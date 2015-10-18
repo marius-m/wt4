@@ -1,4 +1,4 @@
-package sample;
+package lt.markmerkk;
 
 public class Controller {
 }
