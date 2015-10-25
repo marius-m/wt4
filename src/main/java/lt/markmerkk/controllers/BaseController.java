@@ -1,50 +1,44 @@
 package lt.markmerkk.controllers;
 
 import javafx.scene.Scene;
-import javafx.stage.Stage;
+import lt.markmerkk.controllers.interfaces.IViewController;
+import lt.markmerkk.controllers.interfaces.IViewNavigationController;
 
 /**
- * Created with IntelliJ IDEA.
- * User: marius
- * Date: 10/23/13
- * Time: 8:47 PM
+ * Base implementation of the controller, that's life-cycle is controller in ... .
  */
-public abstract class BaseController {
-
-    public interface BaseControllerDelegate {
-        Stage getStage();
-        BaseController pushScene(String sceneXml, Object data);
-        void popScene();
-    }
-
-    protected BaseControllerDelegate mMasterListener;
-    protected Scene mMasterScene;
+// Todo : complete documentation!
+public abstract class BaseController implements IViewController {
 
     public BaseController() { }
 
-    public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
-        mMasterListener = listener;
-        mMasterScene = scene;
+    @Override
+    public void setup(IViewNavigationController listener, Scene scene) {
+
     }
 
-    public Scene getMasterScene() {
-        return mMasterScene;
+    @Override
+    public Scene masterScene() {
+        return null;
     }
 
+    @Override
     public void create(Object data) {
-//        System.out.println("Create:"+getClass().getSimpleName());
+
     }
 
-    public void destroy() {
-//        System.out.println("Destroy:"+getClass().getSimpleName());
-    }
-
+    @Override
     public void resume() {
-//        System.out.println("Resume:"+getClass().getSimpleName());
+
     }
 
+    @Override
     public void pause() {
-//        System.out.println("Pause:"+getClass().getSimpleName());
+
     }
 
+    @Override
+    public void destroy() {
+
+    }
 }
