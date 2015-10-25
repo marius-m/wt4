@@ -15,5 +15,6 @@ Project main purpose is to learn using different technologies in java projects. 
 * Gradle build tooling, custom scripts
 * Java client for JIRA implementation
 * Java git client
+* Sql database implementation, its sync process of sorts
 
 Feel free to contribute, download, change, whatever.
