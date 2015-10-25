@@ -1,6 +1,6 @@
 package lt.markmerkk.navigation;
 
-import lt.markmerkk.navigation.interfaces.AbsStageWrapper;
+import lt.markmerkk.navigation.interfaces.IStageWrapper;
 import lt.markmerkk.navigation.interfaces.IViewController;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
     @Override
     protected void init() {
         super.init();
-        controller.stage = mock(AbsStageWrapper.class);
+        controller.stage = mock(IStageWrapper.class);
     }
 
     @Test

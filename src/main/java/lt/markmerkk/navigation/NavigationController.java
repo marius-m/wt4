@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import lt.markmerkk.navigation.interfaces.ISceneLoader;
-import lt.markmerkk.navigation.interfaces.AbsStageWrapper;
+import lt.markmerkk.navigation.interfaces.IStageWrapper;
 import lt.markmerkk.navigation.interfaces.IViewController;
 import lt.markmerkk.navigation.interfaces.IViewNavigationController;
 
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class NavigationController implements IViewNavigationController {
 
     ISceneLoader sceneLoader;
-    AbsStageWrapper stage;
+    IStageWrapper stage;
     ArrayList<IViewController> scenes;
 
     public NavigationController() {
@@ -34,7 +34,7 @@ public class NavigationController implements IViewNavigationController {
         Platform.exit();
     }
 
-    public void start(AbsStageWrapper primaryStage) {
+    public void start(IStageWrapper primaryStage) {
         this.stage = primaryStage;
         //pushScene(SCENE_XML_MAIN, null);
     }

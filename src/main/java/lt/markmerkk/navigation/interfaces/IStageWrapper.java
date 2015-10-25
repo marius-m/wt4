@@ -7,7 +7,7 @@ import javafx.stage.Stage;
  * Created by mariusmerkevicius on 10/25/15.
  * Represents the wrapper class for the {@link javafx.stage.Stage}
  */
-public interface AbsStageWrapper {
+public interface IStageWrapper {
     /**
      * Gets core stage under the wrapper.
      *
