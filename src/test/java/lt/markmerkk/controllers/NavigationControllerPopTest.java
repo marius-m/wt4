@@ -1,0 +1,103 @@
+package lt.markmerkk.controllers;
+
+import lt.markmerkk.controllers.interfaces.IStageWrapper;
+import lt.markmerkk.controllers.interfaces.IViewController;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+/**
+ * Created by mariusmerkevicius on 10/25/15.
+ * Tests {@link NavigationController#popScene()}
+ */
+public class NavigationControllerPopTest extends NavigationControllerTest {
+
+    @Override
+    protected void init() {
+        super.init();
+        controller.stage = mock(IStageWrapper.class);
+    }
+
+    @Test
+    public void shouldNotBreakWhenNoControllersInTheList() throws Exception {
+        // Arrange
+        init();
+
+        // Act
+        controller.popScene();
+
+        // Assert
+    }
+
+    @Test
+    public void shouldNotPopIfItsTheLastScreen1() throws Exception {
+        // Arrange
+        init();
+        controller.scenes.add(mock(IViewController.class));
+
+        // Act
+        controller.popScene();
+
+        // Assert
+        assertThat(controller.scenes.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldNotPopIfItsTheLastScreen2() throws Exception {
+        // Arrange
+        init();
+        controller.scenes.add(mock(IViewController.class));
+
+        // Act
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+
+        // Assert
+        assertThat(controller.scenes.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldNotPopIfItsTheLastScreen3() throws Exception {
+        // Arrange
+        init();
+        controller.scenes.add(mock(IViewController.class));
+        controller.scenes.add(mock(IViewController.class));
+        controller.scenes.add(mock(IViewController.class));
+
+        // Act
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+        controller.popScene();
+
+        // Assert
+        assertThat(controller.scenes.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldCallProperMethodsWhenPop1() throws Exception {
+        // Arrange
+        init();
+        IViewController firstView = mock(IViewController.class);
+        IViewController secondView = mock(IViewController.class);
+        controller.scenes.add(firstView);
+        controller.scenes.add(secondView);
+
+        // Act
+        controller.popScene();
+
+        // Assert
+        verify(secondView).pause();
+        verify(secondView).destroy();
+        verify(firstView).resume();
+    }
+}

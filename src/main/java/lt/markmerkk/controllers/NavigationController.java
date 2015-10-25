@@ -62,6 +62,8 @@ public class NavigationController implements IViewNavigationController {
 
     @Override
     public void popScene() {
+        if (scenes.size() <= 1)
+            return;
         IViewController baseController = scenes.get(scenes.size() - 1);
         baseController.pause();
         baseController.destroy();
