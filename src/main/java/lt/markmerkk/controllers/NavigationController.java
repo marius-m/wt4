@@ -1,15 +1,14 @@
 package lt.markmerkk.controllers;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.controllers.interfaces.ISceneLoader;
+import lt.markmerkk.controllers.interfaces.IStageWrapper;
 import lt.markmerkk.controllers.interfaces.IViewController;
 import lt.markmerkk.controllers.interfaces.IViewNavigationController;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -19,63 +18,67 @@ import java.util.ArrayList;
  */
 public class NavigationController implements IViewNavigationController {
 
-    Stage stage;
     ISceneLoader sceneLoader;
-    ArrayList<IViewController> sceneInstances;
+    IStageWrapper stage;
+    ArrayList<IViewController> scenes;
+
+    public NavigationController() {
+        scenes = new ArrayList<IViewController>();
+    }
 
     public void stop() {
         // System is shutting down
-        for (IViewController baseController : sceneInstances)
+        for (IViewController baseController : scenes)
             baseController.pause(); // Pausing all scenes
-        for (IViewController baseController : sceneInstances)
+        for (IViewController baseController : scenes)
             baseController.destroy(); // Destroying all scenes
         Platform.exit();
     }
 
-    public void start(Stage primaryStage) {
+    public void start(IStageWrapper primaryStage) {
         this.stage = primaryStage;
         //pushScene(SCENE_XML_MAIN, null);
     }
 
     @Override
     public IViewController pushScene(String sceneXml, Object data) {
-        if (sceneInstances == null)
-            sceneInstances = new ArrayList<IViewController>();
-        if (sceneInstances.size() > 0) {
-            IViewController baseController = sceneInstances.get(sceneInstances.size() - 1);
+        if (sceneXml == null)
+            throw new IllegalArgumentException("Cannot push a scene without fxml path!");
+        if (scenes.size() > 0) {
+            IViewController baseController = scenes.get(scenes.size() - 1);
             baseController.pause(); // Pausing current scene
         }
-        sceneInstances.add(initScene(sceneXml));
+        scenes.add(initLayout(sceneXml));
         stage.setTitle("HG");
-        IViewController newController = sceneInstances.get(sceneInstances.size() - 1);
+        IViewController newController = scenes.get(scenes.size() - 1);
         newController.create(data); // Creating new one
         newController.resume(); // Resuming new one
         stage.setScene(newController.masterScene());
-        stage.setWidth(getStage().getWidth());
-        stage.setHeight(getStage().getHeight());
+        stage.setWidth(stage.getWidth());
+        stage.setHeight(stage.getHeight());
         stage.show();
         return newController;
     }
 
     @Override
     public void popScene() {
-        IViewController baseController = sceneInstances.get(sceneInstances.size() - 1);
+        IViewController baseController = scenes.get(scenes.size() - 1);
         baseController.pause();
         baseController.destroy();
-        sceneInstances.remove(baseController);
-        IViewController oldScene = sceneInstances.get(sceneInstances.size() - 1);
-        oldScene.resume();
-        stage.setScene(oldScene.masterScene());
-        stage.setWidth(getStage().getWidth());
-        stage.setHeight(getStage().getHeight());
+        scenes.remove(baseController);
+        IViewController oldController = scenes.get(scenes.size() - 1);
+        oldController.resume();
+        stage.setScene(oldController.masterScene());
+        stage.setWidth(stage.getWidth());
+        stage.setHeight(stage.getHeight());
         stage.show();
     }
 
 
-    @Override
-    public Stage getStage() {
-        return stage;
-    }
+//    @Override
+//    public Stage getStage() {
+//        return stage;
+//    }
 
     //region Convenience
 
@@ -85,13 +88,26 @@ public class NavigationController implements IViewNavigationController {
      * @param xmlLayout provided xml layout that should be initialized
      * @return initialized and ready controller w`ith its scene reference inside
      */
-    IViewController initScene(String xmlLayout) {
+    IViewController initLayout(String xmlLayout) {
+        if (xmlLayout == null)
+            throw new IllegalArgumentException("Error getting scene path!");
         Scene scene;
         Parent parent = sceneLoader.load(xmlLayout);
         IViewController controller = sceneLoader.getController(parent);
-        scene = new Scene(parent);
+        scene = initScene(parent);
         controller.setup(this, scene);
         return controller;
+    }
+
+    /**
+     * Initializes a scene from a parent.
+     * Wrapper method.
+     *
+     * @param parent provided parent
+     * @return new initialized scene
+     */
+    Scene initScene(Parent parent) {
+        return new Scene(parent);
     }
 
     //endregion

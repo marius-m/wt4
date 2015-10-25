@@ -7,11 +7,6 @@ import lt.markmerkk.controllers.BaseController;
  * An interface that helps set up controller and its core navigation events
  */
 public interface IViewNavigationController {
-    /**
-     * Returns current stage
-     * @return stage
-     */
-    Stage getStage();
 
     /**
      * Pushes new controller forward in the stack
