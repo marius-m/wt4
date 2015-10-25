@@ -19,7 +19,7 @@ public interface IViewNavigationController {
      * @param data additional data passed in. This is optional, null passing is valid.
      * @return new scene
      */
-    BaseController pushScene(String sceneXml, Object data);
+    IViewController pushScene(String sceneXml, Object data);
 
     /**
      * Pops scene out of the controller stack

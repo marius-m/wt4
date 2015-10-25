@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lt.markmerkk.controllers.interfaces.IViewController;
 import lt.markmerkk.controllers.interfaces.IViewNavigationController;
 
 import java.io.IOException;
@@ -16,14 +17,16 @@ import java.util.ArrayList;
  * This holds a stack of controllers, and lets them push forward and backward when needed.
  */
 public class NavigationController implements IViewNavigationController {
+    FXMLLoader loader;
+
     Stage stage;
-    ArrayList<BaseController> sceneInstances;
+    ArrayList<IViewController> sceneInstances;
 
     public void stop() {
         // System is shutting down
-        for (BaseController baseController : sceneInstances)
+        for (IViewController baseController : sceneInstances)
             baseController.pause(); // Pausing all scenes
-        for (BaseController baseController : sceneInstances)
+        for (IViewController baseController : sceneInstances)
             baseController.destroy(); // Destroying all scenes
         Platform.exit();
     }
@@ -41,16 +44,16 @@ public class NavigationController implements IViewNavigationController {
      * @param sceneXml provided xml that should be initialized
      */
     @Override
-    public BaseController pushScene(String sceneXml, Object data) {
+    public IViewController pushScene(String sceneXml, Object data) {
         if (sceneInstances == null)
-            sceneInstances = new ArrayList<BaseController>();
+            sceneInstances = new ArrayList<IViewController>();
         if (sceneInstances.size() > 0) {
-            BaseController baseController = sceneInstances.get(sceneInstances.size() - 1);
+            IViewController baseController = sceneInstances.get(sceneInstances.size() - 1);
             baseController.pause(); // Pausing current scene
         }
-        sceneInstances.add(initSceneToHash(sceneXml));
+        sceneInstances.add(initScene(sceneXml));
         stage.setTitle("HG");
-        BaseController newController = sceneInstances.get(sceneInstances.size() - 1);
+        IViewController newController = sceneInstances.get(sceneInstances.size() - 1);
         newController.create(data); // Creating new one
         newController.resume(); // Resuming new one
         stage.setScene(newController.masterScene());
@@ -62,12 +65,12 @@ public class NavigationController implements IViewNavigationController {
 
     @Override
     public void popScene() {
-        BaseController baseController = sceneInstances.get(sceneInstances.size() - 1);
-        baseController.pause(); // Pausing poped scene
-        baseController.destroy(); // Destroying poped scene
+        IViewController baseController = sceneInstances.get(sceneInstances.size() - 1);
+        baseController.pause();
+        baseController.destroy();
         sceneInstances.remove(baseController);
-        BaseController oldScene = sceneInstances.get(sceneInstances.size() - 1);
-        oldScene.resume(); // Resuming old scene
+        IViewController oldScene = sceneInstances.get(sceneInstances.size() - 1);
+        oldScene.resume();
         stage.setScene(oldScene.masterScene());
         stage.setWidth(getStage().getWidth());
         stage.setHeight(getStage().getHeight());
@@ -86,12 +89,11 @@ public class NavigationController implements IViewNavigationController {
      * @param xmlLayout provided xml layout that should be initialized
      * @return initialized and ready controller w`ith its scene reference inside
      */
-    public BaseController initSceneToHash(String xmlLayout) {
+    IViewController initScene(String xmlLayout) {
         try {
             Scene scene;
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(xmlLayout));
             Parent root = loader.load();
-            BaseController controller = loader.getController();
+            IViewController controller = loader.getController();
             scene = new Scene(root);
             controller.setup(this, scene);
             return controller;
@@ -99,6 +101,24 @@ public class NavigationController implements IViewNavigationController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Loads the controller with a layout from the local resource storage
+     * @param xmlLayout provided xml path
+     * @return loaded controller
+     */
+    IViewController loadController(String xmlLayout) {
+        if (xmlLayout == null)
+            return null;
+        if (loader == null)
+            loader = new FXMLLoader(getClass().getResource(xmlLayout));
+        try {
+            return loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
