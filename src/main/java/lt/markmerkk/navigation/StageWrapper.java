@@ -1,8 +1,8 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import lt.markmerkk.controllers.interfaces.IStageWrapper;
+import lt.markmerkk.navigation.interfaces.AbsStageWrapper;
 
 /**
  * Created by mariusmerkevicius on 10/25/15.
@@ -10,7 +10,7 @@ import lt.markmerkk.controllers.interfaces.IStageWrapper;
  *
  * Mainly used for better testing functionality.
  */
-public class StageWrapper implements IStageWrapper {
+public class StageWrapper implements AbsStageWrapper {
     Stage stage;
 
     public StageWrapper(Stage stage) {

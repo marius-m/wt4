@@ -1,11 +1,10 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
-import lt.markmerkk.controllers.interfaces.IStageWrapper;
-import lt.markmerkk.controllers.interfaces.IViewController;
+import lt.markmerkk.navigation.interfaces.AbsStageWrapper;
+import lt.markmerkk.navigation.interfaces.IViewController;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -18,7 +17,7 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
     @Override
     protected void init() {
         super.init();
-        controller.stage = mock(IStageWrapper.class);
+        controller.stage = mock(AbsStageWrapper.class);
     }
 
     @Test

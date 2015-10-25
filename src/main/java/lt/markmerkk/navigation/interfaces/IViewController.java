@@ -1,4 +1,4 @@
-package lt.markmerkk.controllers.interfaces;
+package lt.markmerkk.navigation.interfaces;
 
 import javafx.scene.Scene;
 

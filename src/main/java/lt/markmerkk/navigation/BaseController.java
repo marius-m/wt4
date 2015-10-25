@@ -1,8 +1,8 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
 import javafx.scene.Scene;
-import lt.markmerkk.controllers.interfaces.IViewController;
-import lt.markmerkk.controllers.interfaces.IViewNavigationController;
+import lt.markmerkk.navigation.interfaces.IViewController;
+import lt.markmerkk.navigation.interfaces.IViewNavigationController;
 
 /**
  * Base implementation of the controller, that's life-cycle is controller in ... .

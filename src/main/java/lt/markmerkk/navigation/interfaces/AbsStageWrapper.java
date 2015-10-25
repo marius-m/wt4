@@ -1,4 +1,4 @@
-package lt.markmerkk.controllers.interfaces;
+package lt.markmerkk.navigation.interfaces;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -7,7 +7,7 @@ import javafx.stage.Stage;
  * Created by mariusmerkevicius on 10/25/15.
  * Represents the wrapper class for the {@link javafx.stage.Stage}
  */
-public interface IStageWrapper {
+public interface AbsStageWrapper {
     /**
      * Gets core stage under the wrapper.
      *

@@ -1,25 +1,24 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import lt.markmerkk.controllers.interfaces.ISceneLoader;
-import lt.markmerkk.controllers.interfaces.IStageWrapper;
-import lt.markmerkk.controllers.interfaces.IViewController;
-import lt.markmerkk.controllers.interfaces.IViewNavigationController;
+import lt.markmerkk.navigation.interfaces.ISceneLoader;
+import lt.markmerkk.navigation.interfaces.AbsStageWrapper;
+import lt.markmerkk.navigation.interfaces.IViewController;
+import lt.markmerkk.navigation.interfaces.IViewNavigationController;
 
 import java.util.ArrayList;
 
 /**
  * Created by mariusmerkevicius on 10/25/15.
  * Represents the basic logic for controller navigation for the scene.
- * This holds a stack of controllers, and lets them push forward and backward when needed.
+ * This holds a stack of navigation, and lets them push forward and backward when needed.
  */
 public class NavigationController implements IViewNavigationController {
 
     ISceneLoader sceneLoader;
-    IStageWrapper stage;
+    AbsStageWrapper stage;
     ArrayList<IViewController> scenes;
 
     public NavigationController() {
@@ -35,7 +34,7 @@ public class NavigationController implements IViewNavigationController {
         Platform.exit();
     }
 
-    public void start(IStageWrapper primaryStage) {
+    public void start(AbsStageWrapper primaryStage) {
         this.stage = primaryStage;
         //pushScene(SCENE_XML_MAIN, null);
     }

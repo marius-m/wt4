@@ -1,4 +1,4 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
 import org.junit.Test;
 

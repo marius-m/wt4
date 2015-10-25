@@ -1,6 +1,5 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
-import javafx.stage.Stage;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

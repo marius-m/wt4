@@ -1,7 +1,4 @@
-package lt.markmerkk.controllers.interfaces;
-
-import javafx.stage.Stage;
-import lt.markmerkk.controllers.BaseController;
+package lt.markmerkk.navigation.interfaces;
 
 /**
  * An interface that helps set up controller and its core navigation events

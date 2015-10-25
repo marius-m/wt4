@@ -1,14 +1,11 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import lt.markmerkk.controllers.interfaces.IStageWrapper;
-import lt.markmerkk.controllers.interfaces.IViewController;
+import lt.markmerkk.navigation.interfaces.AbsStageWrapper;
+import lt.markmerkk.navigation.interfaces.IViewController;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -20,7 +17,7 @@ public class NavigationControllerPushTest extends NavigationControllerTest {
     @Override
     protected void init() {
         super.init();
-        controller.stage = mock(IStageWrapper.class);
+        controller.stage = mock(AbsStageWrapper.class);
     }
 
     @Test

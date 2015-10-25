@@ -1,10 +1,10 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import lt.markmerkk.controllers.interfaces.ISceneLoader;
-import lt.markmerkk.controllers.interfaces.IViewController;
-import lt.markmerkk.controllers.interfaces.IViewNavigationController;
+import lt.markmerkk.navigation.interfaces.ISceneLoader;
+import lt.markmerkk.navigation.interfaces.IViewController;
+import lt.markmerkk.navigation.interfaces.IViewNavigationController;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

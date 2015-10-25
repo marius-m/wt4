@@ -1,8 +1,7 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.navigation;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import lt.markmerkk.controllers.interfaces.IViewController;
 import org.junit.Test;
 
 import java.io.IOException;
