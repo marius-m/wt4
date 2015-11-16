@@ -24,6 +24,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lt.markmerkk.storage.entities.Log;
 import lt.markmerkk.storage.entities.Project;
@@ -62,6 +63,7 @@ public class MainController extends BaseController {
   @FXML TextArea logInput;
   @FXML BorderPane footer;
   @FXML Button timerToggle;
+  @FXML Text totalView;
   private DatePicker datePicker;
 
   public MainController() {
@@ -109,7 +111,6 @@ public class MainController extends BaseController {
         notifyLogsChanged();
       }
     });
-    BorderPane.setMargin(datePicker, new Insets(5, 5, 5, 5));
     DateTime today = new DateTime().withTime(0,0,0,0);
     datePicker.setSelectedDate(today.toDate());
     footer.setRight(datePicker);
@@ -184,7 +185,7 @@ public class MainController extends BaseController {
     for (LogTable log : logs) {
       total += log.getDuration();
     }
-    //totalView.setText(Log.formatDuration(total));
+    totalView.setText(Log.formatDuration(total));
   }
 
   //endregion

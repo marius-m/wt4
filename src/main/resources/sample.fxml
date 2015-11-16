@@ -55,7 +55,17 @@
                         </TableView>
                      </center>
                      <bottom>
-                        <BorderPane fx:id="footer" BorderPane.alignment="CENTER" />
+                        <BorderPane fx:id="footer" BorderPane.alignment="CENTER">
+                           <bottom>
+                              <BorderPane fx:id="footer" BorderPane.alignment="CENTER">
+                                 <left>
+                                    <Text fx:id="totalView" strokeType="OUTSIDE" strokeWidth="0.0" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" />
+                                 </BorderPane.margin>
+                              </BorderPane>
+                           </bottom></BorderPane>
                      </bottom>
                   </BorderPane>
                </children></VBox>

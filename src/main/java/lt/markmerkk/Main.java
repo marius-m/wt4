@@ -28,6 +28,8 @@ public class Main extends Application implements BaseController.BaseControllerDe
         pushScene(SCENE_XML_MAIN, null);
         primaryStage.setWidth(SCENE_WIDTH);
         primaryStage.setHeight(SCENE_HEIGHT);
+        primaryStage.setMinWidth(SCENE_WIDTH);
+        primaryStage.setMinHeight(SCENE_HEIGHT);
     }
 
     @Override
