@@ -8,13 +8,12 @@ import lt.markmerkk.navigation.interfaces.IViewNavigationController;
  * Base implementation of the controller, that's life-cycle is controller in ... .
  */
 // Todo : complete documentation!
-public abstract class BaseController implements IViewController {
+public abstract class BaseController2 implements IViewController {
 
-    public BaseController() { }
+    public BaseController2() { }
 
     @Override
     public void setup(IViewNavigationController listener) {
-
     }
 
     @Override
