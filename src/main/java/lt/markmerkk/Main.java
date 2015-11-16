@@ -11,8 +11,8 @@ import javafx.stage.Stage;
 import lt.markmerkk.controllers.BaseController;
 
 public class Main extends Application implements BaseController.BaseControllerDelegate {
-    public static int SCENE_HEIGHT = 320;
-    public static int SCENE_WIDTH = 480;
+    public static int SCENE_HEIGHT = 500;
+    public static int SCENE_WIDTH = 600;
     protected Stage primaryStage;
     private ArrayList<BaseController> sceneInstances;
     public static final String SCENE_XML_MAIN = "/sample.fxml";

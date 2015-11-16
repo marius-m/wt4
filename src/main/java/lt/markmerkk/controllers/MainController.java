@@ -1,11 +1,18 @@
 package lt.markmerkk.controllers;
 
+import eu.schudt.javafx.controls.calendar.DatePicker;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -17,6 +24,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lt.markmerkk.storage.entities.Log;
 import lt.markmerkk.storage.entities.Project;
@@ -24,7 +32,9 @@ import lt.markmerkk.storage.entities.Task;
 import lt.markmerkk.storage.entities.annotations.TableIndex;
 import lt.markmerkk.storage.entities.table.LogTable;
 import lt.markmerkk.utils.HourGlass;
+import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.Logger;
+import lt.markmerkk.utils.TableDisplayController;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Days;
@@ -50,7 +60,9 @@ public class MainController extends BaseController {
   @FXML TextField timerOutput;
   @FXML TableView logTable;
   @FXML TextArea logInput;
+  @FXML BorderPane footer;
   @FXML Button timerToggle;
+  private DatePicker datePicker;
 
   public MainController() {
     taskController = new TaskController(taskControllerListener);
@@ -63,6 +75,7 @@ public class MainController extends BaseController {
   @Override
   public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
     super.setupController(listener, scene, primaryStage);
+
     logInput.setText(">");
     logInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
       final KeyCombination combo =
@@ -80,6 +93,41 @@ public class MainController extends BaseController {
       @Override public void handle(MouseEvent mouseEvent) {
         if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
         else hourGlass.stop();
+      }
+    });
+
+    // Initialize the DatePicker for birthday
+    datePicker = new DatePicker(Locale.ENGLISH);
+    datePicker.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+    datePicker.getCalendarView().todayButtonTextProperty().set("Today");
+    datePicker.getCalendarView().setShowWeeks(false);
+    datePicker.getStylesheets().add("datepicker.css");
+    datePicker.selectedDateProperty().addListener(new ChangeListener<Date>() {
+      @Override
+      public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+        filterDate = new DateTime(date2);
+        notifyLogsChanged();
+      }
+    });
+    BorderPane.setMargin(datePicker, new Insets(5, 5, 5, 5));
+    DateTime today = new DateTime().withTime(0,0,0,0);
+    datePicker.setSelectedDate(today.toDate());
+    footer.setRight(datePicker);
+
+    notifyProjectsChanged();
+    notifyTasksChanged();
+    notifyLogsChanged();
+
+    LogDisplayController logDisplayController = new LogDisplayController(logTable, logs, new TableDisplayController.Listener<LogTable>() {
+      @Override
+      public void onUpdate(LogTable object) {
+        mMasterListener.pushScene("update_log.fxml", object);
+      }
+
+      @Override
+      public void onDelete(LogTable object) {
+        logStorage.delete(object.getId());
+        notifyLogsChanged();
       }
     });
 
@@ -106,12 +154,12 @@ public class MainController extends BaseController {
   }
 
   private void notifyProjectsChanged() {
-    //ArrayList<Project> projects = projectStorage.readAll();
-    //if (this.projects == null)
-    //  this.projects = FXCollections.observableArrayList();
-    //this.projects.clear();
+    ArrayList<Project> projects = projectStorage.readAll();
+    if (this.projects == null)
+      this.projects = FXCollections.observableArrayList();
+    this.projects.clear();
     //this.projects.add(masterProject);
-    //this.projects.addAll(projects);
+    this.projects.addAll(projects);
     //if (projectsBox != null)
     //  projectsBox.setValue(masterProject);
   }
@@ -179,13 +227,12 @@ public class MainController extends BaseController {
   private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
-      //setTimerOutputVisible(true);
+      timerOutput.setText("");
     }
 
     @Override
     public void onStop(long start, long end, long duration) {
-      //setTimerOutputVisible(false);
-      //com.apple.eawt.Application.getApplication().setDockIconBadge("");
+      timerOutput.setText("");
     }
 
     @Override
@@ -227,13 +274,13 @@ public class MainController extends BaseController {
           logBuilder.setCategory(taskName);
         String projectName = TaskController.splitName(taskName);
         Project project = Project.getProjectWithTitle(projects, projectName);
-        //if (project != null) {
-        //  ArrayList<String> logs = GitController2.getStatus(
-        //      project.getPaths(),
-        //      startTime,
-        //      endTime);
-        //  logBuilder.setGitMessage(logs);
-        //}
+        if (project != null) {
+          //ArrayList<String> logs = GitController2.getStatus(
+          //    project.getPaths(),
+          //    startTime,
+          //    endTime);
+          //logBuilder.setGitMessage(logs);
+        }
 
         logBuilder.setMessage(comment);
         Log log = logBuilder.build();
@@ -253,5 +300,9 @@ public class MainController extends BaseController {
 
   //endregion
 
+  @Override public void destroy() {
+    super.destroy();
 
+    hourGlass.stop();
+  }
 }

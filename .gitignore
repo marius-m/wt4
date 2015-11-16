@@ -37,3 +37,4 @@ build/
 .gradle/
 gradle/
 checkLog.log
+test.db

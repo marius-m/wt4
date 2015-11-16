@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.controllers.MainController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="500.0" prefHeight="400.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.controllers.MainController">
   <tabs>
     <Tab text="Work">
          <content>
@@ -18,9 +18,9 @@
                <children>
                   <BorderPane VBox.vgrow="ALWAYS">
                      <top>
-                        <BorderPane prefHeight="100.0" prefWidth="10.0" BorderPane.alignment="CENTER">
+                        <BorderPane prefHeight="130.0" prefWidth="10.0" BorderPane.alignment="CENTER">
                            <center>
-                              <TextArea fx:id="logInput" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                              <TextArea fx:id="logInput" prefHeight="300.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" />
                                  </BorderPane.margin>
@@ -54,6 +54,9 @@
                            </BorderPane.margin>
                         </TableView>
                      </center>
+                     <bottom>
+                        <BorderPane fx:id="footer" BorderPane.alignment="CENTER" />
+                     </bottom>
                   </BorderPane>
                </children></VBox>
          </content>
