@@ -28,6 +28,8 @@ public class Main extends Application {
 
         stage.setTitle("WT4");
         stage.setScene(new Scene(parent));
+        stage.setMinHeight(SCENE_HEIGHT);
+        stage.setMinWidth(SCENE_WIDTH);
         stage.show();
     }
 
