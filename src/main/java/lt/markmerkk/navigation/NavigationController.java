@@ -62,7 +62,7 @@ public class NavigationController implements IViewNavigationController {
         IViewController baseController = controllers.get(controllers.size() - 1);
         baseController.pause();
         baseController.destroy();
-        controllers.rem`ove(baseController);
+        controllers.remove(baseController);
         IViewController oldController = controllers.get(controllers.size() - 1);
         oldController.resume();
         paneHandler.show();

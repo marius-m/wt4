@@ -26,9 +26,6 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(SCENE_XML_MAIN));
         Parent parent = loader.load();
 
-        //Parent parent2 = new FXMLLoader(getClass().getResource(SCENE_XML_MAIN)).load();
-        //((VBox)parent.lookup("#work")).getChildren().add(parent2);
-
         stage.setTitle("WT4");
         stage.setScene(new Scene(parent));
         stage.show();
