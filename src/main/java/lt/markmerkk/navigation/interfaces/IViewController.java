@@ -12,9 +12,9 @@ public interface IViewController {
     /**
      * A helper method to help set up base controller.
      * @param listener basic navigation listener, used to link navigation with basic controller.
-     * @param scene scene instance passed down to controller
+     *
      */
-    void setup(IViewNavigationController listener, Scene scene);
+    void setup(IViewNavigationController listener);
 
     /**
      * Returns scene that holds the controller.

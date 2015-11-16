@@ -23,7 +23,7 @@ public class NavigationControllerTest {
         controller = new NavigationController();
         // Act
         // Assert
-        assertThat(controller.scenes).isNotNull();
+        assertThat(controller.controllers).isNotNull();
     }
 
 }

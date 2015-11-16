@@ -59,6 +59,6 @@ public class NavigationControllerInitLayoutTest extends NavigationControllerTest
         // Act
         controller.initLayout("/SomeScene.fxml");
         // Assert
-        verify(viewController).setup(any(IViewNavigationController.class), any(Scene.class));
+        verify(viewController).setup(any(IViewNavigationController.class));
     }
 }

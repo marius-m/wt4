@@ -13,7 +13,7 @@ public abstract class BaseController implements IViewController {
     public BaseController() { }
 
     @Override
-    public void setup(IViewNavigationController listener, Scene scene) {
+    public void setup(IViewNavigationController listener) {
 
     }
 

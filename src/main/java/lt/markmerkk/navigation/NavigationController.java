@@ -3,10 +3,8 @@ package lt.markmerkk.navigation;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import lt.markmerkk.navigation.interfaces.ISceneLoader;
-import lt.markmerkk.navigation.interfaces.IStageWrapper;
-import lt.markmerkk.navigation.interfaces.IViewController;
-import lt.markmerkk.navigation.interfaces.IViewNavigationController;
+import javafx.scene.layout.Pane;
+import lt.markmerkk.navigation.interfaces.*;
 
 import java.util.ArrayList;
 
@@ -17,62 +15,59 @@ import java.util.ArrayList;
  */
 public class NavigationController implements IViewNavigationController {
 
+    //IStageWrapper stage;
     ISceneLoader sceneLoader;
-    IStageWrapper stage;
-    ArrayList<IViewController> scenes;
+    IPaneHandler paneHandler;
+    ArrayList<IViewController> controllers;
 
     public NavigationController() {
-        scenes = new ArrayList<IViewController>();
+        controllers = new ArrayList<IViewController>();
     }
 
     public void stop() {
         // System is shutting down
-        for (IViewController baseController : scenes)
-            baseController.pause(); // Pausing all scenes
-        for (IViewController baseController : scenes)
-            baseController.destroy(); // Destroying all scenes
+        for (IViewController baseController : controllers)
+            baseController.pause(); // Pausing all controllers
+        for (IViewController baseController : controllers)
+            baseController.destroy(); // Destroying all controllers
         Platform.exit();
     }
 
-    public void start(IStageWrapper primaryStage) {
-        this.stage = primaryStage;
-        //pushScene(SCENE_XML_MAIN, null);
+    public void start(IPaneHandler paneHandler) {
+        this.paneHandler = paneHandler;
     }
 
     @Override
     public IViewController pushScene(String sceneXml, Object data) {
         if (sceneXml == null)
             throw new IllegalArgumentException("Cannot push a scene without fxml path!");
-        if (scenes.size() > 0) {
-            IViewController baseController = scenes.get(scenes.size() - 1);
-            baseController.pause(); // Pausing current scene
+        if (controllers.size() > 0) {
+            IViewController baseController = controllers.get(controllers.size() - 1);
+            baseController.pause();
         }
-        scenes.add(initLayout(sceneXml));
-        stage.setTitle("HG");
-        IViewController newController = scenes.get(scenes.size() - 1);
-        newController.create(data); // Creating new one
-        newController.resume(); // Resuming new one
-        stage.setScene(newController.masterScene());
-        stage.setWidth(stage.getWidth());
-        stage.setHeight(stage.getHeight());
-        stage.show();
+        controllers.add(initLayout(sceneXml));
+        IViewController newController = controllers.get(controllers.size() - 1);
+        newController.create(data);
+        newController.resume();
+        paneHandler.show();
+//        stage.setScene(newController.masterScene());
+//        stage.show();
         return newController;
     }
 
     @Override
     public void popScene() {
-        if (scenes.size() <= 1)
+        if (controllers.size() <= 1)
             return;
-        IViewController baseController = scenes.get(scenes.size() - 1);
+        IViewController baseController = controllers.get(controllers.size() - 1);
         baseController.pause();
         baseController.destroy();
-        scenes.remove(baseController);
-        IViewController oldController = scenes.get(scenes.size() - 1);
+        controllers.rem`ove(baseController);
+        IViewController oldController = controllers.get(controllers.size() - 1);
         oldController.resume();
-        stage.setScene(oldController.masterScene());
-        stage.setWidth(stage.getWidth());
-        stage.setHeight(stage.getHeight());
-        stage.show();
+        paneHandler.show();
+//        stage.setScene(oldController.masterScene());
+//        stage.show();
     }
 
 
@@ -93,10 +88,11 @@ public class NavigationController implements IViewNavigationController {
         if (xmlLayout == null)
             throw new IllegalArgumentException("Error getting scene path!");
         Scene scene;
-        Parent parent = sceneLoader.load(xmlLayout);
-        IViewController controller = sceneLoader.getController(parent);
-        scene = initScene(parent);
-        controller.setup(this, scene);
+        Pane pane = (Pane) sceneLoader.load(xmlLayout);
+        IViewController controller = sceneLoader.getController(pane);
+        //scene = initScene(pane);
+        paneHandler.init(pane);
+        controller.setup(this);
         return controller;
     }
 

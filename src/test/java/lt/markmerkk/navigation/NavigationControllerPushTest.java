@@ -17,7 +17,7 @@ public class NavigationControllerPushTest extends NavigationControllerTest {
     @Override
     protected void init() {
         super.init();
-        controller.stage = mock(IStageWrapper.class);
+        //controller.stage = mock(IStageWrapper.class);
     }
 
     @Test

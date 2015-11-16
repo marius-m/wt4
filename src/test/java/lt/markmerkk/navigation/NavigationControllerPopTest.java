@@ -17,7 +17,7 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
     @Override
     protected void init() {
         super.init();
-        controller.stage = mock(IStageWrapper.class);
+        //controller.stage = mock(IStageWrapper.class);
     }
 
     @Test
@@ -35,20 +35,20 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
     public void shouldNotPopIfItsTheLastScreen1() throws Exception {
         // Arrange
         init();
-        controller.scenes.add(mock(IViewController.class));
+        controller.controllers.add(mock(IViewController.class));
 
         // Act
         controller.popScene();
 
         // Assert
-        assertThat(controller.scenes.size()).isEqualTo(1);
+        assertThat(controller.controllers.size()).isEqualTo(1);
     }
 
     @Test
     public void shouldNotPopIfItsTheLastScreen2() throws Exception {
         // Arrange
         init();
-        controller.scenes.add(mock(IViewController.class));
+        controller.controllers.add(mock(IViewController.class));
 
         // Act
         controller.popScene();
@@ -58,16 +58,16 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
         controller.popScene();
 
         // Assert
-        assertThat(controller.scenes.size()).isEqualTo(1);
+        assertThat(controller.controllers.size()).isEqualTo(1);
     }
 
     @Test
     public void shouldNotPopIfItsTheLastScreen3() throws Exception {
         // Arrange
         init();
-        controller.scenes.add(mock(IViewController.class));
-        controller.scenes.add(mock(IViewController.class));
-        controller.scenes.add(mock(IViewController.class));
+        controller.controllers.add(mock(IViewController.class));
+        controller.controllers.add(mock(IViewController.class));
+        controller.controllers.add(mock(IViewController.class));
 
         // Act
         controller.popScene();
@@ -79,7 +79,7 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
         controller.popScene();
 
         // Assert
-        assertThat(controller.scenes.size()).isEqualTo(1);
+        assertThat(controller.controllers.size()).isEqualTo(1);
     }
 
     @Test
@@ -88,8 +88,8 @@ public class NavigationControllerPopTest extends NavigationControllerTest {
         init();
         IViewController firstView = mock(IViewController.class);
         IViewController secondView = mock(IViewController.class);
-        controller.scenes.add(firstView);
-        controller.scenes.add(secondView);
+        controller.controllers.add(firstView);
+        controller.controllers.add(secondView);
 
         // Act
         controller.popScene();
