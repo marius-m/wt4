@@ -18,7 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -35,6 +34,7 @@ import lt.markmerkk.utils.HourGlass;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.Logger;
 import lt.markmerkk.utils.TableDisplayController;
+import lt.markmerkk.utils.TaskController;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Days;
@@ -121,7 +121,7 @@ public class MainController extends BaseController {
     LogDisplayController logDisplayController = new LogDisplayController(logTable, logs, new TableDisplayController.Listener<LogTable>() {
       @Override
       public void onUpdate(LogTable object) {
-        mMasterListener.pushScene("update_log.fxml", object);
+        mMasterListener.pushScene("/update_log.fxml", object);
       }
 
       @Override
@@ -300,9 +300,21 @@ public class MainController extends BaseController {
 
   //endregion
 
+  //region World events
+
+  @Override
+  public void resume() {
+    super.resume();
+    notifyProjectsChanged();
+    notifyLogsChanged();
+  }
+
+
   @Override public void destroy() {
     super.destroy();
-
     hourGlass.stop();
   }
+
+  //endregion
+
 }

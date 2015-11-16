@@ -1,4 +1,4 @@
-package lt.markmerkk.controllers;
+package lt.markmerkk.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
