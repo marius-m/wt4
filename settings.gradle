@@ -15,5 +15,4 @@ include 'shared'
 include 'api'
 include 'services:webservice'
 */
-include 'gradle-javafx-plugin'
 rootProject.name = 'wt4'
