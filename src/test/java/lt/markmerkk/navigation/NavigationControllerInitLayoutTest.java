@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import lt.markmerkk.navigation.interfaces.ISceneLoader;
 import lt.markmerkk.navigation.interfaces.IViewController;
 import lt.markmerkk.navigation.interfaces.IViewNavigationController;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mariusmerkevicius on 10/25/15.
  */
+@Ignore
 public class NavigationControllerInitLayoutTest extends NavigationControllerTest {
     @Test
     public void shouldBreakWhenNullXmlPath() throws Exception {

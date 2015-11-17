@@ -2,6 +2,7 @@ package lt.markmerkk.navigation;
 
 import lt.markmerkk.navigation.interfaces.IStageWrapper;
 import lt.markmerkk.navigation.interfaces.IViewController;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.verify;
  * Created by mariusmerkevicius on 10/25/15.
  * Tests {@link NavigationController#popScene()}
  */
+@Ignore
 public class NavigationControllerPopTest extends NavigationControllerTest {
 
     @Override
