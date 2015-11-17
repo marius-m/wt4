@@ -1,0 +1,90 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+group = 'org.bitbucket.shemnon.javafxplugin'
+version = '8.1.2-SNAPSHOT'
+
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    throw new GradleException("Must Build with Java 1.8")
+}
+// check for 8u20
+def matcher = System.getProperty("java.runtime.version") =~ /(\d*)\.(\d*)\.(\d*)(_(\d*))?(\D.*)/
+if (matcher?.matches() && (!matcher?.group(5) || Integer.parseInt(matcher?.group(5)) < 20)) {
+    throw new GradleException("Must Build with Java 8 update 20 or later")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.jclarion:image4j:0.7'
+    compile gradleApi()
+    compile files("${System.properties['java.home']}/../lib/ant-javafx.jar")
+    compile fileTree(dir: "${System.properties['java.home']}", include: '**/jfxrt.jar')
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url:"https://api.bintray.com/maven/shemnon/javafx-gradle/gradle-javafx-plugin/",
+                id: 'bintray-shemnon-javafx-gradle-plugin'
+            ) {
+                try {
+                    authentication(
+                        userName: bintrayUserName,
+                        password: bintrayApiKey
+                    )
+                } catch (MissingPropertyException ignore) {
+                    // ignore, don't authenticate
+                }
+            }
+            snapshotRepository (url: "https://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot/",
+                id: 'cloudbees-javafx-gradle-plugin'
+            ) {
+                try {
+                    authentication(
+                        userName: cloudbeesUserName,
+                        password: cloudbeesPassword
+                    )
+                } catch (MissingPropertyException ignore) {
+                    // ignore, don't authenticate
+                }
+            }
+        }
+    }
+}
+
+[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured {pom ->
+    pom.project {
+        dependencies {
+            dependency {
+                groupId 'net.java.openjdk'
+                artifactId 'jfxrt'
+                version '8b106'
+                scope 'system'
+                systemPath '${java.home}/lib/jfxrt.jar'
+            }
+            dependency {
+                groupId 'net.java.openjdk'
+                artifactId 'jfxrt'
+                version '8b106'
+                scope 'system'
+                systemPath '${java.home}/lib/ext/jfxrt.jar'
+            }
+            dependency {
+                groupId 'net.java.openjdk'
+                artifactId 'ant-javafx'
+                version '8b106'
+                scope 'system'
+                systemPath '${java.home}/../lib/ant-javafx.jar'
+            }
+            dependency {
+                groupId 'org.jclarion'
+                artifactId 'image4j'
+                version '0.7'
+            }
+        }
+    }
+}
