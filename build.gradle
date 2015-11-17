@@ -95,7 +95,7 @@ javafx {
         windows {
             id = 'c533f663-1efd-489f-b910-4c7ec20c7fd0'
             category = 'JavaFX Demos'
-            javaRuntime = 'C:/Program Files (x86)/Java/jdk1.8.0_66'
+            javaRuntime = '﻿C:\\Program Files\\Java\\jdk1.8.0_72'
 
             bundleArguments = [
                 // for EXE and MSI bundles
