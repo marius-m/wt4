@@ -74,7 +74,7 @@
                         </BorderPane>
                      </top>
                      <center>
-                        <TableView fx:id="tableLogs" BorderPane.alignment="CENTER">
+                        <TableView fx:id="tableLogs" focusTraversable="false" BorderPane.alignment="CENTER">
                           <columns>
                             <TableColumn prefWidth="75.0" text="C1" />
                             <TableColumn prefWidth="75.0" text="C2" />

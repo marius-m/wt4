@@ -123,16 +123,14 @@ public class MainController extends BaseController {
    */
   private void initViewListeners() {
     inputFrom.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue,
+      @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
           String newValue) {
         hourGlass.updateTimers(filterDate, inputFrom.getText(), inputTo.getText());
       }
     });
 
     inputTo.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue,
+      @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
           String newValue) {
         hourGlass.updateTimers(filterDate, inputFrom.getText(), inputTo.getText());
       }
@@ -153,6 +151,12 @@ public class MainController extends BaseController {
       @Override public void handle(MouseEvent mouseEvent) {
         if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
         else hourGlass.stop();
+      }
+    });
+
+    buttonEnter.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        logger.log(inputComment.getText());
       }
     });
 
