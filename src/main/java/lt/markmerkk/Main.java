@@ -26,7 +26,8 @@ public class Main extends Application implements BaseController.BaseControllerDe
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
         pushScene(SCENE_XML_MAIN, null);
-        primaryStage.setWidth(SCENE_WIDTH);
+        primaryStage.
+            setWidth(SCENE_WIDTH);
         primaryStage.setHeight(SCENE_HEIGHT);
         primaryStage.setMinWidth(SCENE_WIDTH);
         primaryStage.setMinHeight(SCENE_HEIGHT);

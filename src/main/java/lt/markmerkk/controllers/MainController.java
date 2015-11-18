@@ -12,15 +12,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -58,13 +55,19 @@ public class MainController extends BaseController {
   private Project projectFilter = null;
   private DateTime filterDate;
 
-  @FXML TextField timerOutput;
-  @FXML TableView logTable;
-  @FXML TextArea logInput;
-  @FXML BorderPane footer;
-  @FXML Button timerToggle;
+  @FXML TextField inputTo;
+  @FXML TextField inputFrom;
+  @FXML TextField outputDuration;
+  @FXML TextField inputTask;
+  @FXML TextArea inputComment;
+  @FXML Button buttonClock;
+  @FXML Button buttonEnter;
+
+  @FXML TableView tableLogs;
+
   @FXML Text totalView;
-  private DatePicker datePicker;
+  @FXML BorderPane footer;
+  DatePicker datePicker;
 
   public MainController() {
     taskController = new TaskController(taskControllerListener);
@@ -78,26 +81,20 @@ public class MainController extends BaseController {
   public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
     super.setupController(listener, scene, primaryStage);
 
-    logInput.setText(">");
-    logInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
-      final KeyCombination combo =
-          new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.SHIFT_DOWN);
+    initViewListeners();
+    initViews();
 
-      public void handle(KeyEvent t) {
-        if (combo.match(t)) {
-          logger.log(logInput.getText());
-        }
-      }
-    });
+    notifyProjectsChanged();
+    notifyTasksChanged();
+    notifyLogsChanged();
+  }
 
-    // Timer configuration
-    timerToggle.setOnMouseClicked(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent mouseEvent) {
-        if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
-        else hourGlass.stop();
-      }
-    });
+  //region Init
 
+  /**
+   * Initializes missing views for the controller
+   */
+  private void initViews() {
     // Initialize the DatePicker for birthday
     datePicker = new DatePicker(Locale.ENGLISH);
     datePicker.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -115,32 +112,40 @@ public class MainController extends BaseController {
     datePicker.setSelectedDate(today.toDate());
     footer.setRight(datePicker);
 
-    notifyProjectsChanged();
-    notifyTasksChanged();
-    notifyLogsChanged();
+    LogDisplayController logDisplayController = new LogDisplayController(tableLogs, logs, listener);
+  }
 
-    LogDisplayController logDisplayController = new LogDisplayController(logTable, logs, new TableDisplayController.Listener<LogTable>() {
-      @Override
-      public void onUpdate(LogTable object) {
-        mMasterListener.pushScene("/update_log.fxml", object);
+  /**
+   * Initializes listeners for the views
+   */
+  private void initViewListeners() {
+    inputComment.setText("");
+    inputComment.setOnKeyReleased(new EventHandler<KeyEvent>() {
+      public void handle(KeyEvent t) {
+        if (t.getCode() == KeyCode.ENTER) {
+          logger.log(inputComment.getText());
+        }
       }
+    });
 
-      @Override
-      public void onDelete(LogTable object) {
-        logStorage.delete(object.getId());
-        notifyLogsChanged();
+    // Timer configuration
+    buttonClock.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
+        else hourGlass.stop();
       }
     });
 
   }
 
+  //endregion
+
+
   //region Convenience
 
-  //private void notifyProjectSelectionChanged() {
-  //  projectsBox.setItems(projects);
-  //  projectsBox.setValue(masterProject);
-  //}
-
+  /**
+   * Updates tasks from the database
+   */
   private void notifyTasksChanged() {
     ArrayList<Task> tasks = taskStorage.readAll();
     if (this.tasks == null)
@@ -154,6 +159,9 @@ public class MainController extends BaseController {
       this.tasks.addAll(tasks);
   }
 
+  /**
+   * Updates projects from the database
+   */
   private void notifyProjectsChanged() {
     ArrayList<Project> projects = projectStorage.readAll();
     if (this.projects == null)
@@ -165,6 +173,9 @@ public class MainController extends BaseController {
     //  projectsBox.setValue(masterProject);
   }
 
+  /**
+   * Updates logs from the database
+   */
   private void notifyLogsChanged() {
     ArrayList<Log> logs = logStorage.readWithScope(Log.class.getAnnotation(TableIndex.class).name(),
         new SqlJetScope(
@@ -180,6 +191,9 @@ public class MainController extends BaseController {
     countTotal();
   }
 
+  /**
+   * Counts total time spent for the day
+   */
   private void countTotal() {
     long total = 0;
     for (LogTable log : logs) {
@@ -191,6 +205,18 @@ public class MainController extends BaseController {
   //endregion
 
   //region Listeners
+
+  TableDisplayController.Listener<LogTable> listener =
+      new TableDisplayController.Listener<LogTable>() {
+        @Override public void onUpdate(LogTable object) {
+          mMasterListener.pushScene("/update_log.fxml", object);
+        }
+
+        @Override public void onDelete(LogTable object) {
+          logStorage.delete(object.getId());
+          notifyLogsChanged();
+        }
+      };
 
   private TaskController.ResourceListener taskControllerListener = new TaskController.ResourceListener() {
     @Override
@@ -228,27 +254,23 @@ public class MainController extends BaseController {
   private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
-      timerOutput.setText("");
+      inputFrom.setText(shortFormat.print(start));
+      inputTo.setText(shortFormat.print(end));
+      outputDuration.setText(Log.formatDuration(duration));
     }
 
     @Override
     public void onStop(long start, long end, long duration) {
-      timerOutput.setText("");
+      inputFrom.setText("");
+      inputTo.setText("");
+      outputDuration.setText("");
     }
 
     @Override
     public void onTick(final long start, final long end, final long duration) {
-      Platform.runLater(new Runnable() {
-        @Override public void run() {
-          //if (!isClosing) {
-          timerOutput.setText(
-              shortFormat.print(start) + "-" + shortFormat.print(end) + "=" + Log.formatDuration(
-                  duration));
-          //}
-        }
-      });
-      //com.apple.eawt.Application.getApplication().setDockIconBadge(
-      //    Log.formatShortDuration(duration));
+      inputFrom.setText(shortFormat.print(start));
+      inputTo.setText(shortFormat.print(end));
+      outputDuration.setText(Log.formatDuration(duration));
     }
   };
 
@@ -288,7 +310,7 @@ public class MainController extends BaseController {
         logStorage.insert(log);
 
         // Resetting controls
-        logInput.setText(">");
+        inputComment.setText("");
         hourGlass.restart();
         notifyLogsChanged();
         notifyTasksChanged();
