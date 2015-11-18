@@ -34,6 +34,7 @@ import lt.markmerkk.utils.Logger;
 import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.TaskController;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
@@ -48,6 +49,7 @@ public class MainController extends BaseController {
   private final Logger logger;
   private final HourGlass hourGlass;
   private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  private final DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
 
   private ObservableList<LogTable> logs;
   private ObservableList<Task> tasks;
@@ -124,15 +126,15 @@ public class MainController extends BaseController {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue,
           String newValue) {
-        try {
-          DateTime startTime = shortFormat.parseDateTime(inputFrom.getText());
-          clearError(inputFrom);
-          hourGlass.setPauseReport(false);
+        hourGlass.updateTimers(filterDate, inputFrom.getText(), inputTo.getText());
+      }
+    });
 
-        } catch (IllegalArgumentException e) {
-          reportError(inputFrom);
-          hourGlass.setPauseReport(true);
-        }
+    inputTo.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue,
+          String newValue) {
+        hourGlass.updateTimers(filterDate, inputFrom.getText(), inputTo.getText());
       }
     });
 
@@ -305,14 +307,27 @@ public class MainController extends BaseController {
 
     @Override
     public void onTick(final long start, final long end, final long duration) {
-      //inputFrom.setText(shortFormat.print(start));
-      //inputTo.setText(shortFormat.print(end));
+      clearError(inputFrom);
+      clearError(inputTo);
+      clearError(outputDuration);
       outputDuration.setText(Log.formatDuration(duration));
     }
 
-    @Override public void onError(String message) {
-
+    @Override public void onError(HourGlass.Error error) {
+      switch (error) {
+        case START:
+        case END:
+          reportError(inputFrom);
+          reportError(inputTo);
+          reportError(outputDuration);
+          break;
+        case DURATION:
+          reportError(outputDuration);
+          break;
+      }
+      outputDuration.setText(error.getMessage());
     }
+
   };
 
   private Logger.Listener loggerListener = new Logger.Listener() {

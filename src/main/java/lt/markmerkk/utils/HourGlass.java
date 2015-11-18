@@ -3,7 +3,10 @@ package lt.markmerkk.utils;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by mariusm on 10/30/14.
@@ -18,8 +21,6 @@ public class HourGlass {
   long endMillis = 0;
   long lastTick = 0;
 
-  boolean pauseReport;
-
   Listener listener;
 
   public HourGlass() { }
@@ -33,7 +34,6 @@ public class HourGlass {
    */
   public boolean start() {
     if (state == State.STOPPED) {
-      pauseReport = false;
       state = State.RUNNING;
 
       lastTick = current();
@@ -62,7 +62,6 @@ public class HourGlass {
    */
   public boolean stop() {
     if (state == State.RUNNING) {
-      pauseReport = false;
       state = State.STOPPED;
       timer.cancel();
       timer.purge();
@@ -93,20 +92,20 @@ public class HourGlass {
    * A function to calculate duration and report a change
    */
   void update() {
-    if (pauseReport) return;
     if (state == State.STOPPED) return;
     try {
       if (startMillis < 0)
-        throw new IllegalStateException("Error in start time!");
+        throw new TimeCalcError(Error.START);
       if (endMillis < 0)
-        throw new IllegalStateException("Error in end time!");
+        throw new TimeCalcError(Error.END);
       if (startMillis > endMillis)
-        throw new IllegalStateException("Error calculating duration!");
+        throw new TimeCalcError(Error.DURATION);
       endMillis += calcTimeIncrease();
       long delay = endMillis - startMillis;
       if (listener != null) listener.onTick(startMillis, endMillis, delay);
-    } catch (IllegalStateException e) {
-      if (listener != null) listener.onError(e.getMessage());
+    } catch (TimeCalcError e) {
+      lastTick = current();
+      if (listener != null) listener.onError(e.getError());
     }
   }
 
@@ -132,12 +131,45 @@ public class HourGlass {
 
   //region Getters / Setters
 
-  public void setStartMillis(long startMillis) {
-    this.startMillis = startMillis;
-  }
+  private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  /**
+   * Updates timers with input start, end times and todays date.
+   * @param today provided todays date
+   * @param startTime provided start time in string
+   * @param endTime provided end time in string
+   */
+  public void updateTimers(DateTime today, String startTime, String endTime) {
+    if (today == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    if (startTime == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    if (endTime == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    // Parsing start time
+    try {
+      DateTime start = shortFormat.parseDateTime(startTime).withDate(
+          today.year().get(),
+          today.monthOfYear().get(),
+          today.dayOfMonth().get()
+      );
+      startMillis = start.getMillis();
+    } catch (IllegalArgumentException e) {
+      startMillis = -1;
+    }
 
-  public void setPauseReport(boolean pauseReport) {
-    this.pauseReport = pauseReport;
+    // Parsing end time
+    try {
+      DateTime end = shortFormat.parseDateTime(endTime).withDate(
+          today.year().get(),
+          today.monthOfYear().get(),
+          today.dayOfMonth().get()
+      );
+      endMillis = end.getMillis();
+    } catch (IllegalArgumentException e) {
+      endMillis = -1;
+    }
+
+    update();
   }
 
   public void setListener(Listener listener) {
@@ -212,7 +244,7 @@ public class HourGlass {
     /**
      * Reports an error when there is something wrong with calculation.
      */
-    void onError(String message);
+    void onError(Error error);
   }
 
   /**
@@ -241,7 +273,39 @@ public class HourGlass {
           return STOPPED;
       }
     }
+  }
 
+  /**
+   * Represents an error when calculating a time change.
+   */
+  public enum Error {
+    START("Error in start time!"), END("Error in end time!"), DURATION(
+        "Error calculating duration!");
+    String message;
+
+    Error(String message) {
+      this.message = message;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+  }
+
+  /**
+   * Represents an error thrown when trying to calculate time.
+   */
+  private class TimeCalcError extends IllegalStateException {
+    Error error;
+
+    public TimeCalcError(Error error) {
+      super(error.getMessage());
+      this.error = error;
+    }
+
+    public Error getError() {
+      return error;
+    }
   }
 
   //endregion

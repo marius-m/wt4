@@ -20,7 +20,6 @@ public class HourGlassStartTest {
     glass.start();
 
     // Assert
-    assertThat(glass.pauseReport).isFalse();
     assertThat(glass.startMillis).isEqualTo(1000);
     assertThat(glass.endMillis).isEqualTo(1000);
     assertThat(glass.lastTick).isEqualTo(1000);

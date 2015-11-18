@@ -25,7 +25,6 @@ public class HourGlassStopTest {
     glass.stop();
 
     // Assert
-    assertThat(glass.pauseReport).isFalse();
     assertThat(glass.startMillis).isEqualTo(0);
     assertThat(glass.endMillis).isEqualTo(0);
     assertThat(glass.lastTick).isEqualTo(-1);

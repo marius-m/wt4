@@ -116,7 +116,7 @@ public class HourGlassUpdateTest {
     // Assert
     glass.update();
     verify(glass.listener, never()).onTick(any(Long.class),any(Long.class),any(Long.class));
-    verify(glass.listener).onError("Error in start time!");
+    verify(glass.listener).onError(HourGlass.Error.START);
   }
 
   @Test public void testErrorWhenEndFails() throws Exception {
@@ -132,7 +132,7 @@ public class HourGlassUpdateTest {
     // Assert
     glass.update();
     verify(glass.listener, never()).onTick(any(Long.class), any(Long.class), any(Long.class));
-    verify(glass.listener).onError("Error in end time!");
+    verify(glass.listener).onError(HourGlass.Error.END);
   }
 
   @Test public void testErrorWhenStartBiggerThanEnd() throws Exception {
@@ -148,7 +148,7 @@ public class HourGlassUpdateTest {
     // Assert
     glass.update();
     verify(glass.listener, never()).onTick(any(Long.class), any(Long.class), any(Long.class));
-    verify(glass.listener).onError("Error calculating duration!");
+    verify(glass.listener).onError(HourGlass.Error.DURATION);
   }
 
 }
