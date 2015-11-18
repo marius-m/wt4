@@ -106,6 +106,7 @@ public class MainController extends BaseController {
       @Override
       public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
         filterDate = new DateTime(date2);
+        hourGlass.setCurrentDay(filterDate);
         notifyLogsChanged();
       }
     });

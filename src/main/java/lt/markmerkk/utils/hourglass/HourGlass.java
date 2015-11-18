@@ -156,6 +156,30 @@ public class HourGlass {
   //region Getters / Setters
 
   /**
+   * Sets current day for the hourglass
+   * @param currentDay provided current day
+   */
+  public void setCurrentDay(DateTime currentDay) {
+    if (currentDay == null)
+      throw new IllegalArgumentException("Cannot set current day without provided date!");
+    try {
+      startMillis = new DateTime(startMillis).withDate(
+          currentDay.year().get(),
+          currentDay.monthOfYear().get(),
+          currentDay.dayOfMonth().get()
+      ).getMillis();
+      endMillis = new DateTime(endMillis).withDate(
+          currentDay.year().get(),
+          currentDay.monthOfYear().get(),
+          currentDay.dayOfMonth().get()
+      ).getMillis();
+      update();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * Reports start time in {@link DateTime}
    * @return start time
    */
