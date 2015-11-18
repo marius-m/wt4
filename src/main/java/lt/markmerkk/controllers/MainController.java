@@ -3,9 +3,9 @@ package lt.markmerkk.controllers;
 import eu.schudt.javafx.controls.calendar.DatePicker;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -80,6 +80,7 @@ public class MainController extends BaseController {
   @Override
   public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
     super.setupController(listener, scene, primaryStage);
+    scene.getStylesheets().add(getClass().getResource("/text-field-red-border.css").toExternalForm());
 
     initViewListeners();
     initViews();
@@ -119,6 +120,23 @@ public class MainController extends BaseController {
    * Initializes listeners for the views
    */
   private void initViewListeners() {
+    inputFrom.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue,
+          String newValue) {
+        try {
+          DateTime startTime = shortFormat.parseDateTime(inputFrom.getText());
+          clearError(inputFrom);
+          hourGlass.setPauseReport(false);
+
+        } catch (IllegalArgumentException e) {
+          reportError(inputFrom);
+          hourGlass.setPauseReport(true);
+        }
+      }
+    });
+
+    // Comment event listeners
     inputComment.setText("");
     inputComment.setOnKeyReleased(new EventHandler<KeyEvent>() {
       public void handle(KeyEvent t) {
@@ -142,6 +160,25 @@ public class MainController extends BaseController {
 
 
   //region Convenience
+
+  /**
+   * Adds an indicator as an error for the text field
+   * @param tf provided text field
+   */
+  private void reportError(TextField tf) {
+    ObservableList<String> styleClass = tf.getStyleClass();
+    if (!styleClass.contains("error"))
+      styleClass.add("error");
+  }
+
+  /**
+   * Removes error indicator for the text field
+   * @param tf provided text field
+   */
+  private void clearError(TextField tf) {
+    ObservableList<String> styleClass = tf.getStyleClass();
+    styleClass.removeAll(Collections.singleton("error"));
+  }
 
   /**
    * Updates tasks from the database
@@ -268,9 +305,13 @@ public class MainController extends BaseController {
 
     @Override
     public void onTick(final long start, final long end, final long duration) {
-      inputFrom.setText(shortFormat.print(start));
-      inputTo.setText(shortFormat.print(end));
+      //inputFrom.setText(shortFormat.print(start));
+      //inputTo.setText(shortFormat.print(end));
       outputDuration.setText(Log.formatDuration(duration));
+    }
+
+    @Override public void onError(String message) {
+
     }
   };
 

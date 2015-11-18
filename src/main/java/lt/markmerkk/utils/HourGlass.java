@@ -11,13 +11,18 @@ import org.joda.time.DateTimeUtils;
  */
 public class HourGlass {
   public static final int TICK_DELAY = 1000;
-  private Timer timer = null;
-  protected State state = State.STOPPED;
-  private long startMillis = 0;
-  private Listener listener;
 
-  public HourGlass() {
-  }
+  Timer timer = null;
+  State state = State.STOPPED;
+  long startMillis = 0;
+  long endMillis = 0;
+  long lastTick = 0;
+
+  boolean pauseReport;
+
+  Listener listener;
+
+  public HourGlass() { }
 
   //region Public
 
@@ -28,17 +33,23 @@ public class HourGlass {
    */
   public boolean start() {
     if (state == State.STOPPED) {
+      pauseReport = false;
       state = State.RUNNING;
-      startMillis = DateTimeUtils.currentTimeMillis();
+
+      lastTick = current();
+      endMillis = current();
+      startMillis = current();
       TimerTask updateRunnable = new TimerTask() {
         @Override public void run() {
-          update();
+          Platform.runLater(() -> {
+            update();
+          });
         }
       };
       timer = new Timer();
       timer.scheduleAtFixedRate(updateRunnable, 1, TICK_DELAY);
-      long delay = DateTimeUtils.currentTimeMillis() - startMillis;
-      if (listener != null) listener.onStart(startMillis, DateTimeUtils.currentTimeMillis(), delay);
+      long delay = endMillis - startMillis;
+      if (listener != null) listener.onStart(startMillis, endMillis, delay);
       return true;
     }
     return false;
@@ -51,13 +62,15 @@ public class HourGlass {
    */
   public boolean stop() {
     if (state == State.RUNNING) {
+      pauseReport = false;
       state = State.STOPPED;
       timer.cancel();
       timer.purge();
-      update();
-      long delay = DateTimeUtils.currentTimeMillis() - startMillis;
-      if (listener != null) listener.onStop(startMillis, DateTimeUtils.currentTimeMillis(), delay);
+      long delay = endMillis - startMillis;
+      if (listener != null) listener.onStop(startMillis, endMillis, delay);
       startMillis = 0;
+      endMillis = 0;
+      lastTick = -1;
       return true;
     }
     return false;
@@ -79,16 +92,41 @@ public class HourGlass {
   /**
    * A function to calculate duration and report a change
    */
-  private void update() {
-    Platform.runLater(() -> {
-      if (state == State.STOPPED) return;
-      long delay = DateTimeUtils.currentTimeMillis() - startMillis;
-      if (listener != null)
-        listener.onTick(startMillis, DateTimeUtils.currentTimeMillis(), delay);
-    });
+  void update() {
+    if (pauseReport) return;
+    if (state == State.STOPPED) return;
+    endMillis += calcTimeIncrease();
+    long delay = endMillis - startMillis;
+    if (listener != null) listener.onTick(startMillis, endMillis, delay);
+  }
+
+  /**
+   * Calculates time increase for the tick
+   *
+   * @return time increase
+   */
+  long calcTimeIncrease() {
+    if (lastTick < 0) return 0;
+    if (current() < 0) return 0;
+    if (current() < lastTick) return 0;
+    long increase = current() - lastTick;
+    lastTick = current();
+    return increase;
+  }
+
+  long current() {
+    return DateTimeUtils.currentTimeMillis();
   }
 
   //region Getters / Setters
+
+  public void setStartMillis(long startMillis) {
+    this.startMillis = startMillis;
+  }
+
+  public void setPauseReport(boolean pauseReport) {
+    this.pauseReport = pauseReport;
+  }
 
   public void setListener(Listener listener) {
     this.listener = listener;
@@ -108,7 +146,7 @@ public class HourGlass {
    * Appends a minute to a start time
    */
   public void appendMinute() {
-    if ((startMillis + 1000 * 60) < DateTimeUtils.currentTimeMillis()) {
+    if ((startMillis + 1000 * 60) < current()) {
       startMillis += 1000 * 60; // Adding 60 seconds
     }
     update();
@@ -154,6 +192,11 @@ public class HourGlass {
      * @param duration provided duration
      */
     void onTick(long start, long end, long duration);
+
+    /**
+     * Reports an error when there is something wrong with calculation.
+     */
+    void onError(String message);
   }
 
   /**
