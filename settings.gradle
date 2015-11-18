@@ -9,10 +9,9 @@
  * in the user guide at https://docs.gradle.org/2.7/userguide/multi_project_builds.html
  */
 
-/*
-// To declare projects as part of a multi-project build use the 'include' method
-include 'shared'
-include 'api'
-include 'services:webservice'
-*/
+include ':jira-rest-java-client-api'
+include ':jira-rest-java-client-core'
+
+project(':jira-rest-java-client-api').projectDir = "$rootDir/jira-api" as File
+project(':jira-rest-java-client-core').projectDir = "$rootDir/jira-core" as File
 rootProject.name = 'wt4'

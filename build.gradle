@@ -17,11 +17,13 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
+        maven { url "http://repository.opencastproject.org/nexus/content/repositories/public" }
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'maven'
 apply from: 'javafx.plugin'
 
 repositories {
@@ -46,6 +48,9 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile group: 'com.google.guava', name: 'guava', version: '10.0.1'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '1.3.7'
+
     compile group: 'org.jfxtras', name: 'jfxtras-agenda', version: '8.0-r5-SNAPSHOT'
 
     // Dagger2 dependencies
@@ -59,165 +64,46 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.assertj:assertj-core:2.2.0'
+
+    // Jira
+
+    compile project(':jira-rest-java-client-api')
+    compile project(':jira-rest-java-client-core')
+    compile group: 'com.sun.jersey', name: 'jersey-client', version:'1.5'
+    compile group: 'com.sun.jersey', name: 'jersey-json', version:'1.5'
+    compile group: 'org.hamcrest', name: 'hamcrest-core', version:'1.2.1'
+    compile group: 'junit', name: 'junit', version:'4.8.1'
+    compile group: 'org.hamcrest', name: 'hamcrest-library', version:'1.2.1'
+    compile group: 'org.apache.commons', name: 'commons-io', version:'1.3.2'
+    compile(group: 'com.atlassian.jira', name: 'jira-func-tests', version:'5.2.8') {
+        exclude(module: 'jersey-server')
+        exclude(module: 'jms')
+        exclude(module: 'google-collections')
+    }
+    compile group: 'com.atlassian.jira', name: 'jira-nimble-func-tests', version:'1.0'
+
 }
 
-// Configures plugin
-//javafx {
-//    // Points to JDK and its JavaFX libraries, also declares target runtime JDK
-//    javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_72.jdk'
-//
-//    // Application name and ID presented by target OS
-////    appID 'Wt4'
-////    appName 'Wt4'
-//
-//    // Main class of application
-//    mainClass 'lt.markmerkk.Main'
-//
-//    // JVM arguments, system properties, application command line arguments
-//    jvmArgs = ['-XX:+AggressiveOpts', '-XX:CompileThreshold=1']
-//    systemProperties = ['prism.disableRegionCaching':'true']
-//    arguments = ['-l', '--fast']
-//
-//    // Keystore credentials for signing JAR
-//    // Generate key: keytool -genkey -alias release -keyalg RSA -keystore keystore.jks -keysize 2048
-//    releaseKey {
-//        alias = 'release'
-//        keyPass = 'asdf123'
-//        keyStore = file("${System.properties['user.home']}/global_keystore.jks")
-//        storePass = 'asdf123'
-//    }
-//
-//    signingMode 'release'
-//
-//
-//    profiles {
-//        // not every possible platform override, but ones that have a known impact
-//        windows {
-//            id = 'c533f663-1efd-489f-b910-4c7ec20c7fd0'
-//            category = 'JavaFX Demos'
-//            javaRuntime = '﻿C:\\Program Files\\Java\\jdk1.8.0_72'
-//
-//            bundleArguments = [
-//                // for EXE and MSI bundles
-//                'win.menuGroup' : 'Gradle Samples',	 //If menuHint is set, then this is the menu group to install the application into.
-//
-//                // fir MSI bundles, they have stricter version numbering rules
-//                'win.msi.productVersion' : '8.1.2'
-//            ]
-//        }
-//
-//        macosx {
-//            category = 'public.app-category.developer-tools'
-//            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
-//
-//            bundleArguments = [
-//                // for mac apps
-//                'mac.category' : 'public.app-category.developer-tools',
-//                'mac.CFBundleIdentifier' : 'com.shemnon.gradle-plugin.FullyExpressed',
-//                'mac.CFBundleName' : 'Fully Expressed',
-//                'mac.signing-key-user-name' : 'Danno Ferrin',
-//                //'mac.signing-key-developer-id-app' : 'Developer ID Application: Danno Ferrin' // usually redundant with mac.signing-key-user-name
-//                'mac.bundle-id-signing-prefix' : 'com.shemnon.gradle-plugin.FE.',
-//
-//                // for PKG bundles
-//                //'mac.signing-key-developer-id-installer' : 'Developer ID Installer: Danno Ferrin', // usually redundant with mac.signing-key-user-name
-//
-//                // for Mac App Store Ready bundles
-//                'mac.app-store-entitlements' : 'src/deploy/package/NetworkEntitlements.entitlements',
-//                //'mac.signing-key-app' : '3rd Party Mac Developer Applicaiton: Danno Ferrin', // usually redundant with mac.signing-key-user-name
-//                //'mac.signing-key-pkg' : '3rd Party Mac Developer Installer: Danno Ferrin', // usually redundant with mac.signing-key-user-name
-//
-//            ]
-//        }
-//
-//        linux {
-//            // linux doesn't care about id, it goes un-used at the moment
-//            category = 'Development'
-//            // good luck finding a standard location for the JDK
-//            //javaRuntime = '/usr/lib/jvm/java-7-oracle'
-//
-//            bundleArguments = [
-//                // for DEB bundles
-//                'email' : 'support@example.com', // This is the email used for the deb maintainer field.
-//            ]
-//        }
-//    }
-//
-////    debugKey {
-////        alias = 'buggyKey'
-////        keyPass = '123456'
-////        keyStore = file('veryinsecure.jks')
-////        storePass = '123456'
-////    }
-//    // don't get too excited, the release key is overridden by gradle.properties
-////    releaseKey {
-////        alias = 'imaginary'
-////        keyPass = 'bad'
-////        keyStore = file('nonexistant.jks')
-////        storePass = 'bad'
-////    }
-////    signingMode 'release'
-//
-////    appID 'FullyExpressed'
-////    appName 'Fully Expressed Build File'
-////    mainClass 'org.bitbucket.shemnon.jfx.sample.fullyexpressed.TheMain'
-//
-////    jvmArgs = ['-XX:+AggressiveOpts', '-XX:CompileThreshold=1']
-////    systemProperties = [ 'prism.disableRegionCaching':'true' ]
-////    arguments = ['1AC', '1NC', '2AC', '2NC', '1NR', '1AR', '2NR', '2AR']
-//
-////    embedLauncher = true // caution: class-path not set and is overwritten if set to false
-//
-//    // applet and webstart stuff
-////    width = 800
-////    height = 600
-////    embedJNLP = false
-//
-//
-//    // deplpy/info attributes
-//    category = 'demo'
-//    copyright = 'Copyright (c) 2012, 2014 Danno Ferrin'
-//    description = '''If it can and ever should be configured, it is configured in this build.
-//But really, you should live with the conventions when appropriate.'''
-//    licenseType = '3 clause BSD'
-//    vendor = 'Me!'
-//
-//    // deploy/preferences attributes
-//    installSystemWide = true
-//    menu = true
-//    shortcut = true
-//
-//    codebase = 'http://example.com/bogus/JNLP/Codebase'
-//
-//    // app icons
-////    icons {
-////        shortcut = ['shortcut-16.png', 'shortcut-32.png', 'shortcut-128.png', 'shortcut-256.png', 'shortcut-16@2x.png', 'shortcut-32@2x.png', 'shortcut-128@2x.png']
-////        volume = 'javafx-icon.png'
-////        setup = 'javafx-icon.png'
-////    }
-//
-//    // jnlp icons, legacy
-////    icon {
-////        href = 'src/main/resources/javafx-icon.png'
-////        kind = 'splash'
-////        width = 128
-////        height = 128
-////    }
-////    icon {
-////        href = 'shortcut-32@2x.png'
-////        kind = 'selected'
-////        width = 16
-////        height = 16
-////        scale = 1
-////    }
-//
-//    bundleArguments {
-//        licenseFile = 'LICENSE' // click through license file for some bundlers
-//        userJvmOptions = [ '-Xmx' : '128m',  '-Xms' : '128m'] // A mechanism to allow programs to adjust JVM Options
-//        preferencesID = 'com.shemnon.fullyExpressed' // implementation detail for user JVM options
-//    }
-//
-//}
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.5
+    targetCompatibility = 1.5
+
+
+    repositories {
+        mavenLocal()
+
+        maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+
+    configurations.all {}
+    dependencies {
+        compile group: 'com.google.guava', name: 'guava', version: '10.0.1'
+        compile group: 'com.google.code.findbugs', name: 'jsr305', version: '1.3.7'
+    }
+}
+
 
 compileJava {
     description = "dagger annotation processor is loaded automatically from classpath"

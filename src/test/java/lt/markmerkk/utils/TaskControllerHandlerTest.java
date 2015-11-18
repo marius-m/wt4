@@ -2,8 +2,8 @@ package lt.markmerkk.utils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lt.mm.entities.Project;
-import lt.mm.entities.Task;
+import lt.markmerkk.storage.entities.Project;
+import lt.markmerkk.storage.entities.Task;
 import org.junit.Before;
 import org.junit.Test;
 
