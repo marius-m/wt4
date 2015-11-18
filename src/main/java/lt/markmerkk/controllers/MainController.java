@@ -28,15 +28,12 @@ import lt.markmerkk.storage.entities.Project;
 import lt.markmerkk.storage.entities.Task;
 import lt.markmerkk.storage.entities.annotations.TableIndex;
 import lt.markmerkk.storage.entities.table.LogTable;
-import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.LogDisplayController;
-import lt.markmerkk.utils.Logger;
 import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.TaskController;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.tmatesoft.sqljet.core.table.SqlJetScope;
@@ -46,7 +43,7 @@ import org.tmatesoft.sqljet.core.table.SqlJetScope;
  */
 public class MainController extends BaseController {
   private final TaskController taskController;
-  private final Logger logger;
+  //private final Logger logger;
   private final HourGlass hourGlass;
   private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
   private final DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
@@ -73,8 +70,8 @@ public class MainController extends BaseController {
 
   public MainController() {
     taskController = new TaskController(taskControllerListener);
-    logger = new Logger();
-    logger.setListener(loggerListener);
+    //logger = new Logger();
+    //logger.setListener(loggerListener);
     hourGlass = new HourGlass();
     hourGlass.setListener(hourglassListener);
   }
@@ -82,7 +79,8 @@ public class MainController extends BaseController {
   @Override
   public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
     super.setupController(listener, scene, primaryStage);
-    scene.getStylesheets().add(getClass().getResource("/text-field-red-border.css").toExternalForm());
+    scene.getStylesheets().add(
+        getClass().getResource("/text-field-red-border.css").toExternalForm());
 
     initViewListeners();
     initViews();
@@ -116,6 +114,8 @@ public class MainController extends BaseController {
     footer.setRight(datePicker);
 
     LogDisplayController logDisplayController = new LogDisplayController(tableLogs, logs, listener);
+
+    updateUI();
   }
 
   /**
@@ -141,7 +141,7 @@ public class MainController extends BaseController {
     inputComment.setOnKeyReleased(new EventHandler<KeyEvent>() {
       public void handle(KeyEvent t) {
         if (t.getCode() == KeyCode.ENTER) {
-          logger.log(inputComment.getText());
+          logWork();
         }
       }
     });
@@ -151,21 +151,60 @@ public class MainController extends BaseController {
       @Override public void handle(MouseEvent mouseEvent) {
         if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
         else hourGlass.stop();
+        updateUI();
       }
     });
 
     buttonEnter.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent mouseEvent) {
-        logger.log(inputComment.getText());
+        logWork();
       }
     });
 
   }
 
+  private void updateUI() {
+    boolean disableElement = (hourGlass.getState() == HourGlass.State.STOPPED);
+    inputFrom.setDisable(disableElement);
+    inputTo.setDisable(disableElement);
+    inputTask.setDisable(disableElement);
+    inputComment.setDisable(disableElement);
+    outputDuration.setDisable(disableElement);
+  }
+
   //endregion
 
-
   //region Convenience
+
+  /**
+   * Gathers data and logs work to a database
+   */
+  private void logWork() {
+    try {
+      if (hourGlass.getState() == HourGlass.State.STOPPED)
+        throw new IllegalArgumentException("Please run timer first!");
+      if (!hourGlass.isValid())
+        throw new IllegalArgumentException("Error calculating time!");
+      Log.Builder logBuilder = new Log.Builder();
+      logBuilder.setStart(hourGlass.reportStart().getMillis());
+      logBuilder.setEnd(hourGlass.reportEnd().getMillis());
+      taskController.handle(inputTask.getText());
+      logBuilder.setCategory(TaskController.inspectAndFormTitle(inputTask.getText()));
+      logBuilder.setMessage(inputComment.getText());
+      Log log = logBuilder.build();
+
+      logStorage.insert(log);
+
+      // Resetting controls
+      inputComment.setText("");
+      hourGlass.restart();
+      notifyLogsChanged();
+      notifyTasksChanged();
+      notifyProjectsChanged();
+    } catch (IllegalArgumentException e) {
+      System.out.println(e.getMessage());
+    }
+  }
 
   /**
    * Adds an indicator as an error for the text field
@@ -332,54 +371,51 @@ public class MainController extends BaseController {
       outputDuration.setText(error.getMessage());
     }
 
-  };
-
-  private Logger.Listener loggerListener = new Logger.Listener() {
-    @Override
-    public void onParse(DateTime startTime, DateTime endTime, String comment, String task) {
-      try {
-        Log.Builder logBuilder = new Log.Builder();
-        // Get days from
-        if (startTime == null && hourGlass.getStartMillis() != 0)
-          startTime = new DateTime(hourGlass.getStartMillis());
-        if (startTime == null)
-          startTime = new DateTime(DateTimeUtils.currentTimeMillis());
-        int days = Days.daysBetween(filterDate.toLocalDate(), startTime.toLocalDate()).getDays();
-        startTime = startTime.minusDays(days);
-        logBuilder.setStart(startTime.getMillis());
-        if (endTime == null)
-          endTime = new DateTime(DateTimeUtils.currentTimeMillis());
-        endTime = endTime.minusDays(days);
-        logBuilder.setEnd(endTime.getMillis());
-        taskController.handle(task);
-        String taskName = TaskController.inspectAndFormTitle(task);
-        if (taskName != null)
-          logBuilder.setCategory(taskName);
-        String projectName = TaskController.splitName(taskName);
-        Project project = Project.getProjectWithTitle(projects, projectName);
-        if (project != null) {
-          //ArrayList<String> logs = GitController2.getStatus(
-          //    project.getPaths(),
-          //    startTime,
-          //    endTime);
-          //logBuilder.setGitMessage(logs);
-        }
-
-        logBuilder.setMessage(comment);
-        Log log = logBuilder.build();
-        logStorage.insert(log);
-
-        // Resetting controls
-        inputComment.setText("");
-        hourGlass.restart();
-        notifyLogsChanged();
-        notifyTasksChanged();
-        notifyProjectsChanged();
-      } catch (IllegalArgumentException e) {
-        System.out.println(e.getMessage());
-      }
+    @Override public void onSuggestTime(DateTime start, DateTime end) {
+      inputFrom.setText(shortFormat.print(start));
+      inputTo.setText(shortFormat.print(end));
     }
   };
+
+  //private Logger.Listener loggerListener = new Logger.Listener() {
+  //  @Override
+  //  public void onParse(DateTime startTime, DateTime endTime, String comment, String task) {
+  //    try {
+  //      Log.Builder logBuilder = new Log.Builder();
+  //      // Get days from
+  //      if (startTime == null && hourGlass.getStartMillis() != 0)
+  //        startTime = new DateTime(hourGlass.getStartMillis());
+  //      if (startTime == null)
+  //        startTime = new DateTime(DateTimeUtils.currentTimeMillis());
+  //      int days = Days.daysBetween(filterDate.toLocalDate(), startTime.toLocalDate()).getDays();
+  //      startTime = startTime.minusDays(days);
+  //      logBuilder.setStart(startTime.getMillis());
+  //      if (endTime == null)
+  //        endTime = new DateTime(DateTimeUtils.currentTimeMillis());
+  //      endTime = endTime.minusDays(days);
+  //      logBuilder.setEnd(endTime.getMillis());
+  //      taskController.handle(task);
+  //      String taskName = TaskController.inspectAndFormTitle(task);
+  //      if (taskName != null)
+  //        logBuilder.setCategory(taskName);
+  //      String projectName = TaskController.splitName(taskName);
+  //      Project project = Project.getProjectWithTitle(projects, projectName);
+  //
+  //      logBuilder.setMessage(comment);
+  //      Log log = logBuilder.build();
+  //      logStorage.insert(log);
+  //
+  //      // Resetting controls
+  //      inputComment.setText("");
+  //      hourGlass.restart();
+  //      notifyLogsChanged();
+  //      notifyTasksChanged();
+  //      notifyProjectsChanged();
+  //    } catch (IllegalArgumentException e) {
+  //      System.out.println(e.getMessage());
+  //    }
+  //  }
+  //};
 
   //endregion
 

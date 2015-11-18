@@ -44,7 +44,7 @@ public class HourGlassTimeIncreaseTest {
 
     // Act
     // Assert
-    assertThat(glass.calcTimeIncrease()).isEqualTo(0);
+    assertThat(glass.calcTimeIncrease()).isEqualTo(HourGlass.DEFAULT_TICK);
     assertThat(glass.lastTick).isEqualTo(-1);
   }
 
@@ -56,7 +56,7 @@ public class HourGlassTimeIncreaseTest {
 
     // Act
     // Assert
-    assertThat(glass.calcTimeIncrease()).isEqualTo(0);
+    assertThat(glass.calcTimeIncrease()).isEqualTo(HourGlass.DEFAULT_TICK);
     assertThat(glass.lastTick).isEqualTo(500);
   }
 
@@ -68,7 +68,7 @@ public class HourGlassTimeIncreaseTest {
 
     // Act
     // Assert
-    assertThat(glass.calcTimeIncrease()).isEqualTo(0);
+    assertThat(glass.calcTimeIncrease()).isEqualTo(HourGlass.DEFAULT_TICK);
     assertThat(glass.lastTick).isEqualTo(500);
   }
 

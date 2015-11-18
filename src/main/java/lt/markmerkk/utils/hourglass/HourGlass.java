@@ -15,7 +15,8 @@ import org.joda.time.format.DateTimeFormatter;
  * Represents the logic and core functionality of the clock
  */
 public class HourGlass {
-  public static final int TICK_DELAY = 1000;
+  private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  public static final int DEFAULT_TICK = 1000;
 
   Timer timer = null;
   State state = State.STOPPED;
@@ -49,7 +50,7 @@ public class HourGlass {
         }
       };
       timer = new Timer();
-      timer.scheduleAtFixedRate(updateRunnable, 1, TICK_DELAY);
+      timer.scheduleAtFixedRate(updateRunnable, 1, DEFAULT_TICK);
       long delay = endMillis - startMillis;
       if (listener != null) listener.onStart(startMillis, endMillis, delay);
       return true;
@@ -83,6 +84,7 @@ public class HourGlass {
   public boolean restart() {
     stop();
     start();
+    update();
     return true;
   }
 
@@ -137,9 +139,9 @@ public class HourGlass {
    * @return time increase
    */
   long calcTimeIncrease() {
-    if (lastTick < 0) return 0;
-    if (current() < 0) return 0;
-    if (current() < lastTick) return 0;
+    if (lastTick < 0) return DEFAULT_TICK;
+    if (current() < 0) return DEFAULT_TICK;
+    if (current() < lastTick) return DEFAULT_TICK;
     long increase = current() - lastTick;
     lastTick = current();
     return increase;
@@ -153,7 +155,26 @@ public class HourGlass {
 
   //region Getters / Setters
 
-  private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  /**
+   * Reports start time in {@link DateTime}
+   * @return start time
+   */
+  public DateTime reportStart() {
+    if (isValid())
+      return new DateTime(startMillis);
+    return new DateTime(current());
+  }
+
+  /**
+   * Reports end time in {@link DateTime}
+   * @return end time
+   */
+  public DateTime reportEnd() {
+    if (isValid())
+      return new DateTime(endMillis);
+    return new DateTime(current());
+  }
+
   /**
    * Updates timers with input start, end times and todays date.
    * @param today provided todays date
