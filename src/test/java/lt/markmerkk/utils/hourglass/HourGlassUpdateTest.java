@@ -1,9 +1,10 @@
-package lt.markmerkk.utils;
+package lt.markmerkk.utils.hourglass;
 
+import lt.markmerkk.utils.hourglass.HourGlass;
+import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
@@ -20,7 +21,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     doReturn(1000L).when(glass).current();
 
     // Act
@@ -34,7 +35,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = 1000;
     glass.endMillis = 3000; // current end
     glass.lastTick = 0;
@@ -51,7 +52,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = 1000;
     glass.endMillis = 10000;
     glass.lastTick = 0;
@@ -68,7 +69,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = 1000;
     glass.endMillis = 10000;
     doReturn(1000L).when(glass).current();
@@ -86,7 +87,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = 1000;
     glass.endMillis = 10000;
 
@@ -107,7 +108,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = -1;
     glass.endMillis = 10000;
     doReturn(1000L).when(glass).current();
@@ -123,7 +124,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = 1000;
     glass.endMillis = -1;
     doReturn(1000L).when(glass).current();
@@ -139,7 +140,7 @@ public class HourGlassUpdateTest {
     // Arrange
     HourGlass glass = spy(new HourGlass());
     glass.state = HourGlass.State.RUNNING;
-    glass.listener = mock(HourGlass.Listener.class);
+    glass.listener = mock(Listener.class);
     glass.startMillis = 1000;
     glass.endMillis = 500;
     doReturn(1000L).when(glass).current();

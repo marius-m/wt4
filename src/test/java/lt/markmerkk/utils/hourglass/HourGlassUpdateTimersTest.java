@@ -1,10 +1,10 @@
-package lt.markmerkk.utils;
+package lt.markmerkk.utils.hourglass;
 
+import lt.markmerkk.utils.hourglass.HourGlass;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * Created by mariusmerkevicius on 11/18/15.

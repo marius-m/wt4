@@ -1,5 +1,6 @@
-package lt.markmerkk.utils;
+package lt.markmerkk.utils.hourglass;
 
+import lt.markmerkk.utils.hourglass.HourGlass;
 import org.junit.Before;
 import org.junit.Test;
 

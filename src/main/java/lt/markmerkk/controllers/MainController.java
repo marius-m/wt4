@@ -28,13 +28,13 @@ import lt.markmerkk.storage.entities.Project;
 import lt.markmerkk.storage.entities.Task;
 import lt.markmerkk.storage.entities.annotations.TableIndex;
 import lt.markmerkk.storage.entities.table.LogTable;
-import lt.markmerkk.utils.HourGlass;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.Logger;
 import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.TaskController;
+import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
@@ -294,7 +294,7 @@ public class MainController extends BaseController {
     }
   };
 
-  private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
+  private Listener hourglassListener = new Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(shortFormat.print(start));

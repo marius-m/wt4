@@ -1,10 +1,10 @@
-package lt.markmerkk.utils;
+package lt.markmerkk.utils.hourglass;
 
 import java.util.Timer;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

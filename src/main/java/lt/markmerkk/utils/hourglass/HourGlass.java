@@ -1,8 +1,10 @@
-package lt.markmerkk.utils;
+package lt.markmerkk.utils.hourglass;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
+import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
@@ -84,6 +86,18 @@ public class HourGlass {
     return true;
   }
 
+  /**
+   * Checks if all variables are valid
+   * @return
+   */
+  public boolean isValid() {
+    try {
+      checkAndThrowForError();
+      return true;
+    } catch (TimeCalcError timeCalcError) { }
+    return false;
+  }
+
   //endregion
 
   //region Core
@@ -94,12 +108,7 @@ public class HourGlass {
   void update() {
     if (state == State.STOPPED) return;
     try {
-      if (startMillis < 0)
-        throw new TimeCalcError(Error.START);
-      if (endMillis < 0)
-        throw new TimeCalcError(Error.END);
-      if (startMillis > endMillis)
-        throw new TimeCalcError(Error.DURATION);
+      checkAndThrowForError();
       endMillis += calcTimeIncrease();
       long delay = endMillis - startMillis;
       if (listener != null) listener.onTick(startMillis, endMillis, delay);
@@ -107,6 +116,19 @@ public class HourGlass {
       lastTick = current();
       if (listener != null) listener.onError(e.getError());
     }
+  }
+
+  /**
+   * Checks if all variables are correct for counting
+   * @throws TimeCalcError
+   */
+  void checkAndThrowForError() throws TimeCalcError {
+    if (startMillis < 0)
+      throw new TimeCalcError(Error.START);
+    if (endMillis < 0)
+      throw new TimeCalcError(Error.END);
+    if (startMillis > endMillis)
+      throw new TimeCalcError(Error.DURATION);
   }
 
   /**
@@ -211,43 +233,6 @@ public class HourGlass {
   //region Classes
 
   /**
-   * Public listener that reports the changes
-   */
-  public interface Listener {
-    /**
-     * Called when timer has been started
-     *
-     * @param start provided start time
-     * @param end provided end time
-     * @param duration provided duration
-     */
-    void onStart(long start, long end, long duration);
-
-    /**
-     * Called when timer has been stopped
-     *
-     * @param start provided start time
-     * @param end provided end time
-     * @param duration provided duration
-     */
-    void onStop(long start, long end, long duration);
-
-    /**
-     * Called on every second tick when timer is running
-     *
-     * @param start provided start time
-     * @param end provided end time
-     * @param duration provided duration
-     */
-    void onTick(long start, long end, long duration);
-
-    /**
-     * Reports an error when there is something wrong with calculation.
-     */
-    void onError(Error error);
-  }
-
-  /**
    * Represents the state that timer is in
    */
   public enum State {
@@ -289,22 +274,6 @@ public class HourGlass {
 
     public String getMessage() {
       return message;
-    }
-  }
-
-  /**
-   * Represents an error thrown when trying to calculate time.
-   */
-  private class TimeCalcError extends IllegalStateException {
-    Error error;
-
-    public TimeCalcError(Error error) {
-      super(error.getMessage());
-      this.error = error;
-    }
-
-    public Error getError() {
-      return error;
     }
   }
 
