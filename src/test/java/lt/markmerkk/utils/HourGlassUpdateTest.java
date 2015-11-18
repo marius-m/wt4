@@ -8,6 +8,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -100,6 +101,54 @@ public class HourGlassUpdateTest {
     doReturn(3000L).when(glass).current();
     glass.update();
     verify(glass.listener).onTick(1000, 13000, 12000);
+  }
+
+  @Test public void testErrorWhenStartFails() throws Exception {
+    // Arrange
+    HourGlass glass = spy(new HourGlass());
+    glass.state = HourGlass.State.RUNNING;
+    glass.listener = mock(HourGlass.Listener.class);
+    glass.startMillis = -1;
+    glass.endMillis = 10000;
+    doReturn(1000L).when(glass).current();
+
+    // Act
+    // Assert
+    glass.update();
+    verify(glass.listener, never()).onTick(any(Long.class),any(Long.class),any(Long.class));
+    verify(glass.listener).onError("Error in start time!");
+  }
+
+  @Test public void testErrorWhenEndFails() throws Exception {
+    // Arrange
+    HourGlass glass = spy(new HourGlass());
+    glass.state = HourGlass.State.RUNNING;
+    glass.listener = mock(HourGlass.Listener.class);
+    glass.startMillis = 1000;
+    glass.endMillis = -1;
+    doReturn(1000L).when(glass).current();
+
+    // Act
+    // Assert
+    glass.update();
+    verify(glass.listener, never()).onTick(any(Long.class), any(Long.class), any(Long.class));
+    verify(glass.listener).onError("Error in end time!");
+  }
+
+  @Test public void testErrorWhenStartBiggerThanEnd() throws Exception {
+    // Arrange
+    HourGlass glass = spy(new HourGlass());
+    glass.state = HourGlass.State.RUNNING;
+    glass.listener = mock(HourGlass.Listener.class);
+    glass.startMillis = 1000;
+    glass.endMillis = 500;
+    doReturn(1000L).when(glass).current();
+
+    // Act
+    // Assert
+    glass.update();
+    verify(glass.listener, never()).onTick(any(Long.class), any(Long.class), any(Long.class));
+    verify(glass.listener).onError("Error calculating duration!");
   }
 
 }

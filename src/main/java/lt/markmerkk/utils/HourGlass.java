@@ -87,7 +87,7 @@ public class HourGlass {
 
   //endregion
 
-  // Core update methods
+  //region Core
 
   /**
    * A function to calculate duration and report a change
@@ -95,9 +95,19 @@ public class HourGlass {
   void update() {
     if (pauseReport) return;
     if (state == State.STOPPED) return;
-    endMillis += calcTimeIncrease();
-    long delay = endMillis - startMillis;
-    if (listener != null) listener.onTick(startMillis, endMillis, delay);
+    try {
+      if (startMillis < 0)
+        throw new IllegalStateException("Error in start time!");
+      if (endMillis < 0)
+        throw new IllegalStateException("Error in end time!");
+      if (startMillis > endMillis)
+        throw new IllegalStateException("Error calculating duration!");
+      endMillis += calcTimeIncrease();
+      long delay = endMillis - startMillis;
+      if (listener != null) listener.onTick(startMillis, endMillis, delay);
+    } catch (IllegalStateException e) {
+      if (listener != null) listener.onError(e.getMessage());
+    }
   }
 
   /**
@@ -117,6 +127,8 @@ public class HourGlass {
   long current() {
     return DateTimeUtils.currentTimeMillis();
   }
+
+  //endregion
 
   //region Getters / Setters
 
@@ -142,6 +154,8 @@ public class HourGlass {
 
   //endregion
 
+  //region Convenience
+
   /**
    * Appends a minute to a start time
    */
@@ -159,6 +173,8 @@ public class HourGlass {
     startMillis -= 1000 * 60; // Adding 60 seconds
     update();
   }
+
+  //endregion
 
   //region Classes
 
