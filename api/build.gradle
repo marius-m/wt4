@@ -1,0 +1,7 @@
+
+description = 'JIRA REST Java Client - Public API'
+dependencies {
+    compile group: 'com.atlassian.util.concurrent', name: 'atlassian-util-concurrent', version:'2.4.0-M9'
+    compile group: 'com.atlassian.httpclient', name: 'atlassian-httpclient-api', version:'0.13.2'
+    compile group: 'joda-time', name: 'joda-time', version:'1.6'
+}

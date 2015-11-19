@@ -10,4 +10,11 @@
  */
 
 include ':app'
+
+include ':jira-rest-java-client-api'
+include ':jira-rest-java-client-core'
+project(':jira-rest-java-client-api').projectDir = "$rootDir/api" as File
+project(':jira-rest-java-client-core').projectDir = "$rootDir/core" as File
+
 rootProject.name = 'wt4'
+
