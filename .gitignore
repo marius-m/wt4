@@ -37,4 +37,9 @@ build/
 .gradle/
 gradle/
 checkLog.log
+checkLog1.log
+checkLog2.log
+checkLog3.log
+checkLog4.log
+checkLog5.log
 test.db
