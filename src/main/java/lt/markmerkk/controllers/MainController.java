@@ -354,6 +354,12 @@ public class MainController extends BaseController {
       clearError(inputFrom);
       clearError(inputTo);
       clearError(outputDuration);
+      String newFrom = shortFormat.print(start);
+      if (!newFrom.equals(inputFrom.getText()) && !inputFrom.isFocused())
+        inputFrom.setText(newFrom);
+      String newTo = shortFormat.print(end);
+      if (!newTo.equals(inputTo.getText()) && !inputTo.isFocused())
+        inputTo.setText(newTo);
       outputDuration.setText(Log.formatDuration(duration));
     }
 

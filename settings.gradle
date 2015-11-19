@@ -9,9 +9,9 @@
  * in the user guide at https://docs.gradle.org/2.7/userguide/multi_project_builds.html
  */
 
-include ':jira-rest-java-client-api'
-include ':jira-rest-java-client-core'
+//include ':jira-rest-java-client-api'
+//include ':jira-rest-java-client-core'
 
-project(':jira-rest-java-client-api').projectDir = "$rootDir/jira-api" as File
-project(':jira-rest-java-client-core').projectDir = "$rootDir/jira-core" as File
+//project(':jira-rest-java-client-api').projectDir = "$rootDir/jira-api" as File
+//project(':jira-rest-java-client-core').projectDir = "$rootDir/jira-core" as File
 rootProject.name = 'wt4'
