@@ -8,10 +8,6 @@
  */
 
 
-apply from: 'javafx.plugin'
-javafx {
-  mainClass = 'lt.markmerkk.Main'
-}
 
 allprojects {
   apply plugin: 'maven'
