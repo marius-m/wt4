@@ -1,8 +1,9 @@
 package lt.markmerkk.storage2.database.helpers;
 
-import lt.markmerkk.storage.entities.annotations.Column;
-import lt.markmerkk.storage.entities.annotations.FieldType;
-import lt.markmerkk.storage.entities.annotations.Table;
+import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
+import lt.markmerkk.storage2.database.helpers.entities.Mock2NoColumns;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtend;
+import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,21 +29,21 @@ public class DBQueryUtilsFormColumnsTest {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock1.class)).isEqualTo("");
+    assertThat(DBQueryUtils.formColumns(Mock1Empty.class)).isEqualTo("");
   }
 
   @Test public void testEmpty2() throws Exception {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock2.class)).isEqualTo("");
+    assertThat(DBQueryUtils.formColumns(Mock2NoColumns.class)).isEqualTo("");
   }
 
   @Test public void testValid() throws Exception {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock3.class)).isEqualTo(" (title TEXT,param INTEGER)");
+    assertThat(DBQueryUtils.formColumns(Mock3NoExtend.class)).isEqualTo(" (title TEXT,param INTEGER)");
   }
 
   @Test public void testValidWithExtend() throws Exception {
@@ -53,45 +54,5 @@ public class DBQueryUtilsFormColumnsTest {
     // Assert
     assertThat(DBQueryUtils.formColumns(Mock4.class)).isEqualTo(" (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
   }
-
-  //region Classes
-
-  private class Mock1 { }
-
-  @Table(name = "mock2")
-  private class Mock2 {
-  }
-
-  @Table(name = "mock3")
-  private class Mock3 {
-    @Column(value = FieldType.TEXT)
-    String title;
-    @Column(value = FieldType.INTEGER)
-    String param;
-  }
-
-  @Table(name = "mock3")
-  private class Mock4 extends Mock4Extend {
-    @Column(value = FieldType.TEXT)
-    String title;
-    @Column(value = FieldType.INTEGER)
-    String param;
-  }
-
-  @Table(name = "mock3")
-  private class Mock4Extend extends Mock4Grandparent {
-    @Column(value = FieldType.INTEGER)
-    String id;
-    @Column(value = FieldType.TEXT)
-    String parent_param;
-  }
-
-  @Table(name = "mock3")
-  private class Mock4Grandparent {
-    @Column(value = FieldType.INTEGER)
-    String _id;
-  }
-
-  //endregion
 
 }

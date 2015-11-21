@@ -58,7 +58,7 @@ public class DBQueryUtils {
         query.append(" default ");
         query.append(columnAnnotation.defaultValue());
       }
-      if (i < fields.length - 1) query.append(",");
+      query.append(",");
     }
     return query.toString();
   }

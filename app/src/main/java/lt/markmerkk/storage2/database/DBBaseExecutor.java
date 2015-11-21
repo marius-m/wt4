@@ -26,6 +26,8 @@ public abstract class DBBaseExecutor {
       executeQuery(queryJob, connection);
     } catch (ClassNotFoundException e) { // Might throw when connecting to database
       e.printStackTrace();
+    } catch (UnsupportedOperationException e) { // Might throw when using wrong forming method
+      e.printStackTrace();
     } catch (IllegalArgumentException e) { // Might throw when forming
       e.printStackTrace();
     } catch (SQLException e) { // Might throw with illegal queries
