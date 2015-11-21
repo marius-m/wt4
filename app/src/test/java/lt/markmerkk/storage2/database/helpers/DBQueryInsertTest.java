@@ -88,7 +88,7 @@ public class DBQueryInsertTest {
     Mock4 mock4 = new Mock4(20L, 30L, "some_param", "some_title", "some_name");
     // Assert
     assertEquals(
-        "INSERT INTO mock4 (_id,id,parent_param,title,name) VALUES (20,30,\"some_param\",\"some_title\",\"some_name\");",
+        "INSERT INTO mock4 (_id,id,parentParam,title,name) VALUES (20,30,\"some_param\",\"some_title\",\"some_name\");",
         insert.formQuery(Mock4.class, mock4));
   }
 

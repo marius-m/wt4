@@ -22,7 +22,7 @@ import lt.markmerkk.storage.entities.annotations.Table;
   @Override public Map<String, Object> pack() throws IllegalArgumentException {
     Map<String, Object> pack = super.pack();
     pack.put("id", id);
-    pack.put("parent_param", "\"" + parentParam + "\"");
+    pack.put("parentParam", "\"" + parentParam + "\"");
     return pack;
   }
 }
