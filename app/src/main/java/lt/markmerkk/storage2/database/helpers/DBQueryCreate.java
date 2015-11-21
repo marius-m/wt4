@@ -27,6 +27,6 @@ public class DBQueryCreate implements IQuery {
     if (tableAnnotation == null)
       throw new IllegalArgumentException("Provided class does not have @Table annotation!");
     return String.format("CREATE TABLE %s%s", ((Table) tableAnnotation).name(),
-        DBQueryUtils.formColumns(clazz));
+        DBQueryUtils.formColumnsFromClass(clazz));
   }
 }

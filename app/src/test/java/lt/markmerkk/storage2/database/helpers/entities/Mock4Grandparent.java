@@ -1,5 +1,6 @@
 package lt.markmerkk.storage2.database.helpers.entities;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.storage.entities.annotations.FieldType;
@@ -9,10 +10,16 @@ import lt.markmerkk.storage2.database.interfaces.DBInsertable;
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-@Table(name = "mock3") public class Mock4Grandparent implements DBInsertable {
+@Table(name = "mock4") public class Mock4Grandparent implements DBInsertable {
   @Column(value = FieldType.INTEGER) String _id;
 
+  public Mock4Grandparent(String _id) {
+    this._id = _id;
+  }
+
   @Override public Map<String, String> pack() throws IllegalArgumentException {
-    return null;
+    return new LinkedHashMap<String, String>() {{
+      put("_id", _id);
+    }};
   }
 }

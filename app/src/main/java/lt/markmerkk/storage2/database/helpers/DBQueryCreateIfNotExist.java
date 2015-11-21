@@ -27,6 +27,6 @@ public class DBQueryCreateIfNotExist implements IQuery {
     if (tableAnnotation == null)
       throw new IllegalArgumentException("Provided class does not have @Table annotation!");
     return String.format("CREATE TABLE IF NOT EXISTS %s%s", ((Table) tableAnnotation).name(),
-        DBQueryUtils.formColumns(clazz));
+        DBQueryUtils.formColumnsFromClass(clazz));
   }
 }

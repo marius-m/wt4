@@ -1,6 +1,7 @@
 package lt.markmerkk.storage2.database.helpers;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.utils.Utils;
 
@@ -10,13 +11,61 @@ import lt.markmerkk.utils.Utils;
  */
 public class DBQueryUtils {
   /**
-   * Generates table creation SQL by the class model annotations
-   * recursively
+   * Generates column
    *
-   * @param clazz provided class model
    * @return sql script
    */
-  public static String formColumns(Class clazz) throws IllegalArgumentException {
+  public static String formColumnsFromMapKeys(Map<String, String> map) throws IllegalArgumentException {
+    if (map == null) throw new IllegalArgumentException("Cannot form columns without a map!");
+    if (map.size() == 0) throw new IllegalArgumentException("Cannot form columns with an empty map!");
+    StringBuilder query = new StringBuilder();
+    for (String s : map.keySet()) {
+      if (Utils.isEmpty(s)) continue;
+      if (Utils.isEmpty(map.get(s))) continue;
+      query.append(s);
+      query.append(",");
+    }
+
+    // Detele the last comma and wrap in brackets
+    query.deleteCharAt(query.length() - 1);
+    query.insert(0, "(");
+    query.append(")");
+
+    return query.toString();
+  }
+
+  /**
+   * Generates column
+   *
+   * @return sql script
+   */
+  public static String formColumnsFromMapValues(Map<String, String> map) throws IllegalArgumentException {
+    if (map == null) throw new IllegalArgumentException("Cannot form columns without a map!");
+    if (map.size() == 0) throw new IllegalArgumentException("Cannot form columns with an empty map!");
+    StringBuilder query = new StringBuilder();
+    for (String s : map.keySet()) {
+      if (Utils.isEmpty(s)) continue;
+      if (!map.containsKey(s)) continue;
+      if (Utils.isEmpty(map.get(s))) continue;
+      query.append(map.get(s));
+      query.append(",");
+    }
+
+    // Detele the last comma and wrap in brackets
+    query.deleteCharAt(query.length() - 1);
+    query.insert(0, "(");
+    query.append(")");
+
+    return query.toString();
+  }
+
+  /**
+   * Generates SQL ready column gathering from the class model
+   *
+   * @param clazz provided class model
+   * @return sql
+   */
+  public static String formColumnsFromClass(Class clazz) throws IllegalArgumentException {
     if (clazz == null) throw new IllegalArgumentException("Cannot form columns without a class!");
     StringBuilder query = new StringBuilder();
     do {
@@ -37,7 +86,7 @@ public class DBQueryUtils {
    * Gets all the annotated fields from the class
    *
    * @param clazz provided class
-   * @return query builder
+   * @return list of fields
    */
   // We *still* dont provide core access to the utility class
   static String getFields(Class clazz) {

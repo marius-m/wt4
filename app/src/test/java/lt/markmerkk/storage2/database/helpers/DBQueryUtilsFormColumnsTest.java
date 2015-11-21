@@ -18,7 +18,7 @@ public class DBQueryUtilsFormColumnsTest {
     // Act
     // Assert
     try {
-      DBQueryUtils.formColumns(null);
+      DBQueryUtils.formColumnsFromClass(null);
       fail("Should throw an illegal argument exception");
     } catch (IllegalArgumentException e) {
       assertThat(e).hasMessage("Cannot form columns without a class!");
@@ -29,21 +29,21 @@ public class DBQueryUtilsFormColumnsTest {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock1Empty.class)).isEqualTo("");
+    assertThat(DBQueryUtils.formColumnsFromClass(Mock1Empty.class)).isEqualTo("");
   }
 
   @Test public void testEmpty2() throws Exception {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock2NoColumns.class)).isEqualTo("");
+    assertThat(DBQueryUtils.formColumnsFromClass(Mock2NoColumns.class)).isEqualTo("");
   }
 
   @Test public void testValid() throws Exception {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock3NoExtend.class)).isEqualTo(" (title TEXT,param INTEGER)");
+    assertThat(DBQueryUtils.formColumnsFromClass(Mock3NoExtend.class)).isEqualTo(" (title TEXT,param INTEGER)");
   }
 
   @Test public void testValidWithExtend() throws Exception {
@@ -52,7 +52,7 @@ public class DBQueryUtilsFormColumnsTest {
 
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumns(Mock4.class)).isEqualTo(" (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
+    assertThat(DBQueryUtils.formColumnsFromClass(Mock4.class)).isEqualTo(" (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
   }
 
 }

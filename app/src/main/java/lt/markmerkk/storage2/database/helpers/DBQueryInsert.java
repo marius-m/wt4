@@ -1,6 +1,7 @@
 package lt.markmerkk.storage2.database.helpers;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.storage.entities.annotations.Table;
 import lt.markmerkk.storage2.database.interfaces.DBEntity;
@@ -30,6 +31,10 @@ public class DBQueryInsert implements IQuery {
       throw new IllegalArgumentException("Provided class does not have @Table annotation!");
     if (!DBInsertable.class.isAssignableFrom(clazz))
       throw new IllegalArgumentException("Provided class does not implement DBInsertable!");
-    return null;
+    DBInsertable insertable = (DBInsertable) entity;
+    Map<String, String> pack = insertable.pack();
+    return String.format("INSERT INTO %s %s VALUES %s;", ((Table) tableAnnotation).name(),
+        DBQueryUtils.formColumnsFromMapKeys(pack),
+        DBQueryUtils.formColumnsFromMapValues(pack));
   }
 }
