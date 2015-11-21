@@ -32,7 +32,7 @@ public class DBQueryInsert implements IQuery {
     if (!DBInsertable.class.isAssignableFrom(clazz))
       throw new IllegalArgumentException("Provided class does not implement DBInsertable!");
     DBInsertable insertable = (DBInsertable) entity;
-    Map<String, String> pack = insertable.pack();
+    Map<String, Object> pack = insertable.pack();
     return String.format("INSERT INTO %s %s VALUES %s;", ((Table) tableAnnotation).name(),
         DBQueryUtils.formColumnsFromMapKeys(pack),
         DBQueryUtils.formColumnsFromMapValues(pack));

@@ -15,13 +15,15 @@ public class DBQueryUtils {
    *
    * @return sql script
    */
-  public static String formColumnsFromMapKeys(Map<String, String> map) throws IllegalArgumentException {
+  public static String formColumnsFromMapKeys(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("Cannot form columns without a map!");
     if (map.size() == 0) throw new IllegalArgumentException("Cannot form columns with an empty map!");
     StringBuilder query = new StringBuilder();
     for (String s : map.keySet()) {
       if (Utils.isEmpty(s)) continue;
-      if (Utils.isEmpty(map.get(s))) continue;
+      Object object = map.get(s);
+      if (object == null) continue;
+      if (object instanceof String && Utils.isEmpty((String)object)) continue;
       query.append(s);
       query.append(",");
     }
@@ -39,14 +41,16 @@ public class DBQueryUtils {
    *
    * @return sql script
    */
-  public static String formColumnsFromMapValues(Map<String, String> map) throws IllegalArgumentException {
+  public static String formColumnsFromMapValues(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("Cannot form columns without a map!");
     if (map.size() == 0) throw new IllegalArgumentException("Cannot form columns with an empty map!");
     StringBuilder query = new StringBuilder();
     for (String s : map.keySet()) {
       if (Utils.isEmpty(s)) continue;
       if (!map.containsKey(s)) continue;
-      if (Utils.isEmpty(map.get(s))) continue;
+      Object object = map.get(s);
+      if (object == null) continue;
+      if (object instanceof String && Utils.isEmpty((String)object)) continue;
       query.append(map.get(s));
       query.append(",");
     }

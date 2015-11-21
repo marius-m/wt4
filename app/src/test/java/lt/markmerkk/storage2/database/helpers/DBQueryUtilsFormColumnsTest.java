@@ -52,7 +52,7 @@ public class DBQueryUtilsFormColumnsTest {
 
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumnsFromClass(Mock4.class)).isEqualTo(" (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
+    assertThat(DBQueryUtils.formColumnsFromClass(Mock4.class)).isEqualTo(" (title TEXT,name TEXT,id INTEGER,parentParam TEXT,_id INTEGER)");
   }
 
 }

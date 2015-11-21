@@ -85,13 +85,11 @@ public class DBQueryInsertTest {
     // Arrange
     DBQueryInsert insert = new DBQueryInsert();
     // Act
-    Mock4 mock4 =
-        new Mock4("some_grandparent_id", "some_parent_id", "some_parent_param", "some_title",
-            "some_param");
+    Mock4 mock4 = new Mock4(20L, 30L, "some_param", "some_title", "some_name");
     // Assert
-    assertEquals("INSERT INTO mock3 (_id,id,parent_param,title,param) VALUES (some_grandparent_id,some_parent_id,\"some_parent_param\",\"some_title\",some_parent_param);",
-        insert.formQuery(Mock3NoExtend.class, mock4));
-
+    assertEquals(
+        "INSERT INTO mock4 (_id,id,parent_param,title,name) VALUES (20,30,\"some_param\",\"some_title\",\"some_name\");",
+        insert.formQuery(Mock4.class, mock4));
   }
 
 }

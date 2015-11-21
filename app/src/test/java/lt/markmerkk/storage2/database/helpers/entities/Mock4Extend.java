@@ -10,19 +10,19 @@ import lt.markmerkk.storage.entities.annotations.Table;
  */
 @Table(name = "mock4") public class Mock4Extend
     extends Mock4Grandparent {
-  @Column(value = FieldType.INTEGER) String id;
-  @Column(value = FieldType.TEXT) String parent_param;
+  @Column(value = FieldType.INTEGER) Long id;
+  @Column(value = FieldType.TEXT) String parentParam;
 
-  public Mock4Extend(String _id, String id, String parent_param) {
+  public Mock4Extend(Long _id, Long id, String parentParam) {
     super(_id);
     this.id = id;
-    this.parent_param = parent_param;
+    this.parentParam = parentParam;
   }
 
-  @Override public Map<String, String> pack() throws IllegalArgumentException {
-    Map<String, String> pack = super.pack();
+  @Override public Map<String, Object> pack() throws IllegalArgumentException {
+    Map<String, Object> pack = super.pack();
     pack.put("id", id);
-    pack.put("parent_param", "\"" + parent_param + "\"");
+    pack.put("parent_param", "\"" + parentParam + "\"");
     return pack;
   }
 }

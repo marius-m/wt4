@@ -11,14 +11,14 @@ import lt.markmerkk.storage2.database.interfaces.DBInsertable;
  * Created by mariusmerkevicius on 11/21/15.
  */
 @Table(name = "mock4") public class Mock4Grandparent implements DBInsertable {
-  @Column(value = FieldType.INTEGER) String _id;
+  @Column(value = FieldType.INTEGER) Long _id;
 
-  public Mock4Grandparent(String _id) {
+  public Mock4Grandparent(Long _id) {
     this._id = _id;
   }
 
-  @Override public Map<String, String> pack() throws IllegalArgumentException {
-    return new LinkedHashMap<String, String>() {{
+  @Override public Map<String, Object> pack() throws IllegalArgumentException {
+    return new LinkedHashMap<String, Object>() {{
       put("_id", _id);
     }};
   }

@@ -19,7 +19,7 @@ import lt.markmerkk.storage2.database.interfaces.DBInsertable;
     this.param = param;
   }
 
-  @Override public Map<String, String> pack() throws IllegalArgumentException {
+  @Override public Map<String, Object> pack() throws IllegalArgumentException {
     return null;
   }
 }

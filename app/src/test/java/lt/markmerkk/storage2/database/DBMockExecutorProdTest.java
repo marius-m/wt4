@@ -38,8 +38,7 @@ public class DBMockExecutorProdTest {
     DBMockExecutor executor = new DBMockExecutor();
     // Act
     Mock4 mock4 =
-        new Mock4("some_grandparent_id", "some_parent_id", "some_parent_param", "some_title",
-            "some_param");
+        new Mock4(20L, 30L, "some_param", "some_title", "some_name");
     // Assert
     executor.execute(new CreateJobIfNeeded<>(Mock4.class));
     executor.execute(new InsertJob<Mock4>(Mock4.class, mock4));

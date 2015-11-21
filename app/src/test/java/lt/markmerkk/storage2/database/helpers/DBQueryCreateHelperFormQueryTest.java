@@ -74,7 +74,7 @@ public class DBQueryCreateHelperFormQueryTest {
 
     // Assert
     assertThat(queryString).isNotNull();
-    assertThat(queryString).isEqualTo("CREATE TABLE mock3 (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
+    assertThat(queryString).isEqualTo("CREATE TABLE mock4 (title TEXT,name TEXT,id INTEGER,parentParam TEXT,_id INTEGER)");
   }
 
 }

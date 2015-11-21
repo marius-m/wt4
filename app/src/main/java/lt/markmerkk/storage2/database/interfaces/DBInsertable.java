@@ -13,5 +13,5 @@ public interface DBInsertable extends DBEntity {
    * @return
    * @throws IllegalArgumentException
    */
-  Map<String, String> pack() throws IllegalArgumentException;
+  Map<String, Object> pack() throws IllegalArgumentException;
 }

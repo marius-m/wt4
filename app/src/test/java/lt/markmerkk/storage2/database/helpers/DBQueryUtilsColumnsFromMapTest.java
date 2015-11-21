@@ -66,7 +66,7 @@ public class DBQueryUtilsColumnsFromMapTest {
 
   @Test public void testValid1() throws Exception {
     // Arrange
-    HashMap<String, String> map = new HashMap<String, String>() {{
+    HashMap<String, Object> map = new HashMap<String, Object>() {{
       put("key1", "value1");
       put("key2", "value2");
       put("key3", "value3");
@@ -79,7 +79,7 @@ public class DBQueryUtilsColumnsFromMapTest {
 
   @Test public void testMalformValid1() throws Exception {
     // Arrange
-    HashMap<String, String> map = new HashMap<String, String>() {{
+    HashMap<String, Object> map = new HashMap<String, Object>() {{
       put("key1", "value1");
       put(null, "value2");
       put("key3", "value3");
@@ -92,7 +92,7 @@ public class DBQueryUtilsColumnsFromMapTest {
 
   @Test public void testMalformValid2() throws Exception {
     // Arrange
-    HashMap<String, String> map = new HashMap<String, String>() {{
+    HashMap<String, Object> map = new HashMap<String, Object>() {{
       put("key1", "value1");
       put("", "value2");
       put("key3", "value3");
@@ -105,7 +105,7 @@ public class DBQueryUtilsColumnsFromMapTest {
 
   @Test public void testMalformValid3() throws Exception {
     // Arrange
-    HashMap<String, String> map = new HashMap<String, String>() {{
+    HashMap<String, Object> map = new HashMap<String, Object>() {{
       put("key1", "value1");
       put("key2", null);
       put("key3", "value3");
@@ -118,7 +118,7 @@ public class DBQueryUtilsColumnsFromMapTest {
 
   @Test public void testMalformValid4() throws Exception {
     // Arrange
-    HashMap<String, String> map = new HashMap<String, String>() {{
+    HashMap<String, Object> map = new HashMap<String, Object>() {{
       put("key1", "value1");
       put("key2", null);
       put("key3", "value3");

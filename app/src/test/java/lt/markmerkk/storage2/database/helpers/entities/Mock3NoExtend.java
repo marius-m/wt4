@@ -19,8 +19,8 @@ import lt.markmerkk.storage2.database.interfaces.DBInsertable;
     this.param = param;
   }
 
-  @Override public Map<String, String> pack() throws IllegalArgumentException {
-    LinkedHashMap<String, String> hashMap = new LinkedHashMap<String, String>();
+  @Override public Map<String, Object> pack() throws IllegalArgumentException {
+    LinkedHashMap<String, Object> hashMap = new LinkedHashMap<String, Object>();
     hashMap.put("title", "\"" + title + "\"");
     hashMap.put("param", "\"" + param + "\"");
     return hashMap;
