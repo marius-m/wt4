@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Column {
-    public FieldType value();
-    public boolean canBeNull() default false;
-    public boolean isPrimary() default false;
-    public String defaultValue() default "";
+    FieldType value();
+    boolean canBeNull() default false; // Deprecated, will be removed!!
+    boolean isPrimary() default false;
+    String defaultValue() default "";
 }

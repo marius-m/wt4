@@ -43,3 +43,5 @@ checkLog3.log
 checkLog4.log
 checkLog5.log
 test.db
+app/test.db
+app/sample.db
