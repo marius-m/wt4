@@ -45,3 +45,5 @@ checkLog5.log
 test.db
 app/test.db
 app/sample.db
+app/test_database.db
+app/wt4.db

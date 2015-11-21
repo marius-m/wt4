@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 public class DBBaseExecutorExecuteTest {
   @Test public void testNullQuery() throws Exception {
     // Arrange
-    DBBaseExecutor executor = spy(new DBBaseExecutor());
+    DBBaseExecutor executor = spy(new DBMockExecutor());
     doReturn(mock(Connection.class)).when(executor).open(anyString());
     doNothing().when(executor).close(any(Connection.class));
     // Act
@@ -34,7 +34,7 @@ public class DBBaseExecutorExecuteTest {
 
   @Test public void testNullConnection() throws Exception {
     // Arrange
-    DBBaseExecutor executor = spy(new DBBaseExecutor());
+    DBBaseExecutor executor = spy(new DBMockExecutor());
     doReturn(null).when(executor).open(anyString());
     doNothing().when(executor).close(any(Connection.class));
     // Act
@@ -46,7 +46,7 @@ public class DBBaseExecutorExecuteTest {
 
   @Test public void testThrowOnConnection1() throws Exception {
     // Arrange
-    DBBaseExecutor executor = spy(new DBBaseExecutor());
+    DBBaseExecutor executor = spy(new DBMockExecutor());
     doThrow(new ClassNotFoundException()).when(executor).open(anyString());
     doNothing().when(executor).close(any(Connection.class));
     // Act
@@ -58,7 +58,7 @@ public class DBBaseExecutorExecuteTest {
 
   @Test public void testThrowOnConnection2() throws Exception {
     // Arrange
-    DBBaseExecutor executor = spy(new DBBaseExecutor());
+    DBBaseExecutor executor = spy(new DBMockExecutor());
     doThrow(new SQLException()).when(executor).open(anyString());
     doNothing().when(executor).close(any(Connection.class));
     // Act
@@ -70,7 +70,7 @@ public class DBBaseExecutorExecuteTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
-    DBBaseExecutor executor = spy(new DBBaseExecutor());
+    DBBaseExecutor executor = spy(new DBMockExecutor());
     doReturn(mock(Connection.class)).when(executor).open(anyString());
     doNothing().when(executor).close(any(Connection.class));
     // Act

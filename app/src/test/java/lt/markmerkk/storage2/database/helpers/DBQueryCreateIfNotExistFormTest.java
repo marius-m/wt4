@@ -1,4 +1,4 @@
-package lt.markmerkk.storage2.database;
+package lt.markmerkk.storage2.database.helpers;
 
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.storage.entities.annotations.FieldType;
@@ -6,66 +6,74 @@ import lt.markmerkk.storage.entities.annotations.Table;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-public class DBQueryCreateHelperFormQueryTest {
+public class DBQueryCreateIfNotExistFormTest {
   @Test public void testNull() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
+    DBQueryCreateIfNotExist helper = new DBQueryCreateIfNotExist();
 
     // Act
     // Assert
-    assertThat(helper.formQuery(null)).isNull();
+    try {
+      helper.formQuery(null);
+      fail("Should not form a query for null value!");
+    } catch (IllegalArgumentException e) {
+      assertThat(e).hasMessage("Cant create query for a null value!");
+    }
   }
 
   @Test public void testEmptyClass() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
+    DBQueryCreateIfNotExist helper = new DBQueryCreateIfNotExist();
 
     // Act
-    String queryString = helper.formQuery(Mock1.class);
-
     // Assert
-    assertThat(queryString).isNull();
+    try {
+      helper.formQuery(Mock1.class);
+      fail("Should not create a query for an empty class");
+    } catch (IllegalArgumentException e) {
+      assertThat(e).hasMessage("Provided class does not have @Table annotation!");
+    }
   }
 
   @Test public void testValid1() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
+    DBQueryCreateIfNotExist helper = new DBQueryCreateIfNotExist();
 
     // Act
     String queryString = helper.formQuery(Mock2.class);
 
     // Assert
     assertThat(queryString).isNotNull();
-    assertThat(queryString).isEqualTo("CREATE TABLE mock2");
+    assertThat(queryString).isEqualTo("CREATE TABLE IF NOT EXISTS mock2");
   }
 
   @Test public void testValid2() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
+    DBQueryCreateIfNotExist helper = new DBQueryCreateIfNotExist();
 
     // Act
     String queryString = helper.formQuery(Mock3.class);
 
     // Assert
     assertThat(queryString).isNotNull();
-    assertThat(queryString).isEqualTo("CREATE TABLE mock3 (title TEXT,param INTEGER)");
+    assertThat(queryString).isEqualTo("CREATE TABLE IF NOT EXISTS mock3 (title TEXT,param INTEGER)");
   }
 
   @Test public void testValid3() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
+    DBQueryCreateIfNotExist helper = new DBQueryCreateIfNotExist();
 
     // Act
     String queryString = helper.formQuery(Mock4.class);
 
     // Assert
     assertThat(queryString).isNotNull();
-    assertThat(queryString).isEqualTo("CREATE TABLE mock3 (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
+    assertThat(queryString).isEqualTo("CREATE TABLE IF NOT EXISTS mock3 (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
   }
 
   //region Classes
@@ -107,5 +115,4 @@ public class DBQueryCreateHelperFormQueryTest {
   }
 
   //endregion
-
 }

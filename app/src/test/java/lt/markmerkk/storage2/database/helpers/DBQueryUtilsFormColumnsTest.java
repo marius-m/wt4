@@ -1,4 +1,4 @@
-package lt.markmerkk.storage2.database;
+package lt.markmerkk.storage2.database.helpers;
 
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.storage.entities.annotations.FieldType;
@@ -6,54 +6,52 @@ import lt.markmerkk.storage.entities.annotations.Table;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-public class DBQueryCreateHelperFormParamTest {
+public class DBQueryUtilsFormColumnsTest {
   @Test public void testNull() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
-
     // Act
     // Assert
-    assertThat(helper.formColumns(null)).isEqualTo("");
+    try {
+      DBQueryUtils.formColumns(null);
+      fail("Should throw an illegal argument exception");
+    } catch (IllegalArgumentException e) {
+      assertThat(e).hasMessage("Cannot form columns without a class!");
+    }
   }
 
   @Test public void testEmpty() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
-
     // Act
     // Assert
-    assertThat(helper.formColumns(Mock1.class)).isEqualTo("");
+    assertThat(DBQueryUtils.formColumns(Mock1.class)).isEqualTo("");
   }
 
   @Test public void testEmpty2() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
-
     // Act
     // Assert
-    assertThat(helper.formColumns(Mock2.class)).isEqualTo("");
+    assertThat(DBQueryUtils.formColumns(Mock2.class)).isEqualTo("");
   }
 
   @Test public void testValid() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
-
     // Act
     // Assert
-    assertThat(helper.formColumns(Mock3.class)).isEqualTo(" (title TEXT,param INTEGER)");
+    assertThat(DBQueryUtils.formColumns(Mock3.class)).isEqualTo(" (title TEXT,param INTEGER)");
   }
 
   @Test public void testValidWithExtend() throws Exception {
     // Arrange
-    DBQueryCreateHelper helper = new DBQueryCreateHelper();
+    DBQueryCreate helper = new DBQueryCreate();
 
     // Act
     // Assert
-    assertThat(helper.formColumns(Mock4.class)).isEqualTo(" (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
+    assertThat(DBQueryUtils.formColumns(Mock4.class)).isEqualTo(" (title TEXT,param INTEGER,id INTEGER,parent_param TEXT,_id INTEGER)");
   }
 
   //region Classes

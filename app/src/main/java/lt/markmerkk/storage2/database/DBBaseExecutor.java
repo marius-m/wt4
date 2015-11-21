@@ -9,8 +9,10 @@ import lt.markmerkk.storage2.database.interfaces.IQueryJob;
  * Created by mariusmerkevicius on 11/21/15.
  * An abstract class responsible for connecting to database
  */
-public class DBBaseExecutor {
-  public static final String FILE_NAME = "sample.db";
+public abstract class DBBaseExecutor {
+
+
+  abstract String database();
 
   /**
    * Runs a database execution
@@ -18,16 +20,18 @@ public class DBBaseExecutor {
   public void execute(IQueryJob queryJob) {
     Connection connection = null;
     try {
-      connection = open(FILE_NAME);
+      connection = open(database());
       if (connection == null) return;
       if (queryJob == null) return;
       executeQuery(queryJob, connection);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) { // Might throw when connecting to database
       e.printStackTrace();
-    } catch (SQLException e) {
+    } catch (IllegalArgumentException e) { // Might throw when forming
+      e.printStackTrace();
+    } catch (SQLException e) { // Might throw with illegal queries
       e.printStackTrace();
     } finally {
-      close(connection);
+      close(connection); // We close connection anyway
     }
   }
 

@@ -6,6 +6,10 @@ import lt.markmerkk.storage.entities.LogStorage;
 import lt.markmerkk.storage.entities.Project;
 import lt.markmerkk.storage.entities.Storage;
 import lt.markmerkk.storage.entities.Task;
+import lt.markmerkk.storage2.database.DBBaseExecutor;
+import lt.markmerkk.storage2.database.DBProdExecutor;
+import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.jobs.CreateJob;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,6 +22,7 @@ public abstract class BaseController {
     protected final LogStorage logStorage;
     protected final Storage<Task> taskStorage;
     protected final Storage<Project> projectStorage;
+    private final DBBaseExecutor executor;
 
     public interface BaseControllerDelegate {
         public Stage getStage();
@@ -32,6 +37,10 @@ public abstract class BaseController {
         logStorage = new LogStorage();
         taskStorage = new Storage<Task>(Task.class);
         projectStorage = new Storage<Project>(Project.class);
+
+        // Initializing database
+        executor = new DBProdExecutor();
+        executor.execute(new CreateJob<SimpleLog>(SimpleLog.class));
     }
 
     public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
