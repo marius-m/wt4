@@ -1,8 +1,10 @@
 package lt.markmerkk.storage2.jobs;
 
+import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import lt.markmerkk.storage.entities.annotations.Table;
 import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
 import lt.markmerkk.storage2.database.interfaces.IResult;
@@ -22,7 +24,10 @@ public class QueryJob<T> implements IQueryJob, IResult<T> {
 
 
   @Override public String query() {
-    return "SELECT * FROM mock4;";
+    Annotation tableAnnotation = clazz.getAnnotation(Table.class);
+    if (tableAnnotation == null)
+      throw new IllegalArgumentException("Provided class does not have @Table annotation!");
+    return String.format("SELECT * FROM %s;", ((Table) tableAnnotation).name());
   }
 
   @Override public void execute(Connection connection) throws SQLException {

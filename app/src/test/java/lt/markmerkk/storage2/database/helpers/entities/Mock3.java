@@ -52,4 +52,10 @@ import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 
   //endregion
 
+  @Override public String toString() {
+    return "Mock3{" +
+        "title='" + title + '\'' +
+        ", param='" + param + '\'' +
+        '}';
+  }
 }
