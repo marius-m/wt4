@@ -66,6 +66,26 @@ public class DBMockExecutorProdTest {
     assertThat(result.getParam()).isEqualTo("some_param");
   }
 
+  // fixme : incomplete
+
+  //@Test public void shouldQueryMock3FromTheList() throws Exception {
+  //  // Arrange
+  //  DBMockExecutor executor = new DBMockExecutor();
+  //
+  //  // Act
+  //  Mock3 mock3 = new Mock3("some_title", "some_param");
+  //  executor.execute(new CreateJobIfNeeded<>(Mock3.class));
+  //  executor.execute(new InsertJob(Mock3.class, mock3));
+  //  QueryJob<Mock3> queryJob = new QueryJob<Mock3>(Mock3.class);
+  //  executor.execute(queryJob);
+  //  Mock3 result = queryJob.result();
+  //
+  //  // Assert
+  //  System.out.println(result);
+  //  assertThat(result.getTitle()).isEqualTo("some_title");
+  //  assertThat(result.getParam()).isEqualTo("some_param");
+  //}
+
   @Test public void shouldQueryMock4() throws Exception {
     // Arrange
     DBMockExecutor executor = new DBMockExecutor();

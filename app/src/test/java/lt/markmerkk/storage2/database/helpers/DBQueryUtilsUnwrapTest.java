@@ -4,10 +4,9 @@ import java.sql.ResultSet;
 import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3NoDefaultConstructor;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NoPacking;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3NoInterfaces;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import lt.markmerkk.storage2.jobs.QueryJob;
-import org.jmock.Mock;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +58,7 @@ public class DBQueryUtilsUnwrapTest {
     // Act
     // Assert
     try {
-      DBQueryUtils.unwrapResult(Mock3NoPacking.class, mock(ResultSet.class));
+      DBQueryUtils.unwrapResult(Mock3NoInterfaces.class, mock(ResultSet.class));
       fail("Should not unwrap with null input");
     } catch (IllegalArgumentException e) {
       assertThat(e).hasMessage("Provided entity is not unpackable!");

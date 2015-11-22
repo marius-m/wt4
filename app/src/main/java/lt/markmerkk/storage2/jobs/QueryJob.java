@@ -5,8 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import lt.markmerkk.storage.entities.annotations.Table;
+import lt.markmerkk.storage2.database.annotations.Index;
 import lt.markmerkk.storage2.database.helpers.DBQueryUtils;
-import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
 import lt.markmerkk.storage2.database.interfaces.IResult;
 
@@ -29,6 +29,9 @@ public class QueryJob<T> implements IQueryJob, IResult<T> {
     Annotation tableAnnotation = clazz.getAnnotation(Table.class);
     if (tableAnnotation == null)
       throw new IllegalArgumentException("Provided class does not have @Table annotation!");
+    //Annotation indexAnnotation = clazz.getAnnotation(Index.class);
+    //if (indexAnnotation == null)
+    //  throw new IllegalArgumentException("Provided class does not specify and index to look up to!");
     return String.format("SELECT * FROM %s;", ((Table) tableAnnotation).name());
   }
 

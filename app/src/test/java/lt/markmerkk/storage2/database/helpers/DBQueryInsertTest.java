@@ -3,7 +3,7 @@ package lt.markmerkk.storage2.database.helpers;
 import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtendNoPacking;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NoPacking;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3NoInterfaces;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import org.junit.Test;
 
@@ -47,7 +47,7 @@ public class DBQueryInsertTest {
     // Act
     // Assert
     try {
-      insert.formQuery(Mock3NoPacking.class, null);
+      insert.formQuery(Mock3NoInterfaces.class, null);
       fail("Should not do an insert query");
     } catch (IllegalArgumentException e) {
       assertThat(e).hasMessage("Provided class does not implement DBInsertable!");

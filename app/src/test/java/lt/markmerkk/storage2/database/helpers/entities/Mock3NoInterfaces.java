@@ -7,7 +7,7 @@ import lt.markmerkk.storage.entities.annotations.Table;
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-@Table(name = "mock3") public class Mock3NoPacking {
+@Table(name = "mock3") public class Mock3NoInterfaces {
   @Column(value = FieldType.TEXT) String title;
   @Column(value = FieldType.INTEGER) String param;
 }

@@ -7,13 +7,15 @@ import java.util.Map;
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.storage.entities.annotations.FieldType;
 import lt.markmerkk.storage.entities.annotations.Table;
+import lt.markmerkk.storage2.database.annotations.Index;
 import lt.markmerkk.storage2.database.interfaces.DBPackable;
 import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-@Table(name = "mock3") public class Mock3 implements DBPackable, DBUnpackable {
+@Table(name = "mock3")
+public class Mock3 implements DBPackable, DBUnpackable {
   @Column(value = FieldType.TEXT) String title;
   @Column(value = FieldType.INTEGER) String param;
 
