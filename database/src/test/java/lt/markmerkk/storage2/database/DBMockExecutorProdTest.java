@@ -7,6 +7,7 @@ import lt.markmerkk.storage2.database.helpers.entities.Mock5;
 import lt.markmerkk.storage2.database.interfaces.DBIndexable;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.storage2.jobs.CreateJob;
+import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
@@ -168,6 +169,65 @@ public class DBMockExecutorProdTest {
       assertThat(resultMock.get_id()).isEqualTo(20L+i);
       assertThat(resultMock.getId()).isEqualTo(30L+i);
     }
+  }
+
+  @Test public void shouldQueryListDeleteMock4() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock4 mock1 = new Mock4(
+        20L,
+        30L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock2 = new Mock4(
+        21L,
+        31L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock3 = new Mock4(
+        22L,
+        32L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    executor.execute(new CreateJobIfNeeded<>(Mock4.class));
+    executor.execute(new InsertJob(Mock4.class, mock1));
+    executor.execute(new InsertJob(Mock4.class, mock2));
+    executor.execute(new InsertJob(Mock4.class, mock3));
+    QueryListJob<Mock4> queryListJob = new QueryListJob<Mock4>(Mock4.class);
+    executor.execute(queryListJob);
+    List<Mock4> result = queryListJob.result();
+
+    // Assert
+    assertThat(result.size()).isEqualTo(3);
+    for (int i = 0; i < result.size(); i++) {
+      Mock4 resultMock = result.get(i);
+      assertThat(resultMock.getTitle()).isEqualTo("some_title");
+      assertThat(resultMock.getName()).isEqualTo("some_name");
+      assertThat(resultMock.getParentParam()).isEqualTo("some_parent_param");
+      assertThat(resultMock.get_id()).isEqualTo(20L+i);
+      assertThat(resultMock.getId()).isEqualTo(30L+i);
+    }
+
+    executor.execute(new DeleteJob(Mock4.class, result.get(2)));
+    queryListJob = new QueryListJob<Mock4>(Mock4.class);
+    executor.execute(queryListJob);
+    result = queryListJob.result();
+    assertThat(result.size()).isEqualTo(2);
+
+    executor.execute(new DeleteJob(Mock4.class, result.get(0)));
+    executor.execute(new DeleteJob(Mock4.class, result.get(1)));
+    queryListJob = new QueryListJob<Mock4>(Mock4.class);
+    executor.execute(queryListJob);
+    result = queryListJob.result();
+    assertThat(result.size()).isEqualTo(0);
   }
 
   @Test public void shouldQueryListOnEmptyMock4() throws Exception {

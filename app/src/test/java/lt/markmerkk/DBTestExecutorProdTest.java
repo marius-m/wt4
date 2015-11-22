@@ -6,6 +6,7 @@ import lt.markmerkk.storage2.database.DBMockExecutor;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.CreateJob;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
+import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
@@ -115,6 +116,37 @@ public class DBTestExecutorProdTest {
       SimpleLog resultLog = result.get(i);
       assertThat(resultLog.getComment()).isEqualTo("Some comment" + (i + 1));
     }
+  }
+
+  @Test public void shouldQueryListDelete() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    SimpleLog log1 = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment1");
+    SimpleLog log2 = new SimpleLog(2000, 3000, 1000, "TT-182", "Some comment2");
+    SimpleLog log3 = new SimpleLog(3000, 4000, 1000, "TT-182", "Some comment3");
+
+    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+    executor.execute(new InsertJob(SimpleLog.class, log1));
+    executor.execute(new InsertJob(SimpleLog.class, log2));
+    executor.execute(new InsertJob(SimpleLog.class, log3));
+    QueryListJob<SimpleLog> queryListJob = new QueryListJob<SimpleLog>(SimpleLog.class);
+    executor.execute(queryListJob);
+    List<SimpleLog> result = queryListJob.result();
+
+    // Assert
+    assertThat(result.size()).isEqualTo(3);
+    for (int i = 0; i < result.size(); i++) {
+      SimpleLog resultLog = result.get(i);
+      assertThat(resultLog.getComment()).isEqualTo("Some comment" + (i + 1));
+    }
+
+    executor.execute(new DeleteJob(SimpleLog.class, log1));
+    queryListJob = new QueryListJob<SimpleLog>(SimpleLog.class);
+    executor.execute(queryListJob);
+    result = queryListJob.result();
+    assertThat(result.size()).isEqualTo(2);
   }
 
 
