@@ -38,6 +38,25 @@ public class DBTestExecutorProdTest {
     executor.execute(new InsertJob(SimpleLog.class, log));
   }
 
+  @Test public void shouldInsertMany() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    // Assert
+    SimpleLog log = new SimpleLog(1000, 2000, "TT-182", "Some comment");
+    SimpleLog log2 = new SimpleLog(1000, 2000, "TT-182", "Some comment");
+    SimpleLog log3 = new SimpleLog(1000, 2000, "TT-182", "Some comment");
+    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+    executor.execute(new InsertJob(SimpleLog.class, log));
+    executor.execute(new InsertJob(SimpleLog.class, log2));
+    executor.execute(new InsertJob(SimpleLog.class, log3));
+
+    assertThat(log.get_id()).isEqualTo(1);
+    assertThat(log2.get_id()).isEqualTo(2);
+    assertThat(log3.get_id()).isEqualTo(3);
+  }
+
   @Test public void shouldInsertQuery() throws Exception {
     // Arrange
     DBMockExecutor executor = new DBMockExecutor();
@@ -46,6 +65,7 @@ public class DBTestExecutorProdTest {
     SimpleLog log = new SimpleLog(1000, 2000, "TT-182", "Some comment");
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
+
     QueryJob<SimpleLog> queryJob = new QueryJob<SimpleLog>(SimpleLog.class, () -> "_id = 1");
     executor.execute(queryJob);
     SimpleLog result = queryJob.result();

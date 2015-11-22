@@ -7,6 +7,7 @@ import java.util.Map;
 import lt.markmerkk.storage2.database.annotations.Column;
 import lt.markmerkk.storage2.database.annotations.FieldType;
 import lt.markmerkk.storage2.database.annotations.Table;
+import lt.markmerkk.storage2.database.interfaces.DBIndexUpdatable;
 import lt.markmerkk.storage2.database.interfaces.DBIndexable;
 import lt.markmerkk.storage2.database.interfaces.DBPackable;
 import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
@@ -16,11 +17,16 @@ import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
  * Represents basic entity that could be used with database
  */
 @Table
-public abstract class BaseDBEntity implements DBIndexable, DBPackable, DBUnpackable {
+public abstract class BaseDBEntity implements DBIndexable, DBPackable, DBUnpackable,
+    DBIndexUpdatable {
   public static final String KEY_ID = "_id";
 
   @Column(value = FieldType.INTEGER, isPrimary = true)
   long _id;
+
+  public long get_id() {
+    return _id;
+  }
 
   @Override public String indexClause() {
     return "_id = '" + _id + "'";
@@ -34,5 +40,7 @@ public abstract class BaseDBEntity implements DBIndexable, DBPackable, DBUnpacka
     _id = resultSet.getLong(resultSet.findColumn(KEY_ID));
   }
 
-
+  @Override public void updateIndex(long newIndex) {
+    this._id = newIndex;
+  }
 }
