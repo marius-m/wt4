@@ -79,7 +79,7 @@ public class SimpleLogBuilderTest {
     SimpleLog oldLog = new SimpleLog(1000, 2000, 1000, "temp_task", "temp_comment");
     oldLog.updateIndex(200);
 
-    SimpleLog log = new SimpleLogBuilder(3000, oldLog)
+    SimpleLog log = new SimpleLogBuilder(oldLog)
         .setTask("task")
         .build();
 

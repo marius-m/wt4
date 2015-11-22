@@ -50,14 +50,6 @@ public class SimpleLog extends RemoteEntity {
 
   //region Getters / Setters
 
-  //public DateTimeFormatter getLongFormat() {
-  //  return longFormat;
-  //}
-  //
-  //public DateTimeFormatter getShortFormat() {
-  //  return shortFormat;
-  //}
-
   public String getLongStart() {
     return longFormat.print(start);
   }
@@ -82,32 +74,16 @@ public class SimpleLog extends RemoteEntity {
     return start;
   }
 
-  public void setStart(long start) {
-    this.start = start;
-  }
-
   public long getEnd() {
     return end;
-  }
-
-  public void setEnd(long end) {
-    this.end = end;
   }
 
   public String getTask() {
     return task;
   }
 
-  public void setTask(String task) {
-    this.task = task;
-  }
-
   public String getComment() {
     return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
   public long getDuration() {

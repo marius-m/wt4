@@ -21,8 +21,7 @@ public class SimpleLogBuilder {
     this.now = now;
   }
 
-  public SimpleLogBuilder(long now, SimpleLog log) {
-    this.now = now;
+  public SimpleLogBuilder(SimpleLog log) {
     this._id = log.get_id();
     this.start = log.getStart();
     this.end = log.getEnd();

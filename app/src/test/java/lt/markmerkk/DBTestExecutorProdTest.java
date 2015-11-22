@@ -1,6 +1,7 @@
 package lt.markmerkk;
 
 import java.util.List;
+import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.database.DBMockExecutor;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.CreateJob;
@@ -158,9 +159,10 @@ public class DBTestExecutorProdTest {
     assertThat(result.getTask()).isEqualTo("TT-182");
     assertThat(result.getComment()).isEqualTo("Some comment2");
 
-
-    result.setTask("TT-666");
-    result.setComment("No comment");
+    result = new SimpleLogBuilder(result)
+        .setTask("TT-666")
+        .setComment("No comment")
+        .build();
     executor.execute(new UpdateJob(SimpleLog.class, result));
 
     executor.execute(queryJob); // requerying

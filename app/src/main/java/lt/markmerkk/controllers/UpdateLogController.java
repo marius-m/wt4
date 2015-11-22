@@ -56,7 +56,7 @@ public class UpdateLogController extends BaseController {
 
     private void update() {
         try {
-            updateLog = new SimpleLogBuilder(DateTime.now().getMillis(), updateLog)
+            updateLog = new SimpleLogBuilder(updateLog)
                 .setStart(SimpleLog.longFormat.parseDateTime(startInput.getText()).getMillis())
                 .setEnd(SimpleLog.longFormat.parseDateTime(endInput.getText()).getMillis())
                 .setTask(Utils.validateTaskTitle(taskInput.getText()))
