@@ -2,11 +2,12 @@ package lt.markmerkk.utils;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import lt.markmerkk.storage.entities.table.LogTable;
 import lt.markmerkk.storage2.entities.SimpleLog;
 
 /**
  * Created by mariusm on 1/19/15.
+ * Responsible for displaying {@link SimpleLog} in the
+ * {@link TableView}
  */
 public class LogDisplayController extends TableDisplayController<SimpleLog> {
 

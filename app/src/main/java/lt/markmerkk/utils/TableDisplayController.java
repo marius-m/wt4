@@ -9,7 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import lt.markmerkk.storage.entities.Log;
+import lt.markmerkk.storage2.entities.SimpleLog;
 
 /**
  * Created by mariusm on 11/6/14.
@@ -65,7 +65,7 @@ public abstract class TableDisplayController<Type> {
         TableColumn firstNameCol = new TableColumn(caption);
 //        table.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         firstNameCol.prefWidthProperty().bind(table.widthProperty().divide(widthDivide).subtract(1));
-        firstNameCol.setCellValueFactory(new PropertyValueFactory<Log, String>(property));
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<Type, String>(property));
         return firstNameCol;
     }
 

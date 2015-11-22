@@ -2,10 +2,8 @@ package lt.markmerkk.controllers;
 
 import eu.schudt.javafx.controls.calendar.DatePicker;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,24 +22,22 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lt.markmerkk.storage.entities.table.LogTable;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
-import lt.markmerkk.utils.TaskController;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.tmatesoft.sqljet.core.table.SqlJetScope;
 
 /**
  * Created by mariusmerkevicius on 11/16/15.
+ * Represents the main controller to display UI elements and business logic
  */
 public class MainController extends BaseController {
   private final HourGlass hourGlass;
@@ -179,7 +175,7 @@ public class MainController extends BaseController {
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(hourGlass.reportStart().getMillis())
           .setEnd(hourGlass.reportEnd().getMillis())
-          .setTask(TaskController.inspectAndFormTitle(inputTask.getText()))
+          .setTask(Utils.validateTaskTitle(inputTask.getText()))
           .setComment(inputComment.getText()).build();
       executor.execute(new InsertJob(SimpleLog.class, log));
 
