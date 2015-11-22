@@ -1,8 +1,11 @@
 package lt.markmerkk.storage2.entities;
 
-import lt.markmerkk.storage.entities.annotations.Column;
-import lt.markmerkk.storage.entities.annotations.FieldType;
-import lt.markmerkk.storage.entities.annotations.Table;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+import lt.markmerkk.storage2.database.annotations.Column;
+import lt.markmerkk.storage2.database.annotations.FieldType;
+import lt.markmerkk.storage2.database.annotations.Table;
 
 /**
  * Created by mariusmerkevicius on 11/20/15.
@@ -28,4 +31,15 @@ public abstract class RemoteEntity extends BaseDBEntity {
   // Error message
   @Column(value = FieldType.TEXT)
   String errorMessage;
+
+  @Override public Map<String, Object> pack() throws IllegalArgumentException {
+    Map<String, Object> pack = super.pack();
+    return pack;
+  }
+
+  @Override public void unpack(ResultSet resultSet) throws IllegalArgumentException, SQLException {
+    super.unpack(resultSet);
+  }
+
+
 }
