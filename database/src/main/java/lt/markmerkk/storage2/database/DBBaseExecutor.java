@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
@@ -11,10 +13,13 @@ import lt.markmerkk.storage2.database.interfaces.IQueryJob;
  */
 public abstract class DBBaseExecutor {
 
+  private final Logger logger;
+
+  public DBBaseExecutor() {
+    logger = Logger.getLogger(DBBaseExecutor.class);
+  }
 
   protected abstract String database();
-
-  // todo : will need an executor with returning a list
 
   /**
    * Runs a database execution
@@ -27,13 +32,13 @@ public abstract class DBBaseExecutor {
       if (queryJob == null) return;
       executeQuery(queryJob, connection);
     } catch (ClassNotFoundException e) { // Might throw when connecting to database
-      e.printStackTrace();
+      logger.log(Level.DEBUG, "Cant connect to database!"+e.getMessage());
     } catch (UnsupportedOperationException e) { // Might throw when using wrong forming method
-      e.printStackTrace();
+      logger.log(Level.DEBUG, "Unsupported operation! "+e.getMessage());
     } catch (IllegalArgumentException e) { // Might throw when forming
-      e.printStackTrace();
+      logger.log(Level.DEBUG, "Error! " + e.getMessage());
     } catch (SQLException e) { // Might throw with illegal queries
-      e.printStackTrace();
+      logger.log(Level.DEBUG, "Error! " + e.getMessage());
     } finally {
       close(connection); // We close connection anyway
     }

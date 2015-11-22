@@ -78,6 +78,19 @@ public class DBTestExecutorProdTest {
     assertThat(result.getComment()).isEqualTo("Some comment");
   }
 
+  @Test public void shouldQueryNonExisting() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    SimpleLog log = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment");
+    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+
+    QueryJob<SimpleLog> queryJob = new QueryJob<SimpleLog>(SimpleLog.class, () -> "_id = 1");
+    executor.execute(queryJob);
+    assertThat(queryJob.result()).isNull();
+  }
+
   @Test public void shouldQueryList() throws Exception {
     // Arrange
     DBMockExecutor executor = new DBMockExecutor();

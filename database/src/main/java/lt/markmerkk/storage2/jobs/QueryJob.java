@@ -38,6 +38,7 @@ public class QueryJob<T> implements IQueryJob, IResult<T> {
 
   @Override public void execute(Connection connection) throws SQLException {
     ResultSet resultSet = connection.createStatement().executeQuery(query());
+    if (!resultSet.next()) throw new IllegalArgumentException("Error retrieving object!");
     entity = DBQueryUtils.unwrapResult(clazz, resultSet);
     resultSet.close();
   }

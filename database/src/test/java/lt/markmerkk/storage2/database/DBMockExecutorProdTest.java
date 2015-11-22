@@ -69,6 +69,18 @@ public class DBMockExecutorProdTest {
     assertThat(result.getParam()).isEqualTo("some_param");
   }
 
+  @Test public void shouldQueryNonExisting() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock3 mock3 = new Mock3("some_title", "some_param");
+    executor.execute(new CreateJobIfNeeded<>(Mock3.class));
+    QueryJob<Mock3> queryJob = new QueryJob<Mock3>(Mock3.class, () -> "title = 'some_title'");
+    executor.execute(queryJob);
+    assertThat(queryJob.result()).isNull();
+  }
+
   @Test public void shouldInsertAndAssignMock5() throws Exception {
     // Arrange
     DBMockExecutor executor = new DBMockExecutor();
