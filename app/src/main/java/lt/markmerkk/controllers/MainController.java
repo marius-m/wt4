@@ -212,13 +212,10 @@ public class MainController extends BaseController {
    * Updates logs from the database
    */
   private void notifyLogsChanged() {
-    //ArrayList<Log> logs = logStorage.readWithScope(Log.class.getAnnotation(TableIndex.class).name(),
-    //    new SqlJetScope(
-    //        new Object[]{filterDate.getMillis()},
-    //        new Object[]{filterDate.plusDays(1).getMillis()}
-    //    )
-    //);
-    QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class);
+    QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class,
+        () -> "(start > " + filterDate.getMillis()
+            + " AND "
+            + "end < " + filterDate.plusDays(1).getMillis() + ")");
     executor.execute(queryJob);
     if (logs == null)
       logs = FXCollections.observableArrayList();

@@ -4,9 +4,8 @@ import java.util.List;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import lt.markmerkk.storage2.database.helpers.entities.Mock5;
-import lt.markmerkk.storage2.database.interfaces.DBIndexable;
-import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.storage2.jobs.CreateJob;
+import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
@@ -169,6 +168,49 @@ public class DBMockExecutorProdTest {
       assertThat(resultMock.get_id()).isEqualTo(20L+i);
       assertThat(resultMock.getId()).isEqualTo(30L+i);
     }
+  }
+
+  @Test public void shouldQueryListMock4WithClause() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock4 mock1 = new Mock4(
+        20L,
+        30L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock2 = new Mock4(
+        21L,
+        31L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock3 = new Mock4(
+        22L,
+        32L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    executor.execute(new CreateJobIfNeeded<>(Mock4.class));
+    executor.execute(new InsertJob(Mock4.class, mock1));
+    executor.execute(new InsertJob(Mock4.class, mock2));
+    executor.execute(new InsertJob(Mock4.class, mock3));
+    QueryListJob<Mock4> queryListJob = new QueryListJob<Mock4>(Mock4.class, () -> "_id = 21");
+    executor.execute(queryListJob);
+    List<Mock4> result = queryListJob.result();
+
+    // Assert
+    assertThat(result.size()).isEqualTo(1);
+    assertThat(result.get(0).getTitle()).isEqualTo("some_title");
+    assertThat(result.get(0).getName()).isEqualTo("some_name");
+    assertThat(result.get(0).getParentParam()).isEqualTo("some_parent_param");
+    assertThat(result.get(0).get_id()).isEqualTo(21L);
+    assertThat(result.get(0).getId()).isEqualTo(31L);
   }
 
   @Test public void shouldQueryListDeleteMock4() throws Exception {

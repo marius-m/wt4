@@ -25,6 +25,20 @@ public class QueryListJobQueryTest {
     }
   }
 
+  @Test public void testIndexableWrong() throws Exception {
+    // Arrange
+    QueryListJob queryJob = new QueryListJob<Mock3>(Mock3.class, () -> null);
+
+    // Act
+    // Assert
+    try {
+      queryJob.query();
+      fail("Should not return a query with no @Table");
+    } catch (IllegalArgumentException e) {
+      assertThat(e).hasMessage("Indexable not implemented!");
+    }
+  }
+
   @Test public void testValid1() throws Exception {
     // Arrange
     QueryListJob queryJob = new QueryListJob<Mock3>(Mock3.class);
@@ -35,4 +49,16 @@ public class QueryListJobQueryTest {
     // Assert
     assertThat(query).isEqualTo("SELECT * FROM mock3;");
   }
+
+  @Test public void testValid2() throws Exception {
+    // Arrange
+    QueryListJob queryJob = new QueryListJob<Mock3>(Mock3.class, () -> "title = 'some_title'");
+
+    // Act
+    String query = queryJob.query();
+
+    // Assert
+    assertThat(query).isEqualTo("SELECT * FROM mock3 WHERE title = 'some_title';");
+  }
+
 }
