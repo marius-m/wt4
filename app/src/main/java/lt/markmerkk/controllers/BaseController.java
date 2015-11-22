@@ -3,12 +3,8 @@ package lt.markmerkk.controllers;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
-import lt.markmerkk.storage.entities.LogStorage;
-import lt.markmerkk.storage.entities.Project;
-import lt.markmerkk.storage.entities.Storage;
-import lt.markmerkk.storage.entities.Task;
 import lt.markmerkk.storage2.entities.SimpleLog;
-import lt.markmerkk.storage2.jobs.CreateJob;
+import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,38 +13,30 @@ import lt.markmerkk.storage2.jobs.CreateJob;
  * Time: 8:47 PM
  */
 public abstract class BaseController {
-
-    protected final LogStorage logStorage;
-    protected final Storage<Task> taskStorage;
-    protected final Storage<Project> projectStorage;
-    private final DBProdExecutor executor;
+    protected final DBProdExecutor executor;
 
     public interface BaseControllerDelegate {
-        public Stage getStage();
-        public BaseController pushScene(String sceneXml, Object data);
-        public void popScene();
+        Stage getStage();
+        BaseController pushScene(String sceneXml, Object data);
+        void popScene();
     }
 
-    protected BaseControllerDelegate mMasterListener;
-    protected Scene mMasterScene;
+    protected BaseControllerDelegate masterListener;
+    protected Scene masterScene;
 
     public BaseController() {
-        logStorage = new LogStorage();
-        taskStorage = new Storage<Task>(Task.class);
-        projectStorage = new Storage<Project>(Project.class);
-
         // Initializing database
         executor = new DBProdExecutor();
-        executor.execute(new CreateJob<SimpleLog>(SimpleLog.class));
+        executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     }
 
     public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {
-        mMasterListener = listener;
-        mMasterScene = scene;
+        masterListener = listener;
+        masterScene = scene;
     }
 
     public Scene getMasterScene() {
-        return mMasterScene;
+        return masterScene;
     }
 
     public void create(Object data) {

@@ -146,6 +146,7 @@ public class DBMockExecutorProdTest {
     List<Mock4> result = queryListJob.result();
 
     // Assert
+    assertThat(result.size()).isEqualTo(3);
     System.out.println(result);
     for (int i = 0; i < result.size(); i++) {
       Mock4 resultMock = result.get(i);
@@ -155,6 +156,20 @@ public class DBMockExecutorProdTest {
       assertThat(resultMock.get_id()).isEqualTo(20L+i);
       assertThat(resultMock.getId()).isEqualTo(30L+i);
     }
+  }
+
+  @Test public void shouldQueryListOnEmptyMock4() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    executor.execute(new CreateJobIfNeeded<>(Mock4.class));
+    QueryListJob<Mock4> queryListJob = new QueryListJob<Mock4>(Mock4.class);
+    executor.execute(queryListJob);
+    List<Mock4> result = queryListJob.result();
+
+    // Assert
+    assertThat(result.size()).isEqualTo(0);
   }
 
   @Test public void shouldQueryProperRow() throws Exception {

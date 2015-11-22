@@ -1,22 +1,17 @@
 package lt.markmerkk.controllers;
 
-import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lt.markmerkk.storage.entities.Log;
-import lt.markmerkk.storage.entities.Project;
-import lt.markmerkk.storage.entities.table.LogTable;
-import lt.markmerkk.utils.TaskController;
+import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.jobs.UpdateJob;
+import lt.markmerkk.utils.Utils;
 import org.joda.time.DateTime;
 
 public class UpdateLogController extends BaseController {
@@ -25,12 +20,9 @@ public class UpdateLogController extends BaseController {
     @FXML TextField startInput;
     @FXML TextField endInput;
     @FXML TextArea commentInput;
-    //@FXML ListView gitInput;
     @FXML TextField durationInput;
-    @FXML HBox durationContainer;
-    private ObservableList<String> gitLogs;
-    private LogTable logToUpdate;
-    private ArrayList<Project> projects;
+
+    private SimpleLog updateLog;
 
     public UpdateLogController() {
         super();
@@ -39,37 +31,38 @@ public class UpdateLogController extends BaseController {
     @Override
     public void create(Object data) {
         super.create(data);
-        projects = projectStorage.readAll();
+        updateLog = (SimpleLog) data;
 
-        logToUpdate = (LogTable) data;
-        startInput.setText(logToUpdate.getLongVerbalStart());
+        startInput.setText(updateLog.getLongStart());
         startInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
                 String newValue) {
-                updateDuration();
+                update();
             }
         });
-        endInput.setText(logToUpdate.getLongVerbalEnd());
+        endInput.setText(updateLog.getLongEnd());
         endInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
                 String newValue) {
-                updateDuration();
+                update();
             }
         });
-        commentInput.setText(logToUpdate.getComment());
-        taskInput.setText(logToUpdate.getCategory());
-        updateDuration();
+        commentInput.setText(updateLog.getComment());
+        taskInput.setText(updateLog.getTask());
+        update();
     }
 
-    private void updateDuration() {
+    private void update() {
         try {
-            DateTime startTime = logToUpdate.getLongFormat().parseDateTime(startInput.getText());
-            DateTime endTime = logToUpdate.getLongFormat().parseDateTime(endInput.getText());
-            if (startTime.isAfter(endTime))
-                throw new IllegalArgumentException("Start time cannot be after end time!");
-            durationInput.setText(Log.formatDuration(endTime.getMillis() - startTime.getMillis()));
+            updateLog = new SimpleLogBuilder(DateTime.now().getMillis(), updateLog)
+                .setStart(SimpleLog.longFormat.parseDateTime(startInput.getText()).getMillis())
+                .setEnd(SimpleLog.longFormat.parseDateTime(endInput.getText()).getMillis())
+                .setTask(Utils.validateTaskTitle(taskInput.getText()))
+                .setComment(commentInput.getText())
+                .build();
+            durationInput.setText(updateLog.getPrettyDuration());
         } catch (IllegalArgumentException e) {
             durationInput.setText("Error: " + e.getMessage());
         }
@@ -82,30 +75,21 @@ public class UpdateLogController extends BaseController {
 
     @FXML public void saveAndExit() {
         try {
-            logToUpdate.setComment(commentInput.getText());
-            DateTime startTime = logToUpdate.getLongFormat().parseDateTime(startInput.getText());
-            DateTime endTime = logToUpdate.getLongFormat().parseDateTime(endInput.getText());
-            if (startTime.isAfter(endTime))
-                throw new IllegalArgumentException("Start time cannot be after end time!");
-            logToUpdate.setStart(startTime.getMillis());
-            logToUpdate.setEnd(endTime.getMillis());
-            String newTaskName = TaskController.inspectAndFormTitle(taskInput.getText());
-            if (newTaskName != null)
-                logToUpdate.setCategory(newTaskName);
-            logStorage.update(logToUpdate);
-            mMasterListener.popScene();
+            update();
+            executor.execute(new UpdateJob(SimpleLog.class, updateLog));
+            masterListener.popScene();
         } catch (IllegalArgumentException e) {
             System.out.println("Cannot save!"+e.getMessage());
         }
     }
 
     @FXML public void pop() {
-        mMasterListener.popScene();
+        masterListener.popScene();
     }
 
     @FXML public void delete() {
-        logStorage.delete(logToUpdate.getId());
-        mMasterListener.popScene();
+        //logStorage.delete(updateLog.getId());
+        masterListener.popScene();
     }
 
 }

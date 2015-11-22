@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,14 +24,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lt.markmerkk.storage.entities.Log;
-import lt.markmerkk.storage.entities.Project;
-import lt.markmerkk.storage.entities.Task;
-import lt.markmerkk.storage.entities.annotations.TableIndex;
 import lt.markmerkk.storage.entities.table.LogTable;
+import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.jobs.InsertJob;
+import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.TaskController;
+import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
@@ -42,16 +44,11 @@ import org.tmatesoft.sqljet.core.table.SqlJetScope;
  * Created by mariusmerkevicius on 11/16/15.
  */
 public class MainController extends BaseController {
-  private final TaskController taskController;
-  //private final Logger logger;
   private final HourGlass hourGlass;
   private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
   private final DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
 
-  private ObservableList<LogTable> logs;
-  private ObservableList<Task> tasks;
-  private ObservableList<Project> projects;
-  private Project projectFilter = null;
+  private ObservableList<SimpleLog> logs;
   private DateTime filterDate;
 
   @FXML TextField inputTo;
@@ -69,9 +66,6 @@ public class MainController extends BaseController {
   DatePicker datePicker;
 
   public MainController() {
-    taskController = new TaskController(taskControllerListener);
-    //logger = new Logger();
-    //logger.setListener(loggerListener);
     hourGlass = new HourGlass();
     hourGlass.setListener(hourglassListener);
   }
@@ -84,10 +78,6 @@ public class MainController extends BaseController {
 
     initViewListeners();
     initViews();
-
-    notifyProjectsChanged();
-    notifyTasksChanged();
-    notifyLogsChanged();
   }
 
   //region Init
@@ -186,22 +176,17 @@ public class MainController extends BaseController {
         throw new IllegalArgumentException("Please run timer first!");
       if (!hourGlass.isValid())
         throw new IllegalArgumentException("Error calculating time!");
-      Log.Builder logBuilder = new Log.Builder();
-      logBuilder.setStart(hourGlass.reportStart().getMillis());
-      logBuilder.setEnd(hourGlass.reportEnd().getMillis());
-      taskController.handle(inputTask.getText());
-      logBuilder.setCategory(TaskController.inspectAndFormTitle(inputTask.getText()));
-      logBuilder.setMessage(inputComment.getText());
-      Log log = logBuilder.build();
-
-      logStorage.insert(log);
+      SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
+          .setStart(hourGlass.reportStart().getMillis())
+          .setEnd(hourGlass.reportEnd().getMillis())
+          .setTask(TaskController.inspectAndFormTitle(inputTask.getText()))
+          .setComment(inputComment.getText()).build();
+      executor.execute(new InsertJob(SimpleLog.class, log));
 
       // Resetting controls
       inputComment.setText("");
       hourGlass.restart();
       notifyLogsChanged();
-      notifyTasksChanged();
-      notifyProjectsChanged();
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
@@ -227,50 +212,21 @@ public class MainController extends BaseController {
   }
 
   /**
-   * Updates tasks from the database
-   */
-  private void notifyTasksChanged() {
-    ArrayList<Task> tasks = taskStorage.readAll();
-    if (this.tasks == null)
-      this.tasks = FXCollections.observableArrayList();
-    this.tasks.clear();
-    if (projectFilter != null) {
-      for (Task task : tasks)
-        if (task.getTitle().startsWith(projectFilter.getTitle()))
-          this.tasks.add(task);
-    } else
-      this.tasks.addAll(tasks);
-  }
-
-  /**
-   * Updates projects from the database
-   */
-  private void notifyProjectsChanged() {
-    ArrayList<Project> projects = projectStorage.readAll();
-    if (this.projects == null)
-      this.projects = FXCollections.observableArrayList();
-    this.projects.clear();
-    //this.projects.add(masterProject);
-    this.projects.addAll(projects);
-    //if (projectsBox != null)
-    //  projectsBox.setValue(masterProject);
-  }
-
-  /**
    * Updates logs from the database
    */
   private void notifyLogsChanged() {
-    ArrayList<Log> logs = logStorage.readWithScope(Log.class.getAnnotation(TableIndex.class).name(),
-        new SqlJetScope(
-            new Object[]{filterDate.getMillis()},
-            new Object[]{filterDate.plusDays(1).getMillis()}
-        )
-    );
-    if (this.logs == null)
-      this.logs = FXCollections.observableArrayList();
-    this.logs.clear();
-    for (Log log : logs)
-      this.logs.add(log.toTableEntity());
+    //ArrayList<Log> logs = logStorage.readWithScope(Log.class.getAnnotation(TableIndex.class).name(),
+    //    new SqlJetScope(
+    //        new Object[]{filterDate.getMillis()},
+    //        new Object[]{filterDate.plusDays(1).getMillis()}
+    //    )
+    //);
+    QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class);
+    executor.execute(queryJob);
+    if (logs == null)
+      logs = FXCollections.observableArrayList();
+    logs.clear();
+    logs.addAll(queryJob.result());
     countTotal();
   }
 
@@ -279,67 +235,33 @@ public class MainController extends BaseController {
    */
   private void countTotal() {
     long total = 0;
-    for (LogTable log : logs) {
+    for (SimpleLog log : logs)
       total += log.getDuration();
-    }
-    totalView.setText(Log.formatDuration(total));
+    totalView.setText(Utils.formatDuration(total));
   }
 
   //endregion
 
   //region Listeners
 
-  TableDisplayController.Listener<LogTable> listener =
-      new TableDisplayController.Listener<LogTable>() {
-        @Override public void onUpdate(LogTable object) {
-          mMasterListener.pushScene("/update_log.fxml", object);
+  TableDisplayController.Listener<SimpleLog> listener =
+      new TableDisplayController.Listener<SimpleLog>() {
+        @Override public void onUpdate(SimpleLog object) {
+          masterListener.pushScene("/update_log.fxml", object);
         }
 
-        @Override public void onDelete(LogTable object) {
-          logStorage.delete(object.getId());
-          notifyLogsChanged();
+        @Override public void onDelete(SimpleLog object) {
+          //logStorage.delete(object.getId());
+          //notifyLogsChanged();
         }
       };
-
-  private TaskController.ResourceListener taskControllerListener = new TaskController.ResourceListener() {
-    @Override
-    public ObservableList<Task> getTasks() {
-      return tasks;
-    }
-
-    @Override
-    public ObservableList<Project> getProjects() {
-      return projects;
-    }
-
-    @Override
-    public Long onNewProject(Project newProject) {
-      return (Long)projectStorage.insert(newProject);
-    }
-
-    @Override
-    public Long onNewTask(Task newTask) {
-      return (Long)taskStorage.insert(newTask);
-    }
-
-    @Override
-    public Long onUpdateTask(Task updateTask) {
-      return (Long)taskStorage.update(updateTask);
-    }
-
-    @Override
-    public void onDataChange() {
-      notifyTasksChanged();
-      notifyProjectsChanged();
-    }
-  };
 
   private Listener hourglassListener = new Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(shortFormat.print(start));
       inputTo.setText(shortFormat.print(end));
-      outputDuration.setText(Log.formatDuration(duration));
+      outputDuration.setText(Utils.formatDuration(duration));
     }
 
     @Override
@@ -360,7 +282,7 @@ public class MainController extends BaseController {
       String newTo = shortFormat.print(end);
       if (!newTo.equals(inputTo.getText()) && !inputTo.isFocused())
         inputTo.setText(newTo);
-      outputDuration.setText(Log.formatDuration(duration));
+      outputDuration.setText(Utils.formatDuration(duration));
     }
 
     @Override public void onError(HourGlass.Error error) {
@@ -384,46 +306,6 @@ public class MainController extends BaseController {
     }
   };
 
-  //private Logger.Listener loggerListener = new Logger.Listener() {
-  //  @Override
-  //  public void onParse(DateTime startTime, DateTime endTime, String comment, String task) {
-  //    try {
-  //      Log.Builder logBuilder = new Log.Builder();
-  //      // Get days from
-  //      if (startTime == null && hourGlass.getStartMillis() != 0)
-  //        startTime = new DateTime(hourGlass.getStartMillis());
-  //      if (startTime == null)
-  //        startTime = new DateTime(DateTimeUtils.currentTimeMillis());
-  //      int days = Days.daysBetween(filterDate.toLocalDate(), startTime.toLocalDate()).getDays();
-  //      startTime = startTime.minusDays(days);
-  //      logBuilder.setStart(startTime.getMillis());
-  //      if (endTime == null)
-  //        endTime = new DateTime(DateTimeUtils.currentTimeMillis());
-  //      endTime = endTime.minusDays(days);
-  //      logBuilder.setEnd(endTime.getMillis());
-  //      taskController.handle(task);
-  //      String taskName = TaskController.inspectAndFormTitle(task);
-  //      if (taskName != null)
-  //        logBuilder.setCategory(taskName);
-  //      String projectName = TaskController.splitName(taskName);
-  //      Project project = Project.getProjectWithTitle(projects, projectName);
-  //
-  //      logBuilder.setMessage(comment);
-  //      Log log = logBuilder.build();
-  //      logStorage.insert(log);
-  //
-  //      // Resetting controls
-  //      inputComment.setText("");
-  //      hourGlass.restart();
-  //      notifyLogsChanged();
-  //      notifyTasksChanged();
-  //      notifyProjectsChanged();
-  //    } catch (IllegalArgumentException e) {
-  //      System.out.println(e.getMessage());
-  //    }
-  //  }
-  //};
-
   //endregion
 
   //region World events
@@ -431,7 +313,6 @@ public class MainController extends BaseController {
   @Override
   public void resume() {
     super.resume();
-    notifyProjectsChanged();
     notifyLogsChanged();
   }
 

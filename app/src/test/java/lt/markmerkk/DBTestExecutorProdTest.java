@@ -12,7 +12,6 @@ import lt.markmerkk.storage2.jobs.UpdateJob;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * Created by mariusmerkevicius on 11/22/15.
@@ -33,7 +32,7 @@ public class DBTestExecutorProdTest {
 
     // Act
     // Assert
-    SimpleLog log = new SimpleLog(1000, 2000, "TT-182", "Some comment");
+    SimpleLog log = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment");
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
   }
@@ -44,9 +43,9 @@ public class DBTestExecutorProdTest {
 
     // Act
     // Assert
-    SimpleLog log = new SimpleLog(1000, 2000, "TT-182", "Some comment");
-    SimpleLog log2 = new SimpleLog(1000, 2000, "TT-182", "Some comment");
-    SimpleLog log3 = new SimpleLog(1000, 2000, "TT-182", "Some comment");
+    SimpleLog log = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment");
+    SimpleLog log2 = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment");
+    SimpleLog log3 = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment");
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
     executor.execute(new InsertJob(SimpleLog.class, log2));
@@ -62,7 +61,7 @@ public class DBTestExecutorProdTest {
     DBMockExecutor executor = new DBMockExecutor();
 
     // Act
-    SimpleLog log = new SimpleLog(1000, 2000, "TT-182", "Some comment");
+    SimpleLog log = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment");
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
 
@@ -83,9 +82,9 @@ public class DBTestExecutorProdTest {
     DBMockExecutor executor = new DBMockExecutor();
 
     // Act
-    SimpleLog log1 = new SimpleLog(1000, 2000, "TT-182", "Some comment1");
-    SimpleLog log2 = new SimpleLog(2000, 3000, "TT-182", "Some comment2");
-    SimpleLog log3 = new SimpleLog(3000, 4000, "TT-182", "Some comment3");
+    SimpleLog log1 = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment1");
+    SimpleLog log2 = new SimpleLog(2000, 3000, 1000, "TT-182", "Some comment2");
+    SimpleLog log3 = new SimpleLog(3000, 4000, 1000, "TT-182", "Some comment3");
 
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));
@@ -97,9 +96,10 @@ public class DBTestExecutorProdTest {
 
     // Assert
     System.out.println(result);
+    assertThat(result.size()).isEqualTo(3);
     for (int i = 0; i < result.size(); i++) {
       SimpleLog resultLog = result.get(i);
-      assertThat(resultLog.getComment()).isEqualTo("Some comment"+i);
+      assertThat(resultLog.getComment()).isEqualTo("Some comment" + (i + 1));
     }
   }
 
@@ -109,9 +109,9 @@ public class DBTestExecutorProdTest {
     DBMockExecutor executor = new DBMockExecutor();
 
     // Act
-    SimpleLog log1 = new SimpleLog(1000, 2000, "TT-182", "Some comment1");
-    SimpleLog log2 = new SimpleLog(2000, 3000, "TT-182", "Some comment2");
-    SimpleLog log3 = new SimpleLog(3000, 4000, "TT-182", "Some comment3");
+    SimpleLog log1 = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment1");
+    SimpleLog log2 = new SimpleLog(2000, 3000, 1000, "TT-182", "Some comment2");
+    SimpleLog log3 = new SimpleLog(3000, 4000, 1000, "TT-182", "Some comment3");
 
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));
@@ -137,9 +137,9 @@ public class DBTestExecutorProdTest {
     DBMockExecutor executor = new DBMockExecutor();
 
     // Act
-    SimpleLog log1 = new SimpleLog(1000, 2000, "TT-182", "Some comment1");
-    SimpleLog log2 = new SimpleLog(2000, 3000, "TT-182", "Some comment2");
-    SimpleLog log3 = new SimpleLog(3000, 4000, "TT-182", "Some comment3");
+    SimpleLog log1 = new SimpleLog(1000, 2000, 1000, "TT-182", "Some comment1");
+    SimpleLog log2 = new SimpleLog(2000, 3000, 1000, "TT-182", "Some comment2");
+    SimpleLog log3 = new SimpleLog(3000, 4000, 1000, "TT-182", "Some comment3");
 
     executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));

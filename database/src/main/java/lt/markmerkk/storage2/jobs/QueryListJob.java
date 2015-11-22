@@ -36,11 +36,8 @@ public class QueryListJob<T> implements IQueryJob, IResult<List<T>> {
   @Override public void execute(Connection connection) throws SQLException {
     ResultSet resultSet = connection.createStatement().executeQuery(query());
     entities = new ArrayList<>();
-    if (resultSet.getFetchSize() > 0) {
-      resultSet.first();
-      do {
-        entities.add(DBQueryUtils.unwrapResult(clazz, resultSet));
-      } while(resultSet.next());
+    while (resultSet.next()) {
+      entities.add(DBQueryUtils.unwrapResult(clazz, resultSet));
     }
     resultSet.close();
   }
