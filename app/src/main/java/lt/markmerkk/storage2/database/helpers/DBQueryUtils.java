@@ -1,8 +1,11 @@
 package lt.markmerkk.storage2.database.helpers;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 import lt.markmerkk.storage.entities.annotations.Column;
+import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 import lt.markmerkk.utils.Utils;
 
 /**
@@ -10,6 +13,30 @@ import lt.markmerkk.utils.Utils;
  * Static utils helper class for forming queries
  */
 public class DBQueryUtils {
+
+  /**
+   * Unwraps a result set into an entity with concrete data
+   * @param resultSet provided result set
+   * @return entity
+   * @throws IllegalArgumentException
+   * @throws SQLException
+   */
+  public static <T>T unwrapResult(Class<T> clazz, ResultSet resultSet) throws IllegalArgumentException, SQLException {
+    if (clazz == null) throw new IllegalArgumentException("Class is invalid!");
+    if (resultSet == null) throw new IllegalArgumentException("ResultSet is invalid!");
+    try {
+      T entity = clazz.newInstance();
+      if (!(entity instanceof DBUnpackable)) throw new IllegalArgumentException("Provided entity is not unpackable!");
+      DBUnpackable unpackable = (DBUnpackable) entity;
+      unpackable.unpack(resultSet);
+      return entity;
+    } catch (InstantiationException e) {
+      throw new IllegalArgumentException("Provided entity model cant be created!");
+    } catch (IllegalAccessException e) {
+      throw new IllegalArgumentException("Provided entity model cant be accessed!");
+    }
+  }
+
   /**
    * Generates column
    *
