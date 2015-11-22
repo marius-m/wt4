@@ -16,7 +16,7 @@ public class InsertJobInitTest {
     // Act
     // Assert
     try {
-      new InsertJob<>(null, mock(Mock4.class));
+      new InsertJob(null, mock(Mock4.class));
       fail("Should not create a class with null input");
     } catch (IllegalArgumentException e) {
       assertThat(e.getMessage()).isEqualTo("Cannot create job without a class");
@@ -28,7 +28,7 @@ public class InsertJobInitTest {
     // Act
     // Assert
     try {
-      new InsertJob<>(Mock4.class, null);
+      new InsertJob(Mock4.class, null);
       fail("Should not create a class with null input");
     } catch (IllegalArgumentException e) {
       assertThat(e.getMessage()).isEqualTo("Cannot create job without an instance");
@@ -39,7 +39,7 @@ public class InsertJobInitTest {
     // Arrange
     // Act
     // Assert
-    new InsertJob<Mock4>(Mock4.class, mock(Mock4.class));
+    new InsertJob(Mock4.class, mock(Mock4.class));
   }
 
 }

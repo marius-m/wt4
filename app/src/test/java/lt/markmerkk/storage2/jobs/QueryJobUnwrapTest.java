@@ -85,4 +85,30 @@ public class QueryJobUnwrapTest {
     assertThat(mock3.getTitle()).isEqualTo("some_title");
     assertThat(mock3.getParam()).isEqualTo("some_param");
   }
+
+  @Test public void testValid2() throws Exception {
+    // Arrange
+    QueryJob<Mock4> query = new QueryJob<Mock4>(Mock4.class);
+    ResultSet resultSet = mock(ResultSet.class);
+    doReturn(0).when(resultSet).findColumn("_id");
+    doReturn(1).when(resultSet).findColumn("id");
+    doReturn(2).when(resultSet).findColumn("parentParam");
+    doReturn(3).when(resultSet).findColumn("title");
+    doReturn(4).when(resultSet).findColumn("name");
+    doReturn(20L).when(resultSet).getLong(0);
+    doReturn(30L).when(resultSet).getLong(1);
+    doReturn("some_parent_param").when(resultSet).getString(2);
+    doReturn("some_title").when(resultSet).getString(3);
+    doReturn("some_name").when(resultSet).getString(4);
+    // Act
+    query.unwrapResult(resultSet);
+    Mock4 mock4 = query.result();
+    // Assert
+    assertThat(mock4).isNotNull();
+    assertThat(mock4.getTitle()).isEqualTo("some_title");
+    assertThat(mock4.getName()).isEqualTo("some_name");
+    assertThat(mock4.getParentParam()).isEqualTo("some_parent_param");
+    assertThat(mock4.get_id()).isEqualTo(20L);
+    assertThat(mock4.getId()).isEqualTo(30L);
+  }
 }
