@@ -3,6 +3,7 @@ package lt.markmerkk.storage2.database;
 import java.util.List;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
+import lt.markmerkk.storage2.database.helpers.entities.Mock5;
 import lt.markmerkk.storage2.database.interfaces.DBIndexable;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.storage2.jobs.CreateJob;
@@ -66,6 +67,21 @@ public class DBMockExecutorProdTest {
     System.out.println(result);
     assertThat(result.getTitle()).isEqualTo("some_title");
     assertThat(result.getParam()).isEqualTo("some_param");
+  }
+
+  @Test public void shouldInsertAndAssignMock5() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock5 mock1 = new Mock5("some_title", "some_param");
+    Mock5 mock2 = new Mock5("some_title2", "some_param2");
+    executor.execute(new CreateJobIfNeeded<>(Mock5.class));
+    executor.execute(new InsertJob(Mock5.class, mock1));
+    executor.execute(new InsertJob(Mock5.class, mock2));
+
+    assertThat(mock1.get_id()).isEqualTo(1);
+    assertThat(mock2.get_id()).isEqualTo(2);
   }
 
   @Test public void shouldQueryMock4() throws Exception {

@@ -5,5 +5,10 @@ package lt.markmerkk.storage2.database.interfaces;
  * Represents the data that is passed down in where clause
  */
 public interface DBIndexable extends DBEntity {
+
+  /**
+   * Defines an index clause to make a query to
+   * @return
+   */
   String indexClause();
 }

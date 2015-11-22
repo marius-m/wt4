@@ -52,4 +52,5 @@ import lt.markmerkk.storage2.database.annotations.Table;
     title = resultSet.getString(resultSet.findColumn(KEY_TITLE));
     name = resultSet.getString(resultSet.findColumn(KEY_NAME));
   }
+
 }

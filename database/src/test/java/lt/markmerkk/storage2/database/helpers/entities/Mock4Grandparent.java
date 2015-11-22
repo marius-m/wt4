@@ -42,4 +42,5 @@ import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
   @Override public String indexClause() {
     return "_id = '"+_id+"'";
   }
+
 }

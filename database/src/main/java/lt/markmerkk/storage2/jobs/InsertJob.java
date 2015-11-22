@@ -1,8 +1,12 @@
 package lt.markmerkk.storage2.jobs;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import lt.markmerkk.storage2.database.helpers.DBQueryInsert;
+import lt.markmerkk.storage2.database.interfaces.DBEntity;
+import lt.markmerkk.storage2.database.interfaces.DBIndexUpdatable;
 import lt.markmerkk.storage2.database.interfaces.DBPackable;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
 
@@ -12,10 +16,10 @@ import lt.markmerkk.storage2.database.interfaces.IQueryJob;
  */
 public class InsertJob implements IQueryJob {
 
-  private final DBPackable entity;
+  private final DBEntity entity;
   private final Class clazz;
 
-  public InsertJob(Class clazz, DBPackable entity) {
+  public InsertJob(Class clazz, DBEntity entity) {
     if (clazz == null)
       throw new IllegalArgumentException("Cannot create job without a class");
     if (entity == null)
@@ -29,6 +33,10 @@ public class InsertJob implements IQueryJob {
   }
 
   @Override public void execute(Connection connection) throws SQLException {
-    connection.createStatement().execute(query());
+    Statement statement = connection.createStatement();
+    statement.execute(query());
+    ResultSet result = statement.getGeneratedKeys();
+    if (entity instanceof DBIndexUpdatable)
+      ((DBIndexUpdatable) entity).updateIndex(result.getInt(1)); // shour return row id
   }
 }
