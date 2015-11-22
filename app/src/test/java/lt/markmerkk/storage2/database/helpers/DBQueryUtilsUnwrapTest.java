@@ -79,7 +79,6 @@ public class DBQueryUtilsUnwrapTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
-    QueryJob<Mock3> query = new QueryJob<Mock3>(Mock3.class);
     ResultSet resultSet = mock(ResultSet.class);
     doReturn(0).when(resultSet).findColumn("title");
     doReturn(1).when(resultSet).findColumn("param");
@@ -95,7 +94,6 @@ public class DBQueryUtilsUnwrapTest {
 
   @Test public void testValid2() throws Exception {
     // Arrange
-    QueryJob<Mock4> query = new QueryJob<Mock4>(Mock4.class);
     ResultSet resultSet = mock(ResultSet.class);
     doReturn(0).when(resultSet).findColumn("_id");
     doReturn(1).when(resultSet).findColumn("id");

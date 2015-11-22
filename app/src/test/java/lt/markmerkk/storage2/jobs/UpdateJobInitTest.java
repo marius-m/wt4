@@ -1,7 +1,6 @@
 package lt.markmerkk.storage2.jobs;
 
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
-import lt.markmerkk.storage2.database.interfaces.DBIndexable;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,16 +10,16 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by mariusmerkevicius on 11/22/15.
  */
-public class QueryJobInitTest {
+public class UpdateJobInitTest {
   @Test public void testNullClass() throws Exception {
     // Arrange
     // Act
     // Assert
     try {
-      new QueryJob(null, mock(DBIndexable.class));
-      fail("Should not create a job with invalid input");
+      new InsertJob(null, mock(Mock4.class));
+      fail("Should not create a class with null input");
     } catch (IllegalArgumentException e) {
-      assertThat(e).hasMessage("Cannot create job without an entity");
+      assertThat(e.getMessage()).isEqualTo("Cannot create job without a class");
     }
   }
 
@@ -29,10 +28,10 @@ public class QueryJobInitTest {
     // Act
     // Assert
     try {
-      new QueryJob(Mock4.class, null);
-      fail("Should not create a job with invalid input");
+      new InsertJob(Mock4.class, null);
+      fail("Should not create a class with null input");
     } catch (IllegalArgumentException e) {
-      assertThat(e).hasMessage("Cannot create job without an index");
+      assertThat(e.getMessage()).isEqualTo("Cannot create job without an instance");
     }
   }
 
@@ -40,6 +39,6 @@ public class QueryJobInitTest {
     // Arrange
     // Act
     // Assert
-    new QueryJob<Mock4>(Mock4.class, mock(DBIndexable.class));
+    new InsertJob(Mock4.class, mock(Mock4.class));
   }
 }

@@ -32,6 +32,14 @@ import lt.markmerkk.storage.entities.annotations.Table;
     return name;
   }
 
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   @Override public Map<String, Object> pack() throws IllegalArgumentException {
     Map<String, Object> pack = super.pack();
     pack.put(KEY_TITLE, "\"" + title + "\"");

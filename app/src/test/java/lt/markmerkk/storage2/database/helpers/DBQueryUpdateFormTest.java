@@ -109,7 +109,7 @@ public class DBQueryUpdateFormTest {
     // Assert
     //assertEquals("UPDATE mock3 (title,param) VALUES (\"some_title\",\"some_params\");",
     assertEquals(
-        "UPDATE mock3 SET (title=\"some_title\",param=\"some_params\") WHERE title = 'some_title'",
+        "UPDATE mock3 SET title=\"some_title\",param=\"some_params\" WHERE title = 'some_title'",
         update.formQuery(Mock3.class, mock3));
   }
 
@@ -127,7 +127,7 @@ public class DBQueryUpdateFormTest {
     // Assert
     //assertEquals("UPDATE mock3 (title,param) VALUES (\"some_title\",\"some_params\");",
     assertEquals(
-        "UPDATE mock3 SET (_id=20,id=30,parentParam=\"some_parent_param\",title=\"some_title\",name=\"some_name\") WHERE _id = '20'",
+        "UPDATE mock3 SET _id=20,id=30,parentParam=\"some_parent_param\",title=\"some_title\",name=\"some_name\" WHERE _id = '20'",
         update.formQuery(Mock3.class, mock));
   }
 }

@@ -57,10 +57,8 @@ public class DBQueryUtils {
       query.append(",");
     }
 
-    // Detele the last comma and wrap in brackets
+    // Detele the last comma
     query.deleteCharAt(query.length() - 1);
-    query.insert(0, "(");
-    query.append(")");
 
     return query.toString();
   }
