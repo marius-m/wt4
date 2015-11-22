@@ -7,39 +7,25 @@ import java.util.Map;
 import lt.markmerkk.storage.entities.annotations.Column;
 import lt.markmerkk.storage.entities.annotations.FieldType;
 import lt.markmerkk.storage.entities.annotations.Table;
-import lt.markmerkk.storage2.database.interfaces.DBIndexable;
 import lt.markmerkk.storage2.database.interfaces.DBPackable;
 import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-@Table(name = "mock4") public class Mock4Grandparent implements DBPackable, DBUnpackable,
-    DBIndexable {
-  public static final String KEY_ID = "_id";
-  @Column(value = FieldType.INTEGER) Long _id;
-
-  public Mock4Grandparent() {}
-
-  public Mock4Grandparent(Long _id) {
-    this._id = _id;
-  }
+@Table(name = "mock3") public class Mock3NoIndexable implements DBPackable, DBUnpackable {
+  @Column(value = FieldType.TEXT) String title;
+  @Column(value = FieldType.INTEGER) String param;
 
   @Override public Map<String, Object> pack() throws IllegalArgumentException {
-    return new LinkedHashMap<String, Object>() {{
-      put(KEY_ID, _id);
-    }};
-  }
-
-  public Long get_id() {
-    return _id;
+    LinkedHashMap<String, Object> hashMap = new LinkedHashMap<String, Object>();
+    hashMap.put("title", "\"" + title + "\"");
+    hashMap.put("param", "\"" + param + "\"");
+    return hashMap;
   }
 
   @Override public void unpack(ResultSet resultSet) throws IllegalArgumentException, SQLException {
-    _id = resultSet.getLong(resultSet.findColumn(KEY_ID));
-  }
-
-  @Override public String indexClause() {
-    return "_id = '"+_id+"'";
+    this.title = resultSet.getString(resultSet.findColumn("title"));
+    this.param = resultSet.getString(resultSet.findColumn("param"));
   }
 }

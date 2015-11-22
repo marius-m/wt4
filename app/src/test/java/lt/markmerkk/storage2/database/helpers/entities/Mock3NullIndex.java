@@ -14,32 +14,28 @@ import lt.markmerkk.storage2.database.interfaces.DBUnpackable;
 /**
  * Created by mariusmerkevicius on 11/21/15.
  */
-@Table(name = "mock4") public class Mock4Grandparent implements DBPackable, DBUnpackable,
-    DBIndexable {
-  public static final String KEY_ID = "_id";
-  @Column(value = FieldType.INTEGER) Long _id;
+@Table(name = "mock3") public class Mock3NullIndex implements DBPackable, DBIndexable, DBUnpackable {
+  @Column(value = FieldType.TEXT) String title;
+  @Column(value = FieldType.INTEGER) String param;
 
-  public Mock4Grandparent() {}
-
-  public Mock4Grandparent(Long _id) {
-    this._id = _id;
+  public Mock3NullIndex(String title, String param) {
+    this.title = title;
+    this.param = param;
   }
 
   @Override public Map<String, Object> pack() throws IllegalArgumentException {
-    return new LinkedHashMap<String, Object>() {{
-      put(KEY_ID, _id);
-    }};
-  }
-
-  public Long get_id() {
-    return _id;
-  }
-
-  @Override public void unpack(ResultSet resultSet) throws IllegalArgumentException, SQLException {
-    _id = resultSet.getLong(resultSet.findColumn(KEY_ID));
+    LinkedHashMap<String, Object> hashMap = new LinkedHashMap<String, Object>();
+    hashMap.put("title", "\"" + title + "\"");
+    hashMap.put("param", "\"" + param + "\"");
+    return hashMap;
   }
 
   @Override public String indexClause() {
-    return "_id = '"+_id+"'";
+    return null;
+  }
+
+  @Override public void unpack(ResultSet resultSet) throws IllegalArgumentException, SQLException {
+    this.title = resultSet.getString(resultSet.findColumn("title"));
+    this.param = resultSet.getString(resultSet.findColumn("param"));
   }
 }

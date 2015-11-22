@@ -42,6 +42,35 @@ public class DBQueryUtils {
    *
    * @return sql script
    */
+  public static String formKeyValuesFromMap(Map<String, Object> map) throws IllegalArgumentException {
+    if (map == null) throw new IllegalArgumentException("Cannot form columns without a map!");
+    if (map.size() == 0) throw new IllegalArgumentException("Cannot form columns with an empty map!");
+    StringBuilder query = new StringBuilder();
+    for (String s : map.keySet()) {
+      if (Utils.isEmpty(s)) continue;
+      Object object = map.get(s);
+      if (object == null) continue;
+      if (object instanceof String && Utils.isEmpty((String)object)) continue;
+      query.append(s);
+      query.append("=");
+      query.append(object);
+      query.append(",");
+    }
+
+    // Detele the last comma and wrap in brackets
+    query.deleteCharAt(query.length() - 1);
+    query.insert(0, "(");
+    query.append(")");
+
+    return query.toString();
+  }
+
+
+  /**
+   * Generates column
+   *
+   * @return sql script
+   */
   public static String formColumnsFromMapKeys(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("Cannot form columns without a map!");
     if (map.size() == 0) throw new IllegalArgumentException("Cannot form columns with an empty map!");

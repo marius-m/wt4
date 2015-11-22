@@ -2,7 +2,7 @@ package lt.markmerkk.storage2.database.helpers;
 
 import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtendNoPacking;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3NullPacking;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3NoInterfaces;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import org.junit.Test;
@@ -58,10 +58,10 @@ public class DBQueryInsertTest {
     // Arrange
     DBQueryInsert insert = new DBQueryInsert();
     // Act
-    Mock3NoExtendNoPacking mock3 = new Mock3NoExtendNoPacking("some_title", "some_params");
+    Mock3NullPacking mock3 = new Mock3NullPacking("some_title", "some_params");
     // Assert
     try {
-      insert.formQuery(Mock3NoExtendNoPacking.class, mock3);
+      insert.formQuery(Mock3NullPacking.class, mock3);
       fail("Cannot form without proper packing function");
     } catch (IllegalArgumentException e) {
       assertThat(e).hasMessage("Cannot form columns without a map!");
