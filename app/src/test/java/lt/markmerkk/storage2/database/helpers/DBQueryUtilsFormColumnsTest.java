@@ -2,7 +2,7 @@ package lt.markmerkk.storage2.database.helpers;
 
 import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
 import lt.markmerkk.storage2.database.helpers.entities.Mock2NoColumns;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtend;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class DBQueryUtilsFormColumnsTest {
     // Arrange
     // Act
     // Assert
-    assertThat(DBQueryUtils.formColumnsFromClass(Mock3NoExtend.class)).isEqualTo(" (title TEXT,param INTEGER)");
+    assertThat(DBQueryUtils.formColumnsFromClass(Mock3.class)).isEqualTo(" (title TEXT,param INTEGER)");
   }
 
   @Test public void testValidWithExtend() throws Exception {

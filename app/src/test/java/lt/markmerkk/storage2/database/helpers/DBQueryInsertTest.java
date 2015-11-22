@@ -1,9 +1,9 @@
 package lt.markmerkk.storage2.database.helpers;
 
 import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtend;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtendNoPacking;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NotInsertable;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3NoPacking;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import org.junit.Test;
 
@@ -47,7 +47,7 @@ public class DBQueryInsertTest {
     // Act
     // Assert
     try {
-      insert.formQuery(Mock3NotInsertable.class, null);
+      insert.formQuery(Mock3NoPacking.class, null);
       fail("Should not do an insert query");
     } catch (IllegalArgumentException e) {
       assertThat(e).hasMessage("Provided class does not implement DBInsertable!");
@@ -74,10 +74,10 @@ public class DBQueryInsertTest {
     // Arrange
     DBQueryInsert insert = new DBQueryInsert();
     // Act
-    Mock3NoExtend mock3 = new Mock3NoExtend("some_title", "some_params");
+    Mock3 mock3 = new Mock3("some_title", "some_params");
     // Assert
     assertEquals("INSERT INTO mock3 (title,param) VALUES (\"some_title\",\"some_params\");",
-        insert.formQuery(Mock3NoExtend.class, mock3));
+        insert.formQuery(Mock3.class, mock3));
 
   }
 

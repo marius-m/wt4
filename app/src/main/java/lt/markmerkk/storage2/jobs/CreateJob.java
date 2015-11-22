@@ -21,9 +21,11 @@ public class CreateJob<T> implements IQueryJob {
     this.clazz = clazz;
   }
 
+  @Override public String query() {
+    return new DBQueryCreate().formQuery(clazz);
+  }
+
   @Override public void execute(Connection connection) throws SQLException {
-    DBQueryCreate creationHelper = new DBQueryCreate();
-    Statement statement = connection.createStatement();
-    statement.execute(creationHelper.formQuery(clazz));
+    connection.createStatement().execute(query());
   }
 }

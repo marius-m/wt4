@@ -1,7 +1,6 @@
 package lt.markmerkk.storage2.jobs;
 
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
-import lt.markmerkk.storage2.database.interfaces.DBInsertable;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

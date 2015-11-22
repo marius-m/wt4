@@ -7,7 +7,7 @@ import java.util.Map;
  * Represents an entity that can be *packed* and
  * saved/updated in database
  */
-public interface DBInsertable extends DBEntity {
+public interface DBPackable extends DBEntity {
   /**
    * Packs parameters and returns them as key/values
    * @return

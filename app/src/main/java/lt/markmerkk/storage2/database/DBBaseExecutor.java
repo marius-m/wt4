@@ -14,6 +14,8 @@ public abstract class DBBaseExecutor {
 
   abstract String database();
 
+  // todo : will need an executor with returning a list
+
   /**
    * Runs a database execution
    */

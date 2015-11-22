@@ -2,10 +2,8 @@ package lt.markmerkk.storage2.jobs;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
-import lt.markmerkk.storage2.database.helpers.DBQueryCreate;
 import lt.markmerkk.storage2.database.helpers.DBQueryInsert;
-import lt.markmerkk.storage2.database.interfaces.DBInsertable;
+import lt.markmerkk.storage2.database.interfaces.DBPackable;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
 import lt.markmerkk.storage2.entities.SimpleLog;
 
@@ -15,10 +13,10 @@ import lt.markmerkk.storage2.entities.SimpleLog;
  */
 public class InsertJob<T> implements IQueryJob {
 
-  private final DBInsertable entity;
+  private final DBPackable entity;
   private final Class<T> clazz;
 
-  public InsertJob(Class<T> clazz, DBInsertable entity) {
+  public InsertJob(Class<T> clazz, DBPackable entity) {
     if (clazz == null)
       throw new IllegalArgumentException("Cannot create job without a class");
     if (entity == null)
@@ -27,9 +25,11 @@ public class InsertJob<T> implements IQueryJob {
     this.clazz = clazz;
   }
 
+  @Override public String query() {
+    return new DBQueryInsert().formQuery(clazz, entity);
+  }
+
   @Override public void execute(Connection connection) throws SQLException {
-    DBQueryInsert queryInsert = new DBQueryInsert();
-    Statement statement = connection.createStatement();
-    statement.execute(queryInsert.formQuery(clazz, entity));
+    connection.createStatement().execute(query());
   }
 }

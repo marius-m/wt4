@@ -2,7 +2,7 @@ package lt.markmerkk.storage2.database.helpers;
 
 import lt.markmerkk.storage2.database.helpers.entities.Mock1Empty;
 import lt.markmerkk.storage2.database.helpers.entities.Mock2NoColumns;
-import lt.markmerkk.storage2.database.helpers.entities.Mock3NoExtend;
+import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import org.junit.Test;
 
@@ -58,7 +58,7 @@ public class DBQueryCreateHelperFormQueryTest {
     DBQueryCreate helper = new DBQueryCreate();
 
     // Act
-    String queryString = helper.formQuery(Mock3NoExtend.class);
+    String queryString = helper.formQuery(Mock3.class);
 
     // Assert
     assertThat(queryString).isNotNull();

@@ -11,6 +11,12 @@ import java.sql.Statement;
  */
 public interface IQueryJob {
   /**
+   * Query that is sent for execution
+   * @return query
+   */
+  String query();
+
+  /**
    * Executes a statement on a valid connection
    * @param connection provided valid connection
    * @throws SQLException reports an error if occurs
