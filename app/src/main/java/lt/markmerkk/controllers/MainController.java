@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.utils.LogDisplayController;
@@ -247,8 +248,8 @@ public class MainController extends BaseController {
         }
 
         @Override public void onDelete(SimpleLog object) {
-          //logStorage.delete(object.getId());
-          //notifyLogsChanged();
+          executor.execute(new DeleteJob(SimpleLog.class, object));
+          notifyLogsChanged();
         }
       };
 
