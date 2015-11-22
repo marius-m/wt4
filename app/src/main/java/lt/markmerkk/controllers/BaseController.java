@@ -2,12 +2,11 @@ package lt.markmerkk.controllers;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.storage.entities.LogStorage;
 import lt.markmerkk.storage.entities.Project;
 import lt.markmerkk.storage.entities.Storage;
 import lt.markmerkk.storage.entities.Task;
-import lt.markmerkk.storage2.database.DBBaseExecutor;
-import lt.markmerkk.storage2.database.DBProdExecutor;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.CreateJob;
 
@@ -22,7 +21,7 @@ public abstract class BaseController {
     protected final LogStorage logStorage;
     protected final Storage<Task> taskStorage;
     protected final Storage<Project> projectStorage;
-    private final DBBaseExecutor executor;
+    private final DBProdExecutor executor;
 
     public interface BaseControllerDelegate {
         public Stage getStage();
