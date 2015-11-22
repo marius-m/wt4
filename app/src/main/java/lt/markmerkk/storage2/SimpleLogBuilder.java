@@ -1,6 +1,7 @@
 package lt.markmerkk.storage2;
 
 import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.utils.Utils;
 
 /**
  * Created by mariusmerkevicius on 11/22/15.
@@ -40,7 +41,7 @@ public class SimpleLogBuilder {
   }
 
   public SimpleLogBuilder setTask(String task) {
-    this.task = task;
+    this.task = Utils.validateTaskTitle(task);
     return this;
   }
 

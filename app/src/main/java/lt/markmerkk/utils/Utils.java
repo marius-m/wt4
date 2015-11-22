@@ -71,7 +71,7 @@ public class Utils {
      */
     public static String validateTaskTitle(String message) {
         if (Utils.isEmpty(message))
-            return null;
+            return "";
         message = message.replaceAll("\\n", "");
         Pattern pattern =
             Pattern.compile("[a-zA-Z]+(-)?[0-9]+");
@@ -87,7 +87,7 @@ public class Utils {
                 return null;
             return found;
         }
-        return null;
+        return "";
     }
 
     /**

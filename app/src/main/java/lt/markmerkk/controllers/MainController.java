@@ -176,7 +176,7 @@ public class MainController extends BaseController {
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(hourGlass.reportStart().getMillis())
           .setEnd(hourGlass.reportEnd().getMillis())
-          .setTask(Utils.validateTaskTitle(inputTask.getText()))
+          .setTask(inputTask.getText())
           .setComment(inputComment.getText()).build();
       executor.execute(new InsertJob(SimpleLog.class, log));
 

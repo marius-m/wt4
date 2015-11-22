@@ -10,12 +10,12 @@ public class UtilsValidateTaskTitleTest {
 
     @Test
     public void testEmpty() throws Exception {
-        assertNull(Utils.validateTaskTitle(""));
+        assertEquals("", Utils.validateTaskTitle(""));
     }
 
     @Test
     public void testNull() throws Exception {
-        assertNull(Utils.validateTaskTitle(null));
+        assertEquals("", Utils.validateTaskTitle(null));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class UtilsValidateTaskTitleTest {
 
     @Test
     public void testInvalidSpaces() throws Exception {
-        assertNull(Utils.validateTaskTitle("TT - 11"));
+        assertEquals("", Utils.validateTaskTitle("TT - 11"));
     }
 
     @Test
