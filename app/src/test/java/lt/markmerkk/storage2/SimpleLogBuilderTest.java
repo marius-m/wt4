@@ -69,9 +69,9 @@ public class SimpleLogBuilderTest {
   @Test
   public void testTask() throws Exception {
     SimpleLog log = new SimpleLogBuilder(3000)
-        .setTask("task")
+        .setTask("tt12")
         .build();
-    assertThat(log.getTask()).isEqualTo("task");
+    assertThat(log.getTask()).isEqualTo("TT-12");
   }
 
   @Test
@@ -80,13 +80,13 @@ public class SimpleLogBuilderTest {
     oldLog.updateIndex(200);
 
     SimpleLog log = new SimpleLogBuilder(oldLog)
-        .setTask("task")
+        .setTask("ttt123")
         .build();
 
     assertThat(log.getStart()).isEqualTo(1000); // old
     assertThat(log.getEnd()).isEqualTo(2000); // old
     assertThat(log.getDuration()).isEqualTo(1000); // old
-    assertThat(log.getTask()).isEqualTo("task"); // new
+    assertThat(log.getTask()).isEqualTo("TTT-123"); // new
     assertThat(log.getComment()).isEqualTo("temp_comment"); // old
     assertThat(log.get_id()).isEqualTo(200); // old
   }
