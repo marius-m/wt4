@@ -55,6 +55,7 @@ public class MainController extends BaseController {
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
   @FXML Button buttonEnter;
+  @FXML TextArea outputLogger;
 
   @FXML TableView tableLogs;
 
@@ -75,6 +76,10 @@ public class MainController extends BaseController {
 
     initViewListeners();
     initViews();
+  }
+
+  @Override void onInternalOutput(String message) {
+    outputLogger.appendText(message);
   }
 
   //region Init
@@ -179,6 +184,7 @@ public class MainController extends BaseController {
           .setTask(inputTask.getText())
           .setComment(inputComment.getText()).build();
       executor.execute(new InsertJob(SimpleLog.class, log));
+      this.log.info("Saving: "+log.toString());
 
       // Resetting controls
       inputComment.setText("");
@@ -241,10 +247,12 @@ public class MainController extends BaseController {
   TableDisplayController.Listener<SimpleLog> listener =
       new TableDisplayController.Listener<SimpleLog>() {
         @Override public void onUpdate(SimpleLog object) {
+          MainController.this.log.info("Updating log: "+object.toString());
           masterListener.pushScene("/update_log.fxml", object);
         }
 
         @Override public void onDelete(SimpleLog object) {
+          MainController.this.log.info("Deleting log: "+object.toString());
           executor.execute(new DeleteJob(SimpleLog.class, object));
           notifyLogsChanged();
         }
@@ -256,6 +264,8 @@ public class MainController extends BaseController {
       inputFrom.setText(shortFormat.print(start));
       inputTo.setText(shortFormat.print(end));
       outputDuration.setText(Utils.formatDuration(duration));
+      MainController.this.log.info(
+          "Starting: " + shortFormat.print(start) + " / " + shortFormat.print(end));
     }
 
     @Override
@@ -263,6 +273,8 @@ public class MainController extends BaseController {
       inputFrom.setText("");
       inputTo.setText("");
       outputDuration.setText("");
+      MainController.this.log.info(
+          "Stopping: " + shortFormat.print(start) + " / " + shortFormat.print(end));
     }
 
     @Override

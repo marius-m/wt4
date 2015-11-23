@@ -54,6 +54,8 @@ public class UpdateLogController extends BaseController {
         update();
     }
 
+    @Override void onInternalOutput(String message) { }
+
     private void update() {
         try {
             updateLog = new SimpleLogBuilder(updateLog)
@@ -77,8 +79,10 @@ public class UpdateLogController extends BaseController {
         try {
             update();
             executor.execute(new UpdateJob(SimpleLog.class, updateLog));
+            UpdateLogController.this.log.info("Updated log! "+updateLog);
             masterListener.popScene();
         } catch (IllegalArgumentException e) {
+            UpdateLogController.this.log.info("Error updating."+e.getMessage());
             System.out.println("Cannot save!"+e.getMessage());
         }
     }

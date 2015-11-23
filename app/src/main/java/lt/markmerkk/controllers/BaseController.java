@@ -1,10 +1,20 @@
 package lt.markmerkk.controllers;
 
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,6 +24,8 @@ import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
  */
 public abstract class BaseController {
     protected final DBProdExecutor executor;
+    protected Log log = LogFactory.getLog(MainController.class);
+    private Appender guiAppender;
 
     public interface BaseControllerDelegate {
         Stage getStage();
@@ -24,7 +36,24 @@ public abstract class BaseController {
     protected BaseControllerDelegate masterListener;
     protected Scene masterScene;
 
+    abstract void onInternalOutput(String message);
+
     public BaseController() {
+        guiAppender = new AppenderSkeleton() {
+
+            @Override
+            public boolean requiresLayout() { return true; }
+
+            @Override
+            public void close() { }
+
+            @Override
+            protected void append(LoggingEvent event) {
+                onInternalOutput(layout.format(event));
+            }
+        };
+        guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} - %m%n"));
+
         // Initializing database
         executor = new DBProdExecutor();
         executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
@@ -40,19 +69,19 @@ public abstract class BaseController {
     }
 
     public void create(Object data) {
+        Logger.getRootLogger().addAppender(guiAppender);
 //        System.out.println("Create:"+getClass().getSimpleName());
     }
 
     public void destroy() {
+        Logger.getRootLogger().removeAppender(guiAppender);
 //        System.out.println("Destroy:"+getClass().getSimpleName());
     }
 
     public void resume() {
-//        System.out.println("Resume:"+getClass().getSimpleName());
     }
 
     public void pause() {
-//        System.out.println("Pause:"+getClass().getSimpleName());
     }
 
 }
