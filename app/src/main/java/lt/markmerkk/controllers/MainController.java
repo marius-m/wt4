@@ -22,6 +22,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import lt.markmerkk.jira.IRemote;
+import lt.markmerkk.jira.JiraController;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -57,11 +59,18 @@ public class MainController extends BaseController {
   @FXML Button buttonEnter;
   @FXML TextArea outputLogger;
 
+  @FXML TextField inputHost;
+  @FXML TextField inputUsername;
+  @FXML TextField inputPassword;
+  @FXML Button buttonTest;
+
   @FXML TableView tableLogs;
 
   @FXML Text totalView;
   @FXML BorderPane footer;
   DatePicker datePicker;
+
+  IRemote remote;
 
   public MainController() {
     hourGlass = new HourGlass();
@@ -73,6 +82,8 @@ public class MainController extends BaseController {
     super.setupController(listener, scene, primaryStage);
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
+
+    remote = new JiraController(this.log);
 
     initViewListeners();
     initViews();
@@ -145,6 +156,16 @@ public class MainController extends BaseController {
         if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
         else hourGlass.stop();
         updateUI();
+      }
+    });
+
+    buttonTest.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent event) {
+        remote.isConnectionValid(
+            inputHost.getText(),
+            inputUsername.getText(),
+            inputPassword.getText()
+        );
       }
     });
 
@@ -326,6 +347,7 @@ public class MainController extends BaseController {
   @Override public void destroy() {
     super.destroy();
     hourGlass.stop();
+    remote.destroy();
   }
 
   //endregion

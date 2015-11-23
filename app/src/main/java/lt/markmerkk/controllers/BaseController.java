@@ -14,6 +14,7 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
@@ -52,6 +53,11 @@ public abstract class BaseController {
                 onInternalOutput(layout.format(event));
             }
         };
+        guiAppender.addFilter(new Filter() {
+            @Override public int decide(LoggingEvent event) {
+                return 0;
+            }
+        });
         guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} - %m%n"));
 
         // Initializing database
@@ -70,12 +76,11 @@ public abstract class BaseController {
 
     public void create(Object data) {
         Logger.getRootLogger().addAppender(guiAppender);
-//        System.out.println("Create:"+getClass().getSimpleName());
     }
 
     public void destroy() {
         Logger.getRootLogger().removeAppender(guiAppender);
-//        System.out.println("Destroy:"+getClass().getSimpleName());
+        guiAppender.close();
     }
 
     public void resume() {

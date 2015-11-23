@@ -107,22 +107,22 @@
                <children>
                   <HBox>
                      <children>
-                        <TextField promptText="https://hostname" HBox.hgrow="ALWAYS">
+                        <TextField fx:id="inputHost" promptText="https://hostname" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField promptText="Username" HBox.hgrow="ALWAYS">
+                        <TextField fx:id="inputUsername" promptText="Username" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField promptText="Password">
+                        <TextField fx:id="inputPassword" promptText="Password">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" text="Test" />
+                        <Button fx:id="buttonTest" mnemonicParsing="false" text="Test" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -132,6 +132,9 @@
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" />
                      </VBox.margin>
+                     <font>
+                        <Font size="10.0" />
+                     </font>
                   </TextArea>
                </children>
             </VBox>

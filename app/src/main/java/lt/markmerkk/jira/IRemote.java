@@ -6,6 +6,5 @@ package lt.markmerkk.jira;
  */
 public interface IRemote {
   boolean isConnectionValid(String url, String username, String password);
-  void start();
-  void stop();
+  void destroy();
 }
