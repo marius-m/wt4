@@ -345,8 +345,11 @@ public class MainController extends BaseController {
 
 
   @Override public void destroy() {
+    System.out.println("Destroying core");
     super.destroy();
+    System.out.println("Stopping HG");
     hourGlass.stop();
+    System.out.println("Stopping jira client");
     remote.destroy();
   }
 

@@ -83,10 +83,7 @@ public abstract class BaseController {
         guiAppender.close();
     }
 
-    public void resume() {
-    }
+    public void resume() { }
 
-    public void pause() {
-    }
-
+    public void pause() { }
 }

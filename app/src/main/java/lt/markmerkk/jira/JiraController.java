@@ -29,8 +29,9 @@ public class JiraController implements IRemote {
       final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
       restClient = factory.createWithBasicHttpAuthentication(
           new URI(url), username, password);
-      User promiseUser = restClient.getUserClient().getUser(username).claim();
-      log.info("Jira works!");
+      Promise<User> promiseUser = restClient.getUserClient().getUser(username);
+      User user = promiseUser.claim();
+      log.info("Jira works! "+user.toString());
       return true;
     } catch (URISyntaxException e) {
       log.info("Error connecting to jira! "+e.getMessage());
@@ -41,12 +42,16 @@ public class JiraController implements IRemote {
     } catch (IllegalArgumentException e) {
       log.info("Error connecting to jira! "+e.getMessage());
       return false;
+    } finally {
+      try {
+        if (restClient != null)
+          restClient.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
   @Override public void destroy() {
-    if (restClient != null) try {
-      restClient.close();
-    } catch (IOException e) { }
   }
 }
