@@ -8,6 +8,9 @@ import lt.markmerkk.storage2.database.DBBaseExecutor;
 public class DBProdExecutor extends DBBaseExecutor {
 
   @Override protected String database() {
-    return "wt4.db";
+    String home = System.getProperty("user.home");
+    if (home == null)
+      return "wt4.db";
+    return home+"/wt4.db";
   }
 }

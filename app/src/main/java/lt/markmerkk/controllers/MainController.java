@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -63,7 +64,7 @@ public class MainController extends BaseController {
 
   @FXML TextField inputHost;
   @FXML TextField inputUsername;
-  @FXML TextField inputPassword;
+  @FXML PasswordField inputPassword;
   @FXML Button buttonTest;
 
   @FXML TableView tableLogs;
@@ -347,19 +348,28 @@ public class MainController extends BaseController {
 
   //region World events
 
+  @Override public void create(Object data) {
+    super.create(data);
+  }
+
   @Override
   public void resume() {
     super.resume();
     notifyLogsChanged();
+
+    inputHost.setText(settings.getHost());
+    inputUsername.setText(settings.getName());
   }
 
+  @Override public void pause() {
+    super.pause();
+    settings.setHost(inputHost.getText());
+    settings.setName(inputUsername.getText());
+  }
 
   @Override public void destroy() {
-    System.out.println("Destroying core");
     super.destroy();
-    System.out.println("Stopping HG");
     hourGlass.stop();
-    System.out.println("Stopping jira client");
     remote.destroy();
   }
 

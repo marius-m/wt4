@@ -232,6 +232,10 @@ public class HourGlass {
           today.dayOfMonth().get()
       );
       endMillis = end.getMillis();
+
+      // Correct time with current millis
+      long currentSeconds = (current() - DateTime.now().withSecondOfMinute(0).getMillis());
+      endMillis += currentSeconds;
     } catch (IllegalArgumentException e) {
       endMillis = -1;
     }

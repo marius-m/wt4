@@ -117,11 +117,7 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField fx:id="inputPassword" promptText="Password">
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </TextField>
+                        <PasswordField fx:id="inputPassword" promptText="Password" />
                         <Button fx:id="buttonTest" mnemonicParsing="false" text="Test" />
                      </children>
                      <padding>

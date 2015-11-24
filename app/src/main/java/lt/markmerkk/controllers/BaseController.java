@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
+import lt.markmerkk.utils.SimpleSettings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Appender;
@@ -27,6 +28,7 @@ public abstract class BaseController {
     protected final DBProdExecutor executor;
     protected Log log = LogFactory.getLog(MainController.class);
     private Appender guiAppender;
+    protected SimpleSettings settings;
 
     public interface BaseControllerDelegate {
         Stage getStage();
@@ -40,6 +42,7 @@ public abstract class BaseController {
     abstract void onInternalOutput(String message);
 
     public BaseController() {
+        settings = new SimpleSettings();
         guiAppender = new AppenderSkeleton() {
 
             @Override
@@ -74,11 +77,15 @@ public abstract class BaseController {
         return masterScene;
     }
 
+    //region World events
+
     public void create(Object data) {
+        settings.load();
         Logger.getRootLogger().addAppender(guiAppender);
     }
 
     public void destroy() {
+        settings.save();
         Logger.getRootLogger().removeAppender(guiAppender);
         guiAppender.close();
     }
@@ -86,4 +93,6 @@ public abstract class BaseController {
     public void resume() { }
 
     public void pause() { }
+
+    //endregion
 }

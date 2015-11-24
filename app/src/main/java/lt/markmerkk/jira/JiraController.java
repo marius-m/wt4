@@ -1,8 +1,11 @@
 package lt.markmerkk.jira;
 
+import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.User;
+import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.util.concurrent.Promise;
 import java.io.IOException;
@@ -29,6 +32,7 @@ public class JiraController implements IRemote {
       final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
       restClient = factory.createWithBasicHttpAuthentication(
           new URI(url), username, password);
+
       Promise<User> promiseUser = restClient.getUserClient().getUser(username);
       User user = promiseUser.claim();
       log.info("Jira works! "+user.toString());
@@ -43,15 +47,24 @@ public class JiraController implements IRemote {
       log.info("Error connecting to jira! "+e.getMessage());
       return false;
     } finally {
-      try {
-        if (restClient != null)
-          restClient.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      close();
     }
   }
 
   @Override public void destroy() {
+    log = null;
+    close();
+  }
+
+  /**
+   * Closes any jira connection
+   */
+  private void close() {
+    try {
+      if (restClient != null)
+        restClient.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
