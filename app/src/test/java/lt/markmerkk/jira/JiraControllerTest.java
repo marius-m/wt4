@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -21,6 +22,7 @@ import static org.junit.Assert.*;
 /**
  * Created by mariusmerkevicius on 11/23/15.
  */
+@Ignore // integration testings
 public class JiraControllerTest {
 
   @Test public void testProperties() throws Exception {

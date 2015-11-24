@@ -13,6 +13,8 @@ apply from: 'javafx.plugin'
 mainClassName = "lt.markmerkk.Main"
 
 javafx {
+    appID 'WT4'
+    appName 'Wootrack'
     mainClass = 'lt.markmerkk.Main'
 }
 
@@ -41,6 +43,9 @@ sourceSets {
 configurations {
     compileDagger
 }
+
+group = 'lt.markmerkk'
+version = '0.0.5'
 
 dependencies {
     compile project(':database')
