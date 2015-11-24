@@ -34,6 +34,8 @@ import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.interfaces.Listener;
+import lt.markmerkk.utils.os_formatter.IOSOutput;
+import lt.markmerkk.utils.os_formatter.OSXOutput;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -71,10 +73,12 @@ public class MainController extends BaseController {
   DatePicker datePicker;
 
   IRemote remote;
+  IOSOutput osOutput;
 
   public MainController() {
     hourGlass = new HourGlass();
     hourGlass.setListener(hourglassListener);
+    osOutput = new OSXOutput();
   }
 
   @Override
@@ -287,6 +291,7 @@ public class MainController extends BaseController {
       outputDuration.setText(Utils.formatDuration(duration));
       MainController.this.log.info(
           "Starting: " + shortFormat.print(start) + " / " + shortFormat.print(end));
+      osOutput.onDurationMessage(Utils.formatShortDuration(duration));
     }
 
     @Override
@@ -296,6 +301,7 @@ public class MainController extends BaseController {
       outputDuration.setText("");
       MainController.this.log.info(
           "Stopping: " + shortFormat.print(start) + " / " + shortFormat.print(end));
+      osOutput.onDurationMessage("");
     }
 
     @Override
@@ -304,11 +310,15 @@ public class MainController extends BaseController {
       clearError(inputTo);
       clearError(outputDuration);
       String newFrom = shortFormat.print(start);
-      if (!newFrom.equals(inputFrom.getText()) && !inputFrom.isFocused())
+      if (!newFrom.equals(inputFrom.getText()) && !inputFrom.isFocused()) {
         inputFrom.setText(newFrom);
+        osOutput.onDurationMessage(Utils.formatShortDuration(duration));
+      }
       String newTo = shortFormat.print(end);
-      if (!newTo.equals(inputTo.getText()) && !inputTo.isFocused())
+      if (!newTo.equals(inputTo.getText()) && !inputTo.isFocused()) {
         inputTo.setText(newTo);
+        osOutput.onDurationMessage(Utils.formatShortDuration(duration));
+      }
       outputDuration.setText(Utils.formatDuration(duration));
     }
 

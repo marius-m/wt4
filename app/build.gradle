@@ -51,7 +51,7 @@ dependencies {
     compile project(':database')
     //    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     //    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-
+//    compile fileTree(dir: '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes', include: 'ui.jar')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile group: 'com.google.guava', name: 'guava', version: '10.0.1'

@@ -63,6 +63,33 @@ public class Utils {
         return builder.toString();
     }
 
+    /**
+     * Formats duration time into pretty and short string format
+     * @param durationMillis provided duration to format
+     * @return formatted duration
+     */
+    // fixme : needs tests, as this code was copied from earlier project
+    public static String formatShortDuration(long durationMillis) {
+        if (durationMillis < (1000*60))
+            return "0m";
+        StringBuilder builder = new StringBuilder();
+        PeriodType type = PeriodType.forFields(new DurationFieldType[]{
+            DurationFieldType.hours(),
+            DurationFieldType.minutes()
+        });
+
+        Period period = new Period(durationMillis, type);
+        if (period.getDays() != 0)
+            builder.append(period.getDays()).append("d").append(" ");
+        if (period.getHours() != 0)
+            builder.append(period.getHours()).append("h").append(" ");
+        if (period.getMinutes() != 0)
+            builder.append(period.getMinutes()).append("m").append(" ");
+        if ((builder.length() > 0) && builder.charAt(builder.length()-1) == " ".charAt(0))
+            builder.deleteCharAt(builder.length()-1);
+        return builder.toString();
+    }
+
     public static final String SEPERATOR = "-";
 
     /**
