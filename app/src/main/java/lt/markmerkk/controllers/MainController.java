@@ -24,7 +24,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lt.markmerkk.jira.IRemote;
-import lt.markmerkk.jira.JiraController;
+import lt.markmerkk.jira.JiraExecutor;
+import lt.markmerkk.jira.JiraListener;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -88,7 +89,7 @@ public class MainController extends BaseController {
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
 
-    remote = new JiraController(this.log);
+    remote = new JiraExecutor(jiraListener);
 
     initViewListeners();
     initViews();
@@ -166,11 +167,8 @@ public class MainController extends BaseController {
 
     buttonTest.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent event) {
-        remote.isConnectionValid(
-            inputHost.getText(),
-            inputUsername.getText(),
-            inputPassword.getText()
-        );
+        remote.checkIsLoginValid(inputHost.getText(), inputUsername.getText(),
+            inputPassword.getText());
       }
     });
 
@@ -270,6 +268,20 @@ public class MainController extends BaseController {
 
   //region Listeners
 
+  JiraListener jiraListener = new JiraListener() {
+    @Override public void onLoginSuccess() {
+      log.info("Jira [Success]: Success logging in!");
+    }
+
+    @Override public void onError(String error) {
+      log.info("Jira [Error]: "+error);
+    }
+
+    @Override public void onLoadChange(boolean loading) {
+      log.info("Jira [Loading]: "+loading);
+    }
+  };
+
   TableDisplayController.Listener<SimpleLog> listener =
       new TableDisplayController.Listener<SimpleLog>() {
         @Override public void onUpdate(SimpleLog object) {
@@ -350,6 +362,7 @@ public class MainController extends BaseController {
 
   @Override public void create(Object data) {
     super.create(data);
+    remote.onStart();
   }
 
   @Override
@@ -370,7 +383,7 @@ public class MainController extends BaseController {
   @Override public void destroy() {
     super.destroy();
     hourGlass.stop();
-    remote.destroy();
+    remote.onStop();
   }
 
   //endregion

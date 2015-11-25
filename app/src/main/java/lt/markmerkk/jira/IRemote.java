@@ -5,6 +5,22 @@ package lt.markmerkk.jira;
  * Represents the remote server to sync data
  */
 public interface IRemote {
-  boolean isConnectionValid(String url, String username, String password);
-  void destroy();
+
+  /**
+   * Checks if login is valid for the remote
+   * @param url provided url to check
+   * @param username provided username
+   * @param password provided password
+   */
+  void checkIsLoginValid(String url, String username, String password);
+
+  /**
+   * Indicates start event on main application
+   */
+  void onStart();
+
+  /**
+   * Indicates a stop event on application
+   */
+  void onStop();
 }
