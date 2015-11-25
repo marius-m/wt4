@@ -7,16 +7,21 @@ import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.User;
 import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.util.concurrent.Promise;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import javafx.application.Platform;
+import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
+import lt.markmerkk.jira.extend_base.IssueWorklogsRestClient;
+import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
  * A jira executor for background processes
  */
-public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote {
+public class JiraExecutor extends TaskExecutor<JiraObject> implements IRemote {
 
   public static final String WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
@@ -25,7 +30,7 @@ public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote
   String password;
   String url;
 
-  JiraRestClient client;
+  JiraRestClientPlus client;
 
   JiraListener listener;
 
@@ -40,6 +45,8 @@ public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote
   }
 
   @Override public void onStop() {
+    if (isLoading())
+      cancel();
     close();
     super.onStop();
   }
@@ -48,7 +55,7 @@ public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote
 
   //region Callback
 
-  @Override protected void onResult(IRemoteObject result) {
+  @Override protected void onResult(JiraObject result) {
     Platform.runLater(() -> {
       if (listener == null) return;
       if (result.error() != null) {
@@ -85,8 +92,9 @@ public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote
         this.password = password;
         this.url = url;
 
-        final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
+        AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
         client = factory.createWithBasicHttpAuthentication(new URI(url), username, password);
+
         return new JiraObject<User>(client.getUserClient().getUser(username).claim());
       } catch (URISyntaxException e) {
         return new JiraObject("Error: "+e.getMessage());
@@ -106,16 +114,21 @@ public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote
   public void worklogsForToday() {
     executeInBackground(() -> {
       try {
-        final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
+        AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
         client = factory.createWithBasicHttpAuthentication(new URI(url), username, password);
+
         SearchResult searchResult = client.getSearchClient().searchJql(WORKLOG_FOR_TODAY).claim();
         for (Issue issueLink : searchResult.getIssues()) {
           Issue issue = client.getIssueClient().getIssue(issueLink.getKey()).claim();
-          //System.out.println("Working on issue: "+issue);
-          for (Worklog worklog : issue.getWorklogs()) {
-            System.out.println("Worklog: "+worklog);
+          System.out.println("Issue: "+issue.getKey());
+          Promise<List<Worklog>> worklogPromise = client.getIssueWorklogRestClient().getIssueWorklogs(
+              issue);
+          List<Worklog> workLogs = worklogPromise.claim();
+          for (Worklog workLog : workLogs) {
+            System.out.println("Worklog: "+workLog);
           }
         }
+
         return new JiraObject<SearchResult>(searchResult);
       } catch (URISyntaxException e) {
         return new JiraObject("Error: "+e.getMessage());

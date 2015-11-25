@@ -5,6 +5,7 @@ package lt.markmerkk.jira;
  */
 public class JiraObject<T> implements IRemoteObject<T> {
 
+  Type type;
   T entity;
   String error;
 
@@ -27,4 +28,12 @@ public class JiraObject<T> implements IRemoteObject<T> {
   @Override public String error() {
     return error;
   }
+
+  /**
+   * Identifies type of data object is holding
+   */
+  public enum Type {
+    LOGIN, TODAY_ISSUES, TODAY_WORKLOGS
+  }
+
 }
