@@ -114,6 +114,9 @@
                            <graphic>
                               <ProgressIndicator fx:id="progressIndicator" prefHeight="14.0" prefWidth="14.0" visible="false" />
                            </graphic>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
                         </Button>
                         <TextField fx:id="inputHost" promptText="https://hostname" HBox.hgrow="ALWAYS">
                            <HBox.margin>
@@ -127,7 +130,7 @@
                         </TextField>
                         <PasswordField fx:id="inputPassword" promptText="Password">
                            <HBox.margin>
-                              <Insets right="5.0" />
+                              <Insets />
                            </HBox.margin>
                         </PasswordField>
                      </children>

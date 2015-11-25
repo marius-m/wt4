@@ -97,7 +97,7 @@ public class MainController extends BaseController {
     initViewListeners();
     initViews();
 
-    Platform.runLater(() -> { 
+    Platform.runLater(() -> {
       progressIndicator.setManaged(false);
       progressIndicator.setVisible(false);
     });
