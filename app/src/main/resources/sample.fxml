@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
+
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.controllers.MainController">
   <tabs>
     <Tab text="Work">
@@ -95,10 +96,12 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" />
                                  </BorderPane.margin>
                               </BorderPane>
-                           </bottom></BorderPane>
+                           </bottom>
+                        </BorderPane>
                      </bottom>
                   </BorderPane>
-               </children></VBox>
+               </children>
+            </VBox>
          </content>
     </Tab>
       <Tab text="Settings">
@@ -107,6 +110,11 @@
                <children>
                   <HBox>
                      <children>
+                        <Button fx:id="buttonTest" mnemonicParsing="false" prefWidth="100.0" text="Refresh">
+                           <graphic>
+                              <ProgressIndicator fx:id="progressIndicator" prefHeight="14.0" prefWidth="14.0" visible="false" />
+                           </graphic>
+                        </Button>
                         <TextField fx:id="inputHost" promptText="https://hostname" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets right="5.0" />
@@ -117,8 +125,11 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <PasswordField fx:id="inputPassword" promptText="Password" />
-                        <Button fx:id="buttonTest" mnemonicParsing="false" text="Test" />
+                        <PasswordField fx:id="inputPassword" promptText="Password">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </PasswordField>
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

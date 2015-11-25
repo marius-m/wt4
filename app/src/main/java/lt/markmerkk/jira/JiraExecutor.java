@@ -77,11 +77,9 @@ public class JiraExecutor extends TaskExecutor<IRemoteObject> implements IRemote
         client = factory.createWithBasicHttpAuthentication(new URI(url), username, password);
         return new JiraObject<User>(client.getUserClient().getUser(username).claim());
       } catch (URISyntaxException e) {
-        System.out.println(e.getMessage());
         return new JiraObject("Error: "+e.getMessage());
       } catch (RestClientException e) {
-        System.out.println(e.getMessage());
-        return new JiraObject("Error: "+e.getMessage());
+        return new JiraObject("Error: "+e.getCause().toString());
       } catch (IllegalArgumentException e) {
         return new JiraObject("Error: "+e.getMessage());
       } finally {

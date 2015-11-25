@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -14,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -72,6 +74,7 @@ public class MainController extends BaseController {
 
   @FXML Text totalView;
   @FXML BorderPane footer;
+  @FXML ProgressIndicator progressIndicator;
   DatePicker datePicker;
 
   IRemote remote;
@@ -93,6 +96,11 @@ public class MainController extends BaseController {
 
     initViewListeners();
     initViews();
+
+    Platform.runLater(() -> {
+      progressIndicator.setManaged(false);
+      progressIndicator.setVisible(false);
+    });
   }
 
   @Override void onInternalOutput(String message) {
@@ -278,7 +286,10 @@ public class MainController extends BaseController {
     }
 
     @Override public void onLoadChange(boolean loading) {
-      log.info("Jira [Loading]: "+loading);
+      progressIndicator.setManaged(loading);
+      progressIndicator.setVisible(loading);
+      if (loading)
+        log.info("Loading... ");
     }
   };
 
