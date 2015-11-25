@@ -8,7 +8,12 @@ public interface JiraListener {
   /**
    * Called when login succeeds
    */
-  void onLoginSuccess();
+  void onSuccessLogin();
+
+  /**
+   * Called when worklog for today is pulled
+   */
+  void onTodayWorklog();
 
   /**
    * Called when there is an error

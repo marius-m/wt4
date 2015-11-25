@@ -77,7 +77,7 @@ public class MainController extends BaseController {
   @FXML ProgressIndicator progressIndicator;
   DatePicker datePicker;
 
-  IRemote remote;
+  JiraExecutor remote;
   IOSOutput osOutput;
 
   public MainController() {
@@ -175,6 +175,10 @@ public class MainController extends BaseController {
 
     buttonTest.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent event) {
+        if (remote.isLoading()) {
+          remote.cancel();
+          return;
+        }
         remote.checkIsLoginValid(inputHost.getText(), inputUsername.getText(),
             inputPassword.getText());
       }
@@ -277,8 +281,12 @@ public class MainController extends BaseController {
   //region Listeners
 
   JiraListener jiraListener = new JiraListener() {
-    @Override public void onLoginSuccess() {
+    @Override public void onSuccessLogin() {
       log.info("Jira [Success]: Success logging in!");
+    }
+
+    @Override public void onTodayWorklog() {
+      log.info("Jira [Success]: Today worklog: ");
     }
 
     @Override public void onError(String error) {
@@ -290,6 +298,7 @@ public class MainController extends BaseController {
       progressIndicator.setVisible(loading);
       if (loading)
         log.info("Loading... ");
+      buttonTest.setText((loading) ? "Cancel" : "Refresh");
     }
   };
 
