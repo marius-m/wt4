@@ -8,23 +8,28 @@ import java.net.URISyntaxException;
 import lt.markmerkk.jira.entities.JiraResponse;
 import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
-import lt.markmerkk.jira.interfaces.IJiraResponse;
+import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorker;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
+ * Represents worker extension class that connects to jira client and passes down execution
+ * to {@link #executeRequest(JiraRestClient)}.
  */
-public abstract class JiraWorker {
+public abstract class JiraWorker implements IWorker {
   Credentials credentials;
 
   JiraRestClientPlus client;
 
   public JiraWorker(Credentials credentials) {
+    if (credentials == null)
+      throw new IllegalArgumentException("Cannot function without credentials!");
     this.credentials = credentials;
   }
 
-  abstract IJiraResponse executeRequest(JiraRestClient client);
+  abstract IResponse executeRequest(JiraRestClient client);
 
-  public IJiraResponse execute() {
+  public IResponse execute() {
     if (!credentials.isUserValid()) return new JiraResponse("Error: Invalid user credentials!");
     try {
       AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();

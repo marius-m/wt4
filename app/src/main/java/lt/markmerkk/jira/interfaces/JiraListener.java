@@ -12,14 +12,10 @@ public interface JiraListener {
   Credentials getUserCredentials();
 
   /**
-   * Called when execution succeeds
+   * A method that indicates user for update status
+   * @param message provided message
    */
-  void onSuccess(String success);
-  /**
-   * Called when there is an error
-   * @param error
-   */
-  void onError(String error);
+  void onOutput(String message);
 
   /**
    * Reports loading status

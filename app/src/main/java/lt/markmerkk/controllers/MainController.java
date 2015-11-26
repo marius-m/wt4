@@ -284,12 +284,8 @@ public class MainController extends BaseController {
       return new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
     }
 
-    @Override public void onSuccess(String success) {
-      log.info("Jira [Success]: "+success);
-    }
-
-    @Override public void onError(String error) {
-      log.info("Jira [Error]: "+error);
+    @Override public void onOutput(String message) {
+      log.info("Jira: " + message);
     }
 
     @Override public void onLoadChange(boolean loading) {

@@ -1,43 +1,52 @@
 package lt.markmerkk.jira.entities;
 
-import lt.markmerkk.jira.interfaces.IJiraResponse;
+import lt.markmerkk.jira.interfaces.IResponse;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
  */
-public class JiraResponse<T> implements IJiraResponse<T> {
+public class JiraResponse<T> implements IResponse<T> {
 
-  JiraJobType jiraJobType;
   T entity;
-  String error;
-  String successMessage;
+  String outputMessage;
+  boolean isSuccess;
 
-  public JiraResponse(T entity, String successMessage) {
+  /**
+   * Success constructor
+   * @param outputMessage
+   * @param entity
+   */
+  public JiraResponse(String outputMessage, T entity) {
     if (entity == null)
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Success response cannot be initialized without an entity!");
+    if (outputMessage == null)
+      throw new IllegalArgumentException("Error response cannot be initialized without a message!");
     this.entity = entity;
-    this.successMessage = successMessage;
+    this.outputMessage = outputMessage;
+    this.isSuccess = true;
   }
 
-  public JiraResponse(String error) {
-    if (error == null)
-      throw new IllegalArgumentException();
-    this.error = error;
-  }
-
-  @Override public JiraJobType type() {
-    return jiraJobType;
+  /**
+   * Error constructor
+   * @param outputMessage
+   */
+  public JiraResponse(String outputMessage) {
+    if (outputMessage == null)
+      throw new IllegalArgumentException("Error response cannot be initialized without a message!");
+    this.outputMessage = outputMessage;
+    this.isSuccess = false;
   }
 
   @Override public T entity() {
     return entity;
   }
 
-  @Override public String error() {
-    return error;
+  @Override public boolean isSuccess() {
+    return isSuccess;
   }
 
-  @Override public String success() {
-    return successMessage;
+  @Override public String outputMessage() {
+    return outputMessage;
   }
+
 }

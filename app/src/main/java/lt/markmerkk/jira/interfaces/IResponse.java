@@ -4,15 +4,9 @@ import lt.markmerkk.jira.entities.JiraJobType;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
- * Represents an entity response from network
+ * Represents a response entity from {@link IWorker}
  */
-public interface IJiraResponse<T> {
-
-  /**
-   * Job type
-   * @return
-   */
-  JiraJobType type();
+public interface IResponse<T> {
 
   /**
    * Network object
@@ -21,15 +15,15 @@ public interface IJiraResponse<T> {
   T entity();
 
   /**
-   * Error message
+   * Returns a flag is execution was successful
    * @return
    */
-  String error();
+  boolean isSuccess();
 
   /**
-   * Success message
+   * Returns an output message
    * @return
    */
-  String success();
+  String outputMessage();
 
 }
