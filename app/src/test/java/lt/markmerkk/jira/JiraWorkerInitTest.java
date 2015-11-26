@@ -40,6 +40,10 @@ public class JiraWorkerInitTest {
       return null;
     }
 
+    @Override public String tag() {
+      return null;
+    }
+
     @Override public String preExecuteMessage() {
       return null;
     }

@@ -10,6 +10,12 @@ import lt.markmerkk.jira.interfaces.IRemote;
 public interface IWorker {
 
   /**
+   * An identifier that links {@link IResponse} and {@link IWorker} classes
+   * @return
+   */
+  String tag();
+
+  /**
    * Outputs pre execution method to indicate work for the user
    * @return
    */

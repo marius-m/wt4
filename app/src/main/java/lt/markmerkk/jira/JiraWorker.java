@@ -30,18 +30,18 @@ public abstract class JiraWorker implements IWorker {
   abstract IResponse executeRequest(JiraRestClient client);
 
   public IResponse execute() {
-    if (!credentials.isUserValid()) return new ErrorResponse(null, "Error: Invalid user credentials!");
+    if (!credentials.isUserValid()) return new ErrorResponse(tag(), "Error: Invalid user credentials!");
     try {
       AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
       client = factory.createWithBasicHttpAuthentication(new URI(credentials.getUrl()),
           credentials.getUsername(), credentials.getPassword());
       return executeRequest(client);
     } catch (URISyntaxException e) {
-      return new ErrorResponse(null, "Error: " + e.getMessage());
+      return new ErrorResponse(tag(), "Error: " + e.getMessage());
     } catch (RestClientException e) {
-      return new ErrorResponse(null, "Error: " + e.getCause().toString());
+      return new ErrorResponse(tag(), "Error: " + e.getCause().toString());
     } catch (IllegalArgumentException e) {
-      return new ErrorResponse(null, "Error: " + e.getMessage());
+      return new ErrorResponse(tag(), "Error: " + e.getMessage());
     } finally {
       close();
     }

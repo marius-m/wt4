@@ -10,14 +10,20 @@ import lt.markmerkk.jira.interfaces.IResponse;
  */
 public class JiraWorkerLogin extends JiraWorker {
 
+  public static final String LOGIN = "LOGIN";
+
   public JiraWorkerLogin(Credentials credentials) {
     super(credentials);
   }
 
   @Override IResponse executeRequest(JiraRestClient client) {
-    SuccessResponse<User> userJiraResponse = new SuccessResponse<>(null, "Login success!",
+    SuccessResponse<User> userJiraResponse = new SuccessResponse<>(tag(), "Login success!",
         client.getUserClient().getUser(credentials.getUsername()).claim());
     return userJiraResponse;
+  }
+
+  @Override public String tag() {
+    return LOGIN;
   }
 
   @Override public String preExecuteMessage() {

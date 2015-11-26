@@ -29,7 +29,7 @@ public class ErrorResponseTest {
       new ErrorResponse("some_tag", null);
       fail("Should not create with invalid input");
     } catch (Exception e) {
-      assertThat(e).hasMessage("Error response cannot be initialized without a message!");
+      assertThat(e).hasMessage("Response cannot be initialized without a message!");
     }
   }
 
@@ -41,7 +41,7 @@ public class ErrorResponseTest {
       new ErrorResponse(null, "output_message");
       fail("Should not create with invalid input");
     } catch (Exception e) {
-      assertThat(e).hasMessage("Error response cannot be initialized without a tag!");
+      assertThat(e).hasMessage("Response cannot be initialized without a tag!");
     }
   }
 }

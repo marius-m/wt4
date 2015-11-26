@@ -69,6 +69,10 @@ public class JiraWorkerExecuteTest {
       return null;
     }
 
+    @Override public String tag() {
+      return "some_valid_tag";
+    }
+
     @Override public String preExecuteMessage() {
       return null;
     }
