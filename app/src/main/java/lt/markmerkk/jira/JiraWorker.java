@@ -5,7 +5,7 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import lt.markmerkk.jira.entities.JiraResponse;
+import lt.markmerkk.jira.entities.ErrorResponse;
 import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IResponse;
@@ -30,18 +30,18 @@ public abstract class JiraWorker implements IWorker {
   abstract IResponse executeRequest(JiraRestClient client);
 
   public IResponse execute() {
-    if (!credentials.isUserValid()) return new JiraResponse("Error: Invalid user credentials!");
+    if (!credentials.isUserValid()) return new ErrorResponse("Error: Invalid user credentials!");
     try {
       AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
       client = factory.createWithBasicHttpAuthentication(new URI(credentials.getUrl()),
           credentials.getUsername(), credentials.getPassword());
       return executeRequest(client);
     } catch (URISyntaxException e) {
-      return new JiraResponse("Error: " + e.getMessage());
+      return new ErrorResponse("Error: " + e.getMessage());
     } catch (RestClientException e) {
-      return new JiraResponse("Error: " + e.getCause().toString());
+      return new ErrorResponse("Error: " + e.getCause().toString());
     } catch (IllegalArgumentException e) {
-      return new JiraResponse("Error: " + e.getMessage());
+      return new ErrorResponse("Error: " + e.getMessage());
     } finally {
       close();
     }

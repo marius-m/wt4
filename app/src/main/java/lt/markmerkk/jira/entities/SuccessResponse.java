@@ -3,10 +3,10 @@ package lt.markmerkk.jira.entities;
 import lt.markmerkk.jira.interfaces.IResponse;
 
 /**
- * Created by mariusmerkevicius on 11/25/15.
+ * Created by mariusmerkevicius on 11/26/15.
+ * Represents success response
  */
-public class JiraResponse<T> implements IResponse<T> {
-
+public class SuccessResponse<T> implements IResponse<T> {
   T entity;
   String outputMessage;
   boolean isSuccess;
@@ -16,7 +16,7 @@ public class JiraResponse<T> implements IResponse<T> {
    * @param outputMessage
    * @param entity
    */
-  public JiraResponse(String outputMessage, T entity) {
+  public SuccessResponse(String outputMessage, T entity) {
     if (entity == null)
       throw new IllegalArgumentException("Success response cannot be initialized without an entity!");
     if (outputMessage == null)
@@ -24,17 +24,6 @@ public class JiraResponse<T> implements IResponse<T> {
     this.entity = entity;
     this.outputMessage = outputMessage;
     this.isSuccess = true;
-  }
-
-  /**
-   * Error constructor
-   * @param outputMessage
-   */
-  public JiraResponse(String outputMessage) {
-    if (outputMessage == null)
-      throw new IllegalArgumentException("Error response cannot be initialized without a message!");
-    this.outputMessage = outputMessage;
-    this.isSuccess = false;
   }
 
   @Override public T entity() {
@@ -48,5 +37,4 @@ public class JiraResponse<T> implements IResponse<T> {
   @Override public String outputMessage() {
     return outputMessage;
   }
-
 }

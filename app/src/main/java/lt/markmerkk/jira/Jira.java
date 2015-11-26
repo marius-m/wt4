@@ -1,13 +1,6 @@
 package lt.markmerkk.jira;
 
-import com.atlassian.jira.rest.client.api.RestClientException;
-import com.atlassian.jira.rest.client.api.domain.User;
-import java.net.URI;
-import java.net.URISyntaxException;
-import lt.markmerkk.jira.entities.JiraResponse;
-import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
 import lt.markmerkk.jira.interfaces.JiraListener;
-import lt.markmerkk.utils.Utils;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.

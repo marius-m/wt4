@@ -2,7 +2,7 @@ package lt.markmerkk.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.User;
-import lt.markmerkk.jira.entities.JiraResponse;
+import lt.markmerkk.jira.entities.SuccessResponse;
 import lt.markmerkk.jira.interfaces.IResponse;
 
 /**
@@ -15,7 +15,7 @@ public class JiraWorkerLogin extends JiraWorker {
   }
 
   @Override IResponse executeRequest(JiraRestClient client) {
-    JiraResponse<User> userJiraResponse = new JiraResponse<>("Login success!",
+    SuccessResponse<User> userJiraResponse = new SuccessResponse<>("Login success!",
         client.getUserClient().getUser(credentials.getUsername()).claim());
     return userJiraResponse;
   }
