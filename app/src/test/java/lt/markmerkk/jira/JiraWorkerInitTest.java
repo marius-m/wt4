@@ -1,6 +1,7 @@
 package lt.markmerkk.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.IResponse;
 import org.junit.Test;
 

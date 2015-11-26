@@ -1,9 +1,9 @@
 package lt.markmerkk.jira;
 
+import lt.markmerkk.jira.entities.Credentials;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * Created by mariusmerkevicius on 11/27/15.

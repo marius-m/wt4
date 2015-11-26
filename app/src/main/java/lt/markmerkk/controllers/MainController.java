@@ -25,7 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lt.markmerkk.jira.Credentials;
+import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.JiraExecutor;
 import lt.markmerkk.jira.interfaces.JiraListener;
 import lt.markmerkk.storage2.SimpleLogBuilder;

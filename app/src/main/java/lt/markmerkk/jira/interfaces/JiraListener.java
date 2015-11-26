@@ -1,6 +1,6 @@
 package lt.markmerkk.jira.interfaces;
 
-import lt.markmerkk.jira.Credentials;
+import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.JiraExecutor;
 
 /**

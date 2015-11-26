@@ -5,6 +5,7 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.entities.ErrorResponse;
 import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;

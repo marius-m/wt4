@@ -1,4 +1,4 @@
-package lt.markmerkk.jira;
+package lt.markmerkk.jira.entities;
 
 import lt.markmerkk.utils.Utils;
 
@@ -33,7 +33,7 @@ public class Credentials {
    * Validates user credentials
    * @return
    */
-  boolean isUserValid() {
+  public boolean isUserValid() {
     if (Utils.isEmpty(username)) return false;
     if (Utils.isEmpty(password)) return false;
     if (Utils.isEmpty(url)) return false;

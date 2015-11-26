@@ -2,6 +2,7 @@ package lt.markmerkk.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.User;
+import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.entities.SuccessResponse;
 import lt.markmerkk.jira.interfaces.IResponse;
 
