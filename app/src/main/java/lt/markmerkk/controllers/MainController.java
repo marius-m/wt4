@@ -25,9 +25,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lt.markmerkk.jira.IRemote;
+import lt.markmerkk.jira.Credentials;
 import lt.markmerkk.jira.JiraExecutor;
-import lt.markmerkk.jira.JiraListener;
+import lt.markmerkk.jira.interfaces.JiraListener;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -179,8 +179,7 @@ public class MainController extends BaseController {
           remote.cancel();
           return;
         }
-        remote.checkIsLoginValid(inputHost.getText(), inputUsername.getText(),
-            inputPassword.getText());
+        remote.login();
       }
     });
 
@@ -281,12 +280,12 @@ public class MainController extends BaseController {
   //region Listeners
 
   JiraListener jiraListener = new JiraListener() {
-    @Override public void onSuccessLogin() {
-      log.info("Jira [Success]: Success logging in!");
+    @Override public Credentials getUserCredentials() {
+      return new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
     }
 
-    @Override public void onTodayWorklog() {
-      log.info("Jira [Success]: Today worklog: ");
+    @Override public void onSuccess(String success) {
+      log.info("Jira [Success]: "+success);
     }
 
     @Override public void onError(String error) {
@@ -296,6 +295,9 @@ public class MainController extends BaseController {
     @Override public void onLoadChange(boolean loading) {
       progressIndicator.setManaged(loading);
       progressIndicator.setVisible(loading);
+      inputUsername.setDisable(loading);
+      inputPassword.setDisable(loading);
+      inputHost.setDisable(loading);
       if (loading)
         log.info("Loading... ");
       buttonTest.setText((loading) ? "Cancel" : "Refresh");
