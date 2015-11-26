@@ -9,6 +9,13 @@ import lt.markmerkk.jira.entities.JiraJobType;
 public interface IResponse<T> {
 
   /**
+   * An identifier tag, that links {@link IResponse} and {@link IWorker}
+   * classes when execution is done.
+   * @return
+   */
+  String tag();
+
+  /**
    * Network object
    * @return
    */

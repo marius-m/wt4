@@ -15,7 +15,7 @@ public class JiraWorkerLogin extends JiraWorker {
   }
 
   @Override IResponse executeRequest(JiraRestClient client) {
-    SuccessResponse<User> userJiraResponse = new SuccessResponse<>("Login success!",
+    SuccessResponse<User> userJiraResponse = new SuccessResponse<>(null, "Login success!",
         client.getUserClient().getUser(credentials.getUsername()).claim());
     return userJiraResponse;
   }

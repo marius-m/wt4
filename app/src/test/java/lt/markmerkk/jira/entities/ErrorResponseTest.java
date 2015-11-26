@@ -10,25 +10,38 @@ import static org.junit.Assert.*;
  */
 public class ErrorResponseTest {
 
-  @Test public void testErrorValid() throws Exception {
+  @Test public void testValid() throws Exception {
     // Arrange
     // Act
     // Assert
-    ErrorResponse errorResponse = new ErrorResponse("some_error_message");
+    ErrorResponse errorResponse = new ErrorResponse("some_tag", "some_error_message");
     assertThat(errorResponse.isSuccess()).isFalse();
     assertThat(errorResponse.outputMessage()).isNotNull();
     assertThat(errorResponse.entity()).isNull();
+    assertThat(errorResponse.tag()).isNotNull();
   }
 
-  @Test public void testErrorNullMessage() throws Exception {
+  @Test public void testNullMessage() throws Exception {
     // Arrange
     // Act
     // Assert
     try {
-      new ErrorResponse(null);
+      new ErrorResponse("some_tag", null);
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Error response cannot be initialized without a message!");
+    }
+  }
+
+  @Test public void testNullTag() throws Exception {
+    // Arrange
+    // Act
+    // Assert
+    try {
+      new ErrorResponse(null, "output_message");
+      fail("Should not create with invalid input");
+    } catch (Exception e) {
+      assertThat(e).hasMessage("Error response cannot be initialized without a tag!");
     }
   }
 }

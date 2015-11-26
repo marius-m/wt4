@@ -8,22 +8,31 @@ import lt.markmerkk.jira.interfaces.IResponse;
  */
 public class SuccessResponse<T> implements IResponse<T> {
   T entity;
-  String outputMessage;
   boolean isSuccess;
+  String outputMessage;
+  String tag;
 
   /**
    * Success constructor
-   * @param outputMessage
-   * @param entity
+   * @param tag provided response tag
+   * @param outputMessage provided success message
+   * @param entity provided entity with response
    */
-  public SuccessResponse(String outputMessage, T entity) {
+  public SuccessResponse(String tag, String outputMessage, T entity) {
     if (entity == null)
-      throw new IllegalArgumentException("Success response cannot be initialized without an entity!");
+      throw new IllegalArgumentException("Response cannot be initialized without an entity!");
     if (outputMessage == null)
-      throw new IllegalArgumentException("Error response cannot be initialized without a message!");
+      throw new IllegalArgumentException("Response cannot be initialized without a message!");
+    if (tag == null)
+      throw new IllegalArgumentException("Response cannot be initialized without a tag!");
     this.entity = entity;
     this.outputMessage = outputMessage;
     this.isSuccess = true;
+    this.tag = tag;
+  }
+
+  @Override public String tag() {
+    return tag;
   }
 
   @Override public T entity() {
