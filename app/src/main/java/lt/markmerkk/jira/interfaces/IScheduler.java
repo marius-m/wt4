@@ -9,14 +9,29 @@ import java.util.List;
  * complete a wanted result.
  */
 public interface IScheduler {
+
   /**
    * A list of workers that are doing the job execution
    */
   LinkedList<IWorker> workers();
 
   /**
-   * Identifies scheduler that job was completed depending on job response
-   * @param response
+   * Returns if all the jobs are complete
+   * @return
    */
-  void complete(IResponse response);
+  boolean isComplete();
+
+  /**
+   * Returns next worker in the list.
+   * Might return null if no job is left for execution
+   * @return
+   */
+  IWorker next();
+
+  /**
+   * Identifies scheduler that job was completed depending on job response
+   * and returns next worker to be executed.
+   * @param response execution response.
+   */
+  IWorker complete(IResponse response) throws IllegalStateException;
 }
