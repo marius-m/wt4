@@ -13,9 +13,6 @@ import lt.markmerkk.jira.interfaces.JiraListener;
  */
 public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
-  public static final String WORKLOG_FOR_TODAY =
-      "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
-
   JiraListener listener;
   IScheduler scheduler;
 
@@ -93,6 +90,8 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
       scheduler = null;
       return;
     }
+    if (result.entity() != null)
+      reportOutput(scheduler.next().postExecuteMessage(result.entity()));
     if (scheduler == null) return;
     scheduler.complete(result);
   }

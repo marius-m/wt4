@@ -37,6 +37,10 @@ public class JiraWorkerInitTest {
     @Override public String preExecuteMessage() {
       return null;
     }
+
+    @Override public String postExecuteMessage(Object entity) {
+      return null;
+    }
   }
   //endregion
 

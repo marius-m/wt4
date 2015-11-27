@@ -35,6 +35,13 @@ public interface IWorker<T> {
   String preExecuteMessage();
 
   /**
+   * Outputs post execution method to indicate work for the user
+   * @param entity passed in pulled object
+   * @return
+   */
+  String postExecuteMessage(T entity);
+
+  /**
    * Main execution method for doing any logic
    * @return
    */

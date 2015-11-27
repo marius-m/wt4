@@ -11,7 +11,7 @@ import lt.markmerkk.jira.interfaces.IResponse;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerLogin extends JiraWorker<Object> {
+public class JiraWorkerLogin extends JiraWorker<User> {
 
   public static final String LOGIN = "LOGIN";
 
@@ -23,7 +23,8 @@ public class JiraWorkerLogin extends JiraWorker<Object> {
     return userJiraResponse;
   }
 
-  @Override public void populateInput(Object inputData) { }
+  @Override public void populateInput(User inputData) {
+  }
 
   @Override public String tag() {
     return LOGIN;
@@ -31,5 +32,9 @@ public class JiraWorkerLogin extends JiraWorker<Object> {
 
   @Override public String preExecuteMessage() {
     return "Checking login status...";
+  }
+
+  @Override public String postExecuteMessage(User entity) {
+    return "User: "+entity.getName()+" / "+entity.getEmailAddress()+" / "+entity.getDisplayName();
   }
 }

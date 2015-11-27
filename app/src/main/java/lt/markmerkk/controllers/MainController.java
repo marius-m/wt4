@@ -30,6 +30,7 @@ import lt.markmerkk.jira.JiraScheduler;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.JiraListener;
+import lt.markmerkk.jira.workers.JiraWorkerSearchWorklogForToday;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -185,10 +186,9 @@ public class MainController extends BaseController {
             new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
         try {
           remote.executeScheduler(
-              new JiraScheduler("Login check", credentials, new JiraWorkerLogin(),
+              new JiraScheduler("Sync", credentials,
                   new JiraWorkerLogin(),
-                  new JiraWorkerLogin(),
-                  new JiraWorkerLogin()
+                  new JiraWorkerSearchWorklogForToday()
               ));
         } catch (Exception e) {
           log.info("Error: "+e.getMessage());
