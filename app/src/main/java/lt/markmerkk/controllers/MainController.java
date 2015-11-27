@@ -183,12 +183,16 @@ public class MainController extends BaseController {
         }
         Credentials credentials =
             new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
-        remote.executeScheduler(
-            new JiraScheduler("Login check", null, new JiraWorkerLogin(),
-                new JiraWorkerLogin(),
-                new JiraWorkerLogin(),
-                new JiraWorkerLogin()
-            ));
+        try {
+          remote.executeScheduler(
+              new JiraScheduler("Login check", credentials, new JiraWorkerLogin(),
+                  new JiraWorkerLogin(),
+                  new JiraWorkerLogin(),
+                  new JiraWorkerLogin()
+              ));
+        } catch (Exception e) {
+          log.info("Error: "+e.getMessage());
+        }
       }
     });
 

@@ -11,6 +11,12 @@ import java.util.List;
 public interface IScheduler {
 
   /**
+   * Returns if scheduler has any more tasks
+   * @return
+   */
+  boolean hasMore();
+
+  /**
    * Credentials used with the scheduled tasks
    * @return
    */

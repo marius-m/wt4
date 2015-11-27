@@ -9,6 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -44,11 +45,14 @@ public class JiraExecutorOnResultTest {
   @Test public void testValid() throws Exception {
     // Arrange
     JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
+    IResponse response = mock(IResponse.class);
     executor.scheduler = mock(IScheduler.class);
+    doReturn(true).when(response).isSuccess();
+    doReturn(true).when(executor.scheduler).hasMore();
     doNothing().when(executor).executeScheduler(any(IScheduler.class));
 
     // Act
-    executor.onResult(mock(IResponse.class));
+    executor.onResult(response);
 
     // Assert
     verify(executor.scheduler, times(1)).complete(any(IResponse.class));

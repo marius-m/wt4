@@ -40,8 +40,10 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
     if (listener == null) return;
     if (result == null) return;
     listener.onOutput(result.outputMessage());
+    if (!result.isSuccess()) return;
     if (scheduler == null) return;
     scheduler.complete(result);
+    if (!scheduler.hasMore()) return;
     executeScheduler(scheduler);
   }
 
@@ -58,13 +60,9 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
    */
   public void executeScheduler(IScheduler scheduler) {
     if (scheduler == null) return;
+    if (!scheduler.hasMore()) return;
     this.scheduler = scheduler;
     IWorker nextWorker = scheduler.next();
-    if (nextWorker == null) {
-      this.scheduler = null;
-      listener.onOutput("Finished " + scheduler.name());
-      return;
-    }
     execute(nextWorker);
   }
 

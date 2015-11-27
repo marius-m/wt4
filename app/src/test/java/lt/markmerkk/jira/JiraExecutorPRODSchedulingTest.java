@@ -31,6 +31,10 @@ public class JiraExecutorPRODSchedulingTest {
         .doReturn("tag2")
         .doReturn("tag3")
         .when(response).tag();
+    doReturn(true)
+        .doReturn(true)
+        .doReturn(true)
+        .when(response).isSuccess();
     doAnswer((InvocationOnMock invocationOnMock) -> {
       executor.onResult(response);
       return null;
@@ -50,6 +54,35 @@ public class JiraExecutorPRODSchedulingTest {
 
     // Assert
     verify(executor, times(3)).execute(any(IWorker.class));
+  }
+
+  @Test public void testValidWithError() throws Exception {
+    // Arrange
+    JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
+
+    IResponse response1 = mock(IResponse.class);
+    doReturn("tag1").when(response1).tag();
+    doReturn(false).when(response1).isSuccess();
+
+    doAnswer((InvocationOnMock invocationOnMock) -> {
+      executor.onResult(response1);
+      return null;
+    }).when(executor).executeInBackground(any(Callable.class));
+
+    IWorker worker1 = mock(IWorker.class);
+    doReturn("tag1").when(worker1).tag();
+    IWorker worker2 = mock(IWorker.class);
+    doReturn("tag2").when(worker2).tag();
+    IWorker worker3 = mock(IWorker.class);
+    doReturn("tag3").when(worker3).tag();
+
+    // Act
+    executor.executeScheduler(
+        new JiraScheduler("some_scheduler", mock(ICredentials.class), worker1, worker2, worker3
+    ));
+
+    // Assert
+    verify(executor, times(1)).execute(any(IWorker.class));
   }
 
 }

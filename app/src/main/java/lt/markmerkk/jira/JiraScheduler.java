@@ -37,6 +37,10 @@ public class JiraScheduler implements IScheduler {
     return worker;
   }
 
+  @Override public boolean hasMore() {
+    return (workers.size() > 0);
+  }
+
   @Override public ICredentials credentials() {
     return credentials;
   }
