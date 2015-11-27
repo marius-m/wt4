@@ -1,7 +1,6 @@
 package lt.markmerkk.jira.interfaces;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -45,5 +44,5 @@ public interface IScheduler {
    * and returns next worker to be executed.
    * @param response execution response.
    */
-  IWorker complete(IResponse response) throws IllegalStateException;
+  IWorker complete(IWorkerResult response) throws IllegalStateException;
 }

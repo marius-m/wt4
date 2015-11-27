@@ -1,15 +1,13 @@
 package lt.markmerkk.jira.interfaces;
 
-import lt.markmerkk.jira.entities.JiraJobType;
-
 /**
  * Created by mariusmerkevicius on 11/25/15.
  * Represents a response entity from {@link IWorker}
  */
-public interface IResponse<T> {
+public interface IWorkerResult<T> {
 
   /**
-   * An identifier tag, that links {@link IResponse} and {@link IWorker}
+   * An identifier tag, that links {@link IWorkerResult} and {@link IWorker}
    * classes when execution is done.
    * @return
    */

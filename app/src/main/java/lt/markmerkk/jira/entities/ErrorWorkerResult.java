@@ -1,11 +1,11 @@
 package lt.markmerkk.jira.entities;
 
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  */
-public class ErrorResponse implements IResponse<Object> {
+public class ErrorWorkerResult implements IWorkerResult<Object> {
   String tag;
   String outputMessage;
   boolean isSuccess;
@@ -14,7 +14,7 @@ public class ErrorResponse implements IResponse<Object> {
    * Error constructor
    * @param outputMessage
    */
-  public ErrorResponse(String tag, String outputMessage) {
+  public ErrorWorkerResult(String tag, String outputMessage) {
     if (outputMessage == null)
       throw new IllegalArgumentException("Response cannot be initialized without a message!");
     if (tag == null)

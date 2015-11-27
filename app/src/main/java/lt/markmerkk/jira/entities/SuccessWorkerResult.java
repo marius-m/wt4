@@ -1,12 +1,12 @@
 package lt.markmerkk.jira.entities;
 
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  * Represents success response
  */
-public class SuccessResponse<T> implements IResponse<T> {
+public class SuccessWorkerResult<T> implements IWorkerResult<T> {
   T entity;
   boolean isSuccess;
   String outputMessage;
@@ -18,7 +18,7 @@ public class SuccessResponse<T> implements IResponse<T> {
    * @param outputMessage provided success message
    * @param entity provided entity with response
    */
-  public SuccessResponse(String tag, String outputMessage, T entity) {
+  public SuccessWorkerResult(String tag, String outputMessage, T entity) {
     if (entity == null)
       throw new IllegalArgumentException("Response cannot be initialized without an entity!");
     if (outputMessage == null)

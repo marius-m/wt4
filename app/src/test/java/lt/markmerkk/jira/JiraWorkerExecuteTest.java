@@ -3,7 +3,7 @@ package lt.markmerkk.jira;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,10 +23,10 @@ public class JiraWorkerExecuteTest {
     // Arrange
     MockWorker worker = spy(new MockWorker());
     worker.populateCredentials(new Credentials("asdf", "asdf", "asdf"));
-    doReturn(mock(IResponse.class)).when(worker).executeRequest(any(JiraRestClient.class));
+    doReturn(mock(IWorkerResult.class)).when(worker).executeRequest(any(JiraRestClient.class));
 
     // Act
-    IResponse response = worker.execute();
+    IWorkerResult response = worker.execute();
 
     // Assert
     verify(worker).executeRequest(any(JiraRestClient.class));
@@ -40,7 +40,7 @@ public class JiraWorkerExecuteTest {
     //doReturn(mock(IJiraResponse.class)).when(worker).executeRequest(any(JiraRestClient.class));
 
     // Act
-    IResponse response = worker.execute();
+    IWorkerResult response = worker.execute();
 
     // Assert
     verify(worker, never()).executeRequest(any(JiraRestClient.class));
@@ -54,7 +54,7 @@ public class JiraWorkerExecuteTest {
     //doReturn(mock(IJiraResponse.class)).when(worker).executeRequest(any(JiraRestClient.class));
 
     // Act
-    IResponse response = worker.execute();
+    IWorkerResult response = worker.execute();
 
     // Assert
     verify(worker, never()).executeRequest(any(JiraRestClient.class));
@@ -69,7 +69,7 @@ public class JiraWorkerExecuteTest {
         .when(worker).executeRequest(any(JiraRestClient.class));
 
     // Act
-    IResponse response = worker.execute();
+    IWorkerResult response = worker.execute();
 
     // Assert
     verify(worker).executeRequest(any(JiraRestClient.class));
@@ -81,7 +81,7 @@ public class JiraWorkerExecuteTest {
   private class MockWorker extends JiraWorker {
     public MockWorker() { }
 
-    @Override protected IResponse executeRequest(JiraRestClient client) {
+    @Override protected IWorkerResult executeRequest(JiraRestClient client) {
       return null;
     }
 

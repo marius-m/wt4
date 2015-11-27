@@ -2,7 +2,7 @@ package lt.markmerkk.jira;
 
 import java.util.LinkedList;
 import lt.markmerkk.jira.interfaces.ICredentials;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IScheduler;
 import lt.markmerkk.jira.interfaces.IWorker;
 
@@ -53,7 +53,7 @@ public class JiraScheduler implements IScheduler {
     return workers;
   }
 
-  @Override public IWorker complete(IResponse response) throws IllegalStateException {
+  @Override public IWorker complete(IWorkerResult response) throws IllegalStateException {
     if (response == null) return null;
     IWorker worker = workers.peek();
     if (worker == null) return null;

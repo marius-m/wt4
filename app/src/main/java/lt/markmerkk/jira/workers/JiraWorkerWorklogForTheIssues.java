@@ -2,10 +2,8 @@ package lt.markmerkk.jira.workers;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import lt.markmerkk.jira.JiraWorker;
-import lt.markmerkk.jira.entities.SuccessResponse;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -19,7 +17,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker<Issue> {
 
   public JiraWorkerWorklogForTheIssues() { }
 
-  @Override protected IResponse executeRequest(JiraRestClient client) {
+  @Override protected IWorkerResult executeRequest(JiraRestClient client) {
     //for (Issue issueLink : searchResult.getIssues()) {
     //  Issue issue = client.getIssueClient().getIssue(issueLink.getKey()).claim();
     //  System.out.println("Issue: " + issue.getKey());

@@ -14,7 +14,7 @@ public class ErrorResponseTest {
     // Arrange
     // Act
     // Assert
-    ErrorResponse errorResponse = new ErrorResponse("some_tag", "some_error_message");
+    ErrorWorkerResult errorResponse = new ErrorWorkerResult("some_tag", "some_error_message");
     assertThat(errorResponse.isSuccess()).isFalse();
     assertThat(errorResponse.outputMessage()).isNotNull();
     assertThat(errorResponse.entity()).isNull();
@@ -26,7 +26,7 @@ public class ErrorResponseTest {
     // Act
     // Assert
     try {
-      new ErrorResponse("some_tag", null);
+      new ErrorWorkerResult("some_tag", null);
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without a message!");
@@ -38,7 +38,7 @@ public class ErrorResponseTest {
     // Act
     // Assert
     try {
-      new ErrorResponse(null, "output_message");
+      new ErrorWorkerResult(null, "output_message");
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without a tag!");

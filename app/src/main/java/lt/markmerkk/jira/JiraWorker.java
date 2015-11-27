@@ -5,12 +5,11 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.entities.ErrorResponse;
+import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.ICredentials;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorker;
 
 /**
@@ -28,22 +27,22 @@ public abstract class JiraWorker<T> implements IWorker<T> {
     this.credentials = credentials;
   }
 
-  protected abstract IResponse executeRequest(JiraRestClient client);
+  protected abstract IWorkerResult executeRequest(JiraRestClient client);
 
-  public IResponse execute() {
-    if (credentials == null) return new ErrorResponse(tag(), "Error: No user credentials provided!");
-    if (!credentials.isValid()) return new ErrorResponse(tag(), "Error: Invalid user credentials!");
+  public IWorkerResult execute() {
+    if (credentials == null) return new ErrorWorkerResult(tag(), "Error: No user credentials provided!");
+    if (!credentials.isValid()) return new ErrorWorkerResult(tag(), "Error: Invalid user credentials!");
     try {
       AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
       client = factory.createWithBasicHttpAuthentication(new URI(credentials.url()),
           credentials.username(), credentials.password());
       return executeRequest(client);
     } catch (URISyntaxException e) {
-      return new ErrorResponse(tag(), "Error: " + e.getMessage());
+      return new ErrorWorkerResult(tag(), "Error: " + e.getMessage());
     } catch (RestClientException e) {
-      return new ErrorResponse(tag(), "Error: " + e.getCause().toString());
+      return new ErrorWorkerResult(tag(), "Error: " + e.getCause().toString());
     } catch (IllegalArgumentException e) {
-      return new ErrorResponse(tag(), "Error: " + e.getMessage());
+      return new ErrorWorkerResult(tag(), "Error: " + e.getMessage());
     } finally {
       close();
     }

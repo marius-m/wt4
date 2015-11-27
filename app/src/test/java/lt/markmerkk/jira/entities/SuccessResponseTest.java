@@ -13,7 +13,8 @@ public class SuccessResponseTest {
     // Arrange
     // Act
     // Assert
-    SuccessResponse<Object> successResponse = new SuccessResponse<>("valid_tag", "object", "success_message");
+    SuccessWorkerResult<Object>
+        successResponse = new SuccessWorkerResult<>("valid_tag", "object", "success_message");
     assertThat(successResponse.isSuccess()).isTrue();
     assertThat(successResponse.outputMessage()).isNotNull();
     assertThat(successResponse.entity()).isNotNull();
@@ -25,7 +26,7 @@ public class SuccessResponseTest {
     // Act
     // Assert
     try {
-      new SuccessResponse<String>("valid_tag", null, "success_message");
+      new SuccessWorkerResult<String>("valid_tag", null, "success_message");
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without a message!");
@@ -37,7 +38,7 @@ public class SuccessResponseTest {
     // Act
     // Assert
     try {
-      new SuccessResponse<String>("valid_tag", "some_object", null);
+      new SuccessWorkerResult<String>("valid_tag", "some_object", null);
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without an entity!");
@@ -49,7 +50,7 @@ public class SuccessResponseTest {
     // Act
     // Assert
     try {
-      new SuccessResponse<String>(null, "some_object", "valid entity");
+      new SuccessWorkerResult<String>(null, "some_object", "valid entity");
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without a tag!");

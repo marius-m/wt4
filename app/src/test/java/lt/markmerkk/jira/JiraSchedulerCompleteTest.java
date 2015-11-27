@@ -1,7 +1,7 @@
 package lt.markmerkk.jira;
 
 import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorker;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class JiraSchedulerCompleteTest {
         worker2,
         worker3
     );
-    IResponse response = mock(IResponse.class);
+    IWorkerResult response = mock(IWorkerResult.class);
     doReturn("TAG_1").when(response).tag();
 
     // Act
@@ -56,7 +56,7 @@ public class JiraSchedulerCompleteTest {
         worker2,
         worker3
     );
-    IResponse response = mock(IResponse.class);
+    IWorkerResult response = mock(IWorkerResult.class);
     doReturn("TAG_1")
         .doReturn("TAG_2")
         .doReturn("TAG_3")
@@ -89,7 +89,7 @@ public class JiraSchedulerCompleteTest {
         worker2,
         worker3
     );
-    IResponse response = mock(IResponse.class);
+    IWorkerResult response = mock(IWorkerResult.class);
     doReturn("TAG_3") // Scramble
         .doReturn("TAG_2")
         .doReturn("TAG_1")

@@ -1,8 +1,7 @@
 package lt.markmerkk.jira;
 
-import javafx.application.Platform;
 import lt.markmerkk.jira.interfaces.IRemote;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IScheduler;
 import lt.markmerkk.jira.interfaces.IWorker;
 import lt.markmerkk.jira.interfaces.JiraListener;
@@ -11,7 +10,7 @@ import lt.markmerkk.jira.interfaces.JiraListener;
  * Created by mariusmerkevicius on 11/25/15.
  * A jira executor for background processes
  */
-public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
+public class JiraExecutor extends TaskExecutor<IWorkerResult> implements IRemote {
 
   JiraListener listener;
   IScheduler scheduler;
@@ -74,12 +73,10 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
     reportOutput("Cancelling");
   }
 
-  @Override protected void onReady() {
-  }
-
-  @Override protected void onResult(final IResponse result) {
+  @Override protected void onResult(final IWorkerResult result) {
     if (result == null) return;
     reportOutput(result.outputMessage());
+
     if (!result.isSuccess()) {
       scheduler = null;
       return;

@@ -1,12 +1,10 @@
 package lt.markmerkk.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -24,7 +22,7 @@ public class JiraWorkerInitTest {
   private class MockWorker extends JiraWorker {
     public MockWorker() { }
 
-    @Override protected IResponse executeRequest(JiraRestClient client) {
+    @Override protected IWorkerResult executeRequest(JiraRestClient client) {
       return null;
     }
 

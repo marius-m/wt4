@@ -3,10 +3,9 @@ package lt.markmerkk.jira.workers;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
-import com.atlassian.jira.rest.client.api.domain.User;
 import lt.markmerkk.jira.JiraWorker;
-import lt.markmerkk.jira.entities.SuccessResponse;
-import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.entities.SuccessWorkerResult;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -20,8 +19,9 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker<SearchResult> {
 
   public JiraWorkerSearchWorklogForToday() { }
 
-  @Override protected IResponse executeRequest(JiraRestClient client) {
-    SuccessResponse<SearchResult> searchResultForToday = new SuccessResponse<>(tag(), "Job search complete!",
+  @Override protected IWorkerResult executeRequest(JiraRestClient client) {
+    SuccessWorkerResult<SearchResult>
+        searchResultForToday = new SuccessWorkerResult<>(tag(), "Job search complete!",
         client.getSearchClient().searchJql(WORKLOG_FOR_TODAY).claim());
     return searchResultForToday;
   }
