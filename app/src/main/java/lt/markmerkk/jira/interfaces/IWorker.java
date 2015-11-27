@@ -36,7 +36,7 @@ public interface IWorker<T> {
 
   /**
    * Outputs post execution method to indicate work for the user
-   * @param entity passed in pulled object
+   * @param entity passed in p
    * @return
    */
   String postExecuteMessage(T entity);

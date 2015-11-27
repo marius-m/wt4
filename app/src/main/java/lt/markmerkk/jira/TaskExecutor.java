@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javafx.application.Platform;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
@@ -29,11 +30,6 @@ public abstract class TaskExecutor<ResultType>  {
    * Called whenever cancel is executed
    */
   protected abstract void onCancel();
-
-  /**
-   * Called whenever executor is ready for another call
-   */
-  protected abstract void onReady();
 
   /**
    * Executed when background task is finished
@@ -134,7 +130,8 @@ public abstract class TaskExecutor<ResultType>  {
         if (!isLoading() && !futureResult.isCancelled()) {
           try {
             printDebug("Result");
-            onResult(futureResult.get(1, TimeUnit.SECONDS));
+            ResultType result = futureResult.get(1, TimeUnit.SECONDS);
+            Platform.runLater(() -> onResult(result));
           } catch (InterruptedException e) {
             printDebug("Interruped getting");
             e.printStackTrace();
@@ -149,7 +146,6 @@ public abstract class TaskExecutor<ResultType>  {
         if (futureResult.isCancelled())
           onCancel();
         futureResult = null;
-        onReady();
       }
       setLoading(isLoading());
     }

@@ -6,6 +6,7 @@ import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.entities.SuccessResponse;
 import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.utils.Utils;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -23,8 +24,7 @@ public class JiraWorkerLogin extends JiraWorker<User> {
     return userJiraResponse;
   }
 
-  @Override public void populateInput(User inputData) {
-  }
+  @Override public void populateInput(User inputData) { }
 
   @Override public String tag() {
     return LOGIN;

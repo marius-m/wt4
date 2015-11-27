@@ -75,12 +75,6 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
   }
 
   @Override protected void onReady() {
-    if (scheduler == null) return;
-    if (!scheduler.hasMore()) {
-      reportOutput("Finished " + scheduler.name());
-      return;
-    }
-    executeScheduler(scheduler);
   }
 
   @Override protected void onResult(final IResponse result) {
@@ -94,6 +88,17 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
       reportOutput(scheduler.next().postExecuteMessage(result.entity()));
     if (scheduler == null) return;
     scheduler.complete(result);
+    if (scheduler.hasMore()) {
+      IWorker next = scheduler.next();
+      //next.populateInput(result.entity());
+    }
+
+    if (scheduler == null) return;
+    if (!scheduler.hasMore()) {
+      reportOutput("Finished " + scheduler.name());
+      return;
+    }
+    executeScheduler(scheduler);
   }
 
   @Override protected void onLoadChange(final boolean loading) {

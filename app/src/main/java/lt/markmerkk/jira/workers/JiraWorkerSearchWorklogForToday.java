@@ -27,7 +27,7 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker<SearchResult> {
   }
 
   @Override public void populateInput(SearchResult inputData) {
-
+    System.out.println("Populating data: "+inputData);
   }
 
   @Override public String tag() {
