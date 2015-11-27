@@ -177,7 +177,7 @@ public class MainController extends BaseController {
 
     buttonTest.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent event) {
-        if (remote.isLoading()) {
+        if (remote.isLoading() || remote.hasMore()) {
           remote.cancel();
           return;
         }

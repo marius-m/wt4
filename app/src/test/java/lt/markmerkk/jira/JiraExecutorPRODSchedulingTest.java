@@ -37,6 +37,7 @@ public class JiraExecutorPRODSchedulingTest {
         .when(response).isSuccess();
     doAnswer((InvocationOnMock invocationOnMock) -> {
       executor.onResult(response);
+      executor.onReady();
       return null;
     }).when(executor).executeInBackground(any(Callable.class));
 

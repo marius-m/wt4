@@ -7,20 +7,33 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
+ * An abstract executor class to do various jobs in the background and control them
  */
 public abstract class TaskExecutor<ResultType>  {
   private ScheduledExecutorService resultCheckExecutor = Executors.newScheduledThreadPool(1);
   private ExecutorService mainExecutor;
   private Future<ResultType> futureResult;
 
+  public static final boolean DEBUG = true;
   private boolean loading = false;
 
   public TaskExecutor() { }
 
   //region Abstract
+
+  /**
+   * Called whenever cancel is executed
+   */
+  protected abstract void onCancel();
+
+  /**
+   * Called whenever executor is ready for another call
+   */
+  protected abstract void onReady();
 
   /**
    * Executed when background task is finished
@@ -60,8 +73,10 @@ public abstract class TaskExecutor<ResultType>  {
    * An execution method
    */
   protected void executeInBackground(Callable<ResultType> callable) {
+    printDebug("Queue for execution");
     if (callable == null) return;
     if (isLoading()) return;
+    printDebug("Executing");
     futureResult = mainExecutor.submit(callable);
     setLoading(isLoading());
   }
@@ -70,10 +85,19 @@ public abstract class TaskExecutor<ResultType>  {
    * Calls a cancel on currently loading task
    */
   public void cancel() {
-    if (futureResult == null) return;
-    if (futureResult.isDone()) return;
-    if (futureResult.isCancelled()) return;
-    futureResult.cancel(true);
+    if (futureResult != null) futureResult.cancel(true);
+    printDebug("Cancel");
+    onCancel();
+    setLoading(false);
+  }
+
+  /**
+   * Convenience method to print out logic for debugging workflow
+   * @param message
+   */
+  private void printDebug(String message) {
+    if (!DEBUG) return;
+    System.out.println(message);
   }
 
   //endregion
@@ -95,6 +119,7 @@ public abstract class TaskExecutor<ResultType>  {
     if (this.loading == loading)
       return;
     this.loading = loading;
+    printDebug("Loading: " + loading);
     onLoadChange(loading);
   }
 
@@ -104,17 +129,27 @@ public abstract class TaskExecutor<ResultType>  {
 
   Runnable resultCheck = new Runnable() {
     @Override public void run() {
+      printDebug("Check " + isLoading());
       if (TaskExecutor.this.loading != isLoading()) {
         if (!isLoading() && !futureResult.isCancelled()) {
           try {
-            onResult(futureResult.get());
+            printDebug("Result");
+            onResult(futureResult.get(1, TimeUnit.SECONDS));
           } catch (InterruptedException e) {
+            printDebug("Interruped getting");
             e.printStackTrace();
           } catch (ExecutionException e) {
+            printDebug("Execution error");
+            e.printStackTrace();
+          } catch (TimeoutException e) {
+            printDebug("Timeout exception");
             e.printStackTrace();
           }
         }
+        if (futureResult.isCancelled())
+          onCancel();
         futureResult = null;
+        onReady();
       }
       setLoading(isLoading());
     }

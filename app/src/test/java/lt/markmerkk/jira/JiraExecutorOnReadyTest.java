@@ -3,7 +3,6 @@ package lt.markmerkk.jira;
 import lt.markmerkk.jira.interfaces.IResponse;
 import lt.markmerkk.jira.interfaces.IScheduler;
 import lt.markmerkk.jira.interfaces.JiraListener;
-import lt.markmerkk.storage2.database.interfaces.IResult;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,42 +18,45 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mariusmerkevicius on 11/27/15.
  */
-public class JiraExecutorOnResultTest {
-  @Test public void testNull() throws Exception {
-    // Arrange
-    JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
-
-    // Act
-    executor.onResult(null);
-
-    // Assert
-    verify(executor, never()).executeScheduler(any(IScheduler.class));
-  }
-
+public class JiraExecutorOnReadyTest {
   @Test public void testNullScheduler() throws Exception {
     // Arrange
     JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
+    executor.scheduler = null;
+    //doReturn(true).when(executor.scheduler).hasMore();
+    doNothing().when(executor).executeScheduler(any(IScheduler.class));
 
     // Act
-    executor.onResult(mock(IResponse.class));
+    // Assert
+    executor.onReady();
+  }
+
+  @Test public void testSchedulerDepleted() throws Exception {
+    // Arrange
+    JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
+    executor.scheduler = mock(IScheduler.class);
+    doReturn(false).when(executor.scheduler).hasMore();
+    doNothing().when(executor).executeScheduler(any(IScheduler.class));
+
+    // Act
+    executor.onReady();
 
     // Assert
-    verify(executor, never()).executeScheduler(any(IScheduler.class));
+    verify(executor, never()).executeScheduler(executor.scheduler);
   }
 
   @Test public void testValid() throws Exception {
     // Arrange
     JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
-    IResponse response = mock(IResponse.class);
     executor.scheduler = mock(IScheduler.class);
-    doReturn(true).when(response).isSuccess();
     doReturn(true).when(executor.scheduler).hasMore();
     doNothing().when(executor).executeScheduler(any(IScheduler.class));
 
     // Act
-    executor.onResult(response);
+    executor.onReady();
 
     // Assert
-    verify(executor.scheduler, times(1)).complete(any(IResponse.class));
+    verify(executor).executeScheduler(executor.scheduler);
   }
+
 }

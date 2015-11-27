@@ -36,23 +36,39 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
   //region Callback
 
-  @Override protected void onResult(final IResponse result) {
-    if (listener == null) return;
-    if (result == null) return;
-    listener.onOutput(result.outputMessage());
-    if (!result.isSuccess()) return;
+  @Override protected void onCancel() {
+    scheduler = null;
+    reportOutput("Cancelling");
+  }
+
+  @Override protected void onReady() {
     if (scheduler == null) return;
-    scheduler.complete(result);
-    if (!scheduler.hasMore()) return;
+    if (!scheduler.hasMore()) {
+      reportOutput("Finished " + scheduler.name());
+      return;
+    }
     executeScheduler(scheduler);
   }
 
+  @Override protected void onResult(final IResponse result) {
+    if (result == null) return;
+    reportOutput(result.outputMessage());
+    if (!result.isSuccess()) {
+      scheduler = null;
+      return;
+    }
+    if (scheduler == null) return;
+    scheduler.complete(result);
+  }
+
   @Override protected void onLoadChange(final boolean loading) {
-    if (listener == null) return;
-    listener.onLoadChange(loading);
+    if (listener != null)
+      listener.onLoadChange(loading);
   }
 
   //endregion
+
+  //region Public
 
   /**
    * Executes a scheduler defined jobs
@@ -66,11 +82,34 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
     execute(nextWorker);
   }
 
+  /**
+   * Returns if there are more jobs in the list
+   * @return
+   */
+  public boolean hasMore() {
+    if (scheduler == null) return false;
+    return (scheduler.hasMore());
+  }
+
+  //endregion
+
   //region Convenience
 
+  /**
+   * Reports output message to the outside
+   * @param message
+   */
+  private void reportOutput(String message) {
+    if (listener != null) listener.onOutput(message);
+  }
+
+  /**
+   * Executes a provided worker in the background
+   * @param worker
+   */
   void execute(IWorker worker) {
     if (worker == null) return;
-    if (listener != null) listener.onOutput(worker.preExecuteMessage());
+    reportOutput(worker.preExecuteMessage());
     executeInBackground(worker::execute);
   }
 
