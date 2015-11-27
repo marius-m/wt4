@@ -38,9 +38,8 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
   @Override protected void onResult(final IResponse result) {
     if (listener == null) return;
-    Platform.runLater(() -> {
-      listener.onOutput(result.outputMessage());
-    });
+    if (result == null) return;
+    listener.onOutput(result.outputMessage());
     if (scheduler == null) return;
     scheduler.complete(result);
     executeScheduler(scheduler);
@@ -48,9 +47,7 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
   @Override protected void onLoadChange(final boolean loading) {
     if (listener == null) return;
-    Platform.runLater(() -> {
-      listener.onLoadChange(loading);
-    });
+    listener.onLoadChange(loading);
   }
 
   //endregion
@@ -63,10 +60,11 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
     if (scheduler == null) return;
     this.scheduler = scheduler;
     IWorker nextWorker = scheduler.next();
-    if (nextWorker == null)
-      Platform.runLater( () -> {
-        listener.onOutput("Finished " + scheduler.name());
-      });
+    if (nextWorker == null) {
+      this.scheduler = null;
+      listener.onOutput("Finished " + scheduler.name());
+      return;
+    }
     execute(nextWorker);
   }
 
@@ -74,10 +72,7 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
   void execute(IWorker worker) {
     if (worker == null) return;
-    Platform.runLater( () -> {
-      if (listener != null)
-        listener.onOutput(worker.preExecuteMessage());
-    });
+    if (listener != null) listener.onOutput(worker.preExecuteMessage());
     executeInBackground(worker::execute);
   }
 

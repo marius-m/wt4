@@ -294,18 +294,20 @@ public class MainController extends BaseController {
     }
 
     @Override public void onOutput(String message) {
-      log.info("Jira: " + message);
+      Platform.runLater(() -> log.info("Jira: " + message));
     }
 
     @Override public void onLoadChange(boolean loading) {
-      progressIndicator.setManaged(loading);
-      progressIndicator.setVisible(loading);
-      inputUsername.setDisable(loading);
-      inputPassword.setDisable(loading);
-      inputHost.setDisable(loading);
-      if (loading)
-        log.info("Loading... ");
-      buttonTest.setText((loading) ? "Cancel" : "Refresh");
+      Platform.runLater(() -> {
+        progressIndicator.setManaged(loading);
+        progressIndicator.setVisible(loading);
+        inputUsername.setDisable(loading);
+        inputPassword.setDisable(loading);
+        inputHost.setDisable(loading);
+        if (loading)
+          log.info("Loading... ");
+        buttonTest.setText((loading) ? "Cancel" : "Refresh");
+      });
     }
   };
 
