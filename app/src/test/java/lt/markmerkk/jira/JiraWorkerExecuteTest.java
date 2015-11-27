@@ -81,7 +81,7 @@ public class JiraWorkerExecuteTest {
   private class MockWorker extends JiraWorker {
     public MockWorker() { }
 
-    @Override IResponse executeRequest(JiraRestClient client) {
+    @Override protected IResponse executeRequest(JiraRestClient client) {
       return null;
     }
 

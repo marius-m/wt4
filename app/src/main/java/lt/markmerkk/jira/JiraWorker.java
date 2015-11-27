@@ -19,8 +19,8 @@ import lt.markmerkk.jira.interfaces.IWorker;
  * to {@link #executeRequest(JiraRestClient)}.
  */
 public abstract class JiraWorker<T> implements IWorker<T> {
-  ICredentials credentials;
-  JiraRestClientPlus client;
+  protected ICredentials credentials;
+  protected JiraRestClientPlus client;
 
   public JiraWorker() {}
 
@@ -28,7 +28,7 @@ public abstract class JiraWorker<T> implements IWorker<T> {
     this.credentials = credentials;
   }
 
-  abstract IResponse executeRequest(JiraRestClient client);
+  protected abstract IResponse executeRequest(JiraRestClient client);
 
   public IResponse execute() {
     if (credentials == null) return new ErrorResponse(tag(), "Error: No user credentials provided!");

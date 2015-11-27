@@ -27,7 +27,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lt.markmerkk.jira.JiraExecutor;
 import lt.markmerkk.jira.JiraScheduler;
-import lt.markmerkk.jira.JiraWorkerLogin;
+import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.JiraListener;
 import lt.markmerkk.storage2.SimpleLogBuilder;

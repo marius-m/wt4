@@ -1,6 +1,6 @@
-package lt.markmerkk.jira;
+package lt.markmerkk.jira.workers;
 
-import lt.markmerkk.jira.entities.Credentials;
+import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
