@@ -56,4 +56,21 @@ public class JiraExecutorExecuteScheduleTest {
     // Assert
     verify(executor).execute(any(IWorker.class));
   }
+
+  @Test public void testValidFirstItem() throws Exception {
+    // Arrange
+    JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
+    doNothing().when(executor).executeInBackground(any(Callable.class));
+    IWorker worker1 = mock(IWorker.class);
+    IWorker worker2 = mock(IWorker.class);
+    IWorker worker3 = mock(IWorker.class);
+
+    // Act
+    executor.executeScheduler(new JiraScheduler("some_scheduler",
+        mock(ICredentials.class), worker1, worker2, worker3
+    ));
+
+    // Assert
+    verify(executor).execute(worker1);
+  }
 }
