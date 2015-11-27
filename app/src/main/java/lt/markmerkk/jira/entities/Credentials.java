@@ -1,12 +1,13 @@
 package lt.markmerkk.jira.entities;
 
+import lt.markmerkk.jira.interfaces.ICredentials;
 import lt.markmerkk.utils.Utils;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  * Represents user credentials that are used connecting to jira
  */
-public class Credentials {
+public class Credentials implements ICredentials {
   String username;
   String password;
   String url;
@@ -17,27 +18,22 @@ public class Credentials {
     this.url = url;
   }
 
-  public String getUsername() {
+  @Override public String username() {
     return username;
   }
 
-  public String getPassword() {
+  @Override public String password() {
     return password;
   }
 
-  public String getUrl() {
+  @Override public String url() {
     return url;
   }
 
-  /**
-   * Validates user credentials
-   * @return
-   */
-  public boolean isUserValid() {
+  @Override public boolean isValid() {
     if (Utils.isEmpty(username)) return false;
     if (Utils.isEmpty(password)) return false;
     if (Utils.isEmpty(url)) return false;
     return true;
   }
-
 }

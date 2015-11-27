@@ -9,6 +9,7 @@ import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.entities.ErrorResponse;
 import lt.markmerkk.jira.extend_base.AsynchronousJiraRestClientFactoryPlus;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
+import lt.markmerkk.jira.interfaces.ICredentials;
 import lt.markmerkk.jira.interfaces.IResponse;
 import lt.markmerkk.jira.interfaces.IWorker;
 
@@ -17,25 +18,25 @@ import lt.markmerkk.jira.interfaces.IWorker;
  * Represents worker extension class that connects to jira client and passes down execution
  * to {@link #executeRequest(JiraRestClient)}.
  */
-public abstract class JiraWorker implements IWorker {
-  Credentials credentials;
-
+public abstract class JiraWorker<T> implements IWorker<T> {
+  ICredentials credentials;
   JiraRestClientPlus client;
 
-  public JiraWorker(Credentials credentials) {
-    if (credentials == null)
-      throw new IllegalArgumentException("Cannot function without credentials!");
+  public JiraWorker() {}
+
+  @Override public void populateCredentials(ICredentials credentials) {
     this.credentials = credentials;
   }
 
   abstract IResponse executeRequest(JiraRestClient client);
 
   public IResponse execute() {
-    if (!credentials.isUserValid()) return new ErrorResponse(tag(), "Error: Invalid user credentials!");
+    if (credentials == null) return new ErrorResponse(tag(), "Error: No user credentials provided!");
+    if (!credentials.isValid()) return new ErrorResponse(tag(), "Error: Invalid user credentials!");
     try {
       AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
-      client = factory.createWithBasicHttpAuthentication(new URI(credentials.getUrl()),
-          credentials.getUsername(), credentials.getPassword());
+      client = factory.createWithBasicHttpAuthentication(new URI(credentials.url()),
+          credentials.username(), credentials.password());
       return executeRequest(client);
     } catch (URISyntaxException e) {
       return new ErrorResponse(tag(), "Error: " + e.getMessage());

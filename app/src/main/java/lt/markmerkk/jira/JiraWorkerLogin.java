@@ -9,19 +9,19 @@ import lt.markmerkk.jira.interfaces.IResponse;
 /**
  * Created by mariusmerkevicius on 11/26/15.
  */
-public class JiraWorkerLogin extends JiraWorker {
+public class JiraWorkerLogin extends JiraWorker<Object> {
 
   public static final String LOGIN = "LOGIN";
 
-  public JiraWorkerLogin(Credentials credentials) {
-    super(credentials);
-  }
+  public JiraWorkerLogin() { }
 
   @Override IResponse executeRequest(JiraRestClient client) {
     SuccessResponse<User> userJiraResponse = new SuccessResponse<>(tag(), "Login success!",
-        client.getUserClient().getUser(credentials.getUsername()).claim());
+        client.getUserClient().getUser(credentials.username()).claim());
     return userJiraResponse;
   }
+
+  @Override public void populateInput(Object inputData) { }
 
   @Override public String tag() {
     return LOGIN;

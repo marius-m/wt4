@@ -12,34 +12,23 @@ import static org.junit.Assert.*;
  * Created by mariusmerkevicius on 11/26/15.
  */
 public class JiraWorkerInitTest {
-  @Test public void testNull() throws Exception {
-    // Arrange
-    // Act
-    // Assert
-    try {
-      new MockWorker(null);
-      fail("Should not create a worker without credentials");
-    } catch (Exception e) {
-      assertThat(e).hasMessage("Cannot function without credentials!");
-    }
-  }
 
   @Test public void testValid() throws Exception {
     // Arrange
     // Act
     // Assert
-    assertThat(new MockWorker(new Credentials("asdf", "asdf", "asdf"))).isNotNull();
+    assertThat(new MockWorker()).isNotNull();
   }
 
   //region Classes
   private class MockWorker extends JiraWorker {
-    public MockWorker(Credentials credentials) {
-      super(credentials);
-    }
+    public MockWorker() { }
 
     @Override IResponse executeRequest(JiraRestClient client) {
       return null;
     }
+
+    @Override public void populateInput(Object inputData) { }
 
     @Override public String tag() {
       return null;

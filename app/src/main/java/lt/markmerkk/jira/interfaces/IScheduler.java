@@ -11,15 +11,21 @@ import java.util.List;
 public interface IScheduler {
 
   /**
+   * Credentials used with the scheduled tasks
+   * @return
+   */
+  ICredentials credentials();
+
+  /**
+   * Represents scheduler name
+   * @return
+   */
+  String name();
+
+  /**
    * A list of workers that are doing the job execution
    */
   LinkedList<IWorker> workers();
-
-  /**
-   * Returns if all the jobs are complete
-   * @return
-   */
-  boolean isComplete();
 
   /**
    * Returns next worker in the list.

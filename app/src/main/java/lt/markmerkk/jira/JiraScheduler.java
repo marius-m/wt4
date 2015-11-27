@@ -1,6 +1,7 @@
 package lt.markmerkk.jira;
 
 import java.util.LinkedList;
+import lt.markmerkk.jira.interfaces.ICredentials;
 import lt.markmerkk.jira.interfaces.IResponse;
 import lt.markmerkk.jira.interfaces.IScheduler;
 import lt.markmerkk.jira.interfaces.IWorker;
@@ -11,10 +12,17 @@ import lt.markmerkk.jira.interfaces.IWorker;
  * to complete some long task.
  */
 public class JiraScheduler implements IScheduler {
-
+  private final ICredentials credentials;
+  private final String name;
   LinkedList<IWorker> workers;
 
-  public JiraScheduler(IWorker... inputWorkers) {
+  public JiraScheduler(String name, ICredentials credentials, IWorker... inputWorkers) {
+    if (name == null)
+      throw new IllegalArgumentException("Cannot init scheduler without a name!");
+    if (credentials == null)
+      throw new IllegalArgumentException("Cannot init scheduler without credentials!");
+    this.credentials = credentials;
+    this.name = name;
     workers = new LinkedList<>();
     for (int i = inputWorkers.length-1; i >= 0; i--) {
       IWorker inputWorker = inputWorkers[i];
@@ -22,14 +30,19 @@ public class JiraScheduler implements IScheduler {
     }
   }
 
-  @Override public boolean isComplete() {
-    if (workers == null) return true;
-    if (workers.size() == 0) return true;
-    return false;
+  @Override public IWorker next() {
+    IWorker worker = workers.peek();
+    if (worker != null)
+      worker.populateCredentials(credentials());
+    return worker;
   }
 
-  @Override public IWorker next() {
-    return workers.peek();
+  @Override public ICredentials credentials() {
+    return credentials;
+  }
+
+  @Override public String name() {
+    return this.name;
   }
 
   @Override public LinkedList<IWorker> workers() {

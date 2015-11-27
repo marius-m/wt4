@@ -21,7 +21,8 @@ import static org.mockito.Mockito.verify;
 public class JiraWorkerExecuteTest {
   @Test public void testValid() throws Exception {
     // Arrange
-    MockWorker worker = spy(new MockWorker(new Credentials("asdf", "asdf", "asdf")));
+    MockWorker worker = spy(new MockWorker());
+    worker.populateCredentials(new Credentials("asdf", "asdf", "asdf"));
     doReturn(mock(IResponse.class)).when(worker).executeRequest(any(JiraRestClient.class));
 
     // Act
@@ -34,7 +35,22 @@ public class JiraWorkerExecuteTest {
 
   @Test public void testInvalidCredentials() throws Exception {
     // Arrange
-    MockWorker worker = spy(new MockWorker(new Credentials(null, null, null)));
+    MockWorker worker = spy(new MockWorker());
+    worker.populateCredentials(new Credentials(null, null, null));
+    //doReturn(mock(IJiraResponse.class)).when(worker).executeRequest(any(JiraRestClient.class));
+
+    // Act
+    IResponse response = worker.execute();
+
+    // Assert
+    verify(worker, never()).executeRequest(any(JiraRestClient.class));
+    assertThat(response).isNotNull();
+  }
+
+  @Test public void testNullCredentials() throws Exception {
+    // Arrange
+    MockWorker worker = spy(new MockWorker());
+    worker.populateCredentials(null);
     //doReturn(mock(IJiraResponse.class)).when(worker).executeRequest(any(JiraRestClient.class));
 
     // Act
@@ -47,7 +63,8 @@ public class JiraWorkerExecuteTest {
 
   @Test public void testThrowErrors() throws Exception {
     // Arrange
-    MockWorker worker = spy(new MockWorker(new Credentials("asdf", "asdf", "asdf")));
+    MockWorker worker = spy(new MockWorker());
+    worker.populateCredentials(new Credentials("asdf", "asdf", "asdf"));
     doThrow(new RestClientException("Some problems", new Throwable("Some problems")))
         .when(worker).executeRequest(any(JiraRestClient.class));
 
@@ -62,13 +79,13 @@ public class JiraWorkerExecuteTest {
   //region Classes
 
   private class MockWorker extends JiraWorker {
-    public MockWorker(Credentials credentials) {
-      super(credentials);
-    }
+    public MockWorker() { }
 
     @Override IResponse executeRequest(JiraRestClient client) {
       return null;
     }
+
+    @Override public void populateInput(Object inputData) { }
 
     @Override public String tag() {
       return "some_valid_tag";

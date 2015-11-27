@@ -1,5 +1,6 @@
 package lt.markmerkk.jira;
 
+import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.IResponse;
 import lt.markmerkk.jira.interfaces.IWorker;
 import org.junit.Test;
@@ -22,6 +23,8 @@ public class JiraSchedulerCompleteTest {
     IWorker worker3 = mock(IWorker.class);
     doReturn("TAG_3").when(worker3).tag();
     JiraScheduler scheduler = new JiraScheduler(
+        "some_name",
+        new Credentials("asdf", "asdf", "asdf"),
         worker1,
         worker2,
         worker3
@@ -47,6 +50,8 @@ public class JiraSchedulerCompleteTest {
     IWorker worker3 = mock(IWorker.class);
     doReturn("TAG_3").when(worker3).tag();
     JiraScheduler scheduler = new JiraScheduler(
+        "some_name",
+        new Credentials("asdf", "asdf", "asdf"),
         worker1,
         worker2,
         worker3
@@ -78,6 +83,8 @@ public class JiraSchedulerCompleteTest {
     IWorker worker3 = mock(IWorker.class);
     doReturn("TAG_3").when(worker3).tag();
     JiraScheduler scheduler = new JiraScheduler(
+        "some_name",
+        new Credentials("asdf", "asdf", "asdf"),
         worker1,
         worker2,
         worker3

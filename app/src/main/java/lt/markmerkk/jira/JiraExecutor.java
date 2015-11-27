@@ -18,6 +18,7 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
 
   JiraListener listener;
+  IScheduler scheduler;
 
   public JiraExecutor(JiraListener listener) {
     this.listener = listener;
@@ -40,6 +41,9 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
     Platform.runLater(() -> {
       listener.onOutput(result.outputMessage());
     });
+    if (scheduler == null) return;
+    scheduler.complete(result);
+    executeScheduler(scheduler);
   }
 
   @Override protected void onLoadChange(final boolean loading) {
@@ -51,17 +55,29 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
   //endregion
 
-  public void executeSequence(IScheduler scheduler) {
-
+  /**
+   * Executes a scheduler defined jobs
+   * @param scheduler
+   */
+  public void executeScheduler(IScheduler scheduler) {
+    if (scheduler == null) return;
+    this.scheduler = scheduler;
+    IWorker nextWorker = scheduler.next();
+    if (nextWorker == null)
+      Platform.runLater( () -> {
+        listener.onOutput("Finished " + scheduler.name());
+      });
+    execute(nextWorker);
   }
 
   //region Convenience
 
   void execute(IWorker worker) {
     if (worker == null) return;
-    //JiraWorkerLogin jiraWorkerLogin = new JiraWorkerLogin(listener.getUserCredentials());
-    if (listener != null)
-      listener.onOutput(worker.preExecuteMessage());
+    Platform.runLater( () -> {
+      if (listener != null)
+        listener.onOutput(worker.preExecuteMessage());
+    });
     executeInBackground(worker::execute);
   }
 

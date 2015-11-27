@@ -11,7 +11,7 @@ public class DBProdExecutor extends DBBaseExecutor {
     String home = System.getProperty("user.home");
     if (home == null)
       return "wt4.db";
-    return home+"/wt4.db";
-    //return "wt4.db";
+    //return home+"/wt4.db";
+    return "wt4.db";
   }
 }

@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JiraWorkerLoginTest {
   @Test public void testValid() throws Exception {
     // Arrange
-    JiraWorkerLogin jiraWorkerLogin = new JiraWorkerLogin(new Credentials("asdf", "asfd", "asdf"));
+    JiraWorkerLogin jiraWorkerLogin = new JiraWorkerLogin();
 
     // Act
     // Assert
