@@ -3,6 +3,8 @@ package lt.markmerkk.jira;
 import javafx.application.Platform;
 import lt.markmerkk.jira.interfaces.IRemote;
 import lt.markmerkk.jira.interfaces.IResponse;
+import lt.markmerkk.jira.interfaces.IScheduler;
+import lt.markmerkk.jira.interfaces.IWorker;
 import lt.markmerkk.jira.interfaces.JiraListener;
 
 /**
@@ -49,15 +51,19 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
 
   //endregion
 
-  public void login() {
-    JiraWorkerLogin jiraWorkerLogin = new JiraWorkerLogin(listener.getUserCredentials());
-    if (listener != null)
-      listener.onOutput(jiraWorkerLogin.preExecuteMessage());
-    executeInBackground(jiraWorkerLogin::execute);
+  public void executeSequence(IScheduler scheduler) {
+
   }
 
   //region Convenience
 
+  void execute(IWorker worker) {
+    if (worker == null) return;
+    //JiraWorkerLogin jiraWorkerLogin = new JiraWorkerLogin(listener.getUserCredentials());
+    if (listener != null)
+      listener.onOutput(worker.preExecuteMessage());
+    executeInBackground(worker::execute);
+  }
 
   //endregion
 

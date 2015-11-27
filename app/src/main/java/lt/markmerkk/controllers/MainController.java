@@ -179,7 +179,8 @@ public class MainController extends BaseController {
           remote.cancel();
           return;
         }
-        remote.login();
+        //fixme : will not do anything for now.
+        //remote.login();
       }
     });
 
