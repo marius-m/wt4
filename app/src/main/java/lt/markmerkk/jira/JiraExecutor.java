@@ -16,57 +16,12 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
   public static final String WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
 
-
   JiraListener listener;
   IScheduler scheduler;
 
   public JiraExecutor(JiraListener listener) {
     this.listener = listener;
   }
-
-  //region World events
-
-  @Override public void onStop() {
-    if (isLoading())
-      cancel();
-    super.onStop();
-  }
-
-  //endregion
-
-  //region Callback
-
-  @Override protected void onCancel() {
-    scheduler = null;
-    reportOutput("Cancelling");
-  }
-
-  @Override protected void onReady() {
-    if (scheduler == null) return;
-    if (!scheduler.hasMore()) {
-      reportOutput("Finished " + scheduler.name());
-      return;
-    }
-    executeScheduler(scheduler);
-  }
-
-  @Override protected void onResult(final IResponse result) {
-    if (result == null) return;
-    reportOutput(result.outputMessage());
-    if (!result.isSuccess()) {
-      scheduler = null;
-      return;
-    }
-    if (scheduler == null) return;
-    scheduler.complete(result);
-  }
-
-  @Override protected void onLoadChange(final boolean loading) {
-    if (listener != null)
-      listener.onLoadChange(loading);
-  }
-
-  //endregion
 
   //region Public
 
@@ -111,6 +66,50 @@ public class JiraExecutor extends TaskExecutor<IResponse> implements IRemote {
     if (worker == null) return;
     reportOutput(worker.preExecuteMessage());
     executeInBackground(worker::execute);
+  }
+
+  //endregion
+
+  //region Callback
+
+  @Override protected void onCancel() {
+    scheduler = null;
+    reportOutput("Cancelling");
+  }
+
+  @Override protected void onReady() {
+    if (scheduler == null) return;
+    if (!scheduler.hasMore()) {
+      reportOutput("Finished " + scheduler.name());
+      return;
+    }
+    executeScheduler(scheduler);
+  }
+
+  @Override protected void onResult(final IResponse result) {
+    if (result == null) return;
+    reportOutput(result.outputMessage());
+    if (!result.isSuccess()) {
+      scheduler = null;
+      return;
+    }
+    if (scheduler == null) return;
+    scheduler.complete(result);
+  }
+
+  @Override protected void onLoadChange(final boolean loading) {
+    if (listener != null)
+      listener.onLoadChange(loading);
+  }
+
+  //endregion
+
+  //region World events
+
+  @Override public void onStop() {
+    if (isLoading())
+      cancel();
+    super.onStop();
   }
 
   //endregion
