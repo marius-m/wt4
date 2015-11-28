@@ -33,6 +33,7 @@ import lt.markmerkk.jira.interfaces.WorkerListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
 import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
+import lt.markmerkk.jira.workers.JiraWorkerWorklogMerge;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -192,7 +193,8 @@ public class MainController extends BaseController {
               new WorkScheduler2(credentials,
                   new JiraWorkerLogin(),
                   new JiraWorkerTodayIssues(filterDate),
-                  new JiraWorkerWorklogForIssue(filterDate)
+                  new JiraWorkerWorklogForIssue(filterDate),
+                  new JiraWorkerWorklogMerge(executor)
               )
           );
         } catch (Exception e) {
@@ -308,9 +310,9 @@ public class MainController extends BaseController {
       inputUsername.setDisable(loading);
       inputPassword.setDisable(loading);
       inputHost.setDisable(loading);
-      //if (loading)
-      //  log.info("Loading... ");
       buttonTest.setText((loading) ? "Cancel" : "Refresh");
+      if (!loading)
+        notifyLogsChanged();
     }
   };
 
