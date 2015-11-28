@@ -1,26 +1,28 @@
 package lt.markmerkk.jira.workers;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.User;
 import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
+import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerTodayWorklog extends JiraWorker {
+public class JiraWorkerTodayIssues extends JiraWorker {
   public static final String JQL_WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
 
-  public static final String TAG = "SEARCH_WORKLOG_TODAY";
+  public static final String TAG = "SEARCH_ISSUES_TODAY";
 
-  public JiraWorkerTodayWorklog() { }
+  public JiraWorkerTodayIssues() { }
 
-  @Override protected IWorkerResult executeRequest(JiraRestClient client) {
+  @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     SuccessWorkerResult<SearchResult>
         searchResultForToday = new SuccessWorkerResult<>(tag(),
         client.getSearchClient().searchJql(JQL_WORKLOG_FOR_TODAY).claim());
@@ -44,7 +46,10 @@ public class JiraWorkerTodayWorklog extends JiraWorker {
     if (result instanceof SuccessWorkerResult) {
       if (!(result.entity() instanceof SearchResult)) return "Internal error: Result of wrong type!";
       SearchResult searchResult = (SearchResult) result.entity();
-      return "Success: Worked on these issues: \n";
+      String message = "  Success: Worked on these issues: \n";
+      for (Issue issue : searchResult.getIssues())
+        message += issue.getKey() + "\n";
+      return message;
     }
     return "Unknown internal error!";
   }

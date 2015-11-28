@@ -31,7 +31,8 @@ import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.WorkerListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
-import lt.markmerkk.jira.workers.JiraWorkerTodayWorklog;
+import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
+import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -190,7 +191,8 @@ public class MainController extends BaseController {
           asyncWorkExecutor.executeScheduler(
               new WorkScheduler2(credentials,
                   new JiraWorkerLogin(),
-                  new JiraWorkerTodayWorklog()
+                  new JiraWorkerTodayIssues(),
+                  new JiraWorkerWorklogForIssue()
               )
           );
         } catch (Exception e) {

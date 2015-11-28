@@ -45,6 +45,9 @@ public class WorkScheduler2 implements IScheduler2 {
       if (!result.isSuccess()) throw new IllegalStateException("Result response has failed!");
       if (!(result.tag().equals(executionWorker.tag()))) throw new IllegalStateException("Tags does not match!");
       workers.remove(executionWorker);
+      IWorker nextWorker = nextWorker();
+      if (nextWorker != null)
+        nextWorker.populateInput(result);
     } catch (IllegalStateException e) {
       workers.clear();
       System.out.println(e.getMessage());

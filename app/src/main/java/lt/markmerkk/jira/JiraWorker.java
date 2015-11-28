@@ -15,7 +15,7 @@ import lt.markmerkk.jira.interfaces.IWorker;
 /**
  * Created by mariusmerkevicius on 11/26/15.
  * Represents worker extension class that connects to jira client and passes down execution
- * to {@link #executeRequest(JiraRestClient)}.
+ * to {@link #executeRequest(JiraRestClientPlus)}.
  */
 public abstract class JiraWorker implements IWorker {
   protected ICredentials credentials;
@@ -27,7 +27,7 @@ public abstract class JiraWorker implements IWorker {
     this.credentials = credentials;
   }
 
-  protected abstract IWorkerResult executeRequest(JiraRestClient client);
+  protected abstract IWorkerResult executeRequest(JiraRestClientPlus client);
 
   public IWorkerResult execute() {
     if (credentials == null) return new ErrorWorkerResult(tag(), "No user credentials provided!");

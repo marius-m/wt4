@@ -5,6 +5,7 @@ import com.atlassian.jira.rest.client.api.domain.User;
 import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
+import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
@@ -17,7 +18,7 @@ public class JiraWorkerLogin extends JiraWorker {
 
   public JiraWorkerLogin() { }
 
-  @Override protected IWorkerResult executeRequest(JiraRestClient client) {
+  @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     SuccessWorkerResult<User>
         userJiraResponse = new SuccessWorkerResult<>(tag(),
         client.getUserClient().getUser(credentials.username()).claim());
@@ -39,7 +40,7 @@ public class JiraWorkerLogin extends JiraWorker {
     if (result instanceof SuccessWorkerResult) {
       if (!(result.entity() instanceof User)) return "Internal error: Result of wrong type!";
       User user = (User) result.entity();
-      return "Success: User: "+user.getName();
+      return "  Success: User: "+user.getName();
     }
     return "Unknown internal error!";
   }
