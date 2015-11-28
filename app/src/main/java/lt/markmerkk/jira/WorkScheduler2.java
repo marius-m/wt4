@@ -9,7 +9,7 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/28/15.
- * A scheduler that schedules {@link IWorker} for execution
+ * A currentSchedulerOrEmptyOne that schedules {@link IWorker} for execution
  */
 public class WorkScheduler2 implements IScheduler2 {
 

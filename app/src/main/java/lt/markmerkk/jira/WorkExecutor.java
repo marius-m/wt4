@@ -22,13 +22,15 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
   //region Public
 
   /**
-   * Executes a scheduler defined jobs
+   * Executes a currentSchedulerOrEmptyOne defined jobs
    * @param scheduler
    */
   public void executeScheduler(IScheduler2 scheduler) {
     this.scheduler = scheduler;
-    if (!scheduler().shouldExecute()) return;
-    execute(scheduler().nextWorker());
+    if (!currentSchedulerOrEmptyOne().shouldExecute()) return;
+    IWorker worker = currentSchedulerOrEmptyOne().nextWorker();
+    reportOutput(worker.preExecuteMessage());
+    executeInBackground(worker::execute);
   }
 
   /**
@@ -36,14 +38,14 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    * @return
    */
   public boolean hasMore() {
-    return (scheduler().shouldExecute());
+    return (currentSchedulerOrEmptyOne().shouldExecute());
   }
 
   /**
-   * Wrapper getter for always returning an instance
+   * Wrapper getter for always returning a scheduler instance
    * @return
    */
-  public IScheduler2 scheduler() {
+  public IScheduler2 currentSchedulerOrEmptyOne() {
     if (scheduler == null)
       scheduler = new NullWorkScheduler2();
     return scheduler;
@@ -61,28 +63,18 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
     if (listener != null) listener.onOutput(message);
   }
 
-  /**
-   * Executes a provided worker in the background
-   * @param worker
-   */
-  void execute(IWorker worker) {
-    if (worker == null) return;
-    reportOutput(worker.preExecuteMessage());
-    executeInBackground(worker::execute);
-  }
-
   //endregion
 
   //region Callback
 
   @Override protected void onCancel() {
-    scheduler = null;
+    scheduler.reset();
   }
 
   @Override protected void onResult(final IWorkerResult result) {
-    reportOutput(result.outputMessage());
-    scheduler().handleResult(result);
-    executeScheduler(scheduler());
+    if (result != null) reportOutput(result.outputMessage());
+    currentSchedulerOrEmptyOne().handleResult(result);
+    executeScheduler(currentSchedulerOrEmptyOne());
   }
 
   @Override protected void onLoadChange(final boolean loading) {

@@ -1,28 +1,46 @@
 package lt.markmerkk.jira;
 
 import java.util.concurrent.Callable;
+import lt.markmerkk.jira.interfaces.IScheduler2;
 import lt.markmerkk.jira.interfaces.IWorker;
 import lt.markmerkk.jira.interfaces.WorkerListener;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by mariusmerkevicius on 11/27/15.
+ * Created by mariusmerkevicius on 11/28/15.
  */
-public class WorkExecutorExecuteTest {
+public class WorkExecutorExecuteSchedulerTest {
+
   @Test public void testNull() throws Exception {
     // Arrange
     WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
     doNothing().when(executor).executeInBackground(any(Callable.class));
 
     // Act
-    executor.execute(null);
+    executor.executeScheduler(null);
+
+    // Assert
+    verify(executor, never()).executeInBackground(any(Callable.class));
+  }
+
+  @Test public void testNotExecutable() throws Exception {
+    // Arrange
+    WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    IScheduler2 scheduler = mock(IScheduler2.class);
+    doNothing().when(executor).executeInBackground(any(Callable.class));
+    doReturn(false).when(scheduler).shouldExecute();
+
+    // Act
+    executor.executeScheduler(scheduler);
 
     // Assert
     verify(executor, never()).executeInBackground(any(Callable.class));
@@ -31,10 +49,13 @@ public class WorkExecutorExecuteTest {
   @Test public void testValid() throws Exception {
     // Arrange
     WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    IScheduler2 scheduler = mock(IScheduler2.class);
     doNothing().when(executor).executeInBackground(any(Callable.class));
+    doReturn(true).when(scheduler).shouldExecute();
+    doReturn(mock(IWorker.class)).when(scheduler).nextWorker();
 
     // Act
-    executor.execute(mock(IWorker.class));
+    executor.executeScheduler(scheduler);
 
     // Assert
     verify(executor).executeInBackground(any(Callable.class));

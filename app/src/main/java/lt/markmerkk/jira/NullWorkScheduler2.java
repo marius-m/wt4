@@ -9,7 +9,7 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
 
 /**
  * Created by mariusmerkevicius on 11/28/15.
- * A mock scheduler to avoid null checks
+ * A mock currentSchedulerOrEmptyOne to avoid null checks
  */
 public class NullWorkScheduler2 implements IScheduler2 {
 

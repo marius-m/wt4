@@ -27,7 +27,7 @@ public interface IScheduler2 {
   void handleResult(IWorkerResult result);
 
   /**
-   * Clears scheduler.
+   * Clears currentSchedulerOrEmptyOne.
    */
   void reset();
 

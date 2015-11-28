@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * Created by mariusmerkevicius on 11/23/15.
  */
 @Ignore // integration testings
-public class JiraControllerTest {
+public class JiraIntegrationTest {
 
   @Test public void testProperties() throws Exception {
     // Arrange

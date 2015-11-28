@@ -34,15 +34,15 @@ public class JiraExecutorOnResultTest {
   //  // Arrange
   //  JiraExecutor executor = spy(new JiraExecutor(mock(JiraListener.class)));
   //  IWorkerResult response = mock(IWorkerResult.class);
-  //  executor.scheduler = mock(IScheduler.class);
+  //  executor.currentSchedulerOrEmptyOne = mock(IScheduler.class);
   //  doReturn(true).when(response).isSuccess();
-  //  doReturn(true).when(executor.scheduler).hasMore();
+  //  doReturn(true).when(executor.currentSchedulerOrEmptyOne).hasMore();
   //  doNothing().when(executor).executeScheduler(any(IScheduler.class));
   //
   //  // Act
   //  executor.onResult(response);
   //
   //  // Assert
-  //  verify(executor.scheduler, times(1)).complete(any(IWorkerResult.class));
+  //  verify(executor.currentSchedulerOrEmptyOne, times(1)).complete(any(IWorkerResult.class));
   //}
 }
