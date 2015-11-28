@@ -2,7 +2,7 @@ package lt.markmerkk.utils;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.SimpleLog;
 
 /**
  * Created by mariusm on 1/19/15.

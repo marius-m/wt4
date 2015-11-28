@@ -1,12 +1,9 @@
 package lt.markmerkk.controllers;
 
-import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
-import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.utils.SimpleSettings;
 import org.apache.commons.logging.Log;

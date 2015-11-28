@@ -75,7 +75,8 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
         message += "    Log for "+key+"\n";
         List<Worklog> logs = map.get(key);
         for (Worklog log : logs)
-          message += "      "+"["+log.getMinutesSpent()+"] "+log.getComment()+"\n";
+          //message += "      "+"["+log.getMinutesSpent()+"] "+log.getComment()+"\n";
+          message += "      "+"["+log.getSelf()+"] "+log.getComment()+"\n";
       }
       return message;
     }

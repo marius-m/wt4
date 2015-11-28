@@ -6,13 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import lt.markmerkk.storage2.SimpleLogBuilder;
-import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.jobs.UpdateJob;
-import lt.markmerkk.utils.Utils;
-import org.joda.time.DateTime;
 
 public class UpdateLogController extends BaseController {
 

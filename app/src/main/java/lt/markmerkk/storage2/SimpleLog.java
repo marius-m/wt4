@@ -1,14 +1,12 @@
-package lt.markmerkk.storage2.entities;
+package lt.markmerkk.storage2;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Map;
 import lt.markmerkk.storage2.database.annotations.Column;
 import lt.markmerkk.storage2.database.annotations.FieldType;
 import lt.markmerkk.storage2.database.annotations.Table;
 import lt.markmerkk.utils.Utils;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -38,15 +36,10 @@ public class SimpleLog extends RemoteEntity {
   @Column(value = FieldType.TEXT)
   String comment;
 
+  /**
+   * Its should never be creating using constructor! Always use builders!
+   */
   public SimpleLog() { }
-
-  public SimpleLog(long start, long end, long duration, String task, String comment) {
-    this.start = start;
-    this.end = end;
-    this.task = task;
-    this.duration = duration;
-    this.comment = comment;
-  }
 
   //region Getters / Setters
 

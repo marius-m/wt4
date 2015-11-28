@@ -9,7 +9,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import lt.markmerkk.storage2.entities.SimpleLog;
 
 /**
  * Created by mariusm on 11/6/14.

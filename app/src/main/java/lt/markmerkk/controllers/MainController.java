@@ -34,7 +34,7 @@ import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
 import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
 import lt.markmerkk.storage2.SimpleLogBuilder;
-import lt.markmerkk.storage2.entities.SimpleLog;
+import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;

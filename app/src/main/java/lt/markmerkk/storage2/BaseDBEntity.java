@@ -1,4 +1,4 @@
-package lt.markmerkk.storage2.entities;
+package lt.markmerkk.storage2;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

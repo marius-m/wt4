@@ -3,6 +3,7 @@ package lt.markmerkk.jira;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import lt.markmerkk.jira.entities.Credentials;
+import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 import org.junit.Test;
 
@@ -23,13 +24,13 @@ public class JiraWorkerExecuteTest {
     // Arrange
     MockWorker worker = spy(new MockWorker());
     worker.populateCredentials(new Credentials("asdf", "asdf", "asdf"));
-    doReturn(mock(IWorkerResult.class)).when(worker).executeRequest(any(JiraRestClient.class));
+    doReturn(mock(IWorkerResult.class)).when(worker).executeRequest(any(JiraRestClientPlus.class));
 
     // Act
     IWorkerResult response = worker.execute();
 
     // Assert
-    verify(worker).executeRequest(any(JiraRestClient.class));
+    verify(worker).executeRequest(any(JiraRestClientPlus.class));
     assertThat(response).isNotNull();
   }
 
@@ -43,7 +44,7 @@ public class JiraWorkerExecuteTest {
     IWorkerResult response = worker.execute();
 
     // Assert
-    verify(worker, never()).executeRequest(any(JiraRestClient.class));
+    verify(worker, never()).executeRequest(any(JiraRestClientPlus.class));
     assertThat(response).isNotNull();
   }
 
@@ -57,7 +58,7 @@ public class JiraWorkerExecuteTest {
     IWorkerResult response = worker.execute();
 
     // Assert
-    verify(worker, never()).executeRequest(any(JiraRestClient.class));
+    verify(worker, never()).executeRequest(any(JiraRestClientPlus.class));
     assertThat(response).isNotNull();
   }
 
@@ -66,13 +67,13 @@ public class JiraWorkerExecuteTest {
     MockWorker worker = spy(new MockWorker());
     worker.populateCredentials(new Credentials("asdf", "asdf", "asdf"));
     doThrow(new RestClientException("Some problems", new Throwable("Some problems")))
-        .when(worker).executeRequest(any(JiraRestClient.class));
+        .when(worker).executeRequest(any(JiraRestClientPlus.class));
 
     // Act
     IWorkerResult response = worker.execute();
 
     // Assert
-    verify(worker).executeRequest(any(JiraRestClient.class));
+    verify(worker).executeRequest(any(JiraRestClientPlus.class));
     assertThat(response).isNotNull();
   }
 
@@ -81,7 +82,7 @@ public class JiraWorkerExecuteTest {
   private class MockWorker extends JiraWorker {
     public MockWorker() { }
 
-    @Override protected IWorkerResult executeRequest(JiraRestClient client) {
+    @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
       return null;
     }
 

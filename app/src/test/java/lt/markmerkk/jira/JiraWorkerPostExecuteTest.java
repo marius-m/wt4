@@ -2,6 +2,7 @@ package lt.markmerkk.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import lt.markmerkk.jira.entities.ErrorWorkerResult;
+import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class JiraWorkerPostExecuteTest {
   }
 
   private class MockJiraWorker extends JiraWorker {
-    @Override protected IWorkerResult executeRequest(JiraRestClient client) {
+    @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
       return null;
     }
 
