@@ -191,8 +191,8 @@ public class MainController extends BaseController {
           asyncWorkExecutor.executeScheduler(
               new WorkScheduler2(credentials,
                   new JiraWorkerLogin(),
-                  new JiraWorkerTodayIssues(),
-                  new JiraWorkerWorklogForIssue()
+                  new JiraWorkerTodayIssues(filterDate),
+                  new JiraWorkerWorklogForIssue(filterDate)
               )
           );
         } catch (Exception e) {

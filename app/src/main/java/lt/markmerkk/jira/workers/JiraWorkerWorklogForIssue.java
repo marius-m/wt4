@@ -1,10 +1,10 @@
 package lt.markmerkk.jira.workers;
 
-import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.atlassian.util.concurrent.Promise;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,9 @@ import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -20,18 +23,31 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  */
 public class JiraWorkerWorklogForIssue extends JiraWorker {
   public static final String TAG = "WORKLOG_FOR_ISSUE";
+  private final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
+  private SearchResult searchResult;
+  private final DateTime fromDate;
+  private final DateTime toDate;
 
-  SearchResult searchResult;
-  public JiraWorkerWorklogForIssue() { }
+  public JiraWorkerWorklogForIssue(DateTime searchDate) {
+    if (searchDate == null)
+      throw new IllegalArgumentException("Illegal input date!");
+    fromDate = searchDate;
+    toDate = searchDate.plusDays(1);
+  }
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     if (searchResult == null) return new ErrorWorkerResult(TAG, "Error getting search result!");
     Map<String, List<Worklog>> todayLogs = new HashMap<>();
     for (Issue issueLink : searchResult.getIssues()) {
       Issue issue = client.getIssueClient().getIssue(issueLink.getKey()).claim();
-      Promise<List<Worklog>> worklogPromise =
-          client.getIssueWorklogRestClient().getIssueWorklogs(issue);
-      todayLogs.put(issue.getKey(), worklogPromise.claim());
+      List<Worklog> allWorkLogs =
+          client.getIssueWorklogRestClient().getIssueWorklogs(issue).claim();
+      List<Worklog> searchDateWorklog = new ArrayList<>();
+      // Filtering out the worklog
+      for (Worklog allWorkLog : allWorkLogs)
+        if (allWorkLog.getCreationDate().isAfter(fromDate) && allWorkLog.getCreationDate().isBefore(toDate))
+          searchDateWorklog.add(allWorkLog);
+      todayLogs.put(issue.getKey(), searchDateWorklog);
     }
     return new SuccessWorkerResult<>(TAG, todayLogs);
   }
@@ -59,7 +75,7 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
         message += "    Log for "+key+"\n";
         List<Worklog> logs = map.get(key);
         for (Worklog log : logs)
-          message += "      "+"["+log.getMinutesSpent()+"]"+log.getComment()+"\n";
+          message += "      "+"["+log.getMinutesSpent()+"] "+log.getComment()+"\n";
       }
       return message;
     }

@@ -9,23 +9,34 @@ import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
 public class JiraWorkerTodayIssues extends JiraWorker {
-  public static final String JQL_WORKLOG_FOR_TODAY =
-      "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
-
   public static final String TAG = "SEARCH_ISSUES_TODAY";
+  public static final String JQL_WORKLOG_TEMPLATE =
+      "assignee = currentUser() AND worklogDate >= \"%s\" && worklogDate < \"%s\"";
+  private final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
 
-  public JiraWorkerTodayIssues() { }
+  String jql;
+
+  public JiraWorkerTodayIssues(DateTime searchDate) {
+    if (searchDate == null)
+      throw new IllegalArgumentException("Illegal input date!");
+    String fromDate = dateFormat.print(searchDate);
+    String toDate = dateFormat.print(searchDate.plusDays(1));
+    jql = String.format(JQL_WORKLOG_TEMPLATE, fromDate, toDate);
+  }
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     SuccessWorkerResult<SearchResult>
         searchResultForToday = new SuccessWorkerResult<>(tag(),
-        client.getSearchClient().searchJql(JQL_WORKLOG_FOR_TODAY).claim());
+        client.getSearchClient().searchJql(jql).claim());
     return searchResultForToday;
   }
 
@@ -48,7 +59,7 @@ public class JiraWorkerTodayIssues extends JiraWorker {
       SearchResult searchResult = (SearchResult) result.entity();
       String message = "  Success: Worked on these issues: \n";
       for (Issue issue : searchResult.getIssues())
-        message += issue.getKey() + "\n";
+        message += issue.getKey() + " / " + issue.getSummary() + "\n";
       return message;
     }
     return "Unknown internal error!";

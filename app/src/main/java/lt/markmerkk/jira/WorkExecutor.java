@@ -32,7 +32,10 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    */
   public void executeScheduler(IScheduler2 scheduler) {
     this.scheduler = scheduler;
-    if (!currentSchedulerOrEmptyOne().shouldExecute()) return;
+    if (!currentSchedulerOrEmptyOne().shouldExecute()) {
+      reportOutputSimple("Sync complete!");
+      return;
+    }
     IWorker worker = currentSchedulerOrEmptyOne().nextWorker();
     reportStart(worker);
     executeInBackground(worker::execute);
