@@ -1,8 +1,5 @@
 package lt.markmerkk.jira.interfaces;
 
-import lt.markmerkk.jira.interfaces.IWorker;
-import lt.markmerkk.jira.interfaces.IWorkerResult;
-
 /**
  * Created by mariusmerkevicius on 11/28/15.
  * Represents a reporter that reports various events
@@ -22,7 +19,7 @@ public interface IWorkReporter {
   String reportWorkStart(IWorker worker);
 
   /**
-   * Responsible for outputting a post execution message for {@link IWorker#postExecuteMessage(Object)}
+   * Responsible for outputting a post execution message for {@link IWorker#postExecuteMessage(IWorkerResult)}
    * with provided {@link IWorkerResult}
    * @param worker
    */

@@ -30,8 +30,8 @@ public abstract class JiraWorker implements IWorker {
   protected abstract IWorkerResult executeRequest(JiraRestClient client);
 
   public IWorkerResult execute() {
-    if (credentials == null) return new ErrorWorkerResult(tag(), "Error: No user credentials provided!");
-    if (!credentials.isValid()) return new ErrorWorkerResult(tag(), "Error: Invalid user credentials!");
+    if (credentials == null) return new ErrorWorkerResult(tag(), "No user credentials provided!");
+    if (!credentials.isValid()) return new ErrorWorkerResult(tag(), "Invalid user credentials!");
     try {
       AsynchronousJiraRestClientFactoryPlus factory = new AsynchronousJiraRestClientFactoryPlus();
       client = factory.createWithBasicHttpAuthentication(new URI(credentials.url()),

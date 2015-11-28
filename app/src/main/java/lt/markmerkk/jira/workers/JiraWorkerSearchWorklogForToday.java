@@ -25,8 +25,8 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker {
     return searchResultForToday;
   }
 
-  @Override public void populateInput(Object inputData) {
-    System.out.println("Populating data: "+inputData);
+  @Override public void populateInput(IWorkerResult result) {
+    System.out.println("Populating data: "+ result);
   }
 
   @Override public String tag() {
@@ -37,7 +37,7 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker {
     return "Finding jobs that were done for today";
   }
 
-  @Override public String postExecuteMessage(Object entity) {
+  @Override public String postExecuteMessage(IWorkerResult result) {
     //if (entity == null) return "Unknown";
     //String message = "Today worked on these issues: \n";
     //for (Issue issue : entity.getIssues())

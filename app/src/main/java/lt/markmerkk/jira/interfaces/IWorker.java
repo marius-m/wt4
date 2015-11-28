@@ -14,9 +14,9 @@ public interface IWorker {
 
   /**
    * Populates additional data needed for the worker to execute
-   * @param inputData
+   * @param result
    */
-  void populateInput(Object inputData);
+  void populateInput(IWorkerResult result);
 
   /**
    * An identifier that links {@link IWorkerResult} and {@link IWorker} classes
@@ -32,10 +32,10 @@ public interface IWorker {
 
   /**
    * Outputs post execution method to indicate work for the user
-   * @param entity passed in p
+   * @param result passed in p
    * @return
    */
-  String postExecuteMessage(Object entity);
+  String postExecuteMessage(IWorkerResult result);
 
   /**
    * Main execution method for doing any logic

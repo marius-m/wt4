@@ -8,13 +8,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by mariusmerkevicius on 11/27/15.
  */
-public class JiraWorkerLoginTest {
+public class JiraWorkerLoginInitTest {
   @Test public void testValid() throws Exception {
     // Arrange
     JiraWorkerLogin jiraWorkerLogin = new JiraWorkerLogin();
 
     // Act
+    String tag = jiraWorkerLogin.tag();
+
     // Assert
-    assertThat(jiraWorkerLogin.tag()).isNotNull();
+    assertThat(tag).isNotNull();
   }
 }

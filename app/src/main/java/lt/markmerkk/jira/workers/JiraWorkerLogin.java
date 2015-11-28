@@ -3,6 +3,7 @@ package lt.markmerkk.jira.workers;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.User;
 import lt.markmerkk.jira.JiraWorker;
+import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 
@@ -23,7 +24,7 @@ public class JiraWorkerLogin extends JiraWorker {
     return userJiraResponse;
   }
 
-  @Override public void populateInput(Object inputData) { }
+  @Override public void populateInput(IWorkerResult result) { }
 
   @Override public String tag() {
     return LOGIN;
@@ -33,14 +34,16 @@ public class JiraWorkerLogin extends JiraWorker {
     return "Checking login status...";
   }
 
-  @Override public String postExecuteMessage(Object entity) {
-    if (entity == null) return null;
-    try {
-      User user = (User) entity;
-      return "User: "+user.getName()+" / "+user.getEmailAddress()+" / "+user.getDisplayName();
-    } catch (Exception e) {
-      e.printStackTrace();
+  @Override public String postExecuteMessage(IWorkerResult result) {
+    if (result == null) return "Error getting result!";
+    if (!result.isSuccess()) {
+      String message = "Error getting login information! ";
+      if (result instanceof ErrorWorkerResult)
+        message += ((ErrorWorkerResult) result).getErrorMessage();
+      return message;
     }
-    return null;
+    if (!(result.entity() instanceof User)) return "Internal error: Result of wrong type!";
+    User user = (User) result.entity();
+    return "Success: User: "+user.getName();
   }
 }

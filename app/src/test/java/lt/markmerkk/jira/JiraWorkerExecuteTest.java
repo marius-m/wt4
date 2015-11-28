@@ -85,7 +85,7 @@ public class JiraWorkerExecuteTest {
       return null;
     }
 
-    @Override public void populateInput(Object inputData) { }
+    @Override public void populateInput(IWorkerResult result) { }
 
     @Override public String tag() {
       return "some_valid_tag";
@@ -95,7 +95,7 @@ public class JiraWorkerExecuteTest {
       return null;
     }
 
-    @Override public String postExecuteMessage(Object entity) {
+    @Override public String postExecuteMessage(IWorkerResult result) {
       return null;
     }
   }

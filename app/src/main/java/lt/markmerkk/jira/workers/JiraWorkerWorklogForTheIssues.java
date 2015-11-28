@@ -1,7 +1,6 @@
 package lt.markmerkk.jira.workers;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.Issue;
 import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 
@@ -35,7 +34,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker {
     return null;
   }
 
-  @Override public void populateInput(Object inputData) {
+  @Override public void populateInput(IWorkerResult result) {
 
   }
 
@@ -47,7 +46,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker {
     return "Finding jobs that were done for today";
   }
 
-  @Override public String postExecuteMessage(Object entity) {
+  @Override public String postExecuteMessage(IWorkerResult result) {
     return null;
   }
 

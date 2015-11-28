@@ -26,6 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lt.markmerkk.jira.WorkExecutor;
+import lt.markmerkk.jira.WorkReporter;
 import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.WorkerListener;
@@ -95,7 +96,7 @@ public class MainController extends BaseController {
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
 
-    asyncWorkExecutor = new WorkExecutor(null, workerListener);
+    asyncWorkExecutor = new WorkExecutor(new WorkReporter(), workerListener);
 
     initViewListeners();
     initViews();

@@ -72,10 +72,6 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    * Reports output message to the outside
    */
   private void reportStart(IWorker worker) {
-    //String message = null;
-    //if (worker == null) message = "Invalid worker!";
-    //if (worker != null) message = worker.preExecuteMessage();
-    //if (message == null) return;
     if (listener != null) listener.onOutput(reporter.reportWorkStart(worker));
   }
 
@@ -83,11 +79,6 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    * Reports output message to the outside
    */
   private void reportEnd(IWorker worker, IWorkerResult result) {
-    //String message = null;
-    //if (worker == null) message = "Invalid worker!";
-    //if (result == null) message = "Error getting result!";
-    //if (worker != null && result != null) message = worker.postExecuteMessage(result);
-    //if (message == null) return;
     if (listener != null) listener.onOutput(reporter.reportWorkEnd(worker, result));
   }
 
