@@ -2,7 +2,9 @@ package lt.markmerkk.jira.workers;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.User;
 import lt.markmerkk.jira.JiraWorker;
+import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 
@@ -10,18 +12,18 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerSearchWorklogForToday extends JiraWorker {
-  public static final String WORKLOG_FOR_TODAY =
+public class JiraWorkerTodayWorklog extends JiraWorker {
+  public static final String JQL_WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
 
-  public static final String LOGIN = "SEARCH_WORKLOG_TODAY";
+  public static final String TAG = "SEARCH_WORKLOG_TODAY";
 
-  public JiraWorkerSearchWorklogForToday() { }
+  public JiraWorkerTodayWorklog() { }
 
   @Override protected IWorkerResult executeRequest(JiraRestClient client) {
     SuccessWorkerResult<SearchResult>
         searchResultForToday = new SuccessWorkerResult<>(tag(),
-        client.getSearchClient().searchJql(WORKLOG_FOR_TODAY).claim());
+        client.getSearchClient().searchJql(JQL_WORKLOG_FOR_TODAY).claim());
     return searchResultForToday;
   }
 
@@ -30,7 +32,7 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker {
   }
 
   @Override public String tag() {
-    return LOGIN;
+    return TAG;
   }
 
   @Override public String preExecuteMessage() {
@@ -38,11 +40,12 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker {
   }
 
   @Override public String postExecuteMessage(IWorkerResult result) {
-    //if (entity == null) return "Unknown";
-    //String message = "Today worked on these issues: \n";
-    //for (Issue issue : entity.getIssues())
-    //  message += issue.getProject().getName()+" / "+issue.getKey()+" / "+issue.getSummary()+"\n";
-    //return message;
-    return null;
+    if (super.postExecuteMessage(result) != null) return super.postExecuteMessage(result);
+    if (result instanceof SuccessWorkerResult) {
+      if (!(result.entity() instanceof SearchResult)) return "Internal error: Result of wrong type!";
+      SearchResult searchResult = (SearchResult) result.entity();
+      return "Success: Worked on these issues: \n";
+    }
+    return "Unknown internal error!";
   }
 }

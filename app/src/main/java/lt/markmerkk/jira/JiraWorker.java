@@ -48,6 +48,14 @@ public abstract class JiraWorker implements IWorker {
     }
   }
 
+  // Doing mandatory checks for all instances
+  @Override public String postExecuteMessage(IWorkerResult result) {
+    if (result == null) return "Error getting result!";
+    if (result instanceof ErrorWorkerResult)
+      return "Error: " + ((ErrorWorkerResult) result).getErrorMessage();
+    return null;
+  }
+
   /**
    * Closes any jira connection
    */

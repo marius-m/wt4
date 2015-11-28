@@ -12,7 +12,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker {
   public static final String WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
 
-  public static final String LOGIN = "SEARCH_WORKLOG_TODAY";
+  public static final String TAG = "SEARCH_WORKLOG_TODAY";
 
   public JiraWorkerWorklogForTheIssues() { }
 
@@ -30,7 +30,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker {
 
     //SuccessResponse<SearchResult> searchResultForToday =
     //    new SuccessResponse<>(tag(), "Job search complete!",
-    //        client.getSearchClient().searchJql(WORKLOG_FOR_TODAY).claim());
+    //        client.getSearchClient().searchJql(JQL_WORKLOG_FOR_TODAY).claim());
     return null;
   }
 
@@ -39,7 +39,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker {
   }
 
   @Override public String tag() {
-    return LOGIN;
+    return TAG;
   }
 
   @Override public String preExecuteMessage() {

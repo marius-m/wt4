@@ -35,15 +35,12 @@ public class JiraWorkerLogin extends JiraWorker {
   }
 
   @Override public String postExecuteMessage(IWorkerResult result) {
-    if (result == null) return "Error getting result!";
-    if (!result.isSuccess()) {
-      String message = "Error getting login information! ";
-      if (result instanceof ErrorWorkerResult)
-        message += ((ErrorWorkerResult) result).getErrorMessage();
-      return message;
+    if (super.postExecuteMessage(result) != null) return super.postExecuteMessage(result);
+    if (result instanceof SuccessWorkerResult) {
+      if (!(result.entity() instanceof User)) return "Internal error: Result of wrong type!";
+      User user = (User) result.entity();
+      return "Success: User: "+user.getName();
     }
-    if (!(result.entity() instanceof User)) return "Internal error: Result of wrong type!";
-    User user = (User) result.entity();
-    return "Success: User: "+user.getName();
+    return "Unknown internal error!";
   }
 }
