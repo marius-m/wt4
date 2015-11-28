@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 /**
  * Created by mariusmerkevicius on 11/26/15.
  */
-public class ErrorResponseTest {
+public class ErrorWorkerResultTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
@@ -16,7 +16,6 @@ public class ErrorResponseTest {
     // Assert
     ErrorWorkerResult errorResponse = new ErrorWorkerResult("some_tag", "some_error_message");
     assertThat(errorResponse.isSuccess()).isFalse();
-    assertThat(errorResponse.outputMessage()).isNotNull();
     assertThat(errorResponse.entity()).isNull();
     assertThat(errorResponse.tag()).isNotNull();
   }

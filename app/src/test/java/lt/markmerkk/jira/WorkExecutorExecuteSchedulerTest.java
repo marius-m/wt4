@@ -6,7 +6,6 @@ import lt.markmerkk.jira.interfaces.IWorker;
 import lt.markmerkk.jira.interfaces.WorkerListener;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -22,7 +21,7 @@ public class WorkExecutorExecuteSchedulerTest {
 
   @Test public void testNull() throws Exception {
     // Arrange
-    WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    WorkExecutor executor = spy(new WorkExecutor(null, mock(WorkerListener.class)));
     doNothing().when(executor).executeInBackground(any(Callable.class));
 
     // Act
@@ -34,7 +33,7 @@ public class WorkExecutorExecuteSchedulerTest {
 
   @Test public void testNotExecutable() throws Exception {
     // Arrange
-    WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    WorkExecutor executor = spy(new WorkExecutor(null, mock(WorkerListener.class)));
     IScheduler2 scheduler = mock(IScheduler2.class);
     doNothing().when(executor).executeInBackground(any(Callable.class));
     doReturn(false).when(scheduler).shouldExecute();
@@ -48,7 +47,7 @@ public class WorkExecutorExecuteSchedulerTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
-    WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    WorkExecutor executor = spy(new WorkExecutor(null, mock(WorkerListener.class)));
     IScheduler2 scheduler = mock(IScheduler2.class);
     doNothing().when(executor).executeInBackground(any(Callable.class));
     doReturn(true).when(scheduler).shouldExecute();

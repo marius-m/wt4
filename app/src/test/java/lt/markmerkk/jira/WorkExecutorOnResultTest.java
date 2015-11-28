@@ -5,7 +5,6 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.WorkerListener;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.verify;
 public class WorkExecutorOnResultTest {
   @Test public void testNullResult() throws Exception {
     // Arrange
-    WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    WorkExecutor executor = spy(new WorkExecutor(null, mock(WorkerListener.class)));
 
     // Act
     executor.onResult(null);
@@ -28,7 +27,7 @@ public class WorkExecutorOnResultTest {
 
   @Test public void testValidResult() throws Exception {
     // Arrange
-    WorkExecutor executor = spy(new WorkExecutor(mock(WorkerListener.class)));
+    WorkExecutor executor = spy(new WorkExecutor(null, mock(WorkerListener.class)));
     IWorkerResult result = mock(IWorkerResult.class);
     executor.scheduler = mock(IScheduler2.class);
 

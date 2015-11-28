@@ -7,21 +7,23 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  */
 public class ErrorWorkerResult implements IWorkerResult<Object> {
   String tag;
-  String outputMessage;
-  boolean isSuccess;
+  String errorMessage;
 
   /**
    * Error constructor
-   * @param outputMessage
+   * @param errorMessage
    */
-  public ErrorWorkerResult(String tag, String outputMessage) {
-    if (outputMessage == null)
+  public ErrorWorkerResult(String tag, String errorMessage) {
+    if (errorMessage == null)
       throw new IllegalArgumentException("Response cannot be initialized without a message!");
     if (tag == null)
       throw new IllegalArgumentException("Response cannot be initialized without a tag!");
-    this.outputMessage = outputMessage;
-    this.isSuccess = false;
     this.tag = tag;
+    this.errorMessage = errorMessage;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
   }
 
   @Override public String tag() {
@@ -33,10 +35,7 @@ public class ErrorWorkerResult implements IWorkerResult<Object> {
   }
 
   @Override public boolean isSuccess() {
-    return isSuccess;
+    return false;
   }
 
-  @Override public String outputMessage() {
-    return outputMessage;
-  }
 }

@@ -2,6 +2,7 @@ package lt.markmerkk.jira;
 
 import lt.markmerkk.jira.interfaces.IRemote;
 import lt.markmerkk.jira.interfaces.IScheduler2;
+import lt.markmerkk.jira.interfaces.IWorkReporter;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorker;
 import lt.markmerkk.jira.interfaces.WorkerListener;
@@ -14,9 +15,13 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
 
   WorkerListener listener;
   IScheduler2 scheduler;
+  IWorkReporter reporter;
 
-  public WorkExecutor(WorkerListener listener) {
+  public WorkExecutor(IWorkReporter reporter, WorkerListener listener) {
     this.listener = listener;
+    if (reporter == null)
+      reporter = new NullWorkReporter();
+    this.reporter = reporter;
   }
 
   //region Public
@@ -29,7 +34,7 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
     this.scheduler = scheduler;
     if (!currentSchedulerOrEmptyOne().shouldExecute()) return;
     IWorker worker = currentSchedulerOrEmptyOne().nextWorker();
-    reportOutput(worker.preExecuteMessage());
+    reportStart(worker);
     executeInBackground(worker::execute);
   }
 
@@ -59,9 +64,33 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    * Reports output message to the outside
    * @param message
    */
-  private void reportOutput(String message) {
-    if (listener != null) listener.onOutput(message);
+  private void reportOutputSimple(String message) {
+    if (listener != null) listener.onOutput(reporter.reportMessage(message));
   }
+
+  /**
+   * Reports output message to the outside
+   */
+  private void reportStart(IWorker worker) {
+    //String message = null;
+    //if (worker == null) message = "Invalid worker!";
+    //if (worker != null) message = worker.preExecuteMessage();
+    //if (message == null) return;
+    if (listener != null) listener.onOutput(reporter.reportWorkStart(worker));
+  }
+
+  /**
+   * Reports output message to the outside
+   */
+  private void reportEnd(IWorker worker, IWorkerResult result) {
+    //String message = null;
+    //if (worker == null) message = "Invalid worker!";
+    //if (result == null) message = "Error getting result!";
+    //if (worker != null && result != null) message = worker.postExecuteMessage(result);
+    //if (message == null) return;
+    if (listener != null) listener.onOutput(reporter.reportWorkEnd(worker, result));
+  }
+
 
   //endregion
 
@@ -72,7 +101,7 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
   }
 
   @Override protected void onResult(final IWorkerResult result) {
-    if (result != null) reportOutput(result.outputMessage());
+    if (result != null) reportEnd(currentSchedulerOrEmptyOne().nextWorker(), result);
     currentSchedulerOrEmptyOne().handleResult(result);
     executeScheduler(currentSchedulerOrEmptyOne());
   }

@@ -25,10 +25,4 @@ public interface IWorkerResult<T> {
    */
   boolean isSuccess();
 
-  /**
-   * Returns an output message
-   * @return
-   */
-  String outputMessage();
-
 }

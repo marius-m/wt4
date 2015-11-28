@@ -27,9 +27,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkScheduler2;
-import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.WorkerListener;
+import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.workers.JiraWorkerSearchWorklogForToday;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
@@ -80,7 +80,7 @@ public class MainController extends BaseController {
   @FXML ProgressIndicator progressIndicator;
   DatePicker datePicker;
 
-  WorkExecutor remote;
+  WorkExecutor asyncWorkExecutor;
   IOSOutput osOutput;
 
   public MainController() {
@@ -95,7 +95,7 @@ public class MainController extends BaseController {
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
 
-    remote = new WorkExecutor(workerListener);
+    asyncWorkExecutor = new WorkExecutor(null, workerListener);
 
     initViewListeners();
     initViews();
@@ -178,18 +178,20 @@ public class MainController extends BaseController {
 
     buttonTest.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent event) {
-        if (remote.isLoading() || remote.hasMore()) {
-          remote.cancel();
+        if (asyncWorkExecutor.isLoading() || asyncWorkExecutor.hasMore()) {
+          asyncWorkExecutor.cancel();
           return;
         }
-        Credentials credentials =
-            new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
         try {
-          remote.executeScheduler(
+          Credentials credentials =
+              new Credentials(inputUsername.getText(), inputPassword.getText(),
+                  inputHost.getText());
+          asyncWorkExecutor.executeScheduler(
               new WorkScheduler2(credentials,
                   new JiraWorkerLogin(),
                   new JiraWorkerSearchWorklogForToday()
-              ));
+              )
+          );
         } catch (Exception e) {
           log.info("Error: "+e.getMessage());
         }
@@ -303,8 +305,8 @@ public class MainController extends BaseController {
       inputUsername.setDisable(loading);
       inputPassword.setDisable(loading);
       inputHost.setDisable(loading);
-      if (loading)
-        log.info("Loading... ");
+      //if (loading)
+      //  log.info("Loading... ");
       buttonTest.setText((loading) ? "Cancel" : "Refresh");
     }
   };
@@ -389,7 +391,7 @@ public class MainController extends BaseController {
 
   @Override public void create(Object data) {
     super.create(data);
-    remote.onStart();
+    asyncWorkExecutor.onStart();
   }
 
   @Override
@@ -410,7 +412,7 @@ public class MainController extends BaseController {
   @Override public void destroy() {
     super.destroy();
     hourGlass.stop();
-    remote.onStop();
+    asyncWorkExecutor.onStop();
   }
 
   //endregion

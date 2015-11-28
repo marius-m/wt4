@@ -8,29 +8,16 @@ import static org.junit.Assert.*;
 /**
  * Created by mariusmerkevicius on 11/26/15.
  */
-public class SuccessResponseTest {
+public class SuccessWorkerResultTest {
   @Test public void testValid() throws Exception {
     // Arrange
     // Act
     // Assert
     SuccessWorkerResult<Object>
-        successResponse = new SuccessWorkerResult<>("valid_tag", "object", "success_message");
+        successResponse = new SuccessWorkerResult<>("valid_tag", "success_message");
     assertThat(successResponse.isSuccess()).isTrue();
-    assertThat(successResponse.outputMessage()).isNotNull();
     assertThat(successResponse.entity()).isNotNull();
     assertThat(successResponse.tag()).isNotNull();
-  }
-
-  @Test public void testNullMessage() throws Exception {
-    // Arrange
-    // Act
-    // Assert
-    try {
-      new SuccessWorkerResult<String>("valid_tag", null, "success_message");
-      fail("Should not create with invalid input");
-    } catch (Exception e) {
-      assertThat(e).hasMessage("Response cannot be initialized without a message!");
-    }
   }
 
   @Test public void testNullEntity() throws Exception {
@@ -38,7 +25,7 @@ public class SuccessResponseTest {
     // Act
     // Assert
     try {
-      new SuccessWorkerResult<String>("valid_tag", "some_object", null);
+      new SuccessWorkerResult<String>("valid_tag", null);
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without an entity!");
@@ -50,7 +37,7 @@ public class SuccessResponseTest {
     // Act
     // Assert
     try {
-      new SuccessWorkerResult<String>(null, "some_object", "valid entity");
+      new SuccessWorkerResult<String>(null, "valid entity");
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Response cannot be initialized without a tag!");

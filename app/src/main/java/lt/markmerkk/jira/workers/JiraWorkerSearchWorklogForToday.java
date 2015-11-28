@@ -1,7 +1,6 @@
 package lt.markmerkk.jira.workers;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
@@ -21,7 +20,7 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker {
 
   @Override protected IWorkerResult executeRequest(JiraRestClient client) {
     SuccessWorkerResult<SearchResult>
-        searchResultForToday = new SuccessWorkerResult<>(tag(), "Job search complete!",
+        searchResultForToday = new SuccessWorkerResult<>(tag(),
         client.getSearchClient().searchJql(WORKLOG_FOR_TODAY).claim());
     return searchResultForToday;
   }

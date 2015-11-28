@@ -18,7 +18,7 @@ public class JiraWorkerLogin extends JiraWorker {
 
   @Override protected IWorkerResult executeRequest(JiraRestClient client) {
     SuccessWorkerResult<User>
-        userJiraResponse = new SuccessWorkerResult<>(tag(), "Login success!",
+        userJiraResponse = new SuccessWorkerResult<>(tag(),
         client.getUserClient().getUser(credentials.username()).claim());
     return userJiraResponse;
   }
@@ -34,7 +34,13 @@ public class JiraWorkerLogin extends JiraWorker {
   }
 
   @Override public String postExecuteMessage(Object entity) {
-    User user = (User) entity;
-    return "User: "+user.getName()+" / "+user.getEmailAddress()+" / "+user.getDisplayName();
+    if (entity == null) return null;
+    try {
+      User user = (User) entity;
+      return "User: "+user.getName()+" / "+user.getEmailAddress()+" / "+user.getDisplayName();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }
