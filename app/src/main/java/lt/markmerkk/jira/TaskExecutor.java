@@ -116,7 +116,7 @@ public abstract class TaskExecutor<ResultType>  {
       return;
     this.loading = loading;
     printDebug("Loading: " + loading);
-    onLoadChange(loading);
+    Platform.runLater(() -> onLoadChange(loading));
   }
 
   //endregion
@@ -144,7 +144,7 @@ public abstract class TaskExecutor<ResultType>  {
           }
         }
         if (futureResult.isCancelled())
-          onCancel();
+          Platform.runLater(TaskExecutor.this::onCancel);
         futureResult = null;
       }
       setLoading(isLoading());

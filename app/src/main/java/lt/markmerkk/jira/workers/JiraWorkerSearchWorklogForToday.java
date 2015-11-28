@@ -11,7 +11,7 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerSearchWorklogForToday extends JiraWorker<SearchResult> {
+public class JiraWorkerSearchWorklogForToday extends JiraWorker {
   public static final String WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
 
@@ -26,7 +26,7 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker<SearchResult> {
     return searchResultForToday;
   }
 
-  @Override public void populateInput(SearchResult inputData) {
+  @Override public void populateInput(Object inputData) {
     System.out.println("Populating data: "+inputData);
   }
 
@@ -38,11 +38,12 @@ public class JiraWorkerSearchWorklogForToday extends JiraWorker<SearchResult> {
     return "Finding jobs that were done for today";
   }
 
-  @Override public String postExecuteMessage(SearchResult entity) {
-    if (entity == null) return "Unknown";
-    String message = "Today worked on these issues: \n";
-    for (Issue issue : entity.getIssues())
-      message += issue.getProject().getName()+" / "+issue.getKey()+" / "+issue.getSummary()+"\n";
-    return message;
+  @Override public String postExecuteMessage(Object entity) {
+    //if (entity == null) return "Unknown";
+    //String message = "Today worked on these issues: \n";
+    //for (Issue issue : entity.getIssues())
+    //  message += issue.getProject().getName()+" / "+issue.getKey()+" / "+issue.getSummary()+"\n";
+    //return message;
+    return null;
   }
 }

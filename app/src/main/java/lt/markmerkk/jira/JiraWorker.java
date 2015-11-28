@@ -17,7 +17,7 @@ import lt.markmerkk.jira.interfaces.IWorker;
  * Represents worker extension class that connects to jira client and passes down execution
  * to {@link #executeRequest(JiraRestClient)}.
  */
-public abstract class JiraWorker<T> implements IWorker<T> {
+public abstract class JiraWorker implements IWorker {
   protected ICredentials credentials;
   protected JiraRestClientPlus client;
 

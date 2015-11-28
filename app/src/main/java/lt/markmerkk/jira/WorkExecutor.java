@@ -1,21 +1,21 @@
 package lt.markmerkk.jira;
 
 import lt.markmerkk.jira.interfaces.IRemote;
+import lt.markmerkk.jira.interfaces.IScheduler2;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
-import lt.markmerkk.jira.interfaces.IScheduler;
 import lt.markmerkk.jira.interfaces.IWorker;
-import lt.markmerkk.jira.interfaces.JiraListener;
+import lt.markmerkk.jira.interfaces.WorkerListener;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
  * A jira executor for background processes
  */
-public class JiraExecutor extends TaskExecutor<IWorkerResult> implements IRemote {
+public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote {
 
-  JiraListener listener;
-  IScheduler scheduler;
+  WorkerListener listener;
+  IScheduler2 scheduler;
 
-  public JiraExecutor(JiraListener listener) {
+  public WorkExecutor(WorkerListener listener) {
     this.listener = listener;
   }
 
@@ -25,12 +25,10 @@ public class JiraExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    * Executes a scheduler defined jobs
    * @param scheduler
    */
-  public void executeScheduler(IScheduler scheduler) {
-    if (scheduler == null) return;
-    if (!scheduler.hasMore()) return;
+  public void executeScheduler(IScheduler2 scheduler) {
     this.scheduler = scheduler;
-    IWorker nextWorker = scheduler.next();
-    execute(nextWorker);
+    if (!scheduler().shouldExecute()) return;
+    execute(scheduler().nextWorker());
   }
 
   /**
@@ -38,8 +36,17 @@ public class JiraExecutor extends TaskExecutor<IWorkerResult> implements IRemote
    * @return
    */
   public boolean hasMore() {
-    if (scheduler == null) return false;
-    return (scheduler.hasMore());
+    return (scheduler().shouldExecute());
+  }
+
+  /**
+   * Wrapper getter for always returning an instance
+   * @return
+   */
+  public IScheduler2 scheduler() {
+    if (scheduler == null)
+      scheduler = new NullWorkScheduler2();
+    return scheduler;
   }
 
   //endregion
@@ -70,32 +77,12 @@ public class JiraExecutor extends TaskExecutor<IWorkerResult> implements IRemote
 
   @Override protected void onCancel() {
     scheduler = null;
-    reportOutput("Cancelling");
   }
 
   @Override protected void onResult(final IWorkerResult result) {
-    if (result == null) return;
     reportOutput(result.outputMessage());
-
-    if (!result.isSuccess()) {
-      scheduler = null;
-      return;
-    }
-    if (result.entity() != null)
-      reportOutput(scheduler.next().postExecuteMessage(result.entity()));
-    if (scheduler == null) return;
-    scheduler.complete(result);
-    if (scheduler.hasMore()) {
-      IWorker next = scheduler.next();
-      //next.populateInput(result.entity());
-    }
-
-    if (scheduler == null) return;
-    if (!scheduler.hasMore()) {
-      reportOutput("Finished " + scheduler.name());
-      return;
-    }
-    executeScheduler(scheduler);
+    scheduler().handleResult(result);
+    executeScheduler(scheduler());
   }
 
   @Override protected void onLoadChange(final boolean loading) {

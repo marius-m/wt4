@@ -4,7 +4,7 @@ package lt.markmerkk.jira.interfaces;
  * Created by mariusmerkevicius on 11/26/15.
  * Does the execution of the {@link IRemote} client
  */
-public interface IWorker<T> {
+public interface IWorker {
 
   /**
    * Populates credentials needed for the worker to execute
@@ -16,7 +16,7 @@ public interface IWorker<T> {
    * Populates additional data needed for the worker to execute
    * @param inputData
    */
-  void populateInput(T inputData);
+  void populateInput(Object inputData);
 
   /**
    * An identifier that links {@link IWorkerResult} and {@link IWorker} classes
@@ -35,7 +35,7 @@ public interface IWorker<T> {
    * @param entity passed in p
    * @return
    */
-  String postExecuteMessage(T entity);
+  String postExecuteMessage(Object entity);
 
   /**
    * Main execution method for doing any logic

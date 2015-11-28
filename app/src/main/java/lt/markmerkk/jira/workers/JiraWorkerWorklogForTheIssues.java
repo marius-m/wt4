@@ -9,7 +9,7 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerWorklogForTheIssues extends JiraWorker<Issue> {
+public class JiraWorkerWorklogForTheIssues extends JiraWorker {
   public static final String WORKLOG_FOR_TODAY =
       "assignee = currentUser() AND worklogDate >= \"2015/11/19\" && worklogDate <= \"2015/11/20\"";
 
@@ -35,7 +35,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker<Issue> {
     return null;
   }
 
-  @Override public void populateInput(Issue inputData) {
+  @Override public void populateInput(Object inputData) {
 
   }
 
@@ -47,7 +47,7 @@ public class JiraWorkerWorklogForTheIssues extends JiraWorker<Issue> {
     return "Finding jobs that were done for today";
   }
 
-  @Override public String postExecuteMessage(Issue entity) {
+  @Override public String postExecuteMessage(Object entity) {
     return null;
   }
 

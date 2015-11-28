@@ -10,7 +10,7 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerLogin extends JiraWorker<User> {
+public class JiraWorkerLogin extends JiraWorker {
 
   public static final String LOGIN = "LOGIN";
 
@@ -23,7 +23,7 @@ public class JiraWorkerLogin extends JiraWorker<User> {
     return userJiraResponse;
   }
 
-  @Override public void populateInput(User inputData) { }
+  @Override public void populateInput(Object inputData) { }
 
   @Override public String tag() {
     return LOGIN;
@@ -33,7 +33,8 @@ public class JiraWorkerLogin extends JiraWorker<User> {
     return "Checking login status...";
   }
 
-  @Override public String postExecuteMessage(User entity) {
-    return "User: "+entity.getName()+" / "+entity.getEmailAddress()+" / "+entity.getDisplayName();
+  @Override public String postExecuteMessage(Object entity) {
+    User user = (User) entity;
+    return "User: "+user.getName()+" / "+user.getEmailAddress()+" / "+user.getDisplayName();
   }
 }

@@ -1,15 +1,13 @@
 package lt.markmerkk.jira.interfaces;
 
 import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.JiraExecutor;
+import lt.markmerkk.jira.WorkExecutor;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
- * Represents all the callbacks on {@link JiraExecutor}
+ * Represents all the callbacks on {@link WorkExecutor}
  */
-public interface JiraListener {
-
-  Credentials getUserCredentials();
+public interface WorkerListener {
 
   /**
    * A method that indicates user for update status

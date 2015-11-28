@@ -25,11 +25,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lt.markmerkk.jira.JiraExecutor;
-import lt.markmerkk.jira.JiraScheduler;
+import lt.markmerkk.jira.WorkExecutor;
+import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.JiraListener;
+import lt.markmerkk.jira.interfaces.WorkerListener;
 import lt.markmerkk.jira.workers.JiraWorkerSearchWorklogForToday;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.entities.SimpleLog;
@@ -80,7 +80,7 @@ public class MainController extends BaseController {
   @FXML ProgressIndicator progressIndicator;
   DatePicker datePicker;
 
-  JiraExecutor remote;
+  WorkExecutor remote;
   IOSOutput osOutput;
 
   public MainController() {
@@ -95,7 +95,7 @@ public class MainController extends BaseController {
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
 
-    remote = new JiraExecutor(jiraListener);
+    remote = new WorkExecutor(workerListener);
 
     initViewListeners();
     initViews();
@@ -186,7 +186,7 @@ public class MainController extends BaseController {
             new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
         try {
           remote.executeScheduler(
-              new JiraScheduler("Sync", credentials,
+              new WorkScheduler2(credentials,
                   new JiraWorkerLogin(),
                   new JiraWorkerSearchWorklogForToday()
               ));
@@ -292,26 +292,20 @@ public class MainController extends BaseController {
 
   //region Listeners
 
-  JiraListener jiraListener = new JiraListener() {
-    @Override public Credentials getUserCredentials() {
-      return new Credentials(inputUsername.getText(), inputPassword.getText(), inputHost.getText());
-    }
-
+  WorkerListener workerListener = new WorkerListener() {
     @Override public void onOutput(String message) {
-      Platform.runLater(() -> log.info("Jira: " + message));
+      log.info("Jira: " + message);
     }
 
     @Override public void onLoadChange(boolean loading) {
-      Platform.runLater(() -> {
-        progressIndicator.setManaged(loading);
-        progressIndicator.setVisible(loading);
-        inputUsername.setDisable(loading);
-        inputPassword.setDisable(loading);
-        inputHost.setDisable(loading);
-        if (loading)
-          log.info("Loading... ");
-        buttonTest.setText((loading) ? "Cancel" : "Refresh");
-      });
+      progressIndicator.setManaged(loading);
+      progressIndicator.setVisible(loading);
+      inputUsername.setDisable(loading);
+      inputPassword.setDisable(loading);
+      inputHost.setDisable(loading);
+      if (loading)
+        log.info("Loading... ");
+      buttonTest.setText((loading) ? "Cancel" : "Refresh");
     }
   };
 

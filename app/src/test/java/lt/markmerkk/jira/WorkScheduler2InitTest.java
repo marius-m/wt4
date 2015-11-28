@@ -1,6 +1,5 @@
 package lt.markmerkk.jira;
 
-import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.ICredentials;
 import lt.markmerkk.jira.interfaces.IWorker;
 import org.junit.Test;
@@ -12,13 +11,13 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by mariusmerkevicius on 11/28/15.
  */
-public class JiraScheduler2InitTest {
+public class WorkScheduler2InitTest {
   @Test public void testNull() throws Exception {
     // Arrange
     // Act
     // Assert
     try {
-      JiraScheduler2 scheduler2 = new JiraScheduler2(null);
+      WorkScheduler2 scheduler2 = new WorkScheduler2(null);
       fail("Should not create without credentials");
     } catch (Exception e) {
       assertThat(e).hasMessage("Cannot init scheduler without credentials!");
@@ -27,7 +26,7 @@ public class JiraScheduler2InitTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
-    JiraScheduler2 scheduler2 = new JiraScheduler2(mock(ICredentials.class));
+    WorkScheduler2 scheduler2 = new WorkScheduler2(mock(ICredentials.class));
 
     // Act
     // Assert
@@ -36,7 +35,7 @@ public class JiraScheduler2InitTest {
 
   @Test public void testInitWithWorkers() throws Exception {
     // Arrange
-    JiraScheduler2 scheduler = new JiraScheduler2(
+    WorkScheduler2 scheduler = new WorkScheduler2(
         mock(ICredentials.class),
         mock(IWorker.class),
         mock(IWorker.class),
@@ -51,7 +50,7 @@ public class JiraScheduler2InitTest {
 
   @Test public void testInitWithMalformedWorkers() throws Exception {
     // Arrange
-    JiraScheduler2 scheduler = new JiraScheduler2(
+    WorkScheduler2 scheduler = new WorkScheduler2(
         mock(ICredentials.class),
         null,
         mock(IWorker.class),

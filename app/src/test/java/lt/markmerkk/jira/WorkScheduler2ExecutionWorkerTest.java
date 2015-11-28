@@ -5,29 +5,29 @@ import lt.markmerkk.jira.interfaces.IWorker;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by mariusmerkevicius on 11/28/15.
  */
-public class JiraScheduler2StartExecutionTest {
+public class WorkScheduler2ExecutionWorkerTest {
   @Test public void testValid() throws Exception {
     // Arrange
     IWorker worker1 = mock(IWorker.class);
     IWorker worker2 = mock(IWorker.class);
     IWorker worker3 = mock(IWorker.class);
     IWorker worker4 = mock(IWorker.class);
-    JiraScheduler2 scheduler = spy(new JiraScheduler2(
+    WorkScheduler2 scheduler = spy(new WorkScheduler2(
         mock(ICredentials.class), worker1, worker2, worker3,
         worker4
     ));
-    doReturn(true).when(scheduler).shouldStartExecution();
+    doReturn(true).when(scheduler).shouldExecute();
 
     // Act
-    IWorker worker = scheduler.startExecution();
+    IWorker worker = scheduler.nextWorker();
 
     // Assert
     assertThat(worker).isNotNull();
@@ -40,14 +40,14 @@ public class JiraScheduler2StartExecutionTest {
     IWorker worker2 = mock(IWorker.class);
     IWorker worker3 = mock(IWorker.class);
     IWorker worker4 = mock(IWorker.class);
-    JiraScheduler2 scheduler = spy(new JiraScheduler2(
+    WorkScheduler2 scheduler = spy(new WorkScheduler2(
         mock(ICredentials.class), worker1, worker2, worker3,
         worker4
     ));
-    doReturn(false).when(scheduler).shouldStartExecution();
+    doReturn(false).when(scheduler).shouldExecute();
 
     // Act
-    IWorker worker = scheduler.startExecution();
+    IWorker worker = scheduler.nextWorker();
 
     // Assert
     assertThat(worker).isNull();
@@ -56,12 +56,12 @@ public class JiraScheduler2StartExecutionTest {
   // This cant happen
   @Test public void testNoJobsButShouldStart() throws Exception {
     // Arrange
-    JiraScheduler2 scheduler = spy(
-        new JiraScheduler2(mock(ICredentials.class)));
-    doReturn(true).when(scheduler).shouldStartExecution();
+    WorkScheduler2 scheduler = spy(
+        new WorkScheduler2(mock(ICredentials.class)));
+    doReturn(true).when(scheduler).shouldExecute();
 
     // Act
-    IWorker worker = scheduler.startExecution();
+    IWorker worker = scheduler.nextWorker();
 
     // Assert
     assertThat(worker).isNull();
@@ -73,14 +73,14 @@ public class JiraScheduler2StartExecutionTest {
     IWorker worker2 = mock(IWorker.class);
     IWorker worker3 = mock(IWorker.class);
     IWorker worker4 = mock(IWorker.class);
-    JiraScheduler2 scheduler = spy(new JiraScheduler2(
+    WorkScheduler2 scheduler = spy(new WorkScheduler2(
         mock(ICredentials.class), worker1, worker2, worker3,
         worker4
     ));
-    doReturn(true).when(scheduler).shouldStartExecution();
+    doReturn(true).when(scheduler).shouldExecute();
 
     // Act
-    IWorker worker = scheduler.startExecution();
+    IWorker worker = scheduler.nextWorker();
 
     // Assert
     assertThat(worker).isNotNull();
@@ -88,11 +88,24 @@ public class JiraScheduler2StartExecutionTest {
 
     // Act
     scheduler.workers.remove(0);
-    worker = scheduler.startExecution();
+    worker = scheduler.nextWorker();
 
     // Assert
     assertThat(worker).isNotNull();
     assertThat(worker).isEqualTo(worker2);
+  }
+
+  @Test public void testPopulateCredentials() throws Exception {
+    // Arrange
+    IWorker worker1 = mock(IWorker.class);
+    WorkScheduler2 scheduler = spy(new WorkScheduler2(mock(ICredentials.class), worker1));
+    doReturn(true).when(scheduler).shouldExecute();
+
+    // Act
+    IWorker worker = scheduler.nextWorker();
+
+    // Assert
+    verify(worker).populateCredentials(scheduler.credentials);
   }
 
 

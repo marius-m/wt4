@@ -1,14 +1,14 @@
 package lt.markmerkk.jira;
 
-import lt.markmerkk.jira.interfaces.JiraListener;
+import lt.markmerkk.jira.interfaces.WorkerListener;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  */
-public class Jira extends JiraExecutor {
+public class Work extends WorkExecutor {
 
 
-  public Jira(JiraListener listener) {
+  public Work(WorkerListener listener) {
     super(listener);
   }
 
