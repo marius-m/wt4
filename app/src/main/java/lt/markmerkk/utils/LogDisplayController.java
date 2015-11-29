@@ -1,15 +1,11 @@
 package lt.markmerkk.utils;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableDoubleValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import lt.markmerkk.storage2.SimpleLog;
@@ -64,7 +60,7 @@ public class LogDisplayController extends TableDisplayController<SimpleLog> {
         new Callback<TableColumn.CellDataFeatures<SimpleLog, ImageView>, ObservableValue<ImageView>>() {
           @Override public ObservableValue<ImageView> call(
               TableColumn.CellDataFeatures<SimpleLog, ImageView> param) {
-            return new SimpleObjectProperty<ImageView>(param.getValue().getStateImage());
+            return new SimpleObjectProperty<ImageView>(new ImageView(param.getValue().getStateImageUrl()));
           }
         });
     return columnImage;

@@ -23,6 +23,10 @@ public class SimpleLogBuilder {
 
   private long id;
   private String uri;
+  private boolean dirty = true;
+  private boolean error = false;
+  private boolean deleted = false;
+  private String errorMessage = null;
 
   /**
    * Standard creation
@@ -57,6 +61,11 @@ public class SimpleLogBuilder {
     this.comment = remoteLog.getComment();
     this.uri = remoteLog.getSelf().toString();
     this.id = parseWorklogUri(this.uri);
+
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
   }
 
   /**
@@ -128,6 +137,12 @@ public class SimpleLogBuilder {
     newSimpleLog.comment = this.comment;
     newSimpleLog.uri = this.uri;
     newSimpleLog.id = this.id;
+
+    newSimpleLog.dirty = this.dirty;
+    newSimpleLog.error = this.error;
+    newSimpleLog.errorMessage = this.errorMessage;
+    newSimpleLog.deleted = this.deleted;
+
     if (this._id > 0)
       newSimpleLog._id = this._id;
     return newSimpleLog;
