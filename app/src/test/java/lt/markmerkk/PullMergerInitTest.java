@@ -50,7 +50,7 @@ public class PullMergerInitTest {
     // Act
     // Assert
     try {
-      new PullMerger(mock(IExecutor.class), null, mock(Worklog.class));
+      new PullMerger(mock(IExecutor.class), "TT-123", null);
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Cannot function without remote worklog!");
