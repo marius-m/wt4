@@ -133,8 +133,8 @@ public abstract class TaskExecutor<ResultType>  {
           try {
             printDebug("Result");
             ResultType result = futureResult.get(1, TimeUnit.SECONDS);
-            futureResult = null;
             Platform.runLater(() -> {
+              futureResult = null;
               onResult(result);
             });
           } catch (InterruptedException e) {
