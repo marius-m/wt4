@@ -25,7 +25,8 @@ public class JiraWorkerPushNew extends JiraWorker {
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     PushNewMerger merger = new PushNewMerger(executor, client, targetDate);
-    return new SuccessWorkerResult<>(TAG, merger.merge());
+    String mergeLog = merger.merge();
+    return new SuccessWorkerResult<>(TAG, "Success!", mergeLog);
   }
 
   @Override public void populateInput(IWorkerResult result) { }

@@ -14,6 +14,12 @@ public interface IWorkerResult<T> {
   String tag();
 
   /**
+   * An action log what was done when executing a task in the background
+   * @return
+   */
+  String actionLog();
+
+  /**
    * Network object
    * @return
    */

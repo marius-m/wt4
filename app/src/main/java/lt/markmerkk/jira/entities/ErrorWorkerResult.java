@@ -22,12 +22,12 @@ public class ErrorWorkerResult implements IWorkerResult<Object> {
     this.errorMessage = errorMessage;
   }
 
-  public String getErrorMessage() {
-    return errorMessage;
-  }
-
   @Override public String tag() {
     return tag;
+  }
+
+  @Override public String actionLog() {
+    return errorMessage;
   }
 
   @Override public Object entity() {

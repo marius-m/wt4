@@ -35,7 +35,7 @@ public class JiraWorkerPullMerge extends JiraWorker {
         actionLog += "    "+merger.merge()+"\n";
       }
     }
-    return new SuccessWorkerResult<>(TAG, actionLog);
+    return new SuccessWorkerResult<>(TAG, "Success!", actionLog);
   }
 
   @Override public void populateInput(IWorkerResult result) {
@@ -54,7 +54,7 @@ public class JiraWorkerPullMerge extends JiraWorker {
   @Override public String postExecuteMessage(IWorkerResult result) {
     if (super.postExecuteMessage(result) != null) return super.postExecuteMessage(result);
     if (result instanceof SuccessWorkerResult) {
-      return result.entity()+"Success merging to local database!";
+      return result.actionLog()+"Success merging to local database!";
     }
     return "Unknown internal error!";
   }

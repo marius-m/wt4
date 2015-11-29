@@ -52,7 +52,7 @@ public abstract class JiraWorker implements IWorker {
   @Override public String postExecuteMessage(IWorkerResult result) {
     if (result == null) return "Error getting result!";
     if (result instanceof ErrorWorkerResult)
-      return "Error: " + ((ErrorWorkerResult) result).getErrorMessage();
+      return "Error: " + result.actionLog();
     return null;
   }
 
