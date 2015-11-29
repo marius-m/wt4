@@ -36,14 +36,17 @@ public class JiraWorkerWorklogMerge extends JiraWorker {
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     if (worklog == null) return new ErrorWorkerResult(TAG, "Error getting worklog!");
+    String actionLog = "  Updating local database...\n";
     for (String key : worklog.keySet()) {
+      actionLog += "    Updating task "+key+"\n";
       List<Worklog> logs = worklog.get(key);
       for (Worklog log : logs) {
         SimpleLog simpleLog = new SimpleLogBuilder(key, log).build();
+        actionLog += "      Adding new log "+simpleLog+"\n";
         executor.execute(new InsertJob(SimpleLog.class, simpleLog));
       }
     }
-    return new SuccessWorkerResult<>(TAG, "Success!");
+    return new SuccessWorkerResult<>(TAG, actionLog);
   }
 
   @Override public void populateInput(IWorkerResult result) {
@@ -62,7 +65,7 @@ public class JiraWorkerWorklogMerge extends JiraWorker {
   @Override public String postExecuteMessage(IWorkerResult result) {
     if (super.postExecuteMessage(result) != null) return super.postExecuteMessage(result);
     if (result instanceof SuccessWorkerResult) {
-      return "Success merging to local database!";
+      return result.entity()+"Success merging to local database!";
     }
     return "Unknown internal error!";
   }
