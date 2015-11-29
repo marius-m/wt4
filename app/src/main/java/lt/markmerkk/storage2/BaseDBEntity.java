@@ -40,6 +40,10 @@ public abstract class BaseDBEntity implements DBIndexable, DBPackable, DBUnpacka
     _id = resultSet.getLong(resultSet.findColumn(KEY_ID));
   }
 
+  /**
+   * This is called automatically. It should never be called by hand on any entity object!!!
+   * @param newIndex proposed index id
+   */
   @Override public void updateIndex(long newIndex) {
     this._id = newIndex;
   }

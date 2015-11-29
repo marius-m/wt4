@@ -76,11 +76,35 @@ public class SimpleLogBuilderTest {
   }
 
   @Test
+  public void testFullValid() throws Exception {
+    SimpleLogBuilder builder = new SimpleLogBuilder();
+    SimpleLog log = builder.setStart(1000).setEnd(2000).setTask("TTT123").setComment(
+        "temp_comment").build();
+    log.updateIndex(200);
+
+    assertThat(log.getStart()).isEqualTo(1000); // old
+    assertThat(log.getEnd()).isEqualTo(2000); // old
+    assertThat(log.getDuration()).isEqualTo(1000); // old
+    assertThat(log.getTask()).isEqualTo("TTT-123"); // new
+    assertThat(log.getComment()).isEqualTo("temp_comment"); // old
+    assertThat(log.get_id()).isEqualTo(200); // old
+
+    assertThat(log.isDirty()).isTrue();
+    assertThat(log.isError()).isFalse();
+    assertThat(log.isDeleted()).isFalse();
+  }
+
+  @Test
   public void testDuplicateLog() throws Exception {
     SimpleLogBuilder builder = new SimpleLogBuilder();
 
     SimpleLog oldLog = builder.setStart(1000).setEnd(2000).setTask("temp_task").setComment("temp_comment").build();
     oldLog.updateIndex(200);
+
+    assertThat(oldLog.get_id()).isEqualTo(200); // old
+    assertThat(oldLog.isDirty()).isTrue();
+    assertThat(oldLog.isError()).isFalse();
+    assertThat(oldLog.isDeleted()).isFalse();
 
     SimpleLog log = new SimpleLogBuilder(oldLog)
         .setTask("ttt123")
@@ -92,6 +116,10 @@ public class SimpleLogBuilderTest {
     assertThat(log.getTask()).isEqualTo("TTT-123"); // new
     assertThat(log.getComment()).isEqualTo("temp_comment"); // old
     assertThat(log.get_id()).isEqualTo(200); // old
+
+    assertThat(log.isDirty()).isTrue();
+    assertThat(log.isError()).isFalse();
+    assertThat(log.isDeleted()).isFalse();
   }
 
   public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
@@ -124,6 +152,54 @@ public class SimpleLogBuilderTest {
     assertThat(log.getTask()).isEqualTo("TT-22");
     assertThat(log.getComment()).isEqualTo("valid_comment");
     assertThat(log.get_id()).isEqualTo(0);
+    assertThat(log.isDirty()).isFalse();
+    assertThat(log.isError()).isFalse();
+    assertThat(log.isDeleted()).isFalse();
+  }
+
+  @Test
+  public void testRemoteValidAndUpdate() throws Exception {
+    //Assemble
+    DateTime creationDate = longFormat.parseDateTime("2015-06-13 22:00");
+    Worklog remoteLog = new Worklog(
+        new URI("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051"),
+        new URI("http://not.needed.url"),
+        mock(BasicUser.class),
+        mock(BasicUser.class),
+        "valid_comment",
+        creationDate,
+        creationDate,
+        creationDate,
+        20,
+        Visibility.group("somegroup")
+    );
+
+    // Act
+    SimpleLogBuilder builder = new SimpleLogBuilder("TT-22", remoteLog);
+    SimpleLog logRemote = builder.build();
+
+    // Assert
+    assertThat(logRemote.getStart()).isEqualTo(creationDate.getMillis());
+    assertThat(logRemote.getEnd()).isEqualTo(new DateTime(creationDate).plusMinutes(20).getMillis());
+    assertThat(logRemote.getDuration()).isEqualTo(20 * 60 * 1000);
+    assertThat(logRemote.getTask()).isEqualTo("TT-22");
+    assertThat(logRemote.getComment()).isEqualTo("valid_comment");
+    assertThat(logRemote.get_id()).isEqualTo(0);
+
+    // Act
+    SimpleLog logUpdate = new SimpleLogBuilder(logRemote)
+        .build();
+
+    // Assert
+    assertThat(logUpdate.getStart()).isEqualTo(creationDate.getMillis());
+    assertThat(logUpdate.getEnd()).isEqualTo(new DateTime(creationDate).plusMinutes(20).getMillis());
+    assertThat(logUpdate.getDuration()).isEqualTo(20 * 60 * 1000);
+    assertThat(logUpdate.getTask()).isEqualTo("TT-22");
+    assertThat(logUpdate.getComment()).isEqualTo("valid_comment");
+    assertThat(logUpdate.get_id()).isEqualTo(0);
+    assertThat(logUpdate.isDirty()).isTrue();
+    assertThat(logUpdate.isError()).isFalse();
+    assertThat(logUpdate.isDeleted()).isFalse();
   }
 
 }
