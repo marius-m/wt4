@@ -57,7 +57,33 @@ public class SimpleLogBuilder {
     this.end = remoteLog.getStartDate()
         .withFieldAdded(DurationFieldType.minutes(), remoteLog.getMinutesSpent())
         .getMillis();
-    this.task = task;
+    this.task = Utils.validateTaskTitle(task);
+    this.comment = remoteLog.getComment();
+    this.uri = remoteLog.getSelf().toString();
+    this.id = parseWorklogUri(this.uri);
+
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
+
+  /**
+   * Updating from remote
+   * @param task
+   * @param remoteLog
+   */
+  public SimpleLogBuilder(SimpleLog simpleLog, String task, Worklog remoteLog) {
+    this._id = simpleLog._id;
+    if (task == null)
+      throw new IllegalArgumentException("Error getting task number log!");
+    if (remoteLog == null)
+      throw new IllegalArgumentException("Error getting remote log!");
+    this.start = remoteLog.getStartDate().getMillis();
+    this.end = remoteLog.getStartDate()
+        .withFieldAdded(DurationFieldType.minutes(), remoteLog.getMinutesSpent())
+        .getMillis();
+    this.task = Utils.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
     this.uri = remoteLog.getSelf().toString();
     this.id = parseWorklogUri(this.uri);

@@ -1,13 +1,9 @@
 package lt.markmerkk.jira.workers;
 
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.Worklog;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lt.markmerkk.DBProdExecutor;
+import lt.markmerkk.SimpleLogMerger;
 import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
@@ -17,9 +13,6 @@ import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.InsertJob;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
@@ -29,22 +22,20 @@ public class JiraWorkerWorklogMerge extends JiraWorker {
   public static final String TAG = "WORKLOG_MERGE";
 
   private final IExecutor executor;
-  private Map<String, List<Worklog>> worklog;
+  private Map<String, List<Worklog>> worklogMap;
 
   public JiraWorkerWorklogMerge(IExecutor executor) {
     this.executor = executor;
   }
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
-    if (worklog == null) return new ErrorWorkerResult(TAG, "Error getting worklog!");
+    if (worklogMap == null) return new ErrorWorkerResult(TAG, "Error getting worklog!");
     String actionLog = "  Updating local database...\n";
-    for (String key : worklog.keySet()) {
-      actionLog += "    Updating task "+key+"\n";
-      List<Worklog> logs = worklog.get(key);
+    for (String key : worklogMap.keySet()) {
+      List<Worklog> logs = worklogMap.get(key);
       for (Worklog log : logs) {
-        SimpleLog simpleLog = new SimpleLogBuilder(key, log).build();
-        actionLog += "      Adding new log "+simpleLog+"\n";
-        executor.execute(new InsertJob(SimpleLog.class, simpleLog));
+        SimpleLogMerger merger = new SimpleLogMerger(executor, key, log);
+        actionLog += "    "+merger.merge()+"\n";
       }
     }
     return new SuccessWorkerResult<>(TAG, actionLog);
@@ -52,7 +43,7 @@ public class JiraWorkerWorklogMerge extends JiraWorker {
 
   @Override public void populateInput(IWorkerResult result) {
     if (result.entity() instanceof Map)
-      worklog = (Map<String, List<Worklog>>) result.entity();
+      worklogMap = (Map<String, List<Worklog>>) result.entity();
   }
 
   @Override public String tag() {

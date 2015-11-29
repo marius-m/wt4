@@ -29,6 +29,8 @@ public class SimpleLogMergerMergeTest {
     doReturn(null).when(merger).getLocalEntity(any(Long.class));
     doReturn(1234L).when(merger).getRemoteId(any(Worklog.class));
     doReturn(new SimpleLog()).when(merger).newLog(anyString(), any(Worklog.class));
+    doReturn(new SimpleLog()).when(merger).updateLog(any(SimpleLog.class), anyString(),
+        any(Worklog.class));
 
     // Act
     String output = merger.merge();
@@ -47,6 +49,8 @@ public class SimpleLogMergerMergeTest {
     doReturn(mock(SimpleLog.class)).when(merger).getLocalEntity(any(Long.class));
     doReturn(1234L).when(merger).getRemoteId(any(Worklog.class));
     doReturn(new SimpleLog()).when(merger).newLog(anyString(), any(Worklog.class));
+    doReturn(new SimpleLog()).when(merger).updateLog(any(SimpleLog.class), anyString(),
+        any(Worklog.class));
 
     // Act
     String output = merger.merge();

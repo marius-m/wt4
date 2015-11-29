@@ -158,7 +158,7 @@ public class SimpleLogBuilderTest {
   }
 
   @Test
-  public void testRemoteValidAndUpdate() throws Exception {
+  public void testRemoteValidAndLocalUpdate() throws Exception {
     //Assemble
     DateTime creationDate = longFormat.parseDateTime("2015-06-13 22:00");
     Worklog remoteLog = new Worklog(
@@ -198,6 +198,59 @@ public class SimpleLogBuilderTest {
     assertThat(logUpdate.getComment()).isEqualTo("valid_comment");
     assertThat(logUpdate.get_id()).isEqualTo(0);
     assertThat(logUpdate.isDirty()).isTrue();
+    assertThat(logUpdate.isError()).isFalse();
+    assertThat(logUpdate.isDeleted()).isFalse();
+  }
+
+  @Test
+  public void testLocalValidAndRemoteUpdate() throws Exception {
+    //Assemble
+    DateTime creationDate = longFormat.parseDateTime("2015-06-13 22:00");
+    Worklog remoteLog = new Worklog(
+        new URI("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051"),
+        new URI("http://not.needed.url"),
+        mock(BasicUser.class),
+        mock(BasicUser.class),
+        "valid_comment",
+        creationDate,
+        creationDate,
+        creationDate,
+        20,
+        Visibility.group("somegroup")
+    );
+
+    // Act
+    SimpleLog localLog = new SimpleLogBuilder()
+        .setStart(1000L)
+        .setEnd(2000L)
+        .setTask("tt11")
+        .setComment("Some local comment")
+        .build();
+    localLog.updateIndex(100);
+
+    //Assert
+    assertThat(localLog.getStart()).isEqualTo(1000);
+    assertThat(localLog.getEnd()).isEqualTo(2000);
+    assertThat(localLog.getDuration()).isEqualTo(1000);
+    assertThat(localLog.getTask()).isEqualTo("TT-11");
+    assertThat(localLog.getComment()).isEqualTo("Some local comment");
+    assertThat(localLog.get_id()).isEqualTo(100); // important
+    assertThat(localLog.isDirty()).isTrue();
+    assertThat(localLog.isError()).isFalse();
+    assertThat(localLog.isDeleted()).isFalse();
+
+    // Act
+    SimpleLog logUpdate = new SimpleLogBuilder(localLog, "TT20", remoteLog)
+        .build();
+
+    // Assert
+    assertThat(logUpdate.getStart()).isEqualTo(creationDate.getMillis());
+    assertThat(logUpdate.getEnd()).isEqualTo(new DateTime(creationDate).plusMinutes(20).getMillis());
+    assertThat(logUpdate.getDuration()).isEqualTo(20 * 60 * 1000);
+    assertThat(logUpdate.getTask()).isEqualTo("TT-20");
+    assertThat(logUpdate.getComment()).isEqualTo("valid_comment");
+    assertThat(logUpdate.get_id()).isEqualTo(100); // important part
+    assertThat(logUpdate.isDirty()).isFalse();
     assertThat(logUpdate.isError()).isFalse();
     assertThat(logUpdate.isDeleted()).isFalse();
   }

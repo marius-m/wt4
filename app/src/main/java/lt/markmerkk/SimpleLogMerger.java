@@ -7,6 +7,7 @@ import lt.markmerkk.storage2.database.DBBaseExecutor;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
+import lt.markmerkk.storage2.jobs.UpdateJob;
 
 /**
  * Created by mariusmerkevicius on 11/28/15.
@@ -37,20 +38,23 @@ public class SimpleLogMerger implements IMerger {
   }
 
   @Override public String merge() {
-    SimpleLog localEntity = getLocalEntity(getRemoteId(worklog));
-    if (localEntity == null) {
+    SimpleLog localLog = getLocalEntity(getRemoteId(worklog));
+    if (localLog == null) {
       SimpleLog newLog = newLog(remoteIssue, worklog);
       executor.execute(new InsertJob(SimpleLog.class, newLog));
       return "Creating new log: "+newLog;
     }
-    //SimpleLog newLog = new SimpleLogBuilder(remoteIssue, worklog).build();
-    //executor.execute(new InsertJob(SimpleLog.class, newLog));
-    //return "Creating new log: "+newLog;
-    return "Updating old worklog";
+    SimpleLog updateLog = updateLog(localLog, remoteIssue, worklog);
+    executor.execute(new UpdateJob(SimpleLog.class, updateLog));
+    return "Updating old worklog: "+updateLog;
   }
 
   // We use wrappers as convenience and dedicated jobs for other classes
   //region Convenience wrappers
+
+  SimpleLog updateLog(SimpleLog localLog, String remoteIssue, Worklog worklog) {
+    return new SimpleLogBuilder(localLog, remoteIssue, worklog).build();
+  }
 
   SimpleLog newLog(String remoteIssue, Worklog worklog) {
     return new SimpleLogBuilder(remoteIssue, worklog).build();
