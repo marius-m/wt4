@@ -45,7 +45,7 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
       List<Worklog> searchDateWorklog = new ArrayList<>();
       // Filtering out the worklog
       for (Worklog allWorkLog : allWorkLogs)
-        if (allWorkLog.getCreationDate().isAfter(fromDate) && allWorkLog.getCreationDate().isBefore(toDate))
+        if (allWorkLog.getStartDate().isAfter(fromDate) && allWorkLog.getStartDate().isBefore(toDate))
           searchDateWorklog.add(allWorkLog);
       todayLogs.put(issue.getKey(), searchDateWorklog);
     }

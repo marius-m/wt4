@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -31,12 +32,12 @@ import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.WorkerListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
+import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
 import lt.markmerkk.jira.workers.JiraWorkerPushNew;
 import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
 import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
-import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
-import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
@@ -278,12 +279,13 @@ public class MainController extends BaseController {
     QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class,
         () -> "(start > " + filterDate.getMillis()
             + " AND "
-            + "end < " + filterDate.plusDays(1).getMillis() + ")");
+            + "end < " + filterDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
     executor.execute(queryJob);
     if (logs == null)
       logs = FXCollections.observableArrayList();
     logs.clear();
-    logs.addAll(queryJob.result());
+    if (queryJob.result() != null)
+      logs.addAll(queryJob.result());
     countTotal();
   }
 
