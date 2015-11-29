@@ -57,7 +57,8 @@ public class JiraWorkerTodayIssues extends JiraWorker {
     if (result instanceof SuccessWorkerResult) {
       if (!(result.entity() instanceof SearchResult)) return "Internal error: Result of wrong type!";
       SearchResult searchResult = (SearchResult) result.entity();
-      String message = "  Success: Worked on these issues: \n";
+      String message = "Success! ";
+      message += (searchResult.getIssues().iterator().hasNext()) ? "Worked issues: \n" : "Did not work on any issues!";
       for (Issue issue : searchResult.getIssues())
         message += issue.getKey() + " / " + issue.getSummary() + "\n";
       return message;

@@ -48,21 +48,21 @@ public class PushNewMerger implements IMerger {
   }
 
   @Override public String merge() {
-    String statusLog = "  Pushing local records: \n";
+    String statusLog = "";
     int count = 0;
     do {
       SimpleLog log = newRemoteLog(executor);
       if (log == null) break;
       // Probably need a validator for comment, task not to be null
-      statusLog = "    Uploading new log: "+log+"...\n";
+      statusLog += "\n    Uploading new log: "+log+". ";
       if (Utils.isEmpty(log.getTask())) {
         updateLocalLog(new SimpleLogBuilder(log).buildWithError("Error getting issue!"));
-        statusLog += "      Error: Issue not found!\n";
+        statusLog += "\n      Error: Issue not found!";
         return statusLog;
       }
       if (Utils.isEmpty(log.getComment())) {
         updateLocalLog(new SimpleLogBuilder(log).buildWithError("Error getting comment!"));
-        statusLog += "      Error: Comment not found!\n";
+        statusLog += "\n      Error: Comment not found!";
         return statusLog;
       }
 
@@ -85,7 +85,7 @@ public class PushNewMerger implements IMerger {
     Issue issue = issueClient.getIssue(log.getTask()).claim();
     if (issue == null) {
       updateLocalLog(new SimpleLogBuilder(log).buildWithError("Issue not found!"));
-      statusLog += "      Error: Issue not found!\n";
+      statusLog += "\n      Error: Issue not found!";
       return statusLog;
     }
 
@@ -99,8 +99,8 @@ public class PushNewMerger implements IMerger {
         .build();
     issueClient.addWorklog(issue.getWorklogUri(), worklogInput).claim();
     deleteLocalLog(log);
-    statusLog += "      Successfully uploaded!\n";
-    return statusLog+"\n";
+    statusLog += "\n      Successfully uploaded!";
+    return statusLog;
   }
 
   /**

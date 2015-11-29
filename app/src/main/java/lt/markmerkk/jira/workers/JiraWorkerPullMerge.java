@@ -27,7 +27,7 @@ public class JiraWorkerPullMerge extends JiraWorker {
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
     if (worklogMap == null) return new ErrorWorkerResult(TAG, "Error getting worklog!");
-    String actionLog = "  Updating local database...\n";
+    String actionLog = (worklogMap.size() == 0) ? "No issues to update!" : "Updating local database...\n";
     for (String key : worklogMap.keySet()) {
       List<Worklog> logs = worklogMap.get(key);
       for (Worklog log : logs) {
@@ -54,7 +54,7 @@ public class JiraWorkerPullMerge extends JiraWorker {
   @Override public String postExecuteMessage(IWorkerResult result) {
     if (super.postExecuteMessage(result) != null) return super.postExecuteMessage(result);
     if (result instanceof SuccessWorkerResult) {
-      return result.actionLog()+"Success merging to local database!";
+      return result.actionLog()+"Success merging database!";
     }
     return "Unknown internal error!";
   }

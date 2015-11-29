@@ -42,9 +42,9 @@ public class JiraWorkerPushNew extends JiraWorker {
   @Override public String postExecuteMessage(IWorkerResult result) {
     if (super.postExecuteMessage(result) != null) return super.postExecuteMessage(result);
     if (result instanceof SuccessWorkerResult) {
-      return result.entity() + "\n" + "Success pushing changes to jira!\n";
+      return result.actionLog() + "\nFinished pushing new logs!";
     }
-    return "Unknown internal error!";
+    return "\nUnknown internal error!";
   }
 
 }

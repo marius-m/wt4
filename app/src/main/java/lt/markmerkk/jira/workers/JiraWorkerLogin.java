@@ -40,7 +40,7 @@ public class JiraWorkerLogin extends JiraWorker {
     if (result instanceof SuccessWorkerResult) {
       if (!(result.entity() instanceof User)) return "Internal error: Result of wrong type!";
       User user = (User) result.entity();
-      return "  Success: User: "+user.getName();
+      return "Success: User: "+user.getName();
     }
     return "Unknown internal error!";
   }

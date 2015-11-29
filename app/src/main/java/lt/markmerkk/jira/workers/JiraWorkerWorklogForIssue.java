@@ -62,7 +62,7 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
   }
 
   @Override public String preExecuteMessage() {
-    return "Getting worklog for the issues";
+    return "Getting worklog for the issues...";
   }
 
   @Override public String postExecuteMessage(IWorkerResult result) {
@@ -70,7 +70,8 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
     if (result instanceof SuccessWorkerResult) {
       if (!(result.entity() instanceof Map)) return "Internal error: Result of wrong type!";
       Map<String, List<Worklog>> map = (Map<String, List<Worklog>>) result.entity();
-      String message = "  Success: Here is today worklog of worked issues: \n";
+      String message = "Success! ";
+      message += (map.size() > 0) ? "Work log for worked issues: \n" : "Did not work on any issues.";
       for (String key : map.keySet()) {
         message += "    Log for "+key+"\n";
         List<Worklog> logs = map.get(key);
