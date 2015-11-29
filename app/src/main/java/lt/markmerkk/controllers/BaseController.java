@@ -1,5 +1,6 @@
 package lt.markmerkk.controllers;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
@@ -51,7 +52,7 @@ public abstract class BaseController {
 
             @Override
             protected void append(LoggingEvent event) {
-                onInternalOutput(layout.format(event));
+                Platform.runLater(() -> onInternalOutput(layout.format(event)));
             }
         };
         guiAppender.addFilter(new Filter() {
