@@ -1,7 +1,17 @@
 package lt.markmerkk.utils;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 import lt.markmerkk.storage2.SimpleLog;
 
 /**
@@ -17,11 +27,7 @@ public class LogDisplayController extends TableDisplayController<SimpleLog> {
 
     @Override
     protected void init() {
-        //table.getColumns().add(insertTableColumn(
-        //        ".",
-        //        "storeLocation",
-        //        20
-        //));
+        table.getColumns().add(insertImageColumn(26));
         table.getColumns().add(insertTableColumn(
                 "Task",
                 "task",
@@ -48,11 +54,20 @@ public class LogDisplayController extends TableDisplayController<SimpleLog> {
                 "comment",
                 3
         ));
-//        table.getColumns().add(insertTableColumn(
-//                ".",
-//                "gitMessageIndicator",
-//                20
-//        ));
-
     }
+
+  protected TableColumn<SimpleLog, ImageView> insertImageColumn(float constant) {
+    TableColumn<SimpleLog, ImageView> columnImage = new TableColumn<SimpleLog,ImageView>(".");
+    //columnImage.prefWidthProperty().bind(table.widthProperty().divide(widthDivide).subtract(1));
+    columnImage.prefWidthProperty().bind(new SimpleDoubleProperty(constant));
+    columnImage.setCellValueFactory(
+        new Callback<TableColumn.CellDataFeatures<SimpleLog, ImageView>, ObservableValue<ImageView>>() {
+          @Override public ObservableValue<ImageView> call(
+              TableColumn.CellDataFeatures<SimpleLog, ImageView> param) {
+            return new SimpleObjectProperty<ImageView>(param.getValue().getStateImage());
+          }
+        });
+    return columnImage;
+  }
+
 }

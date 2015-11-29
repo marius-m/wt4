@@ -3,6 +3,7 @@ package lt.markmerkk.storage2;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import javafx.scene.image.ImageView;
 import lt.markmerkk.storage2.database.annotations.Column;
 import lt.markmerkk.storage2.database.annotations.FieldType;
 import lt.markmerkk.storage2.database.annotations.Table;
@@ -81,6 +82,11 @@ public class SimpleLog extends RemoteEntity {
 
   public long getDuration() {
     return duration;
+  }
+
+  public ImageView getStateImage() {
+    ImageView imageView = new ImageView("/gray.png");
+    return imageView;
   }
 
   //endregion

@@ -1,5 +1,7 @@
 package lt.markmerkk.utils;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,7 +10,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 
 /**
  * Created by mariusm on 11/6/14.
@@ -62,15 +67,14 @@ public abstract class TableDisplayController<Type> {
 
     protected TableColumn insertTableColumn(String caption, String property, float widthDivide) {
         TableColumn firstNameCol = new TableColumn(caption);
-//        table.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         firstNameCol.prefWidthProperty().bind(table.widthProperty().divide(widthDivide).subtract(1));
         firstNameCol.setCellValueFactory(new PropertyValueFactory<Type, String>(property));
         return firstNameCol;
     }
 
     public interface Listener<Type> {
-        public void onUpdate(Type object);
-        public void onDelete(Type object);
+        void onUpdate(Type object);
+        void onDelete(Type object);
     }
 
 }
