@@ -56,12 +56,12 @@ public class PushNewMerger implements IMerger {
       // Probably need a validator for comment, task not to be null
       statusLog += "\n    Uploading new log: "+log+". ";
       if (Utils.isEmpty(log.getTask())) {
-        updateLocalLog(new SimpleLogBuilder(log).buildWithError("Error getting issue!"));
+        updateLocalLog(new SimpleLogBuilder(log).buildWithError("Issue field empty!"));
         statusLog += "\n      Error: Issue not found!";
         return statusLog;
       }
       if (Utils.isEmpty(log.getComment())) {
-        updateLocalLog(new SimpleLogBuilder(log).buildWithError("Error getting comment!"));
+        updateLocalLog(new SimpleLogBuilder(log).buildWithError("Comment field empty!"));
         statusLog += "\n      Error: Comment not found!";
         return statusLog;
       }
@@ -84,7 +84,7 @@ public class PushNewMerger implements IMerger {
     IssueRestClient issueClient = client.getIssueClient();
     Issue issue = issueClient.getIssue(log.getTask()).claim();
     if (issue == null) {
-      updateLocalLog(new SimpleLogBuilder(log).buildWithError("Issue not found!"));
+      updateLocalLog(new SimpleLogBuilder(log).buildWithError("No such issue on the server!"));
       statusLog += "\n      Error: Issue not found!";
       return statusLog;
     }

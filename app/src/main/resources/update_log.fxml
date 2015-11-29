@@ -12,12 +12,20 @@
   <children>
       <HBox>
          <children>
-            <Button mnemonicParsing="false" onAction="#pop" text="Cancel">
+            <Button fx:id="buttonCancel" mnemonicParsing="false" onAction="#pop" text="Cancel">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" onAction="#saveAndExit" text="Ok" />
+            <Button fx:id="buttonOk" mnemonicParsing="false" onAction="#saveAndExit" text="Ok">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin></Button>
+            <TextField fx:id="outputError" alignment="CENTER" editable="false" style="-fx-background-color: transparent; -fx-background-insets: 0;" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </TextField>
          </children>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
