@@ -3,6 +3,7 @@ package lt.markmerkk.storage2.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -11,7 +12,7 @@ import org.apache.log4j.Logger;
  * Created by mariusmerkevicius on 11/21/15.
  * An abstract class responsible for connecting to database
  */
-public abstract class DBBaseExecutor {
+public abstract class DBBaseExecutor implements IExecutor {
 
   private final Logger logger;
 

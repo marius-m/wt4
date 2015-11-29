@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.utils.SimpleSettings;
 import org.apache.commons.logging.Log;
@@ -22,7 +23,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * Time: 8:47 PM
  */
 public abstract class BaseController {
-    protected final DBProdExecutor executor;
+    protected final IExecutor executor;
     protected Log log = LogFactory.getLog(MainController.class);
     private Appender guiAppender;
     protected SimpleSettings settings;

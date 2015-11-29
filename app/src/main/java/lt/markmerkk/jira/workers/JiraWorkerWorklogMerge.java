@@ -15,6 +15,7 @@ import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -27,10 +28,10 @@ import org.joda.time.format.DateTimeFormatter;
 public class JiraWorkerWorklogMerge extends JiraWorker {
   public static final String TAG = "WORKLOG_MERGE";
 
-  private final DBProdExecutor executor;
+  private final IExecutor executor;
   private Map<String, List<Worklog>> worklog;
 
-  public JiraWorkerWorklogMerge(DBProdExecutor executor) {
+  public JiraWorkerWorklogMerge(IExecutor executor) {
     this.executor = executor;
   }
 
