@@ -3,28 +3,25 @@ package lt.markmerkk.jira.workers;
 import com.atlassian.jira.rest.client.api.domain.Worklog;
 import java.util.List;
 import java.util.Map;
-import lt.markmerkk.SimpleLogMerger;
+import lt.markmerkk.PullMerger;
 import lt.markmerkk.jira.JiraWorker;
 import lt.markmerkk.jira.entities.ErrorWorkerResult;
 import lt.markmerkk.jira.entities.SuccessWorkerResult;
 import lt.markmerkk.jira.extend_base.JiraRestClientPlus;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
-import lt.markmerkk.storage2.SimpleLog;
-import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
-import lt.markmerkk.storage2.jobs.InsertJob;
 
 /**
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
-public class JiraWorkerWorklogMerge extends JiraWorker {
-  public static final String TAG = "WORKLOG_MERGE";
+public class JiraWorkerPullMerge extends JiraWorker {
+  public static final String TAG = "WORKLOG_PULL";
 
   private final IExecutor executor;
   private Map<String, List<Worklog>> worklogMap;
 
-  public JiraWorkerWorklogMerge(IExecutor executor) {
+  public JiraWorkerPullMerge(IExecutor executor) {
     this.executor = executor;
   }
 
@@ -34,7 +31,7 @@ public class JiraWorkerWorklogMerge extends JiraWorker {
     for (String key : worklogMap.keySet()) {
       List<Worklog> logs = worklogMap.get(key);
       for (Worklog log : logs) {
-        SimpleLogMerger merger = new SimpleLogMerger(executor, key, log);
+        PullMerger merger = new PullMerger(executor, key, log);
         actionLog += "    "+merger.merge()+"\n";
       }
     }
@@ -51,7 +48,7 @@ public class JiraWorkerWorklogMerge extends JiraWorker {
   }
 
   @Override public String preExecuteMessage() {
-    return "Merging worklogs into local database...";
+    return "Merging worklogs...";
   }
 
   @Override public String postExecuteMessage(IWorkerResult result) {

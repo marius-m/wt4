@@ -6,10 +6,8 @@ import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -18,14 +16,14 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mariusmerkevicius on 11/29/15.
  */
-public class SimpleLogMergerMergeTest {
+public class PullMergerMergeTest {
   @Test public void testNew() throws Exception {
     // Arrange
     IExecutor executor = mock(IExecutor.class);
     String remoteIssue = "TT-123";
     Worklog remoteWorklog = mock(Worklog.class);
-    SimpleLogMerger merger = spy(
-        new SimpleLogMerger(executor, remoteIssue, remoteWorklog));
+    PullMerger merger = spy(
+        new PullMerger(executor, remoteIssue, remoteWorklog));
     doReturn(null).when(merger).getLocalEntity(any(Long.class));
     doReturn(1234L).when(merger).getRemoteId(any(Worklog.class));
     doReturn(new SimpleLog()).when(merger).newLog(anyString(), any(Worklog.class));
@@ -44,8 +42,8 @@ public class SimpleLogMergerMergeTest {
     IExecutor executor = mock(IExecutor.class);
     String remoteIssue = "TT-123";
     Worklog remoteWorklog = mock(Worklog.class);
-    SimpleLogMerger merger = spy(
-        new SimpleLogMerger(executor, remoteIssue, remoteWorklog));
+    PullMerger merger = spy(
+        new PullMerger(executor, remoteIssue, remoteWorklog));
     doReturn(mock(SimpleLog.class)).when(merger).getLocalEntity(any(Long.class));
     doReturn(1234L).when(merger).getRemoteId(any(Worklog.class));
     doReturn(new SimpleLog()).when(merger).newLog(anyString(), any(Worklog.class));

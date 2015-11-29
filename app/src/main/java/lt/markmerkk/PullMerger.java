@@ -20,12 +20,12 @@ import lt.markmerkk.storage2.jobs.UpdateJob;
  * 3. All pulled data should contain dirty = 0.
  *
  */
-public class SimpleLogMerger implements IMerger {
+public class PullMerger implements IMerger {
   IExecutor executor;
   String remoteIssue;
   Worklog worklog;
 
-  public SimpleLogMerger(IExecutor executor, String remoteIssue, Worklog remoteWorklog) {
+  public PullMerger(IExecutor executor, String remoteIssue, Worklog remoteWorklog) {
     if (executor == null)
       throw new IllegalArgumentException("Cannot function without database!");
     if (remoteIssue == null)

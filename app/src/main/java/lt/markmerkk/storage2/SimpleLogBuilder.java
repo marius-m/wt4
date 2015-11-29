@@ -85,9 +85,9 @@ public class SimpleLogBuilder {
         .getMillis();
     this.task = Utils.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
+
     this.uri = remoteLog.getSelf().toString();
     this.id = parseWorklogUri(this.uri);
-
     this.deleted = false;
     this.dirty = false;
     this.error = false;
@@ -105,8 +105,13 @@ public class SimpleLogBuilder {
     this.task = log.task;
     this.comment = log.comment;
 
+
     this.uri = log.uri;
     this.id = log.id;
+    this.deleted = log.deleted;
+    this.dirty = true;
+    this.error = false;
+    this.errorMessage = null;
   }
 
   public SimpleLogBuilder setStart(long start) {
@@ -147,6 +152,23 @@ public class SimpleLogBuilder {
     }
   }
 
+  /**
+   * Composes a new log normally with error message
+   * @param errorMessage error log
+   * @return
+   */
+  public SimpleLog buildWithError(String errorMessage) {
+    SimpleLog newSimpleLog = build();
+    newSimpleLog.dirty = false;
+    newSimpleLog.error = true;
+    newSimpleLog.errorMessage = errorMessage;
+    return newSimpleLog;
+  }
+
+  /**
+   * Composes a new log with parameter validation
+   * @return
+   */
   public SimpleLog build() {
     if (this.start <= 0 && this.now <= 0) throw new IllegalArgumentException("Please specify start time, or current time!");
     if (this.end <= 0 && this.now <= 0) throw new IllegalArgumentException("Please specify end time, or current time!");

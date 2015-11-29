@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by mariusmerkevicius on 11/29/15.
  */
-public class SimpleLogMergerInitTest {
+public class PullMergerInitTest {
   @Test public void testValid() throws Exception {
     // Arrange
-    SimpleLogMerger merger = new SimpleLogMerger(mock(IExecutor.class), "asdf", mock(Worklog.class));
+    PullMerger merger = new PullMerger(mock(IExecutor.class), "asdf", mock(Worklog.class));
 
     // Act
     // Assert
@@ -26,7 +26,7 @@ public class SimpleLogMergerInitTest {
     // Act
     // Assert
     try {
-      new SimpleLogMerger(null, "asdf", mock(Worklog.class));
+      new PullMerger(null, "asdf", mock(Worklog.class));
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Cannot function without database!");
@@ -38,7 +38,7 @@ public class SimpleLogMergerInitTest {
     // Act
     // Assert
     try {
-      new SimpleLogMerger(mock(IExecutor.class), null, mock(Worklog.class));
+      new PullMerger(mock(IExecutor.class), null, mock(Worklog.class));
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Cannot function without issue name!");
@@ -50,7 +50,7 @@ public class SimpleLogMergerInitTest {
     // Act
     // Assert
     try {
-      new SimpleLogMerger(mock(IExecutor.class), null, mock(Worklog.class));
+      new PullMerger(mock(IExecutor.class), null, mock(Worklog.class));
       fail("Should not create with invalid input");
     } catch (Exception e) {
       assertThat(e).hasMessage("Cannot function without remote worklog!");
