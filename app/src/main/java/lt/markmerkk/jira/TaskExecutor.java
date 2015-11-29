@@ -127,17 +127,14 @@ public abstract class TaskExecutor<ResultType>  {
     @Override public void run() {
       printDebug("Check " + isLoading());
       if (TaskExecutor.this.loading != isLoading()) {
-        if (!isLoading() && futureResult.isCancelled()) {
-          futureResult = null;
+        if (!isLoading() && futureResult.isCancelled())
           Platform.runLater(TaskExecutor.this::onCancel);
-        }
-
         if (!isLoading() && !futureResult.isCancelled()) {
           try {
             printDebug("Result");
             ResultType result = futureResult.get(1, TimeUnit.SECONDS);
+            futureResult = null;
             Platform.runLater(() -> {
-              futureResult = null;
               onResult(result);
             });
           } catch (InterruptedException e) {
@@ -151,6 +148,7 @@ public abstract class TaskExecutor<ResultType>  {
             e.printStackTrace();
           }
         }
+        futureResult = null;
       }
       setLoading(isLoading());
     }
