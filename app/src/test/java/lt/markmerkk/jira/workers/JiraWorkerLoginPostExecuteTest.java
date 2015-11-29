@@ -26,7 +26,7 @@ public class JiraWorkerLoginPostExecuteTest {
     String message = worker.postExecuteMessage(result);
 
     // Assert
-    assertThat(message).isEqualTo("  Success: User: marius");
+    assertThat(message).isEqualTo("Success: User: marius");
   }
 
 }
