@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
@@ -15,7 +16,8 @@ import javafx.application.Platform;
  * An abstract executor class to do various jobs in the background and control them
  */
 public abstract class TaskExecutor<ResultType>  {
-  private ScheduledExecutorService resultCheckExecutor = Executors.newScheduledThreadPool(1);
+  private ScheduledExecutorService resultCheckExecutor;
+  private ScheduledExecutorService readyCheckExecutor;
   private ExecutorService mainExecutor;
   private Future<ResultType> futureResult;
 
@@ -30,6 +32,11 @@ public abstract class TaskExecutor<ResultType>  {
    * Called whenever cancel is executed
    */
   protected abstract void onCancel();
+
+  /**
+   * Called whenever executor is ready for another task
+   */
+  protected abstract void onReady();
 
   /**
    * Executed when background task is finished
@@ -47,6 +54,7 @@ public abstract class TaskExecutor<ResultType>  {
 
   public void onStart() {
     mainExecutor = Executors.newSingleThreadExecutor();
+    readyCheckExecutor = Executors.newScheduledThreadPool(1);
     resultCheckExecutor = Executors.newScheduledThreadPool(1);
     resultCheckExecutor.scheduleAtFixedRate(resultCheck, 0, 1, TimeUnit.SECONDS);
   }
@@ -61,6 +69,7 @@ public abstract class TaskExecutor<ResultType>  {
         mainExecutor.shutdownNow();
     }
     resultCheckExecutor.shutdownNow();
+    readyCheckExecutor.shutdownNow();
   }
 
   //region Convenience
@@ -137,6 +146,7 @@ public abstract class TaskExecutor<ResultType>  {
               futureResult = null;
               onResult(result);
             });
+            readyCheckExecutor.schedule(TaskExecutor.this::onReady, 1, TimeUnit.SECONDS);
           } catch (InterruptedException e) {
             printDebug("Interruped getting");
             e.printStackTrace();

@@ -94,10 +94,13 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
     scheduler.reset();
   }
 
+  @Override protected void onReady() {
+    executeScheduler(currentSchedulerOrEmptyOne());
+  }
+
   @Override protected void onResult(final IWorkerResult result) {
     if (result != null) reportEnd(currentSchedulerOrEmptyOne().nextWorker(), result);
     currentSchedulerOrEmptyOne().handleResult(result);
-    executeScheduler(currentSchedulerOrEmptyOne());
   }
 
   @Override protected void onLoadChange(final boolean loading) {
