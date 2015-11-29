@@ -14,7 +14,7 @@ mainClassName = "lt.markmerkk.Main"
 
 javafx {
     appID 'WT4'
-    appName 'Wootrack'
+    appName 'WT4'
     mainClass = 'lt.markmerkk.Main'
 }
 
