@@ -21,8 +21,9 @@ public abstract class TaskExecutor<ResultType>  {
   private ExecutorService mainExecutor;
   private Future<ResultType> futureResult;
 
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
   private boolean loading = false;
+  private ScheduledFuture futureReady;
 
   public TaskExecutor() { }
 
@@ -91,6 +92,7 @@ public abstract class TaskExecutor<ResultType>  {
    */
   public void cancel() {
     if (futureResult != null) futureResult.cancel(true);
+    if (futureReady != null) futureReady.cancel(true);
     printDebug("Cancel");
     onCancel();
     setLoading(false);
@@ -146,7 +148,13 @@ public abstract class TaskExecutor<ResultType>  {
               futureResult = null;
               onResult(result);
             });
-            readyCheckExecutor.schedule(TaskExecutor.this::onReady, 1, TimeUnit.SECONDS);
+
+            futureReady = readyCheckExecutor.schedule(() -> {
+              futureReady = null;
+              onReady();
+                }, 1, TimeUnit.SECONDS);
+
+
           } catch (InterruptedException e) {
             printDebug("Interruped getting");
             e.printStackTrace();

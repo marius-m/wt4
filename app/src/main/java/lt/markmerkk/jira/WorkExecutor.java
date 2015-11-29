@@ -92,6 +92,7 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
 
   @Override protected void onCancel() {
     scheduler.reset();
+    onLoadChange(false);
   }
 
   @Override protected void onReady() {
@@ -104,8 +105,9 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
   }
 
   @Override protected void onLoadChange(final boolean loading) {
+    boolean isNotLoading = !loading && !hasMore();
     if (listener != null)
-      listener.onLoadChange(loading);
+      listener.onLoadChange(!isNotLoading);
   }
 
   //endregion
