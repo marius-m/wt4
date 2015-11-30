@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.DBProdExecutor;
+import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
@@ -65,6 +66,7 @@ public abstract class BaseController {
         // Initializing database
         executor = new DBProdExecutor();
         executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+        executor.execute(new CreateJobIfNeeded<>(SimpleIssue.class));
     }
 
     public void setupController(BaseControllerDelegate listener, Scene scene, Stage primaryStage) {

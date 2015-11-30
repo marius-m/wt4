@@ -1,5 +1,6 @@
 package lt.markmerkk.storage2;
 
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Worklog;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,6 +40,33 @@ public class SimpleIssueBuilder {
     this.errorMessage = null;
   }
 
+  public SimpleIssueBuilder(Issue remoteIssue) {
+    this.project = remoteIssue.getProject().getKey();
+    this.key = remoteIssue.getKey();
+    this.description = remoteIssue.getSummary();
+
+    this.uri = remoteIssue.getSelf().toString();
+    this.id = remoteIssue.getId();
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
+
+  public SimpleIssueBuilder(SimpleIssue oldIssue, Issue remoteIssue) {
+    this._id = oldIssue._id;
+    this.project = remoteIssue.getProject().getKey();
+    this.key = remoteIssue.getKey();
+    this.description = remoteIssue.getSummary();
+
+    this.uri = remoteIssue.getSelf().toString();
+    this.id = remoteIssue.getId();
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
+
   public SimpleIssueBuilder setProject(String project) {
     this.project = project;
     return this;
@@ -64,6 +92,12 @@ public class SimpleIssueBuilder {
     newIssue.key = this.key;
     newIssue.description = this.description;
 
+    newIssue.uri = this.uri;
+    newIssue.id = this.id;
+    newIssue.dirty = this.dirty;
+    newIssue.error = this.error;
+    newIssue.errorMessage = this.errorMessage;
+    newIssue.deleted = this.deleted;
     if (this._id > 0)
       newIssue._id = this._id;
     return newIssue;

@@ -32,6 +32,7 @@ import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
 import lt.markmerkk.jira.interfaces.WorkerListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
+import lt.markmerkk.jira.workers.JiraWorkerOpenIssues;
 import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
 import lt.markmerkk.jira.workers.JiraWorkerPushNew;
 import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
@@ -197,7 +198,8 @@ public class MainController extends BaseController {
                   new JiraWorkerPushNew(executor, filterDate),
                   new JiraWorkerTodayIssues(filterDate),
                   new JiraWorkerWorklogForIssue(filterDate),
-                  new JiraWorkerPullMerge(executor)
+                  new JiraWorkerPullMerge(executor),
+                  new JiraWorkerOpenIssues(executor)
               )
           );
         } catch (Exception e) {

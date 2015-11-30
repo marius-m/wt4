@@ -112,9 +112,6 @@
                   <HBox>
                      <children>
                         <Button fx:id="buttonTest" mnemonicParsing="false" prefWidth="100.0" text="Refresh">
-                           <graphic>
-                              <ProgressIndicator fx:id="progressIndicator" prefHeight="14.0" prefWidth="14.0" visible="false" />
-                           </graphic>
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -150,6 +147,9 @@
                </children>
             </VBox>
          </content>
+         <graphic>
+            <ProgressIndicator fx:id="progressIndicator" prefHeight="14.0" prefWidth="14.0" visible="false" />
+         </graphic>
       </Tab>
       <Tab text="Issues">
         <content>
