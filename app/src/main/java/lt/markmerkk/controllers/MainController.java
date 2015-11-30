@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
@@ -25,6 +26,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkReporter;
@@ -37,6 +39,7 @@ import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
 import lt.markmerkk.jira.workers.JiraWorkerPushNew;
 import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
 import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
+import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.jobs.DeleteJob;
@@ -63,6 +66,7 @@ public class MainController extends BaseController {
   private final DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
 
   private ObservableList<SimpleLog> logs;
+  private ObservableList<SimpleIssue> issues;
   private DateTime filterDate;
 
   @FXML TextField inputTo;
@@ -85,6 +89,10 @@ public class MainController extends BaseController {
   @FXML BorderPane footer;
   @FXML ProgressIndicator progressIndicator;
   DatePicker datePicker;
+
+  @FXML TextField inputSearchIssue;
+  @FXML ListView outputIssueList;
+  @FXML WebView outputIssueWeb;
 
   WorkExecutor asyncWorkExecutor;
   IOSOutput osOutput;
@@ -279,7 +287,7 @@ public class MainController extends BaseController {
    */
   private void notifyLogsChanged() {
     QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class,
-        () -> "(start > " + filterDate.getMillis()
+        () -> "WHERE (start > " + filterDate.getMillis()
             + " AND "
             + "end < " + filterDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
     executor.execute(queryJob);
@@ -289,6 +297,20 @@ public class MainController extends BaseController {
     if (queryJob.result() != null)
       logs.addAll(queryJob.result());
     countTotal();
+  }
+
+  /**
+   * Updates issues from the database
+   */
+  private void notifyIssuesChanged() {
+    QueryListJob<SimpleIssue> queryJob = new QueryListJob<>(SimpleIssue.class);
+    executor.execute(queryJob);
+    if (issues == null)
+      issues = FXCollections.observableArrayList();
+    issues.clear();
+    if (queryJob.result() != null)
+      issues.addAll(queryJob.result());
+    outputIssueList.setItems(issues);
   }
 
   /**
@@ -317,8 +339,10 @@ public class MainController extends BaseController {
       inputPassword.setDisable(loading);
       inputHost.setDisable(loading);
       buttonTest.setText((loading) ? "Cancel" : "Refresh");
-      if (!loading)
+      if (!loading) {
         notifyLogsChanged();
+        notifyIssuesChanged();
+      }
     }
   };
 
@@ -409,6 +433,7 @@ public class MainController extends BaseController {
   public void resume() {
     super.resume();
     notifyLogsChanged();
+    notifyIssuesChanged();
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getName());

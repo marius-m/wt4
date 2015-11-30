@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
+// fixme no tests dirty code
 public class JiraWorkerPushNew extends JiraWorker {
   public static final String TAG = "WORKLOG_PUSH";
 

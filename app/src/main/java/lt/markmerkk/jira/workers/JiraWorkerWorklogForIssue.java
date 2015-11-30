@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeFormatter;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
+// fixme no tests, dirty code
 public class JiraWorkerWorklogForIssue extends JiraWorker {
   public static final String TAG = "WORKLOG_FOR_ISSUE";
   private final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy/MM/dd");

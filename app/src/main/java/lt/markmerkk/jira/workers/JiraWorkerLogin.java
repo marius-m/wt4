@@ -12,6 +12,7 @@ import lt.markmerkk.jira.interfaces.IWorkerResult;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
+// fixme no tests, dirty code
 public class JiraWorkerLogin extends JiraWorker {
 
   public static final String LOGIN = "LOGIN";

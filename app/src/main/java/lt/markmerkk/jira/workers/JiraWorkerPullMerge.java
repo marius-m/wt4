@@ -15,6 +15,7 @@ import lt.markmerkk.storage2.database.interfaces.IExecutor;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
+// fixme no tests dirty code
 public class JiraWorkerPullMerge extends JiraWorker {
   public static final String TAG = "WORKLOG_PULL";
 

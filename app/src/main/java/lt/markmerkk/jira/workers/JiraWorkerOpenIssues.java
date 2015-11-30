@@ -17,6 +17,7 @@ import lt.markmerkk.storage2.jobs.UpdateJob;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
+// fixme no tests, dirty code
 public class JiraWorkerOpenIssues extends JiraWorker {
   public static final String TAG = "SEARCH_OPEN";
   public static final String JQL_ASSIGNED_ISSUES =

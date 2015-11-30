@@ -118,12 +118,10 @@ public class SimpleLog extends RemoteEntity {
   //endregion
 
   @Override public String toString() {
-    return "SimpleLog{" +
-        "start=" + longFormat.print(start) +
-        ", end=" + longFormat.print(end) +
-        ", duration=" + Utils.formatDuration(duration) +
-        ", task='" + task + '\'' +
-        ", comment='" + comment + '\'' +
-        '}';
+    return task + " : " +
+        longFormat.print(start) +
+        " + " + longFormat.print(end) +
+        " = " + Utils.formatDuration(duration) +
+        " / \"" + comment + "\"";
   }
 }

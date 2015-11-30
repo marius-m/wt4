@@ -52,10 +52,6 @@ public class SimpleIssue extends RemoteEntity {
   }
 
   @Override public String toString() {
-    return "SimpleIssue{" +
-        "project='" + project + '\'' +
-        ", key='" + key + '\'' +
-        ", description='" + description + '\'' +
-        '}';
+    return key + ": "+description;
   }
 }

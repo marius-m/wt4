@@ -17,6 +17,7 @@ import org.joda.time.format.DateTimeFormatter;
  * Created by mariusmerkevicius on 11/26/15.
  * Tries to check if login is valid for the user
  */
+// fixme no tests, dirty code
 public class JiraWorkerTodayIssues extends JiraWorker {
   public static final String TAG = "SEARCH_ISSUES_TODAY";
   public static final String JQL_WORKLOG_TEMPLATE =

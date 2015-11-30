@@ -157,18 +157,18 @@
                <items>
                   <VBox>
                      <children>
-                        <TextField promptText="Search...">
+                        <TextField fx:id="inputSearchIssue" promptText="Search...">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </TextField>
-                        <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <ListView fx:id="outputIssueList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </VBox>
-                  <WebView layoutX="200.0" layoutY="134.0" prefHeight="200.0" prefWidth="200.0" />
+                  <WebView fx:id="outputIssueWeb" layoutX="200.0" layoutY="134.0" prefHeight="200.0" prefWidth="200.0" />
                </items>
             </SplitPane>
         </content>
