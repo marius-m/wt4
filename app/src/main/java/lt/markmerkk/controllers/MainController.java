@@ -17,12 +17,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
@@ -68,6 +70,12 @@ public class MainController extends BaseController {
   private ObservableList<SimpleLog> logs;
   private ObservableList<SimpleIssue> issues;
   private DateTime filterDate;
+
+  @FXML TabPane tabPane;
+
+  @FXML Tab tabWork;
+  @FXML Tab tabJira;
+  @FXML Tab tabIssues;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
@@ -156,6 +164,17 @@ public class MainController extends BaseController {
    * Initializes listeners for the views
    */
   private void initViewListeners() {
+    outputIssueList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent event) {
+        if (event.getButton().equals(MouseButton.PRIMARY)) {
+          if (event.getClickCount() == 2) {
+            inputTask.setText(outputIssueList.getSelectionModel().getSelectedItem().toString());
+            tabPane.getSelectionModel().select(tabWork);
+          }
+        }
+      }
+    });
+
     inputSearchIssue.textProperty().addListener(new ChangeListener<String>() {
       @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
           String newValue) {
@@ -293,7 +312,7 @@ public class MainController extends BaseController {
    */
   private void notifyLogsChanged() {
     QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class,
-        () -> "WHERE (start > " + filterDate.getMillis()
+        () -> "(start > " + filterDate.getMillis()
             + " AND "
             + "end < " + filterDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
     executor.execute(queryJob);
