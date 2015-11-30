@@ -149,7 +149,6 @@ public class MainController extends BaseController {
     footer.setRight(datePicker);
 
     LogDisplayController logDisplayController = new LogDisplayController(tableLogs, logs, listener);
-
     updateUI();
   }
 
@@ -157,6 +156,13 @@ public class MainController extends BaseController {
    * Initializes listeners for the views
    */
   private void initViewListeners() {
+    inputSearchIssue.textProperty().addListener(new ChangeListener<String>() {
+      @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
+          String newValue) {
+        notifyIssuesChanged();
+      }
+    });
+
     inputFrom.textProperty().addListener(new ChangeListener<String>() {
       @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
           String newValue) {
@@ -304,6 +310,12 @@ public class MainController extends BaseController {
    */
   private void notifyIssuesChanged() {
     QueryListJob<SimpleIssue> queryJob = new QueryListJob<>(SimpleIssue.class);
+    if (!Utils.isEmpty(inputSearchIssue.getText()) && inputSearchIssue.getText().length() >= 2)
+      queryJob = new QueryListJob<>(SimpleIssue.class, () -> "("
+          + "key like '%"+inputSearchIssue.getText()+"%' "
+          + "OR "
+          + "description like '%"+inputSearchIssue.getText()+"%' "
+          + ")");
     executor.execute(queryJob);
     if (issues == null)
       issues = FXCollections.observableArrayList();
