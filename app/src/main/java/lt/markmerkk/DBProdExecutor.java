@@ -20,6 +20,7 @@ public class DBProdExecutor extends DBBaseExecutor {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return home+"/.wt4/wt4.db";
+    //return home+"/.wt4/wt4.db";
+    return "wt4.db";
   }
 }

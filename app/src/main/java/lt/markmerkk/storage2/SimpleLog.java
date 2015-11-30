@@ -37,11 +37,6 @@ public class SimpleLog extends RemoteEntity {
   @Column(value = FieldType.TEXT)
   String comment;
 
-  /**
-   * Its should never be creating using constructor! Always use builders!
-   */
-  public SimpleLog() { }
-
   //region Getters / Setters
 
   public String getLongStart() {

@@ -37,9 +37,9 @@ public abstract class DBBaseExecutor implements IExecutor {
     } catch (UnsupportedOperationException e) { // Might throw when using wrong forming method
       logger.log(Level.ERROR, "Unsupported operation! "+e.getMessage());
     } catch (IllegalArgumentException e) { // Might throw when forming
-      logger.log(Level.ERROR, "Error! " + e.getMessage());
+      logger.log(Level.DEBUG, "Error! " + e.getMessage());
     } catch (SQLException e) { // Might throw with illegal queries
-      logger.log(Level.ERROR, "Error! " + e.getMessage());
+      logger.log(Level.DEBUG, "Error! " + e.getMessage());
     } finally {
       close(connection); // We close connection anyway
     }

@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by mariusmerkevicius on 11/22/15.
  */
-public class DBTestExecutorProdTest {
+public class DBTestExecutorProdLogTest {
   @Test public void shouldCreateTable() throws Exception {
     // Arrange
     DBMockExecutor

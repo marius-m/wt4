@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import javafx.scene.web.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
@@ -103,7 +105,7 @@
             </VBox>
          </content>
     </Tab>
-      <Tab text="Settings">
+      <Tab text="Jira">
          <content>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
@@ -148,6 +150,28 @@
                </children>
             </VBox>
          </content>
+      </Tab>
+      <Tab text="Issues">
+        <content>
+            <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+               <items>
+                  <VBox>
+                     <children>
+                        <TextField promptText="Search...">
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </TextField>
+                        <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <WebView layoutX="200.0" layoutY="134.0" prefHeight="200.0" prefWidth="200.0" />
+               </items>
+            </SplitPane>
+        </content>
       </Tab>
   </tabs>
 </TabPane>
