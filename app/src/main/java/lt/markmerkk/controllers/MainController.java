@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -78,6 +79,7 @@ public class MainController extends BaseController {
   @FXML Tab tabWork;
   @FXML Tab tabJira;
   @FXML Tab tabIssues;
+  @FXML Tab tabCreate;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
@@ -103,6 +105,7 @@ public class MainController extends BaseController {
   @FXML TextField inputSearchIssue;
   @FXML ListView<SimpleIssue> outputIssueList;
   @FXML WebView outputIssueWeb;
+  @FXML WebView createWebview;
 
   WorkExecutor asyncWorkExecutor;
   IOSOutput osOutput;
@@ -166,6 +169,18 @@ public class MainController extends BaseController {
    * Initializes listeners for the views
    */
   private void initViewListeners() {
+    tabCreate.setOnSelectionChanged(new EventHandler<Event>() {
+      @Override public void handle(Event event) {
+        URI issuePath = null;
+        try {
+          issuePath = new URI(inputHost.getText()+"/secure/CreateIssue!default.jspa");
+          createWebview.getEngine().load(issuePath.toString());
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+
     outputIssueList.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent event) {
         if (event.getButton().equals(MouseButton.PRIMARY)) {

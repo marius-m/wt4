@@ -173,5 +173,10 @@
             </SplitPane>
         </content>
       </Tab>
+      <Tab fx:id="tabCreate" text="Create">
+        <content>
+            <WebView fx:id="createWebview" prefHeight="-1.0" prefWidth="-1.0" />
+        </content>
+      </Tab>
   </tabs>
 </TabPane>
