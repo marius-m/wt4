@@ -43,6 +43,10 @@ public abstract class RemoteEntity extends BaseDBEntity {
   @Column(value = FieldType.TEXT)
   String errorMessage;
 
+  public String getUri() {
+    return uri;
+  }
+
   public long getId() {
     return id;
   }

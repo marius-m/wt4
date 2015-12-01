@@ -1,6 +1,8 @@
 package lt.markmerkk.controllers;
 
 import eu.schudt.javafx.controls.calendar.DatePicker;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -99,7 +101,7 @@ public class MainController extends BaseController {
   DatePicker datePicker;
 
   @FXML TextField inputSearchIssue;
-  @FXML ListView outputIssueList;
+  @FXML ListView<SimpleIssue> outputIssueList;
   @FXML WebView outputIssueWeb;
 
   WorkExecutor asyncWorkExecutor;
@@ -167,9 +169,16 @@ public class MainController extends BaseController {
     outputIssueList.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent event) {
         if (event.getButton().equals(MouseButton.PRIMARY)) {
+          SimpleIssue selectedItem = outputIssueList.getSelectionModel().getSelectedItem();
           if (event.getClickCount() == 2) {
-            inputTask.setText(outputIssueList.getSelectionModel().getSelectedItem().toString());
+            inputTask.setText(selectedItem.getKey());
             tabPane.getSelectionModel().select(tabWork);
+          }
+          try {
+            URI issuePath = new URI(inputHost.getText()+"/browse/"+selectedItem.getKey());
+            outputIssueWeb.getEngine().load(issuePath.toString());
+          } catch (URISyntaxException e) {
+            e.printStackTrace();
           }
         }
       }
