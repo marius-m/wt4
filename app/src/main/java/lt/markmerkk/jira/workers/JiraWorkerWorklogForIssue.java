@@ -28,12 +28,16 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
   private SearchResult searchResult;
   private final DateTime fromDate;
   private final DateTime toDate;
+  private final String username;
 
-  public JiraWorkerWorklogForIssue(DateTime searchDate) {
+  public JiraWorkerWorklogForIssue(String username, DateTime searchDate) {
     if (searchDate == null)
       throw new IllegalArgumentException("Illegal input date!");
-    fromDate = searchDate;
-    toDate = searchDate.plusDays(1);
+    if (username == null)
+      throw new IllegalArgumentException("Illegal username!");
+    this.fromDate = searchDate;
+    this.toDate = searchDate.plusDays(1);
+    this.username = username;
   }
 
   @Override protected IWorkerResult executeRequest(JiraRestClientPlus client) {
@@ -45,9 +49,11 @@ public class JiraWorkerWorklogForIssue extends JiraWorker {
           client.getIssueWorklogRestClient().getIssueWorklogs(issue).claim();
       List<Worklog> searchDateWorklog = new ArrayList<>();
       // Filtering out the worklog
-      for (Worklog allWorkLog : allWorkLogs)
-        if (allWorkLog.getStartDate().isAfter(fromDate) && allWorkLog.getStartDate().isBefore(toDate))
-          searchDateWorklog.add(allWorkLog);
+      for (Worklog allWorkLog : allWorkLogs) {
+        if (allWorkLog.getAuthor().getName().equals(username) &&
+            allWorkLog.getStartDate().isAfter(fromDate) && allWorkLog.getStartDate()
+            .isBefore(toDate)) searchDateWorklog.add(allWorkLog);
+      }
       todayLogs.put(issue.getKey(), searchDateWorklog);
     }
     return new SuccessWorkerResult<>(TAG, todayLogs);

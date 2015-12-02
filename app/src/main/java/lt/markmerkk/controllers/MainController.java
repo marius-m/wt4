@@ -256,7 +256,7 @@ public class MainController extends BaseController {
                   new JiraWorkerLogin(),
                   new JiraWorkerPushNew(executor, filterDate),
                   new JiraWorkerTodayIssues(filterDate),
-                  new JiraWorkerWorklogForIssue(filterDate),
+                  new JiraWorkerWorklogForIssue(inputUsername.getText(), filterDate),
                   new JiraWorkerPullMerge(executor),
                   new JiraWorkerOpenIssues(executor)
               )
