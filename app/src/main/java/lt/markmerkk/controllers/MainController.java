@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -169,6 +170,7 @@ public class MainController extends BaseController {
    * Initializes listeners for the views
    */
   private void initViewListeners() {
+
     tabCreate.setOnSelectionChanged(new EventHandler<Event>() {
       @Override public void handle(Event event) {
         URI issuePath = null;

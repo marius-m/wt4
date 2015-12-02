@@ -11,7 +11,7 @@ import lt.markmerkk.jira.interfaces.WorkerListener;
  * Created by mariusmerkevicius on 11/25/15.
  * A jira executor for background processes
  */
-public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote {
+public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemote {
 
   WorkerListener listener;
   IScheduler2 scheduler;
@@ -105,9 +105,9 @@ public class WorkExecutor extends TaskExecutor<IWorkerResult> implements IRemote
   }
 
   @Override protected void onLoadChange(final boolean loading) {
-    boolean isNotLoading = !loading && !hasMore();
+    //boolean isNotLoading = !loading && !hasMore();
     if (listener != null)
-      listener.onLoadChange(!isNotLoading);
+      listener.onLoadChange(isLoading());
   }
 
   //endregion

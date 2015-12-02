@@ -1,13 +1,13 @@
 package lt.markmerkk.jira;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
@@ -16,17 +16,15 @@ import javafx.application.Platform;
  * Created by mariusmerkevicius on 11/25/15.
  * An abstract executor class to do various jobs in the background and control them
  */
-public abstract class TaskExecutor<ResultType>  {
-  private ScheduledExecutorService resultCheckExecutor;
-  private ScheduledExecutorService readyCheckExecutor;
-  private ExecutorService mainExecutor;
-  private Future<ResultType> futureResult;
+public abstract class TaskExecutor2<ResultType>  {
+  private ListenableFuture<ResultType> futureResult;
+  private ListeningExecutorService mainExecutor;
 
   public static final boolean DEBUG = true;
   private boolean loading = false;
-  private ScheduledFuture futureReady;
+  //private ScheduledFuture futureReady;
 
-  public TaskExecutor() { }
+  public TaskExecutor2() { }
 
   //region Abstract
 
@@ -55,11 +53,7 @@ public abstract class TaskExecutor<ResultType>  {
   //endregion
 
   public void onStart() {
-    mainExecutor = Executors.newSingleThreadExecutor();
-    readyCheckExecutor = Executors.newScheduledThreadPool(1);
-    resultCheckExecutor = Executors.newScheduledThreadPool(1);
-    resultCheckExecutor.scheduleAtFixedRate(resultCheck, 0, 1, TimeUnit.SECONDS);
-
+    mainExecutor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
   }
 
   public void onStop() {
@@ -71,8 +65,6 @@ public abstract class TaskExecutor<ResultType>  {
       if (!mainExecutor.isTerminated())
         mainExecutor.shutdownNow();
     }
-    resultCheckExecutor.shutdownNow();
-    readyCheckExecutor.shutdownNow();
   }
 
   //region Convenience
@@ -85,8 +77,22 @@ public abstract class TaskExecutor<ResultType>  {
     if (callable == null) return;
     if (isLoading()) return;
     printDebug("Executing");
+    setLoading(true);
     futureResult = mainExecutor.submit(callable);
-    setLoading(isLoading());
+    Futures.addCallback(futureResult, new FutureCallback<ResultType>() {
+      @Override public void onSuccess(ResultType resultType) {
+        setLoading(false);
+        Platform.runLater(() -> {
+          onResult(resultType);
+          onReady();
+        });
+      }
+
+      @Override public void onFailure(Throwable throwable) {
+        setLoading(false);
+        System.out.println("Some error something");
+      }
+    });
   }
 
   /**
@@ -94,7 +100,6 @@ public abstract class TaskExecutor<ResultType>  {
    */
   public void cancel() {
     if (futureResult != null) futureResult.cancel(true);
-    if (futureReady != null) futureReady.cancel(true);
     printDebug("Cancel");
     onCancel();
     setLoading(false);
@@ -134,45 +139,4 @@ public abstract class TaskExecutor<ResultType>  {
 
   //endregion
 
-  //region Runnables
-
-  Runnable resultCheck = new Runnable() {
-    @Override public void run() {
-      printDebug("Check " + isLoading());
-      if (TaskExecutor.this.loading != isLoading()) {
-        if (!isLoading() && futureResult.isCancelled())
-          Platform.runLater(TaskExecutor.this::onCancel);
-        if (!isLoading() && !futureResult.isCancelled()) {
-          try {
-            printDebug("Result");
-            ResultType result = futureResult.get(1, TimeUnit.SECONDS);
-            Platform.runLater(() -> {
-              futureResult = null;
-              onResult(result);
-            });
-
-            futureReady = readyCheckExecutor.schedule(() -> {
-              futureReady = null;
-              onReady();
-                }, 1, TimeUnit.SECONDS);
-
-
-          } catch (InterruptedException e) {
-            printDebug("Interruped getting");
-            e.printStackTrace();
-          } catch (ExecutionException e) {
-            printDebug("Execution error");
-            e.printStackTrace();
-          } catch (TimeoutException e) {
-            printDebug("Timeout exception");
-            e.printStackTrace();
-          }
-        }
-        futureResult = null;
-      }
-      setLoading(isLoading());
-    }
-  };
-
-  //endregion
 }
