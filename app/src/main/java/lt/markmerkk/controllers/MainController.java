@@ -377,7 +377,7 @@ public class MainController extends BaseController {
     long total = 0;
     for (SimpleLog log : logs)
       total += log.getDuration();
-    totalView.setText(Utils.formatDuration(total));
+    totalView.setText(Utils.formatShortDuration(total));
   }
 
   //endregion
@@ -433,7 +433,7 @@ public class MainController extends BaseController {
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(shortFormat.print(start));
       inputTo.setText(shortFormat.print(end));
-      outputDuration.setText(Utils.formatDuration(duration));
+      outputDuration.setText(Utils.formatShortDuration(duration));
       MainController.this.log.info(
           "Starting: " + shortFormat.print(start) + " / " + shortFormat.print(end));
       osOutput.onDurationMessage(Utils.formatShortDuration(duration));
@@ -464,7 +464,7 @@ public class MainController extends BaseController {
         inputTo.setText(newTo);
         osOutput.onDurationMessage(Utils.formatShortDuration(duration));
       }
-      outputDuration.setText(Utils.formatDuration(duration));
+      outputDuration.setText(Utils.formatShortDuration(duration));
     }
 
     @Override public void onError(HourGlass.Error error) {
