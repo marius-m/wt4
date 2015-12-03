@@ -36,6 +36,13 @@
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
+                                       <children>
+                                          <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" top="5.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                       </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
                                        <children>
@@ -56,11 +63,6 @@
                                              </HBox.margin>
                                           </TextField>
                                           <TextField fx:id="outputDuration" alignment="CENTER" editable="false" maxWidth="1.7976931348623157E308" promptText="Duration" HBox.hgrow="ALWAYS">
-                                             <HBox.margin>
-                                                <Insets left="5.0" />
-                                             </HBox.margin>
-                                          </TextField>
-                                          <TextField fx:id="inputTask" maxWidth="100.0" prefWidth="100.0" promptText="Task" HBox.hgrow="ALWAYS">
                                              <HBox.margin>
                                                 <Insets left="5.0" />
                                              </HBox.margin>
@@ -150,33 +152,6 @@
          <graphic>
             <ProgressIndicator fx:id="progressIndicator" prefHeight="14.0" prefWidth="14.0" visible="false" />
          </graphic>
-      </Tab>
-      <Tab fx:id="tabIssues" text="Issues">
-        <content>
-            <SplitPane dividerPositions="0.5" orientation="VERTICAL">
-               <items>
-                  <VBox>
-                     <children>
-                        <TextField fx:id="inputSearchIssue" promptText="Search...">
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </TextField>
-                        <ListView fx:id="outputIssueList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </VBox>
-                  <WebView fx:id="outputIssueWeb" layoutX="200.0" layoutY="134.0" prefHeight="200.0" prefWidth="200.0" />
-               </items>
-            </SplitPane>
-        </content>
-      </Tab>
-      <Tab fx:id="tabCreate" text="Create">
-        <content>
-            <WebView fx:id="createWebview" prefHeight="-1.0" prefWidth="-1.0" />
-        </content>
       </Tab>
   </tabs>
 </TabPane>

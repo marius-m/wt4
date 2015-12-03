@@ -176,9 +176,10 @@ public class SimpleLogBuilder {
     if (this.start <= 0) this.start = this.now;
     if (this.end <= 0) this.end = now;
     if (this.start > this.end) throw new IllegalArgumentException("Invalid parameters!");
-    DateTime startTime = new DateTime(this.start).withSecondOfMinute(0);
-    DateTime endTime = new DateTime(this.end).withSecondOfMinute(0);
-    duration = endTime.getMillis() - startTime.getMillis();
+    //DateTime startTime = new DateTime(this.start).withSecondOfMinute(0);
+    //DateTime endTime = new DateTime(this.end).withSecondOfMinute(0);
+    //duration = endTime.getMillis() - startTime.getMillis();
+    duration = end - start;
 
 
     SimpleLog newSimpleLog = new SimpleLog();
