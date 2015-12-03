@@ -415,6 +415,17 @@ public class MainController extends BaseController {
           executor.execute(new DeleteJob(SimpleLog.class, object));
           notifyLogsChanged();
         }
+
+        @Override public void onClone(SimpleLog object) {
+          SimpleLog newLog = new SimpleLogBuilder()
+              .setStart(object.getStart())
+              .setEnd(object.getEnd())
+              .setTask(object.getTask())
+              .setComment(object.getComment())
+              .build();
+          executor.execute(new InsertJob(SimpleLog.class, newLog));
+          notifyLogsChanged();
+        }
       };
 
   private Listener hourglassListener = new Listener() {

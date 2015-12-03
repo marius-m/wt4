@@ -46,7 +46,14 @@ public abstract class TableDisplayController<Type> {
 //                System.out.println("Delete "+table.getSelectionModel().getSelectedItem());
             }
         });
-        contextMenu.getItems().addAll(updateItem, deleteItem);
+        MenuItem cloneItem = new MenuItem("Clone");
+        cloneItem.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                if (table.getSelectionModel().getSelectedItem() != null && listener != null)
+                    listener.onClone(table.getSelectionModel().getSelectedItem());
+            }
+        });
+        contextMenu.getItems().addAll(updateItem, deleteItem, cloneItem);
         table.setContextMenu(contextMenu);
 
         table.setRowFactory( tv -> {
@@ -72,9 +79,28 @@ public abstract class TableDisplayController<Type> {
         return firstNameCol;
     }
 
+    /**
+     * Helper listener for execution actions on entities from the tableview
+     * @param <Type>
+     */
     public interface Listener<Type> {
+        /**
+         * Update action
+         * @param object
+         */
         void onUpdate(Type object);
+
+        /**
+         * Delete action
+         * @param object
+         */
         void onDelete(Type object);
+
+        /**
+         * Clone action
+         * @param object
+         */
+        void onClone(Type object);
     }
 
 }
