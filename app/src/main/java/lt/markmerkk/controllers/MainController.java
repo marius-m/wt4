@@ -7,19 +7,16 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
@@ -27,10 +24,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
@@ -91,6 +86,8 @@ public class MainController extends BaseController {
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
   @FXML Button buttonEnter;
+  @FXML Button buttonOpen;
+  @FXML Button buttonNew;
   @FXML TextArea outputLogger;
 
   @FXML TextField inputHost;
@@ -151,8 +148,7 @@ public class MainController extends BaseController {
             event.getCode() == KeyCode.DOWN ||
             event.getCode() == KeyCode.HOME ||
             event.getCode() == KeyCode.END ||
-            event.getCode() == KeyCode.TAB)
-          return;
+            event.getCode() == KeyCode.TAB) return;
         notifyIssuesChanged();
         inputTaskCombo.show();
       }
@@ -183,15 +179,48 @@ public class MainController extends BaseController {
    */
   private void initViewListeners() {
 
+    buttonOpen.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        SimpleIssue selectedIssue =
+            issues.get(inputTaskCombo.getSelectionModel().getSelectedIndex());
+        if (selectedIssue == null) return;
+        URI issuePath = null;
+        try {
+          //issuePath = new URI(inputHost.getText() + "/secure/CreateIssue!default.jspa");
+          issuePath = new URI(inputHost.getText()+"/browse/"+selectedIssue.getKey());
+          final Tab newTab = new Tab(selectedIssue.getKey());
+          newTab.setClosable(true);
+          WebView taskView = new WebView();
+          newTab.setContent(taskView);
+          tabPane.getTabs().add(newTab);
+          tabPane.getSelectionModel().select(newTab);
+          taskView.getEngine().load(issuePath.toString());
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+
+    buttonNew.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        URI issuePath = null;
+        try {
+          issuePath = new URI(inputHost.getText() + "/secure/CreateIssue!default.jspa");
+          final Tab newTab = new Tab("New");
+          newTab.setClosable(true);
+          WebView taskView = new WebView();
+          newTab.setContent(taskView);
+          tabPane.getTabs().add(newTab);
+          tabPane.getSelectionModel().select(newTab);
+          taskView.getEngine().load(issuePath.toString());
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+
     //tabCreate.setOnSelectionChanged(new EventHandler<Event>() {
     //  @Override public void handle(Event event) {
-    //    URI issuePath = null;
-    //    try {
-    //      issuePath = new URI(inputHost.getText()+"/secure/CreateIssue!default.jspa");
-    //      createWebview.getEngine().load(issuePath.toString());
-    //    } catch (URISyntaxException e) {
-    //      e.printStackTrace();
-    //    }
     //  }
     //});
 
@@ -269,6 +298,9 @@ public class MainController extends BaseController {
     inputTaskCombo.setDisable(disableElement);
     inputComment.setDisable(disableElement);
     outputDuration.setDisable(disableElement);
+    buttonEnter.setDisable(disableElement);
+    buttonOpen.setDisable(disableElement);
+    buttonNew.setDisable(disableElement);
   }
 
   //endregion
