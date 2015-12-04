@@ -45,7 +45,7 @@ configurations {
 }
 
 group = 'lt.markmerkk'
-version = '0.8.5'
+version = '0.8.7'
 
 dependencies {
     compile project(':database')

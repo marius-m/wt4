@@ -56,7 +56,7 @@ public class SimpleLog extends RemoteEntity {
   }
 
   public String getPrettyDuration() {
-    return Utils.formatDuration(duration);
+    return Utils.formatShortDuration(duration);
   }
 
   public long getStart() {
@@ -121,7 +121,7 @@ public class SimpleLog extends RemoteEntity {
     return task + " : " +
         longFormat.print(start) +
         " + " + longFormat.print(end) +
-        " = " + Utils.formatDuration(duration) +
+        " = " + Utils.formatShortDuration(duration) +
         " / \"" + comment + "\"";
   }
 }

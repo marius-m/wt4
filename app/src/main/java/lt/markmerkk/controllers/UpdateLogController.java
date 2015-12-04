@@ -62,12 +62,12 @@ public class UpdateLogController extends BaseController {
      */
     void updateLock() {
         if (updateLog.getId() == 0) return; // Its local
-        taskInput.setDisable(true);
-        startInput.setDisable(true);
-        endInput.setDisable(true);
-        commentInput.setDisable(true);
-        durationInput.setDisable(true);
-        outputError.setDisable(true);
+        taskInput.setEditable(false);
+        startInput.setEditable(false);
+        endInput.setEditable(false);
+        commentInput.setEditable(false);
+        durationInput.setEditable(false);
+        outputError.setEditable(false);
         buttonOk.setDisable(true);
         outputError.setText("Can't update logs that were uploaded!");
     }

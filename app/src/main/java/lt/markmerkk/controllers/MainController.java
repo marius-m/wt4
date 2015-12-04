@@ -1,6 +1,8 @@
 package lt.markmerkk.controllers;
 
 import eu.schudt.javafx.controls.calendar.DatePicker;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -14,7 +16,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
@@ -24,7 +26,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
@@ -76,14 +77,17 @@ public class MainController extends BaseController {
   @FXML Tab tabWork;
   @FXML Tab tabJira;
   @FXML Tab tabIssues;
+  @FXML Tab tabCreate;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
   @FXML TextField outputDuration;
-  @FXML TextField inputTask;
+  //@FXML TextField inputTask;
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
   @FXML Button buttonEnter;
+  @FXML Button buttonOpen;
+  @FXML Button buttonNew;
   @FXML TextArea outputLogger;
 
   @FXML TextField inputHost;
@@ -98,9 +102,7 @@ public class MainController extends BaseController {
   @FXML ProgressIndicator progressIndicator;
   DatePicker datePicker;
 
-  @FXML TextField inputSearchIssue;
-  @FXML ListView outputIssueList;
-  @FXML WebView outputIssueWeb;
+  @FXML ComboBox<SimpleIssue> inputTaskCombo;
 
   WorkExecutor asyncWorkExecutor;
   IOSOutput osOutput;
@@ -138,7 +140,19 @@ public class MainController extends BaseController {
    * Initializes missing views for the controller
    */
   private void initViews() {
-    // Initialize the DatePicker for birthday
+    inputTaskCombo.setOnKeyReleased(new EventHandler<KeyEvent>() {
+      @Override public void handle(KeyEvent event) {
+        if (event.getCode() == KeyCode.RIGHT ||
+            event.getCode() == KeyCode.LEFT ||
+            event.getCode() == KeyCode.UP ||
+            event.getCode() == KeyCode.DOWN ||
+            event.getCode() == KeyCode.HOME ||
+            event.getCode() == KeyCode.END ||
+            event.getCode() == KeyCode.TAB) return;
+        notifyIssuesChanged();
+        inputTaskCombo.show();
+      }
+    });
     datePicker = new DatePicker(Locale.ENGLISH);
     datePicker.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     datePicker.getCalendarView().todayButtonTextProperty().set("Today");
@@ -164,23 +178,51 @@ public class MainController extends BaseController {
    * Initializes listeners for the views
    */
   private void initViewListeners() {
-    outputIssueList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent event) {
-        if (event.getButton().equals(MouseButton.PRIMARY)) {
-          if (event.getClickCount() == 2) {
-            inputTask.setText(outputIssueList.getSelectionModel().getSelectedItem().toString());
-            tabPane.getSelectionModel().select(tabWork);
-          }
+
+    buttonOpen.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        SimpleIssue selectedIssue =
+            issues.get(inputTaskCombo.getSelectionModel().getSelectedIndex());
+        if (selectedIssue == null) return;
+        URI issuePath = null;
+        try {
+          //issuePath = new URI(inputHost.getText() + "/secure/CreateIssue!default.jspa");
+          issuePath = new URI(inputHost.getText()+"/browse/"+selectedIssue.getKey());
+          final Tab newTab = new Tab(selectedIssue.getKey());
+          newTab.setClosable(true);
+          WebView taskView = new WebView();
+          newTab.setContent(taskView);
+          tabPane.getTabs().add(newTab);
+          tabPane.getSelectionModel().select(newTab);
+          taskView.getEngine().load(issuePath.toString());
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
         }
       }
     });
 
-    inputSearchIssue.textProperty().addListener(new ChangeListener<String>() {
-      @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
-          String newValue) {
-        notifyIssuesChanged();
+    buttonNew.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        URI issuePath = null;
+        try {
+          issuePath = new URI(inputHost.getText() + "/secure/CreateIssue!default.jspa");
+          final Tab newTab = new Tab("New");
+          newTab.setClosable(true);
+          WebView taskView = new WebView();
+          newTab.setContent(taskView);
+          tabPane.getTabs().add(newTab);
+          tabPane.getSelectionModel().select(newTab);
+          taskView.getEngine().load(issuePath.toString());
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
+        }
       }
     });
+
+    //tabCreate.setOnSelectionChanged(new EventHandler<Event>() {
+    //  @Override public void handle(Event event) {
+    //  }
+    //});
 
     inputFrom.textProperty().addListener(new ChangeListener<String>() {
       @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -230,7 +272,7 @@ public class MainController extends BaseController {
                   new JiraWorkerLogin(),
                   new JiraWorkerPushNew(executor, filterDate),
                   new JiraWorkerTodayIssues(filterDate),
-                  new JiraWorkerWorklogForIssue(filterDate),
+                  new JiraWorkerWorklogForIssue(inputUsername.getText(), filterDate),
                   new JiraWorkerPullMerge(executor),
                   new JiraWorkerOpenIssues(executor)
               )
@@ -253,9 +295,12 @@ public class MainController extends BaseController {
     boolean disableElement = (hourGlass.getState() == HourGlass.State.STOPPED);
     inputFrom.setDisable(disableElement);
     inputTo.setDisable(disableElement);
-    inputTask.setDisable(disableElement);
+    inputTaskCombo.setDisable(disableElement);
     inputComment.setDisable(disableElement);
     outputDuration.setDisable(disableElement);
+    buttonEnter.setDisable(disableElement);
+    buttonOpen.setDisable(disableElement);
+    buttonNew.setDisable(disableElement);
   }
 
   //endregion
@@ -274,7 +319,7 @@ public class MainController extends BaseController {
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(hourGlass.reportStart().getMillis())
           .setEnd(hourGlass.reportEnd().getMillis())
-          .setTask(inputTask.getText())
+          .setTask(inputTaskCombo.getEditor().getText())
           .setComment(inputComment.getText()).build();
       executor.execute(new InsertJob(SimpleLog.class, log));
       this.log.info("Saving: "+log.toString());
@@ -329,11 +374,11 @@ public class MainController extends BaseController {
    */
   private void notifyIssuesChanged() {
     QueryListJob<SimpleIssue> queryJob = new QueryListJob<>(SimpleIssue.class);
-    if (!Utils.isEmpty(inputSearchIssue.getText()) && inputSearchIssue.getText().length() >= 2)
+    if (!Utils.isEmpty(inputTaskCombo.getEditor().getText()) && inputTaskCombo.getEditor().getText().length() >= 2)
       queryJob = new QueryListJob<>(SimpleIssue.class, () -> "("
-          + "key like '%"+inputSearchIssue.getText()+"%' "
+          + "key like '%"+inputTaskCombo.getEditor().getText()+"%' "
           + "OR "
-          + "description like '%"+inputSearchIssue.getText()+"%' "
+          + "description like '%"+inputTaskCombo.getEditor().getText()+"%' "
           + ")");
     executor.execute(queryJob);
     if (issues == null)
@@ -341,7 +386,7 @@ public class MainController extends BaseController {
     issues.clear();
     if (queryJob.result() != null)
       issues.addAll(queryJob.result());
-    outputIssueList.setItems(issues);
+    inputTaskCombo.setItems(issues);
   }
 
   /**
@@ -351,7 +396,7 @@ public class MainController extends BaseController {
     long total = 0;
     for (SimpleLog log : logs)
       total += log.getDuration();
-    totalView.setText(Utils.formatDuration(total));
+    totalView.setText(Utils.formatShortDuration(total));
   }
 
   //endregion
@@ -389,6 +434,17 @@ public class MainController extends BaseController {
           executor.execute(new DeleteJob(SimpleLog.class, object));
           notifyLogsChanged();
         }
+
+        @Override public void onClone(SimpleLog object) {
+          SimpleLog newLog = new SimpleLogBuilder()
+              .setStart(object.getStart())
+              .setEnd(object.getEnd())
+              .setTask(object.getTask())
+              .setComment(object.getComment())
+              .build();
+          executor.execute(new InsertJob(SimpleLog.class, newLog));
+          notifyLogsChanged();
+        }
       };
 
   private Listener hourglassListener = new Listener() {
@@ -396,7 +452,7 @@ public class MainController extends BaseController {
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(shortFormat.print(start));
       inputTo.setText(shortFormat.print(end));
-      outputDuration.setText(Utils.formatDuration(duration));
+      outputDuration.setText(Utils.formatShortDuration(duration));
       MainController.this.log.info(
           "Starting: " + shortFormat.print(start) + " / " + shortFormat.print(end));
       osOutput.onDurationMessage(Utils.formatShortDuration(duration));
@@ -427,7 +483,7 @@ public class MainController extends BaseController {
         inputTo.setText(newTo);
         osOutput.onDurationMessage(Utils.formatShortDuration(duration));
       }
-      outputDuration.setText(Utils.formatDuration(duration));
+      outputDuration.setText(Utils.formatShortDuration(duration));
     }
 
     @Override public void onError(HourGlass.Error error) {

@@ -4,6 +4,7 @@ import com.atlassian.jira.rest.client.api.domain.Worklog;
 import java.net.URI;
 import java.net.URISyntaxException;
 import lt.markmerkk.utils.Utils;
+import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
 /**
@@ -175,7 +176,11 @@ public class SimpleLogBuilder {
     if (this.start <= 0) this.start = this.now;
     if (this.end <= 0) this.end = now;
     if (this.start > this.end) throw new IllegalArgumentException("Invalid parameters!");
+    //DateTime startTime = new DateTime(this.start).withSecondOfMinute(0);
+    //DateTime endTime = new DateTime(this.end).withSecondOfMinute(0);
+    //duration = endTime.getMillis() - startTime.getMillis();
     duration = end - start;
+
 
     SimpleLog newSimpleLog = new SimpleLog();
     newSimpleLog.start = this.start;
