@@ -40,34 +40,34 @@ public class Utils {
         return false;
     }
 
-    ///**
-    // * Formats duration time into pretty string format
-    // * @param durationMillis provided duration to format
-    // * @return formatted duration
-    // */
-    //public static String formatDuration(long durationMillis) {
-    //    if (durationMillis < 1000)
-    //        return "0s";
-    //    StringBuilder builder = new StringBuilder();
-    //    PeriodType type = PeriodType.forFields(new DurationFieldType[]{
-    //        DurationFieldType.hours(),
-    //        DurationFieldType.minutes(),
-    //        DurationFieldType.seconds()
-    //    });
-    //
-    //    Period period = new Period(durationMillis, type);
-    //    if (period.getDays() != 0)
-    //        builder.append(period.getDays()).append("d").append(" ");
-    //    if (period.getHours() != 0)
-    //        builder.append(period.getHours()).append("h").append(" ");
-    //    if (period.getMinutes() != 0)
-    //        builder.append(period.getMinutes()).append("m").append(" ");
-    //    //if (period.getSeconds() != 0)
-    //    //    builder.append(period.getSeconds()).append("s").append(" ");
-    //    if ((builder.length() > 0) && builder.charAt(builder.length()-1) == " ".charAt(0))
-    //        builder.deleteCharAt(builder.length()-1);
-    //    return builder.toString();
-    //}
+    /**
+     * Formats duration time into pretty string format
+     * @param durationMillis provided duration to format
+     * @return formatted duration
+     */
+    public static String formatDuration(long durationMillis) {
+        if (durationMillis < 1000)
+            return "0s";
+        StringBuilder builder = new StringBuilder();
+        PeriodType type = PeriodType.forFields(new DurationFieldType[]{
+            DurationFieldType.hours(),
+            DurationFieldType.minutes(),
+            DurationFieldType.seconds()
+        });
+
+        Period period = new Period(durationMillis, type);
+        if (period.getDays() != 0)
+            builder.append(period.getDays()).append("d").append(" ");
+        if (period.getHours() != 0)
+            builder.append(period.getHours()).append("h").append(" ");
+        if (period.getMinutes() != 0)
+            builder.append(period.getMinutes()).append("m").append(" ");
+        if (period.getSeconds() != 0)
+            builder.append(period.getSeconds()).append("s").append(" ");
+        if ((builder.length() > 0) && builder.charAt(builder.length()-1) == " ".charAt(0))
+            builder.deleteCharAt(builder.length()-1);
+        return builder.toString();
+    }
 
     /**
      * Formats duration time into pretty and short string format
