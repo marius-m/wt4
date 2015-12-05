@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox prefHeight="312.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.clock.ClockPresenter">
+   <children>
+      <HBox>
+         <children>
+            <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </ComboBox>
+            <Button fx:id="buttonOpen" mnemonicParsing="false" text="&gt;">
+               <HBox.margin>
+                  <Insets right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonNew" minWidth="50.0" mnemonicParsing="false" text="New">
+               <HBox.margin>
+                  <Insets right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+         <children>
+            <Button fx:id="buttonEnter" mnemonicParsing="false" prefWidth="80.0" text="Enter" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonClock" mnemonicParsing="false" prefWidth="80.0" text="Clock" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="inputFrom" alignment="CENTER" maxWidth="100.0" promptText="From">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="inputTo" alignment="CENTER" maxWidth="100.0" promptText="To">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="outputDuration" alignment="CENTER" editable="false" maxWidth="1.7976931348623157E308" promptText="Duration" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <TextArea fx:id="inputComment" prefHeight="300.0" prefWidth="200.0" promptText="Comment" wrapText="true" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
+      </TextArea>
+   </children>
+</VBox>
