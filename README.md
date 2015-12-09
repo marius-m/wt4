@@ -30,7 +30,7 @@ In theory app should be self explanatory, in practice this is not always the cas
 * Field "Comment" is the comment for the task
 * Field "Task" is the task ID that connects worklogs to remote. For ex.: ITO-182, TT-122, AD-22.
 
-![Work window](img/Screenshot 2015-11-30 00.30.43.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2015-11-30 00.30.43.png)
 
 * By right clicking you can edit / delete a log
 * Double click moves to update window
@@ -39,11 +39,11 @@ In theory app should be self explanatory, in practice this is not always the cas
 	* Green - synced with remote
 	* Red - error syncing with remote
 
-![Work window](img/Screenshot 2015-11-30 00.35.40.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2015-11-30 00.35.40.png)
 
 * Everything can be edited in update window
 
-![Work window](img/Screenshot 2015-11-30 00.40.09.png)
+![Update](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2015-11-30 00.40.09.png)
 
 * Settings tab lets Sync everything to remote server. It needs proper user credentials and remote server hostname. 
 * Sync is done on a day that is currently selected
@@ -51,7 +51,7 @@ In theory app should be self explanatory, in practice this is not always the cas
 	* Try to push all the local work logs to the remote
 	* Pull all the work logs from remote and display it
 
-![Work window](img/Screenshot 2015-11-30 00.45.31.png)
+![Sync](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2015-11-30 00.45.31.png)
 
 
 ## Shortcomings (critical soon to be features for 1.0 version)
