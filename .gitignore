@@ -46,3 +46,4 @@ app/test.db
 database/test_database.db
 app/test_database.db
 app/wt4.db
+usr.properties

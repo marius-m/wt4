@@ -19,6 +19,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class SimpleLog extends RemoteEntity {
   public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
   public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+  public final static DateTimeFormatter longDateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
 
   private static final String KEY_START = "start";
   private static final String KEY_END = "end";

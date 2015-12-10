@@ -3,6 +3,7 @@ package lt.markmerkk.utils.hourglass;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javax.annotation.PreDestroy;
 import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
 import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
@@ -98,6 +99,12 @@ public class HourGlass {
       return true;
     } catch (TimeCalcError timeCalcError) { }
     return false;
+  }
+
+  @PreDestroy
+  public void destroy() {
+    if (state == State.RUNNING)
+      stop();
   }
 
   //endregion

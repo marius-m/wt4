@@ -6,7 +6,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <VBox prefHeight="312.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.clock.ClockPresenter">
    <children>
       <HBox>
@@ -33,12 +32,12 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
          <children>
-            <Button fx:id="buttonEnter" mnemonicParsing="false" prefWidth="80.0" text="Enter" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </Button>
             <Button fx:id="buttonClock" mnemonicParsing="false" prefWidth="80.0" text="Clock" HBox.hgrow="ALWAYS" />
+            <DatePicker fx:id="inputTargetDate" editable="false">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </DatePicker>
             <TextField fx:id="inputFrom" alignment="CENTER" maxWidth="100.0" promptText="From">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -64,5 +63,14 @@
             <Insets bottom="5.0" left="5.0" right="5.0" />
          </VBox.margin>
       </TextArea>
+      <HBox VBox.vgrow="ALWAYS">
+         <children>
+            <Button fx:id="buttonEnter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Enter" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
    </children>
 </VBox>

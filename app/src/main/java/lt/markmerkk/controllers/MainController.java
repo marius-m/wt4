@@ -82,7 +82,6 @@ public class MainController extends BaseController {
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
   @FXML TextField outputDuration;
-  //@FXML TextField inputTask;
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
   @FXML Button buttonEnter;
