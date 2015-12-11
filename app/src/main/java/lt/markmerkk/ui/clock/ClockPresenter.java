@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -57,16 +59,22 @@ public class ClockPresenter implements Initializable {
   DateTime targetDate;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    inputTargetDate.setConverter(new SimpleDatePickerConverter());
+    inputTargetDate.setOnAction(dateChangeListener);
     hourGlass.setListener(hourglassListener);
     inputFrom.textProperty().addListener(timeChangeListener);
     inputTo.textProperty().addListener(timeChangeListener);
     inputComment.setOnKeyReleased(onKeyboardEnterEventHandler);
     buttonClock.setOnMouseClicked(onMouseClockEventHandler);
     buttonEnter.setOnMouseClicked(onMouseEnterEventHandler);
-    inputTargetDate.setConverter(new SimpleDatePickerConverter());
-    inputTargetDate.editorProperty().addListener(targetDateListener);
-    String dateNow = SimpleLog.longDateFormat.print(DateTime.now());
-    inputTargetDate.getEditor().setText(dateNow);
+
+    // Setting todays date
+    DateTime now = DateTime.now();
+    targetDate = now;
+    hourGlass.setCurrentDay(now);
+    Platform.runLater(() -> {
+      inputTargetDate.getEditor().setText(SimpleLog.longDateFormat.print(now));
+    });
     updateUI();
   }
 
@@ -146,11 +154,9 @@ public class ClockPresenter implements Initializable {
     }
   };
 
-  ChangeListener<TextField> targetDateListener = new ChangeListener<TextField>() {
-    @Override
-    public void changed(ObservableValue<? extends TextField> observable, TextField oldValue,
-        TextField newValue) {
-      targetDate = SimpleLog.longDateFormat.parseDateTime(newValue.getText());
+  EventHandler<ActionEvent> dateChangeListener = new EventHandler<ActionEvent>() {
+    @Override public void handle(ActionEvent event) {
+      targetDate = SimpleLog.longDateFormat.parseDateTime(inputTargetDate.getEditor().getText());
       hourGlass.setCurrentDay(targetDate);
       //notifyLogsChanged();
     }
