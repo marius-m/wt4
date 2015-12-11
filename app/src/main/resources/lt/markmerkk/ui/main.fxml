@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-<SplitPane dividerPositions="0.4" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.MainPresenter">
+<SplitPane dividerPositions="0.4" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="500.0" prefWidth="600.0" stylesheets="@../../../divider.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.MainPresenter">
   <items>
       <BorderPane fx:id="northPane" prefHeight="200.0" prefWidth="200.0" />
       <BorderPane fx:id="southPane" prefHeight="200.0" prefWidth="200.0" />

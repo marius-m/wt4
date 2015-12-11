@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-<TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </TableView>
+   </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
    </padding>
-</TableView>
+</VBox>
