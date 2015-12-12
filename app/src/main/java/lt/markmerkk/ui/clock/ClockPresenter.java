@@ -44,22 +44,15 @@ public class ClockPresenter implements Initializable {
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
-  //@FXML TextField outputDuration;
-  //@FXML TextField inputTask;
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
   @FXML Button buttonEnter;
   @FXML Button buttonOpen;
   @FXML Button buttonNew;
-  //@FXML TextArea outputLogger;
   @FXML ComboBox<SimpleIssue> inputTaskCombo;
-  @FXML DatePicker inputTargetDate;
-
-  DateTime targetDate;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    inputTargetDate.setConverter(new SimpleDatePickerConverter());
-    inputTargetDate.setOnAction(dateChangeListener);
+    hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
     inputFrom.textProperty().addListener(timeChangeListener);
     inputTo.textProperty().addListener(timeChangeListener);
@@ -68,12 +61,6 @@ public class ClockPresenter implements Initializable {
     buttonEnter.setOnMouseClicked(onMouseEnterEventHandler);
 
     // Setting todays date
-    DateTime now = DateTime.now();
-    targetDate = now;
-    hourGlass.setCurrentDay(now);
-    Platform.runLater(() -> {
-      inputTargetDate.getEditor().setText(SimpleLog.longDateFormat.print(now));
-    });
     updateUI();
   }
 
@@ -88,11 +75,9 @@ public class ClockPresenter implements Initializable {
     inputTo.setDisable(disableElement);
     inputTaskCombo.setDisable(disableElement);
     inputComment.setDisable(disableElement);
-    //outputDuration.setDisable(disableElement);
     buttonEnter.setDisable(disableElement);
     buttonOpen.setDisable(disableElement);
     buttonNew.setDisable(disableElement);
-    inputTargetDate.setDisable(disableElement);
   }
 
   /**
@@ -141,7 +126,7 @@ public class ClockPresenter implements Initializable {
   ChangeListener<String> timeChangeListener = new ChangeListener<String>() {
     @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
         String newValue) {
-      hourGlass.updateTimers(targetDate, inputFrom.getText(), inputTo.getText());
+      hourGlass.updateTimers(inputFrom.getText(), inputTo.getText());
     }
   };
 
@@ -153,53 +138,33 @@ public class ClockPresenter implements Initializable {
     }
   };
 
-  EventHandler<ActionEvent> dateChangeListener = new EventHandler<ActionEvent>() {
-    @Override public void handle(ActionEvent event) {
-      targetDate = SimpleLog.longDateFormat.parseDateTime(inputTargetDate.getEditor().getText());
-      hourGlass.setCurrentDay(targetDate);
-      //notifyLogsChanged();
-    }
-  };
-
   private Listener hourglassListener = new Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
-      inputFrom.setText(SimpleLog.shortFormat.print(start));
-      inputTo.setText(SimpleLog.shortFormat.print(end));
-      //outputDuration.setText(Utils.formatShortDuration(duration));
+      inputFrom.setText(HourGlass.longFormat.print(start));
+      inputTo.setText(HourGlass.longFormat.print(end));
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
-      //MainController.this.log.info(
-      //    "Starting: " + shortFormat.print(start) + " / " + shortFormat.print(end));
-      //osOutput.onDurationMessage(Utils.formatShortDuration(duration));
     }
 
     @Override
     public void onStop(long start, long end, long duration) {
       inputFrom.setText("");
       inputTo.setText("");
-      //outputDuration.setText("");
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
-      //MainController.this.log.info(
-      //    "Stopping: " + shortFormat.print(start) + " / " + shortFormat.print(end));
-      //osOutput.onDurationMessage("");
     }
 
     @Override
     public void onTick(final long start, final long end, final long duration) {
       clearError(inputFrom);
       clearError(inputTo);
-      //clearError(outputDuration);
-      String newFrom = SimpleLog.shortFormat.print(start);
+      String newFrom = HourGlass.longFormat.print(start);
       if (!newFrom.equals(inputFrom.getText()) && !inputFrom.isFocused()) {
         inputFrom.setText(newFrom);
-        //osOutput.onDurationMessage(Utils.formatShortDuration(duration));
       }
-      String newTo = SimpleLog.shortFormat.print(end);
+      String newTo = HourGlass.longFormat.print(end);
       if (!newTo.equals(inputTo.getText()) && !inputTo.isFocused()) {
         inputTo.setText(newTo);
-        //osOutput.onDurationMessage(Utils.formatShortDuration(duration));
       }
-      //outputDuration.setText(Utils.formatShortDuration(duration));
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER,
           Utils.formatShortDuration(duration)));
     }
@@ -210,19 +175,16 @@ public class ClockPresenter implements Initializable {
         case END:
           reportError(inputFrom);
           reportError(inputTo);
-          //reportError(outputDuration);
           break;
         case DURATION:
-          //reportError(outputDuration);
           break;
       }
-      //outputDuration.setText(error.getMessage());
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, error.getMessage()));
     }
 
     @Override public void onSuggestTime(DateTime start, DateTime end) {
-      inputFrom.setText(SimpleLog.shortFormat.print(start));
-      inputTo.setText(SimpleLog.shortFormat.print(end));
+      inputFrom.setText(HourGlass.longFormat.print(start));
+      inputTo.setText(HourGlass.longFormat.print(end));
     }
   };
 

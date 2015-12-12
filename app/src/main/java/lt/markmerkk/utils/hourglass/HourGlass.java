@@ -16,7 +16,9 @@ import org.joda.time.format.DateTimeFormatter;
  * Represents the logic and core functionality of the clock
  */
 public class HourGlass {
-  private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+
   public static final int DEFAULT_TICK = 1000;
 
   Timer timer = null;
@@ -238,6 +240,39 @@ public class HourGlass {
           today.monthOfYear().get(),
           today.dayOfMonth().get()
       );
+      endMillis = end.getMillis();
+
+      // Correct time with current millis
+      long currentSeconds = (current() - DateTime.now().withSecondOfMinute(0).getMillis());
+      endMillis += currentSeconds;
+    } catch (IllegalArgumentException e) {
+      endMillis = -1;
+    }
+
+    update();
+  }
+
+  /**
+   * Updates timers with input start, end times.
+   * @param startTime provided start time in string
+   * @param endTime provided end time in string
+   */
+  public void updateTimers(String startTime, String endTime) {
+    if (startTime == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    if (endTime == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    // Parsing start time
+    try {
+      DateTime start = longFormat.parseDateTime(startTime);
+      startMillis = start.getMillis();
+    } catch (IllegalArgumentException e) {
+      startMillis = -1;
+    }
+
+    // Parsing end time
+    try {
+      DateTime end = longFormat.parseDateTime(endTime);
       endMillis = end.getMillis();
 
       // Correct time with current millis

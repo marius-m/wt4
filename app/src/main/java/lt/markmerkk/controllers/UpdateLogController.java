@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.jobs.UpdateJob;
+import lt.markmerkk.utils.hourglass.HourGlass;
 
 public class UpdateLogController extends BaseController {
 
@@ -77,8 +78,8 @@ public class UpdateLogController extends BaseController {
     private void update() {
         try {
             updateLog = new SimpleLogBuilder(updateLog)
-                .setStart(SimpleLog.longFormat.parseDateTime(startInput.getText()).getMillis())
-                .setEnd(SimpleLog.longFormat.parseDateTime(endInput.getText()).getMillis())
+                .setStart(HourGlass.longFormat.parseDateTime(startInput.getText()).getMillis())
+                .setEnd(HourGlass.longFormat.parseDateTime(endInput.getText()).getMillis())
                 .setTask(taskInput.getText())
                 .setComment(commentInput.getText())
                 .build();
