@@ -1,8 +1,6 @@
 package lt.markmerkk.ui.clock;
 
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -21,7 +19,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.util.StringConverter;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.storage2.SimpleIssue;
@@ -40,12 +37,14 @@ import org.joda.time.DateTime;
  */
 public class ClockPresenter implements Initializable {
 
+  public static final String BUTTON_LABEL_ENTER = "Enter";
+
   @Inject DBProdExecutor dbExecutor;
   @Inject HourGlass hourGlass;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
-  @FXML TextField outputDuration;
+  //@FXML TextField outputDuration;
   //@FXML TextField inputTask;
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
@@ -89,7 +88,7 @@ public class ClockPresenter implements Initializable {
     inputTo.setDisable(disableElement);
     inputTaskCombo.setDisable(disableElement);
     inputComment.setDisable(disableElement);
-    outputDuration.setDisable(disableElement);
+    //outputDuration.setDisable(disableElement);
     buttonEnter.setDisable(disableElement);
     buttonOpen.setDisable(disableElement);
     buttonNew.setDisable(disableElement);
@@ -167,7 +166,8 @@ public class ClockPresenter implements Initializable {
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(SimpleLog.shortFormat.print(start));
       inputTo.setText(SimpleLog.shortFormat.print(end));
-      outputDuration.setText(Utils.formatShortDuration(duration));
+      //outputDuration.setText(Utils.formatShortDuration(duration));
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
       //MainController.this.log.info(
       //    "Starting: " + shortFormat.print(start) + " / " + shortFormat.print(end));
       //osOutput.onDurationMessage(Utils.formatShortDuration(duration));
@@ -177,7 +177,8 @@ public class ClockPresenter implements Initializable {
     public void onStop(long start, long end, long duration) {
       inputFrom.setText("");
       inputTo.setText("");
-      outputDuration.setText("");
+      //outputDuration.setText("");
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
       //MainController.this.log.info(
       //    "Stopping: " + shortFormat.print(start) + " / " + shortFormat.print(end));
       //osOutput.onDurationMessage("");
@@ -187,7 +188,7 @@ public class ClockPresenter implements Initializable {
     public void onTick(final long start, final long end, final long duration) {
       clearError(inputFrom);
       clearError(inputTo);
-      clearError(outputDuration);
+      //clearError(outputDuration);
       String newFrom = SimpleLog.shortFormat.print(start);
       if (!newFrom.equals(inputFrom.getText()) && !inputFrom.isFocused()) {
         inputFrom.setText(newFrom);
@@ -198,7 +199,9 @@ public class ClockPresenter implements Initializable {
         inputTo.setText(newTo);
         //osOutput.onDurationMessage(Utils.formatShortDuration(duration));
       }
-      outputDuration.setText(Utils.formatShortDuration(duration));
+      //outputDuration.setText(Utils.formatShortDuration(duration));
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER,
+          Utils.formatShortDuration(duration)));
     }
 
     @Override public void onError(HourGlass.Error error) {
@@ -207,13 +210,14 @@ public class ClockPresenter implements Initializable {
         case END:
           reportError(inputFrom);
           reportError(inputTo);
-          reportError(outputDuration);
+          //reportError(outputDuration);
           break;
         case DURATION:
-          reportError(outputDuration);
+          //reportError(outputDuration);
           break;
       }
-      outputDuration.setText(error.getMessage());
+      //outputDuration.setText(error.getMessage());
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, error.getMessage()));
     }
 
     @Override public void onSuggestTime(DateTime start, DateTime end) {
