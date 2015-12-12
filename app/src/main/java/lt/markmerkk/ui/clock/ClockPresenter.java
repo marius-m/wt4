@@ -16,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -45,7 +46,8 @@ public class ClockPresenter implements Initializable {
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
   @FXML TextArea inputComment;
-  @FXML Button buttonClock;
+  //@FXML Button buttonClock;
+  @FXML ToggleButton buttonClock;
   @FXML Button buttonEnter;
   @FXML Button buttonOpen;
   @FXML Button buttonNew;
@@ -56,11 +58,13 @@ public class ClockPresenter implements Initializable {
     hourGlass.setListener(hourglassListener);
     inputFrom.textProperty().addListener(timeChangeListener);
     inputTo.textProperty().addListener(timeChangeListener);
-    inputComment.setOnKeyReleased(onKeyboardEnterEventHandler);
-    buttonClock.setOnMouseClicked(onMouseClockEventHandler);
-    buttonEnter.setOnMouseClicked(onMouseEnterEventHandler);
+    updateUI();
+  }
 
-    // Setting todays date
+  public void onClockClick() {
+    if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
+    else hourGlass.stop();
+    buttonClock.setSelected(hourGlass.getState() == HourGlass.State.RUNNING);
     updateUI();
   }
 
@@ -109,32 +113,10 @@ public class ClockPresenter implements Initializable {
 
   //region Listeners
 
-  EventHandler<MouseEvent> onMouseEnterEventHandler = new EventHandler<MouseEvent>() {
-    @Override public void handle(MouseEvent mouseEvent) {
-      logWork();
-    }
-  };
-
-  EventHandler<MouseEvent> onMouseClockEventHandler = new EventHandler<MouseEvent>() {
-    @Override public void handle(MouseEvent mouseEvent) {
-      if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
-      else hourGlass.stop();
-      updateUI();
-    }
-  };
-
   ChangeListener<String> timeChangeListener = new ChangeListener<String>() {
     @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
         String newValue) {
       hourGlass.updateTimers(inputFrom.getText(), inputTo.getText());
-    }
-  };
-
-  EventHandler<KeyEvent> onKeyboardEnterEventHandler = new EventHandler<KeyEvent>() {
-    public void handle(KeyEvent t) {
-      if (t.getCode() == KeyCode.ENTER) {
-        logWork();
-      }
     }
   };
 
@@ -143,7 +125,8 @@ public class ClockPresenter implements Initializable {
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(HourGlass.longFormat.print(start));
       inputTo.setText(HourGlass.longFormat.print(end));
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(
+          duration)));
     }
 
     @Override

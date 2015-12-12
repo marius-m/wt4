@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
@@ -32,10 +33,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
          <children>
-            <Button fx:id="buttonClock" mnemonicParsing="false" prefWidth="80.0" text="Clock" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin></Button>
+            <ToggleButton fx:id="buttonClock" mnemonicParsing="false" onAction="#onClockClick" stylesheets="@../../../../play_pause.css" />
             <TextField fx:id="inputFrom" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
