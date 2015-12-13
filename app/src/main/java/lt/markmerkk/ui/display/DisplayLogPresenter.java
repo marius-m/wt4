@@ -15,14 +15,19 @@ import lt.markmerkk.utils.TableDisplayController;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class SimpleLogPresenter implements Initializable {
+public class DisplayLogPresenter implements Initializable {
   @Inject BasicLogStorage storage;
   @FXML TableView<SimpleLog> tableView;
+
+  Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     LogDisplayController logDisplayController =
         new LogDisplayController(tableView, storage.getData(), new TableDisplayController.Listener() {
-          @Override public void onUpdate(Object object) { }
+          @Override public void onUpdate(Object object) {
+            if (listener == null) return;
+            listener.onUpdate(object);
+          }
 
           @Override public void onDelete(Object object) {
             storage.delete((SimpleLog)object);
@@ -32,6 +37,21 @@ public class SimpleLogPresenter implements Initializable {
             storage.insert((SimpleLog)object);
           }
         });
+  }
+
+  public void setListener(Listener listener) {
+    this.listener = listener;
+  }
+
+  /**
+   * Helper listener for the log display
+   */
+  public interface Listener {
+    /**
+     * Called whenever items is being updated
+     * @param object item set for update
+     */
+    void onUpdate(Object object);
   }
 
 }
