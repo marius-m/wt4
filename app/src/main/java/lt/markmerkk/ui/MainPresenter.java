@@ -4,11 +4,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import lt.markmerkk.ui.clock.ClockView;
-import lt.markmerkk.ui.display.LogDisplayView;
+import lt.markmerkk.ui.display.SimpleLogView;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.
@@ -23,7 +21,7 @@ public class MainPresenter implements Initializable {
     ClockView clockView = new ClockView();
     northPane.setCenter(clockView.getView());
 
-    LogDisplayView logDisplayView = new LogDisplayView();
-    southPane.setCenter(logDisplayView.getView());
+    SimpleLogView simpleLogView = new SimpleLogView();
+    southPane.setCenter(simpleLogView.getView());
   }
 }

@@ -39,10 +39,4 @@ public interface Listener {
    */
   void onError(HourGlass.Error error);
 
-  /**
-   * Suggests time to be used for the UI
-   * @param start suggested start time
-   * @param end suggested end time
-   */
-  void onSuggestTime(DateTime start, DateTime end);
 }

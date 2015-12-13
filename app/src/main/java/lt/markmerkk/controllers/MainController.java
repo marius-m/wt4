@@ -500,10 +500,6 @@ public class MainController extends BaseController {
       outputDuration.setText(error.getMessage());
     }
 
-    @Override public void onSuggestTime(DateTime start, DateTime end) {
-      inputFrom.setText(shortFormat.print(start));
-      inputTo.setText(shortFormat.print(end));
-    }
   };
 
   //endregion

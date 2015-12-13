@@ -3,30 +3,22 @@ package lt.markmerkk.ui.clock;
 import java.net.URL;
 import java.util.Collections;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
-import lt.markmerkk.DBProdExecutor;
+import lt.markmerkk.storage2.BasicLogStorage;
+import lt.markmerkk.storage2.ILoggerListener;
 import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
-import lt.markmerkk.storage2.jobs.InsertJob;
-import lt.markmerkk.ui.clock.utils.SimpleDatePickerConverter;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.interfaces.Listener;
@@ -40,13 +32,12 @@ public class ClockPresenter implements Initializable {
 
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
-  @Inject DBProdExecutor dbExecutor;
   @Inject HourGlass hourGlass;
+  @Inject BasicLogStorage storage;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
   @FXML TextArea inputComment;
-  //@FXML Button buttonClock;
   @FXML ToggleButton buttonClock;
   @FXML Button buttonEnter;
   @FXML Button buttonOpen;
@@ -66,6 +57,10 @@ public class ClockPresenter implements Initializable {
     else hourGlass.stop();
     buttonClock.setSelected(hourGlass.getState() == HourGlass.State.RUNNING);
     updateUI();
+  }
+
+  public void onEnterClick() {
+    logWork();
   }
 
   //region Convenience
@@ -98,12 +93,11 @@ public class ClockPresenter implements Initializable {
           .setEnd(hourGlass.reportEnd().getMillis())
           .setTask(inputTaskCombo.getEditor().getText())
           .setComment(inputComment.getText()).build();
-      dbExecutor.execute(new InsertJob(SimpleLog.class, log));
+      storage.insert(log);
 
       // Resetting controls
       inputComment.setText("");
       hourGlass.restart();
-      //notifyLogsChanged();
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
@@ -117,6 +111,7 @@ public class ClockPresenter implements Initializable {
     @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
         String newValue) {
       hourGlass.updateTimers(inputFrom.getText(), inputTo.getText());
+      storage.setTargetDate(inputFrom.getText());
     }
   };
 
@@ -165,10 +160,6 @@ public class ClockPresenter implements Initializable {
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, error.getMessage()));
     }
 
-    @Override public void onSuggestTime(DateTime start, DateTime end) {
-      inputFrom.setText(HourGlass.longFormat.print(start));
-      inputTo.setText(HourGlass.longFormat.print(end));
-    }
   };
 
   //endregion

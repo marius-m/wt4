@@ -56,7 +56,7 @@
       </TextArea>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Button fx:id="buttonEnter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Enter" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonEnter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onEnterClick" text="Enter" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </HBox.margin>
