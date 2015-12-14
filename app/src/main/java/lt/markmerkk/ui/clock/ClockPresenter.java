@@ -70,13 +70,14 @@ public class ClockPresenter implements Initializable {
    */
   private void updateUI() {
     boolean disableElement = (hourGlass.getState() == HourGlass.State.STOPPED);
-    inputFrom.setDisable(disableElement);
-    inputTo.setDisable(disableElement);
-    inputTaskCombo.setDisable(disableElement);
-    inputComment.setDisable(disableElement);
+    inputFrom.setEditable(!disableElement);
+    inputTo.setEditable(!disableElement);
+    inputComment.setEditable(!disableElement);
+    inputComment.setPromptText("Start timer to log work!");
     buttonEnter.setDisable(disableElement);
-    buttonOpen.setDisable(disableElement);
-    buttonNew.setDisable(disableElement);
+    //inputTaskCombo.setEditable(!disableElement);
+    //buttonOpen.setDisable(disableElement);
+    //buttonNew.setDisable(disableElement);
   }
 
   /**

@@ -41,7 +41,7 @@
             <Insets top="5.0" />
          </VBox.margin>
       </HBox>
-      <TextArea fx:id="commentInput" promptText="Comment" wrapText="true">
+      <TextArea fx:id="commentInput" promptText="Comment" wrapText="true" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
