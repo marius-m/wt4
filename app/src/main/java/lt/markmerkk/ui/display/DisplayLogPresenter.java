@@ -23,18 +23,18 @@ public class DisplayLogPresenter implements Initializable {
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     LogDisplayController logDisplayController =
-        new LogDisplayController(tableView, storage.getData(), new TableDisplayController.Listener() {
-          @Override public void onUpdate(Object object) {
+        new LogDisplayController(tableView, storage.getData(), new TableDisplayController.Listener<SimpleLog>() {
+          @Override public void onUpdate(SimpleLog object) {
             if (listener == null) return;
             listener.onUpdate(object);
           }
 
-          @Override public void onDelete(Object object) {
-            storage.delete((SimpleLog)object);
+          @Override public void onDelete(SimpleLog object) {
+            storage.delete(object);
           }
 
-          @Override public void onClone(Object object) {
-            storage.insert((SimpleLog)object);
+          @Override public void onClone(SimpleLog object) {
+            storage.insert(object);
           }
         });
   }
@@ -42,6 +42,8 @@ public class DisplayLogPresenter implements Initializable {
   public void setListener(Listener listener) {
     this.listener = listener;
   }
+
+  //region Classes
 
   /**
    * Helper listener for the log display
@@ -51,7 +53,9 @@ public class DisplayLogPresenter implements Initializable {
      * Called whenever items is being updated
      * @param object item set for update
      */
-    void onUpdate(Object object);
+    void onUpdate(SimpleLog object);
   }
+
+  //endregion
 
 }

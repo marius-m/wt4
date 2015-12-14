@@ -69,8 +69,8 @@ dependencies {
 
     // Dagger2 dependencies
     compile 'org.glassfish:javax.annotation:10.0-b28'
-    compile group: 'com.google.dagger', name: 'dagger', version:'2.1-SNAPSHOT'
-    compile group: 'com.google.dagger', name: 'dagger-compiler', version:'2.1-SNAPSHOT'
+//    compile group: 'com.google.dagger', name: 'dagger', version:'2.1-SNAPSHOT'
+//    compile group: 'com.google.dagger', name: 'dagger-compiler', version:'2.1-SNAPSHOT'
 
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
@@ -96,16 +96,16 @@ dependencies {
     compile group: 'com.atlassian.jira', name: 'jira-nimble-func-tests', version:'1.0'
 }
 
-compileJava {
-    description = "dagger annotation processor is loaded automatically from classpath"
-    sourceSets.dagger.java.srcDirs*.mkdirs()
-    classpath += configurations.compileDagger
-    options.compilerArgs += [
-        '-s', sourceSets.dagger.java.srcDirs.iterator().next()
-    ]
-}
-
-clean {
-    description = "delete files in generated source directory tree"
-    delete fileTree(dir: sourceSets.dagger.java.srcDirs.iterator().next())
-}
+//compileJava {
+//    description = "dagger annotation processor is loaded automatically from classpath"
+//    sourceSets.dagger.java.srcDirs*.mkdirs()
+//    classpath += configurations.compileDagger
+//    options.compilerArgs += [
+//        '-s', sourceSets.dagger.java.srcDirs.iterator().next()
+//    ]
+//}
+//
+//clean {
+//    description = "delete files in generated source directory tree"
+//    delete fileTree(dir: sourceSets.dagger.java.srcDirs.iterator().next())
+//}

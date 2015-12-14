@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
+import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogPresenter;
 import lt.markmerkk.ui.display.DisplayLogView;
@@ -33,19 +34,15 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    DisplayLogView simpleLogView = new DisplayLogView();
-    ((DisplayLogPresenter)simpleLogView.getPresenter()).setListener(
-        displayListener);
+    DisplayLogView simpleLogView = new DisplayLogView(displayListener);
     southPane.setCenter(simpleLogView.getView());
   }
 
   /**
    * Displays update log window
    */
-  private void displayUpdateLog() {
-    UpdateLogView updateLogView = new UpdateLogView();
-    ((UpdateLogPresenter) updateLogView.getPresenter()).setListener(
-        updateListener);
+  private void updateLog(SimpleLog simpleLog) {
+    UpdateLogView updateLogView = new UpdateLogView(updateListener, simpleLog);
     southPane.setCenter(updateLogView.getView());
   }
 
@@ -60,9 +57,10 @@ public class MainPresenter implements Initializable {
   };
 
   DisplayLogPresenter.Listener displayListener = new DisplayLogPresenter.Listener() {
-    @Override public void onUpdate(Object object) {
-      displayUpdateLog();
+    @Override public void onUpdate(SimpleLog object) {
+      updateLog(object);
     }
+
   };
 
   //endregion

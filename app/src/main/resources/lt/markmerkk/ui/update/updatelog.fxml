@@ -12,7 +12,7 @@
    <children>
       <HBox>
          <children>
-            <TextField fx:id="outputError" alignment="CENTER" editable="false" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="Updating task: " HBox.hgrow="ALWAYS">
+            <TextField fx:id="outputInfo" alignment="CENTER" editable="false" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="Updating task: " HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -21,20 +21,19 @@
       </HBox>
       <HBox>
          <children>
-            <TextField fx:id="startInput" alignment="CENTER" maxWidth="150.0" promptText="From">
+            <TextField fx:id="startInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
             </TextField>
-            <TextField fx:id="endInput" alignment="CENTER" maxWidth="150.0" promptText="To">
+            <TextField fx:id="endInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
             </TextField>
-            <TextField fx:id="durationInput" editable="false" promptText="Duration" HBox.hgrow="ALWAYS" />
-            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="100.0" promptText="Task">
+            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
                <HBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </HBox.margin>
             </TextField>
          </children>
@@ -54,7 +53,7 @@
                   <Insets right="5.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="buttonOk" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSave" text="Ok" HBox.hgrow="ALWAYS" />
+            <Button fx:id="buttonOk" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSave" text="Save" HBox.hgrow="ALWAYS" />
          </children>
          <VBox.margin>
             <Insets top="5.0" />

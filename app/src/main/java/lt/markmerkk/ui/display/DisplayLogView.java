@@ -7,4 +7,7 @@ import com.airhacks.afterburner.views.FXMLView;
  * Represents the view to display the log list
  */
 public class DisplayLogView extends FXMLView {
+  public DisplayLogView(DisplayLogPresenter.Listener listener) {
+    ((DisplayLogPresenter) getPresenter()).setListener(listener);
+  }
 }
