@@ -5,7 +5,6 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javax.annotation.PreDestroy;
 import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
-import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
@@ -366,6 +365,48 @@ public class HourGlass {
     public String getMessage() {
       return message;
     }
+  }
+
+  //endregion
+
+  //region Classes
+
+  /**
+   * Public listener that reports the changes
+   */
+  public static interface Listener {
+    /**
+     * Called when timer has been started
+     *
+     * @param start provided start time
+     * @param end provided end time
+     * @param duration provided duration
+     */
+    void onStart(long start, long end, long duration);
+
+    /**
+     * Called when timer has been stopped
+     *
+     * @param start provided start time
+     * @param end provided end time
+     * @param duration provided duration
+     */
+    void onStop(long start, long end, long duration);
+
+    /**
+     * Called on every second tick when timer is running
+     *
+     * @param start provided start time
+     * @param end provided end time
+     * @param duration provided duration
+     */
+    void onTick(long start, long end, long duration);
+
+    /**
+     * Reports an error when there is something wrong with calculation.
+     */
+    void onError(Error error);
+
   }
 
   //endregion

@@ -10,4 +10,8 @@ import javafx.scene.control.TextField;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the view with the clock for logging info.
  */
-public class ClockView extends FXMLView { }
+public class ClockView extends FXMLView {
+  public ClockView(ClockPresenter.Listener listener) {
+    ((ClockPresenter) getPresenter()).listener = listener;
+  }
+}

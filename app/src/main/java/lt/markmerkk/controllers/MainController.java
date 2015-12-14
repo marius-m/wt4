@@ -52,7 +52,6 @@ import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
-import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import lt.markmerkk.utils.os_formatter.IOSOutput;
 import lt.markmerkk.utils.os_formatter.OSXOutput;
 import org.joda.time.DateTime;
@@ -446,7 +445,7 @@ public class MainController extends BaseController {
         }
       };
 
-  private Listener hourglassListener = new Listener() {
+  private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(shortFormat.print(start));

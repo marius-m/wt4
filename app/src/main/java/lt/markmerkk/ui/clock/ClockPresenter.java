@@ -15,13 +15,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.ILoggerListener;
 import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
-import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
 
 /**
@@ -44,6 +42,8 @@ public class ClockPresenter implements Initializable {
   @FXML Button buttonNew;
   @FXML ComboBox<SimpleIssue> inputTaskCombo;
 
+  Listener listener;
+
   @Override public void initialize(URL location, ResourceBundle resources) {
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
@@ -52,16 +52,22 @@ public class ClockPresenter implements Initializable {
     updateUI();
   }
 
-  public void onClockClick() {
+  public void onClickClock() {
     if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
     else hourGlass.stop();
     buttonClock.setSelected(hourGlass.getState() == HourGlass.State.RUNNING);
     updateUI();
   }
 
-  public void onEnterClick() {
+  public void onClickEnter() {
     logWork();
   }
+
+  public void onClickNew() {
+    listener.onNew();
+  }
+
+  public void onClickForward() { }
 
   //region Convenience
 
@@ -116,7 +122,7 @@ public class ClockPresenter implements Initializable {
     }
   };
 
-  private Listener hourglassListener = new Listener() {
+  private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(HourGlass.longFormat.print(start));
@@ -187,5 +193,15 @@ public class ClockPresenter implements Initializable {
   }
 
   //endregion
+
+  /**
+   * Helper listener for the clock window
+   */
+  public interface Listener {
+    /**
+     * Occurs when button new is clicked
+     */
+    void onNew();
+  }
 
 }
