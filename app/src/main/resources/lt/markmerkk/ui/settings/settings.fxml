@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.settings.SettingsPresenter">
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <children>
+      <HBox>
+         <children>
+            <Button fx:id="buttonTest" mnemonicParsing="false" prefWidth="100.0" text="Refresh">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <TextField fx:id="inputHost" promptText="https://hostname" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="inputUsername" promptText="Username" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <PasswordField fx:id="inputPassword" promptText="Password">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </PasswordField>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
+      <TextArea fx:id="outputLogger" editable="false" promptText="Console log" VBox.vgrow="ALWAYS">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextArea>
+   </children>
+</VBox>

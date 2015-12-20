@@ -4,17 +4,22 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogPresenter;
 import lt.markmerkk.ui.display.DisplayLogView;
+import lt.markmerkk.ui.settings.SettingsPresenter;
+import lt.markmerkk.ui.settings.SettingsView;
 import lt.markmerkk.ui.update.UpdateLogPresenter;
 import lt.markmerkk.ui.update.UpdateLogView;
 
@@ -80,8 +85,17 @@ public class MainPresenter implements Initializable {
 
   ClockPresenter.Listener clockListener = new ClockPresenter.Listener() {
     @Override public void onNew() {
-      Tab mockTab = new Tab();
+      Tab mockTab = new Tab("Settings");
+      final SettingsView settingsView = new SettingsView();
+      mockTab.setContent(settingsView.getView());
       tabPane.getTabs().add(mockTab);
+      tabPane.getSelectionModel().select(mockTab);
+      mockTab.setOnClosed(new EventHandler<Event>() {
+        @Override public void handle(Event event) {
+          if (settingsView.getPresenter() instanceof Destroyable)
+            ((Destroyable) settingsView.getPresenter()).destroy();
+        }
+      });
     }
   };
 

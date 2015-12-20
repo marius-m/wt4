@@ -26,6 +26,11 @@
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>
             </Button>
+            <Button fx:id="buttonNew1" minWidth="50.0" mnemonicParsing="false" onAction="#onClickNew" text="Settings">
+               <HBox.margin>
+                  <Insets right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
          </children>
          <VBox.margin>
             <Insets />
