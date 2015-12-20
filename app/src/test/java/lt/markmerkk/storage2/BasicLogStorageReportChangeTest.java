@@ -15,7 +15,7 @@ public class BasicLogStorageReportChangeTest {
   @Test public void testValidLogs() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    storage.listeners = new ArrayList<ILoggerListener>() {{
+    storage.listeners = new ArrayList<ILoggerListener<SimpleLog>>() {{
       add(mock(ILoggerListener.class));
       add(mock(ILoggerListener.class));
     }};
@@ -24,23 +24,23 @@ public class BasicLogStorageReportChangeTest {
     storage.reportDataChange();
 
     // Assert
-    verify(storage.listeners.get(0)).onLogsChange(any(ObservableList.class));
-    verify(storage.listeners.get(1)).onLogsChange(any(ObservableList.class));
+    verify(storage.listeners.get(0)).onDataChange(any(ObservableList.class));
+    verify(storage.listeners.get(1)).onDataChange(any(ObservableList.class));
   }
 
   @Test public void testValidIssues() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    storage.listeners = new ArrayList<ILoggerListener>() {{
+    storage.listeners = new ArrayList<ILoggerListener<SimpleLog>>() {{
       add(mock(ILoggerListener.class));
       add(mock(ILoggerListener.class));
     }};
 
     // Act
-    storage.reportIssueChange();
+    storage.reportDataChange();
 
     // Assert
-    verify(storage.listeners.get(0)).onIssuesChange(any(ObservableList.class));
-    verify(storage.listeners.get(1)).onIssuesChange(any(ObservableList.class));
+    verify(storage.listeners.get(0)).onDataChange(any(ObservableList.class));
+    verify(storage.listeners.get(1)).onDataChange(any(ObservableList.class));
   }
 }
