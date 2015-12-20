@@ -79,7 +79,7 @@ public class ClockPresenter implements Initializable {
     inputFrom.setEditable(!disableElement);
     inputTo.setEditable(!disableElement);
     inputComment.setEditable(!disableElement);
-    inputComment.setPromptText("Start timer to log work!");
+    inputComment.setPromptText( (disableElement) ? "Start timer to log work!" : "Go go go!");
     buttonEnter.setDisable(disableElement);
     //inputTaskCombo.setEditable(!disableElement);
     //buttonOpen.setDisable(disableElement);
