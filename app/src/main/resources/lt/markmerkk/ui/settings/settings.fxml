@@ -7,9 +7,6 @@
 <?import javafx.scene.control.*?>
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.settings.SettingsPresenter">
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
    <children>
       <HBox>
          <children>
@@ -42,6 +39,9 @@
          <font>
             <Font size="10.0" />
          </font>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
       </TextArea>
    </children>
 </VBox>
