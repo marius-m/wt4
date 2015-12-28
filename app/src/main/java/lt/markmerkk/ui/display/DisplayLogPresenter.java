@@ -8,6 +8,7 @@ import javafx.scene.control.TableView;
 import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
 
@@ -34,7 +35,7 @@ public class DisplayLogPresenter implements Initializable {
           }
 
           @Override public void onClone(SimpleLog object) {
-            storage.insert(object);
+            storage.insert(new SimpleLogBuilder(object).build());
           }
         });
   }
