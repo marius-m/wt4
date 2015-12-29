@@ -26,14 +26,17 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
   List<ILoggerListener<SimpleLog>> listeners;
   DateTime targetDate;
 
-  @PostConstruct
-  private void initualize() {
+  public BasicLogStorage() {
     listeners = new ArrayList<>();
+  }
+
+  @PostConstruct
+  void initualize() {
     setTargetDate(HourGlass.longFormat.print(DateTime.now()));
   }
 
   @PreDestroy
-  private void destroy() {
+  void destroy() {
     listeners.clear();
   }
 
