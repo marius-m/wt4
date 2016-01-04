@@ -1,5 +1,7 @@
 package lt.markmerkk.jira;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import lt.markmerkk.jira.interfaces.IRemote;
 import lt.markmerkk.jira.interfaces.IScheduler2;
 import lt.markmerkk.jira.interfaces.IWorkReporter;
@@ -22,6 +24,13 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
     if (reporter == null)
       reporter = new NullWorkReporter();
     this.reporter = reporter;
+  }
+
+  public WorkExecutor() {
+//    this.listener = listener;
+//    if (reporter == null)
+      reporter = new NullWorkReporter();
+//    this.reporter = reporter;
   }
 
   //region Public
@@ -85,6 +94,9 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
     if (listener != null) listener.onOutput(reporter.reportWorkEnd(worker, result));
   }
 
+  public void setListener(WorkerListener listener) {
+    this.listener = listener;
+  }
 
   //endregion
 
@@ -114,6 +126,13 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
 
   //region World events
 
+  @PostConstruct
+  @Override
+  public void onStart() {
+    super.onStart();
+  }
+
+  @PreDestroy
   @Override public void onStop() {
     if (isLoading())
       cancel();

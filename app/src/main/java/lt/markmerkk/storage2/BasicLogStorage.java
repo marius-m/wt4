@@ -53,6 +53,10 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
     } catch (IllegalArgumentException e) { }
   }
 
+  public DateTime getTargetDate() {
+    return targetDate;
+  }
+
   @Override public void register(ILoggerListener listener) {
     if (listener == null) return;
     listeners.add(listener);

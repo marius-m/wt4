@@ -10,7 +10,7 @@
    <children>
       <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <children>
-            <TextField fx:id="outputStatus" alignment="CENTER" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="20h / Update: Never" HBox.hgrow="ALWAYS">
+            <TextField fx:id="outputStatus" alignment="CENTER" editable="false" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="20h / Update: Never" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
