@@ -20,6 +20,7 @@ import lt.markmerkk.ui.display.DisplayLogPresenter;
 import lt.markmerkk.ui.display.DisplayLogView;
 import lt.markmerkk.ui.settings.SettingsPresenter;
 import lt.markmerkk.ui.settings.SettingsView;
+import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.update.UpdateLogPresenter;
 import lt.markmerkk.ui.update.UpdateLogView;
 
@@ -36,6 +37,8 @@ public class MainPresenter implements Initializable {
   @Override public void initialize(URL location, ResourceBundle resources) {
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
+    StatusView statusView = new StatusView();
+    southPane.setBottom(statusView.getView());
 
     displayLogs();
     modifyTabShowing();

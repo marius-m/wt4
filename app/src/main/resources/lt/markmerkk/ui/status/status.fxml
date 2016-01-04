@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.status.StatusPresenter">
+   <children>
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+         <children>
+            <TextField fx:id="outputStatus" alignment="CENTER" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="20h / Update: Never" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </TextField>
+            <ProgressIndicator fx:id="outputProgress" prefHeight="18.0" prefWidth="18.0" visible="false">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </HBox.margin>
+            </ProgressIndicator>
+         </children>
+      </HBox>
+   </children>
+   <opaqueInsets>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </opaqueInsets>
+</VBox>

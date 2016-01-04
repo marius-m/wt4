@@ -12,6 +12,7 @@ import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
+import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import org.joda.time.DateTime;
 
@@ -65,11 +66,11 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
   /**
    * Counts total time spent for the day
    */
-  private void countTotal() {
-    //long total = 0;
-    //for (SimpleLog log : logs)
-    //  total += log.getDuration();
-    //totalView.setText(Utils.formatShortDuration(total));
+  private long countTotal() {
+    long total = 0;
+    for (SimpleLog log : logs)
+      total += log.getDuration();
+    return total;
   }
 
   @Override public void insert(SimpleLog dataEntity) {
@@ -102,11 +103,15 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
     if (queryJob.result() != null)
       logs.addAll(queryJob.result());
     reportDataChange();
-    //countTotal();
+    countTotal();
   }
 
   @Override public ObservableList<SimpleLog> getData() {
     return logs;
+  }
+
+  public String getTotal() {
+    return Utils.formatShortDuration(countTotal());
   }
 
   //region Convenience
