@@ -35,7 +35,8 @@ import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkReporter;
 import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.WorkerListener;
+import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
+import lt.markmerkk.jira.interfaces.WorkerOutputListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.workers.JiraWorkerOpenIssues;
 import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
@@ -117,7 +118,8 @@ public class MainController extends BaseController {
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
 
-    asyncWorkExecutor = new WorkExecutor(new WorkReporter(), workerListener);
+    asyncWorkExecutor = new WorkExecutor(new WorkReporter(), workerOutputListener);
+    asyncWorkExecutor.setLoadingListener(workerLoading);
 
     initViewListeners();
     initViews();
@@ -401,12 +403,15 @@ public class MainController extends BaseController {
 
   //region Listeners
 
-  WorkerListener workerListener = new WorkerListener() {
+  WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
     @Override public void onOutput(String message) {
       log.info("Jira: " + message);
     }
+  };
 
-    @Override public void onLoadChange(boolean loading) {
+  WorkerLoadingListener workerLoading = new WorkerLoadingListener() {
+    @Override
+    public void onLoadChange(boolean loading) {
       progressIndicator.setManaged(loading);
       progressIndicator.setVisible(loading);
       inputUsername.setDisable(loading);
@@ -419,6 +424,7 @@ public class MainController extends BaseController {
       }
     }
   };
+
 
   TableDisplayController.Listener<SimpleLog> listener =
       new TableDisplayController.Listener<SimpleLog>() {

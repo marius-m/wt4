@@ -22,7 +22,7 @@ public abstract class TaskExecutor<ResultType>  {
   private ExecutorService mainExecutor;
   private Future<ResultType> futureResult;
 
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
   private boolean loading = false;
   private ScheduledFuture futureReady;
 

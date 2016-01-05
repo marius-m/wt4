@@ -7,7 +7,9 @@ import lt.markmerkk.jira.interfaces.IScheduler2;
 import lt.markmerkk.jira.interfaces.IWorkReporter;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorker;
-import lt.markmerkk.jira.interfaces.WorkerListener;
+import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
+import lt.markmerkk.jira.interfaces.WorkerOutputListener;
+import lt.markmerkk.jira.interfaces.WorkerErrorListener;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
@@ -15,22 +17,21 @@ import lt.markmerkk.jira.interfaces.WorkerListener;
  */
 public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemote {
 
-  WorkerListener listener;
+  WorkerOutputListener outputListener;
+  WorkerLoadingListener loadingListener;
+  WorkerErrorListener statusOutputListener;
   IScheduler2 scheduler;
   IWorkReporter reporter;
 
-  public WorkExecutor(IWorkReporter reporter, WorkerListener listener) {
-    this.listener = listener;
+  public WorkExecutor(IWorkReporter reporter, WorkerOutputListener listener) {
+    this.outputListener = listener;
     if (reporter == null)
       reporter = new NullWorkReporter();
     this.reporter = reporter;
   }
 
   public WorkExecutor() {
-//    this.listener = listener;
-//    if (reporter == null)
-      reporter = new NullWorkReporter();
-//    this.reporter = reporter;
+      reporter = new WorkReporter();
   }
 
   //region Public
@@ -77,25 +78,37 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
    * @param message
    */
   private void reportOutputSimple(String message) {
-    if (listener != null) listener.onOutput(reporter.reportMessage(message));
+    if (outputListener != null) outputListener.onOutput(reporter.reportMessage(message));
   }
 
   /**
    * Reports output message to the outside
    */
   private void reportStart(IWorker worker) {
-    if (listener != null) listener.onOutput(reporter.reportWorkStart(worker));
+    if (outputListener != null) outputListener.onOutput(reporter.reportWorkStart(worker));
   }
 
   /**
    * Reports output message to the outside
    */
   private void reportEnd(IWorker worker, IWorkerResult result) {
-    if (listener != null) listener.onOutput(reporter.reportWorkEnd(worker, result));
+    if (outputListener != null) outputListener.onOutput(reporter.reportWorkEnd(worker, result));
   }
 
-  public void setListener(WorkerListener listener) {
-    this.listener = listener;
+  //endregion
+
+  //region Getters / Setters
+
+  public void setOutputListener(WorkerOutputListener outputListener) {
+    this.outputListener = outputListener;
+  }
+
+  public void setLoadingListener(WorkerLoadingListener loadingListener) {
+    this.loadingListener = loadingListener;
+  }
+
+  public void setStatusOutputListener(WorkerErrorListener statusOutputListener) {
+    this.statusOutputListener = statusOutputListener;
   }
 
   //endregion
@@ -118,8 +131,8 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
 
   @Override protected void onLoadChange(final boolean loading) {
     //boolean isNotLoading = !loading && !hasMore();
-    if (listener != null)
-      listener.onLoadChange(isLoading());
+    if (loadingListener != null)
+      loadingListener.onLoadChange(isLoading());
   }
 
   //endregion

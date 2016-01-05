@@ -20,7 +20,7 @@ public abstract class TaskExecutor2<ResultType>  {
   private ListenableFuture<ResultType> futureResult;
   private ListeningExecutorService mainExecutor;
 
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
   private boolean loading = false;
   //private ScheduledFuture futureReady;
 
