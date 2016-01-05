@@ -1,8 +1,5 @@
 package lt.markmerkk.jira;
 
-import java.util.LinkedList;
-import java.util.List;
-import lt.markmerkk.jira.interfaces.ICredentials;
 import lt.markmerkk.jira.interfaces.IScheduler2;
 import lt.markmerkk.jira.interfaces.IWorker;
 import lt.markmerkk.jira.interfaces.IWorkerResult;
@@ -23,7 +20,7 @@ public class NullWorkScheduler2 implements IScheduler2 {
     return null;
   }
 
-  @Override public void handleResult(IWorkerResult result) { }
+  @Override public void handleResult(IWorkerResult result) throws IllegalStateException { }
 
   @Override public void reset() { }
 }

@@ -15,6 +15,7 @@ import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
+import lt.markmerkk.jira.interfaces.WorkerErrorListener;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.jira.interfaces.WorkerOutputListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
@@ -26,6 +27,7 @@ import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.ILoggerListener;
+import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
@@ -42,6 +44,7 @@ public class StatusPresenter implements Initializable, Destroyable {
   @Inject DBProdExecutor executor;
   @Inject BasicLogStorage storage;
   @Inject WorkExecutor workExecutor;
+  @Inject LastUpdateController lastUpdateController;
 
   @FXML TextField outputStatus;
   @FXML ProgressIndicator outputProgress;
@@ -49,12 +52,13 @@ public class StatusPresenter implements Initializable, Destroyable {
   Log log = LogFactory.getLog(WorkExecutor.class);
 
   String total;
-  String lastUpdate;
+  boolean error = false;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     outputStatus.setOnMouseClicked(outputClickListener);
     workExecutor.setOutputListener(workerOutputListener);
     workExecutor.setLoadingListener(workerLoadingListener);
+    workExecutor.setErrorListener(errorListener);
 
     Platform.runLater(() -> {
       outputProgress.setManaged(false);
@@ -95,6 +99,7 @@ public class StatusPresenter implements Initializable, Destroyable {
       );
     } catch (Exception e) {
       log.info("Jira: " + e.getMessage());
+      System.out.println(e.getMessage());
     }
   }
 
@@ -102,10 +107,10 @@ public class StatusPresenter implements Initializable, Destroyable {
    * Convenience method to update current status
    */
   void updateStatus() {
-    // fixme change last update with "time ago"
-    String storageLastUpdate = (settings.getLastUpdate() == 0) ? "Never" : Utils.formatShortDuration(DateTime.now().getMillis() - settings.getLastUpdate());
-    lastUpdate = (workExecutor.isLoading()) ? "Updating..." : storageLastUpdate;
-    outputStatus.setText(String.format("Last update: %s / Today's log: %s", lastUpdate, total));
+    String update = (workExecutor.isLoading()) ? "Loading..." : lastUpdateController.getOutput();
+    if (error)
+      update = "Error. Check settings for details. ";
+    outputStatus.setText(String.format("Last update: %s / Today's log: %s", update, total));
   }
 
   //endregion
@@ -137,9 +142,11 @@ public class StatusPresenter implements Initializable, Destroyable {
   WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
     @Override
     public void onLoadChange(boolean loading) {
+      if (loading)
+        StatusPresenter.this.error = false;
       if (!loading) {
         storage.notifyDataChange();
-        settings.setLastUpdate(DateTime.now().getMillis());
+        lastUpdateController.refresh();
       }
 
       Platform.runLater(() -> {
@@ -147,6 +154,13 @@ public class StatusPresenter implements Initializable, Destroyable {
         outputProgress.setVisible(loading);
         updateStatus();
       });
+    }
+  };
+
+  WorkerErrorListener errorListener = new WorkerErrorListener() {
+    @Override
+    public void onError(String error) {
+      StatusPresenter.this.error = true;
     }
   };
 

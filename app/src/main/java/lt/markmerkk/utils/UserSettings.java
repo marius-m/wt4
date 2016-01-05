@@ -6,12 +6,12 @@ import lt.markmerkk.listeners.WorldEvents;
 
 /**
  * Created by mariusmerkevicius on 12/21/15.
+ * Controller for holding persistent data
  */
 public class UserSettings implements WorldEvents {
   public static final String HOST = "HOST";
   public static final String USER = "USER";
   public static final String PASS = "PASS";
-  public static final String LAST_UPDATE = "LAST_UPDATE";
 
   AdvHashSettings settings;
 
@@ -19,7 +19,6 @@ public class UserSettings implements WorldEvents {
   String host;
   String username;
   String password;
-  long lastUpdate;
 
   public UserSettings() {
     settings = new AdvHashSettings();
@@ -54,12 +53,12 @@ public class UserSettings implements WorldEvents {
     this.password = password;
   }
 
-  public long getLastUpdate() {
-    return lastUpdate;
+  public void setCustom(String key, String value) {
+    settings.set(key, value);
   }
 
-  public void setLastUpdate(long lastUpdate) {
-    this.lastUpdate = lastUpdate;
+  public String getCustom(String key) {
+    return settings.get(key);
   }
 
   //endregion
@@ -72,11 +71,6 @@ public class UserSettings implements WorldEvents {
     host = settings.get(HOST);
     username = settings.get(USER);
     password = settings.get(PASS);
-    try {
-      lastUpdate = Long.parseLong(settings.get(LAST_UPDATE));
-    } catch (NumberFormatException e) {
-      lastUpdate = 0;
-    }
   }
 
   @PreDestroy
@@ -84,7 +78,6 @@ public class UserSettings implements WorldEvents {
     settings.set(HOST, getHost());
     settings.set(USER, getUsername());
     settings.set(PASS, getPassword());
-    settings.set(LAST_UPDATE, String.format("%d", getLastUpdate()));
     settings.save();
   }
 

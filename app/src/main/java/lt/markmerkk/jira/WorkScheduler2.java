@@ -37,7 +37,7 @@ public class WorkScheduler2 implements IScheduler2 {
     return worker;
   }
 
-  @Override public void handleResult(IWorkerResult result) {
+  @Override public void handleResult(IWorkerResult result) throws IllegalStateException {
     IWorker executionWorker = nextWorker();
     try {
       if (executionWorker == null) throw new IllegalStateException("No execution workers!");
@@ -50,7 +50,7 @@ public class WorkScheduler2 implements IScheduler2 {
         nextWorker.populateInput(result);
     } catch (IllegalStateException e) {
       workers.clear();
-      System.out.println(e.getMessage());
+      throw new IllegalStateException(e);
     }
   }
 

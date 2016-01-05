@@ -19,7 +19,7 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
 
   WorkerOutputListener outputListener;
   WorkerLoadingListener loadingListener;
-  WorkerErrorListener statusOutputListener;
+  WorkerErrorListener errorListener;
   IScheduler2 scheduler;
   IWorkReporter reporter;
 
@@ -107,8 +107,8 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
     this.loadingListener = loadingListener;
   }
 
-  public void setStatusOutputListener(WorkerErrorListener statusOutputListener) {
-    this.statusOutputListener = statusOutputListener;
+  public void setErrorListener(WorkerErrorListener errorListener) {
+    this.errorListener = errorListener;
   }
 
   //endregion
@@ -126,7 +126,12 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
 
   @Override protected void onResult(final IWorkerResult result) {
     if (result != null) reportEnd(currentSchedulerOrEmptyOne().nextWorker(), result);
-    currentSchedulerOrEmptyOne().handleResult(result);
+    try {
+      currentSchedulerOrEmptyOne().handleResult(result);
+    } catch (IllegalStateException e) {
+      if (errorListener != null)
+        errorListener.onError(e.getMessage());
+    }
   }
 
   @Override protected void onLoadChange(final boolean loading) {

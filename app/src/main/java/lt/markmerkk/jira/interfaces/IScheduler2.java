@@ -24,7 +24,7 @@ public interface IScheduler2 {
    * are executed on separate threads
    * @param result
    */
-  void handleResult(IWorkerResult result);
+  void handleResult(IWorkerResult result) throws IllegalStateException;
 
   /**
    * Clears currentSchedulerOrEmptyOne.
