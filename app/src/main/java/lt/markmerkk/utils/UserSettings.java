@@ -11,6 +11,7 @@ public class UserSettings implements WorldEvents {
   public static final String HOST = "HOST";
   public static final String USER = "USER";
   public static final String PASS = "PASS";
+  public static final String LAST_UPDATE = "LAST_UPDATE";
 
   AdvHashSettings settings;
 
@@ -18,6 +19,7 @@ public class UserSettings implements WorldEvents {
   String host;
   String username;
   String password;
+  String lastUpdate;
 
   public UserSettings() {
     settings = new AdvHashSettings();
@@ -52,6 +54,14 @@ public class UserSettings implements WorldEvents {
     this.password = password;
   }
 
+  public String getLastUpdate() {
+    return lastUpdate;
+  }
+
+  public void setLastUpdate(String lastUpdate) {
+    this.lastUpdate = lastUpdate;
+  }
+
   //endregion
 
   //region World events
@@ -62,6 +72,7 @@ public class UserSettings implements WorldEvents {
     host = settings.get(HOST);
     username = settings.get(USER);
     password = settings.get(PASS);
+    lastUpdate = settings.get(LAST_UPDATE);
   }
 
   @PreDestroy
@@ -69,6 +80,7 @@ public class UserSettings implements WorldEvents {
     settings.set(HOST, getHost());
     settings.set(USER, getUsername());
     settings.set(PASS, getPassword());
+    settings.set(LAST_UPDATE, getLastUpdate());
     settings.save();
   }
 

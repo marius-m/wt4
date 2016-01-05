@@ -2,6 +2,7 @@ package lt.markmerkk.ui.status;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,8 +28,11 @@ import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.ILoggerListener;
 import lt.markmerkk.utils.UserSettings;
+import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -52,6 +56,12 @@ public class StatusPresenter implements Initializable, Destroyable {
     outputStatus.setOnMouseClicked(outputClickListener);
     workExecutor.setOutputListener(workerOutputListener);
     workExecutor.setLoadingListener(workerLoadingListener);
+
+    Platform.runLater(() -> {
+      outputProgress.setManaged(false);
+      outputProgress.setVisible(false);
+    });
+    lastUpdate = settings.getLastUpdate();
     storage.register(loggerListener);
     total = storage.getTotal();
     updateStatus();
@@ -86,8 +96,6 @@ public class StatusPresenter implements Initializable, Destroyable {
           )
       );
     } catch (Exception e) {
-//      System.out.println(e.getMessage());
-//      e.printStackTrace();
       log.info("Jira: " + e.getMessage());
     }
   }
@@ -96,8 +104,9 @@ public class StatusPresenter implements Initializable, Destroyable {
    * Convenience method to update current status
    */
   void updateStatus() {
-    // fixme : incomplete
-    outputStatus.setText(String.format("%s / Update: never", total));
+    // fixme change last update with "time ago"
+    lastUpdate = (Utils.isEmpty(lastUpdate)) ? "Never" : lastUpdate;
+    outputStatus.setText(String.format("Last update: %s / %s", lastUpdate, total));
   }
 
   //endregion
@@ -129,9 +138,17 @@ public class StatusPresenter implements Initializable, Destroyable {
   WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
     @Override
     public void onLoadChange(boolean loading) {
-      outputProgress.setVisible(loading);
-      if (!loading)
+      if (!loading) {
         storage.notifyDataChange();
+        settings.setLastUpdate(HourGlass.longFormat.print(DateTime.now().getMillis()));
+      }
+
+      Platform.runLater(() -> {
+        outputProgress.setManaged(loading);
+        outputProgress.setVisible(loading);
+        lastUpdate = (loading) ? "Updating..." : settings.getLastUpdate();
+        updateStatus();
+      });
     }
   };
 
