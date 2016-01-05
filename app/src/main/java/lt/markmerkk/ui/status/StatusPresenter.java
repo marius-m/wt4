@@ -28,6 +28,7 @@ import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.ILoggerListener;
 import lt.markmerkk.utils.LastUpdateController;
+import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
@@ -39,66 +40,32 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable {
-  @Inject UserSettings settings;
-  @Inject DBProdExecutor executor;
+public class StatusPresenter implements Initializable, Destroyable, WorkerLoadingListener {
   @Inject BasicLogStorage storage;
-  @Inject WorkExecutor workExecutor;
   @Inject LastUpdateController lastUpdateController;
+  @Inject SyncController syncController;
 
   @FXML TextField outputStatus;
   @FXML ProgressIndicator outputProgress;
-
-  Log log = LogFactory.getLog(WorkExecutor.class);
 
   String total;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     outputStatus.setOnMouseClicked(outputClickListener);
-    workExecutor.setOutputListener(workerOutputListener);
-    workExecutor.setLoadingListener(workerLoadingListener);
-    workExecutor.setErrorListener(errorListener);
-    Platform.runLater(() -> {
-      outputProgress.setManaged(false);
-      outputProgress.setVisible(false);
-    });
+    syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
     updateStatus();
+
+    onLoadChange(syncController.isLoading());
   }
 
   @Override public void destroy() {
+    syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
   }
 
   //region Convenience
-
-  /**
-   * Called whenever status is clicked
-   */
-  public void onStatusClick() {
-    if (workExecutor.isLoading() || workExecutor.hasMore()) {
-      workExecutor.cancel();
-      return;
-    }
-    try {
-      Credentials credentials =
-          new Credentials(settings.getUsername(), settings.getPassword(),
-              settings.getHost());
-      workExecutor.executeScheduler(
-          new WorkScheduler2(credentials,
-              new JiraWorkerLogin(),
-              new JiraWorkerPushNew(executor, storage.getTargetDate()),
-              new JiraWorkerTodayIssues(storage.getTargetDate()),
-              new JiraWorkerWorklogForIssue(settings.getUsername(), storage.getTargetDate()),
-              new JiraWorkerPullMerge(executor),
-              new JiraWorkerOpenIssues(executor)
-          )
-      );
-    } catch (Exception e) {
-      log.info(e.getMessage());
-    }
-  }
 
   /**
    * Convenience method to update current status
@@ -122,41 +89,17 @@ public class StatusPresenter implements Initializable, Destroyable {
   EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
-      onStatusClick();
+      syncController.sync();
     }
   };
 
-  WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
-    @Override
-    public void onOutput(String message) {
-      log.info(message);
-    }
-  };
-
-  WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
-    @Override
-    public void onLoadChange(boolean loading) {
-      lastUpdateController.setError(false);
-      lastUpdateController.setLoading(loading);
-      if (!loading) {
-        storage.notifyDataChange();
-        lastUpdateController.refresh();
-      }
-
-      Platform.runLater(() -> {
-        outputProgress.setManaged(loading);
-        outputProgress.setVisible(loading);
-        updateStatus();
-      });
-    }
-  };
-
-  WorkerErrorListener errorListener = new WorkerErrorListener() {
-    @Override
-    public void onError(String error) {
-      lastUpdateController.setError(true);
-    }
-  };
+  @Override
+  public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      outputProgress.setManaged(loading);
+      outputProgress.setVisible(loading);
+    });
+  }
 
   //endregion
 

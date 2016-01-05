@@ -14,6 +14,9 @@
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
+               <graphic>
+                  <ProgressIndicator fx:id="outputProgress" prefHeight="18.0" prefWidth="18.0" visible="false" />
+               </graphic>
             </Button>
             <TextField fx:id="inputHost" promptText="https://hostname" HBox.hgrow="ALWAYS">
                <HBox.margin>
