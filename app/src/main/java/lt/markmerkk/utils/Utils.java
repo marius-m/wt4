@@ -1,14 +1,16 @@
 package lt.markmerkk.utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.scene.control.ComboBox;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import java.util.stream.Stream;
+import javafx.scene.control.TextArea;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.joda.time.DurationFieldType;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
@@ -159,6 +161,37 @@ public class Utils {
             return found;
         }
         return null;
+    }
+
+    /**
+     * Fills provided text area with an old log
+     * @param textArea
+     */
+    public static void fillAllLog(TextArea textArea) {
+        if (textArea == null) return;
+        textArea.clear();
+        try (Stream<String> stream = Files.lines(Paths.get("checkLog.log"), Charset.defaultCharset())) {
+            stream.forEach(textArea::appendText);
+        } catch (IOException ex) { }
+    }
+
+    /**
+     * Returns last logged output
+     */
+    public static String lastLog() {
+        StringBuilder output = new StringBuilder();
+        try {
+            int maxLines = 150;
+            int lineCount = 0;
+            ReversedLinesFileReader object = new ReversedLinesFileReader(new File("checkLog.log"));
+            while (lineCount < maxLines) {
+                output.insert(0, object.readLine() + "\n");
+                lineCount++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return output.toString();
     }
 
 }

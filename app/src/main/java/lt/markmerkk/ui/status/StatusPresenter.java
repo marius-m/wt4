@@ -58,7 +58,6 @@ public class StatusPresenter implements Initializable, Destroyable {
     workExecutor.setOutputListener(workerOutputListener);
     workExecutor.setLoadingListener(workerLoadingListener);
     workExecutor.setErrorListener(errorListener);
-
     Platform.runLater(() -> {
       outputProgress.setManaged(false);
       outputProgress.setVisible(false);
@@ -97,8 +96,7 @@ public class StatusPresenter implements Initializable, Destroyable {
           )
       );
     } catch (Exception e) {
-      log.info("Jira: " + e.getMessage());
-      System.out.println(e.getMessage());
+      log.info(e.getMessage());
     }
   }
 
@@ -131,7 +129,7 @@ public class StatusPresenter implements Initializable, Destroyable {
   WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
     @Override
     public void onOutput(String message) {
-      //System.out.println(message);
+      log.info(message);
     }
   };
 

@@ -10,7 +10,7 @@
    <children>
       <HBox>
          <children>
-            <Button fx:id="buttonTest" mnemonicParsing="false" prefWidth="100.0" text="Refresh">
+            <Button fx:id="buttonRefresh" mnemonicParsing="false" prefWidth="100.0" text="Refresh">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>

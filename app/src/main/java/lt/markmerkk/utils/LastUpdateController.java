@@ -45,6 +45,7 @@ public class LastUpdateController {
    */
   public void refresh() {
     lastUpdate = now();
+    settings.setCustom(LAST_UPDATE, String.format("%d", lastUpdate));
   }
 
   //endregion
