@@ -12,7 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
-import lt.markmerkk.controllers.MainController;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
@@ -61,7 +60,6 @@ public class StatusPresenter implements Initializable, Destroyable {
       outputProgress.setManaged(false);
       outputProgress.setVisible(false);
     });
-    lastUpdate = settings.getLastUpdate();
     storage.register(loggerListener);
     total = storage.getTotal();
     updateStatus();
@@ -105,8 +103,9 @@ public class StatusPresenter implements Initializable, Destroyable {
    */
   void updateStatus() {
     // fixme change last update with "time ago"
-    lastUpdate = (Utils.isEmpty(lastUpdate)) ? "Never" : lastUpdate;
-    outputStatus.setText(String.format("Last update: %s / %s", lastUpdate, total));
+    String storageLastUpdate = (settings.getLastUpdate() == 0) ? "Never" : Utils.formatShortDuration(DateTime.now().getMillis() - settings.getLastUpdate());
+    lastUpdate = (workExecutor.isLoading()) ? "Updating..." : storageLastUpdate;
+    outputStatus.setText(String.format("Last update: %s / Today's log: %s", lastUpdate, total));
   }
 
   //endregion
@@ -140,13 +139,12 @@ public class StatusPresenter implements Initializable, Destroyable {
     public void onLoadChange(boolean loading) {
       if (!loading) {
         storage.notifyDataChange();
-        settings.setLastUpdate(HourGlass.longFormat.print(DateTime.now().getMillis()));
+        settings.setLastUpdate(DateTime.now().getMillis());
       }
 
       Platform.runLater(() -> {
         outputProgress.setManaged(loading);
         outputProgress.setVisible(loading);
-        lastUpdate = (loading) ? "Updating..." : settings.getLastUpdate();
         updateStatus();
       });
     }

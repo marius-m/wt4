@@ -19,7 +19,7 @@ public class UserSettings implements WorldEvents {
   String host;
   String username;
   String password;
-  String lastUpdate;
+  long lastUpdate;
 
   public UserSettings() {
     settings = new AdvHashSettings();
@@ -54,11 +54,11 @@ public class UserSettings implements WorldEvents {
     this.password = password;
   }
 
-  public String getLastUpdate() {
+  public long getLastUpdate() {
     return lastUpdate;
   }
 
-  public void setLastUpdate(String lastUpdate) {
+  public void setLastUpdate(long lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
 
@@ -72,7 +72,11 @@ public class UserSettings implements WorldEvents {
     host = settings.get(HOST);
     username = settings.get(USER);
     password = settings.get(PASS);
-    lastUpdate = settings.get(LAST_UPDATE);
+    try {
+      lastUpdate = Long.parseLong(settings.get(LAST_UPDATE));
+    } catch (NumberFormatException e) {
+      lastUpdate = 0;
+    }
   }
 
   @PreDestroy
@@ -80,7 +84,7 @@ public class UserSettings implements WorldEvents {
     settings.set(HOST, getHost());
     settings.set(USER, getUsername());
     settings.set(PASS, getPassword());
-    settings.set(LAST_UPDATE, getLastUpdate());
+    settings.set(LAST_UPDATE, String.format("%d", getLastUpdate()));
     settings.save();
   }
 
