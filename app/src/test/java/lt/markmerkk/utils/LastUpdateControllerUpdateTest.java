@@ -50,7 +50,7 @@ public class LastUpdateControllerUpdateTest {
   }
 
   @Test
-  public void ouput_withLastUpdateHigher_returnValid() throws Exception {
+  public void output_withLastUpdateHigher_returnValid() throws Exception {
     // Arrange
     controller.lastUpdate = 1000;
     doReturn(1000000L).when(controller).now();
@@ -61,7 +61,7 @@ public class LastUpdateControllerUpdateTest {
   }
 
   @Test
-  public void ouput_withZereLastUpdate_returnNever() throws Exception {
+  public void output_withZereLastUpdate_returnNever() throws Exception {
     // Arrange
     controller.lastUpdate = 0;
     doReturn(1000000L).when(controller).now();
@@ -70,4 +70,42 @@ public class LastUpdateControllerUpdateTest {
     // Assert
     assertThat(controller.getOutput()).isEqualTo("Never");
   }
+
+  @Test
+  public void output_validWithLoadingFlag_returnLoading() throws Exception {
+    // Arrange
+    controller.lastUpdate = 1000;
+    doReturn(1000000L).when(controller).now();
+    controller.setLoading(true);
+
+    // Act
+    // Assert
+    assertThat(controller.getOutput()).isEqualTo("Loading...");
+  }
+
+  @Test
+  public void output_validWithErrorFlag_returnLoading() throws Exception {
+    // Arrange
+    controller.lastUpdate = 1000;
+    doReturn(1000000L).when(controller).now();
+    controller.setError(true);
+
+    // Act
+    // Assert
+    assertThat(controller.getOutput()).isEqualTo("Error. Check settings for details.");
+  }
+
+  @Test
+  public void output_validWithLoadingWithErrorFlag_returnLoading() throws Exception {
+    // Arrange
+    controller.lastUpdate = 1000;
+    doReturn(1000000L).when(controller).now();
+    controller.setLoading(true);
+    controller.setError(true);
+
+    // Act
+    // Assert
+    assertThat(controller.getOutput()).isEqualTo("Loading...");
+  }
+
 }
