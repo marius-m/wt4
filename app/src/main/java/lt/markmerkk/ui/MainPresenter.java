@@ -70,9 +70,16 @@ public class MainPresenter implements Initializable {
   //region Listeners
 
   ClockPresenter.Listener clockListener = new ClockPresenter.Listener() {
-    @Override public void onNew() {
+    @Override
+    public void onSettings() {
       tabsController.addCloseableTab(new SettingsView(), "Settings");
     }
+
+    @Override
+    public void onOpen(String url) {
+
+    }
+
   };
 
   UpdateLogPresenter.Listener updateListener = new UpdateLogPresenter.Listener() {

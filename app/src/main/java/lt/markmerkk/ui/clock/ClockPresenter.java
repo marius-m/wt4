@@ -64,10 +64,15 @@ public class ClockPresenter implements Initializable {
   }
 
   public void onClickNew() {
-    listener.onNew();
   }
 
-  public void onClickForward() { }
+  public void onClickForward() {
+
+  }
+
+  public void onClickSettings() {
+    listener.onSettings();
+  }
 
   //region Convenience
 
@@ -199,9 +204,15 @@ public class ClockPresenter implements Initializable {
    */
   public interface Listener {
     /**
-     * Occurs when button new is clicked
+     * Occurs settings window is requested
      */
-    void onNew();
+    void onSettings();
+
+    /**
+     * Occurs when url should be opened
+     */
+    void onOpen(String url);
+
   }
 
 }

@@ -16,17 +16,17 @@
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </ComboBox>
-            <Button fx:id="buttonOpen" mnemonicParsing="false" onAction="#onClickForward" text="&gt;">
+            <Button fx:id="buttonOpen" minWidth="30.0" mnemonicParsing="false" onAction="#onClickForward" stylesheets="@../../../../forward.css">
                <HBox.margin>
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="buttonNew" minWidth="50.0" mnemonicParsing="false" onAction="#onClickNew" text="New">
+            <Button fx:id="buttonNew" minWidth="30.0" mnemonicParsing="false" onAction="#onClickNew" stylesheets="@../../../../new.css">
                <HBox.margin>
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="buttonNew1" minWidth="50.0" mnemonicParsing="false" onAction="#onClickNew" text="Settings">
+            <Button fx:id="buttonNew1" minWidth="30.0" mnemonicParsing="false" onAction="#onClickSettings" stylesheets="@../../../../settings.css">
                <HBox.margin>
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>
