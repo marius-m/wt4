@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import lt.markmerkk.AutoSync;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkScheduler2;
@@ -35,6 +36,7 @@ public class SyncController {
   @Inject BasicLogStorage storage;
   @Inject WorkExecutor workExecutor;
   @Inject LastUpdateController lastUpdateController;
+  @Inject AutoSync autoSync;
 
   Log log = LogFactory.getLog(SyncController.class);
 
@@ -45,6 +47,8 @@ public class SyncController {
     workExecutor.setOutputListener(workerOutputListener);
     workExecutor.setLoadingListener(workerLoadingListener);
     workExecutor.setErrorListener(errorListener);
+    autoSync.setListener(autoSyncListener);
+    autoSync.schedule(settings.getAutoUpdate());
   }
 
   /**
@@ -55,6 +59,7 @@ public class SyncController {
       workExecutor.cancel();
       return;
     }
+    lastUpdateController.setError(false);
     try {
       Credentials credentials =
           new Credentials(settings.getUsername(), settings.getPassword(),
@@ -94,6 +99,15 @@ public class SyncController {
 
   //region Listeners
 
+  AutoSync.Listener autoSyncListener = new AutoSync.Listener() {
+    @Override
+    public void onTrigger() {
+      if (workExecutor.isLoading() || workExecutor.hasMore())
+        return;
+      sync();
+    }
+  };
+
   WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
     @Override
     public void onOutput(String message) {
@@ -104,13 +118,11 @@ public class SyncController {
   WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
     @Override
     public void onLoadChange(boolean loading) {
-      lastUpdateController.setError(false);
       lastUpdateController.setLoading(loading);
       if (!loading) {
         storage.notifyDataChange();
         lastUpdateController.refresh();
       }
-
       for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
         workerLoadingListener.onLoadChange(loading);
     }

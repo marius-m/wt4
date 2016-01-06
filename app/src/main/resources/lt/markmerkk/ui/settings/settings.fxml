@@ -33,6 +33,11 @@
                   <Insets />
                </HBox.margin>
             </PasswordField>
+            <ComboBox fx:id="refreshCombo" prefWidth="150.0" promptText="Auto sync">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </ComboBox>
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
