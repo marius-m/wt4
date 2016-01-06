@@ -8,10 +8,7 @@ import java.util.Properties;
  * Created by mariusmerkevicius on 11/24/15.
  * Stores string data
  */
-public abstract class HashSettings extends BaseSettings {
-  public static final String KEY_HOST = "hostname";
-  public static final String KEY_NAME = "username";
-
+public class HashSettings extends BaseSettings {
   Map<String, String> keyValues;
 
   public HashSettings() {
@@ -25,6 +22,7 @@ public abstract class HashSettings extends BaseSettings {
   }
 
   public void set(String key, String value) {
+    if (key == null || value == null) return;
     keyValues.put(key, value);
   }
 

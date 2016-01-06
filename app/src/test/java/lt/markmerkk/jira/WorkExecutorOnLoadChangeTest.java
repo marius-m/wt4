@@ -1,13 +1,6 @@
 package lt.markmerkk.jira;
 
-import lt.markmerkk.jira.interfaces.IWorkReporter;
-import lt.markmerkk.jira.interfaces.WorkerListener;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 /**

@@ -11,15 +11,24 @@ import java.util.Properties;
  * Uses a persistent storage to save user info
  */
 public abstract class BaseSettings {
-
   public static final String PROPERTIES_FILE = "usr.properties";
 
+  /**
+   * Loads properties from file system
+   * @param properties input file to load properties into
+   */
   abstract void onLoad(Properties properties);
 
+  /**
+   * Saves properties into file system
+   * @param properties input properties
+   */
   abstract void onSave(Properties properties);
 
+  //region Core
+
   /**
-   * Loads properties from local storage
+   * Core method to load properties from local storage
    */
   public void load() {
     try {
@@ -37,7 +46,7 @@ public abstract class BaseSettings {
   }
 
   /**
-   * Saves properties to local storage
+   * Core method to save properties to local storage
    */
   public void save() {
     FileOutputStream out = null;
@@ -53,5 +62,7 @@ public abstract class BaseSettings {
       e.printStackTrace();
     }
   }
+
+  //endregion
 
 }

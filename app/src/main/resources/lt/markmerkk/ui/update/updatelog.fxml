@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.update.UpdateLogPresenter">
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <children>
+      <HBox>
+         <children>
+            <TextField fx:id="outputInfo" alignment="CENTER" editable="false" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="Updating task: " HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox>
+         <children>
+            <TextField fx:id="startInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="endInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <TextArea fx:id="commentInput" promptText="Comment" wrapText="true" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </TextArea>
+      <HBox>
+         <children>
+            <Button fx:id="buttonCancel" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickCancel" text="Cancel" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonOk" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSave" text="Save" HBox.hgrow="ALWAYS" />
+         </children>
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

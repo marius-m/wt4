@@ -61,7 +61,7 @@ public class JiraWorkerOpenIssues extends JiraWorker {
   }
 
   @Override public void populateInput(IWorkerResult result) {
-    System.out.println("Populating data: "+ result);
+    //System.out.println("Populating data: "+ result);
   }
 
   @Override public String tag() {

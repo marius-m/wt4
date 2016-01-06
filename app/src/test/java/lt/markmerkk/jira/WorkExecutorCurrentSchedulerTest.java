@@ -1,7 +1,7 @@
 package lt.markmerkk.jira;
 
 import lt.markmerkk.jira.interfaces.IScheduler2;
-import lt.markmerkk.jira.interfaces.WorkerListener;
+import lt.markmerkk.jira.interfaces.WorkerOutputListener;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 public class WorkExecutorCurrentSchedulerTest {
   @Test public void testNull() throws Exception {
     // Arrange
-    WorkExecutor executor = new WorkExecutor(null, mock(WorkerListener.class));
+    WorkExecutor executor = new WorkExecutor(null, mock(WorkerOutputListener.class));
     executor.scheduler = null;
 
     // Act
@@ -25,7 +25,7 @@ public class WorkExecutorCurrentSchedulerTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
-    WorkExecutor executor = new WorkExecutor(null, mock(WorkerListener.class));
+    WorkExecutor executor = new WorkExecutor(null, mock(WorkerOutputListener.class));
     executor.scheduler = mock(IScheduler2.class);
 
     // Act

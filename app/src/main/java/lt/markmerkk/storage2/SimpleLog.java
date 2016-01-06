@@ -8,6 +8,7 @@ import lt.markmerkk.storage2.database.annotations.Column;
 import lt.markmerkk.storage2.database.annotations.FieldType;
 import lt.markmerkk.storage2.database.annotations.Table;
 import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -17,8 +18,9 @@ import org.joda.time.format.DateTimeFormatter;
  */
 @Table(name = "Log")
 public class SimpleLog extends RemoteEntity {
-  public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
-  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+  //public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  //public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+  //public final static DateTimeFormatter longDateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
 
   private static final String KEY_START = "start";
   private static final String KEY_END = "end";
@@ -40,19 +42,19 @@ public class SimpleLog extends RemoteEntity {
   //region Getters / Setters
 
   public String getLongStart() {
-    return longFormat.print(start);
+    return HourGlass.longFormat.print(start);
   }
 
   public String getShortStart() {
-    return shortFormat.print(start);
+    return HourGlass.shortFormat.print(start);
   }
 
   public String getLongEnd() {
-    return longFormat.print(end);
+    return HourGlass.longFormat.print(end);
   }
 
   public String getShortEnd() {
-    return shortFormat.print(end);
+    return HourGlass.shortFormat.print(end);
   }
 
   public String getPrettyDuration() {
@@ -119,8 +121,8 @@ public class SimpleLog extends RemoteEntity {
 
   @Override public String toString() {
     return task + " : " +
-        longFormat.print(start) +
-        " + " + longFormat.print(end) +
+        HourGlass.longFormat.print(start) +
+        " + " + HourGlass.longFormat.print(end) +
         " = " + Utils.formatShortDuration(duration) +
         " / \"" + comment + "\"";
   }

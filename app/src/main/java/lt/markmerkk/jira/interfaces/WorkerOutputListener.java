@@ -5,9 +5,9 @@ import lt.markmerkk.jira.WorkExecutor;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
- * Represents all the callbacks on {@link WorkExecutor}
+ * Represents output callbacks on {@link WorkExecutor}
  */
-public interface WorkerListener {
+public interface WorkerOutputListener {
 
   /**
    * A method that indicates user for update status
@@ -15,8 +15,4 @@ public interface WorkerListener {
    */
   void onOutput(String message);
 
-  /**
-   * Reports loading status
-   */
-  void onLoadChange(boolean loading);
 }

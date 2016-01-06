@@ -3,8 +3,8 @@ package lt.markmerkk.utils.hourglass;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javax.annotation.PreDestroy;
 import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
-import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
@@ -15,7 +15,9 @@ import org.joda.time.format.DateTimeFormatter;
  * Represents the logic and core functionality of the clock
  */
 public class HourGlass {
-  private final DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
+  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+
   public static final int DEFAULT_TICK = 1000;
 
   Timer timer = null;
@@ -98,6 +100,12 @@ public class HourGlass {
       return true;
     } catch (TimeCalcError timeCalcError) { }
     return false;
+  }
+
+  @PreDestroy
+  public void destroy() {
+    if (state == State.RUNNING)
+      stop();
   }
 
   //endregion
@@ -243,6 +251,39 @@ public class HourGlass {
     update();
   }
 
+  /**
+   * Updates timers with input start, end times.
+   * @param startTime provided start time in string
+   * @param endTime provided end time in string
+   */
+  public void updateTimers(String startTime, String endTime) {
+    if (startTime == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    if (endTime == null)
+      throw new IllegalArgumentException("Incorrect updateTimers use!");
+    // Parsing start time
+    try {
+      DateTime start = longFormat.parseDateTime(startTime);
+      startMillis = start.getMillis();
+    } catch (IllegalArgumentException e) {
+      startMillis = -1;
+    }
+
+    // Parsing end time
+    try {
+      DateTime end = longFormat.parseDateTime(endTime);
+      endMillis = end.getMillis();
+
+      // Correct time with current millis
+      long currentSeconds = (current() - DateTime.now().withSecondOfMinute(0).getMillis());
+      endMillis += currentSeconds;
+    } catch (IllegalArgumentException e) {
+      endMillis = -1;
+    }
+
+    update();
+  }
+
   public void setListener(Listener listener) {
     this.listener = listener;
   }
@@ -324,6 +365,48 @@ public class HourGlass {
     public String getMessage() {
       return message;
     }
+  }
+
+  //endregion
+
+  //region Classes
+
+  /**
+   * Public listener that reports the changes
+   */
+  public static interface Listener {
+    /**
+     * Called when timer has been started
+     *
+     * @param start provided start time
+     * @param end provided end time
+     * @param duration provided duration
+     */
+    void onStart(long start, long end, long duration);
+
+    /**
+     * Called when timer has been stopped
+     *
+     * @param start provided start time
+     * @param end provided end time
+     * @param duration provided duration
+     */
+    void onStop(long start, long end, long duration);
+
+    /**
+     * Called on every second tick when timer is running
+     *
+     * @param start provided start time
+     * @param end provided end time
+     * @param duration provided duration
+     */
+    void onTick(long start, long end, long duration);
+
+    /**
+     * Reports an error when there is something wrong with calculation.
+     */
+    void onError(Error error);
+
   }
 
   //endregion

@@ -1,13 +1,7 @@
 package lt.markmerkk.jira;
 
-import lt.markmerkk.jira.interfaces.IScheduler2;
-import lt.markmerkk.jira.interfaces.IWorkerResult;
-import lt.markmerkk.jira.interfaces.WorkerListener;
-import org.junit.Test;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 /**

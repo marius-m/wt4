@@ -35,7 +35,8 @@ import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkReporter;
 import lt.markmerkk.jira.WorkScheduler2;
 import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.WorkerListener;
+import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
+import lt.markmerkk.jira.interfaces.WorkerOutputListener;
 import lt.markmerkk.jira.workers.JiraWorkerLogin;
 import lt.markmerkk.jira.workers.JiraWorkerOpenIssues;
 import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
@@ -52,7 +53,6 @@ import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
-import lt.markmerkk.utils.hourglass.interfaces.Listener;
 import lt.markmerkk.utils.os_formatter.IOSOutput;
 import lt.markmerkk.utils.os_formatter.OSXOutput;
 import org.joda.time.DateTime;
@@ -82,7 +82,6 @@ public class MainController extends BaseController {
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
   @FXML TextField outputDuration;
-  //@FXML TextField inputTask;
   @FXML TextArea inputComment;
   @FXML Button buttonClock;
   @FXML Button buttonEnter;
@@ -119,7 +118,8 @@ public class MainController extends BaseController {
     scene.getStylesheets().add(
         getClass().getResource("/text-field-red-border.css").toExternalForm());
 
-    asyncWorkExecutor = new WorkExecutor(new WorkReporter(), workerListener);
+    asyncWorkExecutor = new WorkExecutor(new WorkReporter(), workerOutputListener);
+    asyncWorkExecutor.setLoadingListener(workerLoading);
 
     initViewListeners();
     initViews();
@@ -403,12 +403,15 @@ public class MainController extends BaseController {
 
   //region Listeners
 
-  WorkerListener workerListener = new WorkerListener() {
+  WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
     @Override public void onOutput(String message) {
       log.info("Jira: " + message);
     }
+  };
 
-    @Override public void onLoadChange(boolean loading) {
+  WorkerLoadingListener workerLoading = new WorkerLoadingListener() {
+    @Override
+    public void onLoadChange(boolean loading) {
       progressIndicator.setManaged(loading);
       progressIndicator.setVisible(loading);
       inputUsername.setDisable(loading);
@@ -421,6 +424,7 @@ public class MainController extends BaseController {
       }
     }
   };
+
 
   TableDisplayController.Listener<SimpleLog> listener =
       new TableDisplayController.Listener<SimpleLog>() {
@@ -447,7 +451,7 @@ public class MainController extends BaseController {
         }
       };
 
-  private Listener hourglassListener = new Listener() {
+  private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
       inputFrom.setText(shortFormat.print(start));
@@ -501,10 +505,6 @@ public class MainController extends BaseController {
       outputDuration.setText(error.getMessage());
     }
 
-    @Override public void onSuggestTime(DateTime start, DateTime end) {
-      inputFrom.setText(shortFormat.print(start));
-      inputTo.setText(shortFormat.print(end));
-    }
   };
 
   //endregion

@@ -12,12 +12,6 @@ apply plugin: 'application'
 apply from: 'javafx.plugin'
 mainClassName = "lt.markmerkk.Main"
 
-javafx {
-    appID 'WT4'
-    appName 'WT4'
-    mainClass = 'lt.markmerkk.Main'
-}
-
 allprojects {
     repositories {
         jcenter()
@@ -32,20 +26,32 @@ repositories {
     jcenter()
 }
 
-sourceSets {
-    dagger {
-        java {
-            srcDirs = ['src/dagger/java']
-        }
-    }
-}
+//sourceSets {
+//    dagger {
+//        java {
+//            srcDirs = ['src/dagger/java']
+//        }
+//    }
+//}
 
-configurations {
-    compileDagger
-}
+//configurations {
+//    compileDagger
+//}
 
 group = 'lt.markmerkk'
 version = '0.8.7'
+
+javafx {
+    appID 'WT4'
+    appName 'WT4'
+    mainClass = 'lt.markmerkk.Main'
+    profiles {
+        macosx {
+            //        javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
+//            javaRuntime = ""
+        }
+    }
+}
 
 dependencies {
     compile project(':database')
@@ -55,15 +61,17 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
 //    compile 'com.google.guava:guava:18.0'
-    compile group: 'com.google.guava', name: 'guava', version: '10.0.1'
+    compile 'com.airhacks:afterburner.fx:1.6.0'
+    compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '1.3.7'
 
     //compile group: 'org.jfxtras', name: 'jfxtras-agenda', version: '8.0-r5-SNAPSHOT'
+    compile 'commons-io:commons-io:2.4'
 
     // Dagger2 dependencies
     compile 'org.glassfish:javax.annotation:10.0-b28'
-    compile group: 'com.google.dagger', name: 'dagger', version:'2.1-SNAPSHOT'
-    compile group: 'com.google.dagger', name: 'dagger-compiler', version:'2.1-SNAPSHOT'
+//    compile group: 'com.google.dagger', name: 'dagger', version:'2.1-SNAPSHOT'
+//    compile group: 'com.google.dagger', name: 'dagger-compiler', version:'2.1-SNAPSHOT'
 
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
@@ -89,16 +97,16 @@ dependencies {
     compile group: 'com.atlassian.jira', name: 'jira-nimble-func-tests', version:'1.0'
 }
 
-compileJava {
-    description = "dagger annotation processor is loaded automatically from classpath"
-    sourceSets.dagger.java.srcDirs*.mkdirs()
-    classpath += configurations.compileDagger
-    options.compilerArgs += [
-        '-s', sourceSets.dagger.java.srcDirs.iterator().next()
-    ]
-}
+//compileJava {
+//    description = "dagger annotation processor is loaded automatically from classpath"
+//    sourceSets.dagger.java.srcDirs*.mkdirs()
+//    classpath += configurations.compileDagger
+//    options.compilerArgs += [
+//        '-s', sourceSets.dagger.java.srcDirs.iterator().next()
+//    ]
+//}
 
-clean {
-    description = "delete files in generated source directory tree"
-    delete fileTree(dir: sourceSets.dagger.java.srcDirs.iterator().next())
-}
+//clean {
+//    description = "delete files in generated source directory tree"
+//    delete fileTree(dir: sourceSets.dagger.java.srcDirs.iterator().next())
+//}
