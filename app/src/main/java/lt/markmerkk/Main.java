@@ -19,7 +19,6 @@ public class Main extends Application {
         Scene scene = new Scene(mainView.getView());
         scene.getStylesheets().add(
             getClass().getResource("/text-field-red-border.css").toExternalForm());
-
         stage.setWidth(SCENE_WIDTH);
         stage.setHeight(SCENE_HEIGHT);
         stage.setMinWidth(SCENE_WIDTH);
