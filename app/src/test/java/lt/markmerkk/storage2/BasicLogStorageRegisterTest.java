@@ -13,7 +13,7 @@ public class BasicLogStorageRegisterTest {
   @Test public void testValidRegister() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    ILoggerListener listener = mock(ILoggerListener.class);
+    IDataListener listener = mock(IDataListener.class);
 
     // Act
     storage.register(listener);
@@ -26,7 +26,7 @@ public class BasicLogStorageRegisterTest {
   @Test public void testValidUnregister() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    ILoggerListener listener = mock(ILoggerListener.class);
+    IDataListener listener = mock(IDataListener.class);
 
     // Act
     storage.register(listener);
@@ -45,7 +45,7 @@ public class BasicLogStorageRegisterTest {
   @Test public void testUnregisterNoSuchListener() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    ILoggerListener listener = mock(ILoggerListener.class);
+    IDataListener listener = mock(IDataListener.class);
 
     // Act
     storage.unregister(listener);
@@ -57,7 +57,7 @@ public class BasicLogStorageRegisterTest {
   @Test public void testRegisterNull() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    ILoggerListener listener = mock(ILoggerListener.class);
+    IDataListener listener = mock(IDataListener.class);
 
     // Act
     storage.register(null);
@@ -69,7 +69,7 @@ public class BasicLogStorageRegisterTest {
   @Test public void testUnregisterNull() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    ILoggerListener listener = mock(ILoggerListener.class);
+    IDataListener listener = mock(IDataListener.class);
 
     // Act
     storage.unregister(null);

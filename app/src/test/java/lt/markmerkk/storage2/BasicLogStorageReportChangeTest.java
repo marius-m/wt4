@@ -15,9 +15,9 @@ public class BasicLogStorageReportChangeTest {
   @Test public void testValidLogs() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    storage.listeners = new ArrayList<ILoggerListener<SimpleLog>>() {{
-      add(mock(ILoggerListener.class));
-      add(mock(ILoggerListener.class));
+    storage.listeners = new ArrayList<IDataListener<SimpleLog>>() {{
+      add(mock(IDataListener.class));
+      add(mock(IDataListener.class));
     }};
 
     // Act
@@ -31,9 +31,9 @@ public class BasicLogStorageReportChangeTest {
   @Test public void testValidIssues() throws Exception {
     // Arrange
     BasicLogStorage storage = new BasicLogStorage();
-    storage.listeners = new ArrayList<ILoggerListener<SimpleLog>>() {{
-      add(mock(ILoggerListener.class));
-      add(mock(ILoggerListener.class));
+    storage.listeners = new ArrayList<IDataListener<SimpleLog>>() {{
+      add(mock(IDataListener.class));
+      add(mock(IDataListener.class));
     }};
 
     // Act

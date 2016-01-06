@@ -20,11 +20,11 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 12/13/15.
  * Represents the storage for simple use.
  */
-public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
+public class BasicLogStorage implements IDataStorage<SimpleLog> {
   @Inject DBProdExecutor executor;
 
   ObservableList<SimpleLog> logs;
-  List<ILoggerListener<SimpleLog>> listeners;
+  List<IDataListener<SimpleLog>> listeners;
   DateTime targetDate;
 
   public BasicLogStorage() {
@@ -41,7 +41,7 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
     listeners.clear();
   }
 
-  @Override public void setTargetDate(String targetDate) {
+  public void setTargetDate(String targetDate) {
     if (targetDate == null) return;
     try {
       DateTime dateTime = HourGlass.longFormat.parseDateTime(targetDate);
@@ -57,12 +57,12 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
     return targetDate;
   }
 
-  @Override public void register(ILoggerListener listener) {
+  @Override public void register(IDataListener listener) {
     if (listener == null) return;
     listeners.add(listener);
   }
 
-  @Override public void unregister(ILoggerListener listener) {
+  @Override public void unregister(IDataListener listener) {
     if (listener == null) return;
     listeners.remove(listener);
   }
@@ -124,7 +124,7 @@ public class BasicLogStorage implements ILoggerStorage<SimpleLog> {
    * Reports log change for all the listener
    */
   void reportDataChange() {
-    for (ILoggerListener<SimpleLog> listener : listeners)
+    for (IDataListener<SimpleLog> listener : listeners)
       listener.onDataChange(logs);
   }
 

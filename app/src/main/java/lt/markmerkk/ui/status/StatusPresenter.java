@@ -11,30 +11,12 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
-import lt.markmerkk.DBProdExecutor;
-import lt.markmerkk.jira.WorkExecutor;
-import lt.markmerkk.jira.WorkScheduler2;
-import lt.markmerkk.jira.entities.Credentials;
-import lt.markmerkk.jira.interfaces.WorkerErrorListener;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
-import lt.markmerkk.jira.interfaces.WorkerOutputListener;
-import lt.markmerkk.jira.workers.JiraWorkerLogin;
-import lt.markmerkk.jira.workers.JiraWorkerOpenIssues;
-import lt.markmerkk.jira.workers.JiraWorkerPullMerge;
-import lt.markmerkk.jira.workers.JiraWorkerPushNew;
-import lt.markmerkk.jira.workers.JiraWorkerTodayIssues;
-import lt.markmerkk.jira.workers.JiraWorkerWorklogForIssue;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.ILoggerListener;
+import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
-import lt.markmerkk.utils.UserSettings;
-import lt.markmerkk.utils.Utils;
-import lt.markmerkk.utils.hourglass.HourGlass;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -78,7 +60,7 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
 
   //region Listeners
 
-  ILoggerListener loggerListener = new ILoggerListener() {
+  IDataListener loggerListener = new IDataListener() {
     @Override
     public void onDataChange(ObservableList data) {
       total = storage.getTotal();

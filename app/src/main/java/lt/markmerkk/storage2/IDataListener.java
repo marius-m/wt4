@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
  * A callback listener when some event occurs on
  * storage
  */
-public interface ILoggerListener<T> {
+public interface IDataListener<T> {
   /**
    * Called when new data is available
    * @param data

@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -13,7 +14,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javax.inject.Inject;
+import lt.markmerkk.storage2.BasicIssueStorage;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
@@ -31,7 +35,8 @@ public class ClockPresenter implements Initializable {
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
   @Inject HourGlass hourGlass;
-  @Inject BasicLogStorage storage;
+  @Inject BasicLogStorage logStorage;
+  @Inject BasicIssueStorage issueStorage;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
@@ -45,6 +50,8 @@ public class ClockPresenter implements Initializable {
   Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    inputTaskCombo.setItems(issueStorage.getData());
+    inputTaskCombo.setOnKeyReleased(comboKeyListener);
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
     inputFrom.textProperty().addListener(timeChangeListener);
@@ -105,7 +112,7 @@ public class ClockPresenter implements Initializable {
           .setEnd(hourGlass.reportEnd().getMillis())
           .setTask(inputTaskCombo.getEditor().getText())
           .setComment(inputComment.getText()).build();
-      storage.insert(log);
+      logStorage.insert(log);
 
       // Resetting controls
       inputComment.setText("");
@@ -119,11 +126,37 @@ public class ClockPresenter implements Initializable {
 
   //region Listeners
 
+  EventHandler<KeyEvent> comboKeyListener = new EventHandler<KeyEvent>() {
+    @Override public void handle(KeyEvent event) {
+      if (event.getCode() == KeyCode.ESCAPE ||
+          event.getCode() == KeyCode.ENTER) {
+        issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
+        inputTaskCombo.hide();
+        return;
+      }
+      if (event.getCode() == KeyCode.UP ||
+          event.getCode() == KeyCode.DOWN) {
+        inputTaskCombo.show();
+        return;
+      }
+
+      if (event.getCode() == KeyCode.RIGHT ||
+          event.getCode() == KeyCode.LEFT ||
+          event.getCode() == KeyCode.HOME ||
+          event.getCode() == KeyCode.END ||
+          event.getCode() == KeyCode.DELETE ||
+          event.getCode() == KeyCode.TAB)
+        return;
+      issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
+      inputTaskCombo.show();
+    }
+  };
+
   ChangeListener<String> timeChangeListener = new ChangeListener<String>() {
     @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
         String newValue) {
       hourGlass.updateTimers(inputFrom.getText(), inputTo.getText());
-      storage.setTargetDate(inputFrom.getText());
+      logStorage.setTargetDate(inputFrom.getText());
     }
   };
 
