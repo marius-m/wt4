@@ -1,5 +1,7 @@
 package lt.markmerkk.ui.clock;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.ResourceBundle;
@@ -11,17 +13,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.web.WebView;
 import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicIssueStorage;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import org.joda.time.DateTime;
@@ -37,6 +42,7 @@ public class ClockPresenter implements Initializable {
   @Inject HourGlass hourGlass;
   @Inject BasicLogStorage logStorage;
   @Inject BasicIssueStorage issueStorage;
+  @Inject UserSettings settings;
 
   @FXML TextField inputTo;
   @FXML TextField inputFrom;
@@ -71,10 +77,23 @@ public class ClockPresenter implements Initializable {
   }
 
   public void onClickNew() {
+    try {
+      URI newPath = new URI(settings.getHost()+"/secure/CreateIssue!default.jspa");
+      listener.onOpen(newPath.toString(), "New task");
+    } catch (URISyntaxException e) { }
   }
 
   public void onClickForward() {
-
+    if (inputTaskCombo.getSelectionModel() == null) return;
+    if (inputTaskCombo.getSelectionModel().getSelectedIndex() < 0) return;
+    SimpleIssue selectedIssue =
+        issueStorage.getData().get(inputTaskCombo.getSelectionModel().getSelectedIndex());
+    if (selectedIssue == null) return;
+    URI issuePath = null;
+    try {
+      issuePath = new URI(settings.getHost()+"/browse/"+selectedIssue.getKey());
+      listener.onOpen(issuePath.toString(), selectedIssue.getKey());
+    } catch (URISyntaxException e) { }
   }
 
   public void onClickSettings() {
@@ -244,7 +263,7 @@ public class ClockPresenter implements Initializable {
     /**
      * Occurs when url should be opened
      */
-    void onOpen(String url);
+    void onOpen(String url, String title);
 
   }
 

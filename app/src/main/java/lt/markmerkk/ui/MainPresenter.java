@@ -2,14 +2,10 @@ package lt.markmerkk.ui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
@@ -19,6 +15,7 @@ import lt.markmerkk.ui.settings.SettingsView;
 import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.update.UpdateLogPresenter;
 import lt.markmerkk.ui.update.UpdateLogView;
+import lt.markmerkk.ui.taskweb.TaskWebView;
 import lt.markmerkk.utils.HiddenTabsController;
 
 /**
@@ -76,8 +73,8 @@ public class MainPresenter implements Initializable {
     }
 
     @Override
-    public void onOpen(String url) {
-
+    public void onOpen(String url, String title) {
+      tabsController.addCloseableTab(new TaskWebView(url), title);
     }
 
   };

@@ -11,7 +11,7 @@
    <children>
       <HBox>
          <children>
-            <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
+            <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Search for a task or insert new one..." HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
