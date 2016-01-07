@@ -183,12 +183,15 @@ public class Utils {
         try {
             int maxLines = 150;
             int lineCount = 0;
-            ReversedLinesFileReader object = new ReversedLinesFileReader(new File("checkLog.log"));
+            File file = new File("checkLog.log");
+            ReversedLinesFileReader object = new ReversedLinesFileReader(file);
             while (lineCount < maxLines) {
                 output.insert(0, object.readLine() + "\n");
                 lineCount++;
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         return output.toString();
