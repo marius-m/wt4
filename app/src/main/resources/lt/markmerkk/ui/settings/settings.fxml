@@ -10,7 +10,7 @@
    <children>
       <HBox>
          <children>
-            <Button fx:id="buttonRefresh" mnemonicParsing="false" prefWidth="100.0" text="Refresh">
+            <Button fx:id="buttonRefresh" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Refresh" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
@@ -18,22 +18,7 @@
                   <ProgressIndicator fx:id="outputProgress" prefHeight="18.0" prefWidth="18.0" visible="false" />
                </graphic>
             </Button>
-            <TextField fx:id="inputHost" promptText="https://hostname" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </TextField>
-            <TextField fx:id="inputUsername" promptText="Username" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </TextField>
-            <PasswordField fx:id="inputPassword" promptText="Password">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </PasswordField>
-            <ComboBox fx:id="refreshCombo" prefWidth="150.0" promptText="Auto sync">
+            <ComboBox fx:id="refreshCombo" maxWidth="1.7976931348623157E308" promptText="Auto sync" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
@@ -41,6 +26,28 @@
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
+      <HBox>
+         <children>
+            <TextField fx:id="inputHost" maxWidth="1.7976931348623157E308" promptText="https://hostname" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="inputUsername" maxWidth="1.7976931348623157E308" promptText="Username" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </TextField>
+            <PasswordField fx:id="inputPassword" maxWidth="1.7976931348623157E308" promptText="Password">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </PasswordField>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
          </padding>
       </HBox>
       <TextArea fx:id="outputLogger" editable="false" promptText="Console log" VBox.vgrow="ALWAYS">

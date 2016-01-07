@@ -149,7 +149,6 @@ public class ClockPresenter implements Initializable {
     @Override public void handle(KeyEvent event) {
       if (event.getCode() == KeyCode.ESCAPE ||
           event.getCode() == KeyCode.ENTER) {
-        issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
         inputTaskCombo.hide();
         return;
       }

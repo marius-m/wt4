@@ -18,10 +18,10 @@ import org.apache.commons.logging.LogFactory;
  * Responsible for executing a scheduled {@link WorkExecutor}
  */
 public class AutoSync implements WorldEvents {
-  public static final String REFRESH_NEVER = "Never.";
-  public static final String REFRESH_15 = "In 15 mins.";
-  public static final String REFRESH_30 = "In 30 mins.";
-  public static final String REFRESH_60 = "In 60 mins.";
+  public static final String REFRESH_NEVER = "Auto update: Disabled";
+  public static final String REFRESH_15 = "Auto update: 15 mins.";
+  public static final String REFRESH_30 = "Auto update: 30 mins.";
+  public static final String REFRESH_60 = "Auto update: 60 mins.";
 
   Log log = LogFactory.getLog(AutoSync.class);
 

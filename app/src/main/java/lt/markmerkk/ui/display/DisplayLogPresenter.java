@@ -35,7 +35,13 @@ public class DisplayLogPresenter implements Initializable {
           }
 
           @Override public void onClone(SimpleLog object) {
-            storage.insert(new SimpleLogBuilder(object).build());
+            SimpleLog newLog = new SimpleLogBuilder()
+                .setStart(object.getStart())
+                .setEnd(object.getEnd())
+                .setTask(object.getTask())
+                .setComment(object.getComment())
+                .build();
+            storage.insert(newLog);
           }
         });
   }
