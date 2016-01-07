@@ -66,6 +66,10 @@ In theory app should be self explanatory, in practice this is not always the cas
 
 * Q: Why does it weight so much ?
 * A: It is bundled with Java8, so for most part its java that weights so much. It is done, so you don't have to download it separately. 
+* Q: I'm getting 403, 401 status code when trying to log in!
+* A: Either you're: 
+	* Entering wrong user credentials
+	* Must sign out/in into JIRA through Web (JIRA resets user to as CAPTCHA, to identify its not a spam bot, which this app is what it is)
 	
  
 
