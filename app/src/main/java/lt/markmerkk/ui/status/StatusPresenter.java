@@ -41,7 +41,7 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     total = storage.getTotal();
     updateStatus();
 
-    onLoadChange(syncController.isLoading());
+    onSyncChange(syncController.isLoading());
   }
 
   @Override public void destroy() {
@@ -55,7 +55,6 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
    * Convenience method to update current status
    */
   void updateStatus() {
-    if (autoSync2.isSyncNeeded()) syncController.sync();
     outputStatus.setText(String.format("Last update: %s / Today's log: %s", lastUpdateController.getOutput(), total));
   }
 
@@ -80,10 +79,16 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
 
   @Override
   public void onLoadChange(boolean loading) {
+    updateStatus();
+  }
+
+  @Override
+  public void onSyncChange(boolean syncing) {
     Platform.runLater(() -> {
-      outputProgress.setManaged(loading);
-      outputProgress.setVisible(loading);
+      outputProgress.setManaged(syncing);
+      outputProgress.setVisible(syncing);
     });
+    updateStatus();
   }
 
   //endregion

@@ -423,6 +423,11 @@ public class MainController extends BaseController {
         notifyIssuesChanged();
       }
     }
+
+    @Override
+    public void onSyncChange(boolean syncing) {
+
+    }
   };
 
 

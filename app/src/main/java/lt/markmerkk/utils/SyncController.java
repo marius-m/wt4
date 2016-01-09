@@ -96,15 +96,6 @@ public class SyncController {
 
   //region Listeners
 
-  AutoSync.Listener autoSyncListener = new AutoSync.Listener() {
-    @Override
-    public void onTrigger() {
-      if (workExecutor.isLoading() || workExecutor.hasMore())
-        return;
-      sync();
-    }
-  };
-
   WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
     @Override
     public void onOutput(String message) {
@@ -115,13 +106,19 @@ public class SyncController {
   WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
     @Override
     public void onLoadChange(boolean loading) {
-      lastUpdateController.setLoading(loading);
-      if (!loading) {
+      for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
+        workerLoadingListener.onLoadChange(loading);
+    }
+
+    @Override
+    public void onSyncChange(boolean syncing) {
+      lastUpdateController.setLoading(syncing);
+      if (!syncing) {
         storage.notifyDataChange();
         lastUpdateController.refresh();
       }
       for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
-        workerLoadingListener.onLoadChange(loading);
+        workerLoadingListener.onSyncChange(syncing);
     }
   };
 

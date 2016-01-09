@@ -70,7 +70,7 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
     Logger.getRootLogger().addAppender(guiAppender);
-    onLoadChange(syncController.isLoading());
+    onSyncChange(syncController.isLoading());
     syncController.addLoadingListener(this);
   }
 
@@ -105,9 +105,13 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   @Override
   public void onLoadChange(boolean loading) {
+  }
+
+  @Override
+  public void onSyncChange(boolean syncing) {
     Platform.runLater(() -> {
-      outputProgress.setManaged(loading);
-      outputProgress.setVisible(loading);
+      outputProgress.setManaged(syncing);
+      outputProgress.setVisible(syncing);
     });
   }
 

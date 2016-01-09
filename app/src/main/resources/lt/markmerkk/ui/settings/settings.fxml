@@ -10,9 +10,9 @@
    <children>
       <HBox>
          <children>
-            <Button fx:id="buttonRefresh" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Refresh" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonRefresh" mnemonicParsing="false" text="Refresh" HBox.hgrow="ALWAYS">
                <HBox.margin>
-                  <Insets right="5.0" />
+                  <Insets />
                </HBox.margin>
                <graphic>
                   <ProgressIndicator fx:id="outputProgress" prefHeight="18.0" prefWidth="18.0" visible="false" />

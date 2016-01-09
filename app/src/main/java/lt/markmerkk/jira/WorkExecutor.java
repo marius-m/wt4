@@ -5,11 +5,11 @@ import javax.annotation.PreDestroy;
 import lt.markmerkk.jira.interfaces.IRemote;
 import lt.markmerkk.jira.interfaces.IScheduler2;
 import lt.markmerkk.jira.interfaces.IWorkReporter;
-import lt.markmerkk.jira.interfaces.IWorkerResult;
 import lt.markmerkk.jira.interfaces.IWorker;
+import lt.markmerkk.jira.interfaces.IWorkerResult;
+import lt.markmerkk.jira.interfaces.WorkerErrorListener;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.jira.interfaces.WorkerOutputListener;
-import lt.markmerkk.jira.interfaces.WorkerErrorListener;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
@@ -22,6 +22,8 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
   WorkerErrorListener errorListener;
   IScheduler2 scheduler;
   IWorkReporter reporter;
+
+  boolean isSync;
 
   public WorkExecutor(IWorkReporter reporter, WorkerOutputListener listener) {
     this.outputListener = listener;
@@ -44,6 +46,7 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
     this.scheduler = scheduler;
     if (!currentSchedulerOrEmptyOne().shouldExecute()) {
       reportOutputSimple("Sync complete!");
+      onSyncChange();
       return;
     }
     IWorker worker = currentSchedulerOrEmptyOne().nextWorker();
@@ -72,6 +75,26 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
   //endregion
 
   //region Convenience
+
+  /**
+   * Reports a sync change
+   */
+  void onSyncChange() {
+    boolean newSyncStatus = isSyncing();
+    //System.out.println("Sync change: " + isLoading() + "/" + hasMore() + ":" + newSyncStatus);
+    if (this.isSync == newSyncStatus) return;
+    this.isSync = newSyncStatus;
+    if (loadingListener == null) return;
+    loadingListener.onSyncChange(newSyncStatus);
+  }
+
+  /**
+   * Flags to check is sync is going
+   * @return
+   */
+  boolean isSyncing() {
+    return isLoading() || hasMore();
+  }
 
   /**
    * Reports output message to the outside
@@ -135,9 +158,9 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
   }
 
   @Override protected void onLoadChange(final boolean loading) {
-    //boolean isNotLoading = !loading && !hasMore();
     if (loadingListener != null)
       loadingListener.onLoadChange(isLoading());
+    onSyncChange();
   }
 
   //endregion

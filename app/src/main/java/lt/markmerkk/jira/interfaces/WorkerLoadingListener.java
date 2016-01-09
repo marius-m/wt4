@@ -11,4 +11,9 @@ public interface WorkerLoadingListener {
    * Reports loading status
    */
   void onLoadChange(boolean loading);
+
+  /**
+   * Reports sync status
+   */
+  void onSyncChange(boolean syncing);
 }
