@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
@@ -37,6 +38,9 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   String total;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    outputStatus.setTooltip(new Tooltip("Status" +
+        "\n\nTime since last update. Current sum of today's work log." +
+        "\n\nPress to activate/cancel synchronization with remote."));
     outputStatus.setOnMouseClicked(outputClickListener);
     syncController.addLoadingListener(this);
     storage.register(loggerListener);

@@ -26,7 +26,7 @@
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="buttonNew1" minWidth="30.0" mnemonicParsing="false" onAction="#onClickSettings" stylesheets="@../../../../settings.css">
+            <Button fx:id="buttonSettings" minWidth="30.0" mnemonicParsing="false" onAction="#onClickSettings" stylesheets="@../../../../settings.css">
                <HBox.margin>
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>

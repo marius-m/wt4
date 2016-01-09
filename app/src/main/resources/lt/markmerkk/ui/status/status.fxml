@@ -12,7 +12,7 @@
          <children>
             <ProgressIndicator fx:id="outputProgress" prefHeight="18.0" prefWidth="18.0" visible="false">
                <HBox.margin>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                  <Insets bottom="2.0" left="7.0" right="2.0" top="2.0" />
                </HBox.margin>
             </ProgressIndicator>
             <TextField fx:id="outputStatus" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: transparent; -fx-background-insets: 0;" text="Last update: Never / 20h" HBox.hgrow="ALWAYS">
@@ -25,7 +25,7 @@
             </TextField>
          </children>
          <VBox.margin>
-            <Insets left="5.0" />
+            <Insets />
          </VBox.margin>
       </HBox>
    </children>
