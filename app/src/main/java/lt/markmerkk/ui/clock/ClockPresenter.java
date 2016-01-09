@@ -17,6 +17,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
@@ -51,6 +52,7 @@ public class ClockPresenter implements Initializable {
   @FXML Button buttonEnter;
   @FXML Button buttonOpen;
   @FXML Button buttonNew;
+  @FXML Button buttonSettings;
   @FXML ComboBox<SimpleIssue> inputTaskCombo;
 
   Listener listener;
@@ -58,6 +60,28 @@ public class ClockPresenter implements Initializable {
   @Override public void initialize(URL location, ResourceBundle resources) {
     inputTaskCombo.setItems(issueStorage.getData());
     inputTaskCombo.setOnKeyReleased(comboKeyListener);
+    inputFrom.setTooltip(new Tooltip("Worklog start" +
+        "\n\nStart time for the current log. " +
+        "It can be edited whenever timer is running. " +
+        "\nThis timer acts as today's date, " +
+        "changing this will change display for the whole work log."));
+    inputTo.setTooltip(new Tooltip("Worklog end" +
+        "\n\nEnd time for the current log." +
+        "It can be edited whenever timer is running. "));
+    inputTaskCombo.setTooltip(new Tooltip("Issue search bar " +
+        "\n\nType in issue number, title to begin searching."));
+    buttonClock.setTooltip(new Tooltip("Start/Stop " +
+        "\n\nEnable/disable work timer."));
+    buttonEnter.setTooltip(new Tooltip("Enter " +
+        "\n\nEnters currently running work."));
+    buttonOpen.setTooltip(new Tooltip("Forward " +
+        "\n\nOpen selected issue details."));
+    buttonNew.setTooltip(new Tooltip("New. " +
+        "\n\nCreate new issue."));
+    buttonSettings.setTooltip(new Tooltip("Settings. " +
+        "\n\nSetting up remote host, user credentials."));
+    inputComment.setTooltip(new Tooltip("Comment" +
+        "\n\nEnter comment here for the work log."));
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
     inputFrom.textProperty().addListener(timeChangeListener);
@@ -112,9 +136,6 @@ public class ClockPresenter implements Initializable {
     inputComment.setEditable(!disableElement);
     inputComment.setPromptText( (disableElement) ? "Start timer to log work!" : "Go go go!");
     buttonEnter.setDisable(disableElement);
-    //inputTaskCombo.setEditable(!disableElement);
-    //buttonOpen.setDisable(disableElement);
-    //buttonNew.setDisable(disableElement);
   }
 
   /**

@@ -16,9 +16,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
-import lt.markmerkk.AutoSync;
+import lt.markmerkk.AutoSync2;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
@@ -38,7 +39,7 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   @Inject UserSettings settings;
   @Inject SyncController syncController;
-  @Inject AutoSync autoSync;
+  @Inject AutoSync2 autoSync;
 
   @FXML TextField inputHost, inputUsername;
   @FXML PasswordField inputPassword;
@@ -52,17 +53,26 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   Appender guiAppender;
 
-  public SettingsPresenter() {
-    refreshVars.add(AutoSync.REFRESH_NEVER);
-    refreshVars.add(AutoSync.REFRESH_15);
-    refreshVars.add(AutoSync.REFRESH_30);
-    refreshVars.add(AutoSync.REFRESH_60);
-  }
+  public SettingsPresenter() { }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    refreshCombo.setItems(refreshVars);
-    refreshCombo.getSelectionModel().select(settings.getAutoUpdate());
+    refreshCombo.setItems(autoSync.getSelectionKeys());
+    refreshCombo.getSelectionModel().select(autoSync.currentSelection());
     refreshCombo.valueProperty().addListener(refreshChangeListener);
+    refreshCombo.setTooltip(new Tooltip("Auto refresh timer " +
+        "\n\nChanging this will automatically sync with remote after time interval. "));
+    inputHost.setTooltip(new Tooltip("JIRA hostname " +
+        "\n\nEnter your hostname for the jira. For ex.: https://jira.ito.lt"));
+    inputUsername.setTooltip(new Tooltip("JIRA user username " +
+        "\n\nEnter username for the user you will be using."));
+    inputPassword.setTooltip(new Tooltip("JIRA user password " +
+        "\n\nEnter password for the user you will be using."));
+    buttonRefresh.setTooltip(new Tooltip("JIRA sync start/cancel" +
+        "\n\nTest remote connection by synchronizing with the remote. " +
+        "\nWorks the same way as the button in status bar."));
+    outputLogger.setTooltip(new Tooltip("JIRA Connection output" +
+        "\n\nLog for the remote connection and sync status. " +
+        "\nCan be used for testing/checking remote connection problems."));
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getUsername());
@@ -73,8 +83,9 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} - %m%n"));
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
+    outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
-    onLoadChange(syncController.isLoading());
+    onSyncChange(syncController.isLoading());
     syncController.addLoadingListener(this);
   }
 
@@ -93,8 +104,7 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     @Override
     public void changed(ObservableValue ov, String t, String t1) {
       String selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
-      autoSync.schedule(selectedItem);
-      settings.setAutoUpdate(selectedItem);
+      autoSync.setCurrentSelection(selectedItem);
     }
   };
 
@@ -110,9 +120,13 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   @Override
   public void onLoadChange(boolean loading) {
+  }
+
+  @Override
+  public void onSyncChange(boolean syncing) {
     Platform.runLater(() -> {
-      outputProgress.setManaged(loading);
-      outputProgress.setVisible(loading);
+      outputProgress.setManaged(syncing);
+      outputProgress.setVisible(syncing);
     });
   }
 

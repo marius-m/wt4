@@ -7,16 +7,20 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
+import lt.markmerkk.AutoSync2;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.hourglass.KeepAliveController;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -26,20 +30,26 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
+  @Inject KeepAliveController keepAliveController;
+  @Inject AutoSync2 autoSync;
 
-  @FXML TextField outputStatus;
+  @FXML Button outputStatus;
   @FXML ProgressIndicator outputProgress;
 
   String total;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    outputStatus.setTooltip(new Tooltip("Status" +
+        "\n\nTime since last update. Current sum of today's work log." +
+        "\n\nPress to activate/cancel synchronization with remote."));
     outputStatus.setOnMouseClicked(outputClickListener);
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
-    updateStatus();
 
-    onLoadChange(syncController.isLoading());
+    updateStatus();
+    onSyncChange(syncController.isLoading());
+    keepAliveController.setListener(keepAliveListener);
   }
 
   @Override public void destroy() {
@@ -77,11 +87,26 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
 
   @Override
   public void onLoadChange(boolean loading) {
-    Platform.runLater(() -> {
-      outputProgress.setManaged(loading);
-      outputProgress.setVisible(loading);
-    });
+    updateStatus();
   }
+
+  @Override
+  public void onSyncChange(boolean syncing) {
+    Platform.runLater(() -> {
+      outputProgress.setManaged(syncing);
+      outputProgress.setVisible(syncing);
+    });
+    updateStatus();
+  }
+
+  KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
+    @Override
+    public void onUpdate() {
+      if (!syncController.isSyncing() && autoSync.isSyncNeeded())
+        syncController.sync();
+      updateStatus();
+    }
+  };
 
   //endregion
 

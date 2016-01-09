@@ -2,7 +2,6 @@ package lt.markmerkk.utils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import lt.markmerkk.AutoSync;
 import lt.markmerkk.listeners.WorldEvents;
 
 /**
@@ -13,7 +12,6 @@ public class UserSettings implements WorldEvents {
   public static final String HOST = "HOST";
   public static final String USER = "USER";
   public static final String PASS = "PASS";
-  public static final String AUTO_UPDATE = "AUTO_UPDATE";
 
   AdvHashSettings settings;
 
@@ -21,7 +19,6 @@ public class UserSettings implements WorldEvents {
   String host;
   String username;
   String password;
-  String autoUpdate;
 
   public UserSettings() {
     settings = new AdvHashSettings();
@@ -56,18 +53,9 @@ public class UserSettings implements WorldEvents {
     this.password = password;
   }
 
-  public String getAutoUpdate() {
-    if (autoUpdate == null)
-      return AutoSync.REFRESH_NEVER;
-    return autoUpdate;
-  }
-
-  public void setAutoUpdate(String autoUpdate) {
-    this.autoUpdate = autoUpdate;
-  }
-
   public void setCustom(String key, String value) {
     settings.set(key, value);
+    settings.save();
   }
 
   public String getCustom(String key) {
@@ -84,7 +72,6 @@ public class UserSettings implements WorldEvents {
     host = settings.get(HOST);
     username = settings.get(USER);
     password = settings.get(PASS);
-    autoUpdate = settings.get(AUTO_UPDATE);
   }
 
   @PreDestroy
@@ -92,7 +79,6 @@ public class UserSettings implements WorldEvents {
     settings.set(HOST, getHost());
     settings.set(USER, getUsername());
     settings.set(PASS, getPassword());
-    settings.set(AUTO_UPDATE, getAutoUpdate());
     settings.save();
   }
 

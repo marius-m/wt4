@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
@@ -23,6 +24,8 @@ public class DisplayLogPresenter implements Initializable {
   Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    tableView.setTooltip(new Tooltip("Worklog display" +
+        "\n\nToday's current work log"));
     LogDisplayController logDisplayController =
         new LogDisplayController(tableView, storage.getData(), new TableDisplayController.Listener<SimpleLog>() {
           @Override public void onUpdate(SimpleLog object) {

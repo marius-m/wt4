@@ -73,10 +73,14 @@ public class LastUpdateController {
   }
 
   public String getOutput() {
-    if (lastUpdate == 0) return "Never";
     if (loading) return "Loading...";
     if (error) return "Error. Check settings for details.";
-    return Utils.formatShortDuration(now() - lastUpdate);
+    if (lastUpdate == 0) return "Never";
+    return Utils.formatShortDuration(durationTillLastUpdate());
+  }
+
+  public long durationTillLastUpdate() {
+    return now() - lastUpdate;
   }
 
   //endregion

@@ -1,14 +1,9 @@
 package lt.markmerkk.utils;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
-import javafx.application.Platform;
-import javafx.fxml.Initializable;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import lt.markmerkk.AutoSync;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkScheduler2;
@@ -36,7 +31,6 @@ public class SyncController {
   @Inject BasicLogStorage storage;
   @Inject WorkExecutor workExecutor;
   @Inject LastUpdateController lastUpdateController;
-  @Inject AutoSync autoSync;
 
   Log log = LogFactory.getLog(SyncController.class);
 
@@ -47,8 +41,6 @@ public class SyncController {
     workExecutor.setOutputListener(workerOutputListener);
     workExecutor.setLoadingListener(workerLoadingListener);
     workExecutor.setErrorListener(errorListener);
-    autoSync.setListener(autoSyncListener);
-    autoSync.schedule(settings.getAutoUpdate());
   }
 
   /**
@@ -95,18 +87,13 @@ public class SyncController {
     return workExecutor.isLoading();
   }
 
+  public boolean isSyncing() {
+    return workExecutor.isSyncing();
+  }
+
   //endregion
 
   //region Listeners
-
-  AutoSync.Listener autoSyncListener = new AutoSync.Listener() {
-    @Override
-    public void onTrigger() {
-      if (workExecutor.isLoading() || workExecutor.hasMore())
-        return;
-      sync();
-    }
-  };
 
   WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
     @Override
@@ -118,13 +105,19 @@ public class SyncController {
   WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
     @Override
     public void onLoadChange(boolean loading) {
-      lastUpdateController.setLoading(loading);
-      if (!loading) {
+      for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
+        workerLoadingListener.onLoadChange(loading);
+    }
+
+    @Override
+    public void onSyncChange(boolean syncing) {
+      lastUpdateController.setLoading(syncing);
+      if (!syncing) {
         storage.notifyDataChange();
         lastUpdateController.refresh();
       }
       for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
-        workerLoadingListener.onLoadChange(loading);
+        workerLoadingListener.onSyncChange(syncing);
     }
   };
 
