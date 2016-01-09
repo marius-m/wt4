@@ -18,6 +18,7 @@ import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.hourglass.KeepAliveController;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -27,6 +28,8 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
+  @Inject KeepAliveController keepAliveController;
+  @Inject AutoSync2 autoSync;
 
   @FXML TextField outputStatus;
   @FXML ProgressIndicator outputProgress;
@@ -38,9 +41,10 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
-    updateStatus();
 
+    updateStatus();
     onSyncChange(syncController.isLoading());
+    keepAliveController.setListener(keepAliveListener);
   }
 
   @Override public void destroy() {
@@ -89,6 +93,15 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     });
     updateStatus();
   }
+
+  KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
+    @Override
+    public void onUpdate() {
+      if (!syncController.isSyncing() && autoSync.isSyncNeeded())
+        syncController.sync();
+      updateStatus();
+    }
+  };
 
   //endregion
 

@@ -92,7 +92,7 @@ public class WorkExecutor extends TaskExecutor2<IWorkerResult> implements IRemot
    * Flags to check is sync is going
    * @return
    */
-  boolean isSyncing() {
+  public boolean isSyncing() {
     return isLoading() || hasMore();
   }
 

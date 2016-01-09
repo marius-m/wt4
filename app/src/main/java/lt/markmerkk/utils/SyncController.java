@@ -87,6 +87,10 @@ public class SyncController {
     return workExecutor.isLoading();
   }
 
+  public boolean isSyncing() {
+    return workExecutor.isSyncing();
+  }
+
   //endregion
 
   //region Listeners
