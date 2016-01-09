@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync;
+import lt.markmerkk.AutoSync2;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
@@ -38,7 +39,7 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   @Inject UserSettings settings;
   @Inject SyncController syncController;
-  @Inject AutoSync autoSync;
+  @Inject AutoSync2 autoSync;
 
   @FXML TextField inputHost, inputUsername;
   @FXML PasswordField inputPassword;
@@ -52,16 +53,11 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   Appender guiAppender;
 
-  public SettingsPresenter() {
-    refreshVars.add(AutoSync.REFRESH_NEVER);
-    refreshVars.add(AutoSync.REFRESH_15);
-    refreshVars.add(AutoSync.REFRESH_30);
-    refreshVars.add(AutoSync.REFRESH_60);
-  }
+  public SettingsPresenter() { }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    refreshCombo.setItems(refreshVars);
-    refreshCombo.getSelectionModel().select(settings.getAutoUpdate());
+    refreshCombo.setItems(autoSync.getSelectionKeys());
+    refreshCombo.getSelectionModel().select(autoSync.currentSelection());
     refreshCombo.valueProperty().addListener(refreshChangeListener);
 
     inputHost.setText(settings.getHost());
@@ -93,8 +89,7 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     @Override
     public void changed(ObservableValue ov, String t, String t1) {
       String selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
-      autoSync.schedule(selectedItem);
-      settings.setAutoUpdate(selectedItem);
+      autoSync.setCurrentSelection(selectedItem);
     }
   };
 

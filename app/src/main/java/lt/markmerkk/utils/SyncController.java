@@ -36,7 +36,6 @@ public class SyncController {
   @Inject BasicLogStorage storage;
   @Inject WorkExecutor workExecutor;
   @Inject LastUpdateController lastUpdateController;
-  @Inject AutoSync autoSync;
 
   Log log = LogFactory.getLog(SyncController.class);
 
@@ -47,8 +46,6 @@ public class SyncController {
     workExecutor.setOutputListener(workerOutputListener);
     workExecutor.setLoadingListener(workerLoadingListener);
     workExecutor.setErrorListener(errorListener);
-    autoSync.setListener(autoSyncListener);
-    autoSync.schedule(settings.getAutoUpdate());
   }
 
   /**

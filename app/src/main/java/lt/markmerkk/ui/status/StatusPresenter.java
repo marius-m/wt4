@@ -11,6 +11,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
+import lt.markmerkk.AutoSync2;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -26,6 +27,7 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
+  @Inject AutoSync2 autoSync2;
 
   @FXML TextField outputStatus;
   @FXML ProgressIndicator outputProgress;
@@ -53,6 +55,7 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
    * Convenience method to update current status
    */
   void updateStatus() {
+    if (autoSync2.isSyncNeeded()) syncController.sync();
     outputStatus.setText(String.format("Last update: %s / Today's log: %s", lastUpdateController.getOutput(), total));
   }
 

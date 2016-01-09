@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
  * Created by mariusmerkevicius on 1/6/16.
  * Responsible for executing a scheduled {@link WorkExecutor}
  */
+@Deprecated
 public class AutoSync implements WorldEvents {
   public static final String REFRESH_NEVER = "Auto update: Disabled";
   public static final String REFRESH_15 = "Auto update: 15 mins.";
