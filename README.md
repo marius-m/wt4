@@ -4,9 +4,9 @@ App to speed up time tracking and logging work with ease.
 
 The project is still in development, but main features are already completely/partially done. 
 
-* Traking time, logging work
+* Tracking time, logging work
 * Create/update/delete work locally
-* Basic JIRA synchronization (Though still works only one way)
+* Basic JIRA synchronization (Though still lacks deletion feature reflect on remote)
 
 ## Download
 
