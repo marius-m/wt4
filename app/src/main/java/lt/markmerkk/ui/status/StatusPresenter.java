@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -32,7 +33,7 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;
 
-  @FXML TextField outputStatus;
+  @FXML Button outputStatus;
   @FXML ProgressIndicator outputProgress;
 
   String total;
