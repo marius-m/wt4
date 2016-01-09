@@ -13,14 +13,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.web.WebView;
 import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicIssueStorage;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -168,12 +166,15 @@ public class ClockPresenter implements Initializable {
 
   EventHandler<KeyEvent> comboKeyListener = new EventHandler<KeyEvent>() {
     @Override public void handle(KeyEvent event) {
+
       if (event.getCode() == KeyCode.ESCAPE ||
           event.getCode() == KeyCode.ENTER) {
         inputTaskCombo.hide();
         return;
       }
-      if (event.getCode() == KeyCode.UP ||
+
+      if (
+          event.getCode() == KeyCode.UP ||
           event.getCode() == KeyCode.DOWN) {
         inputTaskCombo.show();
         return;
@@ -183,9 +184,18 @@ public class ClockPresenter implements Initializable {
           event.getCode() == KeyCode.LEFT ||
           event.getCode() == KeyCode.HOME ||
           event.getCode() == KeyCode.END ||
-          event.getCode() == KeyCode.DELETE ||
           event.getCode() == KeyCode.TAB)
         return;
+
+      if (event.getCode() == KeyCode.BACK_SPACE ||
+          event.getCode() == KeyCode.DELETE) {
+        issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
+        inputTaskCombo.show();
+        return;
+      }
+
+      if (Utils.isEmpty(event.getText())) return;
+
       issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
       inputTaskCombo.show();
     }

@@ -79,19 +79,18 @@ public class BasicIssueStorage implements IDataStorage<SimpleIssue> {
 
   @Override
   public void notifyDataChange() {
-    if (Utils.isEmpty(filter) && filter.length() <= 2) {
-      issues.clear();
-      return;
-    }
-
     QueryListJob<SimpleIssue> queryJob = new QueryListJob<>(SimpleIssue.class);
-    queryJob = new QueryListJob<>(SimpleIssue.class, () -> "("
-        + "key like '%" + filter + "%' "
-        + "OR "
-        + "description like '%" + filter + "%' "
-        + ")");
-    executor.execute(queryJob);
     issues.clear();
+    if (Utils.isEmpty(filter) && filter.length() <= 2) {
+      queryJob = new QueryListJob<>(SimpleIssue.class);
+    } else {
+      queryJob = new QueryListJob<>(SimpleIssue.class, () -> "("
+          + "key like '%" + filter + "%' "
+          + "OR "
+          + "description like '%" + filter + "%' "
+          + ")");
+    }
+    executor.execute(queryJob);
     if (queryJob.result() != null)
       issues.addAll(queryJob.result());
     reportDataChange();
