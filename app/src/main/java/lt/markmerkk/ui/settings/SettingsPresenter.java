@@ -83,6 +83,7 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} - %m%n"));
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
+    outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
     onSyncChange(syncController.isLoading());
     syncController.addLoadingListener(this);
