@@ -41,7 +41,7 @@ In theory app should be self explanatory, in practice this is not always the cas
 		* Green - synced with remote
 		* Red - error syncing with remote
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-07_23.38.11.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-09_16.24.29.png)
 
 ### Setting up remote
 
@@ -52,7 +52,7 @@ In theory app should be self explanatory, in practice this is not always the cas
 * To test remote access, press refresh
 * Console ouput will display all the sync process info (and errors)
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-07_23.51.19.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-09_16.25.23.png)
 
 ## Shortcomings
 
