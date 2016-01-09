@@ -20,7 +20,6 @@ public class KeepAliveController {
   Listener listener;
   long delay = MINUTE;
 
-  @PostConstruct
   public void start() {
     TimerTask updateRunnable = new TimerTask() {
       @Override public void run() {
@@ -32,7 +31,6 @@ public class KeepAliveController {
     timer.scheduleAtFixedRate(updateRunnable, 1, delay);
   }
 
-  @PreDestroy
   public void stop() {
     if (timer == null) return;
     timer.cancel();

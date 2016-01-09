@@ -45,9 +45,11 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     updateStatus();
     onSyncChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
+    keepAliveController.start();
   }
 
   @Override public void destroy() {
+    keepAliveController.stop();
     syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
   }
