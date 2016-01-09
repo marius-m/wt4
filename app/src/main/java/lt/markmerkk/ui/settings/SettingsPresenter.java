@@ -18,7 +18,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
-import lt.markmerkk.AutoSync;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;

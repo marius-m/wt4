@@ -1,14 +1,9 @@
 package lt.markmerkk.utils;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
-import javafx.application.Platform;
-import javafx.fxml.Initializable;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import lt.markmerkk.AutoSync;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.jira.WorkScheduler2;

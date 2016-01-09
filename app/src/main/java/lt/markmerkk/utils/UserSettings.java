@@ -2,7 +2,6 @@ package lt.markmerkk.utils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import lt.markmerkk.AutoSync;
 import lt.markmerkk.listeners.WorldEvents;
 
 /**

@@ -27,7 +27,6 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
-  @Inject AutoSync2 autoSync2;
 
   @FXML TextField outputStatus;
   @FXML ProgressIndicator outputProgress;
