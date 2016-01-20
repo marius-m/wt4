@@ -94,6 +94,8 @@ public class ClockPresenter implements Initializable {
     updateUI();
   }
 
+  //region Keyboard input
+
   public void onClickClock() {
     if (hourGlass.getState() == HourGlass.State.STOPPED) hourGlass.start();
     else hourGlass.stop();
@@ -129,6 +131,8 @@ public class ClockPresenter implements Initializable {
     listener.onSettings();
   }
 
+  //endregion
+
   //region Convenience
 
   /**
@@ -137,7 +141,9 @@ public class ClockPresenter implements Initializable {
   private void updateUI() {
     boolean disableElement = (hourGlass.getState() == HourGlass.State.STOPPED);
     inputFrom.setEditable(!disableElement);
+    inputFrom.setDisable(disableElement);
     inputTo.setEditable(!disableElement);
+    inputTo.setDisable(disableElement);
     inputComment.setEditable(!disableElement);
     inputComment.setPromptText( (disableElement) ? "Start timer to log work!" : "Go go go!");
     buttonEnter.setDisable(disableElement);
@@ -162,6 +168,9 @@ public class ClockPresenter implements Initializable {
       // Resetting controls
       inputComment.setText("");
       hourGlass.restart();
+      inputTo.requestFocus();
+      inputFrom.requestFocus();
+      inputComment.requestFocus();
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
@@ -184,8 +193,13 @@ public class ClockPresenter implements Initializable {
 
     @Override
     public LocalDate fromString(String string) {
-      DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
-      return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+      try {
+        DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
+        return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+      } catch (IllegalArgumentException e) {
+        DateTime oldTime = DateTime.now();
+        return LocalDate.of(oldTime.getYear(), oldTime.getMonthOfYear(), oldTime.getDayOfMonth());
+      }
     }
   };
 
@@ -202,8 +216,13 @@ public class ClockPresenter implements Initializable {
 
     @Override
     public LocalDate fromString(String string) {
-      DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
-      return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+      try {
+        DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
+        return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+      } catch (IllegalArgumentException e) {
+        DateTime oldTime = DateTime.now();
+        return LocalDate.of(oldTime.getYear(), oldTime.getMonthOfYear(), oldTime.getDayOfMonth());
+      }
     }
   };
 
@@ -292,6 +311,8 @@ public class ClockPresenter implements Initializable {
           reportError(inputTo.getEditor());
           break;
         case DURATION:
+          reportError(inputFrom.getEditor());
+          reportError(inputTo.getEditor());
           break;
       }
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, error.getMessage()));

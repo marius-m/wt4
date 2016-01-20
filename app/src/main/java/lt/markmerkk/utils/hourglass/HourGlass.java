@@ -88,8 +88,11 @@ public class HourGlass {
    * Restarts timer
    */
   public boolean restart() {
+    long lastEnd = endMillis;
     stop();
     start();
+    startMillis = lastEnd;
+    endMillis = current();
     update();
     return true;
   }
