@@ -146,8 +146,8 @@ public class ClockPresenter implements Initializable {
       if (!hourGlass.isValid())
         throw new IllegalArgumentException("Error calculating time!");
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
-          .setStart(hourGlass.reportStart().getMillis())
-          .setEnd(hourGlass.reportEnd().getMillis())
+          .setStart(HourGlass.parseMillisFromText(inputFrom.getText()))
+          .setEnd(HourGlass.parseMillisFromText(inputTo.getText()))
           .setTask(inputTaskCombo.getEditor().getText())
           .setComment(inputComment.getText()).build();
       logStorage.insert(log);
