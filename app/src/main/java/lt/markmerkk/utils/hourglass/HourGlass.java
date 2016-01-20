@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javax.annotation.PreDestroy;
+import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -316,6 +317,20 @@ public class HourGlass {
   public void subractMinute() {
     startMillis -= 1000 * 60; // Adding 60 seconds
     update();
+  }
+
+  /**
+   * Parses time output and converts it into millis
+   * @param time input formatted time
+   * @return
+   */
+  public static long parseMillisFromText(String time) {
+    if (Utils.isEmpty(time)) return -1;
+    try {
+      return longFormat.parseDateTime(time).getMillis();
+    } catch (IllegalArgumentException e) {
+      return -1;
+    }
   }
 
   //endregion
