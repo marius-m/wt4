@@ -39,16 +39,16 @@
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
          <children>
             <ToggleButton fx:id="buttonClock" mnemonicParsing="false" onAction="#onClickClock" stylesheets="@../../../../play_pause.css" />
-            <TextField fx:id="inputFrom" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
+            <DatePicker fx:id="inputFrom" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
-            </TextField>
-            <TextField fx:id="inputTo" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS">
+            </DatePicker>
+            <DatePicker fx:id="inputTo" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
-            </TextField>
+            </DatePicker>
          </children>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

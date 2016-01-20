@@ -3,22 +3,27 @@ package lt.markmerkk.ui.clock;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.StringConverter;
 import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicIssueStorage;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -43,8 +48,8 @@ public class ClockPresenter implements Initializable {
   @Inject BasicIssueStorage issueStorage;
   @Inject UserSettings settings;
 
-  @FXML TextField inputTo;
-  @FXML TextField inputFrom;
+  @FXML DatePicker inputTo;
+  @FXML DatePicker inputFrom;
   @FXML TextArea inputComment;
   @FXML ToggleButton buttonClock;
   @FXML Button buttonEnter;
@@ -82,8 +87,10 @@ public class ClockPresenter implements Initializable {
         "\n\nEnter comment here for the work log."));
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
-    inputFrom.textProperty().addListener(timeChangeListener);
-    inputTo.textProperty().addListener(timeChangeListener);
+    inputFrom.getEditor().textProperty().addListener(timeChangeListener);
+    inputTo.getEditor().textProperty().addListener(timeChangeListener);
+    inputFrom.setConverter(startDateConverter);
+    inputTo.setConverter(endDateConverter);
     updateUI();
   }
 
@@ -146,8 +153,8 @@ public class ClockPresenter implements Initializable {
       if (!hourGlass.isValid())
         throw new IllegalArgumentException("Error calculating time!");
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
-          .setStart(HourGlass.parseMillisFromText(inputFrom.getText()))
-          .setEnd(HourGlass.parseMillisFromText(inputTo.getText()))
+          .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
+          .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
           .setTask(inputTaskCombo.getEditor().getText())
           .setComment(inputComment.getText()).build();
       logStorage.insert(log);
@@ -163,6 +170,42 @@ public class ClockPresenter implements Initializable {
   //endregion
 
   //region Listeners
+
+  StringConverter startDateConverter = new StringConverter<LocalDate>() {
+    @Override
+    public String toString(LocalDate date) {
+      DateTime updateTime = new DateTime(hourGlass.getStartMillis()).withDate(
+          date.getYear(),
+          date.getMonthValue(),
+          date.getDayOfMonth()
+      );
+      return HourGlass.longFormat.print(updateTime);
+    }
+
+    @Override
+    public LocalDate fromString(String string) {
+      DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
+      return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+    }
+  };
+
+  StringConverter endDateConverter = new StringConverter<LocalDate>() {
+    @Override
+    public String toString(LocalDate date) {
+      DateTime updateTime = new DateTime(hourGlass.getEndMillis()).withDate(
+          date.getYear(),
+          date.getMonthValue(),
+          date.getDayOfMonth()
+      );
+      return HourGlass.longFormat.print(updateTime);
+    }
+
+    @Override
+    public LocalDate fromString(String string) {
+      DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
+      return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+    }
+  };
 
   EventHandler<KeyEvent> comboKeyListener = new EventHandler<KeyEvent>() {
     @Override public void handle(KeyEvent event) {
@@ -204,38 +247,38 @@ public class ClockPresenter implements Initializable {
   ChangeListener<String> timeChangeListener = new ChangeListener<String>() {
     @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
         String newValue) {
-      hourGlass.updateTimers(inputFrom.getText(), inputTo.getText());
-      logStorage.setTargetDate(inputFrom.getText());
+      hourGlass.updateTimers(inputFrom.getEditor().getText(), inputTo.getEditor().getText());
+      logStorage.setTargetDate(inputFrom.getEditor().getText());
     }
   };
 
   private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
-      inputFrom.setText(HourGlass.longFormat.print(start));
-      inputTo.setText(HourGlass.longFormat.print(end));
+      inputFrom.getEditor().setText(HourGlass.longFormat.print(start));
+      inputTo.getEditor().setText(HourGlass.longFormat.print(end));
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(
           duration)));
     }
 
     @Override
     public void onStop(long start, long end, long duration) {
-      inputFrom.setText("");
-      inputTo.setText("");
+      inputFrom.getEditor().setText("");
+      inputTo.getEditor().setText("");
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
     }
 
     @Override
     public void onTick(final long start, final long end, final long duration) {
-      clearError(inputFrom);
-      clearError(inputTo);
+      clearError(inputFrom.getEditor());
+      clearError(inputTo.getEditor());
       String newFrom = HourGlass.longFormat.print(start);
-      if (!newFrom.equals(inputFrom.getText()) && !inputFrom.isFocused()) {
-        inputFrom.setText(newFrom);
+      if (!newFrom.equals(inputFrom.getEditor().getText()) && !inputFrom.isFocused()) {
+        inputFrom.getEditor().setText(newFrom);
       }
       String newTo = HourGlass.longFormat.print(end);
-      if (!newTo.equals(inputTo.getText()) && !inputTo.isFocused()) {
-        inputTo.setText(newTo);
+      if (!newTo.equals(inputTo.getEditor().getText()) && !inputTo.isFocused()) {
+        inputTo.getEditor().setText(newTo);
       }
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER,
           Utils.formatShortDuration(duration)));
@@ -245,8 +288,8 @@ public class ClockPresenter implements Initializable {
       switch (error) {
         case START:
         case END:
-          reportError(inputFrom);
-          reportError(inputTo);
+          reportError(inputFrom.getEditor());
+          reportError(inputTo.getEditor());
           break;
         case DURATION:
           break;
