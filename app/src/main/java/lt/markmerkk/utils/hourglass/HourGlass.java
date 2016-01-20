@@ -16,8 +16,11 @@ import org.joda.time.format.DateTimeFormatter;
  * Represents the logic and core functionality of the clock
  */
 public class HourGlass {
-  public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
-  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+  public static final String DATE_SHORT_FORMAT = "HH:mm";
+  public static final String DATE_LONG_FORMAT = "yyyy-MM-dd HH:mm";
+
+  public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern(DATE_SHORT_FORMAT);
+  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern(DATE_LONG_FORMAT);
 
   public static final int DEFAULT_TICK = 1000;
 
@@ -85,8 +88,11 @@ public class HourGlass {
    * Restarts timer
    */
   public boolean restart() {
+    long lastEnd = endMillis;
     stop();
     start();
+    startMillis = lastEnd;
+    endMillis = current();
     update();
     return true;
   }
@@ -295,6 +301,10 @@ public class HourGlass {
 
   public long getStartMillis() {
     return startMillis;
+  }
+
+  public long getEndMillis() {
+    return endMillis;
   }
 
   //endregion

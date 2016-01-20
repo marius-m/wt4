@@ -99,7 +99,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class,
         () -> "(start > " + targetDate.getMillis()
             + " AND "
-            + "end < " + targetDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
+            + "start < " + targetDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
     executor.execute(queryJob);
     if (logs == null)
       logs = FXCollections.observableArrayList();
