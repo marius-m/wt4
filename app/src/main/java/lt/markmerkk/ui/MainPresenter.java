@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
@@ -13,9 +15,10 @@ import lt.markmerkk.ui.display.DisplayLogPresenter;
 import lt.markmerkk.ui.display.DisplayLogView;
 import lt.markmerkk.ui.settings.SettingsView;
 import lt.markmerkk.ui.status.StatusView;
+import lt.markmerkk.ui.taskweb.TaskWebView;
 import lt.markmerkk.ui.update.UpdateLogPresenter;
 import lt.markmerkk.ui.update.UpdateLogView;
-import lt.markmerkk.ui.taskweb.TaskWebView;
+import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
 
 /**
@@ -28,6 +31,8 @@ public class MainPresenter implements Initializable {
   @FXML BorderPane northPane;
   @FXML BorderPane southPane;
 
+  Stage stage;
+  Popup popup;
   HiddenTabsController tabsController;
 
   public MainPresenter() {
@@ -35,6 +40,7 @@ public class MainPresenter implements Initializable {
   }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    popup = new Popup();
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
     StatusView statusView = new StatusView();
@@ -52,6 +58,8 @@ public class MainPresenter implements Initializable {
   private void displayLogs() {
     DisplayLogView simpleLogView = new DisplayLogView(displayListener);
     southPane.setCenter(simpleLogView.getView());
+//    WeekView weekView = new WeekView();
+//    southPane.setCenter(weekView.getView());
   }
 
   /**
@@ -59,7 +67,16 @@ public class MainPresenter implements Initializable {
    */
   private void updateLog(SimpleLog simpleLog) {
     UpdateLogView updateLogView = new UpdateLogView(updateListener, simpleLog);
-    southPane.setCenter(updateLogView.getView());
+    popup.getContent().addAll(updateLogView.getView());
+    popup.show(stage);
+  }
+
+  //endregion
+
+  //region Getters / Setters
+
+  public void setStage(Stage stage) {
+    this.stage = stage;
   }
 
   //endregion
@@ -81,6 +98,8 @@ public class MainPresenter implements Initializable {
 
   UpdateLogPresenter.Listener updateListener = new UpdateLogPresenter.Listener() {
     @Override public void onFinish() {
+      if (popup.isShowing())
+        popup.hide();
       displayLogs();
     }
   };
