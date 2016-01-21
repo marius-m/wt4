@@ -15,13 +15,37 @@
                   <Insets left="5.0" right="5.0" />
                </HBox.margin>
             </ProgressIndicator>
-            <Button fx:id="outputStatus" mnemonicParsing="false" text="Last update: Never / 20h">
+            <Button fx:id="buttonRefresh" mnemonicParsing="false" text="Last update: Never">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
                <font>
                   <Font size="11.0" />
                </font>
+            </Button>
+            <Button fx:id="buttonDayView" mnemonicParsing="false" text="Day view">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonWeekView" mnemonicParsing="false" text="Week view">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonToday" disable="true" mnemonicParsing="false" text="Total: 20h">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
             </Button>
          </children>
          <VBox.margin>

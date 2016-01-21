@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
@@ -18,6 +17,7 @@ import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
+import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
@@ -33,16 +33,25 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;
 
-  @FXML Button outputStatus;
   @FXML ProgressIndicator outputProgress;
+  @FXML Button buttonRefresh;
+  @FXML Button buttonDayView;
+  @FXML Button buttonWeekView;
+  @FXML Button buttonToday;
 
   String total;
 
+  Listener listener;
+
   @Override public void initialize(URL location, ResourceBundle resources) {
-    outputStatus.setTooltip(new Tooltip("Status" +
+    buttonRefresh.setTooltip(new Tooltip("Status" +
         "\n\nTime since last update. Current sum of today's work log." +
         "\n\nPress to activate/cancel synchronization with remote."));
-    outputStatus.setOnMouseClicked(outputClickListener);
+    buttonRefresh.setOnMouseClicked(outputClickListener);
+    buttonDayView.setOnMouseClicked(buttonDayListener);
+    buttonWeekView.setOnMouseClicked(buttonWeekListener);
+    buttonToday.setTooltip(new Tooltip("Total" +
+        "\n\nTotal work duration"));
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
@@ -63,12 +72,29 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
    * Convenience method to update current status
    */
   void updateStatus() {
-    outputStatus.setText(String.format("Last update: %s / Today's log: %s", lastUpdateController.getOutput(), total));
+    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput()));
+    buttonToday.setText(String.format("Total: %s", total));
   }
 
   //endregion
 
   //region Listeners
+
+  EventHandler<MouseEvent> buttonWeekListener = new EventHandler<MouseEvent>() {
+    @Override
+    public void handle(MouseEvent event) {
+      if (listener == null) return;
+      listener.onDisplayType(DisplayType.WEEK);
+    }
+  };
+
+  EventHandler<MouseEvent> buttonDayListener = new EventHandler<MouseEvent>() {
+    @Override
+    public void handle(MouseEvent event) {
+      if (listener == null) return;
+      listener.onDisplayType(DisplayType.DAY);
+    }
+  };
 
   IDataListener loggerListener = new IDataListener() {
     @Override
@@ -107,6 +133,31 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
       updateStatus();
     }
   };
+
+  //endregion
+
+  //region Getters / Setters
+
+  public void setListener(Listener listener) {
+    this.listener = listener;
+  }
+
+
+  //endregion
+
+  //region Classes
+
+  /**
+   * Helper listener for interacting with status
+   * listener
+   */
+  public interface Listener {
+    /**
+     * Callback whenever display type is selected
+     * @param type
+     */
+    void onDisplayType(DisplayType type);
+  }
 
   //endregion
 

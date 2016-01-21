@@ -11,13 +11,15 @@ import javafx.stage.Stage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
-import lt.markmerkk.ui.display.DisplayLogPresenter;
 import lt.markmerkk.ui.display.DisplayLogView;
+import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.ui.settings.SettingsView;
+import lt.markmerkk.ui.status.StatusPresenter;
 import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.taskweb.TaskWebView;
 import lt.markmerkk.ui.update.UpdateLogPresenter;
 import lt.markmerkk.ui.update.UpdateLogView;
+import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
 
@@ -34,6 +36,7 @@ public class MainPresenter implements Initializable {
   Stage stage;
   Popup popup;
   HiddenTabsController tabsController;
+  DisplayType displayType = DisplayType.DAY;
 
   public MainPresenter() {
     tabsController = new HiddenTabsController();
@@ -43,7 +46,6 @@ public class MainPresenter implements Initializable {
     popup = new Popup();
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
-    StatusView statusView = new StatusView();
     southPane.setBottom(statusView.getView());
 
     displayLogs();
@@ -56,17 +58,23 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    DisplayLogView simpleLogView = new DisplayLogView(displayListener);
-    southPane.setCenter(simpleLogView.getView());
-//    WeekView weekView = new WeekView();
-//    southPane.setCenter(weekView.getView());
+    switch (displayType) {
+      case DAY:
+        DisplayLogView simpleLogView = new DisplayLogView(updateListener);
+        southPane.setCenter(simpleLogView.getView());
+        break;
+      case WEEK:
+        WeekView weekView = new WeekView(updateListener);
+        southPane.setCenter(weekView.getView());
+        break;
+    }
   }
 
   /**
    * Displays update log window
    */
   private void updateLog(SimpleLog simpleLog) {
-    UpdateLogView updateLogView = new UpdateLogView(updateListener, simpleLog);
+    UpdateLogView updateLogView = new UpdateLogView(updateWindowListener, simpleLog);
     popup.getContent().addAll(updateLogView.getView());
     popup.show(stage);
   }
@@ -96,7 +104,7 @@ public class MainPresenter implements Initializable {
 
   };
 
-  UpdateLogPresenter.Listener updateListener = new UpdateLogPresenter.Listener() {
+  UpdateLogPresenter.Listener updateWindowListener = new UpdateLogPresenter.Listener() {
     @Override public void onFinish() {
       if (popup.isShowing())
         popup.hide();
@@ -104,12 +112,20 @@ public class MainPresenter implements Initializable {
     }
   };
 
-  DisplayLogPresenter.Listener displayListener = new DisplayLogPresenter.Listener() {
+  UpdateListener updateListener = new UpdateListener() {
     @Override public void onUpdate(SimpleLog object) {
       updateLog(object);
     }
-
   };
+
+  StatusView statusView = new StatusView(new StatusPresenter.Listener() {
+    @Override
+    public void onDisplayType(DisplayType type) {
+      if (MainPresenter.this.displayType == type) return;
+      MainPresenter.this.displayType = type;
+      displayLogs();
+    }
+  });
 
   //endregion
 

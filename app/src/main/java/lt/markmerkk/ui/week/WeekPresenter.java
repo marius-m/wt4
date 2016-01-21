@@ -21,6 +21,7 @@ import jfxtras.util.NodeUtil;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.ui.interfaces.UpdateListener;
 import org.joda.time.DateTime;
 
 /**
@@ -31,8 +32,9 @@ public class WeekPresenter implements Initializable {
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
-
   Agenda agenda;
+
+  UpdateListener updateListener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     storage.register(new IDataListener<SimpleLog>() {
@@ -50,6 +52,9 @@ public class WeekPresenter implements Initializable {
     agenda.editAppointmentCallbackProperty().set(new Callback<Agenda.Appointment, Void>() {
       @Override
       public Void call(final Agenda.Appointment appointment) {
+        if (updateListener == null) return null;
+        if (!(appointment instanceof AppointmentSimpleLog)) return null;
+        updateListener.onUpdate(((AppointmentSimpleLog) appointment).getSimpleLog());
         return null;
       }
     });
@@ -61,12 +66,11 @@ public class WeekPresenter implements Initializable {
 
   private void update() {
     agenda.appointments().clear();
-    for (SimpleLog simpleLog : storage.getData()) {
+    for (final SimpleLog simpleLog : storage.getData()) {
       DateTime startTime = new DateTime(simpleLog.getStart());
       DateTime endTime = new DateTime(simpleLog.getEnd());
-      //System.out.println("Outputting: "+startTime+" / "+endTime);
       agenda.appointments().add(
-          new Agenda.AppointmentImplLocal()
+          new AppointmentSimpleLog(simpleLog)
               .withStartLocalDateTime(
                   LocalDateTime.of(
                       startTime.getYear(),
@@ -86,4 +90,7 @@ public class WeekPresenter implements Initializable {
     }
   }
 
+  public void setUpdateListener(UpdateListener updateListener) {
+    this.updateListener = updateListener;
+  }
 }

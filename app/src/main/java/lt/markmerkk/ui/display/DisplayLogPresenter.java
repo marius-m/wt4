@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
 
@@ -21,7 +22,7 @@ public class DisplayLogPresenter implements Initializable {
   @Inject BasicLogStorage storage;
   @FXML TableView<SimpleLog> tableView;
 
-  Listener listener;
+  UpdateListener updateListener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     tableView.setTooltip(new Tooltip("Worklog display" +
@@ -29,8 +30,8 @@ public class DisplayLogPresenter implements Initializable {
     LogDisplayController logDisplayController =
         new LogDisplayController(tableView, storage.getData(), new TableDisplayController.Listener<SimpleLog>() {
           @Override public void onUpdate(SimpleLog object) {
-            if (listener == null) return;
-            listener.onUpdate(object);
+            if (updateListener == null) return;
+            updateListener.onUpdate(object);
           }
 
           @Override public void onDelete(SimpleLog object) {
@@ -49,22 +50,11 @@ public class DisplayLogPresenter implements Initializable {
         });
   }
 
-  public void setListener(Listener listener) {
-    this.listener = listener;
+  public void setUpdateListener(UpdateListener updateListener) {
+    this.updateListener = updateListener;
   }
 
   //region Classes
-
-  /**
-   * Helper listener for the log display
-   */
-  public interface Listener {
-    /**
-     * Called whenever items is being updated
-     * @param object item set for update
-     */
-    void onUpdate(SimpleLog object);
-  }
 
   //endregion
 
