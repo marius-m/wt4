@@ -183,6 +183,7 @@ public class ClockPresenter implements Initializable {
   StringConverter startDateConverter = new StringConverter<LocalDate>() {
     @Override
     public String toString(LocalDate date) {
+      if (date == null) return HourGlass.longFormat.print(DateTime.now());
       DateTime updateTime = new DateTime(hourGlass.getStartMillis()).withDate(
           date.getYear(),
           date.getMonthValue(),
@@ -206,6 +207,7 @@ public class ClockPresenter implements Initializable {
   StringConverter endDateConverter = new StringConverter<LocalDate>() {
     @Override
     public String toString(LocalDate date) {
+      if (date == null) return HourGlass.longFormat.print(DateTime.now());
       DateTime updateTime = new DateTime(hourGlass.getEndMillis()).withDate(
           date.getYear(),
           date.getMonthValue(),
