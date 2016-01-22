@@ -23,15 +23,7 @@
                   <Font size="11.0" />
                </font>
             </Button>
-            <Button fx:id="buttonDayView" mnemonicParsing="false" text="Day view">
-               <font>
-                  <Font size="11.0" />
-               </font>
-               <HBox.margin>
-                  <Insets left="5.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="buttonWeekView" mnemonicParsing="false" text="Week view">
+            <Button fx:id="buttonViewToggle" mnemonicParsing="false" text="View: day">
                <font>
                   <Font size="11.0" />
                </font>

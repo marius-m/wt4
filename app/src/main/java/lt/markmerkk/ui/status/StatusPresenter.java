@@ -35,11 +35,11 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
 
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh;
-  @FXML Button buttonDayView;
-  @FXML Button buttonWeekView;
+  @FXML Button buttonViewToggle;
   @FXML Button buttonToday;
 
   String total;
+  DisplayType displayType = DisplayType.DAY;
 
   Listener listener;
 
@@ -48,10 +48,11 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
         "\n\nTime since last update. Current sum of today's work log." +
         "\n\nPress to activate/cancel synchronization with remote."));
     buttonRefresh.setOnMouseClicked(outputClickListener);
-    buttonDayView.setOnMouseClicked(buttonDayListener);
-    buttonWeekView.setOnMouseClicked(buttonWeekListener);
+    buttonViewToggle.setTooltip(new Tooltip("Toggle display view" +
+        "\n\nToggles the display view."));
+    buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
     buttonToday.setTooltip(new Tooltip("Total" +
-        "\n\nTotal work duration"));
+        "\n\nTotal work duration."));
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
@@ -74,25 +75,20 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   void updateStatus() {
     buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput()));
     buttonToday.setText(String.format("Total: %s", total));
+    buttonViewToggle.setText(String.format("View: %s", displayType.name()));
   }
 
   //endregion
 
   //region Listeners
 
-  EventHandler<MouseEvent> buttonWeekListener = new EventHandler<MouseEvent>() {
+  EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
       if (listener == null) return;
-      listener.onDisplayType(DisplayType.WEEK);
-    }
-  };
-
-  EventHandler<MouseEvent> buttonDayListener = new EventHandler<MouseEvent>() {
-    @Override
-    public void handle(MouseEvent event) {
-      if (listener == null) return;
-      listener.onDisplayType(DisplayType.DAY);
+      displayType = (displayType == DisplayType.DAY) ? DisplayType.WEEK : DisplayType.DAY;
+      listener.onDisplayType(displayType);
+      updateStatus();
     }
   };
 
