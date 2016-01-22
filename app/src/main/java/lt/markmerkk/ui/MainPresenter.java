@@ -4,21 +4,22 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
+import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.ui.settings.SettingsView;
 import lt.markmerkk.ui.status.StatusPresenter;
 import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.taskweb.TaskWebView;
-import lt.markmerkk.ui.update.UpdateLogPresenter;
 import lt.markmerkk.ui.update.UpdateLogView;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.ui.week.WeekView;
@@ -35,16 +36,15 @@ public class MainPresenter implements Initializable {
   @FXML BorderPane southPane;
 
   Stage stage;
-  Popup popup;
   HiddenTabsController tabsController;
   DisplayType displayType = DisplayType.DAY;
+  Stage updateDialog;
 
   public MainPresenter() {
     tabsController = new HiddenTabsController();
   }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    popup = new Popup();
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
     southPane.setBottom(statusView.getView());
@@ -75,9 +75,14 @@ public class MainPresenter implements Initializable {
    * Displays update log window
    */
   private void updateLog(SimpleLog simpleLog) {
-    UpdateLogView updateLogView = new UpdateLogView(updateWindowListener, simpleLog);
-    popup.getContent().addAll(updateLogView.getView());
-    popup.show(stage);
+    UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, simpleLog);
+    updateDialog = new Stage(StageStyle.TRANSPARENT);
+    updateDialog.initModality(Modality.WINDOW_MODAL);
+    updateDialog.initOwner(stage);
+    // Need to adjust position
+    // Need buttons to disable views
+    updateDialog.setScene(new Scene(updateLogView.getView()));
+    updateDialog.show();
   }
 
   //endregion
@@ -105,11 +110,17 @@ public class MainPresenter implements Initializable {
 
   };
 
-  UpdateLogPresenter.Listener updateWindowListener = new UpdateLogPresenter.Listener() {
-    @Override public void onFinish() {
-      if (popup.isShowing())
-        popup.hide();
+  DialogListener updateWindowDialogListener = new DialogListener() {
+    @Override public void onSave() {
+      if (updateDialog.isShowing())
+        updateDialog.hide();
       displayLogs();
+    }
+
+    @Override
+    public void onCancel() {
+      if (updateDialog.isShowing())
+        updateDialog.hide();
     }
   };
 
