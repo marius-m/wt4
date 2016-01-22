@@ -11,8 +11,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
+import lt.markmerkk.listeners.Destroyable;
+import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
@@ -38,9 +41,11 @@ public class MainPresenter implements Initializable {
   @FXML BorderPane northPane;
   @FXML BorderPane southPane;
 
+  IPresenter displayPresenter;
+
   Stage stage;
-  HiddenTabsController tabsController;
   Stage updateDialog;
+  HiddenTabsController tabsController;
 
   public MainPresenter() {
     tabsController = new HiddenTabsController();
@@ -61,33 +66,21 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
+    if (displayPresenter instanceof Destroyable)
+      ((Destroyable) displayPresenter).destroy();
+    displayPresenter = null;
     switch (storage.getDisplayType()) {
       case DAY:
         DisplayLogView simpleLogView = new DisplayLogView(updateListener);
         southPane.setCenter(simpleLogView.getView());
+        displayPresenter = (IPresenter) simpleLogView.getPresenter();
         break;
       case WEEK:
         WeekView weekView = new WeekView(updateListener);
         southPane.setCenter(weekView.getView());
+        displayPresenter = (IPresenter) weekView.getPresenter();
         break;
     }
-  }
-
-  /**
-   * Displays update log window
-   */
-  private void updateLog(SimpleLog simpleLog) {
-    UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, simpleLog);
-    updateDialog = new Stage(StageStyle.TRANSPARENT);
-    updateDialog.initModality(Modality.WINDOW_MODAL);
-    updateDialog.initOwner(stage);
-    // Need to adjust position
-    // Need buttons to disable views
-    Scene updateScene = new Scene(updateLogView.getView(), 450, 300);
-    updateDialog.setScene(updateScene);
-    updateDialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
-    updateDialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);
-    updateDialog.show();
   }
 
   //endregion
@@ -119,7 +112,7 @@ public class MainPresenter implements Initializable {
     @Override public void onSave() {
       if (updateDialog.isShowing())
         updateDialog.hide();
-      displayLogs();
+      storage.notifyDataChange();
     }
 
     @Override
@@ -131,7 +124,33 @@ public class MainPresenter implements Initializable {
 
   UpdateListener updateListener = new UpdateListener() {
     @Override public void onUpdate(SimpleLog object) {
-      updateLog(object);
+      UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, object);
+      updateDialog = new Stage(StageStyle.TRANSPARENT);
+      updateDialog.initModality(Modality.WINDOW_MODAL);
+      updateDialog.initOwner(stage);
+      // Need to adjust position
+      // Need buttons to disable views
+      Scene updateScene = new Scene(updateLogView.getView(), 450, 300);
+      updateDialog.setScene(updateScene);
+      updateDialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
+      updateDialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);
+      updateDialog.show();
+    }
+
+    @Override
+    public void onDelete(SimpleLog object) {
+      storage.delete(object);
+    }
+
+    @Override
+    public void onClone(SimpleLog object) {
+      SimpleLog newLog = new SimpleLogBuilder()
+          .setStart(object.getStart())
+          .setEnd(object.getEnd())
+          .setTask(object.getTask())
+          .setComment(object.getComment())
+          .build();
+      storage.insert(newLog);
     }
   };
 
