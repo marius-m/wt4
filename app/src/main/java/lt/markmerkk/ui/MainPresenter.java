@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
@@ -11,6 +12,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
+import lt.markmerkk.listeners.Destroyable;
+import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
@@ -38,9 +41,11 @@ public class MainPresenter implements Initializable {
   @FXML BorderPane northPane;
   @FXML BorderPane southPane;
 
+  IPresenter displayPresenter;
+
   Stage stage;
-  HiddenTabsController tabsController;
   Stage updateDialog;
+  HiddenTabsController tabsController;
 
   public MainPresenter() {
     tabsController = new HiddenTabsController();
@@ -61,14 +66,19 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
+    if (displayPresenter instanceof Destroyable)
+      ((Destroyable) displayPresenter).destroy();
+    displayPresenter = null;
     switch (storage.getDisplayType()) {
       case DAY:
         DisplayLogView simpleLogView = new DisplayLogView(updateListener);
         southPane.setCenter(simpleLogView.getView());
+        displayPresenter = (IPresenter) simpleLogView.getPresenter();
         break;
       case WEEK:
         WeekView weekView = new WeekView(updateListener);
         southPane.setCenter(weekView.getView());
+        displayPresenter = (IPresenter) weekView.getPresenter();
         break;
     }
   }

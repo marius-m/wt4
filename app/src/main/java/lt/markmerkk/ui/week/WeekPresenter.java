@@ -4,24 +4,16 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableRow;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.stage.Popup;
 import javafx.util.Callback;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import jfxtras.internal.scene.control.skin.agenda.AgendaWeekSkin;
 import jfxtras.scene.control.agenda.Agenda;
-import jfxtras.util.NodeUtil;
 import lt.markmerkk.listeners.Destroyable;
+import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.storage2.SimpleLog;
@@ -32,7 +24,7 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable, Destroyable {
+public class WeekPresenter implements Initializable, Destroyable, IPresenter {
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
@@ -41,6 +33,7 @@ public class WeekPresenter implements Initializable, Destroyable {
   UpdateListener updateListener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    System.out.println("Init");
     storage.register(storageListener);
     agenda = new Agenda();
     agenda.setLocale(new java.util.Locale("de"));
@@ -65,6 +58,7 @@ public class WeekPresenter implements Initializable, Destroyable {
 
   private void update() {
     agenda.appointments().clear();
+    long start = System.currentTimeMillis();
     for (final SimpleLog simpleLog : storage.getData()) {
       DateTime startTime = new DateTime(simpleLog.getStart());
       DateTime endTime = new DateTime(simpleLog.getEnd());
@@ -100,15 +94,17 @@ public class WeekPresenter implements Initializable, Destroyable {
               .withSummary(simpleLog.getComment())
       );
     }
+    //System.out.println("Calendar deploy in " + (System.currentTimeMillis() - start));
   }
 
   public void setUpdateListener(UpdateListener updateListener) {
     this.updateListener = updateListener;
   }
 
-
+  @PreDestroy
   @Override
   public void destroy() {
+    System.out.println("Destroy");
     storage.unregister(storageListener);
   }
 

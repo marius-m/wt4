@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javax.inject.Inject;
+import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
@@ -18,7 +19,7 @@ import lt.markmerkk.utils.TableDisplayController;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class DisplayLogPresenter implements Initializable {
+public class DisplayLogPresenter implements Initializable, IPresenter {
   @Inject BasicLogStorage storage;
   @FXML TableView<SimpleLog> tableView;
 
