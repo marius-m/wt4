@@ -47,8 +47,13 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
   public void setTargetDate(String targetDate) {
     if (targetDate == null) return;
     try {
-      DateTime dateTime = HourGlass.longFormat.parseDateTime(targetDate);
-      this.targetDate = dateTime
+      DateTime newTime = HourGlass.longFormat.parseDateTime(targetDate);
+      if (this.targetDate != null
+          && this.targetDate.getYear() == newTime.getYear()
+          && this.targetDate.getMonthOfYear() == newTime.getMonthOfYear()
+          && this.targetDate.getDayOfMonth() == newTime.getDayOfMonth())
+        return;
+      this.targetDate = newTime
           .withHourOfDay(0)
           .withMinuteOfHour(0)
           .withSecondOfMinute(0);
@@ -95,6 +100,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
   }
 
   @Override public void notifyDataChange() {
+    long start = System.currentTimeMillis();
     QueryListJob<SimpleLog> queryJob;
     switch (displayType) {
       case WEEK:
@@ -112,6 +118,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
                 + "start < " + targetDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
     }
     executor.execute(queryJob);
+//    System.out.println("Query in " + (System.currentTimeMillis() - start) + "ms");
     if (logs == null)
       logs = FXCollections.observableArrayList();
     logs.clear();
@@ -143,8 +150,6 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
 
   //endregion
 
-
-
   public String getTotal() {
     return Utils.formatShortDuration(countTotal());
   }
@@ -155,8 +160,11 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
    * Reports log change for all the listener
    */
   void reportDataChange() {
-    for (IDataListener<SimpleLog> listener : listeners)
+    for (IDataListener<SimpleLog> listener : listeners) {
+      long start = System.currentTimeMillis();
       listener.onDataChange(logs);
+//      System.out.println("Update for "+listener+" in " + (System.currentTimeMillis() - start) + "ms");
+    }
   }
 
   //endregion

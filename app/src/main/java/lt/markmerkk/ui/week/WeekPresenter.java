@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import jfxtras.internal.scene.control.skin.agenda.AgendaWeekSkin;
 import jfxtras.scene.control.agenda.Agenda;
 import jfxtras.util.NodeUtil;
+import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.storage2.SimpleLog;
@@ -31,7 +32,7 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable {
+public class WeekPresenter implements Initializable, Destroyable {
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
@@ -40,12 +41,7 @@ public class WeekPresenter implements Initializable {
   UpdateListener updateListener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    storage.register(new IDataListener<SimpleLog>() {
-      @Override
-      public void onDataChange(ObservableList<SimpleLog> data) {
-        update();
-      }
-    });
+    storage.register(storageListener);
     agenda = new Agenda();
     agenda.setLocale(new java.util.Locale("de"));
 		agenda.setSkin(new AgendaWeekSkin(agenda));
@@ -109,4 +105,22 @@ public class WeekPresenter implements Initializable {
   public void setUpdateListener(UpdateListener updateListener) {
     this.updateListener = updateListener;
   }
+
+
+  @Override
+  public void destroy() {
+    storage.unregister(storageListener);
+  }
+
+  //region Listeners
+
+  IDataListener<SimpleLog> storageListener = new IDataListener<SimpleLog>() {
+    @Override
+    public void onDataChange(ObservableList<SimpleLog> data) {
+      update();
+    }
+  };
+
+  //endregion
+
 }

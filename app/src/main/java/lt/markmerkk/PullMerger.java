@@ -1,9 +1,9 @@
 package lt.markmerkk;
 
 import com.atlassian.jira.rest.client.api.domain.Worklog;
+import lt.markmerkk.listeners.IMerger;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
-import lt.markmerkk.storage2.database.DBBaseExecutor;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
