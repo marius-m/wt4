@@ -36,17 +36,13 @@ public class DisplayLogPresenter implements Initializable, IPresenter {
           }
 
           @Override public void onDelete(SimpleLog object) {
-            storage.delete(object);
+            if (updateListener == null) return;
+            updateListener.onDelete(object);
           }
 
           @Override public void onClone(SimpleLog object) {
-            SimpleLog newLog = new SimpleLogBuilder()
-                .setStart(object.getStart())
-                .setEnd(object.getEnd())
-                .setTask(object.getTask())
-                .setComment(object.getComment())
-                .build();
-            storage.insert(newLog);
+            if (updateListener == null) return;
+            updateListener.onClone(object);
           }
         });
   }

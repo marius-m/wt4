@@ -1,21 +1,21 @@
 package lt.markmerkk.ui.week;
 
-import com.google.common.util.concurrent.MoreExecutors;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import jfxtras.internal.scene.control.skin.agenda.AgendaWeekSkin;
 import jfxtras.scene.control.agenda.Agenda;
-import lt.markmerkk.jira.TaskExecutor2;
 import lt.markmerkk.jira.TaskExecutor3;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
@@ -40,7 +40,6 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
   TaskExecutor3 asyncExecutor;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    System.out.println("Init");
     storage.register(storageListener);
     agenda = new Agenda();
     agenda.setLocale(new java.util.Locale("de"));
@@ -48,15 +47,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
 //		agenda.setSkin(new AgendaDaySkin(agenda));
 		agenda.setAllowDragging(false);
 		agenda.setAllowResize(false);
-    agenda.editAppointmentCallbackProperty().set(new Callback<Agenda.Appointment, Void>() {
-      @Override
-      public Void call(final Agenda.Appointment appointment) {
-        if (updateListener == null) return null;
-        if (!(appointment instanceof AppointmentSimpleLog)) return null;
-        updateListener.onUpdate(((AppointmentSimpleLog) appointment).getSimpleLog());
-        return null;
-      }
-    });
+    agenda.editAppointmentCallbackProperty().set(agendaCallbackListener);
     mainContainer.getChildren().add(agenda);
     asyncExecutor = new TaskExecutor3();
     asyncExecutor.setListener(this);
@@ -83,6 +74,39 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
       if (asyncExecutor.isLoading())
         asyncExecutor.cancel();
       asyncExecutor.executeInBackground(updateRunnable);
+    }
+  };
+
+  Callback<Agenda.Appointment, Void> agendaCallbackListener = new Callback<Agenda.Appointment, Void>() {
+    @Override
+    public Void call(final Agenda.Appointment appointment) {
+      if (updateListener == null) return null;
+      if (!(appointment instanceof AppointmentSimpleLog)) return null;
+      ContextMenu contextMenu = new ContextMenu();
+      MenuItem updateItem = new MenuItem("Update");
+      updateItem.setOnAction(new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e) {
+          if (updateListener == null) return;
+          updateListener.onUpdate(((AppointmentSimpleLog) appointment).getSimpleLog());
+        }
+      });
+      MenuItem deleteItem = new MenuItem("Delete");
+      deleteItem.setOnAction(new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e) {
+          if (updateListener == null) return;
+          updateListener.onDelete(((AppointmentSimpleLog) appointment).getSimpleLog());
+        }
+      });
+      MenuItem cloneItem = new MenuItem("Clone");
+      cloneItem.setOnAction(new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e) {
+          if (updateListener == null) return;
+          updateListener.onClone(((AppointmentSimpleLog) appointment).getSimpleLog());
+        }
+      });
+      contextMenu.getItems().addAll(updateItem, deleteItem, cloneItem);
+      agenda.setContextMenu(contextMenu);
+      return null;
     }
   };
 
@@ -127,7 +151,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
                     endTime.getHourOfDay(),
                     endTime.getMinuteOfHour()))
             .withAppointmentGroup(group)
-            .withSummary(simpleLog.getComment());
+            .withSummary(simpleLog.getTask()+"\n"+simpleLog.getComment());
       }
     }
   };
