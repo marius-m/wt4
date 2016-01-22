@@ -81,7 +81,10 @@ public class MainPresenter implements Initializable {
     updateDialog.initOwner(stage);
     // Need to adjust position
     // Need buttons to disable views
-    updateDialog.setScene(new Scene(updateLogView.getView()));
+    Scene updateScene = new Scene(updateLogView.getView(), 450, 300);
+    updateDialog.setScene(updateScene);
+    updateDialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
+    updateDialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);
     updateDialog.show();
   }
 
