@@ -12,9 +12,11 @@ import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
+import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 /**
  * Created by mariusmerkevicius on 12/13/15.
@@ -26,6 +28,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
   ObservableList<SimpleLog> logs;
   List<IDataListener<SimpleLog>> listeners;
   DateTime targetDate;
+  DisplayType displayType = DisplayType.DAY;
 
   public BasicLogStorage() {
     listeners = new ArrayList<>();
@@ -51,10 +54,6 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
           .withSecondOfMinute(0);
       notifyDataChange();
     } catch (IllegalArgumentException e) { }
-  }
-
-  public DateTime getTargetDate() {
-    return targetDate;
   }
 
   @Override public void register(IDataListener listener) {
@@ -96,10 +95,22 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
   }
 
   @Override public void notifyDataChange() {
-    QueryListJob<SimpleLog> queryJob = new QueryListJob<>(SimpleLog.class,
-        () -> "(start > " + targetDate.getMillis()
-            + " AND "
-            + "start < " + targetDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
+    QueryListJob<SimpleLog> queryJob;
+    switch (displayType) {
+      case WEEK:
+        DateTime weekStart = targetDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        DateTime weekEnd = targetDate.withDayOfWeek(DateTimeConstants.SUNDAY);
+        queryJob = new QueryListJob<>(SimpleLog.class,
+            () -> "(start > " + weekStart.getMillis()
+                + " AND "
+                + "start < " + weekEnd.getMillis() + ") ORDER BY start ASC");
+        break;
+      default:
+        queryJob = new QueryListJob<>(SimpleLog.class,
+            () -> "(start > " + targetDate.getMillis()
+                + " AND "
+                + "start < " + targetDate.plusDays(1).getMillis() + ") ORDER BY start ASC");
+    }
     executor.execute(queryJob);
     if (logs == null)
       logs = FXCollections.observableArrayList();
@@ -110,9 +121,29 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     countTotal();
   }
 
+  //region Getters / Setters
+
   @Override public ObservableList<SimpleLog> getData() {
     return logs;
   }
+
+  public DateTime getTargetDate() {
+    return targetDate;
+  }
+
+  public DisplayType getDisplayType() {
+    return displayType;
+  }
+
+  public void setDisplayType(DisplayType displayType) {
+    if (this.displayType == displayType) return;
+    this.displayType = displayType;
+    notifyDataChange();
+  }
+
+  //endregion
+
+
 
   public String getTotal() {
     return Utils.formatShortDuration(countTotal());

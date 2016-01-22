@@ -4,18 +4,27 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javax.inject.Inject;
+import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
-import lt.markmerkk.ui.display.DisplayLogPresenter;
 import lt.markmerkk.ui.display.DisplayLogView;
+import lt.markmerkk.ui.interfaces.DialogListener;
+import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.ui.settings.SettingsView;
+import lt.markmerkk.ui.status.StatusPresenter;
 import lt.markmerkk.ui.status.StatusView;
-import lt.markmerkk.ui.update.UpdateLogPresenter;
-import lt.markmerkk.ui.update.UpdateLogView;
 import lt.markmerkk.ui.taskweb.TaskWebView;
+import lt.markmerkk.ui.update.UpdateLogView;
+import lt.markmerkk.ui.utils.DisplayType;
+import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
 
 /**
@@ -23,12 +32,15 @@ import lt.markmerkk.utils.HiddenTabsController;
  * Represents the main presenter of the app
  */
 public class MainPresenter implements Initializable {
+  @Inject BasicLogStorage storage;
 
   @FXML TabPane tabPane;
   @FXML BorderPane northPane;
   @FXML BorderPane southPane;
 
+  Stage stage;
   HiddenTabsController tabsController;
+  Stage updateDialog;
 
   public MainPresenter() {
     tabsController = new HiddenTabsController();
@@ -37,7 +49,6 @@ public class MainPresenter implements Initializable {
   @Override public void initialize(URL location, ResourceBundle resources) {
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
-    StatusView statusView = new StatusView();
     southPane.setBottom(statusView.getView());
 
     displayLogs();
@@ -50,16 +61,41 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    DisplayLogView simpleLogView = new DisplayLogView(displayListener);
-    southPane.setCenter(simpleLogView.getView());
+    switch (storage.getDisplayType()) {
+      case DAY:
+        DisplayLogView simpleLogView = new DisplayLogView(updateListener);
+        southPane.setCenter(simpleLogView.getView());
+        break;
+      case WEEK:
+        WeekView weekView = new WeekView(updateListener);
+        southPane.setCenter(weekView.getView());
+        break;
+    }
   }
 
   /**
    * Displays update log window
    */
   private void updateLog(SimpleLog simpleLog) {
-    UpdateLogView updateLogView = new UpdateLogView(updateListener, simpleLog);
-    southPane.setCenter(updateLogView.getView());
+    UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, simpleLog);
+    updateDialog = new Stage(StageStyle.TRANSPARENT);
+    updateDialog.initModality(Modality.WINDOW_MODAL);
+    updateDialog.initOwner(stage);
+    // Need to adjust position
+    // Need buttons to disable views
+    Scene updateScene = new Scene(updateLogView.getView(), 450, 300);
+    updateDialog.setScene(updateScene);
+    updateDialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
+    updateDialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);
+    updateDialog.show();
+  }
+
+  //endregion
+
+  //region Getters / Setters
+
+  public void setStage(Stage stage) {
+    this.stage = stage;
   }
 
   //endregion
@@ -79,18 +115,32 @@ public class MainPresenter implements Initializable {
 
   };
 
-  UpdateLogPresenter.Listener updateListener = new UpdateLogPresenter.Listener() {
-    @Override public void onFinish() {
+  DialogListener updateWindowDialogListener = new DialogListener() {
+    @Override public void onSave() {
+      if (updateDialog.isShowing())
+        updateDialog.hide();
       displayLogs();
+    }
+
+    @Override
+    public void onCancel() {
+      if (updateDialog.isShowing())
+        updateDialog.hide();
     }
   };
 
-  DisplayLogPresenter.Listener displayListener = new DisplayLogPresenter.Listener() {
+  UpdateListener updateListener = new UpdateListener() {
     @Override public void onUpdate(SimpleLog object) {
       updateLog(object);
     }
-
   };
+
+  StatusView statusView = new StatusView(new StatusPresenter.Listener() {
+    @Override
+    public void onDisplayType(DisplayType type) {
+      displayLogs();
+    }
+  });
 
   //endregion
 

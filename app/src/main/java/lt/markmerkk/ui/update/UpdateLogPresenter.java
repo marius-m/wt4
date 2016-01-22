@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.utils.hourglass.HourGlass;
 
 /**
@@ -27,7 +28,7 @@ public class UpdateLogPresenter {
   @FXML Button buttonOk;
   @FXML Button buttonCancel;
 
-  Listener listener;
+  DialogListener dialogListener;
   SimpleLog entity;
 
   protected void initWithEntity(SimpleLog entity) {
@@ -108,16 +109,16 @@ public class UpdateLogPresenter {
   //region View events
 
   public void onClickCancel() {
-    if (listener == null) return;
-    listener.onFinish();
+    if (dialogListener == null) return;
+    dialogListener.onCancel();
   }
 
   public void onClickSave() {
-    if (listener == null) return;
+    if (dialogListener == null) return;
     try {
       update();
       storage.update(entity);
-      listener.onFinish();
+      dialogListener.onSave();
     } catch (IllegalArgumentException e) { }
   }
 
@@ -125,20 +126,10 @@ public class UpdateLogPresenter {
 
   //region Listeners
 
-  public void setListener(Listener listener) {
-    this.listener = listener;
+  public void setDialogListener(DialogListener dialogListener) {
+    this.dialogListener = dialogListener;
   }
 
   //endregion
-
-  /**
-   * Helper listener for the log update
-   */
-  public interface Listener {
-    /**
-     * Called whenever items is finished updating
-     */
-    void onFinish();
-  }
 
 }
