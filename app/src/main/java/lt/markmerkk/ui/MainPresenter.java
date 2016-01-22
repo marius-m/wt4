@@ -10,6 +10,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javax.inject.Inject;
+import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
@@ -30,6 +32,7 @@ import lt.markmerkk.utils.HiddenTabsController;
  * Represents the main presenter of the app
  */
 public class MainPresenter implements Initializable {
+  @Inject BasicLogStorage storage;
 
   @FXML TabPane tabPane;
   @FXML BorderPane northPane;
@@ -37,7 +40,6 @@ public class MainPresenter implements Initializable {
 
   Stage stage;
   HiddenTabsController tabsController;
-  DisplayType displayType = DisplayType.DAY;
   Stage updateDialog;
 
   public MainPresenter() {
@@ -59,7 +61,7 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    switch (displayType) {
+    switch (storage.getDisplayType()) {
       case DAY:
         DisplayLogView simpleLogView = new DisplayLogView(updateListener);
         southPane.setCenter(simpleLogView.getView());
@@ -136,8 +138,6 @@ public class MainPresenter implements Initializable {
   StatusView statusView = new StatusView(new StatusPresenter.Listener() {
     @Override
     public void onDisplayType(DisplayType type) {
-      if (MainPresenter.this.displayType == type) return;
-      MainPresenter.this.displayType = type;
       displayLogs();
     }
   });

@@ -39,7 +39,6 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   @FXML Button buttonToday;
 
   String total;
-  DisplayType displayType = DisplayType.DAY;
 
   Listener listener;
 
@@ -75,7 +74,7 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   void updateStatus() {
     buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput()));
     buttonToday.setText(String.format("Total: %s", total));
-    buttonViewToggle.setText(String.format("View: %s", displayType.name()));
+    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
   }
 
   //endregion
@@ -86,7 +85,8 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     @Override
     public void handle(MouseEvent event) {
       if (listener == null) return;
-      displayType = (displayType == DisplayType.DAY) ? DisplayType.WEEK : DisplayType.DAY;
+      DisplayType displayType = (storage.getDisplayType() == DisplayType.DAY) ? DisplayType.WEEK : DisplayType.DAY;
+      storage.setDisplayType(displayType);
       listener.onDisplayType(displayType);
       updateStatus();
     }
