@@ -72,6 +72,18 @@ public class WeekPresenter implements Initializable {
     for (final SimpleLog simpleLog : storage.getData()) {
       DateTime startTime = new DateTime(simpleLog.getStart());
       DateTime endTime = new DateTime(simpleLog.getEnd());
+      Agenda.AppointmentGroup group = null;
+      switch (simpleLog.getStateImageUrl()) {
+        case "/red.png":
+          group = agenda.appointmentGroups().get(0);
+          break;
+        case "/yellow.png":
+          group = agenda.appointmentGroups().get(10);
+          break;
+        case "/green.png":
+          group = agenda.appointmentGroups().get(13);
+          break;
+      }
       agenda.appointments().add(
           new AppointmentSimpleLog(simpleLog)
               .withStartLocalDateTime(
@@ -88,6 +100,7 @@ public class WeekPresenter implements Initializable {
                       endTime.getDayOfMonth(),
                       endTime.getHourOfDay(),
                       endTime.getMinuteOfHour()))
+              .withAppointmentGroup(group)
               .withSummary(simpleLog.getComment())
       );
     }
