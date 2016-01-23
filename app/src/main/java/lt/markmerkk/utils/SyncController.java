@@ -13,7 +13,10 @@ import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteFetchMerger;
+import lt.markmerkk.ui.utils.DisplayType;
 import net.rcarz.jiraclient.WorkLog;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 /**
  * Created by mariusmerkevicius on 1/5/16.
@@ -49,12 +52,23 @@ public class SyncController {
       return;
     }
     lastUpdateController.setError(false);
+    DateTime startTime;
+    DateTime endTime;
+    switch (storage.getDisplayType()) {
+      case WEEK:
+        startTime = storage.getTargetDate().withDayOfWeek(DateTimeConstants.MONDAY);
+        endTime = storage.getTargetDate().withDayOfWeek(DateTimeConstants.SUNDAY);
+        break;
+      default:
+        startTime = storage.getTargetDate();
+        endTime = storage.getTargetDate().plusDays(1);
+    }
     jiraLogExecutor.asyncRunner(
         settings.getHost(),
         settings.getUsername(),
         settings.getPassword(),
-        storage.getTargetDate(),
-        storage.getTargetDate().plusDays(1)
+        startTime,
+        endTime
     );
   }
 
