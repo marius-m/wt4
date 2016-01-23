@@ -60,7 +60,7 @@ public class SimpleLogBuilder {
         .getMillis();
     this.task = Utils.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
-    this.uri = remoteLog.getSelf().toString();
+    this.uri = remoteLog.getSelf();
     this.id = parseWorklogUri(this.uri);
 
     this.deleted = false;
