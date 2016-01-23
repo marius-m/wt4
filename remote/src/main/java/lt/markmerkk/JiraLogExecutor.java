@@ -2,6 +2,7 @@ package lt.markmerkk;
 
 import java.util.ArrayList;
 import java.util.List;
+import lt.markmerkk.interfaces.IRemoteListener;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
@@ -24,7 +25,27 @@ public class JiraLogExecutor extends BaseExecutor2 {
   public final static DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
   public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
   public static final String JQL_WORKLOG_TEMPLATE =
-      "key in workedIssues(\"2016-01-14\", \"2016-01-14\", \"marius.m@ito.lt\")";
+      "key in workedIssues(\"%s\", \"%s\", \"%s\")";
+
+  IRemoteListener remoteListener;
+
+  public JiraLogExecutor(IRemoteListener remoteListener) {
+    if (remoteListener == null)
+      throw new IllegalArgumentException("remoteListener == null");
+    this.remoteListener = remoteListener;
+  }
+
+  /**
+   * Runs {@link #runner(String, String, String, DateTime, DateTime)} asynchronously
+   */
+  public void asyncRunner(String host, String user, String pass, DateTime startSearchDate, DateTime endSearchDate) {
+    executeInBackground(new Runnable() {
+      @Override
+      public void run() {
+        runner(host, user, pass, startSearchDate, endSearchDate);
+      }
+    });
+  }
 
   /**
    * Runs jira worklog pull for the provided date
@@ -39,10 +60,13 @@ public class JiraLogExecutor extends BaseExecutor2 {
 
       startSearchDate = startSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
       endSearchDate = endSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-      doSearchWorklog(startSearchDate, endSearchDate, jira);
+
+      List<WorkLog> workLogs = doFetchWorklog(startSearchDate, endSearchDate, jira);
+      remoteListener.onResult(workLogs);
     } catch (JiraException e) {
-      logger.debug(e.getMessage());
-    }
+      remoteListener.onError(e.getMessage());
+      logger.info(e.getMessage());
+    } catch (InterruptedException e) { }
   }
 
   //region Convenience
@@ -54,26 +78,32 @@ public class JiraLogExecutor extends BaseExecutor2 {
    * @param jira provided jira client
    * @throws JiraException
    */
-  List<WorkLog> doSearchWorklog(DateTime startSearchDate, DateTime endSearchDate, JiraClient jira) throws JiraException {
-    Issue.SearchResult sr = jira.searchIssues(
-        String.format(JQL_WORKLOG_TEMPLATE,
-            dateFormat.print(startSearchDate.getMillis()),
-            dateFormat.print(endSearchDate.getMillis())
-        )
-    );
+  List<WorkLog> doFetchWorklog(DateTime startSearchDate, DateTime endSearchDate, JiraClient jira) throws JiraException, InterruptedException {
     logger.info("Looking on worked issues through " + longFormat.print(startSearchDate)
         + " to "
         + longFormat.print(endSearchDate)
         + " for "
         + jira.getSelf());
+    if (!isLoading()) throw new InterruptedException();
+    Issue.SearchResult sr = jira.searchIssues(
+        String.format(JQL_WORKLOG_TEMPLATE,
+            dateFormat.print(startSearchDate.getMillis()),
+            dateFormat.print(endSearchDate.getMillis()),
+            jira.getSelf()
+        )
+    );
+    if (!isLoading()) throw new InterruptedException();
     logger.info("Found issues " + sr.issues.size() + " that have been worked on: ");
     List<WorkLog> logs = new ArrayList<>();
     for (Issue i : sr.issues) {
+      if (!isLoading()) throw new InterruptedException();
       Issue issue = jira.getIssue(i.getKey());
+      if (!isLoading()) throw new InterruptedException();
       List<WorkLog> filteredLogs = filterLogs(jira.getSelf(), startSearchDate, endSearchDate, issue.getAllWorkLogs());
       logs.addAll(filteredLogs);
       logger.info("Found " + filteredLogs.size() + " logs that have been worked on " + i.getKey());
     }
+    if (!isLoading()) throw new InterruptedException();
     return logs;
   }
 
@@ -119,12 +149,11 @@ public class JiraLogExecutor extends BaseExecutor2 {
 
   //endregion
 
-//  public void asyncRunner() {
-//    executeInBackground(this::runner);
-//  }
-
   @Override
-  protected void onCancel() { }
+  protected void onCancel() {
+    logger.info("Cancelled.");
+    remoteListener.onCancel();
+  }
 
   @Override
   protected void onReady() { }
@@ -133,5 +162,7 @@ public class JiraLogExecutor extends BaseExecutor2 {
   protected void onFinish() { }
 
   @Override
-  protected void onLoadChange(boolean loading) { }
+  protected void onLoadChange(boolean loading) {
+    remoteListener.onLoadChange(loading);
+  }
 }

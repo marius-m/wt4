@@ -3,116 +3,103 @@ package lt.markmerkk.utils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
+import lt.markmerkk.JiraLogExecutor;
+import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.storage2.BasicLogStorage;
+import net.rcarz.jiraclient.WorkLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 1/5/16.
  * Handles synchronization with jira from other components
  */
 public class SyncController {
-//  @Inject UserSettings settings;
-//  @Inject DBProdExecutor executor;
-//  @Inject BasicLogStorage storage;
+  @Inject UserSettings settings;
+  @Inject DBProdExecutor dbExecutor;
+  @Inject BasicLogStorage storage;
 //  @Inject WorkExecutor workExecutor;
-//  @Inject LastUpdateController lastUpdateController;
+  @Inject LastUpdateController lastUpdateController;
 
-  //Log log = LogFactory.getLog(SyncController.class);
+  JiraLogExecutor jiraLogExecutor;
+  List<IRemoteListener> remoteListeners = new ArrayList<>();
 
-//  List<WorkerLoadingListener> loadingListenerList = new ArrayList<>();
+  @PostConstruct
+  public void init() {
+    jiraLogExecutor = new JiraLogExecutor(remoteListener);
+    jiraLogExecutor.onStart();
+  }
 
-//  @PostConstruct
-//  public void init() {
-//    workExecutor.setOutputListener(workerOutputListener);
-//    workExecutor.setLoadingListener(workerLoadingListener);
-//    workExecutor.setErrorListener(errorListener);
-//  }
-//
-//  /**
-//   * Main method to start synchronization
-//   */
-//  public void sync() {
-//    if (workExecutor.isLoading() || workExecutor.hasMore()) {
-//      workExecutor.cancel();
-//      return;
-//    }
-//    lastUpdateController.setError(false);
-//    try {
-//      Credentials credentials =
-//          new Credentials(settings.getUsername(), settings.getPassword(),
-//              settings.getHost());
-//      workExecutor.executeScheduler(
-//          new WorkScheduler2(credentials,
-//              new JiraWorkerLogin(),
-//              new JiraWorkerPushNew(executor, storage.getTargetDate()),
-//              new JiraWorkerTodayIssues(storage.getTargetDate()),
-//              new JiraWorkerWorklogForIssue(settings.getUsername(), storage.getTargetDate()),
-//              new JiraWorkerPullMerge(executor),
-//              new JiraWorkerOpenIssues(executor)
-//          )
-//      );
-//    } catch (Exception e) {
-//      log.info(e.getMessage());
-//    }
-//  }
-//
-//  //region Getters / Setters
-//
-//  public void addLoadingListener(WorkerLoadingListener listener) {
-//    if (listener == null) return;
-//    loadingListenerList.add(listener);
-//  }
-//
-//  public void removeLoadingListener(WorkerLoadingListener listener) {
-//    if (listener == null) return;
-//    loadingListenerList.remove(listener);
-//  }
-//
-//  public boolean isLoading() {
-//    return workExecutor.isLoading();
-//  }
-//
-//  public boolean isSyncing() {
-//    return workExecutor.isSyncing();
-//  }
-//
-//  //endregion
-//
-//  //region Listeners
-//
-//  WorkerOutputListener workerOutputListener = new WorkerOutputListener() {
-//    @Override
-//    public void onOutput(String message) {
-//      log.info(message);
-//    }
-//  };
-//
-//  WorkerLoadingListener workerLoadingListener = new WorkerLoadingListener() {
-//    @Override
-//    public void onLoadChange(boolean loading) {
-//      for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
-//        workerLoadingListener.onLoadChange(loading);
-//    }
-//
-//    @Override
-//    public void onSyncChange(boolean syncing) {
-//      lastUpdateController.setLoading(syncing);
-//      if (!syncing) {
-//        storage.notifyDataChange();
-//        lastUpdateController.refresh();
-//      }
-//      for (WorkerLoadingListener workerLoadingListener : loadingListenerList)
-//        workerLoadingListener.onSyncChange(syncing);
-//    }
-//  };
-//
-//  WorkerErrorListener errorListener = new WorkerErrorListener() {
-//    @Override
-//    public void onError(String error) {
-//      lastUpdateController.setError(true);
-//    }
-//  };
+  @PreDestroy
+  public void destroy() {
+    jiraLogExecutor.onStop();
+  }
+
+  /**
+   * Main method to start synchronization
+   */
+  public void sync() {
+    if (jiraLogExecutor.isLoading()) {
+      jiraLogExecutor.cancel();
+      return;
+    }
+    lastUpdateController.setError(false);
+    jiraLogExecutor.asyncRunner(
+        settings.getHost(),
+        settings.getUsername(),
+        settings.getPassword(),
+        storage.getTargetDate(),
+        storage.getTargetDate().plusDays(1)
+    );
+  }
+
+  //region Getters / Setters
+
+  public boolean isLoading() {
+    return jiraLogExecutor.isLoading();
+  }
+
+  public void addLoadingListener(IRemoteListener listener) {
+    if (listener == null) return;
+    remoteListeners.add(listener);
+  }
+
+  public void removeLoadingListener(IRemoteListener listener) {
+    if (listener == null) return;
+    remoteListeners.remove(listener);
+  }
+
+  //endregion
+
+  //region Listeners
+  IRemoteListener remoteListener = new IRemoteListener() {
+    @Override
+    public void onLoadChange(boolean loading) {
+      lastUpdateController.setLoading(loading);
+      if (!loading) {
+        storage.notifyDataChange();
+        lastUpdateController.refresh();
+      }
+      for (IRemoteListener remoteListeners : SyncController.this.remoteListeners)
+        remoteListeners.onLoadChange(loading);
+    }
+
+    @Override
+    public void onResult(List<WorkLog> remoteLogs) {
+
+    }
+
+    @Override
+    public void onError(String error) {
+      lastUpdateController.setError(true);
+    }
+
+    @Override
+    public void onCancel() { }
+  };
 
   //endregion
 

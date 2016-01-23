@@ -186,7 +186,9 @@ public class Utils {
             File file = new File("checkLog.log");
             ReversedLinesFileReader object = new ReversedLinesFileReader(file);
             while (lineCount < maxLines) {
-                output.insert(0, object.readLine() + "\n");
+                String line = object.readLine();
+                if (line == null) return "";
+                output.insert(0, line + "\n");
                 lineCount++;
             }
         } catch (IOException e) {

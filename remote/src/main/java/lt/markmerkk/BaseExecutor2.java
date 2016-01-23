@@ -7,6 +7,8 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Only one execution can be done at time.
  */
 public abstract class BaseExecutor2 {
+  private static final Logger logger = LoggerFactory.getLogger(BaseExecutor2.class);
   private ListenableFuture future;
   private ListeningExecutorService mainExecutor;
   //private Handler handler = new Handler();
@@ -110,7 +113,7 @@ public abstract class BaseExecutor2 {
    */
   private void printDebug(String message) {
     if (!DEBUG) return;
-    System.out.println(message);
+    logger.info(message);
   }
 
   //endregion

@@ -1,6 +1,7 @@
 package lt.markmerkk.ui.settings;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -20,10 +21,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
+import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
+import net.rcarz.jiraclient.WorkLog;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
@@ -34,7 +37,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to edit settings
  */
-public class SettingsPresenter implements Initializable, Destroyable {
+public class SettingsPresenter implements Initializable, Destroyable, IRemoteListener {
 
   @Inject UserSettings settings;
   @Inject SyncController syncController;
@@ -46,9 +49,6 @@ public class SettingsPresenter implements Initializable, Destroyable {
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh;
   @FXML ComboBox<String> refreshCombo;
-
-
-  ObservableList<String> refreshVars = FXCollections.observableArrayList();
 
   Appender guiAppender;
 
@@ -84,13 +84,13 @@ public class SettingsPresenter implements Initializable, Destroyable {
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
-//    onSyncChange(syncController.isLoading());
-//    syncController.addLoadingListener(this);
+    onLoadChange(syncController.isLoading());
+    syncController.addLoadingListener(this);
   }
 
   @Override public void destroy() {
-//    syncController.removeLoadingListener(this);
-//    Logger.getRootLogger().removeAppender(guiAppender);
+    syncController.removeLoadingListener(this);
+    Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
@@ -113,21 +113,26 @@ public class SettingsPresenter implements Initializable, Destroyable {
       settings.setHost(inputHost.getText());
       settings.setUsername(inputUsername.getText());
       settings.setPassword(inputPassword.getText());
-      //syncController.sync();
+      syncController.sync();
     }
   };
 
-//  @Override
-//  public void onLoadChange(boolean loading) {
-//  }
+  @Override
+  public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      outputProgress.setManaged(loading);
+      outputProgress.setVisible(loading);
+    });
+  }
 
-//  @Override
-//  public void onSyncChange(boolean syncing) {
-//    Platform.runLater(() -> {
-//      outputProgress.setManaged(syncing);
-//      outputProgress.setVisible(syncing);
-//    });
-//  }
+  @Override
+  public void onResult(List<WorkLog> remoteLogs) { }
+
+  @Override
+  public void onError(String error) { }
+
+  @Override
+  public void onCancel() { }
 
   //endregion
 
