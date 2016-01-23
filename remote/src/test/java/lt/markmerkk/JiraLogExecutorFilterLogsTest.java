@@ -2,6 +2,8 @@ package lt.markmerkk;
 
 import java.util.ArrayList;
 import java.util.List;
+import lt.markmerkk.interfaces.IRemoteListener;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -27,7 +29,7 @@ public class JiraLogExecutorFilterLogsTest {
 
   @Before
   public void setUp() {
-      executor = new JiraLogExecutor();
+      executor = new JiraLogExecutor(mock(IRemoteListener.class), mock(IRemoteLoadListener.class));
   }
 
   @Test
