@@ -1,7 +1,9 @@
 package lt.markmerkk;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import net.rcarz.jiraclient.BasicCredentials;
@@ -61,7 +63,7 @@ public class JiraLogExecutor extends BaseExecutor2 {
       startSearchDate = startSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
       endSearchDate = endSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
 
-      List<WorkLog> workLogs = doFetchWorklog(startSearchDate, endSearchDate, jira);
+      Map<String, List<WorkLog>> workLogs = doFetchWorklog(startSearchDate, endSearchDate, jira);
       remoteListener.onWorklogDownloadComplete(workLogs);
     } catch (JiraException e) {
       remoteListener.onError(e.getMessage());
@@ -78,7 +80,7 @@ public class JiraLogExecutor extends BaseExecutor2 {
    * @param jira provided jira client
    * @throws JiraException
    */
-  List<WorkLog> doFetchWorklog(DateTime startSearchDate, DateTime endSearchDate, JiraClient jira) throws JiraException, InterruptedException {
+  Map<String, List<WorkLog>> doFetchWorklog(DateTime startSearchDate, DateTime endSearchDate, JiraClient jira) throws JiraException, InterruptedException {
     logger.info("Looking on worked issues through " + longFormat.print(startSearchDate)
         + " to "
         + longFormat.print(endSearchDate)
@@ -94,13 +96,13 @@ public class JiraLogExecutor extends BaseExecutor2 {
     Issue.SearchResult sr = jira.searchIssues(jql);
     if (!isLoading()) throw new InterruptedException();
     logger.info("Found issues " + sr.issues.size() + " that have been worked on: ");
-    List<WorkLog> logs = new ArrayList<>();
+    Map<String, List<WorkLog>> logs = new HashMap<>();
     for (Issue i : sr.issues) {
       if (!isLoading()) throw new InterruptedException();
       Issue issue = jira.getIssue(i.getKey());
       if (!isLoading()) throw new InterruptedException();
       List<WorkLog> filteredLogs = filterLogs(jira.getSelf(), startSearchDate, endSearchDate, issue.getAllWorkLogs());
-      logs.addAll(filteredLogs);
+      logs.put(i.getKey(), filteredLogs);
       logger.info("Found " + filteredLogs.size() + " logs that have been worked on " + i.getKey());
     }
     if (!isLoading()) throw new InterruptedException();

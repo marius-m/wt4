@@ -1,6 +1,7 @@
 package lt.markmerkk.interfaces;
 
 import java.util.List;
+import java.util.Map;
 import net.rcarz.jiraclient.WorkLog;
 
 /**
@@ -12,7 +13,7 @@ public interface IRemoteListener {
    * Reported remote logs
    * @param remoteLogs
    */
-  void onWorklogDownloadComplete(List<WorkLog> remoteLogs);
+  void onWorklogDownloadComplete(Map<String, List<WorkLog>> remoteLogs);
 
   /**
    * Reported error when fetching data

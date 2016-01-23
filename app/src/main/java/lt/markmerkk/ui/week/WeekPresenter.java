@@ -3,6 +3,7 @@ package lt.markmerkk.ui.week;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,7 +29,7 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable, Destroyable, IPresenter {
+public class WeekPresenter implements Initializable, Destroyable, IPresenter, SimpleAsyncExecutor.LoadListener {
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
@@ -36,7 +37,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter {
 
   Agenda.AppointmentImplLocal[] appointments;
   UpdateListener updateListener;
-//  TaskExecutor3 asyncExecutor;
+  SimpleAsyncExecutor asyncExecutor;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     storage.register(storageListener);
@@ -48,10 +49,10 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter {
 		agenda.setAllowResize(false);
     agenda.editAppointmentCallbackProperty().set(agendaCallbackListener);
     mainContainer.getChildren().add(agenda);
-//    asyncExecutor = new TaskExecutor3();
-//    asyncExecutor.setListener(this);
-//    asyncExecutor.onStart();
-//    asyncExecutor.executeInBackground(updateRunnable);
+    asyncExecutor = new SimpleAsyncExecutor();
+    asyncExecutor.setListener(this);
+    asyncExecutor.onStart();
+    asyncExecutor.executeInBackground(updateRunnable);
   }
 
   public void setUpdateListener(UpdateListener updateListener) {
@@ -61,7 +62,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter {
   @PreDestroy
   @Override
   public void destroy() {
-//    asyncExecutor.onStop();
+    asyncExecutor.onStop();
     storage.unregister(storageListener);
   }
 
@@ -70,9 +71,9 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter {
   IDataListener<SimpleLog> storageListener = new IDataListener<SimpleLog>() {
     @Override
     public void onDataChange(ObservableList<SimpleLog> data) {
-//      if (asyncExecutor.isLoading())
-//        asyncExecutor.cancel();
-//      asyncExecutor.executeInBackground(updateRunnable);
+      if (asyncExecutor.isLoading())
+        asyncExecutor.cancel();
+      asyncExecutor.executeInBackground(updateRunnable);
     }
   };
 
@@ -155,13 +156,15 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter {
     }
   };
 
-//  @Override
-//  public void onLoadChange(boolean loading) {
-//    if (!loading) {
-//      agenda.appointments().clear();
-//      agenda.appointments().addAll(appointments);
-//    }
-//  }
+  @Override
+  public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      if (!loading) {
+        agenda.appointments().clear();
+        agenda.appointments().addAll(appointments);
+      }
+    });
+  }
 
   //endregion
 

@@ -3,6 +3,7 @@ package lt.markmerkk.storage2;
 import java.net.URI;
 import java.net.URISyntaxException;
 import lt.markmerkk.utils.Utils;
+import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
@@ -48,51 +49,51 @@ public class SimpleLogBuilder {
    * @param task
    * @param remoteLog
    */
-//  public SimpleLogBuilder(String task, Worklog remoteLog) {
-//    if (task == null)
-//      throw new IllegalArgumentException("Error getting task number log!");
-//    if (remoteLog == null)
-//      throw new IllegalArgumentException("Error getting remote log!");
-//    this.start = remoteLog.getStartDate().getMillis();
-//    this.end = remoteLog.getStartDate()
-//        .withFieldAdded(DurationFieldType.minutes(), remoteLog.getMinutesSpent())
-//        .getMillis();
-//    this.task = Utils.validateTaskTitle(task);
-//    this.comment = remoteLog.getComment();
-//    this.uri = remoteLog.getSelf().toString();
-//    this.id = parseWorklogUri(this.uri);
-//
-//    this.deleted = false;
-//    this.dirty = false;
-//    this.error = false;
-//    this.errorMessage = null;
-//  }
+  public SimpleLogBuilder(String task, WorkLog remoteLog) {
+    if (task == null)
+      throw new IllegalArgumentException("Error getting task number log!");
+    if (remoteLog == null)
+      throw new IllegalArgumentException("Error getting remote log!");
+    this.start = remoteLog.getStarted().getTime();
+    this.end = new DateTime(remoteLog.getStarted().getTime())
+        .withFieldAdded(DurationFieldType.seconds(), remoteLog.getTimeSpentSeconds())
+        .getMillis();
+    this.task = Utils.validateTaskTitle(task);
+    this.comment = remoteLog.getComment();
+    this.uri = remoteLog.getSelf().toString();
+    this.id = parseWorklogUri(this.uri);
+
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
 
   /**
    * Updating from remote
    * @param task
    * @param remoteLog
    */
-//  public SimpleLogBuilder(SimpleLog simpleLog, String task, Worklog remoteLog) {
-//    this._id = simpleLog._id;
-//    if (task == null)
-//      throw new IllegalArgumentException("Error getting task number log!");
-//    if (remoteLog == null)
-//      throw new IllegalArgumentException("Error getting remote log!");
-//    this.start = remoteLog.getStartDate().getMillis();
-//    this.end = remoteLog.getStartDate()
-//        .withFieldAdded(DurationFieldType.minutes(), remoteLog.getMinutesSpent())
-//        .getMillis();
-//    this.task = Utils.validateTaskTitle(task);
-//    this.comment = remoteLog.getComment();
-//
-//    this.uri = remoteLog.getSelf().toString();
-//    this.id = parseWorklogUri(this.uri);
-//    this.deleted = false;
-//    this.dirty = false;
-//    this.error = false;
-//    this.errorMessage = null;
-//  }
+  public SimpleLogBuilder(SimpleLog simpleLog, String task, WorkLog remoteLog) {
+    this._id = simpleLog._id;
+    if (task == null)
+      throw new IllegalArgumentException("Error getting task number log!");
+    if (remoteLog == null)
+      throw new IllegalArgumentException("Error getting remote log!");
+    this.start = remoteLog.getStarted().getTime();
+    this.end = new DateTime(remoteLog.getStarted().getTime())
+        .withFieldAdded(DurationFieldType.seconds(), remoteLog.getTimeSpentSeconds())
+        .getMillis();
+    this.task = Utils.validateTaskTitle(task);
+    this.comment = remoteLog.getComment();
+
+    this.uri = remoteLog.getSelf().toString();
+    this.id = parseWorklogUri(this.uri);
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
 
   /**
    * Cloning log

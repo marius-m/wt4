@@ -2,6 +2,7 @@ package lt.markmerkk.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -11,6 +12,7 @@ import lt.markmerkk.JiraLogExecutor;
 import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
+import lt.markmerkk.storage2.RemoteFetchMerger;
 import net.rcarz.jiraclient.WorkLog;
 
 /**
@@ -77,9 +79,15 @@ public class SyncController {
   //region Listeners
 
   IRemoteListener remoteListener = new IRemoteListener() {
-    @Override
-    public void onWorklogDownloadComplete(List<WorkLog> remoteLogs) {
 
+    @Override
+    public void onWorklogDownloadComplete(Map<String, List<WorkLog>> remoteLogs) {
+      for (String key : remoteLogs.keySet())
+        for (WorkLog workLog : remoteLogs.get(key))
+          new RemoteFetchMerger(dbExecutor, key, workLog).merge();
+      Platform.runLater(() -> {
+        storage.notifyDataChange();
+      });
     }
 
     @Override
