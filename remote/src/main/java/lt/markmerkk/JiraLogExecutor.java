@@ -85,13 +85,13 @@ public class JiraLogExecutor extends BaseExecutor2 {
         + " for "
         + jira.getSelf());
     if (!isLoading()) throw new InterruptedException();
-    Issue.SearchResult sr = jira.searchIssues(
-        String.format(JQL_WORKLOG_TEMPLATE,
-            dateFormat.print(startSearchDate.getMillis()),
-            dateFormat.print(endSearchDate.getMillis()),
-            jira.getSelf()
-        )
+    String jql = String.format(JQL_WORKLOG_TEMPLATE,
+        dateFormat.print(startSearchDate.getMillis()),
+        dateFormat.print(endSearchDate.getMillis()),
+        jira.getSelf()
     );
+    logger.debug("Running JQL "+jql);
+    Issue.SearchResult sr = jira.searchIssues(jql);
     if (!isLoading()) throw new InterruptedException();
     logger.info("Found issues " + sr.issues.size() + " that have been worked on: ");
     List<WorkLog> logs = new ArrayList<>();

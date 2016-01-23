@@ -1,6 +1,7 @@
 package lt.markmerkk.ui.status;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -13,6 +14,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
+import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
@@ -20,12 +22,13 @@ import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
+import net.rcarz.jiraclient.WorkLog;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable {
+public class StatusPresenter implements Initializable, Destroyable, IRemoteListener {
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
@@ -51,17 +54,17 @@ public class StatusPresenter implements Initializable, Destroyable {
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
     buttonToday.setTooltip(new Tooltip("Total" +
         "\n\nTotal work duration."));
-    //syncController.addLoadingListener(this);
+    syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
 
     updateStatus();
-    //onSyncChange(syncController.isLoading());
+    onLoadChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
   }
 
   @Override public void destroy() {
-    //syncController.removeLoadingListener(this);
+    syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
   }
 
@@ -102,30 +105,16 @@ public class StatusPresenter implements Initializable, Destroyable {
   EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
-//      syncController.sync();
+      syncController.sync();
     }
   };
-
-//  @Override
-//  public void onLoadChange(boolean loading) {
-//    updateStatus();
-//  }
-
-//  @Override
-//  public void onSyncChange(boolean syncing) {
-//    Platform.runLater(() -> {
-//      outputProgress.setManaged(syncing);
-//      outputProgress.setVisible(syncing);
-//    });
-//    updateStatus();
-//  }
 
   KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
     @Override
     public void onUpdate() {
-//      if (!syncController.isSyncing() && autoSync.isSyncNeeded())
-//        syncController.sync();
-//      updateStatus();
+      if (!syncController.isLoading() && autoSync.isSyncNeeded())
+        syncController.sync();
+      updateStatus();
     }
   };
 
@@ -136,6 +125,24 @@ public class StatusPresenter implements Initializable, Destroyable {
   public void setListener(Listener listener) {
     this.listener = listener;
   }
+
+  @Override
+  public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      outputProgress.setManaged(loading);
+      outputProgress.setVisible(loading);
+    });
+    updateStatus();
+  }
+
+  @Override
+  public void onResult(List<WorkLog> remoteLogs) { }
+
+  @Override
+  public void onError(String error) { }
+
+  @Override
+  public void onCancel() { }
 
 
   //endregion

@@ -187,14 +187,12 @@ public class Utils {
             ReversedLinesFileReader object = new ReversedLinesFileReader(file);
             while (lineCount < maxLines) {
                 String line = object.readLine();
-                if (line == null) return "";
+                //if (line == null) return "";
                 output.insert(0, line + "\n");
                 lineCount++;
             }
         } catch (IOException e) {
-            e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
         }
         return output.toString();
     }

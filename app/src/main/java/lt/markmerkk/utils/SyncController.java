@@ -2,6 +2,7 @@ package lt.markmerkk.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -78,13 +79,15 @@ public class SyncController {
   IRemoteListener remoteListener = new IRemoteListener() {
     @Override
     public void onLoadChange(boolean loading) {
-      lastUpdateController.setLoading(loading);
-      if (!loading) {
-        storage.notifyDataChange();
-        lastUpdateController.refresh();
-      }
-      for (IRemoteListener remoteListeners : SyncController.this.remoteListeners)
-        remoteListeners.onLoadChange(loading);
+      Platform.runLater(() -> {
+        lastUpdateController.setLoading(loading);
+        if (!loading) {
+          storage.notifyDataChange();
+          lastUpdateController.refresh();
+        }
+        for (IRemoteListener remoteListeners : SyncController.this.remoteListeners)
+          remoteListeners.onLoadChange(loading);
+      });
     }
 
     @Override
@@ -94,7 +97,9 @@ public class SyncController {
 
     @Override
     public void onError(String error) {
-      lastUpdateController.setError(true);
+      Platform.runLater(() -> {
+        lastUpdateController.setError(true);
+      });
     }
 
     @Override
