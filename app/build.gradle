@@ -7,39 +7,31 @@
  * user guide available at http://gradle.org/docs/2.5/userguide/tutorial_java_projects.html
  */
 
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'application'
 apply from: 'javafx.plugin'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'idea'
+
 mainClassName = "lt.markmerkk.Main"
 
 allprojects {
     repositories {
+        mavenCentral()
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-
-repositories {
-    jcenter()
-}
-
-//sourceSets {
-//    dagger {
-//        java {
-//            srcDirs = ['src/dagger/java']
-//        }
-//    }
-//}
-
-//configurations {
-//    compileDagger
-//}
-
 group = 'lt.markmerkk'
-version = '0.9.3'
+version = '0.9.4'
 
 javafx {
     appID 'WT4'
@@ -48,7 +40,7 @@ javafx {
     profiles {
         macosx {
             //        javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
-//            javaRuntime = '<NO RUNTIME>'
+            javaRuntime = '<NO RUNTIME>'
         }
     }
 }
@@ -58,9 +50,12 @@ dependencies {
     //    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     //    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
 //    compile fileTree(dir: '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes', include: 'ui.jar')
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
 //    compile 'com.google.guava:guava:18.0'
+    compile 'com.vinumeris:updatefx:1.5'
+
     compile 'com.airhacks:afterburner.fx:1.6.0'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '1.3.7'
@@ -96,17 +91,3 @@ dependencies {
     }
     compile group: 'com.atlassian.jira', name: 'jira-nimble-func-tests', version:'1.0'
 }
-
-//compileJava {
-//    description = "dagger annotation processor is loaded automatically from classpath"
-//    sourceSets.dagger.java.srcDirs*.mkdirs()
-//    classpath += configurations.compileDagger
-//    options.compilerArgs += [
-//        '-s', sourceSets.dagger.java.srcDirs.iterator().next()
-//    ]
-//}
-
-//clean {
-//    description = "delete files in generated source directory tree"
-//    delete fileTree(dir: sourceSets.dagger.java.srcDirs.iterator().next())
-//}

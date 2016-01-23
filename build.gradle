@@ -29,6 +29,7 @@ subprojects {
     maven { url "http://repo.maven.apache.org/maven2" }
     maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
     maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
+
   }
 
   configurations.all {}
