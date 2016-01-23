@@ -1,42 +1,51 @@
-package lt.markmerkk.jira;
+package lt.markmerkk;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import javafx.application.Platform;
-import lt.markmerkk.ui.status.StatusPresenter;
 
 /**
  * Created by mariusmerkevicius on 11/25/15.
- * An abstract executor class to do various jobs in the background and reports
- * its loging process
+ * Base class of a background executor to execute methods.
+ *
+ * Only one execution can be done at time.
  */
-public class TaskExecutor3  {
-  private ListenableFuture futureResult;
+public abstract class BaseExecutor2 {
+  private ListenableFuture future;
   private ListeningExecutorService mainExecutor;
+  //private Handler handler = new Handler();
 
   public static final boolean DEBUG = false;
   private boolean loading = false;
 
-  Listener listener;
-
-  public TaskExecutor3() { }
+  public BaseExecutor2() {
+  }
 
   //region Abstract
 
   /**
-   * Executed when there are changes in the loading state.
-   * @param loading
+   * Called whenever cancel is executed
    */
-  void onLoadChange(boolean loading) {
-    if (listener == null) return;
-    listener.onLoadChange(loading);
-  }
+  protected abstract void onCancel();
+
+  /**
+   * Called whenever executor is ready for another task
+   */
+  protected abstract void onReady();
+
+  /**
+   * Executed when background task is finished
+   */
+  protected abstract void onFinish();
+
+  /**
+   * Executed when there are changes in the loading state.
+   */
+  protected abstract void onLoadChange(boolean loading);
 
   //endregion
 
@@ -45,6 +54,7 @@ public class TaskExecutor3  {
   }
 
   public void onStop() {
+    if (mainExecutor == null) return;
     try {
       mainExecutor.shutdown();
       mainExecutor.awaitTermination(3, TimeUnit.SECONDS);
@@ -66,15 +76,20 @@ public class TaskExecutor3  {
     if (isLoading()) return;
     printDebug("Executing");
     setLoading(true);
-    futureResult = mainExecutor.submit(runnable);
-    Futures.addCallback(futureResult, new FutureCallback<Void>() {
-      @Override public void onSuccess(Void resultType) {
+    future = mainExecutor.submit(runnable);
+    Futures.addCallback(future, new FutureCallback<Void>() {
+      @Override
+      public void onSuccess(Void resultType) {
         setLoading(false);
+        onFinish();
+        onReady();
       }
 
-      @Override public void onFailure(Throwable throwable) {
+      @Override
+      public void onFailure(Throwable throwable) {
         setLoading(false);
-        System.out.println("Some error something");
+        onFinish();
+        onReady();
       }
     });
   }
@@ -83,14 +98,15 @@ public class TaskExecutor3  {
    * Calls a cancel on currently loading task
    */
   public void cancel() {
-    if (futureResult != null) futureResult.cancel(true);
+    if (future == null) return;
+    onCancel();
+    future.cancel(true);
     printDebug("Cancel");
     setLoading(false);
   }
 
   /**
    * Convenience method to print out logic for debugging workflow
-   * @param message
    */
   private void printDebug(String message) {
     if (!DEBUG) return;
@@ -101,19 +117,13 @@ public class TaskExecutor3  {
 
   //region Getters / setters
 
-
-  public void setListener(Listener listener) {
-    this.listener = listener;
-  }
-
   /**
    * Returns current state of loading
-   * @return
    */
   public boolean isLoading() {
-    if (futureResult == null) return false;
-    if (futureResult.isDone()) return false;
-    if (futureResult.isCancelled()) return false;
+    if (future == null) return false;
+    if (future.isDone()) return false;
+    if (future.isCancelled()) return false;
     return true;
   }
 
@@ -122,17 +132,8 @@ public class TaskExecutor3  {
       return;
     this.loading = loading;
     printDebug("Loading: " + loading);
-    Platform.runLater(() -> onLoadChange(loading));
+    onLoadChange(loading);
   }
-
-  //endregion
-
-  //region Classes
-
-  public interface Listener {
-    void onLoadChange(boolean loading);
-  }
-
-  //endregion
-
 }
+
+//endregion
