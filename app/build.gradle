@@ -39,7 +39,7 @@ javafx {
     mainClass = 'lt.markmerkk.Main'
     profiles {
         macosx {
-            //        javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
+            //javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
             javaRuntime = '<NO RUNTIME>'
         }
     }
@@ -50,11 +50,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.vinumeris:updatefx:1.5'
-
     compile 'com.airhacks:afterburner.fx:1.6.0'
-
-    compile group: 'org.jfxtras', name: 'jfxtras-agenda', version: '8.0-r5-SNAPSHOT'
     compile 'commons-io:commons-io:2.4'
+    compile 'org.jfxtras:jfxtras-agenda:8.0-r5-SNAPSHOT'
 
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
