@@ -9,16 +9,10 @@ import net.rcarz.jiraclient.WorkLog;
  */
 public interface IRemoteListener {
   /**
-   * Reports loading changes
-   * @param loading is in execution
-   */
-  void onLoadChange(boolean loading);
-
-  /**
    * Reported remote logs
    * @param remoteLogs
    */
-  void onResult(List<WorkLog> remoteLogs);
+  void onWorklogDownloadComplete(List<WorkLog> remoteLogs);
 
   /**
    * Reported error when fetching data

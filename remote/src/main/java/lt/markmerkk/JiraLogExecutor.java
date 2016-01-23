@@ -3,6 +3,7 @@ package lt.markmerkk;
 import java.util.ArrayList;
 import java.util.List;
 import lt.markmerkk.interfaces.IRemoteListener;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
@@ -28,23 +29,22 @@ public class JiraLogExecutor extends BaseExecutor2 {
       "key in workedIssues(\"%s\", \"%s\", \"%s\")";
 
   IRemoteListener remoteListener;
+  IRemoteLoadListener remoteLoadListener;
 
-  public JiraLogExecutor(IRemoteListener remoteListener) {
+  public JiraLogExecutor(IRemoteListener remoteListener, IRemoteLoadListener remoteLoadListener) {
     if (remoteListener == null)
       throw new IllegalArgumentException("remoteListener == null");
+    if (remoteLoadListener == null)
+      throw new IllegalArgumentException("remoteLoadListener == null");
     this.remoteListener = remoteListener;
+    this.remoteLoadListener = remoteLoadListener;
   }
 
   /**
    * Runs {@link #runner(String, String, String, DateTime, DateTime)} asynchronously
    */
   public void asyncRunner(String host, String user, String pass, DateTime startSearchDate, DateTime endSearchDate) {
-    executeInBackground(new Runnable() {
-      @Override
-      public void run() {
-        runner(host, user, pass, startSearchDate, endSearchDate);
-      }
-    });
+    executeInBackground(() -> runner(host, user, pass, startSearchDate, endSearchDate));
   }
 
   /**
@@ -62,7 +62,7 @@ public class JiraLogExecutor extends BaseExecutor2 {
       endSearchDate = endSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
 
       List<WorkLog> workLogs = doFetchWorklog(startSearchDate, endSearchDate, jira);
-      remoteListener.onResult(workLogs);
+      remoteListener.onWorklogDownloadComplete(workLogs);
     } catch (JiraException e) {
       remoteListener.onError(e.getMessage());
       logger.info(e.getMessage());
@@ -163,6 +163,6 @@ public class JiraLogExecutor extends BaseExecutor2 {
 
   @Override
   protected void onLoadChange(boolean loading) {
-    remoteListener.onLoadChange(loading);
+    remoteLoadListener.onLoadChange(loading);
   }
 }

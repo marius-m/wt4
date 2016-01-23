@@ -14,7 +14,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.interfaces.IRemoteListener;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
@@ -28,7 +28,7 @@ import net.rcarz.jiraclient.WorkLog;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable, IRemoteListener {
+public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener {
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
@@ -134,16 +134,6 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteListe
     });
     updateStatus();
   }
-
-  @Override
-  public void onResult(List<WorkLog> remoteLogs) { }
-
-  @Override
-  public void onError(String error) { }
-
-  @Override
-  public void onCancel() { }
-
 
   //endregion
 

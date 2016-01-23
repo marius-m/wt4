@@ -6,8 +6,6 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +19,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.interfaces.IRemoteListener;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
@@ -37,7 +35,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to edit settings
  */
-public class SettingsPresenter implements Initializable, Destroyable, IRemoteListener {
+public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoadListener {
 
   @Inject UserSettings settings;
   @Inject SyncController syncController;
@@ -124,15 +122,6 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLis
       outputProgress.setVisible(loading);
     });
   }
-
-  @Override
-  public void onResult(List<WorkLog> remoteLogs) { }
-
-  @Override
-  public void onError(String error) { }
-
-  @Override
-  public void onCancel() { }
 
   //endregion
 
