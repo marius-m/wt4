@@ -7,11 +7,11 @@ import javafx.collections.ObservableList;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import lt.markmerkk.jira.WorkExecutor;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.UserSettings;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Created by mariusmerkevicius on 1/8/16.
@@ -43,7 +43,7 @@ public class AutoSync2 {
   Map<String, Long> selections;
   String currentSelection = null;
 
-  Log log = LogFactory.getLog(AutoSync2.class);
+  Logger log = LoggerFactory.getLogger(AutoSync2.class);
 
   public AutoSync2() {
     this.selections = new HashMap<>();

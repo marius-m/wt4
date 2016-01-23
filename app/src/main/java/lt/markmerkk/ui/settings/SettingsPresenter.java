@@ -20,7 +20,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
@@ -35,7 +34,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to edit settings
  */
-public class SettingsPresenter implements Initializable, Destroyable, WorkerLoadingListener {
+public class SettingsPresenter implements Initializable, Destroyable {
 
   @Inject UserSettings settings;
   @Inject SyncController syncController;
@@ -85,13 +84,13 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
-    onSyncChange(syncController.isLoading());
-    syncController.addLoadingListener(this);
+//    onSyncChange(syncController.isLoading());
+//    syncController.addLoadingListener(this);
   }
 
   @Override public void destroy() {
-    syncController.removeLoadingListener(this);
-    Logger.getRootLogger().removeAppender(guiAppender);
+//    syncController.removeLoadingListener(this);
+//    Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
@@ -114,21 +113,21 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
       settings.setHost(inputHost.getText());
       settings.setUsername(inputUsername.getText());
       settings.setPassword(inputPassword.getText());
-      syncController.sync();
+      //syncController.sync();
     }
   };
 
-  @Override
-  public void onLoadChange(boolean loading) {
-  }
+//  @Override
+//  public void onLoadChange(boolean loading) {
+//  }
 
-  @Override
-  public void onSyncChange(boolean syncing) {
-    Platform.runLater(() -> {
-      outputProgress.setManaged(syncing);
-      outputProgress.setVisible(syncing);
-    });
-  }
+//  @Override
+//  public void onSyncChange(boolean syncing) {
+//    Platform.runLater(() -> {
+//      outputProgress.setManaged(syncing);
+//      outputProgress.setVisible(syncing);
+//    });
+//  }
 
   //endregion
 

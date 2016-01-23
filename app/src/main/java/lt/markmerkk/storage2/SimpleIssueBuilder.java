@@ -1,7 +1,5 @@
 package lt.markmerkk.storage2;
 
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.Worklog;
 import java.net.URI;
 import java.net.URISyntaxException;
 import lt.markmerkk.utils.Utils;
@@ -40,32 +38,32 @@ public class SimpleIssueBuilder {
     this.errorMessage = null;
   }
 
-  public SimpleIssueBuilder(Issue remoteIssue) {
-    this.project = remoteIssue.getProject().getKey();
-    this.key = remoteIssue.getKey();
-    this.description = remoteIssue.getSummary();
+//  public SimpleIssueBuilder(Issue remoteIssue) {
+//    this.project = remoteIssue.getProject().getKey();
+//    this.key = remoteIssue.getKey();
+//    this.description = remoteIssue.getSummary();
+//
+//    this.uri = remoteIssue.getSelf().toString();
+//    this.id = remoteIssue.getId();
+//    this.deleted = false;
+//    this.dirty = false;
+//    this.error = false;
+//    this.errorMessage = null;
+//  }
 
-    this.uri = remoteIssue.getSelf().toString();
-    this.id = remoteIssue.getId();
-    this.deleted = false;
-    this.dirty = false;
-    this.error = false;
-    this.errorMessage = null;
-  }
-
-  public SimpleIssueBuilder(SimpleIssue oldIssue, Issue remoteIssue) {
-    this._id = oldIssue._id;
-    this.project = remoteIssue.getProject().getKey();
-    this.key = remoteIssue.getKey();
-    this.description = remoteIssue.getSummary();
-
-    this.uri = remoteIssue.getSelf().toString();
-    this.id = remoteIssue.getId();
-    this.deleted = false;
-    this.dirty = false;
-    this.error = false;
-    this.errorMessage = null;
-  }
+//  public SimpleIssueBuilder(SimpleIssue oldIssue, Issue remoteIssue) {
+//    this._id = oldIssue._id;
+//    this.project = remoteIssue.getProject().getKey();
+//    this.key = remoteIssue.getKey();
+//    this.description = remoteIssue.getSummary();
+//
+//    this.uri = remoteIssue.getSelf().toString();
+//    this.id = remoteIssue.getId();
+//    this.deleted = false;
+//    this.dirty = false;
+//    this.error = false;
+//    this.errorMessage = null;
+//  }
 
   public SimpleIssueBuilder setProject(String project) {
     this.project = project;

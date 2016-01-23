@@ -12,10 +12,5 @@
 include ':app'
 
 include ':database'
-include ':jira-rest-java-client-api'
-include ':jira-rest-java-client-core'
-project(':jira-rest-java-client-api').projectDir = "$rootDir/api" as File
-project(':jira-rest-java-client-core').projectDir = "$rootDir/core" as File
-
+include ':remote'
 rootProject.name = 'wt4'
-
