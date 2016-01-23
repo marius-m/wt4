@@ -11,6 +11,7 @@
 
 include ':app'
 
+include ':jira-client'
 include ':database'
 include ':remote'
 rootProject.name = 'wt4'

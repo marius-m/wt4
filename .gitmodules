@@ -1,0 +1,3 @@
+[submodule "jira-client"]
+	path = jira-client
+	url = https://github.com/mikulucky/jira-client.git
