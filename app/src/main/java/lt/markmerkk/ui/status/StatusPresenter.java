@@ -39,6 +39,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @FXML Button buttonRefresh;
   @FXML Button buttonViewToggle;
   @FXML Button buttonToday;
+  @FXML Button buttonAbout;
 
   String total;
 
@@ -54,6 +55,10 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
     buttonToday.setTooltip(new Tooltip("Total" +
         "\n\nTotal work duration."));
+    buttonAbout.setTooltip(new Tooltip("About" +
+        "\n\nAbout the app." +
+        "\nCheck for automatic updates!"));
+    buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
@@ -109,6 +114,14 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     }
   };
 
+  EventHandler<MouseEvent> aboutClickListener = new EventHandler<MouseEvent>() {
+    @Override
+    public void handle(MouseEvent event) {
+      if (listener == null) return;
+      listener.onAbout();
+    }
+  };
+
   KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
     @Override
     public void onUpdate() {
@@ -149,6 +162,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
      * @param type
      */
     void onDisplayType(DisplayType type);
+
+    /**
+     * Called when about is pressed
+     */
+    void onAbout();
   }
 
   //endregion

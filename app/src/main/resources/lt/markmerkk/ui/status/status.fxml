@@ -10,6 +10,14 @@
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
          <children>
+            <Button fx:id="buttonAbout" mnemonicParsing="false" text="?">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <HBox.margin>
+                  <Insets right="2.0" />
+               </HBox.margin>
+            </Button>
             <ProgressIndicator fx:id="outputProgress" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="14.0" visible="false">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" />

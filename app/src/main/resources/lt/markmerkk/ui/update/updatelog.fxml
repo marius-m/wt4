@@ -17,6 +17,11 @@
                   <Insets />
                </HBox.margin>
             </TextField>
+            <Button fx:id="buttonCancel" mnemonicParsing="false" onAction="#onClickCancel" prefHeight="15.0" prefWidth="15.0" text="x" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
          </children>
       </HBox>
       <HBox>
@@ -48,11 +53,6 @@
       </TextArea>
       <HBox>
          <children>
-            <Button fx:id="buttonCancel" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickCancel" text="Cancel" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </Button>
             <Button fx:id="buttonOk" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSave" text="Save" HBox.hgrow="ALWAYS" />
          </children>
          <VBox.margin>
