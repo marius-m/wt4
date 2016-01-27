@@ -17,7 +17,7 @@
                   <Insets />
                </HBox.margin>
             </TextField>
-            <Button fx:id="buttonCancel" mnemonicParsing="false" onAction="#onClickCancel" prefHeight="15.0" prefWidth="15.0" text="x" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonClose" mnemonicParsing="false" onAction="#onClickClose" prefHeight="15.0" prefWidth="15.0" text="x" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

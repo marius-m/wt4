@@ -26,7 +26,7 @@ public class UpdateLogPresenter {
   @FXML TextArea commentInput;
   @FXML TextField outputInfo;
   @FXML Button buttonOk;
-  @FXML Button buttonCancel;
+  @FXML Button buttonClose;
 
   DialogListener dialogListener;
   SimpleLog entity;
@@ -71,8 +71,6 @@ public class UpdateLogPresenter {
     outputInfo.setText("Can't update logs that were uploaded!");
   }
 
-  //region Convenience
-
   /**
    * Recalculates and updates info according to input change
    */
@@ -104,11 +102,9 @@ public class UpdateLogPresenter {
 
   //endregion
 
-  //endregion
-
   //region View events
 
-  public void onClickCancel() {
+  public void onClickClose() {
     if (dialogListener == null) return;
     dialogListener.onCancel();
   }

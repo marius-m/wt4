@@ -124,6 +124,16 @@ public class MainPresenter implements Initializable {
     }
   };
 
+  DialogListener versionWindowDialogListener = new DialogListener() {
+    @Override public void onSave() { }
+
+    @Override
+    public void onCancel() {
+      if (dialog.isShowing())
+        dialog.hide();
+    }
+  };
+
   UpdateListener updateListener = new UpdateListener() {
     @Override public void onUpdate(SimpleLog object) {
       UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, object);
@@ -155,7 +165,7 @@ public class MainPresenter implements Initializable {
 
     @Override
     public void onAbout() {
-      VersionView versionView = new VersionView();
+      VersionView versionView = new VersionView(versionWindowDialogListener);
       openDialog(versionView);
     }
   });

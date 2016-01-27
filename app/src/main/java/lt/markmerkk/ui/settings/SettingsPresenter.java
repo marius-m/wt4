@@ -24,12 +24,16 @@ import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
-import net.rcarz.jiraclient.WorkLog;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
+//import org.apache.log4j.Appender;
+//import org.apache.log4j.AppenderSkeleton;
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.PatternLayout;
+//import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -77,7 +81,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     buttonRefresh.setOnMouseClicked(refreshClickListener);
 
     guiAppender = new SimpleAppender();
-    guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} - %m%n"));
+    guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} %5p %c{1}:%L - %m%n"));
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
@@ -138,6 +142,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     protected void append(LoggingEvent event) {
       Platform.runLater(() -> SettingsPresenter.this.outputLogger.appendText(layout.format(event)));
     }
+
   }
 
   //endregion
