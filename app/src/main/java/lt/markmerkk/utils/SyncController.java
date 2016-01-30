@@ -26,6 +26,7 @@ import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
@@ -104,12 +105,23 @@ public class SyncController {
 
     // Starting sync execution
     remoteLoadListener.onLoadChange(true);
-    Observable<Pair<Issue, List<WorkLog>>> observable = JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer);
+    Observable<Pair<Issue, List<WorkLog>>> observable =
+        JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(JavaFxScheduler.getInstance());
     PublishSubject<Pair<Issue, List<WorkLog>>> publishSubject = PublishSubject.create();
     publishSubject.subscribe(
-        pair -> logger.info("Adding filtered worklog pairgst: " + pair),
-        error -> remoteLoadListener.onLoadChange(false),
-        () -> remoteLoadListener.onLoadChange(false)
+        pair -> {
+          logger.info("Adding filtered worklog pairgst: " + pair);
+          for (WorkLog workLog : pair.getValue())
+            new RemoteFetchMerger(dbExecutor, pair.getKey().getKey(), workLog).merge();
+        },
+        error -> {
+          remoteLoadListener.onLoadChange(false);
+        }, () -> {
+          remoteLoadListener.onLoadChange(false);
+          storage.notifyDataChange();
+        }
     );
     subscription = observable.subscribe(publishSubject);
   }

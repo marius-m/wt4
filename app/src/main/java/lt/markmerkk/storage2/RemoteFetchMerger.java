@@ -40,7 +40,6 @@ public class RemoteFetchMerger implements IMerger {
       SimpleLog newLog = newLog(remoteIssue, worklog);
       executor.execute(new InsertJob(SimpleLog.class, newLog));
       return "Creating new log: " + newLog;
-
     }
     SimpleLog updateLog = updateLog(localLog, remoteIssue, worklog);
     executor.execute(new UpdateJob(SimpleLog.class, updateLog));
