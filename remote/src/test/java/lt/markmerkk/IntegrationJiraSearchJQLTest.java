@@ -1,25 +1,23 @@
 package lt.markmerkk;
 
 import java.io.FileInputStream;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.JiraException;
-import net.rcarz.jiraclient.WorkLog;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import rx.Observable;
-import rx.functions.Func1;
 import rx.observers.TestSubscriber;
 
 /**
  * Created by mariusmerkevicius on 1/29/16.
  */
-public class IntegrationJiraLogger2Test {
+public class IntegrationJiraSearchJQLTest {
 
   private Properties properties;
+  private JiraClient client;
 
   @Before
   public void setUp() throws Exception {
@@ -49,48 +47,53 @@ public class IntegrationJiraLogger2Test {
 
     // Assert
     subscriber.assertNoErrors(); // Should create successfully
-
   }
 
   @Test
-  public void test_inputLogger_shouldProceed() throws Exception {
+  public void test_inputValid_shouldPullWorklogs() throws Exception {
     // Arrange
-    TestSubscriber<Map<String, List<WorkLog>>> subscriber = new TestSubscriber<>();
 
-    Observable<Map<String, List<WorkLog>>> loggerObservable = Observable.create(
-        new JiraLogger2(
-            null,
-            JiraLogExecutor.dateFormat.parseDateTime("2016-01-14"),
-            JiraLogExecutor.dateFormat.parseDateTime("2016-01-15")
-        )
-    );
-
-    // Act
-    loggerObservable.subscribe(subscriber);
-
-
-    // Assert
-    subscriber.assertError(JiraException.class); // No client provided
-  }
-
-  @Test
-  public void test_combine_shouldConnect() throws Exception {
-    // Arrange
-    TestSubscriber<Map<String, List<WorkLog>>> subscriber = new TestSubscriber<>();
-
+    // Forming jira client
     Observable.create(new JiraConnector(
         (String) properties.get("host"),
         (String) properties.get("username"),
         (String) properties.get("password")
-    )).flatMap(jiraClient -> Observable.create(new JiraLogger2(
-        jiraClient,
-        JiraLogExecutor.dateFormat.parseDateTime("2016-01-14"),
-        JiraLogExecutor.dateFormat.parseDateTime("2016-01-15")
-    ))).subscribe(subscriber);
+    )).subscribe(jiraClient -> client = jiraClient);
+
+    DateTime start = JiraSearchJQL.dateFormat.parseDateTime("2016-01-14");
+    DateTime end = JiraSearchJQL.dateFormat.parseDateTime("2016-01-15");
+
 
     // Act
+    Observable.create(new JiraSearchJQL(client, start, end))
+        .flatMap(searchResult -> Observable.from(searchResult.issues))
+        .map(issue -> issue.getKey())
+        .flatMap(key -> {
+          try {
+            return Observable.just(client.getIssue(key));
+          } catch (JiraException e) {
+            return Observable.error(e);
+          }
+        })
+        .filter(issue -> issue != null)
+        .flatMap(issue -> {
+          try {
+            return Observable.from(issue.getAllWorkLogs());
+          } catch (JiraException e) {
+            return Observable.error(e);
+          }
+        })
+        .flatMap(workLog -> Observable.create(new JiraLogFilterer(
+            (String) properties.get("username"),
+            start,
+            end,
+            workLog
+        )))
+        .filter(workLog -> workLog != null)
+        .subscribe(workLog -> System.out.println(workLog));
+
     // Assert
-    subscriber.assertNoErrors(); // Should retrieve data!
+
   }
 
 }
