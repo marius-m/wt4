@@ -51,6 +51,10 @@ dependencies {
     compile project(':database')
     compile project(':remote')
 
+    compile 'io.reactivex:rxjavafx:0.0.2'
+    compile 'io.reactivex:rxjava:1.1.0'
+
+
     compile 'joda-time:joda-time:2.9.1'
     compile 'com.vinumeris:updatefx:1.5'
     compile 'com.airhacks:afterburner.fx:1.6.0'
@@ -59,7 +63,6 @@ dependencies {
 
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
-    compile 'org.slf4j:slf4j-jdk14:1.7.12'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'

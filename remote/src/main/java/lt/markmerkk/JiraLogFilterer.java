@@ -28,10 +28,10 @@ public class JiraLogFilterer implements Observable.OnSubscribe<WorkLog> {
   public void call(Subscriber<? super WorkLog> subscriber) {
     try {
       subscriber.onNext(filterLog(user, start, end, workLog));
-      subscriber.onCompleted();
     } catch (FilterErrorException e) {
       logger.debug(e.getMessage());
     }
+    subscriber.onCompleted();
   }
 
   /**

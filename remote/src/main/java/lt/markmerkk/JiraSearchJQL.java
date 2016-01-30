@@ -63,7 +63,7 @@ public class JiraSearchJQL implements Observable.OnSubscribe<Issue.SearchResult>
       );
       logger.debug("Running JQL "+jql);
       Issue.SearchResult sr = client.searchIssues(jql);
-      logger.info("Found issues " + sr.issues.size() + " that have been worked on: ");
+      logger.info("Found issues " + sr.issues.size() + " that have been worked on.");
 
       subscriber.onNext(sr);
       subscriber.onCompleted();
