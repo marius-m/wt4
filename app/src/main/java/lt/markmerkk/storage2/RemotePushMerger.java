@@ -42,6 +42,7 @@ public class RemotePushMerger {
    */
   public void merge(SimpleLog localLog) {
     if (!isValid(localLog)) return;
+    logger.info("Uploading "+localLog);
     upload(localLog);
   }
 
@@ -52,23 +53,23 @@ public class RemotePushMerger {
    */
   private boolean isValid(SimpleLog localLog) {
     if (Strings.isNullOrEmpty(localLog.getComment())) {
-      logger.debug(localLog+" doesn't have a comment!");
+      logger.debug("Skipping "+localLog+"as it doesn't have a comment!");
       executor.execute(new UpdateJob(SimpleLog.class,
           new SimpleLogBuilder(localLog).buildWithError("Does not have a comment!")));
       return false;
     }
     if (Strings.isNullOrEmpty(localLog.getTask())) {
-      logger.debug(localLog+" doesn't have an issue!");
+      logger.debug("Skipping "+localLog+"as it doesn't have an issue!");
       executor.execute(new UpdateJob(SimpleLog.class,
           new SimpleLogBuilder(localLog).buildWithError("Does not have a linked issue!")));
       return false;
     }
     if (!localLog.isDirty()) {
-      logger.debug(localLog+" is already in sync!");
+      logger.debug("Skipping "+localLog+"as it is already in sync!");
       return false;
     }
     if (localLog.isError()) {
-      logger.debug(localLog+" already has an error!");
+      logger.debug("Skipping "+localLog+"as it already has an error!");
       return false;
     }
     return true;

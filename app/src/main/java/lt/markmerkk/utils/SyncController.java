@@ -2,8 +2,7 @@ package lt.markmerkk.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -13,7 +12,6 @@ import lt.markmerkk.JiraConnector;
 import lt.markmerkk.JiraLogFilterer;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
-import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteFetchMerger;
@@ -29,9 +27,12 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Func1;
+import rx.observables.ConnectableObservable;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
+import rx.subjects.AsyncSubject;
 import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 /**
  * Created by mariusmerkevicius on 1/5/16.
@@ -106,43 +107,46 @@ public class SyncController {
     if (jiraClient == null)
       return;
 
-    // Starting sync execution
-    remoteLoadListener.onLoadChange(true);
-//    Observable observable =
-//        JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
-//            .map((Func1<Pair<Issue, List<WorkLog>>, Void>) pair -> {
-//              logger.info("Adding filtered worklog pairgst: " + pair);
-//              for (WorkLog workLog : pair.getValue()) {
-//                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
-//              }
-//              return null;
-//            })
-//            .subscribeOn(Schedulers.computation())
-//            .observeOn(JavaFxScheduler.getInstance());
-    Observable observable = Observable.from(storage.getData())
-        .map(new Func1<SimpleLog, SimpleLog>() {
-          @Override
-          public SimpleLog call(SimpleLog simpleLog) {
-            remotePushMerger.merge(simpleLog);
-            return simpleLog;
-          }
+    Observable<String> downloadObservable =
+        JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(JavaFxScheduler.getInstance())
+            .map(pair -> {
+              for (WorkLog workLog : pair.getValue())
+                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
+              return "Remote worklogs: " + pair;
+            });
+
+    Observable<String> uploadObservable = Observable.from(storage.getData())
+        .subscribeOn(Schedulers.computation())
+        .observeOn(JavaFxScheduler.getInstance())
+        .map(simpleLog -> {
+          remotePushMerger.merge(simpleLog);
+          return null;
         });
 
-    PublishSubject<SimpleLog> publishSubject = PublishSubject.create();
-    publishSubject.subscribe(
-        simpleLog -> {
-          logger.info("Current log: "+simpleLog);
-          storage.notifyDataChange();
-        },
-        error -> {
-          remoteLoadListener.onLoadChange(false);
-        }, () -> {
-          remoteLoadListener.onLoadChange(false);
-          storage.notifyDataChange();
-        }
-    );
+    remoteLoadListener.onLoadChange(true);
 
-    subscription = observable.subscribe(publishSubject);
+    subscription = uploadObservable
+        .subscribe(output -> logger.info(output),
+            error -> {
+              logger.info("Upload error!  "+error);
+              remoteLoadListener.onLoadChange(false);
+            }, () -> {
+              logger.info("Upload complete! ");
+              //remoteLoadListener.onLoadChange(false);
+              storage.notifyDataChange();
+
+              downloadObservable
+                  .subscribe(output -> logger.info(output),
+                      error -> {
+                        logger.info("Download error! "+error);
+                      }, () -> {
+                        logger.info("Download complete! ");
+                        remoteLoadListener.onLoadChange(false);
+                        storage.notifyDataChange();
+                      });
+            });
   }
 
   //region Convenience
