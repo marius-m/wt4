@@ -17,6 +17,8 @@ import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteFetchMerger;
+import lt.markmerkk.storage2.RemotePushMerger;
+import lt.markmerkk.storage2.SimpleLog;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.WorkLog;
@@ -99,26 +101,37 @@ public class SyncController {
         endTime
     );
     RemoteFetchMerger remoteFetchMerger = new RemoteFetchMerger(dbExecutor);
+    RemotePushMerger remotePushMerger = new RemotePushMerger(dbExecutor, jiraClient);
 
     if (jiraClient == null)
       return;
 
     // Starting sync execution
     remoteLoadListener.onLoadChange(true);
-    Observable observable =
-        JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
-            .map((Func1<Pair<Issue, List<WorkLog>>, Void>) pair -> {
-              logger.info("Adding filtered worklog pairgst: " + pair);
-              for (WorkLog workLog : pair.getValue()) {
-                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
-              }
-              return null;
-            })
-            .subscribeOn(Schedulers.computation())
-            .observeOn(JavaFxScheduler.getInstance());
-    PublishSubject<Void> publishSubject = PublishSubject.create();
+//    Observable observable =
+//        JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
+//            .map((Func1<Pair<Issue, List<WorkLog>>, Void>) pair -> {
+//              logger.info("Adding filtered worklog pairgst: " + pair);
+//              for (WorkLog workLog : pair.getValue()) {
+//                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
+//              }
+//              return null;
+//            })
+//            .subscribeOn(Schedulers.computation())
+//            .observeOn(JavaFxScheduler.getInstance());
+    Observable observable = Observable.from(storage.getData())
+        .map(new Func1<SimpleLog, SimpleLog>() {
+          @Override
+          public SimpleLog call(SimpleLog simpleLog) {
+            remotePushMerger.merge(simpleLog);
+            return simpleLog;
+          }
+        });
+
+    PublishSubject<SimpleLog> publishSubject = PublishSubject.create();
     publishSubject.subscribe(
-        pair -> {
+        simpleLog -> {
+          logger.info("Current log: "+simpleLog);
           storage.notifyDataChange();
         },
         error -> {
@@ -128,6 +141,7 @@ public class SyncController {
           storage.notifyDataChange();
         }
     );
+
     subscription = observable.subscribe(publishSubject);
   }
 

@@ -61,4 +61,14 @@ public class JiraObservables {
             }
         );
   }
+
+  /**
+   * Returns an observable that is responsible for pushing new {@link WorkLog}
+   * @param client
+   * @return
+   */
+  public static Observable<Boolean> newWorklogs(
+      JiraClient client) {
+    return null;
+  }
 }
