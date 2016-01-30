@@ -3,7 +3,6 @@ package lt.markmerkk;
 import java.io.FileInputStream;
 import java.util.Properties;
 import net.rcarz.jiraclient.JiraClient;
-import net.rcarz.jiraclient.JiraException;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,35 +62,15 @@ public class IntegrationJiraSearchJQLTest {
     DateTime start = JiraSearchJQL.dateFormat.parseDateTime("2016-01-14");
     DateTime end = JiraSearchJQL.dateFormat.parseDateTime("2016-01-15");
 
+    JiraLogFilterer filterer = new JiraLogFilterer(
+        (String) properties.get("username"),
+        start,
+        end
+    );
 
     // Act
-    Observable.create(new JiraSearchJQL(client, start, end))
-        .flatMap(searchResult -> Observable.from(searchResult.issues))
-        .map(issue -> issue.getKey())
-        .flatMap(key -> {
-          try {
-            return Observable.just(client.getIssue(key));
-          } catch (JiraException e) {
-            return Observable.error(e);
-          }
-        })
-        .filter(issue -> issue != null)
-        .flatMap(issue -> {
-          System.out.println("Filtering logs for the "+issue.getKey());
-          try {
-            return Observable.from(issue.getAllWorkLogs());
-          } catch (JiraException e) {
-            return Observable.error(e);
-          }
-        }).flatMap(workLog -> {
-          return Observable.create(new JiraLogFilterer(
-              (String) properties.get("username"),
-              start,
-              end,
-              workLog));
-        })
-        .filter(workLog -> workLog != null)
-        .subscribe(workLog -> System.out.println(workLog));
+    JiraObservables.remoteWorklogs(client, start, end, filterer)
+        .subscribe(pair -> System.out.println(pair.getKey() + " / " + pair.getValue().size()));
 
     // Assert
 

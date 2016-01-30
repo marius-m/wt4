@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
+import javafx.util.Pair;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.JiraConnector;
 import lt.markmerkk.JiraLogFilterer;
+import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.interfaces.IRemoteListener;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteFetchMerger;
+import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.WorkLog;
@@ -90,16 +93,21 @@ public class SyncController {
         jiraClient -> SyncController.this.jiraClient = jiraClient,
         error -> logger.info(error.getMessage())
     );
+    JiraLogFilterer filterer = new JiraLogFilterer(
+        settings.getUsername(),
+        startTime,
+        endTime
+    );
 
     if (jiraClient == null)
       return;
 
     // Starting sync execution
     remoteLoadListener.onLoadChange(true);
-    Observable<WorkLog> observable = renewWorklogsObservable(startTime, endTime);
-    PublishSubject<WorkLog> publishSubject = PublishSubject.create();
+    Observable<Pair<Issue, List<WorkLog>>> observable = JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer);
+    PublishSubject<Pair<Issue, List<WorkLog>>> publishSubject = PublishSubject.create();
     publishSubject.subscribe(
-        workLog -> logger.info("Adding filtered worklog: " + workLog),
+        pair -> logger.info("Adding filtered worklog pairgst: " + pair),
         error -> remoteLoadListener.onLoadChange(false),
         () -> remoteLoadListener.onLoadChange(false)
     );
@@ -107,43 +115,6 @@ public class SyncController {
   }
 
   //region Convenience
-
-  /**
-   * Pulls the {@link WorkLog}'s using {@link JiraClient}
-   * @param startTime worklog start time
-   * @param endTime worklog end time
-   * @return
-   */
-  private Observable<WorkLog> renewWorklogsObservable(DateTime startTime, DateTime endTime) {
-    return Observable.create(new JiraSearchJQL(jiraClient, startTime, endTime))
-        .flatMap(searchResult -> Observable.from(searchResult.issues))
-        .map(issue -> issue.getKey())
-        .flatMap(key -> {
-          try {
-            return Observable.just(SyncController.this.jiraClient.getIssue(key));
-          } catch (JiraException e) {
-            return Observable.error(e);
-          }
-        })
-        .filter(issue -> issue != null)
-        .flatMap(issue -> {
-          logger.info("Filtering logs for the " + issue.getKey());
-          try {
-            return Observable.from(issue.getAllWorkLogs());
-          } catch (JiraException e) {
-            return Observable.error(e);
-          }
-        })
-        .flatMap(workLog -> {
-          return Observable.create(new JiraLogFilterer(
-              settings.getUsername(),
-              startTime,
-              endTime,
-              workLog));
-        })
-        .subscribeOn(Schedulers.computation())
-        .observeOn(JavaFxScheduler.getInstance());
-  }
 
   //endregion
 

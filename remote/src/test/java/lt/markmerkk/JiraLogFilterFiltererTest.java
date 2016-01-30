@@ -36,139 +36,120 @@ public class JiraLogFilterFiltererTest {
   @Test
   public void filterLog_valid_shouldReturnWorklog() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(2000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    List<WorkLog> onNextEvents = testSubscriber.getOnNextEvents();
-    assertThat(onNextEvents).isNotNull();
-    assertThat(onNextEvents.size()).isEqualTo(1);
-    assertThat(onNextEvents.get(0)).isEqualTo(worklog);
+    assertThat(out).isNotNull();
   }
 
   @Test
   public void filterLog_endEqualCreate_shouldReturnWorklog() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(1000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(1000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    List<WorkLog> onNextEvents = testSubscriber.getOnNextEvents();
-    assertThat(onNextEvents).isNotNull();
-    assertThat(onNextEvents.size()).isEqualTo(1);
-    assertThat(onNextEvents.get(0)).isEqualTo(worklog);
+    assertThat(out).isNotNull();
   }
 
   @Test
   public void filterLog_startEqualCreate_shouldReturnWorklog() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(1000), new DateTime(2000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(1000), new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    List<WorkLog> onNextEvents = testSubscriber.getOnNextEvents();
-    assertThat(onNextEvents).isNotNull();
-    assertThat(onNextEvents.size()).isEqualTo(1);
-    assertThat(onNextEvents.get(0)).isEqualTo(worklog);
+    assertThat(out).isNotNull();
   }
 
   @Test
   public void filterLog_endBeforeCreate_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(900), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(900));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 
   @Test
   public void filterLog_startAfterCreate_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(1200), new DateTime(2000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(1200), new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 
   @Test
   public void filterLog_invalidUser_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("null", new DateTime(500), new DateTime(2000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("null", new DateTime(500), new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 
   @Test
   public void filterLog_nullUser_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer(null, new DateTime(500), new DateTime(2000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer(null, new DateTime(500), new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 
   @Test
   public void filterLog_nullStartTime_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", null, new DateTime(2000), worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", null, new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 
   @Test
   public void filterLog_nullEndTime_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), null, worklog);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), null);
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(worklog);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 
   @Test
   public void filterLog_nullWorkLog_shouldReturnNull() throws Exception {
     // Arrange
-    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(2000), null);
+    JiraLogFilterer filterer = new JiraLogFilterer("asdf", new DateTime(500), new DateTime(2000));
 
     // Act
-    Observable.create(filterer)
-        .subscribe(testSubscriber);
+    WorkLog out = filterer.filterLog(null);
 
     // Assert
-    testSubscriber.assertError(JiraLogFilterer.FilterErrorException.class);
+    assertThat(out).isNull();
   }
 }

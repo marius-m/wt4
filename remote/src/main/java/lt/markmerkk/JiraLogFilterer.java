@@ -10,48 +10,38 @@ import rx.Subscriber;
 /**
  * Created by mariusmerkevicius on 1/30/16.
  */
-public class JiraLogFilterer implements Observable.OnSubscribe<WorkLog> {
+public class JiraLogFilterer {
   Logger logger = Logger.getLogger(JiraLogFilterer.class);
 
   String user;
   DateTime start, end;
   WorkLog workLog;
 
-  public JiraLogFilterer(String user, DateTime start, DateTime end, WorkLog workLog) {
+  public JiraLogFilterer(String user, DateTime start, DateTime end) {
     this.user = user;
     this.start = start;
     this.end = end;
-    this.workLog = workLog;
-  }
-
-  @Override
-  public void call(Subscriber<? super WorkLog> subscriber) {
-    try {
-      subscriber.onNext(filterLog(user, start, end, workLog));
-    } catch (FilterErrorException e) {
-      logger.debug(e.getMessage());
-    }
-    subscriber.onCompleted();
   }
 
   /**
    * Filters {@link WorkLog} and returns it. If worklog fails validation, null is returned.
    *
-   * @param user provided user for the worklog
-   * @param startSearchDate provided start search date
-   * @param endSearchDate provided end search date
    * @param workLog worklog to check
    */
-  WorkLog filterLog(String user, DateTime startSearchDate, DateTime endSearchDate, WorkLog workLog)
-      throws FilterErrorException {
-    if (user == null) throw new FilterErrorException("user == null");
-    if (startSearchDate == null) throw new FilterErrorException("start == null");
-    if (endSearchDate == null) throw new FilterErrorException("end == null");
-    if (workLog == null) throw new FilterErrorException("worklog == null");
-    if (!workLog.getAuthor().getName().equals(user))  throw new FilterErrorException("invalid user");
-    if (startSearchDate.isAfter(workLog.getStarted().getTime()))  throw new FilterErrorException("start is after worklog date");
-    if (endSearchDate.isBefore(workLog.getStarted().getTime()))  throw new FilterErrorException("end is before worklog date");
-    return workLog;
+  public WorkLog filterLog(WorkLog workLog) {
+    try {
+      if (user == null) throw new FilterErrorException("user == null");
+      if (start == null) throw new FilterErrorException("start == null");
+      if (end == null) throw new FilterErrorException("end == null");
+      if (workLog == null) throw new FilterErrorException("worklog == null");
+      if (!workLog.getAuthor().getName().equals(user))  throw new FilterErrorException("invalid user");
+      if (start.isAfter(workLog.getStarted().getTime()))  throw new FilterErrorException("start is after worklog date");
+      if (end.isBefore(workLog.getStarted().getTime()))  throw new FilterErrorException("end is before worklog date");
+      return workLog;
+    } catch (FilterErrorException e) {
+      logger.debug("Ignoring "+workLog+" for because "+e.getMessage());
+      return null;
+    }
   }
 
   //region Classes
