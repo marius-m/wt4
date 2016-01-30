@@ -64,8 +64,12 @@ public class SyncController {
    * Main method to start synchronization
    */
   public void sync() {
-    if (subscription != null && !subscription.isUnsubscribed())
+    if (subscription != null && !subscription.isUnsubscribed()) {
       subscription.unsubscribe();
+      remoteLoadListener.onLoadChange(false);
+      logger.info("Cancelling sync!");
+      return;
+    }
     lastUpdateController.setError(false);
     DateTime startTime;
     DateTime endTime;
@@ -95,7 +99,7 @@ public class SyncController {
     Observable<WorkLog> observable = renewWorklogsObservable(startTime, endTime);
     PublishSubject<WorkLog> publishSubject = PublishSubject.create();
     publishSubject.subscribe(
-        workLog -> logger.info("Adding worklog: " + workLog),
+        workLog -> logger.info("Adding filtered worklog: " + workLog),
         error -> remoteLoadListener.onLoadChange(false),
         () -> remoteLoadListener.onLoadChange(false)
     );
