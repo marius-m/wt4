@@ -19,14 +19,12 @@ import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteFetchMerger;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
-import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Func1;
 import rx.schedulers.JavaFxScheduler;
@@ -100,6 +98,7 @@ public class SyncController {
         startTime,
         endTime
     );
+    RemoteFetchMerger remoteFetchMerger = new RemoteFetchMerger(dbExecutor);
 
     if (jiraClient == null)
       return;
@@ -110,8 +109,9 @@ public class SyncController {
         JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
             .map((Func1<Pair<Issue, List<WorkLog>>, Void>) pair -> {
               logger.info("Adding filtered worklog pairgst: " + pair);
-              for (WorkLog workLog : pair.getValue())
-                new RemoteFetchMerger(dbExecutor, pair.getKey().getKey(), workLog).merge();
+              for (WorkLog workLog : pair.getValue()) {
+                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
+              }
               return null;
             })
             .subscribeOn(Schedulers.computation())
@@ -155,30 +155,30 @@ public class SyncController {
 
   //region Listeners
 
-  IRemoteListener remoteListener = new IRemoteListener() {
-
-    @Override
-    public void onWorklogDownloadComplete(Map<String, List<WorkLog>> remoteLogs) {
-      for (String key : remoteLogs.keySet())
-        for (WorkLog workLog : remoteLogs.get(key))
-          new RemoteFetchMerger(dbExecutor, key, workLog).merge();
-      Platform.runLater(() -> {
-        storage.notifyDataChange();
-      });
-    }
-
-    @Override
-    public void onError(String error) {
-      Platform.runLater(() -> {
-        lastUpdateController.setError(true);
-      });
-    }
-
-    @Override
-    public void onCancel() {
-
-    }
-  };
+//  IRemoteListener remoteListener = new IRemoteListener() {
+//
+//    @Override
+//    public void onWorklogDownloadComplete(Map<String, List<WorkLog>> remoteLogs) {
+//      for (String key : remoteLogs.keySet())
+//        for (WorkLog workLog : remoteLogs.get(key))
+//          new RemoteFetchMerger(dbExecutor).merge();
+//      Platform.runLater(() -> {
+//        storage.notifyDataChange();
+//      });
+//    }
+//
+//    @Override
+//    public void onError(String error) {
+//      Platform.runLater(() -> {
+//        lastUpdateController.setError(true);
+//      });
+//    }
+//
+//    @Override
+//    public void onCancel() {
+//
+//    }
+//  };
 
   IRemoteLoadListener remoteLoadListener = new IRemoteLoadListener() {
     @Override
