@@ -77,18 +77,19 @@ public class IntegrationJiraSearchJQLTest {
         })
         .filter(issue -> issue != null)
         .flatMap(issue -> {
+          System.out.println("Filtering logs for the "+issue.getKey());
           try {
             return Observable.from(issue.getAllWorkLogs());
           } catch (JiraException e) {
             return Observable.error(e);
           }
+        }).flatMap(workLog -> {
+          return Observable.create(new JiraLogFilterer(
+              (String) properties.get("username"),
+              start,
+              end,
+              workLog));
         })
-        .flatMap(workLog -> Observable.create(new JiraLogFilterer(
-            (String) properties.get("username"),
-            start,
-            end,
-            workLog
-        )))
         .filter(workLog -> workLog != null)
         .subscribe(workLog -> System.out.println(workLog));
 

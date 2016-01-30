@@ -1,6 +1,7 @@
 package lt.markmerkk;
 
 import net.rcarz.jiraclient.WorkLog;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.Filter;
 import org.joda.time.DateTime;
 import rx.Observable;
@@ -10,6 +11,8 @@ import rx.Subscriber;
  * Created by mariusmerkevicius on 1/30/16.
  */
 public class JiraLogFilterer implements Observable.OnSubscribe<WorkLog> {
+  Logger logger = Logger.getLogger(JiraLogFilterer.class);
+
   String user;
   DateTime start, end;
   WorkLog workLog;
@@ -27,7 +30,7 @@ public class JiraLogFilterer implements Observable.OnSubscribe<WorkLog> {
       subscriber.onNext(filterLog(user, start, end, workLog));
       subscriber.onCompleted();
     } catch (FilterErrorException e) {
-      subscriber.onError(e);
+      logger.debug(e.getMessage());
     }
   }
 
