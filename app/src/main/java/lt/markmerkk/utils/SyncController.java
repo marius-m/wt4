@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.functions.Func1;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -105,16 +106,20 @@ public class SyncController {
 
     // Starting sync execution
     remoteLoadListener.onLoadChange(true);
-    Observable<Pair<Issue, List<WorkLog>>> observable =
+    Observable observable =
         JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
+            .map((Func1<Pair<Issue, List<WorkLog>>, Void>) pair -> {
+              logger.info("Adding filtered worklog pairgst: " + pair);
+              for (WorkLog workLog : pair.getValue())
+                new RemoteFetchMerger(dbExecutor, pair.getKey().getKey(), workLog).merge();
+              return null;
+            })
             .subscribeOn(Schedulers.computation())
             .observeOn(JavaFxScheduler.getInstance());
-    PublishSubject<Pair<Issue, List<WorkLog>>> publishSubject = PublishSubject.create();
+    PublishSubject<Void> publishSubject = PublishSubject.create();
     publishSubject.subscribe(
         pair -> {
-          logger.info("Adding filtered worklog pairgst: " + pair);
-          for (WorkLog workLog : pair.getValue())
-            new RemoteFetchMerger(dbExecutor, pair.getKey().getKey(), workLog).merge();
+          storage.notifyDataChange();
         },
         error -> {
           remoteLoadListener.onLoadChange(false);
