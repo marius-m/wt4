@@ -38,38 +38,36 @@ public class SyncController {
   @Inject UserSettings settings;
   @Inject DBProdExecutor dbExecutor;
   @Inject BasicLogStorage storage;
-//  @Inject WorkExecutor workExecutor;
   @Inject LastUpdateController lastUpdateController;
 
-  //JiraLogExecutor jiraLogExecutor;
   List<IRemoteLoadListener> remoteLoadListeners = new ArrayList<>();
   JiraClient jiraClient;
 
   boolean loading = false;
-  PublishSubject<WorkLog> publishSubject = PublishSubject.create();
   private Subscription subscription;
 
   @PostConstruct
-  public void init() {
-//    jiraLogExecutor = new JiraLogExecutor(remoteListener, remoteLoadListener);
-//    jiraLogExecutor.onStart();
-  }
+  public void init() { }
 
   @PreDestroy
   public void destroy() {
-    //jiraLogExecutor.onStop();
+    if (subscription != null && !subscription.isUnsubscribed())
+      subscription.unsubscribe();
   }
 
   /**
    * Main method to start synchronization
    */
   public void sync() {
+    // Cancel check
     if (subscription != null && !subscription.isUnsubscribed()) {
       subscription.unsubscribe();
       remoteLoadListener.onLoadChange(false);
       logger.info("Cancelling sync!");
       return;
     }
+
+    // Data prepare
     lastUpdateController.setError(false);
     DateTime startTime;
     DateTime endTime;
@@ -92,9 +90,11 @@ public class SyncController {
         jiraClient -> SyncController.this.jiraClient = jiraClient,
         error -> logger.info(error.getMessage())
     );
+
     if (jiraClient == null)
       return;
 
+    // Starting sync execution
     remoteLoadListener.onLoadChange(true);
     Observable<WorkLog> observable = renewWorklogsObservable(startTime, endTime);
     PublishSubject<WorkLog> publishSubject = PublishSubject.create();
