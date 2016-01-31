@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class Main extends Application {
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
-  public static int VERSION = 4;
+  public static int VERSION = 5;
   public static int SCENE_WIDTH = 600;
   public static int SCENE_HEIGHT = 500;
   private static final Logger log = LoggerFactory.getLogger(Main.class);
@@ -69,16 +69,8 @@ public class Main extends Application {
 
 //    log.info("Hello World! This is version " + VERSION);
 //    ProgressIndicator indicator = showGiantProgressWheel(stage);
-//    List<ECPoint> pubkeys = Crypto.decode("0335FE0506672CAD82FFDD7AEBF61EC5DE312507835D930D53F0345EFC8471FB72");
-//    Updater updater = new Updater(URI.create("http://localhost:80/index"), "" + VERSION,
-//        AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
-//      @Override
-//      protected void updateProgress(long workDone, long max) {
-//        super.updateProgress(workDone, max);
-//        Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
-//      }
-//    };
 //    indicator.progressProperty().bind(updater.progressProperty());
+
 //    log.info("Checking for updates!");
 //    updater.setOnSucceeded(event -> {
 //      try {
