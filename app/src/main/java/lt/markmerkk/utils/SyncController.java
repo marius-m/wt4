@@ -2,8 +2,6 @@ package lt.markmerkk.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.ObservableList;
-import javafx.util.Pair;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -16,8 +14,6 @@ import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteFetchMerger;
 import lt.markmerkk.storage2.RemotePushMerger;
-import lt.markmerkk.storage2.SimpleLog;
-import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
@@ -26,34 +22,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Func1;
-import rx.observables.ConnectableObservable;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
-import rx.subjects.AsyncSubject;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
 
 /**
- * Created by mariusmerkevicius on 1/5/16.
- * Handles synchronization with jira from other components
+ * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
 public class SyncController {
   private static final Logger logger = LoggerFactory.getLogger(JiraSearchJQL.class);
 
-  @Inject UserSettings settings;
-  @Inject DBProdExecutor dbExecutor;
-  @Inject BasicLogStorage storage;
-  @Inject LastUpdateController lastUpdateController;
+  @Inject
+  UserSettings settings;
+  @Inject
+  DBProdExecutor dbExecutor;
+  @Inject
+  BasicLogStorage storage;
+  @Inject
+  LastUpdateController lastUpdateController;
 
   List<IRemoteLoadListener> remoteLoadListeners = new ArrayList<>();
+  Subscription subscription;
   JiraClient jiraClient;
 
   boolean loading = false;
-  private Subscription subscription;
 
   @PostConstruct
-  public void init() { }
+  public void init() {
+  }
 
   @PreDestroy
   public void destroy() {
@@ -97,7 +92,10 @@ public class SyncController {
         settings.getPassword()
     )).subscribe(
         jiraClient -> SyncController.this.jiraClient = jiraClient,
-        error -> logger.info(error.getMessage())
+        error -> {
+          logger.info(error.getMessage());
+          lastUpdateController.setError(true);
+        }
     );
     JiraLogFilterer filterer = new JiraLogFilterer(
         settings.getUsername(),
@@ -129,10 +127,12 @@ public class SyncController {
     subscription = uploadObservable
         .subscribeOn(Schedulers.computation())
         .observeOn(JavaFxScheduler.getInstance())
-        .subscribe(output -> {},
+        .subscribe(output -> {
+            },
             error -> {
-              logger.info("Upload error!  "+error);
+              logger.info("Upload error!  " + error);
               remoteLoadListener.onLoadChange(false);
+              lastUpdateController.setError(true);
             }, () -> {
               logger.info("Upload complete! ");
               //remoteLoadListener.onLoadChange(false);
@@ -141,13 +141,16 @@ public class SyncController {
               downloadObservable
                   .subscribeOn(Schedulers.computation())
                   .observeOn(JavaFxScheduler.getInstance())
-                  .subscribe(output -> {},
+                  .subscribe(output -> {
+                      },
                       error -> {
-                        logger.info("Download error! "+error);
+                        logger.info("Download error! " + error);
+                        lastUpdateController.setError(true);
                       }, () -> {
                         logger.info("Download complete! ");
                         remoteLoadListener.onLoadChange(false);
                         storage.notifyDataChange();
+                        lastUpdateController.refresh();
                       });
             });
   }
@@ -176,39 +179,11 @@ public class SyncController {
 
   //region Listeners
 
-//  IRemoteListener remoteListener = new IRemoteListener() {
-//
-//    @Override
-//    public void onWorklogDownloadComplete(Map<String, List<WorkLog>> remoteLogs) {
-//      for (String key : remoteLogs.keySet())
-//        for (WorkLog workLog : remoteLogs.get(key))
-//          new RemoteFetchMerger(dbExecutor).merge();
-//      Platform.runLater(() -> {
-//        storage.notifyDataChange();
-//      });
-//    }
-//
-//    @Override
-//    public void onError(String error) {
-//      Platform.runLater(() -> {
-//        lastUpdateController.setError(true);
-//      });
-//    }
-//
-//    @Override
-//    public void onCancel() {
-//
-//    }
-//  };
-
   IRemoteLoadListener remoteLoadListener = new IRemoteLoadListener() {
     @Override
     public void onLoadChange(boolean loading) {
+      SyncController.this.loading = loading;
       lastUpdateController.setLoading(loading);
-      if (!loading) {
-        storage.notifyDataChange();
-        lastUpdateController.refresh();
-      }
       for (IRemoteLoadListener remoteListeners : SyncController.this.remoteLoadListeners)
         remoteListeners.onLoadChange(loading);
     }

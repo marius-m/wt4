@@ -36,12 +36,12 @@ public class RemoteFetchMerger {
     if (localLog == null) {
       SimpleLog newLog = newLog(remoteIssue, remoteLog);
       executor.execute(new InsertJob(SimpleLog.class, newLog));
-      logger.debug("Creating log:" + newLog);
+      logger.info("New remote log: " + "(" + remoteIssue + ")" + newLog);
       return;
     }
     SimpleLog updateLog = updateLog(localLog, remoteIssue, remoteLog);
     executor.execute(new UpdateJob(SimpleLog.class, updateLog));
-    logger.debug("Updating worklog:" + updateLog);
+    logger.info("Updating old log: " + "(" + remoteIssue + ")" + updateLog);
   }
 
   //region Convenience wrappers
