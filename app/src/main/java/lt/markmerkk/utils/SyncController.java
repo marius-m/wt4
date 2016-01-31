@@ -139,7 +139,7 @@ public class SyncController {
               //remoteLoadListener.onLoadChange(false);
               storage.notifyDataChange();
 
-              downloadObservable
+              subscription = downloadObservable
                   .subscribeOn(Schedulers.computation())
                   .observeOn(JavaFxScheduler.getInstance())
                   .subscribe(output -> {
