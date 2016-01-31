@@ -79,8 +79,11 @@ public class SyncController {
     DateTime endTime;
     switch (storage.getDisplayType()) {
       case WEEK:
-        startTime = storage.getTargetDate().withDayOfWeek(DateTimeConstants.MONDAY);
-        endTime = storage.getTargetDate().withDayOfWeek(DateTimeConstants.SUNDAY);
+        startTime = storage.getTargetDate()
+            .withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
+        endTime = storage.getTargetDate()
+            .withDayOfWeek(DateTimeConstants.SUNDAY)
+            .plusDays(1).withTimeAtStartOfDay();
         break;
       default:
         startTime = storage.getTargetDate();
@@ -109,17 +112,13 @@ public class SyncController {
 
     Observable<String> downloadObservable =
         JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
-            .subscribeOn(Schedulers.computation())
-            .observeOn(JavaFxScheduler.getInstance())
             .map(pair -> {
               for (WorkLog workLog : pair.getValue())
                 remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
-              return "Remote worklogs: " + pair;
+              return null;
             });
 
     Observable<String> uploadObservable = Observable.from(storage.getData())
-        .subscribeOn(Schedulers.computation())
-        .observeOn(JavaFxScheduler.getInstance())
         .map(simpleLog -> {
           remotePushMerger.merge(simpleLog);
           return null;
@@ -128,7 +127,9 @@ public class SyncController {
     remoteLoadListener.onLoadChange(true);
 
     subscription = uploadObservable
-        .subscribe(output -> logger.info(output),
+        .subscribeOn(Schedulers.computation())
+        .observeOn(JavaFxScheduler.getInstance())
+        .subscribe(output -> {},
             error -> {
               logger.info("Upload error!  "+error);
               remoteLoadListener.onLoadChange(false);
@@ -138,7 +139,9 @@ public class SyncController {
               storage.notifyDataChange();
 
               downloadObservable
-                  .subscribe(output -> logger.info(output),
+                  .subscribeOn(Schedulers.computation())
+                  .observeOn(JavaFxScheduler.getInstance())
+                  .subscribe(output -> {},
                       error -> {
                         logger.info("Download error! "+error);
                       }, () -> {

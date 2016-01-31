@@ -104,8 +104,10 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     QueryListJob<SimpleLog> queryJob;
     switch (displayType) {
       case WEEK:
-        DateTime weekStart = targetDate.withDayOfWeek(DateTimeConstants.MONDAY);
-        DateTime weekEnd = targetDate.withDayOfWeek(DateTimeConstants.SUNDAY);
+        DateTime weekStart = targetDate
+            .withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
+        DateTime weekEnd = targetDate.withDayOfWeek(DateTimeConstants.SUNDAY)
+            .plusDays(1).withTimeAtStartOfDay();
         queryJob = new QueryListJob<>(SimpleLog.class,
             () -> "(start > " + weekStart.getMillis()
                 + " AND "
