@@ -2,6 +2,8 @@ package lt.markmerkk;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.google.common.util.concurrent.Uninterruptibles;
+import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
+import com.sun.javafx.application.HostServicesDelegate;
 import com.vinumeris.updatefx.AppDirectory;
 import com.vinumeris.updatefx.Crypto;
 import com.vinumeris.updatefx.UpdateFX;
@@ -27,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
+  public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
   public static int VERSION = 4;
   public static int SCENE_WIDTH = 600;
@@ -61,6 +64,8 @@ public class Main extends Application {
   public void start(Stage stage) throws Exception {
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
     AppDirectory.initAppDir(UPDATE_DIR);
+
+    hostServices = HostServicesFactory.getInstance(this);
 
 //    log.info("Hello World! This is version " + VERSION);
 //    ProgressIndicator indicator = showGiantProgressWheel(stage);
@@ -116,6 +121,7 @@ public class Main extends Application {
   @Override
   public void stop() throws Exception {
     super.stop();
+    hostServices = null;
     Injector.forgetAll();
   }
 

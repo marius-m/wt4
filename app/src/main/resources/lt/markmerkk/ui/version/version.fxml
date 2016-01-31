@@ -9,97 +9,104 @@
 
 <StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.version.VersionPresenter">
    <children>
-      <VBox alignment="CENTER" maxHeight="300.0" maxWidth="450.0" minHeight="300.0" minWidth="450.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-radius: 10 0 0 0; -fx-background-radius: 10 0 0 0;">
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
+      <VBox alignment="TOP_RIGHT" maxHeight="300.0" maxWidth="450.0" minHeight="300.0" minWidth="450.0" style="-fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10 0 0 0; -fx-background-radius: 10 0 0 0;">
          <children>
-            <HBox alignment="CENTER">
+            <Button fx:id="buttonClose" mnemonicParsing="false" onAction="#onClickClose" text="x">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Button>
+            <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
                <children>
-                  <StackPane prefHeight="128.0" prefWidth="128.0">
+                  <HBox alignment="CENTER">
                      <children>
-                        <ImageView fitHeight="128.0" fitWidth="128.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../icon-128.png" />
-                           </image>
-                           <StackPane.margin>
-                              <Insets bottom="15.0" />
-                           </StackPane.margin>
-                        </ImageView>
-                        <ProgressIndicator prefHeight="128.0" prefWidth="128.0" progress="1.0" visible="false" />
+                        <StackPane prefHeight="132.0" prefWidth="132.0">
+                           <children>
+                              <ProgressIndicator minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" progress="1.0" style="-fx-progress-color: orange;" styleClass="customProgressIndicator" stylesheets="@../../../../custom-progress.css" StackPane.alignment="CENTER">
+                                 <StackPane.margin>
+                                    <Insets />
+                                 </StackPane.margin>
+                                 <padding>
+                                    <Insets bottom="-20.0" />
+                                 </padding>
+                              </ProgressIndicator>
+                              <ImageView fitHeight="128.0" fitWidth="128.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
+                                 <image>
+                                    <Image url="@../../../../icon-128.png" />
+                                 </image>
+                                 <StackPane.margin>
+                                    <Insets />
+                                 </StackPane.margin>
+                              </ImageView>
+                           </children>
+                        </StackPane>
                      </children>
-                  </StackPane>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="CENTER">
-               <children>
-                  <Hyperlink fx:id="buttonTitle" text="WT4">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Hyperlink>
-               </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="CENTER">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Version: 0.9.4">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Text>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="©">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                     <HBox.margin>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Hyperlink fx:id="buttonTitle" onAction="#onClickTitle" text="WT4">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Hyperlink>
+                     </children>
+                     <VBox.margin>
                         <Insets />
-                     </HBox.margin>
-                  </Text>
-                  <Hyperlink fx:id="buttonAuthor" text="Marius Merkevičius">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Hyperlink>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\@">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Text>
-                  <Hyperlink fx:id="buttonPlace" text="iTo">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Hyperlink>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="2016">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Text>
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Version: 0.9.4">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Text>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="©">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Text>
+                        <Hyperlink fx:id="buttonAuthor" onAction="#onClickAuthor" text="Marius Merkevičius">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\@">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Text>
+                        <Hyperlink fx:id="buttonPlace" onAction="#onClickPlace" text="iTo">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="2016">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
       </VBox>
-      <HBox alignment="TOP_RIGHT">
-         <children>
-            <Button fx:id="buttonClose" mnemonicParsing="false" onAction="#onClickClose" text="x" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </Button>
-         </children>
-      </HBox>
    </children>
 </StackPane>
