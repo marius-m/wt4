@@ -148,6 +148,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     updateStatus();
   }
 
+  @Override
+  public void onError(String error) {
+    updateStatus();
+  }
+
   //endregion
 
   //region Classes

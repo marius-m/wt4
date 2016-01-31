@@ -127,6 +127,11 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     });
   }
 
+  @Override
+  public void onError(String error) {
+    // output log indicates any errors here
+  }
+
   //endregion
 
   //region Classes

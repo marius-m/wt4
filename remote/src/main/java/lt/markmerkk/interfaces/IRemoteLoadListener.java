@@ -14,4 +14,10 @@ public interface IRemoteLoadListener {
    */
   void onLoadChange(boolean loading);
 
+  /**
+   * Reports an error.
+   * @param error
+   */
+  void onError(String error);
+
 }

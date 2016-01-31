@@ -88,11 +88,11 @@ public class LastUpdateControllerUpdateTest {
     // Arrange
     controller.lastUpdate = 1000;
     doReturn(1000000L).when(controller).now();
-    controller.setError(true);
+    controller.setError("Some error!");
 
     // Act
     // Assert
-    assertThat(controller.getOutput()).isEqualTo("Error. Check settings for details.");
+    assertThat(controller.getOutput()).isEqualTo("Error. Some error!");
   }
 
   @Test
@@ -101,7 +101,7 @@ public class LastUpdateControllerUpdateTest {
     controller.lastUpdate = 1000;
     doReturn(1000000L).when(controller).now();
     controller.setLoading(true);
-    controller.setError(true);
+    controller.setError("Some error!");
 
     // Act
     // Assert

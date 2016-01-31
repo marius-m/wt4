@@ -69,7 +69,6 @@ public class SyncController {
     }
 
     // Data prepare
-    lastUpdateController.setError(false);
     DateTime startTime;
     DateTime endTime;
     switch (storage.getDisplayType()) {
@@ -94,19 +93,21 @@ public class SyncController {
         jiraClient -> SyncController.this.jiraClient = jiraClient,
         error -> {
           logger.info(error.getMessage());
-          lastUpdateController.setError(true);
+          remoteLoadListener.onError(error.getMessage());
         }
     );
+
+    if (jiraClient == null)
+      return;
+
     JiraLogFilterer filterer = new JiraLogFilterer(
         settings.getUsername(),
         startTime,
         endTime
     );
+
     RemoteFetchMerger remoteFetchMerger = new RemoteFetchMerger(dbExecutor);
     RemotePushMerger remotePushMerger = new RemotePushMerger(dbExecutor, jiraClient);
-
-    if (jiraClient == null)
-      return;
 
     Observable<String> downloadObservable =
         JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
@@ -132,7 +133,7 @@ public class SyncController {
             error -> {
               logger.info("Upload error!  " + error);
               remoteLoadListener.onLoadChange(false);
-              lastUpdateController.setError(true);
+              remoteLoadListener.onError(error.getMessage());
             }, () -> {
               logger.info("Upload complete! ");
               //remoteLoadListener.onLoadChange(false);
@@ -145,12 +146,11 @@ public class SyncController {
                       },
                       error -> {
                         logger.info("Download error! " + error);
-                        lastUpdateController.setError(true);
+                        remoteLoadListener.onError(error.getMessage());
                       }, () -> {
                         logger.info("Download complete! ");
                         remoteLoadListener.onLoadChange(false);
                         storage.notifyDataChange();
-                        lastUpdateController.refresh();
                       });
             });
   }
@@ -183,9 +183,20 @@ public class SyncController {
     @Override
     public void onLoadChange(boolean loading) {
       SyncController.this.loading = loading;
+      if (loading)
+        lastUpdateController.setError(null);
+      if (!loading)
+        lastUpdateController.refresh();
       lastUpdateController.setLoading(loading);
       for (IRemoteLoadListener remoteListeners : SyncController.this.remoteLoadListeners)
         remoteListeners.onLoadChange(loading);
+    }
+
+    @Override
+    public void onError(String error) {
+      lastUpdateController.setError(error);
+      for (IRemoteLoadListener remoteListeners : SyncController.this.remoteLoadListeners)
+        remoteListeners.onError(error);
     }
   };
 
