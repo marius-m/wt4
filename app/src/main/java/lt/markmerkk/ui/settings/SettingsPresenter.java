@@ -29,11 +29,6 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
-//import org.apache.log4j.Appender;
-//import org.apache.log4j.AppenderSkeleton;
-//import org.apache.log4j.Logger;
-//import org.apache.log4j.PatternLayout;
-//import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.

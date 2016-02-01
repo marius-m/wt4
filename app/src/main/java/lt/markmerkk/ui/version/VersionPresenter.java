@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -84,13 +85,16 @@ public class VersionPresenter implements Initializable, Destroyable {
     Observable<UpdateSummary> updateObservable = Observable.create(new Observable.OnSubscribe<UpdateSummary>() {
       @Override
       public void call(Subscriber<? super UpdateSummary> subscriber) {
+        System.out.println("Code path: "+UpdateFX.findCodePath(Main.class));
         List<ECPoint> pubkeys = Crypto.decode("0335FE0506672CAD82FFDD7AEBF61EC5DE312507835D930D53F0345EFC8471FB72");
         Updater updater = new Updater(URI.create("http://localhost:80/index"), "" + Main.VERSION,
             AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
           @Override
           protected void updateProgress(long workDone, long max) {
             super.updateProgress(workDone, max);
-            //progressIndicator.setProgress(workDone);
+            float progress = workDone * 100 / max;
+            final float finalProgress = ((float) progress) / 100;
+            Platform.runLater(() -> progressIndicator.setProgress((double) finalProgress));
             Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
           }
         };
@@ -108,7 +112,7 @@ public class VersionPresenter implements Initializable, Destroyable {
         updater.setOnFailed(event -> {
           subscriber.onError(updater.getException());
         });
-        Thread asyncThread = new Thread(updater);
+        Thread asyncThread = new Thread(updater, "UpdateFX Thread");
         asyncThread.run();
         subscriber.add(new Subscription() {
           @Override

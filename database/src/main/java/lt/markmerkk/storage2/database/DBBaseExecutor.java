@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
@@ -14,11 +14,9 @@ import org.apache.log4j.Logger;
  */
 public abstract class DBBaseExecutor implements IExecutor {
 
-  private final Logger logger;
+  private static final Logger logger = LoggerFactory.getLogger(DBBaseExecutor.class);
 
-  public DBBaseExecutor() {
-    logger = Logger.getLogger(DBBaseExecutor.class);
-  }
+  public DBBaseExecutor() { }
 
   protected abstract String database();
 
@@ -33,13 +31,13 @@ public abstract class DBBaseExecutor implements IExecutor {
       if (queryJob == null) return;
       executeQuery(queryJob, connection);
     } catch (ClassNotFoundException e) { // Might throw when connecting to database
-      logger.log(Level.ERROR, "Cant connect to database!"+e.getMessage());
+      logger.error("Cant connect to database!"+e.getMessage());
     } catch (UnsupportedOperationException e) { // Might throw when using wrong forming method
-      logger.log(Level.ERROR, "Unsupported operation! "+e.getMessage());
+      logger.error("Unsupported operation! "+e.getMessage());
     } catch (IllegalArgumentException e) { // Might throw when forming
-      logger.log(Level.DEBUG, "Error! " + e.getMessage());
+      logger.debug("Error! " + e.getMessage());
     } catch (SQLException e) { // Might throw with illegal queries
-      logger.log(Level.DEBUG, "Error! " + e.getMessage());
+      logger.debug("Error! " + e.getMessage()); // this is perfectly normal
     } finally {
       close(connection); // We close connection anyway
     }

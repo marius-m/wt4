@@ -27,17 +27,7 @@ public class DBProdExecutor extends DBBaseExecutor {
   private void destroy() { }
 
   @Override protected String database() {
-    String home = System.getProperty("user.home");
-    if (home == null)
-      return "wt4.db";
-    try {
-      File file = new File(home+"/.wt4/");
-      FileUtils.forceMkdir(file);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-//    return home+"/.wt4/wt4.db";
-    return "wt4.db";
+    return Main.CFG_PATH+"wt4.db";
   }
 
 }

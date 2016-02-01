@@ -1,17 +1,15 @@
 package lt.markmerkk;
 
 import net.rcarz.jiraclient.WorkLog;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.Filter;
 import org.joda.time.DateTime;
-import rx.Observable;
-import rx.Subscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 1/30/16.
  */
 public class JiraLogFilterer {
-  Logger logger = Logger.getLogger(JiraLogFilterer.class);
+  Logger logger = LoggerFactory.getLogger(JiraLogFilterer.class);
 
   String user;
   DateTime start, end;
