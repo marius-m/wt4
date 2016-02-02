@@ -1,5 +1,6 @@
 package lt.markmerkk;
 
+import com.google.common.base.Strings;
 import java.util.Iterator;
 import java.util.List;
 import javafx.util.Pair;
@@ -9,6 +10,7 @@ import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -27,9 +29,12 @@ public class JiraObservables {
    * @return
    */
   public static Observable<Pair<Issue, List<WorkLog>>> remoteWorklogs(
-      JiraClient client, DateTime start, DateTime end, JiraLogFilterer filterer) {
-    return Observable.create(new JiraSearchJQL(client, start, end))
-        .flatMap(searchResult -> Observable.from(searchResult.issues))
+      JiraClient client, JiraLogFilterer filterer, DateTime start, DateTime end) {
+    return JiraObservables.issueSearchDateRangeObservable(start, end, client.getSelf())
+        .flatMap(jql -> Observable.create(new JiraSearchJQL(client, jql)))
+        .flatMap(searchResult -> {
+          return Observable.from(searchResult.issues);
+        })
         .map(issue -> issue.getKey())
         .flatMap(key -> {
           try {
@@ -63,12 +68,37 @@ public class JiraObservables {
   }
 
   /**
-   * Returns an observable that is responsible for pushing new {@link WorkLog}
-   * @param client
+   * Returns a date range from observable
+   * @param start start date
+   * @param end end date
    * @return
    */
-  public static Observable<Boolean> newWorklogs(
-      JiraClient client) {
-    return null;
+  public static Observable<String> issueSearchDateRangeObservable(DateTime start, DateTime end, String user) {
+    return Observable.create(new Observable.OnSubscribe<String>() {
+      @Override
+      public void call(Subscriber<? super String> subscriber) {
+        if (start == null) {
+          subscriber.onError(new IllegalArgumentException("Start date invalid"));
+          return;
+        }
+        if (end == null) {
+          subscriber.onError(new IllegalArgumentException("End date invalid"));
+          return;
+        }
+        if (user == null) {
+          subscriber.onError(new IllegalArgumentException("Invalid user"));
+          return;
+        }
+        DateTime startSearchDate = start.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+        DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+        subscriber.onNext(String.format(JiraSearchJQL.JQL_WORKLOG_TEMPLATE,
+            JiraSearchJQL.dateFormat.print(startSearchDate.getMillis()),
+            JiraSearchJQL.dateFormat.print(endSearchDate.getMillis()),
+            user
+        ));
+        subscriber.onCompleted();
+      }
+    });
   }
+
 }

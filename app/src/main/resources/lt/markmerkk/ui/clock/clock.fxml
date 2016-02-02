@@ -11,17 +11,17 @@
    <children>
       <HBox>
          <children>
-            <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Search for a task or insert new one..." HBox.hgrow="ALWAYS">
+            <ProgressIndicator fx:id="taskLoadIndicator" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false">
+               <HBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </HBox.margin>
+            </ProgressIndicator>
+            <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Search for a task or insert new one..." stylesheets="@../../../../live_search.css" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </ComboBox>
             <Button fx:id="buttonOpen" minWidth="30.0" mnemonicParsing="false" onAction="#onClickForward" stylesheets="@../../../../forward.css">
-               <HBox.margin>
-                  <Insets right="5.0" top="5.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="buttonNew" minWidth="30.0" mnemonicParsing="false" onAction="#onClickNew" stylesheets="@../../../../new.css">
                <HBox.margin>
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>

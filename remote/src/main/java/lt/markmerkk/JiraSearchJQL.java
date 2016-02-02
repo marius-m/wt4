@@ -25,17 +25,14 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 public class JiraSearchJQL implements Observable.OnSubscribe<Issue.SearchResult> {
   private static final Logger logger = LoggerFactory.getLogger(JiraSearchJQL.class);
   public final static DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
-  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
-  public static final String JQL_WORKLOG_TEMPLATE =
-      "key in workedIssues(\"%s\", \"%s\", \"%s\")";
+  public static final String JQL_WORKLOG_TEMPLATE = "key in workedIssues(\"%s\", \"%s\", \"%s\")";
 
   JiraClient client;
-  DateTime startSearchDate, endSearchDate;
+  String jql;
 
-  public JiraSearchJQL(JiraClient client, DateTime startSearchDate, DateTime endSearchDate) {
+  public JiraSearchJQL(JiraClient client, String jql) {
     this.client = client;
-    this.startSearchDate = startSearchDate;
-    this.endSearchDate = endSearchDate;
+    this.jql = jql;
   }
 
   @Override
@@ -43,28 +40,11 @@ public class JiraSearchJQL implements Observable.OnSubscribe<Issue.SearchResult>
     try {
       if (client == null)
         throw new IllegalArgumentException("client == null");
-      if (startSearchDate == null)
-        throw new IllegalArgumentException("startSearchDate == null");
-      if (endSearchDate == null)
-        throw new IllegalArgumentException("endSearchDate == null");
-      startSearchDate = startSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-      endSearchDate = endSearchDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-
-
-      logger.info("Looking on worked issues through " + dateFormat.print(startSearchDate)
-          + " to "
-          + dateFormat.print(endSearchDate)
-          + " for "
-          + client.getSelf());
-      String jql = String.format(JQL_WORKLOG_TEMPLATE,
-          dateFormat.print(startSearchDate.getMillis()),
-          dateFormat.print(endSearchDate.getMillis()),
-          client.getSelf()
-      );
-      logger.debug("Running JQL "+jql);
+      if (jql == null)
+        throw new IllegalArgumentException("jql == null");
+      logger.info("Doing search: "+jql);
       Issue.SearchResult sr = client.searchIssues(jql);
       logger.info("Found issues " + sr.issues.size() + " that have been worked on.");
-
       subscriber.onNext(sr);
       subscriber.onCompleted();
     } catch (JiraException e) {

@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -23,19 +24,21 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
+import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.storage2.BasicIssueStorage;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.utils.ClientObservables;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.observables.JavaFxObservable;
 import rx.schedulers.JavaFxScheduler;
@@ -46,6 +49,7 @@ import rx.schedulers.Schedulers;
  * Represents the presenter for the clock for logging info.
  */
 public class ClockPresenter implements Initializable {
+  public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
   @Inject HourGlass hourGlass;
@@ -60,50 +64,48 @@ public class ClockPresenter implements Initializable {
   @FXML ToggleButton buttonClock;
   @FXML Button buttonEnter;
   @FXML Button buttonOpen;
-  @FXML Button buttonNew;
+  //@FXML Button buttonNew;
   @FXML Button buttonSettings;
 
+  @FXML ProgressIndicator taskLoadIndicator;
   @FXML ComboBox<Issue> inputTaskCombo;
-  @FXML ObservableList<Issue> issues;
+  ObservableList<Issue> items;
 
   Listener listener;
   Subscription comboSubscription;
+  Observable<String> clearComboObservable;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    issues = FXCollections.emptyObservableList();
-    inputTaskCombo.setItems(issues);
-
-    comboSubscription = JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
-        .debounce(500, TimeUnit.MILLISECONDS)
+//    inputTaskCombo.setConverter(new StringConverter<Issue>() {
+//      @Override
+//      public String toString(Issue object) {
+//        return String.format("%s : %s", object.getKey(), object.getSummary());
+//      }
+//
+//      @Override
+//      public Issue fromString(String string) {
+//        return null;
+//      }
+//    });
+    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
+        .observeOn(JavaFxScheduler.getInstance())
         .map(searchPhrase -> {
-          // preparing list
-          issues.clear();
+//          if (Strings.isNullOrEmpty(inputTaskCombo.getEditor().getText()))
+//            inputTaskCombo.getSelectionModel().clearSelection();
+//          if (inputTaskCombo.getSelectionModel().getSelectedItem() != null)
+//            return null;
           return searchPhrase;
         })
         .filter(searchPhrase -> !Strings.isNullOrEmpty(searchPhrase))
-        .map(searchPhrase -> String.format("summary ~ %s OR key = %s", searchPhrase, searchPhrase))
-        .flatMap(searchPhrase -> Observable.create(new Observable.OnSubscribe<Issue.SearchResult>() {
-          @Override
-          public void call(Subscriber<? super Issue.SearchResult> subscriber) {
-            if (syncController.getJiraClient() == null) {
-              subscriber.onError(new IllegalArgumentException("JiraClient is null!"));
-            }
-            try {
-              Issue.SearchResult sr = syncController.getJiraClient().searchIssues(searchPhrase);
-              subscriber.onNext(sr);
-              subscriber.onCompleted();
-            } catch (JiraException e) {
-              subscriber.onError(e);
-            }
-        }
-        }))
-        .flatMap(searchResult -> Observable.from(searchResult.issues))
-        .filter(issue -> issue != null)
-        .subscribeOn(Schedulers.computation())
+        .debounce(800, TimeUnit.MILLISECONDS)
+        .flatMap(searchPhrase -> Observable.just(searchPhrase))
         .observeOn(JavaFxScheduler.getInstance())
-        .subscribe(issue -> {
-          issues.add(issue);
-        }, error -> System.out.println("Got error: "+error.getMessage()));
+        .subscribe(s -> { // fixme bad nesting functions, this should be done with rx, when ill know how to do it :/
+          System.out.println("Output "+Thread.currentThread().toString());
+          performSearch(s);
+        }, error -> {
+          logger.error("Error with user input! "+error);
+        }, () -> logger.error("Input has lost focus!"));
 
     //inputTaskCombo.setOnKeyReleased(comboKeyListener);
     inputFrom.setTooltip(new Tooltip("Worklog start" +
@@ -137,6 +139,44 @@ public class ClockPresenter implements Initializable {
     updateUI();
   }
 
+  void performSearch(final String searchPhrase) {
+    if (comboSubscription != null && comboSubscription.isUnsubscribed())
+      comboSubscription.unsubscribe();
+    comboSubscription = ClientObservables.issueSearchInputObservable(searchPhrase)
+        .observeOn(JavaFxScheduler.getInstance())
+        .map(sp -> {
+          taskLoadIndicator.setManaged(true);
+          taskLoadIndicator.setVisible(true);
+          inputTaskCombo.setItems(null);
+          inputTaskCombo.requestLayout();
+          inputTaskCombo.hide();
+          return sp;
+        })
+        .observeOn(Schedulers.computation())
+        .flatMap(jql -> {
+          logger.info("Searching for "+jql);
+          return Observable.create(new JiraSearchJQL(syncController.getJiraClient(), jql));
+        })
+        .flatMap(searchResult -> {
+          syncController.reinitJiraClient();
+          logger.info("Search result: " + searchResult.issues.size());
+          if (searchResult.issues.size() == 0)
+            return Observable.empty();
+          return Observable.just(FXCollections.observableArrayList(searchResult.issues));
+        })
+        .observeOn(JavaFxScheduler.getInstance())
+        .subscribe(issues -> {
+          inputTaskCombo.setItems(issues);
+          inputTaskCombo.requestLayout();
+          inputTaskCombo.show();
+        }, error -> {
+          logger.error("Error doing search.", error);
+        }, () -> {
+          taskLoadIndicator.setManaged(false);
+          taskLoadIndicator.setVisible(false);
+        });
+  }
+
   //region Keyboard input
 
   public void onClickClock() {
@@ -148,13 +188,6 @@ public class ClockPresenter implements Initializable {
 
   public void onClickEnter() {
     logWork();
-  }
-
-  public void onClickNew() {
-//    try {
-//      URI newPath = new URI(settings.getHost()+"/secure/CreateIssue!default.jspa");
-//      listener.onOpen(newPath.toString(), "New task");
-//    } catch (URISyntaxException e) { }
   }
 
   public void onClickForward() {

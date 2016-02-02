@@ -48,32 +48,32 @@ public class IntegrationJiraSearchJQLTest {
     subscriber.assertNoErrors(); // Should create successfully
   }
 
-  @Test
-  public void test_inputValid_shouldPullWorklogs() throws Exception {
-    // Arrange
-
-    // Forming jira client
-    Observable.create(new JiraConnector(
-        (String) properties.get("host"),
-        (String) properties.get("username"),
-        (String) properties.get("password")
-    )).subscribe(jiraClient -> client = jiraClient);
-
-    DateTime start = JiraSearchJQL.dateFormat.parseDateTime("2016-01-14");
-    DateTime end = JiraSearchJQL.dateFormat.parseDateTime("2016-01-15");
-
-    JiraLogFilterer filterer = new JiraLogFilterer(
-        (String) properties.get("username"),
-        start,
-        end
-    );
-
-    // Act
-    JiraObservables.remoteWorklogs(client, start, end, filterer)
-        .subscribe(pair -> System.out.println(pair.getKey() + " / " + pair.getValue().size()));
-
-    // Assert
-
-  }
+//  @Test
+//  public void test_inputValid_shouldPullWorklogs() throws Exception {
+//    // Arrange
+//
+//    // Forming jira client
+//    Observable.create(new JiraConnector(
+//        (String) properties.get("host"),
+//        (String) properties.get("username"),
+//        (String) properties.get("password")
+//    )).subscribe(jiraClient -> client = jiraClient);
+//
+//    DateTime start = JiraSearchJQL.dateFormat.parseDateTime("2016-01-14");
+//    DateTime end = JiraSearchJQL.dateFormat.parseDateTime("2016-01-15");
+//
+//    JiraLogFilterer filterer = new JiraLogFilterer(
+//        (String) properties.get("username"),
+//        start,
+//        end
+//    );
+//
+//    // Act
+//    JiraObservables.remoteWorklogs(client, start, end, filterer)
+//        .subscribe(pair -> System.out.println(pair.getKey() + " / " + pair.getValue().size()));
+//
+//    // Assert
+//
+//  }
 
 }

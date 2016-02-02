@@ -100,7 +100,7 @@ public class SyncController {
     RemotePushMerger remotePushMerger = new RemotePushMerger(dbExecutor, jiraClient);
 
     Observable<String> downloadObservable =
-        JiraObservables.remoteWorklogs(jiraClient, startTime, endTime, filterer)
+        JiraObservables.remoteWorklogs(jiraClient, filterer, startTime, endTime)
             .map(pair -> {
               for (WorkLog workLog : pair.getValue())
                 remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
@@ -114,34 +114,20 @@ public class SyncController {
         });
 
     remoteLoadListener.onLoadChange(true);
-
-    subscription = uploadObservable
+    subscription = downloadObservable.startWith(uploadObservable)
         .subscribeOn(Schedulers.computation())
         .observeOn(JavaFxScheduler.getInstance())
         .subscribe(output -> {
+              //logger.info(output);
             },
             error -> {
-              logger.info("Upload error!  " + error);
+              logger.info("Sync error!  " + error);
               remoteLoadListener.onLoadChange(false);
               remoteLoadListener.onError(error.getMessage());
             }, () -> {
-              logger.info("Upload complete! ");
-              //remoteLoadListener.onLoadChange(false);
+              logger.info("Sync complete! ");
+              remoteLoadListener.onLoadChange(false);
               storage.notifyDataChange();
-
-              subscription = downloadObservable
-                  .subscribeOn(Schedulers.computation())
-                  .observeOn(JavaFxScheduler.getInstance())
-                  .subscribe(output -> {
-                      },
-                      error -> {
-                        logger.info("Download error! " + error);
-                        remoteLoadListener.onError(error.getMessage());
-                      }, () -> {
-                        logger.info("Download complete! ");
-                        remoteLoadListener.onLoadChange(false);
-                        storage.notifyDataChange();
-                      });
             });
   }
 
