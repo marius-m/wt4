@@ -48,7 +48,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<Issue> {
   public void doSearchForInput(String input) {
     if (searchSubscription != null && searchSubscription.isUnsubscribed())
       searchSubscription.unsubscribe();
-    searchSubscription = Observable.just(comboBox.getEditor().getText())
+    searchSubscription = Observable.just(input)
         .filter(searchPhrase -> !Strings.isNullOrEmpty(searchPhrase))
         .observeOn(JavaFxScheduler.getInstance())
         .map(sp -> {
