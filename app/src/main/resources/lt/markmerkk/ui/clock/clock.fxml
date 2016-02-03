@@ -21,7 +21,12 @@
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </ComboBox>
-            <Button fx:id="buttonOpen" minWidth="30.0" mnemonicParsing="false" onAction="#onClickForward" stylesheets="@../../../../forward.css">
+            <Button fx:id="buttonSearch" minWidth="30.0" mnemonicParsing="false" onAction="#onClickSearch" stylesheets="@../../../../forward.css">
+               <HBox.margin>
+                  <Insets right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonOpen" minWidth="30.0" mnemonicParsing="false" onAction="#onClickOpen" stylesheets="@../../../../forward.css">
                <HBox.margin>
                   <Insets right="5.0" top="5.0" />
                </HBox.margin>

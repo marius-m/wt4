@@ -1,6 +1,8 @@
 package lt.markmerkk.ui.clock;
 
 import com.google.common.base.Strings;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -8,7 +10,6 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,26 +22,22 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
-import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.Main;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
-import lt.markmerkk.utils.ClientObservables;
+import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import net.rcarz.jiraclient.Issue;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.Subscription;
 import rx.observables.JavaFxObservable;
-import rx.schedulers.JavaFxScheduler;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
@@ -56,6 +53,8 @@ public class ClockPresenter implements Initializable {
   BasicLogStorage logStorage;
   @Inject
   SyncController syncController;
+  @Inject
+  UserSettings settings;
 
   @FXML
   DatePicker inputTo;
@@ -69,52 +68,32 @@ public class ClockPresenter implements Initializable {
   Button buttonEnter;
   @FXML
   Button buttonOpen;
+  @FXML
+  Button buttonSearch;
   //@FXML Button buttonNew;
   @FXML
   Button buttonSettings;
 
-  @FXML
-  ProgressIndicator taskLoadIndicator;
-  @FXML
-  ComboBox<Issue> inputTaskCombo;
-  Subscription searchSubscription;
+  @FXML ProgressIndicator taskLoadIndicator;
+  @FXML ComboBox<Issue> inputTaskCombo;
 
+  IssueSearchAdapter issueSearchAdapter;
   Listener listener;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    inputTaskCombo.setConverter(new StringConverter<Issue>() {
-      @Override
-      public String toString(Issue object) {
-        if (object == null) return "";
-        return object.getKey() + " : " + object.getSummary() + " / " + object.getAssignee();
-      }
-
-      @Override
-      public Issue fromString(String string) {
-        return inputTaskCombo.getSelectionModel().getSelectedItem();
-      }
-    });
-    inputTaskCombo.getEditor().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent keyEvent) -> {
-      switch (keyEvent.getCode()) {
-        case ENTER:
-          doIssueSearch();
-          keyEvent.consume();
-          break;
-        case DOWN:
-        case UP:
-          inputTaskCombo.show();
-          keyEvent.consume();
-          break;
-      }
-    });
-
-    JavaFxObservable.fromNodeEvents(buttonOpen, ActionEvent.ACTION)
-        .subscribe(event -> {
-          doIssueSearch();
+    issueSearchAdapter = new IssueSearchAdapter(syncController, inputTaskCombo, taskLoadIndicator);
+    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
+        .subscribe(newString -> {
+          if (newString != null && newString.length() <= 2)
+            inputTaskCombo.getSelectionModel().clearSelection();
+          if (Strings.isNullOrEmpty(newString))
+            inputTaskCombo.getSelectionModel().clearSelection();
+          boolean visible = inputTaskCombo.getSelectionModel().getSelectedItem() != null;
+          buttonOpen.setVisible(visible);
+          buttonOpen.setManaged(visible);
         });
 
-//    inputTaskCombo.setOnKeyReleased(comboKeyListener);
     inputFrom.setTooltip(new Tooltip("Worklog start" +
         "\n\nStart time for the current log. " +
         "It can be edited whenever timer is running. " +
@@ -131,8 +110,6 @@ public class ClockPresenter implements Initializable {
         "\n\nEnters currently running work."));
     buttonOpen.setTooltip(new Tooltip("Forward " +
         "\n\nOpen selected issue details."));
-//    buttonNew.setTooltip(new Tooltip("New. " +
-//        "\n\nCreate new issue."));
     buttonSettings.setTooltip(new Tooltip("Settings. " +
         "\n\nSetting up remote host, user credentials."));
     inputComment.setTooltip(new Tooltip("Comment" +
@@ -143,9 +120,12 @@ public class ClockPresenter implements Initializable {
     inputTo.getEditor().textProperty().addListener(timeChangeListener);
     inputFrom.setConverter(startDateConverter);
     inputTo.setConverter(endDateConverter);
+
     Platform.runLater(() -> {
       taskLoadIndicator.setManaged(false);
       taskLoadIndicator.setVisible(false);
+      buttonOpen.setVisible(false);
+      buttonOpen.setManaged(false);
     });
     updateUI();
   }
@@ -163,17 +143,20 @@ public class ClockPresenter implements Initializable {
     logWork();
   }
 
-  public void onClickForward() {
-//    if (inputTaskCombo.getSelectionModel() == null) return;
-//    if (inputTaskCombo.getSelectionModel().getSelectedIndex() < 0) return;
-//    SimpleIssue selectedIssue =
-//        issueStorage.getData().get(inputTaskCombo.getSelectionModel().getSelectedIndex());
-//    if (selectedIssue == null) return;
-//    URI issuePath = null;
-//    try {
-//      issuePath = new URI(settings.getHost()+"/browse/"+selectedIssue.getKey());
-//      listener.onOpen(issuePath.toString(), selectedIssue.getKey());
-//    } catch (URISyntaxException e) { }
+  public void onClickOpen() {
+    if (inputTaskCombo.getSelectionModel().getSelectedItem() == null) return;
+    if (Strings.isNullOrEmpty(settings.getHost())) return;
+    URI issuePath = null;
+    try {
+      issuePath = new URI(settings.getHost()+"/browse/"+inputTaskCombo.getSelectionModel().getSelectedItem().getKey());
+      Main.hostServices.showDocument(issuePath.toString());
+    } catch (URISyntaxException e) {
+      logger.error("Cant open issue! ", e);
+    }
+  }
+
+  public void onClickSearch() {
+    issueSearchAdapter.doSearch();
   }
 
   public void onClickSettings() {
@@ -277,45 +260,6 @@ public class ClockPresenter implements Initializable {
     }
   };
 
-//  EventHandler<KeyEvent> comboKeyListener = new EventHandler<KeyEvent>() {
-//    @Override public void handle(KeyEvent event) {
-//      if (event.getCode() == KeyCode.ENTER) {
-//        doIssueSearch();
-//        return;
-//      }
-//
-//      if (event.getCode() == KeyCode.ESCAPE) {
-//        inputTaskCombo.hide();
-//        return;
-//      }
-//
-//      if (
-//          event.getCode() == KeyCode.UP ||
-//          event.getCode() == KeyCode.DOWN) {
-//        inputTaskCombo.show();
-//        return;
-//      }
-//
-//      if (event.getCode() == KeyCode.RIGHT ||
-//          event.getCode() == KeyCode.LEFT ||
-//          event.getCode() == KeyCode.HOME ||
-//          event.getCode() == KeyCode.END ||
-//          event.getCode() == KeyCode.TAB)
-//        return;
-//
-//      if (event.getCode() == KeyCode.BACK_SPACE ||
-//          event.getCode() == KeyCode.DELETE) {
-//        //issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
-//        inputTaskCombo.show();
-//        return;
-//      }
-//
-//      if (Utils.isEmpty(event.getText())) return;
-////      issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
-//      inputTaskCombo.show();
-//    }
-//  };
-
   ChangeListener<String> timeChangeListener = new ChangeListener<String>() {
     @Override
     public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -379,48 +323,6 @@ public class ClockPresenter implements Initializable {
 
   //region Convenience
 
-  /**
-   * Does the issue search on the network to fill in {@link #inputTaskCombo}
-   */
-  void doIssueSearch() {
-    if (searchSubscription != null && searchSubscription.isUnsubscribed())
-      searchSubscription.unsubscribe();
-    searchSubscription = Observable.just(inputTaskCombo.getEditor().getText())
-        .filter(searchPhrase -> !Strings.isNullOrEmpty(searchPhrase))
-        .observeOn(JavaFxScheduler.getInstance())
-        .map(sp -> {
-          taskLoadIndicator.setManaged(true);
-          taskLoadIndicator.setVisible(true);
-          inputTaskCombo.hide();
-          return sp;
-        })
-        .observeOn(Schedulers.computation())
-        .flatMap(searchPhrase -> ClientObservables.issueSearchInputObservable(searchPhrase))
-        .flatMap(jql -> {
-          logger.info("Searching for \"" + jql + "\"");
-          return Observable.create(new JiraSearchJQL(syncController.getJiraClient(), jql));
-        })
-        .flatMap(searchResult -> {
-          syncController.reinitJiraClient();
-          logger.info("Search result: " + searchResult.issues.size());
-          if (searchResult.issues.size() == 0)
-            return Observable.empty();
-          return Observable.just(FXCollections.observableArrayList(searchResult.issues));
-        })
-        .observeOn(JavaFxScheduler.getInstance())
-        .subscribe(issues -> {
-          inputTaskCombo.setItems(issues);
-          inputTaskCombo.requestLayout();
-          inputTaskCombo.show();
-        }, error -> {
-          logger.error("Error doing search.", error);
-          taskLoadIndicator.setManaged(false);
-          taskLoadIndicator.setVisible(false);
-        }, () -> {
-          taskLoadIndicator.setManaged(false);
-          taskLoadIndicator.setVisible(false);
-        });
-  }
 
   /**
    * Adds an indicator as an error for the text field
