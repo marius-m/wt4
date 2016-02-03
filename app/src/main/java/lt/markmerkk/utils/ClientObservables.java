@@ -17,8 +17,8 @@ public class ClientObservables {
         .map(searchPhrase -> {
           String key = Utils.validateTaskTitle(searchPhrase);
           if (!Strings.isNullOrEmpty(key))
-            return String.format("summary ~ %s OR key = %s", searchPhrase, key);
-          return String.format("summary ~ %s", searchPhrase);
+            return String.format("summary ~ \"%s\" OR key = \"%s\"", searchPhrase, key);
+          return String.format("summary ~ \"%s\"", searchPhrase);
         });
   }
 
