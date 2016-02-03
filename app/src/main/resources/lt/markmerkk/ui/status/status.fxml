@@ -17,6 +17,9 @@
                <HBox.margin>
                   <Insets right="2.0" />
                </HBox.margin>
+               <graphic>
+                  <ProgressIndicator fx:id="versionLoadIndicator" prefHeight="10.0" prefWidth="10.0" visible="false" />
+               </graphic>
             </Button>
             <ProgressIndicator fx:id="outputProgress" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="14.0" visible="false">
                <HBox.margin>

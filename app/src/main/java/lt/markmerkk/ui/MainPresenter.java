@@ -1,17 +1,20 @@
 package lt.markmerkk.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
+import lt.markmerkk.Main;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -31,6 +34,7 @@ import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
+import lt.markmerkk.utils.VersionController;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.

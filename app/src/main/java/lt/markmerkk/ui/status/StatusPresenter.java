@@ -1,5 +1,6 @@
 package lt.markmerkk.ui.status;
 
+import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -14,6 +15,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
+import lt.markmerkk.Main;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -21,6 +23,7 @@ import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
 import net.rcarz.jiraclient.WorkLog;
 
@@ -28,14 +31,17 @@ import net.rcarz.jiraclient.WorkLog;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener {
+public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener,
+    VersionController.UpgradeListener {
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;
+  @Inject VersionController versionController;
 
   @FXML ProgressIndicator outputProgress;
+  @FXML ProgressIndicator versionLoadIndicator;
   @FXML Button buttonRefresh;
   @FXML Button buttonViewToggle;
   @FXML Button buttonToday;
@@ -66,9 +72,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     updateStatus();
     onLoadChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
+    versionController.addListener(this);
   }
 
   @Override public void destroy() {
+    versionController.removeListener(this);
     syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
   }
@@ -87,6 +95,22 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   //endregion
 
   //region Listeners
+
+  @Override
+  public void onProgressChange(double progressChange) {
+    boolean visible = (progressChange > 0.0f && progressChange < 1.0f);
+    versionLoadIndicator.setManaged(visible);
+    versionLoadIndicator.setVisible(visible);
+  }
+
+  @Override
+  public void onSummaryUpdate(UpdateSummary updateSummary) {
+    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION) {
+      buttonAbout.setText("!");
+      return;
+    }
+    buttonAbout.setText("?");
+  }
 
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
     @Override
