@@ -48,12 +48,12 @@ public class Main extends Application {
 
     // After bootstrap function log4j fails to load configuration. Need to persist config.
     PropertyConfigurator.configure(getClass().getResource("/custom_log4j.properties"));
-    SimpleLayout layout = new SimpleLayout();
-    fileAppender = new RollingFileAppender(layout, CFG_PATH + "info.log", true);
-    fileAppender.setMaxFileSize("1000KB");
-    fileAppender.setMaxBackupIndex(1);
-    fileAppender.setThreshold(Priority.INFO);
-    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+//    SimpleLayout layout = new SimpleLayout();
+//    fileAppender = new RollingFileAppender(layout, CFG_PATH + "info.log", true);
+//    fileAppender.setMaxFileSize("1000KB");
+//    fileAppender.setMaxBackupIndex(1);
+//    fileAppender.setThreshold(Priority.INFO);
+//    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
 
 
     hostServices = HostServicesFactory.getInstance(this);
@@ -72,7 +72,7 @@ public class Main extends Application {
 
   @Override
   public void stop() throws Exception {
-    org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
+//    org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
     super.stop();
     hostServices = null;
     Injector.forgetAll();
