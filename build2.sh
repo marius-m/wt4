@@ -5,10 +5,6 @@ if [ $# -eq 0 ]; then
 fi
 gradle clean shadowJar
 cp app/build/libs/app-0.9.4-all.jar out/builds/$1.jar
-#sed -i .bak 's/public static int VERSION = 1;/public static int VERSION = 3;/' app/src/main/java/lt/markmerkk/Main.java
-#gradle clean shadowJar
-#cp app/build/libs/app-0.9.4-all.jar out/builds/3.jar
-#mv app/src/main/java/lt/markmerkk/Main.java.bak app/src/main/java/lt/markmerkk/Main.java
 
 java -jar tools/updatefx-app-1.6-SNAPSHOT.jar --url=http://localhost:80/ out
 

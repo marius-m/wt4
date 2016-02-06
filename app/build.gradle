@@ -21,7 +21,7 @@ buildscript {
 //            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
 //        }
         jcenter()
-        flatDir name: 'localRepository', dirs: '../libs'
+        flatDir name: 'localRepository', dirs: '../tools'
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
@@ -111,6 +111,7 @@ allprojects {
 
 group = 'lt.markmerkk'
 version = '0.9.4'
+def versionCode = '1'
 
 javafx {
     appID 'WT4'
@@ -118,8 +119,8 @@ javafx {
     mainClass = 'lt.markmerkk.Main'
     profiles {
         macosx {
-            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
-//            javaRuntime = '<NO RUNTIME>'
+//            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
+            javaRuntime = '<NO RUNTIME>'
             //javaRuntime = '.'
         }
     }
@@ -148,23 +149,66 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.assertj:assertj-core:2.2.0'
 }
-task deleteLibs(dependsOn: jar) << {
-    def path = "$projectDir/build/libs"
-    assert file(path).exists()
-    println '### Deleting old ' + path + ' ###'
-    project.delete fileTree(dir: path, exclude: "dont_delete.txt")
-}
-task renameLibs(type: Copy) << {
-    def path = "$projectDir/build/libs/"
-    assert file(path).exists()
-    from(path+'app-0.9.4-all.jar')
-    into(path+'app-0.9.4.jar')
-}
-shadowJar.dependsOn renameLibs
-task makeJar(dependsOn:[shadowJar, deleteLibs, jar]) << {
-    println '### Project ready ###'
+
+/**
+ * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
+ */
+task processJar(dependsOn:shadowJar, type: JavaExec) {
+    // Preparing project structure
+    // todo: This probably should be solved somehow else, as sites should never be deleted
+    def processDir = new File(rootDir, "out")
+    if (processDir.exists())
+        processDir.deleteDir()
+    processDir.mkdirs()
+    File processBuilds = new File("$rootDir/out", "builds")
+    processBuilds.mkdirs()
+
+    standardInput = System.in
+    classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
+    classpath += sourceSets.main.runtimeClasspath
+    main = 'com.vinumeris.updatefx.tools.UFXPrepare'
+    workingDir = "$rootDir"
+    args = ['--pass=123','--url=http://localhost:80/', 'out']
+
+    doFirst {
+        def libsDir = new File(projectDir, "build/libs")
+        if (libsDir.exists())
+            project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
+        File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
+        assert outFile.exists()
+        outFile.renameTo("${libsDir.absolutePath}/${versionCode}.jar")
+        outFile = new File("${libsDir.absolutePath}/${versionCode}.jar")
+        println '### Jar ready from process ###'
+
+        // Using processed files
+        println '### Copying ###'
+        println "From: $outFile.absolutePath"
+        println "Into: $processBuilds.absolutePath"
+
+        copy {
+            from outFile.absolutePath
+            into processBuilds.absolutePath
+        }
+        println '### Processing ###'
+    }
+
+    doLast {
+        println '### Process complete ###'
+        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
+        copy {
+            from outFile.absolutePath
+            into libsDir.absolutePath
+        }
+        println '### Outputting processed jar ###'
+        println "From: $outFile.absolutePath"
+        println "Into: $libsDir.absolutePath"
+    }
 }
 
-startScripts.dependsOn shadowJar
+task makeJar(dependsOn:processJar) << {
+
+}
+
+startScripts.dependsOn makeJar
 
 
