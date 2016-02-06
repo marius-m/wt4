@@ -160,7 +160,7 @@ public class VersionController {
     @Override
     public void call(Subscriber<? super Updater> subscriber) {
       System.out.println("Code path: " + UpdateFX.findCodePath(Main.class));
-      List<ECPoint> pubkeys = Crypto.decode("0335FE0506672CAD82FFDD7AEBF61EC5DE312507835D930D53F0345EFC8471FB72");
+      List<ECPoint> pubkeys = Crypto.decode("0349CCE851295DC05856858CD17DF9C82758A84D9A95B7A967A20DD93A3C50C04C");
       Updater updater = new Updater(URI.create("http://localhost:80/index"), "" + Main.VERSION,
           AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
         @Override

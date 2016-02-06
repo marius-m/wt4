@@ -119,8 +119,8 @@ javafx {
     mainClass = 'lt.markmerkk.Main'
     profiles {
         macosx {
-//            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
-            javaRuntime = '<NO RUNTIME>'
+            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
+//            javaRuntime = '<NO RUNTIME>'
             //javaRuntime = '.'
         }
     }
@@ -157,11 +157,12 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     // Preparing project structure
     // todo: This probably should be solved somehow else, as sites should never be deleted
     def processDir = new File(rootDir, "out")
-    if (processDir.exists())
-        processDir.deleteDir()
-    processDir.mkdirs()
+    if (!processDir.exists())
+        processDir.mkdirs()
     File processBuilds = new File("$rootDir/out", "builds")
     processBuilds.mkdirs()
+    project.delete fileTree(dir: processBuilds)
+
 
     standardInput = System.in
     classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
@@ -171,6 +172,8 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     args = ['--pass=123','--url=http://localhost:80/', 'out']
 
     doFirst {
+
+        // Taking jar from the compiled place
         def libsDir = new File(projectDir, "build/libs")
         if (libsDir.exists())
             project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
@@ -189,10 +192,13 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
             from outFile.absolutePath
             into processBuilds.absolutePath
         }
+
         println '### Processing ###'
     }
 
     doLast {
+
+        // Placing back to original place
         println '### Process complete ###'
         def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
         copy {
@@ -202,13 +208,15 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         println '### Outputting processed jar ###'
         println "From: $outFile.absolutePath"
         println "Into: $libsDir.absolutePath"
+
+        // Renaming back to original name
+        outFile = new File("${rootDir}/app/build/libs/${versionCode}.jar")
+        outFile.renameTo("${rootDir}/app/build/libs/app-${version}.jar")
     }
 }
 
-task makeJar(dependsOn:processJar) << {
+task makeJar(dependsOn:processJar) << { }
 
-}
-
-startScripts.dependsOn makeJar
+jfxDeploy.dependsOn makeJar
 
 

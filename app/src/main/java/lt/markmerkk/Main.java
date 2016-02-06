@@ -24,7 +24,7 @@ public class Main extends Application {
   public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
-  public static int VERSION = 7;
+  public static int VERSION = 1;
   public static int SCENE_WIDTH = 600;
   public static int SCENE_HEIGHT = 500;
 
