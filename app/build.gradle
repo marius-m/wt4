@@ -136,7 +136,7 @@ dependencies {
     //compile 'io.reactivex:rxjava-async-util:0.21.0'
 
     compile 'joda-time:joda-time:2.9.1'
-    compile 'com.vinumeris:updatefx:1.5'
+//    compile 'com.vinumeris:updatefx:1.5'
     compile 'com.airhacks:afterburner.fx:1.6.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.jfxtras:jfxtras-agenda:8.0-r5-SNAPSHOT'
@@ -153,70 +153,70 @@ dependencies {
 /**
  * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
  */
-task processJar(dependsOn:shadowJar, type: JavaExec) {
-    // Preparing project structure
-    // todo: This probably should be solved somehow else, as sites should never be deleted
-    def processDir = new File(rootDir, "out")
-    if (!processDir.exists())
-        processDir.mkdirs()
-    File processBuilds = new File("$rootDir/out", "builds")
-    processBuilds.mkdirs()
-    project.delete fileTree(dir: processBuilds)
+//task processJar(dependsOn:shadowJar, type: JavaExec) {
+//    // Preparing project structure
+//    // todo: This probably should be solved somehow else, as sites should never be deleted
+//    def processDir = new File(rootDir, "out")
+//    if (!processDir.exists())
+//        processDir.mkdirs()
+//    File processBuilds = new File("$rootDir/out", "builds")
+//    processBuilds.mkdirs()
+//    project.delete fileTree(dir: processBuilds)
+//
+//
+//    standardInput = System.in
+//    classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
+//    classpath += sourceSets.main.runtimeClasspath
+//    main = 'com.vinumeris.updatefx.tools.UFXPrepare'
+//    workingDir = "$rootDir"
+//    args = ['--pass=123','--url=http://localhost:80/', 'out']
+//
+//    doFirst {
+//
+//        // Taking jar from the compiled place
+//        def libsDir = new File(projectDir, "build/libs")
+//        if (libsDir.exists())
+//            project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
+//        File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
+//        assert outFile.exists()
+//        outFile.renameTo("${libsDir.absolutePath}/${versionCode}.jar")
+//        outFile = new File("${libsDir.absolutePath}/${versionCode}.jar")
+//        println '### Jar ready from process ###'
+//
+//        // Using processed files
+//        println '### Copying ###'
+//        println "From: $outFile.absolutePath"
+//        println "Into: $processBuilds.absolutePath"
+//
+//        copy {
+//            from outFile.absolutePath
+//            into processBuilds.absolutePath
+//        }
+//
+//        println '### Processing ###'
+//    }
+//
+//    doLast {
+//
+//        // Placing back to original place
+//        println '### Process complete ###'
+//        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
+//        copy {
+//            from outFile.absolutePath
+//            into libsDir.absolutePath
+//        }
+//        println '### Outputting processed jar ###'
+//        println "From: $outFile.absolutePath"
+//        println "Into: $libsDir.absolutePath"
+//
+//        // Renaming back to original name
+//        outFile = new File("${rootDir}/app/build/libs/${versionCode}.jar")
+//        outFile.renameTo("${rootDir}/app/build/libs/app-${version}.jar")
+//    }
+//}
 
+//task makeJar(dependsOn:processJar) << { }
 
-    standardInput = System.in
-    classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
-    classpath += sourceSets.main.runtimeClasspath
-    main = 'com.vinumeris.updatefx.tools.UFXPrepare'
-    workingDir = "$rootDir"
-    args = ['--pass=123','--url=http://localhost:80/', 'out']
-
-    doFirst {
-
-        // Taking jar from the compiled place
-        def libsDir = new File(projectDir, "build/libs")
-        if (libsDir.exists())
-            project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
-        File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
-        assert outFile.exists()
-        outFile.renameTo("${libsDir.absolutePath}/${versionCode}.jar")
-        outFile = new File("${libsDir.absolutePath}/${versionCode}.jar")
-        println '### Jar ready from process ###'
-
-        // Using processed files
-        println '### Copying ###'
-        println "From: $outFile.absolutePath"
-        println "Into: $processBuilds.absolutePath"
-
-        copy {
-            from outFile.absolutePath
-            into processBuilds.absolutePath
-        }
-
-        println '### Processing ###'
-    }
-
-    doLast {
-
-        // Placing back to original place
-        println '### Process complete ###'
-        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
-        copy {
-            from outFile.absolutePath
-            into libsDir.absolutePath
-        }
-        println '### Outputting processed jar ###'
-        println "From: $outFile.absolutePath"
-        println "Into: $libsDir.absolutePath"
-
-        // Renaming back to original name
-        outFile = new File("${rootDir}/app/build/libs/${versionCode}.jar")
-        outFile.renameTo("${rootDir}/app/build/libs/app-${version}.jar")
-    }
-}
-
-task makeJar(dependsOn:processJar) << { }
-
-jfxDeploy.dependsOn makeJar
+//jfxDeploy.dependsOn makeJar
 
 

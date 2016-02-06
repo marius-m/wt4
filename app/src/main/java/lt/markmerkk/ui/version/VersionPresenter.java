@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.version;
 
-import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -22,22 +21,29 @@ import org.slf4j.LoggerFactory;
 public class VersionPresenter implements Initializable, Destroyable, VersionController.UpgradeListener {
   Logger logger = LoggerFactory.getLogger(VersionPresenter.class);
 
-  @Inject VersionController versionController;
+  @Inject
+  VersionController versionController;
 
-  @FXML Button buttonClose;
-  @FXML Hyperlink buttonTitle;
-  @FXML Hyperlink buttonAuthor;
-  @FXML Hyperlink buttonPlace;
-  @FXML Hyperlink buttonUpdate;
-  @FXML ProgressIndicator progressIndicator;
+  @FXML
+  Button buttonClose;
+  @FXML
+  Hyperlink buttonTitle;
+  @FXML
+  Hyperlink buttonAuthor;
+  @FXML
+  Hyperlink buttonPlace;
+  @FXML
+  Hyperlink buttonUpdate;
+  @FXML
+  ProgressIndicator progressIndicator;
 
   DialogListener dialogListener;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     versionController.addListener(this);
-    onProgressChange(versionController.getProgress());
-    onSummaryUpdate(versionController.getSummary());
+//    onProgressChange(versionController.getProgress());
+//    onSummaryUpdate(versionController.getSummary());
   }
 
   @Override
@@ -51,7 +57,8 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     dialogListener.onCancel();
   }
 
-  public void onClickSave() { }
+  public void onClickSave() {
+  }
 
   public void onClickTitle() {
     if (Main.hostServices != null)
@@ -69,12 +76,12 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   }
 
   public void onClickUpdate() {
-    if (versionController.getSummary() != null
-        && versionController.getSummary().highestVersion > Main.VERSION) {
-      versionController.upgrade();
-      return;
-    }
-    versionController.checkForUpdate();
+//    if (versionController.getSummary() != null
+//        && versionController.getSummary().highestVersion > Main.VERSION) {
+//      versionController.upgrade();
+//      return;
+//    }
+//    versionController.checkForUpdate();
   }
 
   @Override
@@ -82,22 +89,22 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     progressIndicator.setProgress((progressChange <= 0) ? 0 : progressChange);
   }
 
-  @Override
-  public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
-      buttonUpdate.setText("Updating...");
-      return;
-    }
-    if (updateSummary == null) {
-      buttonUpdate.setText("No information about the update!");
-      return;
-    }
-    if (updateSummary.highestVersion > Main.VERSION) {
-      buttonUpdate.setText("New updates are available! Update? (Will restart the app).");
-      return;
-    }
-    buttonUpdate.setText("App is up to date!");
-  }
+//  @Override
+//  public void onSummaryUpdate(UpdateSummary updateSummary) {
+//    if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
+//      buttonUpdate.setText("Updating...");
+//      return;
+//    }
+//    if (updateSummary == null) {
+//      buttonUpdate.setText("No information about the update!");
+//      return;
+//    }
+//    if (updateSummary.highestVersion > Main.VERSION) {
+//      buttonUpdate.setText("New updates are available! Update? (Will restart the app).");
+//      return;
+//    }
+//    buttonUpdate.setText("App is up to date!");
+//  }
 
   //region Listeners
 

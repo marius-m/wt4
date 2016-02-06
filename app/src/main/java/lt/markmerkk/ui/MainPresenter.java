@@ -1,20 +1,17 @@
 package lt.markmerkk.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
-import lt.markmerkk.Main;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -34,18 +31,20 @@ import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
-import lt.markmerkk.utils.VersionController;
 
 /**
- * Created by mariusmerkevicius on 12/5/15.
- * Represents the main presenter of the app
+ * Created by mariusmerkevicius on 12/5/15. Represents the main presenter of the app
  */
 public class MainPresenter implements Initializable {
-  @Inject BasicLogStorage storage;
+  @Inject
+  BasicLogStorage storage;
 
-  @FXML TabPane tabPane;
-  @FXML BorderPane northPane;
-  @FXML BorderPane southPane;
+  @FXML
+  TabPane tabPane;
+  @FXML
+  BorderPane northPane;
+  @FXML
+  BorderPane southPane;
 
   IPresenter displayPresenter;
 
@@ -57,7 +56,8 @@ public class MainPresenter implements Initializable {
     tabsController = new HiddenTabsController();
   }
 
-  @Override public void initialize(URL location, ResourceBundle resources) {
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
     southPane.setBottom(statusView.getView());
@@ -115,7 +115,8 @@ public class MainPresenter implements Initializable {
   };
 
   DialogListener updateWindowDialogListener = new DialogListener() {
-    @Override public void onSave() {
+    @Override
+    public void onSave() {
       if (dialog.isShowing())
         dialog.hide();
       storage.notifyDataChange();
@@ -129,7 +130,9 @@ public class MainPresenter implements Initializable {
   };
 
   DialogListener versionWindowDialogListener = new DialogListener() {
-    @Override public void onSave() { }
+    @Override
+    public void onSave() {
+    }
 
     @Override
     public void onCancel() {
@@ -139,7 +142,8 @@ public class MainPresenter implements Initializable {
   };
 
   UpdateListener updateListener = new UpdateListener() {
-    @Override public void onUpdate(SimpleLog object) {
+    @Override
+    public void onUpdate(SimpleLog object) {
       UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, object);
       openDialog(updateLogView);
     }

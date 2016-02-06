@@ -1,8 +1,6 @@
 package lt.markmerkk.ui.status;
 
-import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -15,7 +13,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.Main;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -25,33 +22,44 @@ import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
-import net.rcarz.jiraclient.WorkLog;
 
 /**
- * Created by mariusmerkevicius on 12/20/15.
- * Represents the presenter to show app status
+ * Created by mariusmerkevicius on 12/20/15. Represents the presenter to show app status
  */
 public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener,
     VersionController.UpgradeListener {
-  @Inject BasicLogStorage storage;
-  @Inject LastUpdateController lastUpdateController;
-  @Inject SyncController syncController;
-  @Inject KeepAliveController keepAliveController;
-  @Inject AutoSync2 autoSync;
-  @Inject VersionController versionController;
+  @Inject
+  BasicLogStorage storage;
+  @Inject
+  LastUpdateController lastUpdateController;
+  @Inject
+  SyncController syncController;
+  @Inject
+  KeepAliveController keepAliveController;
+  @Inject
+  AutoSync2 autoSync;
+  @Inject
+  VersionController versionController;
 
-  @FXML ProgressIndicator outputProgress;
-  @FXML ProgressIndicator versionLoadIndicator;
-  @FXML Button buttonRefresh;
-  @FXML Button buttonViewToggle;
-  @FXML Button buttonToday;
-  @FXML Button buttonAbout;
+  @FXML
+  ProgressIndicator outputProgress;
+  @FXML
+  ProgressIndicator versionLoadIndicator;
+  @FXML
+  Button buttonRefresh;
+  @FXML
+  Button buttonViewToggle;
+  @FXML
+  Button buttonToday;
+  @FXML
+  Button buttonAbout;
 
   String total;
 
   Listener listener;
 
-  @Override public void initialize(URL location, ResourceBundle resources) {
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
     buttonRefresh.setTooltip(new Tooltip("Status" +
         "\n\nTime since last update. Current sum of today's work log." +
         "\n\nPress to activate/cancel synchronization with remote."));
@@ -75,7 +83,8 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     versionController.addListener(this);
   }
 
-  @Override public void destroy() {
+  @Override
+  public void destroy() {
     versionController.removeListener(this);
     syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
@@ -103,15 +112,15 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     versionLoadIndicator.setVisible(visible);
   }
 
-  @Override
-  public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION) {
-      buttonAbout.setText("!");
-      return;
-    }
-    buttonAbout.setText("?");
-  }
-
+  //  @Override
+//  public void onSummaryUpdate(UpdateSummary updateSummary) {
+//    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION) {
+//      buttonAbout.setText("!");
+//      return;
+//    }
+//    buttonAbout.setText("?");
+//  }
+//
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
@@ -182,13 +191,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   //region Classes
 
   /**
-   * Helper listener for interacting with status
-   * listener
+   * Helper listener for interacting with status listener
    */
   public interface Listener {
     /**
      * Callback whenever display type is selected
-     * @param type
      */
     void onDisplayType(DisplayType type);
 
