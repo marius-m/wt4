@@ -116,7 +116,7 @@ def versionCode = '1'
 javafx {
     appID 'WT4'
     appName 'WT4'
-    mainClass = 'com.threerings.getdown.launcher.Getdown'
+    mainClass = 'lt.markmerkk.Main'
     profiles {
         macosx {
             javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
@@ -202,19 +202,12 @@ task simpleProcess(dependsOn:shadowJar, type:JavaExec) {
     }
 
     doLast {
-
-        // Placing back to original place
-        println '### Process complete ###'
-        def outFile = new File("${rootDir}/out/${codename}/${codename}.jar")
+        def execFile = new File("$rootDir/tools", "getdown-1.5.jar")
         copy {
-            from outFile.absolutePath
-            into libsDir.absolutePath
+            from execFile.absolutePath
+            into libsDir absolutePath
         }
-        println '### Outputting processed jar ###'
-        println "From: $outFile.absolutePath"
-        println "Into: $libsDir.absolutePath"
 
-        outFile = new File("${rootDir}/app/build/libs/app-${version}.jar")
     }
 }
 
