@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javafx.scene.control.TextArea;
+import lt.markmerkk.Main;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.joda.time.DurationFieldType;
 import org.joda.time.Period;
@@ -183,7 +184,7 @@ public class Utils {
         try {
             int maxLines = 150;
             int lineCount = 0;
-            File file = new File("checkLog.log");
+            File file = new File(Main.CFG_PATH + "info.log");
             ReversedLinesFileReader object = new ReversedLinesFileReader(file);
             while (lineCount < maxLines) {
                 String line = object.readLine();
@@ -195,6 +196,30 @@ public class Utils {
         } catch (NullPointerException e) {
         }
         return output.toString();
+    }
+
+  /**
+   * Recursively cleans out directory
+   * @param file
+   * @return
+   */
+  public static boolean delete(File file) {
+        File[] flist = null;
+        if (file == null)
+            return false;
+        if (file.isFile())
+            return file.delete();
+        if (!file.isDirectory())
+            return false;
+        flist = file.listFiles();
+        if (flist != null && flist.length > 0) {
+            for (File f : flist) {
+                if (!delete(f)) {
+                    return false;
+                }
+            }
+        }
+        return file.delete();
     }
 
 }

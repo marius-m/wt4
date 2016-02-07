@@ -1,68 +1,99 @@
 package lt.markmerkk.ui.clock;
 
+import com.google.common.base.Strings;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
-import lt.markmerkk.storage2.BasicIssueStorage;
+import lt.markmerkk.Main;
 import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.SimpleIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.utils.IssueSearchAdapter;
+import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
+import net.rcarz.jiraclient.Issue;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.observables.JavaFxObservable;
 
 /**
- * Created by mariusmerkevicius on 12/5/15.
- * Represents the presenter for the clock for logging info.
+ * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
+ * info.
  */
 public class ClockPresenter implements Initializable {
-
+  public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
-  @Inject HourGlass hourGlass;
-  @Inject BasicLogStorage logStorage;
-  @Inject BasicIssueStorage issueStorage;
-  @Inject UserSettings settings;
+  @Inject
+  HourGlass hourGlass;
+  @Inject
+  BasicLogStorage logStorage;
+  @Inject
+  SyncController syncController;
+  @Inject
+  UserSettings settings;
 
-  @FXML DatePicker inputTo;
-  @FXML DatePicker inputFrom;
-  @FXML TextArea inputComment;
-  @FXML ToggleButton buttonClock;
-  @FXML Button buttonEnter;
-  @FXML Button buttonOpen;
-  @FXML Button buttonNew;
-  @FXML Button buttonSettings;
-  @FXML ComboBox<SimpleIssue> inputTaskCombo;
+  @FXML
+  DatePicker inputTo;
+  @FXML
+  DatePicker inputFrom;
+  @FXML
+  TextArea inputComment;
+  @FXML
+  ToggleButton buttonClock;
+  @FXML
+  Button buttonEnter;
+  @FXML
+  Button buttonOpen;
+  @FXML
+  Button buttonSearch;
+  //@FXML Button buttonNew;
+  @FXML
+  Button buttonSettings;
 
+  @FXML ProgressIndicator taskLoadIndicator;
+  @FXML ComboBox<Issue> inputTaskCombo;
+
+  IssueSearchAdapter issueSearchAdapter;
   Listener listener;
 
-  @Override public void initialize(URL location, ResourceBundle resources) {
-    inputTaskCombo.setItems(issueStorage.getData());
-    inputTaskCombo.setOnKeyReleased(comboKeyListener);
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    issueSearchAdapter = new IssueSearchAdapter(syncController, inputTaskCombo, taskLoadIndicator);
+    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
+        .subscribe(newString -> {
+          if (newString != null && newString.length() <= 2)
+            inputTaskCombo.getSelectionModel().clearSelection();
+          if (Strings.isNullOrEmpty(newString))
+            inputTaskCombo.getSelectionModel().clearSelection();
+          boolean visible = inputTaskCombo.getSelectionModel().getSelectedItem() != null;
+          buttonOpen.setVisible(visible);
+          buttonOpen.setManaged(visible);
+        });
+
     inputFrom.setTooltip(new Tooltip("Worklog start" +
         "\n\nStart time for the current log. " +
         "It can be edited whenever timer is running. " +
@@ -79,8 +110,6 @@ public class ClockPresenter implements Initializable {
         "\n\nEnters currently running work."));
     buttonOpen.setTooltip(new Tooltip("Forward " +
         "\n\nOpen selected issue details."));
-    buttonNew.setTooltip(new Tooltip("New. " +
-        "\n\nCreate new issue."));
     buttonSettings.setTooltip(new Tooltip("Settings. " +
         "\n\nSetting up remote host, user credentials."));
     inputComment.setTooltip(new Tooltip("Comment" +
@@ -91,6 +120,13 @@ public class ClockPresenter implements Initializable {
     inputTo.getEditor().textProperty().addListener(timeChangeListener);
     inputFrom.setConverter(startDateConverter);
     inputTo.setConverter(endDateConverter);
+
+    Platform.runLater(() -> {
+      taskLoadIndicator.setManaged(false);
+      taskLoadIndicator.setVisible(false);
+      buttonOpen.setVisible(false);
+      buttonOpen.setManaged(false);
+    });
     updateUI();
   }
 
@@ -107,24 +143,20 @@ public class ClockPresenter implements Initializable {
     logWork();
   }
 
-  public void onClickNew() {
-    try {
-      URI newPath = new URI(settings.getHost()+"/secure/CreateIssue!default.jspa");
-      listener.onOpen(newPath.toString(), "New task");
-    } catch (URISyntaxException e) { }
-  }
-
-  public void onClickForward() {
-    if (inputTaskCombo.getSelectionModel() == null) return;
-    if (inputTaskCombo.getSelectionModel().getSelectedIndex() < 0) return;
-    SimpleIssue selectedIssue =
-        issueStorage.getData().get(inputTaskCombo.getSelectionModel().getSelectedIndex());
-    if (selectedIssue == null) return;
+  public void onClickOpen() {
+    if (inputTaskCombo.getSelectionModel().getSelectedItem() == null) return;
+    if (Strings.isNullOrEmpty(settings.getHost())) return;
     URI issuePath = null;
     try {
-      issuePath = new URI(settings.getHost()+"/browse/"+selectedIssue.getKey());
-      listener.onOpen(issuePath.toString(), selectedIssue.getKey());
-    } catch (URISyntaxException e) { }
+      issuePath = new URI(settings.getHost()+"/browse/"+inputTaskCombo.getSelectionModel().getSelectedItem().getKey());
+      Main.hostServices.showDocument(issuePath.toString());
+    } catch (URISyntaxException e) {
+      logger.error("Cant open issue! ", e);
+    }
+  }
+
+  public void onClickSearch() {
+    issueSearchAdapter.doSearch();
   }
 
   public void onClickSettings() {
@@ -145,7 +177,7 @@ public class ClockPresenter implements Initializable {
     inputTo.setEditable(!disableElement);
     inputTo.setDisable(disableElement);
     inputComment.setEditable(!disableElement);
-    inputComment.setPromptText( (disableElement) ? "Start timer to log work!" : "Go go go!");
+    inputComment.setPromptText((disableElement) ? "Start timer to log work!" : "Go go go!");
     buttonEnter.setDisable(disableElement);
   }
 
@@ -228,46 +260,10 @@ public class ClockPresenter implements Initializable {
     }
   };
 
-  EventHandler<KeyEvent> comboKeyListener = new EventHandler<KeyEvent>() {
-    @Override public void handle(KeyEvent event) {
-
-      if (event.getCode() == KeyCode.ESCAPE ||
-          event.getCode() == KeyCode.ENTER) {
-        inputTaskCombo.hide();
-        return;
-      }
-
-      if (
-          event.getCode() == KeyCode.UP ||
-          event.getCode() == KeyCode.DOWN) {
-        inputTaskCombo.show();
-        return;
-      }
-
-      if (event.getCode() == KeyCode.RIGHT ||
-          event.getCode() == KeyCode.LEFT ||
-          event.getCode() == KeyCode.HOME ||
-          event.getCode() == KeyCode.END ||
-          event.getCode() == KeyCode.TAB)
-        return;
-
-      if (event.getCode() == KeyCode.BACK_SPACE ||
-          event.getCode() == KeyCode.DELETE) {
-        issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
-        inputTaskCombo.show();
-        return;
-      }
-
-      if (Utils.isEmpty(event.getText())) return;
-
-      issueStorage.updateFilter(inputTaskCombo.getEditor().getText());
-      inputTaskCombo.show();
-    }
-  };
-
   ChangeListener<String> timeChangeListener = new ChangeListener<String>() {
-    @Override public void changed(ObservableValue<? extends String> observable, String oldValue,
-        String newValue) {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue,
+                        String newValue) {
       hourGlass.updateTimers(inputFrom.getEditor().getText(), inputTo.getEditor().getText());
       logStorage.setTargetDate(inputFrom.getEditor().getText());
     }
@@ -305,7 +301,8 @@ public class ClockPresenter implements Initializable {
           Utils.formatShortDuration(duration)));
     }
 
-    @Override public void onError(HourGlass.Error error) {
+    @Override
+    public void onError(HourGlass.Error error) {
       switch (error) {
         case START:
         case END:
@@ -326,8 +323,10 @@ public class ClockPresenter implements Initializable {
 
   //region Convenience
 
+
   /**
    * Adds an indicator as an error for the text field
+   *
    * @param tf provided text field
    */
   private void reportError(TextField tf) {
@@ -338,6 +337,7 @@ public class ClockPresenter implements Initializable {
 
   /**
    * Removes error indicator for the text field
+   *
    * @param tf provided text field
    */
   private void clearError(TextField tf) {

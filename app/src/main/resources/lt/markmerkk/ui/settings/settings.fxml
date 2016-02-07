@@ -52,7 +52,7 @@
       </HBox>
       <TextArea fx:id="outputLogger" editable="false" promptText="Console log" VBox.vgrow="ALWAYS">
          <font>
-            <Font size="10.0" />
+            <Font name="Monospaced Regular" size="10.0" />
          </font>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" />

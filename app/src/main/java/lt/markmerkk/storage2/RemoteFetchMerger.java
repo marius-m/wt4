@@ -1,11 +1,12 @@
 package lt.markmerkk.storage2;
 
-import lt.markmerkk.listeners.IMerger;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
 import net.rcarz.jiraclient.WorkLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 11/28/15. Responsible for merging / updating database {@link
@@ -16,35 +17,31 @@ import net.rcarz.jiraclient.WorkLog;
  * 2. Update local log with the data from sever
  * 3. All pulled data should contain dirty = 0.
  */
-public class RemoteFetchMerger implements IMerger {
-  IExecutor executor;
-  String remoteIssue;
-  WorkLog worklog;
+public class RemoteFetchMerger {
+  Logger logger = LoggerFactory.getLogger(RemoteFetchMerger.class);
 
-  public RemoteFetchMerger(IExecutor executor, String remoteIssue, WorkLog remoteWorklog) {
+  IExecutor executor;
+
+  public RemoteFetchMerger(IExecutor executor) {
     if (executor == null)
       throw new IllegalArgumentException("executor == null");
-    if (remoteIssue == null)
-      throw new IllegalArgumentException("remoteIssue == null");
-    if (remoteWorklog == null)
-      throw new IllegalArgumentException("remoteWorkLog == null");
     this.executor = executor;
-    this.remoteIssue = remoteIssue;
-    this.worklog = remoteWorklog;
   }
 
-  @Override
-  public String merge() {
-    SimpleLog localLog = getLocalEntity(getRemoteId(worklog));
+  /**
+   * Merges remote {@link WorkLog} and local {@link SimpleLog}
+   */
+  public void merge(String remoteIssue, WorkLog remoteLog) {
+    SimpleLog localLog = getLocalEntity(getRemoteId(remoteLog));
     if (localLog == null) {
-      SimpleLog newLog = newLog(remoteIssue, worklog);
+      SimpleLog newLog = newLog(remoteIssue, remoteLog);
       executor.execute(new InsertJob(SimpleLog.class, newLog));
-      return "Creating new log: " + newLog;
-
+      logger.info("New remote log: " + newLog);
+      return;
     }
-    SimpleLog updateLog = updateLog(localLog, remoteIssue, worklog);
+    SimpleLog updateLog = updateLog(localLog, remoteIssue, remoteLog);
     executor.execute(new UpdateJob(SimpleLog.class, updateLog));
-    return "Updating old worklog: " + updateLog;
+    logger.info("Updating old log: " + updateLog);
   }
 
   //region Convenience wrappers

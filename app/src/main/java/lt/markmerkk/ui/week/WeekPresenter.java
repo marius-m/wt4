@@ -4,6 +4,9 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -39,11 +42,16 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
   UpdateListener updateListener;
   SimpleAsyncExecutor asyncExecutor;
 
+  // fixme : VERY VERY WEIRD AND DIRTY IMPLEMENTATION OF SKIN WORKAROUND :/
+  public static DateTime targetDate = null;
+
   @Override public void initialize(URL location, ResourceBundle resources) {
     storage.register(storageListener);
+    targetDate = new DateTime(storage.getTargetDate());
     agenda = new Agenda();
-    agenda.setLocale(new java.util.Locale("de"));
-		agenda.setSkin(new AgendaWeekSkin(agenda));
+    agenda.setLocale(new java.util.Locale("en"));
+    CustomAgendaWeekView weekSkin = new CustomAgendaWeekView(agenda);
+    agenda.setSkin(weekSkin);
 //		agenda.setSkin(new AgendaDaySkin(agenda));
 		agenda.setAllowDragging(false);
 		agenda.setAllowResize(false);
@@ -71,6 +79,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
   IDataListener<SimpleLog> storageListener = new IDataListener<SimpleLog>() {
     @Override
     public void onDataChange(ObservableList<SimpleLog> data) {
+      targetDate = new DateTime(storage.getTargetDate());
       if (asyncExecutor.isLoading())
         asyncExecutor.cancel();
       asyncExecutor.executeInBackground(updateRunnable);
@@ -162,6 +171,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
       if (!loading) {
         agenda.appointments().clear();
         agenda.appointments().addAll(appointments);
+        agenda.setSkin(new CustomAgendaWeekView(agenda, storage.getTargetDate()));
       }
     });
   }
