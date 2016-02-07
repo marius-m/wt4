@@ -170,13 +170,14 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 }
 
 task updateRemote() {
-    // fixme : Hardcoded update link
-    def remoteUpdateDir = new File("/Users/mariusmerkevicius/Dropbox/Public/updates")
-    if (!remoteUpdateDir.exists())
-        remoteUpdateDir.mkdirs()
-    assert remoteUpdateDir.exists()
-
     doLast {
+        // fixme : Hardcoded update link
+        def remoteUpdateDir = new File("/Users/mariusmerkevicius/Dropbox/Public/updates")
+        if (!remoteUpdateDir.exists())
+            remoteUpdateDir.mkdirs()
+        assert remoteUpdateDir.exists()
+
+        
         def localUpdateDir = fileTree(dir: "${rootDir}/out/site")
         project.delete fileTree(dir: remoteUpdateDir)
         println '### Updating remote ###'

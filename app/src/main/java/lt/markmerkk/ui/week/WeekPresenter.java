@@ -171,7 +171,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
       if (!loading) {
         agenda.appointments().clear();
         agenda.appointments().addAll(appointments);
-        agenda.setSkin(new CustomAgendaWeekView(agenda, storage.getTargetDate()));
+        agenda.setSkin(new CustomAgendaWeekView(agenda));
       }
     });
   }
