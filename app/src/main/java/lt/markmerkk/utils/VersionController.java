@@ -54,6 +54,10 @@ public class VersionController {
   }
 
   public void checkForUpdate() {
+    if (Main.DEBUG) {
+      logger.info("Running debug version! Skipping update check!");
+      return;
+    }
     if (subscription != null && !subscription.isUnsubscribed())
       return;
     logger.info("Looking for updates...");
@@ -73,6 +77,10 @@ public class VersionController {
    * Does the app upgrade
    */
   public void upgrade() {
+    if (Main.DEBUG) {
+      logger.info("Running debug version! Skipping upgrade!");
+      return;
+    }
     if (summary == null) {
       logger.error("Error upgrading app!");
       return;

@@ -25,12 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
-  public static final boolean DEBUG = true;
+  public static boolean DEBUG = true;
   public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
-  public static int VERSION_CODE = 1;
-  public static String VERSION_NAME = "Unknown";
+  public static int VERSION_CODE = 1; // Will be updated on init
+  public static String VERSION_NAME = "Unknown";  // Will be updated on init
   public static int SCENE_WIDTH = 600;
   public static int SCENE_HEIGHT = 500;
 
@@ -41,6 +41,8 @@ public class Main extends Application {
 
   @Override
   public void start(Stage stage) throws Exception {
+    DEBUG = (System.getProperty("release") == null);
+    logger.info("Running in DEBUG=" + DEBUG);
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
     if (isFirstLaunch()) {
       UpdateFX.restartApp();
@@ -101,6 +103,10 @@ public class Main extends Application {
    * Prepares an update directory
    */
   static boolean isFirstLaunch() throws IOException {
+    if (DEBUG) {
+      logger.info("Running debug version! Skipping first launch check!");
+      return false;
+    }
     Path updatePath = AppDirectory.initAppDir(UPDATE_DIR);
     FirstSettings firstSettings = new FirstSettings();
     firstSettings.load();

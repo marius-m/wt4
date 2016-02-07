@@ -34,13 +34,28 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.13'
-def versionCode = '10'
+version = '0.9.14'
+def versionCode = '11'
 
 javafx {
     appID 'WT4'
     appName 'WT4'
     mainClass = 'lt.markmerkk.Main'
+    systemProperties = ['release':'true']
+    //arguments = ['-l', '--fast']
+
+    embedLauncher = false
+
+    // deploy/info attributes
+    category = 'Productivity'
+    copyright = 'Copyright (c) 2016 Marius Merkevicius'
+    description = 'Time tracking with WT4'
+    licenseType = 'Apache 2.0'
+    vendor = 'Marius Merkevicius'
+    installSystemWide = true
+    menu = true
+    shortcut = true
+
     profiles {
         macosx {
             javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
@@ -75,7 +90,7 @@ dependencies {
 }
 
 tasks.withType(JavaExec) {
-    systemProperties System.properties
+    systemProperties project.getProperties()
 }
 
 /**
@@ -167,7 +182,7 @@ task versionOutput() {
     }
 }
 
-task makeJar(dependsOn:processJar) << { }
+task makeJar(dependsOn:processJar) { }
 
 compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
