@@ -81,6 +81,7 @@ javafx {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':jira-client')
     compile project(':database')
     compile project(':remote')
 
@@ -177,7 +178,7 @@ task updateRemote() {
             remoteUpdateDir.mkdirs()
         assert remoteUpdateDir.exists()
 
-        
+
         def localUpdateDir = fileTree(dir: "${rootDir}/out/site")
         project.delete fileTree(dir: remoteUpdateDir)
         println '### Updating remote ###'
