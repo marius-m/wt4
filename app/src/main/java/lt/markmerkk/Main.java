@@ -7,7 +7,7 @@ import com.vinumeris.updatefx.AppDirectory;
 import com.vinumeris.updatefx.UpdateFX;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 import javafx.application.Application;
@@ -42,7 +42,10 @@ public class Main extends Application {
   @Override
   public void start(Stage stage) throws Exception {
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
-    initUpdateSettings();
+    if (isFirstLaunch()) {
+      UpdateFX.restartApp();
+      return;
+    }
     initVersionSettings();
     initStaticPaths();
     initLoggerSettings();
@@ -97,16 +100,17 @@ public class Main extends Application {
   /**
    * Prepares an update directory
    */
-  static void initUpdateSettings() throws IOException {
+  static boolean isFirstLaunch() throws IOException {
     Path updatePath = AppDirectory.initAppDir(UPDATE_DIR);
     FirstSettings firstSettings = new FirstSettings();
     firstSettings.load();
     if (firstSettings.isFirst()) {
       File updateDir = updatePath.toFile();
       Utils.delete(updateDir);
+      firstSettings.save();
+      return true;
     }
-    firstSettings.save();
-    AppDirectory.initAppDir(UPDATE_DIR);
+    return false;
   }
 
   /**
@@ -115,7 +119,8 @@ public class Main extends Application {
    */
   void initVersionSettings() throws IOException {
     Properties versionProperties = new Properties();
-    versionProperties.load(getClass().getResourceAsStream("/version.properties"));
+    InputStream resourceAsStream = getClass().getResourceAsStream("/version.properties");
+    versionProperties.load(resourceAsStream);
     VERSION_CODE = Integer.parseInt(versionProperties.getProperty("version_code"));
     VERSION_NAME = versionProperties.getProperty("version_name");
     logger.info("Running version %s with version code %d", VERSION_NAME, VERSION_CODE);
