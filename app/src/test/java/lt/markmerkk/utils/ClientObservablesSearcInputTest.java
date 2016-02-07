@@ -25,7 +25,7 @@ public class ClientObservablesSearcInputTest {
 
     // Assert
     subscriber.assertNoErrors();
-    assertThat(output).isEqualTo("summary ~ dokumentacija");
+    assertThat(output).isEqualTo("summary ~ \"dokumentacija\"");
   }
 
   @Test
@@ -41,7 +41,7 @@ public class ClientObservablesSearcInputTest {
 
     // Assert
     subscriber.assertNoErrors();
-    assertThat(output).isEqualTo("summary ~ tt15 OR key = TT-15");
+    assertThat(output).isEqualTo("summary ~ \"tt15\" OR key = \"TT-15\"");
   }
 
   @Test
