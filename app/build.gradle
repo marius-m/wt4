@@ -110,8 +110,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.4'
-def versionCode = '1'
+version = '0.9.5'
+def versionCode = '2'
 
 javafx {
     appID 'WT4'
@@ -126,10 +126,6 @@ javafx {
     }
 }
 
-run {
-    systemProperties['versionCode'] = "${versionCode}"
-    systemProperties['version'] = "${version}"
-}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':database')
@@ -155,8 +151,6 @@ dependencies {
 }
 
 tasks.withType(JavaExec) {
-    // Assign all Java system properties from
-    // the command line to the JavaExec task.
     systemProperties System.properties
 }
 
@@ -169,18 +163,23 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def processDir = new File(rootDir, "out")
     if (!processDir.exists())
         processDir.mkdirs()
+    assert processDir.exists()
     File processBuilds = new File("$rootDir/out", "builds")
     processBuilds.mkdirs()
+    assert processBuilds.exists()
 
-    //project.delete fileTree(dir: processBuilds)
-
+    // fixme : Hardcoded update link
+    def remoteUpdateDir = new File("/Users/mariusmerkevicius/Dropbox/Public/updates")
+    if (!remoteUpdateDir.exists())
+        remoteUpdateDir.mkdirs()
+    assert remoteUpdateDir.exists()
 
     standardInput = System.in
     classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
     classpath += sourceSets.main.runtimeClasspath
     main = 'com.vinumeris.updatefx.tools.UFXPrepare'
     workingDir = "$rootDir"
-    args = ['--pass=123','--url=http://localhost:80/', 'out']
+    args = ['--pass=123','--url=https://dl.dropboxusercontent.com/u/60630588/updates', 'out']
 
     doFirst {
 
@@ -220,14 +219,26 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         println "From: $outFile.absolutePath"
         println "Into: $libsDir.absolutePath"
 
-        // Renaming back to original name
-        outFile = new File("${rootDir}/app/build/libs/${versionCode}.jar")
-        outFile.renameTo("${rootDir}/app/build/libs/app-${version}.jar")
+        def localUpdateDir = fileTree(dir: "${rootDir}/out/site")
+        project.delete fileTree(dir: remoteUpdateDir)
+        copy {
+            from localUpdateDir
+            into remoteUpdateDir
+        }
+    }
+}
+
+task versionOutput() {
+    def versionFile = new File("${projectDir}/src/main/resources","version.properties")
+    doLast {
+        versionFile.write"version_code=${versionCode}\n"
+        versionFile << "version_name=${version}"
     }
 }
 
 task makeJar(dependsOn:processJar) << { }
 
+compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
 

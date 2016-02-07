@@ -161,8 +161,8 @@ public class VersionController {
     @Override
     public void call(Subscriber<? super Updater> subscriber) {
       System.out.println("Code path: " + UpdateFX.findCodePath(Main.class));
-      List<ECPoint> pubkeys = Crypto.decode("02A1BC300C44E1B055E8D895B9759D5C5A5099911E133AB7F0F3CF61617AE5202F");
-      Updater updater = new Updater(URI.create("http://localhost:80/index"), "" + Main.VERSION_CODE,
+      List<ECPoint> pubkeys = Crypto.decode("03BF1B29FB9CFD4282A321CE9C429803B3F9C5EB4330B26D992FB8833E93FB1ED1");
+      Updater updater = new Updater(URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"), "" + Main.VERSION_CODE,
           AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
         @Override
         protected void updateProgress(long workDone, long max) {

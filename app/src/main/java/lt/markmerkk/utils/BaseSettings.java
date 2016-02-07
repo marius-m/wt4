@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseSettings {
   Logger logger = LoggerFactory.getLogger(BaseSettings.class);
-  public static final String PROPERTIES_FILE = "usr.properties";
+  //public static final String PROPERTIES_FILE = "usr.properties";
+
+  abstract String propertyPath();
 
   /**
    * Loads properties from file system
@@ -37,7 +39,7 @@ public abstract class BaseSettings {
   public void load() {
     try {
       FileInputStream in = null;
-      in = new FileInputStream(Main.CFG_PATH + PROPERTIES_FILE);
+      in = new FileInputStream(propertyPath());
       Properties props = new Properties();
       props.load(in);
       onLoad(props);
@@ -55,7 +57,7 @@ public abstract class BaseSettings {
   public void save() {
     FileOutputStream out = null;
     try {
-      out = new FileOutputStream(Main.CFG_PATH + PROPERTIES_FILE);
+      out = new FileOutputStream(propertyPath());
       Properties props = new Properties();
       onSave(props);
       props.store(out, null);

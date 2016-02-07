@@ -198,4 +198,28 @@ public class Utils {
         return output.toString();
     }
 
+  /**
+   * Recursively cleans out directory
+   * @param file
+   * @return
+   */
+  public static boolean delete(File file) {
+        File[] flist = null;
+        if (file == null)
+            return false;
+        if (file.isFile())
+            return file.delete();
+        if (!file.isDirectory())
+            return false;
+        flist = file.listFiles();
+        if (flist != null && flist.length > 0) {
+            for (File f : flist) {
+                if (!delete(f)) {
+                    return false;
+                }
+            }
+        }
+        return file.delete();
+    }
+
 }
