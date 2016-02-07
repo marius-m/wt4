@@ -24,7 +24,8 @@ public class Main extends Application {
   public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
-  public static int VERSION = 1;
+  public static int VERSION_CODE = 1;
+  public static String VERSION_NAME = "Unknown";
   public static int SCENE_WIDTH = 600;
   public static int SCENE_HEIGHT = 500;
 
@@ -38,6 +39,11 @@ public class Main extends Application {
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
     AppDirectory.initAppDir(UPDATE_DIR);
 
+    VERSION_CODE = Integer.parseInt(System.getProperty("versionCode"));
+    VERSION_NAME = System.getProperty("version");
+
+    logger.info("Running version %s with version code %d", VERSION_NAME, VERSION_CODE);
+
     // Setting up file paths
     String home = System.getProperty("user.home");
     try {
@@ -48,12 +54,12 @@ public class Main extends Application {
 
     // After bootstrap function log4j fails to load configuration. Need to persist config.
     PropertyConfigurator.configure(getClass().getResource("/custom_log4j.properties"));
-//    SimpleLayout layout = new SimpleLayout();
-//    fileAppender = new RollingFileAppender(layout, CFG_PATH + "info.log", true);
-//    fileAppender.setMaxFileSize("1000KB");
-//    fileAppender.setMaxBackupIndex(1);
-//    fileAppender.setThreshold(Priority.INFO);
-//    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+    SimpleLayout layout = new SimpleLayout();
+    fileAppender = new RollingFileAppender(layout, CFG_PATH + "info.log", true);
+    fileAppender.setMaxFileSize("1000KB");
+    fileAppender.setMaxBackupIndex(1);
+    fileAppender.setThreshold(Priority.INFO);
+    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
 
 
     hostServices = HostServicesFactory.getInstance(this);

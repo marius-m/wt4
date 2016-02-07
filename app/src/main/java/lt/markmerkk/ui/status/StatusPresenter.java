@@ -2,7 +2,6 @@ package lt.markmerkk.ui.status;
 
 import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -25,7 +24,6 @@ import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
-import net.rcarz.jiraclient.WorkLog;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -105,7 +103,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
 
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION) {
+    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION_CODE) {
       buttonAbout.setText("!");
       return;
     }

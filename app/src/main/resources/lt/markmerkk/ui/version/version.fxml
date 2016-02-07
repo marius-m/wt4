@@ -69,7 +69,7 @@
                   </HBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Version: 0.9.4">
+                        <Text fx:id="labelVersion" strokeType="OUTSIDE" strokeWidth="0.0" text="Version: 0.9.4">
                            <font>
                               <Font size="10.0" />
                            </font>

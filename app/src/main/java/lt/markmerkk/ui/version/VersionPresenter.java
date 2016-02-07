@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.text.Text;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
 import lt.markmerkk.listeners.Destroyable;
@@ -29,6 +30,7 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   @FXML Hyperlink buttonAuthor;
   @FXML Hyperlink buttonPlace;
   @FXML Hyperlink buttonUpdate;
+  @FXML Text labelVersion;
   @FXML ProgressIndicator progressIndicator;
 
   DialogListener dialogListener;
@@ -36,6 +38,7 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     versionController.addListener(this);
+    labelVersion.setText(String.format("Version: %s", Main.VERSION_NAME));
     onProgressChange(versionController.getProgress());
     onSummaryUpdate(versionController.getSummary());
   }
@@ -70,7 +73,7 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
 
   public void onClickUpdate() {
     if (versionController.getSummary() != null
-        && versionController.getSummary().highestVersion > Main.VERSION) {
+        && versionController.getSummary().highestVersion > Main.VERSION_CODE) {
       versionController.upgrade();
       return;
     }
@@ -92,7 +95,7 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
       buttonUpdate.setText("No information about the update!");
       return;
     }
-    if (updateSummary.highestVersion > Main.VERSION) {
+    if (updateSummary.highestVersion > Main.VERSION_CODE) {
       buttonUpdate.setText("New updates are available! Update? (Will restart the app).");
       return;
     }

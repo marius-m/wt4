@@ -24,11 +24,13 @@ import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
-//import org.apache.log4j.Appender;
-//import org.apache.log4j.AppenderSkeleton;
-//import org.apache.log4j.Logger;
-//import org.apache.log4j.PatternLayout;
-//import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -47,7 +49,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   @FXML Button buttonRefresh;
   @FXML ComboBox<String> refreshCombo;
 
-//  Appender guiAppender;
+  Appender guiAppender;
 
   public SettingsPresenter() { }
 
@@ -75,23 +77,23 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     inputPassword.setText(settings.getPassword());
     buttonRefresh.setOnMouseClicked(refreshClickListener);
 
-//    guiAppender = new SimpleAppender();
-//    guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} %5p %c{1}:%L - %m%n"));
+    guiAppender = new SimpleAppender();
+    guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} %5p %c{1}:%L - %m%n"));
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
-//    Logger.getRootLogger().addAppender(guiAppender);
+    Logger.getRootLogger().addAppender(guiAppender);
     onLoadChange(syncController.isLoading());
     syncController.addLoadingListener(this);
   }
 
   @Override public void destroy() {
     syncController.removeLoadingListener(this);
-//    Logger.getRootLogger().removeAppender(guiAppender);
+    Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
-//    guiAppender.close();
+    guiAppender.close();
   }
 
   //region Listeners
@@ -131,19 +133,19 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
 
   //region Classes
 
-//  private class SimpleAppender extends AppenderSkeleton {
-//    @Override
-//    public boolean requiresLayout() { return true; }
-//
-//    @Override
-//    public void close() { }
-//
-//    @Override
-//    protected void append(LoggingEvent event) {
-//      Platform.runLater(() -> SettingsPresenter.this.outputLogger.appendText(layout.format(event)));
-//    }
-//
-//  }
+  private class SimpleAppender extends AppenderSkeleton {
+    @Override
+    public boolean requiresLayout() { return true; }
+
+    @Override
+    public void close() { }
+
+    @Override
+    protected void append(LoggingEvent event) {
+      Platform.runLater(() -> SettingsPresenter.this.outputLogger.appendText(layout.format(event)));
+    }
+
+  }
 //
   //endregion
 

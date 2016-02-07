@@ -77,11 +77,12 @@ public class VersionController {
       logger.error("Error upgrading app!");
       return;
     }
-    if (summary.highestVersion <= Main.VERSION) {
+    if (summary.highestVersion <= Main.VERSION_CODE) {
       logger.error("App is up to date!");
       return;
     }
-    UpdateFX.pinToVersion(AppDirectory.dir(), summary.highestVersion);
+    // Try do take the newest version
+    //UpdateFX.pinToVersion(AppDirectory.dir(), summary.highestVersion);
     UpdateFX.restartApp();
   }
 
@@ -160,8 +161,8 @@ public class VersionController {
     @Override
     public void call(Subscriber<? super Updater> subscriber) {
       System.out.println("Code path: " + UpdateFX.findCodePath(Main.class));
-      List<ECPoint> pubkeys = Crypto.decode("0349CCE851295DC05856858CD17DF9C82758A84D9A95B7A967A20DD93A3C50C04C");
-      Updater updater = new Updater(URI.create("http://localhost:80/index"), "" + Main.VERSION,
+      List<ECPoint> pubkeys = Crypto.decode("02A1BC300C44E1B055E8D895B9759D5C5A5099911E133AB7F0F3CF61617AE5202F");
+      Updater updater = new Updater(URI.create("http://localhost:80/index"), "" + Main.VERSION_CODE,
           AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
         @Override
         protected void updateProgress(long workDone, long max) {

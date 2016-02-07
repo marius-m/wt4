@@ -126,6 +126,10 @@ javafx {
     }
 }
 
+run {
+    systemProperties['versionCode'] = "${versionCode}"
+    systemProperties['version'] = "${version}"
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':database')
@@ -150,6 +154,12 @@ dependencies {
     testCompile 'org.assertj:assertj-core:2.2.0'
 }
 
+tasks.withType(JavaExec) {
+    // Assign all Java system properties from
+    // the command line to the JavaExec task.
+    systemProperties System.properties
+}
+
 /**
  * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
  */
@@ -161,7 +171,8 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         processDir.mkdirs()
     File processBuilds = new File("$rootDir/out", "builds")
     processBuilds.mkdirs()
-    project.delete fileTree(dir: processBuilds)
+
+    //project.delete fileTree(dir: processBuilds)
 
 
     standardInput = System.in
