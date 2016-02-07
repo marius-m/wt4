@@ -41,7 +41,7 @@ public class Main extends Application {
 
   @Override
   public void start(Stage stage) throws Exception {
-    DEBUG = (System.getProperty("release") == null);
+    DEBUG = ("false".equals(System.getProperty("release")));
     logger.info("Running in DEBUG=" + DEBUG);
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
     if (isFirstLaunch()) {
@@ -75,6 +75,9 @@ public class Main extends Application {
   }
 
   public static void main(String[] args) throws IOException {
+    for (String arg : args) {
+      System.out.println(arg);
+    }
     AppDirectory.initAppDir(UPDATE_DIR);
     UpdateFX.bootstrap(Main.class, AppDirectory.dir(), args);
   }

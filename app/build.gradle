@@ -41,7 +41,7 @@ javafx {
     appID 'WT4'
     appName 'WT4'
     mainClass = 'lt.markmerkk.Main'
-    systemProperties = ['release':'true']
+    //systemProperties = ['release':'true']
     //arguments = ['-l', '--fast']
 
     embedLauncher = false
@@ -58,10 +58,24 @@ javafx {
 
     profiles {
         macosx {
+            category = 'public.app-category.productivity'
             javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
-//            javaRuntime = '<NO RUNTIME>'
-            //javaRuntime = '.'
+            bundleArguments = [
+                    'mac.category' : 'public.app-category.developer-tools',
+                    'mac.CFBundleIdentifier' : 'lt.markmerkk.Main',
+                    'mac.CFBundleName' : 'WT4',
+            ]
         }
+
+        windows {
+            id = 'c533f663-1efd-489f-b910-4c7ec20c7fd0'
+            category = 'Productivity'
+            bundleArguments = [
+                    'win.menuGroup' : 'Productivity',
+                    'win.msi.productVersion' : "${version}"
+            ]
+        }
+
     }
 }
 
@@ -69,6 +83,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':database')
     compile project(':remote')
+
 
     compile 'io.reactivex:rxjavafx:0.0.2'
     compile 'io.reactivex:rxjava:1.1.0'
