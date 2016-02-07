@@ -5,6 +5,7 @@ import java.util.Properties;
 import net.rcarz.jiraclient.JiraClient;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import rx.Observable;
@@ -13,6 +14,7 @@ import rx.observers.TestSubscriber;
 /**
  * Created by mariusmerkevicius on 1/29/16.
  */
+@Ignore
 public class IntegrationJiraSearchJQLTest {
 
   private Properties properties;
