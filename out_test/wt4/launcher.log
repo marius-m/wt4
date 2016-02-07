@@ -1,0 +1,30 @@
+2016/02/07 01:49:34:766 INFO n.a: ------------------ VM Info ------------------
+2016/02/07 01:49:34:768 INFO n.a: -- OS Name: Mac OS X
+2016/02/07 01:49:34:768 INFO n.a: -- OS Arch: x86_64
+2016/02/07 01:49:34:769 INFO n.a: -- OS Vers: 10.11.3
+2016/02/07 01:49:34:769 INFO n.a: -- Java Vers: 1.8.0_66
+2016/02/07 01:49:34:769 INFO n.a: -- Java Home: /Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/jre
+2016/02/07 01:49:34:769 INFO n.a: -- User Name: mariusmerkevicius
+2016/02/07 01:49:34:769 INFO n.a: -- User Home: /Users/mariusmerkevicius
+2016/02/07 01:49:34:769 INFO n.a: -- Cur dir: /Users/mariusmerkevicius/Projects/wt4/out_test
+2016/02/07 01:49:34:769 INFO n.a: ---------------------------------------------
+2016/02/07 01:49:34:977 INFO n.a: ---------------- Proxy Info -----------------
+2016/02/07 01:49:34:977 INFO n.a: -- Proxy Host: null
+2016/02/07 01:49:34:978 INFO n.a: -- Proxy Port: null
+2016/02/07 01:49:34:978 INFO n.a: ---------------------------------------------
+2016/02/07 01:49:35:004 INFO n.a: Able to lock for updates: true
+2016/02/07 01:49:35:018 INFO n.a: Verifying application: http://127.0.0.1/wt4/
+2016/02/07 01:49:35:018 INFO n.a: Version: -1
+2016/02/07 01:49:35:018 INFO n.a: Class: lt.markmerkk.Main
+2016/02/07 01:49:35:019 INFO n.a: Dropping status 'm.validating'.
+2016/02/07 01:49:35:036 INFO n.a: Attempting to refetch 'digest.txt' from 'http://127.0.0.1/wt4/digest.txt'.
+2016/02/07 01:49:35:079 INFO n.a: No signers, not verifying file [path=digest.txt]
+2016/02/07 01:49:35:081 INFO n.a: Resources verified.
+2016/02/07 01:49:35:084 INFO n.a: Didn't find any custom environment variables, not setting any.
+2016/02/07 01:49:35:084 INFO n.a: Running /Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/jre/bin/java
+  -classpath
+  /Users/mariusmerkevicius/Projects/wt4/out_test/wt4/wt4.jar
+  -Xdock:icon=/Users/mariusmerkevicius/Projects/wt4/out_test/wt4/../desktop.icns
+  -Xdock:name=wt4
+  -Dcom.threerings.getdown=true
+  lt.markmerkk.Main

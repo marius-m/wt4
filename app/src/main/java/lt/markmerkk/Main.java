@@ -3,8 +3,6 @@ package lt.markmerkk;
 import com.airhacks.afterburner.injection.Injector;
 import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
-import com.vinumeris.updatefx.AppDirectory;
-import com.vinumeris.updatefx.UpdateFX;
 import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
@@ -12,10 +10,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.ui.MainView;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
-import org.apache.log4j.SimpleLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,20 +27,19 @@ public class Main extends Application {
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
   private RollingFileAppender fileAppender;
 
-  public Main() { }
+  public Main() {
+  }
 
   @Override
   public void start(Stage stage) throws Exception {
-    Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
-    AppDirectory.initAppDir(UPDATE_DIR);
-
     // Setting up file paths
     String home = System.getProperty("user.home");
     try {
       File file = new File(home + ((DEBUG) ? "/.wt4_debug/" : "/.wt4/"));
       FileUtils.forceMkdir(file);
-      CFG_PATH = file.getAbsolutePath()+"/";
-    } catch (IOException e) { }
+      CFG_PATH = file.getAbsolutePath() + "/";
+    } catch (IOException e) {
+    }
 
     // After bootstrap function log4j fails to load configuration. Need to persist config.
     PropertyConfigurator.configure(getClass().getResource("/custom_log4j.properties"));
@@ -79,12 +74,10 @@ public class Main extends Application {
   }
 
   public static void main(String[] args) throws IOException {
-    AppDirectory.initAppDir(UPDATE_DIR);
-    UpdateFX.bootstrap(Main.class, AppDirectory.dir(), args);
+    launch(args);
   }
 
   public static void realMain(String[] args) {
-    launch(args);
   }
 
 }

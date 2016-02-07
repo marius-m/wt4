@@ -1,0 +1,4 @@
+appbase = http://127.0.0.1/wt4/
+ui.name = wt4
+code = wt4.jar
+class = lt.markmerkk.Main

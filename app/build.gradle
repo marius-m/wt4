@@ -116,7 +116,7 @@ def versionCode = '1'
 javafx {
     appID 'WT4'
     appName 'WT4'
-    mainClass = 'lt.markmerkk.Main'
+    mainClass = 'com.threerings.getdown.launcher.Getdown'
     profiles {
         macosx {
             javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
@@ -136,7 +136,7 @@ dependencies {
     //compile 'io.reactivex:rxjava-async-util:0.21.0'
 
     compile 'joda-time:joda-time:2.9.1'
-    compile 'com.vinumeris:updatefx:1.5'
+//    compile 'com.vinumeris:updatefx:1.5'
     compile 'com.airhacks:afterburner.fx:1.6.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.jfxtras:jfxtras-agenda:8.0-r5-SNAPSHOT'
@@ -150,48 +150,53 @@ dependencies {
     testCompile 'org.assertj:assertj-core:2.2.0'
 }
 
-/**
- * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
- */
-task processJar(dependsOn:shadowJar, type: JavaExec) {
-    // Preparing project structure
-    // todo: This probably should be solved somehow else, as sites should never be deleted
+def codename = 'wt4'
+def configRemoteLink = "http://127.0.0.1/${codename}/"
+def configName = "${codename}"
+def configJar = "${codename}.jar"
+def configClass = "${mainClassName}"
+
+task simpleProcess(dependsOn:shadowJar, type:JavaExec) {
     def processDir = new File(rootDir, "out")
-    if (!processDir.exists())
-        processDir.mkdirs()
-    File processBuilds = new File("$rootDir/out", "builds")
-    processBuilds.mkdirs()
-    project.delete fileTree(dir: processBuilds)
+    if (processDir.exists())
+        project.delete processDir
+    processDir.mkdirs()
 
-
-    standardInput = System.in
-    classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
+    classpath = files("$rootDir/tools/getdown-1.5.jar")
     classpath += sourceSets.main.runtimeClasspath
-    main = 'com.vinumeris.updatefx.tools.UFXPrepare'
-    workingDir = "$rootDir"
-    args = ['--pass=123','--url=http://localhost:80/', 'out']
+    main = 'com.threerings.getdown.tools.Digester'
+    workingDir = "$rootDir/out"
+    args = ["${codename}"]
+
+    //java -classpath getdown-X.Y.jar com.threerings.getdown.tools.Digester myapp
 
     doFirst {
-
         // Taking jar from the compiled place
         def libsDir = new File(projectDir, "build/libs")
         if (libsDir.exists())
             project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
         File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
         assert outFile.exists()
-        outFile.renameTo("${libsDir.absolutePath}/${versionCode}.jar")
-        outFile = new File("${libsDir.absolutePath}/${versionCode}.jar")
+        outFile.renameTo("${libsDir.absolutePath}/${codename}.jar")
+        outFile = new File("${libsDir.absolutePath}/${codename}.jar")
         println '### Jar ready from process ###'
 
         // Using processed files
         println '### Copying ###'
         println "From: $outFile.absolutePath"
-        println "Into: $processBuilds.absolutePath"
+        println "Into: $processDir.absolutePath"
 
         copy {
             from outFile.absolutePath
-            into processBuilds.absolutePath
+            into "${processDir.absolutePath}/${codename}"
         }
+
+        // Creating getdown.txt
+        def config = new File("${rootDir}/out/${codename}", 'getdown.txt')
+        config.write "appbase = ${configRemoteLink}\n"
+        config << "ui.name = ${configName}\n"
+        config << "code = ${configJar}\n"
+        config << "class = ${configClass}\n"
 
         println '### Processing ###'
     }
@@ -200,7 +205,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 
         // Placing back to original place
         println '### Process complete ###'
-        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
+        def outFile = new File("${rootDir}/out/${codename}/${codename}.jar")
         copy {
             from outFile.absolutePath
             into libsDir.absolutePath
@@ -209,14 +214,30 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         println "From: $outFile.absolutePath"
         println "Into: $libsDir.absolutePath"
 
-        // Renaming back to original name
-        outFile = new File("${rootDir}/app/build/libs/${versionCode}.jar")
-        outFile.renameTo("${rootDir}/app/build/libs/app-${version}.jar")
+        outFile = new File("${rootDir}/app/build/libs/app-${version}.jar")
     }
 }
 
-task makeJar(dependsOn:processJar) << { }
+task processTest() {
+    doLast {
+        def processDir = new File("$rootDir", "out_test")
+        if (processDir.exists())
+            project.delete processDir
+        processDir.mkdirs()
+        def execFile = new File("$rootDir/tools", "getdown-1.5.jar")
+        copy {
+            from execFile.absolutePath
+            into processDir.absolutePath
+        }
+        new File("${processDir}/${codename}").mkdirs()
+        def config = new File("${processDir}/${codename}", 'getdown.txt')
+        config.write "appbase = ${configRemoteLink}\n"
+        config << "allow_offline = true\n"
+    }
+}
 
+task makeJar(dependsOn:simpleProcess) << { }
 jfxDeploy.dependsOn makeJar
+
 
 
