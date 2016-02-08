@@ -34,8 +34,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.15'
-def versionCode = '12'
+version = '0.9.20'
+def versionCode = '17'
 
 javafx {
     appID 'WT4'
@@ -104,7 +104,6 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.assertj:assertj-core:2.2.0'
 }
-
 tasks.withType(JavaExec) {
     systemProperties project.getProperties()
 }
@@ -113,6 +112,8 @@ tasks.withType(JavaExec) {
  * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
  */
 task processJar(dependsOn:shadowJar, type: JavaExec) {
+    if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
+        return;
     // Preparing project structure
     // todo: This probably should be solved somehow else, as sites should never be deleted
     def processDir = new File(rootDir, "out")
@@ -131,6 +132,8 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     args = ['--pass=123','--url=https://dl.dropboxusercontent.com/u/60630588/updates', 'out']
 
     doFirst {
+        if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
+            return;
 
         // Taking jar from the compiled place
         def libsDir = new File(projectDir, "build/libs")
@@ -156,6 +159,8 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     }
 
     doLast {
+        if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
+            return;
 
         // Placing back to original place
         println '### Process complete ###'
@@ -164,6 +169,48 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
             from outFile.absolutePath
             into libsDir.absolutePath
         }
+        println '### Outputting processed jar ###'
+        println "From: $outFile.absolutePath"
+        println "Into: $libsDir.absolutePath"
+    }
+}
+
+/**
+ * Processes jar for windows platform
+ */
+task processJarForWin() {
+    if (System.getProperty('os.name').toLowerCase().split()[0].equals("macosx"))
+        return;
+    // Preparing project structure
+    // todo: This probably should be solved somehow else, as sites should never be deleted
+    def processDir = new File(rootDir, "out")
+    if (!processDir.exists())
+        processDir.mkdirs()
+    assert processDir.exists()
+    File processBuilds = new File("$rootDir/out", "builds")
+    processBuilds.mkdirs()
+    assert processBuilds.exists()
+
+    doFirst {
+        println '### Processing ###'
+    }
+
+    doLast {
+        if (System.getProperty('os.name').toLowerCase().split()[0].equals("macosx"))
+            return;
+
+        println '### Process complete ###'
+        def libsDir = new File(projectDir, "build/libs")
+        if (libsDir.exists())
+            project.delete fileTree(dir: libsDir)
+        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
+        assert outFile.exists()
+
+        copy {
+            from outFile.absolutePath
+            into libsDir.absolutePath
+        }
+
         println '### Outputting processed jar ###'
         println "From: $outFile.absolutePath"
         println "Into: $libsDir.absolutePath"
@@ -199,7 +246,7 @@ task versionOutput() {
     }
 }
 
-task makeJar(dependsOn:processJar) { }
+task makeJar(dependsOn:[processJar]) { }
 
 compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
