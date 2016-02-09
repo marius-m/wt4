@@ -186,19 +186,29 @@ public class SimpleLogBuilder {
     newSimpleLog.start = this.start;
     newSimpleLog.end = this.end;
     newSimpleLog.duration = this.duration;
-    newSimpleLog.task = this.task;
-    newSimpleLog.comment = this.comment;
+    newSimpleLog.task = normalize(this.task);
+    newSimpleLog.comment = normalize(this.comment);
     newSimpleLog.uri = this.uri;
     newSimpleLog.id = this.id;
 
     newSimpleLog.dirty = this.dirty;
     newSimpleLog.error = this.error;
-    newSimpleLog.errorMessage = this.errorMessage;
+    newSimpleLog.errorMessage = normalize(this.errorMessage);
     newSimpleLog.deleted = this.deleted;
 
     if (this._id > 0)
       newSimpleLog._id = this._id;
     return newSimpleLog;
+  }
+
+  /**
+   * Removes strings that may break functioanlity.
+   * @param input
+   * @return
+   */
+  String normalize(String input) {
+    if (input == null) return null;
+    return input.replaceAll("\"", "\'");
   }
 
 }

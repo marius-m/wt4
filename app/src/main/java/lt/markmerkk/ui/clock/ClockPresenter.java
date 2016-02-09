@@ -75,14 +75,11 @@ public class ClockPresenter implements Initializable {
   Button buttonOpen;
   @FXML
   Button buttonSearch;
-  //@FXML Button buttonNew;
   @FXML
   Button buttonSettings;
 
   @FXML ProgressIndicator taskLoadIndicator;
   @FXML ComboBox<Issue> inputTaskCombo;
-  @FXML HBox topContainer;
-
 
   IssueSearchAdapter issueSearchAdapter;
   Listener listener;
