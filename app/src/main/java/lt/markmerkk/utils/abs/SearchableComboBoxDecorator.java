@@ -1,7 +1,10 @@
 package lt.markmerkk.utils.abs;
 
+import javafx.event.Event;
+import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
@@ -26,7 +29,9 @@ public abstract class SearchableComboBoxDecorator<T> {
 
   public void init(ComboBox<T> comboBox) {
     comboBox.setConverter(converter());
-    comboBox.getEditor().addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyEvent);
+    comboBox.getEditor().addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+      onKeyEvent(event);
+    });
   }
 
   //region Abstract

@@ -59,7 +59,8 @@ javafx {
     profiles {
         macosx {
             category = 'public.app-category.productivity'
-            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
+//            javaRuntime = '<NO RUNTIME>'
+            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/'
             bundleArguments = [
                     'mac.category' : 'public.app-category.developer-tools',
                     'mac.CFBundleIdentifier' : 'lt.markmerkk.Main',
@@ -247,7 +248,6 @@ task versionOutput() {
 }
 
 task makeJar(dependsOn:[processJar]) { }
-
 compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
