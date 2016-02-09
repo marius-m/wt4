@@ -78,7 +78,8 @@ public class RemotePushMerger {
     Issue issue = null;
     try {
       issue = client.getIssue(localLog.getTask());
-      WorkLog out = issue.addWorkLog(localLog.getComment(),
+      String localComment = TimeSplit.addStamp(localLog.getStart(), localLog.getEnd(), localLog.getComment());
+      WorkLog out = issue.addWorkLog(localComment,
           new DateTime(localLog.getStart()),
           localLog.getDuration() / 1000);
       executor.execute(new DeleteJob(SimpleLog.class, localLog));
