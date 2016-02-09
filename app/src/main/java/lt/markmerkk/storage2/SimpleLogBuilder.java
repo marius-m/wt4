@@ -213,15 +213,4 @@ public class SimpleLogBuilder {
     return input.replaceAll("\"", "\'");
   }
 
-  /**
-   * Adds a time to the raw comment.
-   * @param rawComment
-   * @return
-   */
-  String addTimeToComment(long start, long end, String rawComment) {
-    if (Strings.isNullOrEmpty(rawComment)) return null;
-    return String.format("%s - %s >> %s", HourGlass.shortFormat.print(start),
-        HourGlass.shortFormat.print(end), rawComment);
-  }
-
 }
