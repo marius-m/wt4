@@ -169,7 +169,7 @@ public class VersionController {
     @Override
     public void call(Subscriber<? super Updater> subscriber) {
       System.out.println("Code path: " + UpdateFX.findCodePath(Main.class));
-      List<ECPoint> pubkeys = Crypto.decode("03BF1B29FB9CFD4282A321CE9C429803B3F9C5EB4330B26D992FB8833E93FB1ED1");
+      List<ECPoint> pubkeys = Crypto.decode("03277844CEBC197A402B292133CD20C34C8920F68CE33B93B7FA1779AE01E98D57");
       Updater updater = new Updater(URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"), "" + Main.VERSION_CODE,
           AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
         @Override

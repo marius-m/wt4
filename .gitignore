@@ -50,3 +50,4 @@ usr.properties
 app/nullsimple.properties
 app/nullusr.properties
 first.properties
+app/src/main/resources/version.properties
