@@ -1,8 +1,10 @@
 package lt.markmerkk.storage2;
 
+import com.google.common.base.Strings;
 import java.net.URI;
 import java.net.URISyntaxException;
 import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
@@ -209,6 +211,17 @@ public class SimpleLogBuilder {
   String normalize(String input) {
     if (input == null) return null;
     return input.replaceAll("\"", "\'");
+  }
+
+  /**
+   * Adds a time to the raw comment.
+   * @param rawComment
+   * @return
+   */
+  String addTimeToComment(long start, long end, String rawComment) {
+    if (Strings.isNullOrEmpty(rawComment)) return null;
+    return String.format("%s - %s >> %s", HourGlass.shortFormat.print(start),
+        HourGlass.shortFormat.print(end), rawComment);
   }
 
 }
