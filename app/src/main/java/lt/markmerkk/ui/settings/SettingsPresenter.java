@@ -1,12 +1,11 @@
 package lt.markmerkk.ui.settings;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,11 +19,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
@@ -35,7 +36,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to edit settings
  */
-public class SettingsPresenter implements Initializable, Destroyable, WorkerLoadingListener {
+public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoadListener {
 
   @Inject UserSettings settings;
   @Inject SyncController syncController;
@@ -47,9 +48,6 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh;
   @FXML ComboBox<String> refreshCombo;
-
-
-  ObservableList<String> refreshVars = FXCollections.observableArrayList();
 
   Appender guiAppender;
 
@@ -80,12 +78,12 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     buttonRefresh.setOnMouseClicked(refreshClickListener);
 
     guiAppender = new SimpleAppender();
-    guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} - %m%n"));
+    guiAppender.setLayout(new PatternLayout("%d{ABSOLUTE} %5p %c{1}:%L - %m%n"));
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
-    onSyncChange(syncController.isLoading());
+    onLoadChange(syncController.isLoading());
     syncController.addLoadingListener(this);
   }
 
@@ -120,14 +118,15 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
 
   @Override
   public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      outputProgress.setManaged(loading);
+      outputProgress.setVisible(loading);
+    });
   }
 
   @Override
-  public void onSyncChange(boolean syncing) {
-    Platform.runLater(() -> {
-      outputProgress.setManaged(syncing);
-      outputProgress.setVisible(syncing);
-    });
+  public void onError(String error) {
+    // output log indicates any errors here
   }
 
   //endregion
@@ -145,8 +144,9 @@ public class SettingsPresenter implements Initializable, Destroyable, WorkerLoad
     protected void append(LoggingEvent event) {
       Platform.runLater(() -> SettingsPresenter.this.outputLogger.appendText(layout.format(event)));
     }
-  }
 
+  }
+//
   //endregion
 
 }

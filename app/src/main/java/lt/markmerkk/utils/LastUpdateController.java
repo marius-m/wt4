@@ -16,8 +16,9 @@ public class LastUpdateController {
 
   @Inject UserSettings settings;
 
+  String error;
   boolean loading = false;
-  boolean error = false;
+  //boolean error = false;
   long lastUpdate = 0;
 
   //region World event
@@ -68,13 +69,13 @@ public class LastUpdateController {
     this.loading = loading;
   }
 
-  public void setError(boolean error) {
+  public void setError(String error) {
     this.error = error;
   }
 
   public String getOutput() {
     if (loading) return "Loading...";
-    if (error) return "Error. Check settings for details.";
+    if (error != null) return "Error. "+error;
     if (lastUpdate == 0) return "Never";
     return Utils.formatShortDuration(durationTillLastUpdate());
   }

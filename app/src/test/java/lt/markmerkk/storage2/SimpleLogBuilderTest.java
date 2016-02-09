@@ -1,9 +1,8 @@
 package lt.markmerkk.storage2;
 
-import com.atlassian.jira.rest.client.api.domain.BasicUser;
-import com.atlassian.jira.rest.client.api.domain.Visibility;
-import com.atlassian.jira.rest.client.api.domain.Worklog;
 import java.net.URI;
+import java.util.Date;
+import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -11,6 +10,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -128,18 +128,12 @@ public class SimpleLogBuilderTest {
   public void testRemoteValid() throws Exception {
     //Assemble
     DateTime creationDate = longFormat.parseDateTime("2015-06-13 22:00");
-    Worklog remoteLog = new Worklog(
-        new URI("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051"),
-        new URI("http://not.needed.url"),
-        mock(BasicUser.class),
-        mock(BasicUser.class),
-        "valid_comment",
-        creationDate,
-        creationDate,
-        creationDate,
-        20,
-        Visibility.group("somegroup")
-    );
+    WorkLog remoteLog = mock(WorkLog.class);
+    doReturn("73051").when(remoteLog).getId();
+    doReturn(new Date(creationDate.getMillis())).when(remoteLog).getStarted();
+    doReturn(60 * 20).when(remoteLog).getTimeSpentSeconds(); // 20 minutes
+    doReturn("valid_comment").when(remoteLog).getComment();
+    doReturn("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051").when(remoteLog).getSelf();
 
     // Act
     SimpleLogBuilder builder = new SimpleLogBuilder("TT-22", remoteLog);
@@ -161,18 +155,13 @@ public class SimpleLogBuilderTest {
   public void testRemoteValidAndLocalUpdate() throws Exception {
     //Assemble
     DateTime creationDate = longFormat.parseDateTime("2015-06-13 22:00");
-    Worklog remoteLog = new Worklog(
-        new URI("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051"),
-        new URI("http://not.needed.url"),
-        mock(BasicUser.class),
-        mock(BasicUser.class),
-        "valid_comment",
-        creationDate,
-        creationDate,
-        creationDate,
-        20,
-        Visibility.group("somegroup")
-    );
+
+    WorkLog remoteLog = mock(WorkLog.class);
+    doReturn("73051").when(remoteLog).getId();
+    doReturn(new Date(creationDate.getMillis())).when(remoteLog).getStarted();
+    doReturn(60 * 20).when(remoteLog).getTimeSpentSeconds(); // 20 minutes
+    doReturn("valid_comment").when(remoteLog).getComment();
+    doReturn("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051").when(remoteLog).getSelf();
 
     // Act
     SimpleLogBuilder builder = new SimpleLogBuilder("TT-22", remoteLog);
@@ -206,18 +195,12 @@ public class SimpleLogBuilderTest {
   public void testLocalValidAndRemoteUpdate() throws Exception {
     //Assemble
     DateTime creationDate = longFormat.parseDateTime("2015-06-13 22:00");
-    Worklog remoteLog = new Worklog(
-        new URI("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051"),
-        new URI("http://not.needed.url"),
-        mock(BasicUser.class),
-        mock(BasicUser.class),
-        "valid_comment",
-        creationDate,
-        creationDate,
-        creationDate,
-        20,
-        Visibility.group("somegroup")
-    );
+    WorkLog remoteLog = mock(WorkLog.class);
+    doReturn("73051").when(remoteLog).getId();
+    doReturn(new Date(creationDate.getMillis())).when(remoteLog).getStarted();
+    doReturn(60 * 20).when(remoteLog).getTimeSpentSeconds(); // 20 minutes
+    doReturn("valid_comment").when(remoteLog).getComment();
+    doReturn("https://jira.ito.lt/rest/api/2/issue/31463/worklog/73051").when(remoteLog).getSelf();
 
     // Act
     SimpleLog localLog = new SimpleLogBuilder()

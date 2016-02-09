@@ -6,107 +6,250 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at http://gradle.org/docs/2.5/userguide/tutorial_java_projects.html
  */
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+
+}
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'idea'
 apply from: 'javafx.plugin'
+
 mainClassName = "lt.markmerkk.Main"
 
 allprojects {
     repositories {
+        mavenCentral()
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-
-repositories {
-    jcenter()
-}
-
-//sourceSets {
-//    dagger {
-//        java {
-//            srcDirs = ['src/dagger/java']
-//        }
-//    }
-//}
-
-//configurations {
-//    compileDagger
-//}
-
 group = 'lt.markmerkk'
-version = '0.9.3'
+version = '0.9.8'
+def versionCode = '1'
 
 javafx {
     appID 'WT4'
     appName 'WT4'
     mainClass = 'lt.markmerkk.Main'
+    //systemProperties = ['release':'true']
+    //arguments = ['-l', '--fast']
+
+    embedLauncher = false
+
+    // deploy/info attributes
+    category = 'Productivity'
+    copyright = 'Copyright (c) 2016 Marius Merkevicius'
+    description = 'Time tracking with WT4'
+    licenseType = 'Apache 2.0'
+    vendor = 'Marius Merkevicius'
+    installSystemWide = true
+    menu = true
+    shortcut = true
+
     profiles {
         macosx {
-            //        javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/'
+            category = 'public.app-category.productivity'
 //            javaRuntime = '<NO RUNTIME>'
+            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/'
+            bundleArguments = [
+                    'mac.category' : 'public.app-category.developer-tools',
+                    'mac.CFBundleIdentifier' : 'lt.markmerkk.Main',
+                    'mac.CFBundleName' : 'WT4',
+            ]
         }
+
+        windows {
+            id = 'c533f663-1efd-489f-b910-4c7ec20c7fd0'
+            category = 'Productivity'
+            bundleArguments = [
+                    'win.menuGroup' : 'Productivity',
+                    'win.msi.productVersion' : "${version}"
+            ]
+        }
+
     }
 }
 
 dependencies {
-    compile project(':database')
-    //    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
-    //    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-//    compile fileTree(dir: '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes', include: 'ui.jar')
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':jira-client')
+    compile project(':database')
+    compile project(':remote')
 
-//    compile 'com.google.guava:guava:18.0'
+
+    compile 'io.reactivex:rxjavafx:0.0.2'
+    compile 'io.reactivex:rxjava:1.1.0'
+    //compile 'io.reactivex:rxjava-async-util:0.21.0'
+
+    compile 'joda-time:joda-time:2.9.1'
+    compile 'com.vinumeris:updatefx:1.5'
     compile 'com.airhacks:afterburner.fx:1.6.0'
-    compile group: 'com.google.guava', name: 'guava', version: '18.0'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '1.3.7'
-
-    compile group: 'org.jfxtras', name: 'jfxtras-agenda', version: '8.0-r5-SNAPSHOT'
     compile 'commons-io:commons-io:2.4'
-
-    // Dagger2 dependencies
-    compile 'org.glassfish:javax.annotation:10.0-b28'
-//    compile group: 'com.google.dagger', name: 'dagger', version:'2.1-SNAPSHOT'
-//    compile group: 'com.google.dagger', name: 'dagger-compiler', version:'2.1-SNAPSHOT'
+    compile 'org.jfxtras:jfxtras-agenda:8.0-r5-SNAPSHOT'
 
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
+//    compile group: 'org.slf4j', name: 'slf4j-jdk14', version:'1.7.12'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.assertj:assertj-core:2.2.0'
-
-    // Jira
-    compile project(':jira-rest-java-client-api')
-    compile project(':jira-rest-java-client-core')
-    compile group: 'com.sun.jersey', name: 'jersey-client', version:'1.5'
-    compile group: 'com.sun.jersey', name: 'jersey-json', version:'1.5'
-    compile group: 'org.hamcrest', name: 'hamcrest-core', version:'1.2.1'
-    compile group: 'junit', name: 'junit', version:'4.8.1'
-    compile group: 'org.hamcrest', name: 'hamcrest-library', version:'1.2.1'
-    compile group: 'org.apache.commons', name: 'commons-io', version:'1.3.2'
-    compile(group: 'com.atlassian.jira', name: 'jira-func-tests', version:'5.2.8') {
-        exclude(module: 'jersey-server')
-        exclude(module: 'jms')
-        exclude(module: 'google-collections')
-    }
-    compile group: 'com.atlassian.jira', name: 'jira-nimble-func-tests', version:'1.0'
+}
+tasks.withType(JavaExec) {
+    systemProperties project.getProperties()
 }
 
-//compileJava {
-//    description = "dagger annotation processor is loaded automatically from classpath"
-//    sourceSets.dagger.java.srcDirs*.mkdirs()
-//    classpath += configurations.compileDagger
-//    options.compilerArgs += [
-//        '-s', sourceSets.dagger.java.srcDirs.iterator().next()
-//    ]
-//}
+/**
+ * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
+ */
+task processJar(dependsOn:shadowJar, type: JavaExec) {
+    if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
+        return;
+    // Preparing project structure
+    // todo: This probably should be solved somehow else, as sites should never be deleted
+    def processDir = new File(rootDir, "out")
+    if (!processDir.exists())
+        processDir.mkdirs()
+    assert processDir.exists()
+    File processBuilds = new File("$rootDir/out", "builds")
+    processBuilds.mkdirs()
+    assert processBuilds.exists()
 
-//clean {
-//    description = "delete files in generated source directory tree"
-//    delete fileTree(dir: sourceSets.dagger.java.srcDirs.iterator().next())
-//}
+    standardInput = System.in
+    classpath = files("$rootDir/tools/updatefx-app-1.5.2-SNAPSHOT.jar")
+    classpath += sourceSets.main.runtimeClasspath
+    main = 'com.vinumeris.updatefx.tools.UFXPrepare'
+    workingDir = "$rootDir"
+    args = ['--pass=123','--url=https://dl.dropboxusercontent.com/u/60630588/updates', 'out']
+
+    doFirst {
+        if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
+            return;
+
+        // Taking jar from the compiled place
+        def libsDir = new File(projectDir, "build/libs")
+        if (libsDir.exists())
+            project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
+        File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
+        assert outFile.exists()
+        outFile.renameTo("${libsDir.absolutePath}/${versionCode}.jar")
+        outFile = new File("${libsDir.absolutePath}/${versionCode}.jar")
+        println '### Jar ready from process ###'
+
+        // Using processed files
+        println '### Copying ###'
+        println "From: $outFile.absolutePath"
+        println "Into: $processBuilds.absolutePath"
+
+        copy {
+            from outFile.absolutePath
+            into processBuilds.absolutePath
+        }
+
+        println '### Processing ###'
+    }
+
+    doLast {
+        if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
+            return;
+
+        // Placing back to original place
+        println '### Process complete ###'
+        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
+        copy {
+            from outFile.absolutePath
+            into libsDir.absolutePath
+        }
+        println '### Outputting processed jar ###'
+        println "From: $outFile.absolutePath"
+        println "Into: $libsDir.absolutePath"
+    }
+}
+
+/**
+ * Processes jar for windows platform
+ */
+task processJarForWin() {
+    if (System.getProperty('os.name').toLowerCase().split()[0].equals("macosx"))
+        return;
+    // Preparing project structure
+    // todo: This probably should be solved somehow else, as sites should never be deleted
+    def processDir = new File(rootDir, "out")
+    if (!processDir.exists())
+        processDir.mkdirs()
+    assert processDir.exists()
+    File processBuilds = new File("$rootDir/out", "builds")
+    processBuilds.mkdirs()
+    assert processBuilds.exists()
+
+    doFirst {
+        println '### Processing ###'
+    }
+
+    doLast {
+        if (System.getProperty('os.name').toLowerCase().split()[0].equals("macosx"))
+            return;
+
+        println '### Process complete ###'
+        def libsDir = new File(projectDir, "build/libs")
+        if (libsDir.exists())
+            project.delete fileTree(dir: libsDir)
+        def outFile = new File("${rootDir}/out/builds/processed/${versionCode}.jar")
+        assert outFile.exists()
+
+        copy {
+            from outFile.absolutePath
+            into libsDir.absolutePath
+        }
+
+        println '### Outputting processed jar ###'
+        println "From: $outFile.absolutePath"
+        println "Into: $libsDir.absolutePath"
+    }
+}
+
+task updateRemote() {
+    doLast {
+        // fixme : Hardcoded update link
+        def remoteUpdateDir = new File("/Users/mariusmerkevicius/Dropbox/Public/updates")
+        if (!remoteUpdateDir.exists())
+            remoteUpdateDir.mkdirs()
+        assert remoteUpdateDir.exists()
+
+
+        def localUpdateDir = fileTree(dir: "${rootDir}/out/site")
+        project.delete fileTree(dir: remoteUpdateDir)
+        println '### Updating remote ###'
+        println "From: $localUpdateDir"
+        println "Into: $remoteUpdateDir"
+        copy {
+            from localUpdateDir
+            into remoteUpdateDir
+        }
+    }
+}
+
+task versionOutput() {
+    def versionFile = new File("${projectDir}/src/main/resources","version.properties")
+    doLast {
+        versionFile.write"version_code=${versionCode}\n"
+        versionFile << "version_name=${version}"
+    }
+}
+
+//task makeJar(dependsOn:[processJar]) { }
+task makeJar(dependsOn:[processJarForWin]) { }
+compileJava.dependsOn versionOutput
+jfxDeploy.dependsOn makeJar
+
+

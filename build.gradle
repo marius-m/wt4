@@ -29,12 +29,11 @@ subprojects {
     maven { url "http://repo.maven.apache.org/maven2" }
     maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
     maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
+
   }
 
-  configurations.all {}
+//  configurations.all {}
   dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '10.0.1'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '1.3.7'
-    compile group: 'org.codehaus.jettison', name: 'jettison', version:'1.3.7'
   }
 }

@@ -1,16 +1,20 @@
 package lt.markmerkk.ui;
 
+import com.airhacks.afterburner.views.FXMLView;
+import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
+import lt.markmerkk.Main;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -27,8 +31,10 @@ import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.taskweb.TaskWebView;
 import lt.markmerkk.ui.update.UpdateLogView;
 import lt.markmerkk.ui.utils.DisplayType;
+import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
+import lt.markmerkk.utils.VersionController;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.
@@ -44,7 +50,7 @@ public class MainPresenter implements Initializable {
   IPresenter displayPresenter;
 
   Stage stage;
-  Stage updateDialog;
+  Stage dialog;
   HiddenTabsController tabsController;
 
   public MainPresenter() {
@@ -110,31 +116,32 @@ public class MainPresenter implements Initializable {
 
   DialogListener updateWindowDialogListener = new DialogListener() {
     @Override public void onSave() {
-      if (updateDialog.isShowing())
-        updateDialog.hide();
+      if (dialog.isShowing())
+        dialog.hide();
       storage.notifyDataChange();
     }
 
     @Override
     public void onCancel() {
-      if (updateDialog.isShowing())
-        updateDialog.hide();
+      if (dialog.isShowing())
+        dialog.hide();
+    }
+  };
+
+  DialogListener versionWindowDialogListener = new DialogListener() {
+    @Override public void onSave() { }
+
+    @Override
+    public void onCancel() {
+      if (dialog.isShowing())
+        dialog.hide();
     }
   };
 
   UpdateListener updateListener = new UpdateListener() {
     @Override public void onUpdate(SimpleLog object) {
       UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, object);
-      updateDialog = new Stage(StageStyle.TRANSPARENT);
-      updateDialog.initModality(Modality.WINDOW_MODAL);
-      updateDialog.initOwner(stage);
-      // Need to adjust position
-      // Need buttons to disable views
-      Scene updateScene = new Scene(updateLogView.getView(), 450, 300);
-      updateDialog.setScene(updateScene);
-      updateDialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
-      updateDialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);
-      updateDialog.show();
+      openDialog(updateLogView);
     }
 
     @Override
@@ -159,9 +166,35 @@ public class MainPresenter implements Initializable {
     public void onDisplayType(DisplayType type) {
       displayLogs();
     }
+
+    @Override
+    public void onAbout() {
+      VersionView versionView = new VersionView(versionWindowDialogListener);
+      openDialog(versionView);
+    }
   });
 
   //endregion
 
+  //region Convenience
+
+  /**
+   * Opens dialog view
+   */
+  private void openDialog(FXMLView view) {
+    if (view == null) return;
+    dialog = new Stage(StageStyle.TRANSPARENT);
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.initOwner(stage);
+    // Need to adjust position
+    // Need buttons to disable views
+    Scene updateScene = new Scene(view.getView(), 450, 300);
+    dialog.setScene(updateScene);
+    dialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
+    dialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);
+    dialog.show();
+  }
+
+  //endregion
 
 }

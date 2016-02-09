@@ -5,13 +5,19 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import lt.markmerkk.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 11/24/15.
  * Uses a persistent storage to save user info
  */
 public abstract class BaseSettings {
-  public static final String PROPERTIES_FILE = "usr.properties";
+  Logger logger = LoggerFactory.getLogger(BaseSettings.class);
+  //public static final String PROPERTIES_FILE = "usr.properties";
+
+  abstract String propertyPath();
 
   /**
    * Loads properties from file system
@@ -33,15 +39,15 @@ public abstract class BaseSettings {
   public void load() {
     try {
       FileInputStream in = null;
-      in = new FileInputStream(PROPERTIES_FILE);
+      in = new FileInputStream(propertyPath());
       Properties props = new Properties();
       props.load(in);
       onLoad(props);
       in.close();
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      logger.error("No default settings file found! "+e.getMessage());
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error("Error opening settings file!" + e.getMessage());
     }
   }
 
@@ -51,15 +57,15 @@ public abstract class BaseSettings {
   public void save() {
     FileOutputStream out = null;
     try {
-      out = new FileOutputStream(PROPERTIES_FILE);
+      out = new FileOutputStream(propertyPath());
       Properties props = new Properties();
       onSave(props);
       props.store(out, null);
       out.close();
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      logger.error("No default settings file found! "+e.getMessage());
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error("Error opening settings file!" + e.getMessage());
     }
   }
 

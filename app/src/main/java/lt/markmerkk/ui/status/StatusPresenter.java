@@ -1,5 +1,6 @@
 package lt.markmerkk.ui.status;
 
+import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -13,30 +14,36 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.jira.interfaces.WorkerLoadingListener;
+import lt.markmerkk.Main;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable, WorkerLoadingListener {
+public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener,
+    VersionController.UpgradeListener {
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;
+  @Inject VersionController versionController;
 
   @FXML ProgressIndicator outputProgress;
+  @FXML ProgressIndicator versionLoadIndicator;
   @FXML Button buttonRefresh;
   @FXML Button buttonViewToggle;
   @FXML Button buttonToday;
+  @FXML Button buttonAbout;
 
   String total;
 
@@ -52,16 +59,22 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
     buttonToday.setTooltip(new Tooltip("Total" +
         "\n\nTotal work duration."));
+    buttonAbout.setTooltip(new Tooltip("About" +
+        "\n\nAbout the app." +
+        "\nCheck for automatic updates!"));
+    buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
     total = storage.getTotal();
 
     updateStatus();
-    onSyncChange(syncController.isLoading());
+    onLoadChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
+    versionController.addListener(this);
   }
 
   @Override public void destroy() {
+    versionController.removeListener(this);
     syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
   }
@@ -80,6 +93,22 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
   //endregion
 
   //region Listeners
+
+  @Override
+  public void onProgressChange(double progressChange) {
+    boolean visible = (progressChange > 0.0f && progressChange < 1.0f);
+    versionLoadIndicator.setManaged(visible);
+    versionLoadIndicator.setVisible(visible);
+  }
+
+  @Override
+  public void onSummaryUpdate(UpdateSummary updateSummary) {
+    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION_CODE) {
+      buttonAbout.setText("!");
+      return;
+    }
+    buttonAbout.setText("?");
+  }
 
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
     @Override
@@ -107,24 +136,18 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     }
   };
 
-  @Override
-  public void onLoadChange(boolean loading) {
-    updateStatus();
-  }
-
-  @Override
-  public void onSyncChange(boolean syncing) {
-    Platform.runLater(() -> {
-      outputProgress.setManaged(syncing);
-      outputProgress.setVisible(syncing);
-    });
-    updateStatus();
-  }
+  EventHandler<MouseEvent> aboutClickListener = new EventHandler<MouseEvent>() {
+    @Override
+    public void handle(MouseEvent event) {
+      if (listener == null) return;
+      listener.onAbout();
+    }
+  };
 
   KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
     @Override
     public void onUpdate() {
-      if (!syncController.isSyncing() && autoSync.isSyncNeeded())
+      if (!syncController.isLoading() && autoSync.isSyncNeeded())
         syncController.sync();
       updateStatus();
     }
@@ -138,6 +161,19 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
     this.listener = listener;
   }
 
+  @Override
+  public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      outputProgress.setManaged(loading);
+      outputProgress.setVisible(loading);
+    });
+    updateStatus();
+  }
+
+  @Override
+  public void onError(String error) {
+    updateStatus();
+  }
 
   //endregion
 
@@ -153,6 +189,11 @@ public class StatusPresenter implements Initializable, Destroyable, WorkerLoadin
      * @param type
      */
     void onDisplayType(DisplayType type);
+
+    /**
+     * Called when about is pressed
+     */
+    void onAbout();
   }
 
   //endregion

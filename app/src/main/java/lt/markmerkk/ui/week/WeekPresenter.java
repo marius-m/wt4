@@ -3,6 +3,10 @@ package lt.markmerkk.ui.week;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,7 +20,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import jfxtras.internal.scene.control.skin.agenda.AgendaWeekSkin;
 import jfxtras.scene.control.agenda.Agenda;
-import lt.markmerkk.jira.TaskExecutor3;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -29,7 +32,7 @@ import org.joda.time.DateTime;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable, Destroyable, IPresenter, TaskExecutor3.Listener {
+public class WeekPresenter implements Initializable, Destroyable, IPresenter, SimpleAsyncExecutor.LoadListener {
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
@@ -37,19 +40,24 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
 
   Agenda.AppointmentImplLocal[] appointments;
   UpdateListener updateListener;
-  TaskExecutor3 asyncExecutor;
+  SimpleAsyncExecutor asyncExecutor;
+
+  // fixme : VERY VERY WEIRD AND DIRTY IMPLEMENTATION OF SKIN WORKAROUND :/
+  public static DateTime targetDate = null;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     storage.register(storageListener);
+    targetDate = new DateTime(storage.getTargetDate());
     agenda = new Agenda();
-    agenda.setLocale(new java.util.Locale("de"));
-		agenda.setSkin(new AgendaWeekSkin(agenda));
+    agenda.setLocale(new java.util.Locale("en"));
+    CustomAgendaWeekView weekSkin = new CustomAgendaWeekView(agenda);
+    agenda.setSkin(weekSkin);
 //		agenda.setSkin(new AgendaDaySkin(agenda));
 		agenda.setAllowDragging(false);
 		agenda.setAllowResize(false);
     agenda.editAppointmentCallbackProperty().set(agendaCallbackListener);
     mainContainer.getChildren().add(agenda);
-    asyncExecutor = new TaskExecutor3();
+    asyncExecutor = new SimpleAsyncExecutor();
     asyncExecutor.setListener(this);
     asyncExecutor.onStart();
     asyncExecutor.executeInBackground(updateRunnable);
@@ -71,6 +79,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
   IDataListener<SimpleLog> storageListener = new IDataListener<SimpleLog>() {
     @Override
     public void onDataChange(ObservableList<SimpleLog> data) {
+      targetDate = new DateTime(storage.getTargetDate());
       if (asyncExecutor.isLoading())
         asyncExecutor.cancel();
       asyncExecutor.executeInBackground(updateRunnable);
@@ -158,10 +167,13 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ta
 
   @Override
   public void onLoadChange(boolean loading) {
-    if (!loading) {
-      agenda.appointments().clear();
-      agenda.appointments().addAll(appointments);
-    }
+    Platform.runLater(() -> {
+      if (!loading) {
+        agenda.appointments().clear();
+        agenda.appointments().addAll(appointments);
+        agenda.setSkin(new CustomAgendaWeekView(agenda));
+      }
+    });
   }
 
   //endregion

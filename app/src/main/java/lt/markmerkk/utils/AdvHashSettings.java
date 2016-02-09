@@ -3,13 +3,14 @@ package lt.markmerkk.utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.codec.binary.Base64;
+import lt.markmerkk.Main;
 
 /**
  * Created by mariusmerkevicius on 11/24/15.
  * Stores string data
  */
 public class AdvHashSettings extends BaseSettings {
+  public static final String PROPERTIES_PATH = "usr.properties";
   Map<String, String> keyValues;
 
   public AdvHashSettings() {
@@ -27,13 +28,18 @@ public class AdvHashSettings extends BaseSettings {
     keyValues.put(key, value);
   }
 
+  @Override
+  String propertyPath() {
+    return Main.CFG_PATH + PROPERTIES_PATH;
+  }
+
   @Override void onLoad(Properties properties) {
     keyValues.clear();
     for (Object o : properties.keySet())
       if (o instanceof String) {
         String property = properties.getProperty((String) o);
         if (Utils.isEmpty(property)) continue;
-        byte[] decodeBytes = Base64.decodeBase64(property);
+        byte[] decodeBytes = Base64.decode(property, 0);
         String decodeValue = new String(decodeBytes);
         keyValues.put((String)o, decodeValue);
       }
@@ -42,7 +48,7 @@ public class AdvHashSettings extends BaseSettings {
   @Override void onSave(Properties properties) {
     for (String s : keyValues.keySet()) {
       String value = keyValues.get(s);
-      properties.put(s, new String(Base64.encodeBase64(value.getBytes())));
+      properties.put(s, new String(Base64.encode(value.getBytes(), 0)).trim());
     }
   }
 }
