@@ -80,6 +80,8 @@ public class ClockPresenter implements Initializable {
   @FXML
   Button buttonSearch;
   @FXML
+  Button buttonRefresh;
+  @FXML
   Button buttonSettings;
 
   @FXML ProgressIndicator taskLoadIndicator;
@@ -116,8 +118,10 @@ public class ClockPresenter implements Initializable {
         "\n\nEnable/disable work timer."));
     buttonEnter.setTooltip(new Tooltip("Enter " +
         "\n\nEnters currently running work."));
+    buttonRefresh.setTooltip(new Tooltip("Refresh search cache " +
+        "\n\nRefresh issue search cache."));
     buttonOpen.setTooltip(new Tooltip("Forward " +
-        "\n\nOpen selected issue details."));
+        "\n\nOpen selected issue details for more details."));
     buttonSettings.setTooltip(new Tooltip("Settings. " +
         "\n\nSetting up remote host, user credentials."));
     inputComment.setTooltip(new Tooltip("Comment" +

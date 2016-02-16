@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
+import javafx.util.StringConverter;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.events.StartSyncEvent;
@@ -91,6 +92,22 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
         break;
     }
 
+  }
+
+  @Override
+  protected StringConverter<LocalIssue> converter() {
+    return new StringConverter<LocalIssue>() {
+      @Override
+      public String toString(LocalIssue object) {
+        if (object == null) return "";
+        return object.getKey() + " : " + object.getDescription();
+      }
+
+      @Override
+      public LocalIssue fromString(String string) {
+        return comboBox.getSelectionModel().getSelectedItem();
+      }
+    };
   }
 
   //endregion

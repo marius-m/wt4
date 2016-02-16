@@ -28,7 +28,7 @@ public abstract class SearchableComboBoxDecorator<T> {
   }
 
   public void init(ComboBox<T> comboBox) {
-    //comboBox.setConverter(converter());
+    comboBox.setConverter(converter());
     comboBox.getEditor().addEventFilter(KeyEvent.KEY_RELEASED, event -> {
       onKeyEvent(event);
     });
@@ -38,11 +38,11 @@ public abstract class SearchableComboBoxDecorator<T> {
 
   protected abstract void onKeyEvent(KeyEvent keyEvent);
 
-//  /**
-//   * Display converter
-//   * @return
-//   */
-//  protected abstract StringConverter<T> converter();
+  /**
+   * Display converter
+   * @return
+   */
+  protected abstract StringConverter<T> converter();
 
   //endregion
 
