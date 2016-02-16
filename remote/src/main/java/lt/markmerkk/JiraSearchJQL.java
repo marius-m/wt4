@@ -25,7 +25,8 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 public class JiraSearchJQL implements Observable.OnSubscribe<Issue.SearchResult> {
   private static final Logger logger = LoggerFactory.getLogger(JiraSearchJQL.class);
   public final static DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
-  public static final String JQL_WORKLOG_TEMPLATE = "key in workedIssues(\"%s\", \"%s\", \"%s\")";
+  public static final String DEFAULT_JQL_WORKLOG_TEMPLATE = "key in workedIssues(\"%s\", \"%s\", \"%s\")";
+  public static final String DEFAULT_JQL_USER_ISSUES = "(status not in (closed, resolved)) AND (assignee = currentUser() OR reporter = currentUser())";
 
   JiraClient client;
   String jql;
@@ -43,9 +44,22 @@ public class JiraSearchJQL implements Observable.OnSubscribe<Issue.SearchResult>
       if (jql == null)
         throw new IllegalArgumentException("jql == null");
       logger.info("Doing search: "+jql);
-      Issue.SearchResult sr = client.searchIssues(jql);
-      logger.info("Found issues " + sr.issues.size() + " that have been worked on.");
-      subscriber.onNext(sr);
+      int batchCurrent = 0;
+      int batchSize = 50;
+      int batchTotal = 0;
+      do {
+        if (subscriber.isUnsubscribed())
+          break;
+
+        Issue.SearchResult sr = client.searchIssues(jql, "summary", batchSize, batchCurrent);
+        logger.info(String.format("Found %d issues. Current page %d. Max page %d. Total %d. ",
+            sr.issues.size(), sr.start, sr.max, sr.total));
+        logger.info("Found issues " + sr.issues.size() + " that have been worked on.");
+        subscriber.onNext(sr);
+
+        batchCurrent += sr.max;
+        batchTotal = sr.total;
+      } while (batchCurrent < batchTotal);
       subscriber.onCompleted();
     } catch (JiraException e) {
       subscriber.onError(e);

@@ -7,6 +7,7 @@ import rx.Observable;
  * Created by mariusmerkevicius on 2/2/16.
  */
 public class ClientObservables {
+
   /**
    * Returns a modified serach phrase
    * @return

@@ -48,7 +48,7 @@ public class SyncController {
 
   @PostConstruct
   public void init() {
-    reinitJiraClient();
+    clientObservable();
   }
 
   @PreDestroy
@@ -85,7 +85,13 @@ public class SyncController {
         endTime = storage.getTargetDate().plusDays(1);
     }
 
-    reinitJiraClient();
+    clientObservable().subscribe(
+        jiraClient -> SyncController.this.jiraClient = jiraClient,
+        error -> {
+          logger.info(error.getMessage());
+          remoteLoadListener.onError(error.getMessage());
+        }
+    );
 
     if (jiraClient == null)
       return;
@@ -133,23 +139,6 @@ public class SyncController {
 
   //region Convenience
 
-  /**
-   * Reinitializes jira client
-   */
-  public void reinitJiraClient() {
-    // Forming jira client
-    Observable.create(new JiraConnector(
-        settings.getHost(),
-        settings.getUsername(),
-        settings.getPassword()
-    )).subscribe(
-        jiraClient -> SyncController.this.jiraClient = jiraClient,
-        error -> {
-          logger.info(error.getMessage());
-          remoteLoadListener.onError(error.getMessage());
-        }
-    );
-  }
 
   //endregion
 
@@ -199,5 +188,22 @@ public class SyncController {
   };
 
   //endregion
+
+  //region Observables
+
+  /**
+   * Returns an observable for jira client initialization
+   */
+  public Observable<JiraClient> clientObservable() {
+    // Forming jira client
+    return Observable.create(new JiraConnector(
+        settings.getHost(),
+        settings.getUsername(),
+        settings.getPassword()
+    ));
+  }
+
+  //endregion
+
 
 }

@@ -1,15 +1,10 @@
 package lt.markmerkk.storage2;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import lt.markmerkk.utils.Utils;
-import org.joda.time.DurationFieldType;
-
 /**
  * Created by mariusmerkevicius on 11/22/15.
- * A helper class to validate and build {@link SimpleIssue} object
+ * A helper class to validate and build {@link LocalIssue} object
  */
-public class SimpleIssueBuilder {
+public class LocalIssueBuilder {
   private String project;
   private String key;
   private String description;
@@ -21,10 +16,11 @@ public class SimpleIssueBuilder {
   private boolean error = false;
   private boolean deleted = false;
   private String errorMessage = null;
+  private long downloadMillis = 0L;
 
-  public SimpleIssueBuilder() { }
+  public LocalIssueBuilder() { }
 
-  public SimpleIssueBuilder(SimpleIssue oldIssue) {
+  public LocalIssueBuilder(LocalIssue oldIssue) {
     this._id = oldIssue._id;
     this.project = oldIssue.project;
     this.key = oldIssue.key;
@@ -65,27 +61,34 @@ public class SimpleIssueBuilder {
 //    this.errorMessage = null;
 //  }
 
-  public SimpleIssueBuilder setProject(String project) {
+  public LocalIssueBuilder setProject(String project) {
     this.project = project;
     return this;
   }
 
-  public SimpleIssueBuilder setKey(String key) {
+  public LocalIssueBuilder setKey(String key) {
     this.key = key;
     return this;
   }
 
-  public SimpleIssueBuilder setDescription(String description) {
+  public LocalIssueBuilder setDescription(String description) {
     this.description = description;
     return this;
   }
 
-  public SimpleIssue build() {
-    SimpleIssue newIssue = new SimpleIssue();
+  public LocalIssueBuilder setDownloadMillis(long downloadMillis) {
+    this.downloadMillis = downloadMillis;
+    return this;
+  }
+
+  public LocalIssue build() {
+    LocalIssue newIssue = new LocalIssue();
     if (this.project == null)
       throw new IllegalArgumentException("Project must be provided!");
     if (this.key == null)
       throw new IllegalArgumentException("Key must be provided!");
+    if (downloadMillis <= 0)
+      throw new IllegalArgumentException("downloadMillis == 0");
     newIssue.project = this.project;
     newIssue.key = this.key;
     newIssue.description = this.description;
@@ -96,6 +99,7 @@ public class SimpleIssueBuilder {
     newIssue.error = this.error;
     newIssue.errorMessage = this.errorMessage;
     newIssue.deleted = this.deleted;
+    newIssue.download_millis = this.downloadMillis;
     if (this._id > 0)
       newIssue._id = this._id;
     return newIssue;

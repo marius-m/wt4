@@ -13,6 +13,8 @@ import lt.markmerkk.storage2.database.annotations.Table;
  */
 @Table
 public abstract class RemoteEntity extends BaseDBEntity {
+  private static final String KEY_DOWNLOAD_MILLIS = "download_millis";
+
   private static final String KEY_ID = "id";
   private static final String KEY_URI = "uri";
 
@@ -42,6 +44,8 @@ public abstract class RemoteEntity extends BaseDBEntity {
   // Error message
   @Column(value = FieldType.TEXT)
   String errorMessage;
+  @Column(value = FieldType.INTEGER)
+  long download_millis; // Reflects when did this issue was downloaded
 
   public String getUri() {
     return uri;
@@ -75,6 +79,8 @@ public abstract class RemoteEntity extends BaseDBEntity {
     pack.put(KEY_DIRTY, (dirty) ? 1 : 0);
     pack.put(KEY_ERROR, (error) ? 1 : 0);
     pack.put(KEY_ERROR_MESSAGE, "\"" + errorMessage + "\"");
+    pack.put(KEY_ERROR_MESSAGE, "\"" + errorMessage + "\"");
+    pack.put(KEY_DOWNLOAD_MILLIS, download_millis);
     return pack;
   }
 
@@ -86,6 +92,7 @@ public abstract class RemoteEntity extends BaseDBEntity {
     dirty = resultSet.getBoolean(resultSet.findColumn(KEY_DIRTY));
     error = resultSet.getBoolean(resultSet.findColumn(KEY_ERROR));
     errorMessage = resultSet.getString(resultSet.findColumn(KEY_ERROR_MESSAGE));
+    download_millis = resultSet.getInt(resultSet.findColumn(KEY_DOWNLOAD_MILLIS));
   }
 
 

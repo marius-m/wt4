@@ -18,11 +18,11 @@ import lt.markmerkk.utils.Utils;
  * Created by mariusmerkevicius on 1/6/16.
  * Holds all downloaded issues for use
  */
-public class BasicIssueStorage implements IDataStorage<SimpleIssue> {
+public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   @Inject DBProdExecutor executor;
 
-  ObservableList<SimpleIssue> issues;
-  List<IDataListener<SimpleIssue>> listeners;
+  ObservableList<LocalIssue> issues;
+  List<IDataListener<LocalIssue>> listeners;
 
   String filter;
 
@@ -45,46 +45,46 @@ public class BasicIssueStorage implements IDataStorage<SimpleIssue> {
   }
 
   @Override
-  public void register(IDataListener<SimpleIssue> listener) {
+  public void register(IDataListener<LocalIssue> listener) {
     if (listener == null) return;
     listeners.add(listener);
   }
 
   @Override
-  public void unregister(IDataListener<SimpleIssue> listener) {
+  public void unregister(IDataListener<LocalIssue> listener) {
     if (listener == null) return;
     listeners.remove(listener);
   }
 
   @Override
-  public void insert(SimpleIssue dataEntity) {
+  public void insert(LocalIssue dataEntity) {
     if (dataEntity == null) return;
-    executor.execute(new InsertJob(SimpleIssue.class, dataEntity));
+    executor.execute(new InsertJob(LocalIssue.class, dataEntity));
     notifyDataChange();
   }
 
   @Override
-  public void delete(SimpleIssue dataEntity) {
+  public void delete(LocalIssue dataEntity) {
     if (dataEntity == null) return;
-    executor.execute(new DeleteJob(SimpleIssue.class, dataEntity));
+    executor.execute(new DeleteJob(LocalIssue.class, dataEntity));
     notifyDataChange();
   }
 
   @Override
-  public void update(SimpleIssue dataEntity) {
+  public void update(LocalIssue dataEntity) {
     if (dataEntity == null) return;
-    executor.execute(new UpdateJob(SimpleIssue.class, dataEntity));
+    executor.execute(new UpdateJob(LocalIssue.class, dataEntity));
     notifyDataChange();
   }
 
   @Override
   public void notifyDataChange() {
-    QueryListJob<SimpleIssue> queryJob = new QueryListJob<>(SimpleIssue.class);
+    QueryListJob<LocalIssue> queryJob = new QueryListJob<>(LocalIssue.class);
     issues.clear();
     if (Utils.isEmpty(filter) && filter.length() <= 2) {
-      queryJob = new QueryListJob<>(SimpleIssue.class);
+      queryJob = new QueryListJob<>(LocalIssue.class);
     } else {
-      queryJob = new QueryListJob<>(SimpleIssue.class, () -> "("
+      queryJob = new QueryListJob<>(LocalIssue.class, () -> "("
           + "key like '%" + filter + "%' "
           + "OR "
           + "description like '%" + filter + "%' "
@@ -97,7 +97,7 @@ public class BasicIssueStorage implements IDataStorage<SimpleIssue> {
   }
 
   @Override
-  public ObservableList<SimpleIssue> getData() {
+  public ObservableList<LocalIssue> getData() {
     return issues;
   }
 
@@ -107,7 +107,7 @@ public class BasicIssueStorage implements IDataStorage<SimpleIssue> {
    * Reports log change for all the listener
    */
   void reportDataChange() {
-    for (IDataListener<SimpleIssue> listener : listeners)
+    for (IDataListener<LocalIssue> listener : listeners)
       listener.onDataChange(issues);
   }
 
