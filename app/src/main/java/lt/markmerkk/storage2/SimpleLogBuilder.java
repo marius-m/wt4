@@ -1,10 +1,8 @@
 package lt.markmerkk.storage2;
 
-import com.google.common.base.Strings;
 import java.net.URI;
 import java.net.URISyntaxException;
 import lt.markmerkk.utils.Utils;
-import lt.markmerkk.utils.hourglass.HourGlass;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
@@ -63,7 +61,7 @@ public class SimpleLogBuilder {
     this.task = Utils.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
     this.uri = remoteLog.getSelf();
-    this.id = parseWorklogUri(this.uri);
+    this.id = parseUri(this.uri);
 
     this.deleted = false;
     this.dirty = false;
@@ -90,7 +88,7 @@ public class SimpleLogBuilder {
     this.comment = remoteLog.getComment();
 
     this.uri = remoteLog.getSelf().toString();
-    this.id = parseWorklogUri(this.uri);
+    this.id = parseUri(this.uri);
     this.deleted = false;
     this.dirty = false;
     this.error = false;
@@ -141,7 +139,7 @@ public class SimpleLogBuilder {
    * Takes in worklog uri and parses out the last part of it.
    * @return
    */
-  public static long parseWorklogUri(String url) {
+  public static long parseUri(String url) {
     if (Utils.isEmpty(url)) return 0;
     try {
       URI uri = new URI(url);

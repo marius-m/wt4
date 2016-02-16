@@ -1,6 +1,7 @@
 package lt.markmerkk.storage2.database;
 
 import java.util.List;
+import java.util.Set;
 import lt.markmerkk.storage2.database.helpers.entities.Mock3;
 import lt.markmerkk.storage2.database.helpers.entities.Mock4;
 import lt.markmerkk.storage2.database.helpers.entities.Mock5;
@@ -8,6 +9,7 @@ import lt.markmerkk.storage2.jobs.CreateJob;
 import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
+import lt.markmerkk.storage2.jobs.QueryDistinctListJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
@@ -384,5 +386,45 @@ public class DBMockExecutorProdTest {
     assertThat(updateResult.get_id()).isEqualTo(20L);
     assertThat(updateResult.getId()).isEqualTo(30L);
   }
+
+  @Test public void shouldQueryDistinctListMock4() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock4 mock1 = new Mock4(
+        20L,
+        30L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock2 = new Mock4(
+        21L,
+        31L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock3 = new Mock4(
+        22L,
+        32L,
+        "some_parent_param",
+        "different_title",
+        "some_name"
+    );
+    executor.execute(new CreateJobIfNeeded<>(Mock4.class));
+    executor.execute(new InsertJob(Mock4.class, mock1));
+    executor.execute(new InsertJob(Mock4.class, mock2));
+    executor.execute(new InsertJob(Mock4.class, mock3));
+    QueryDistinctListJob<Mock4> queryListJob = new QueryDistinctListJob<Mock4>(Mock4.class, () -> "title");
+    executor.executeOrThrow(queryListJob);
+    Set<String> result = queryListJob.result();
+
+    // Assert
+    assertThat(result).isNotNull();
+    assertThat(result.size()).isEqualTo(2);
+  }
+
 
 }

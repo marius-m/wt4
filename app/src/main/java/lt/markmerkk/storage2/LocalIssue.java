@@ -11,11 +11,13 @@ import lt.markmerkk.storage2.database.annotations.Table;
  * Created by mariusmerkevicius on 11/30/15.
  * Represents a jira issue
  */
-@Table(name = "Issue")
-public class SimpleIssue extends RemoteEntity {
-  private static final String KEY_PROJECT = "project";
-  private static final String KEY_KEY = "key";
-  private static final String KEY_DESCRIPTION = "description";
+@Table(name = "LocalIssue")
+public class LocalIssue extends RemoteEntity {
+  public static final String KEY_PROJECT = "project";
+  public static final String KEY_KEY = "key";
+  public static final String KEY_DESCRIPTION = "description";
+  public static final String KEY_CREATE_DATE = "createDate";
+  public static final String KEY_UPDATE_DATE = "updateDate";
 
   @Column(value = FieldType.TEXT)
   String project;
@@ -23,6 +25,13 @@ public class SimpleIssue extends RemoteEntity {
   String key;
   @Column(value = FieldType.TEXT)
   String description;
+
+  @Column(value = FieldType.INTEGER)
+  long createDate;
+  @Column(value = FieldType.INTEGER)
+  long updateDate;
+
+  // Life cycle links
 
   public String getKey() {
     return key;
@@ -41,6 +50,8 @@ public class SimpleIssue extends RemoteEntity {
     pack.put(KEY_PROJECT, "\"" + project + "\"");
     pack.put(KEY_KEY, "\"" + key + "\"");
     pack.put(KEY_DESCRIPTION, "\"" + description + "\"");
+    pack.put(KEY_CREATE_DATE, createDate);
+    pack.put(KEY_UPDATE_DATE, updateDate);
     return pack;
   }
 
@@ -49,6 +60,8 @@ public class SimpleIssue extends RemoteEntity {
     project = resultSet.getString(resultSet.findColumn(KEY_PROJECT));
     key = resultSet.getString(resultSet.findColumn(KEY_KEY));
     description = resultSet.getString(resultSet.findColumn(KEY_DESCRIPTION));
+    createDate = resultSet.getLong(resultSet.findColumn(KEY_CREATE_DATE));
+    updateDate = resultSet.getLong(resultSet.findColumn(KEY_UPDATE_DATE));
   }
 
   @Override public String toString() {

@@ -17,6 +17,7 @@ import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
+  public static final String LOG_LAYOUT = "%d{ABSOLUTE} %5p %c{1}:%L - %m%n";
   public static boolean DEBUG = true;
   public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
@@ -36,6 +38,7 @@ public class Main extends Application {
 
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
   private RollingFileAppender fileAppender;
+  private RollingFileAppender errorAppender;
 
   public Main() { }
 
@@ -70,6 +73,7 @@ public class Main extends Application {
   @Override
   public void stop() throws Exception {
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
+    org.apache.log4j.Logger.getRootLogger().removeAppender(errorAppender);
     super.stop();
     hostServices = null;
     Injector.forgetAll();
@@ -92,12 +96,17 @@ public class Main extends Application {
    */
   private void initLoggerSettings() throws IOException {
     PropertyConfigurator.configure(getClass().getResource("/custom_log4j.properties"));
-    SimpleLayout layout = new SimpleLayout();
-    fileAppender = new RollingFileAppender(layout, CFG_PATH + "info.log", true);
+    fileAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT), CFG_PATH + "info.log", true);
     fileAppender.setMaxFileSize("1000KB");
     fileAppender.setMaxBackupIndex(1);
     fileAppender.setThreshold(Priority.INFO);
     org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+
+    errorAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT), CFG_PATH + "debug.log", true);
+    errorAppender.setMaxFileSize("100000KB");
+    errorAppender.setMaxBackupIndex(1);
+    errorAppender.setThreshold(Priority.toPriority(Priority.ALL_INT));
+    org.apache.log4j.Logger.getRootLogger().addAppender(errorAppender);
   }
 
   /**

@@ -1,6 +1,5 @@
 package lt.markmerkk;
 
-import com.google.common.base.Strings;
 import java.util.Iterator;
 import java.util.List;
 import javafx.util.Pair;
@@ -31,7 +30,7 @@ public class JiraObservables {
   public static Observable<Pair<Issue, List<WorkLog>>> remoteWorklogs(
       JiraClient client, JiraLogFilterer filterer, DateTime start, DateTime end) {
     return JiraObservables.issueSearchDateRangeObservable(start, end, client.getSelf())
-        .flatMap(jql -> Observable.create(new JiraSearchJQL(client, jql)))
+        .flatMap(jql -> Observable.create(new JiraSearchJQL(client, jql, "*navigable")))
         .flatMap(searchResult -> {
           return Observable.from(searchResult.issues);
         })
@@ -91,7 +90,7 @@ public class JiraObservables {
         }
         DateTime startSearchDate = start.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
         DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-        subscriber.onNext(String.format(JiraSearchJQL.JQL_WORKLOG_TEMPLATE,
+        subscriber.onNext(String.format(JiraSearchJQL.DEFAULT_JQL_WORKLOG_TEMPLATE,
             JiraSearchJQL.dateFormat.print(startSearchDate.getMillis()),
             JiraSearchJQL.dateFormat.print(endSearchDate.getMillis()),
             user
@@ -99,6 +98,20 @@ public class JiraObservables {
         subscriber.onCompleted();
       }
     });
+  }
+
+  /**
+   * Observable for pulling all the user issues
+   * @param jql
+   * @return
+   */
+  public static Observable<Issue> userIssues(JiraClient client, String jql) {
+    return Observable.create(new JiraSearchJQL(client, jql, "summary,project,created,updated"))
+        .flatMap(searchResult -> {
+          if (searchResult.issues.size() == 0)
+            return Observable.empty();
+          return Observable.from(searchResult.issues);
+        });
   }
 
 }

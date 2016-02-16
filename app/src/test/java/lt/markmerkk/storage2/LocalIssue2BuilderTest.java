@@ -8,13 +8,13 @@ import static org.junit.Assert.fail;
 /**
  * Created by mariusmerkevicius on 11/30/15.
  */
-public class SimpleIssueBuilderTest {
+public class LocalIssue2BuilderTest {
   @Test public void testEmpty() throws Exception {
     // Arrange
     // Act
     // Assert
     try {
-      SimpleIssue issue = new SimpleIssueBuilder().build();
+      LocalIssue issue = new LocalIssueBuilder().build();
       fail("Should not build issue");
     } catch (Exception e) {
       assertThat(e).hasMessage("Project must be provided!");
@@ -26,13 +26,30 @@ public class SimpleIssueBuilderTest {
     // Act
     // Assert
     try {
-      SimpleIssue issue = new SimpleIssueBuilder()
+      LocalIssue issue = new LocalIssueBuilder()
+          .setKey("valid_key")
+          .setDescription("valid_description")
+          .setDownloadMillis(1000L)
+          .build();
+      fail("Should not build issue");
+    } catch (Exception e) {
+      assertThat(e).hasMessage("Project must be provided!");
+    }
+  }
+
+  @Test public void testMissingDownloadMillis() throws Exception {
+    // Arrange
+    // Act
+    // Assert
+    try {
+      LocalIssue issue = new LocalIssueBuilder()
+          .setProject("valid_project")
           .setKey("valid_key")
           .setDescription("valid_description")
           .build();
       fail("Should not build issue");
     } catch (Exception e) {
-      assertThat(e).hasMessage("Project must be provided!");
+      assertThat(e).hasMessage("downloadMillis == 0");
     }
   }
 
@@ -41,7 +58,7 @@ public class SimpleIssueBuilderTest {
     // Act
     // Assert
     try {
-      SimpleIssue issue = new SimpleIssueBuilder().setProject("valid_project")
+      LocalIssue issue = new LocalIssueBuilder().setProject("valid_project")
           .setDescription("valid_description")
           .build();
       fail("Should not build issue");
@@ -52,8 +69,12 @@ public class SimpleIssueBuilderTest {
 
   @Test public void testValidMissingDescription() throws Exception {
     // Arrange
-    SimpleIssue issue =
-        new SimpleIssueBuilder().setProject("valid_project").setKey("valid_key").build();
+    LocalIssue issue =
+        new LocalIssueBuilder()
+            .setProject("valid_project")
+            .setKey("valid_key")
+            .setDownloadMillis(1000L)
+            .build();
     // Act
     // Assert
     assertThat(issue).isNotNull();
@@ -64,9 +85,12 @@ public class SimpleIssueBuilderTest {
 
   @Test public void testValid() throws Exception {
     // Arrange
-    SimpleIssue issue =
-        new SimpleIssueBuilder()
-            .setProject("valid_project").setKey("valid_key").setDescription("valid_description")
+    LocalIssue issue =
+        new LocalIssueBuilder()
+            .setProject("valid_project")
+            .setKey("valid_key")
+            .setDescription("valid_description")
+            .setDownloadMillis(1000L)
             .build();
     // Act
     // Assert

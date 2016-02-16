@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
  * Created by mariusmerkevicius on 11/28/15. Responsible for merging / updating database {@link
  * SimpleLog} entities with the remote ones.
  */
-public class RemotePushMerger {
-  Logger logger = LoggerFactory.getLogger(RemotePushMerger.class);
+public class RemoteLogPushMerger {
+  Logger logger = LoggerFactory.getLogger(RemoteLogPushMerger.class);
   IExecutor executor;
   JiraClient client;
 
-  public RemotePushMerger(IExecutor executor, JiraClient client) {
+  public RemoteLogPushMerger(IExecutor executor, JiraClient client) {
     if (executor == null)
       throw new IllegalArgumentException("Cannot function without database!");
     if (client == null)

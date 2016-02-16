@@ -51,3 +51,5 @@ app/nullsimple.properties
 app/nullusr.properties
 first.properties
 app/src/main/resources/version.properties
+app/error.log
+database/error.log

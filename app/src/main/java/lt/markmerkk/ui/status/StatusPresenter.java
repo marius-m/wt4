@@ -1,5 +1,6 @@
 package lt.markmerkk.ui.status;
 
+import com.google.common.eventbus.Subscribe;
 import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
+import lt.markmerkk.events.StartSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -22,6 +24,7 @@ import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
 
@@ -71,6 +74,8 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     onLoadChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
     versionController.addListener(this);
+
+    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   @Override public void destroy() {
@@ -78,6 +83,21 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
   }
+
+  //region Events
+
+  /**
+   * Called when {@link SyncEventBus} calls {@link StartSyncEvent}
+   * @param event
+   */
+  @Subscribe
+  public void onEvent(StartSyncEvent event) {
+    if (syncController.isLoading())
+      return;
+    syncController.sync();
+  }
+
+  //endregion
 
   //region Convenience
 
@@ -132,7 +152,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
-      syncController.sync();
+      SyncEventBus.getInstance().getEventBus().post(new StartSyncEvent());
     }
   };
 

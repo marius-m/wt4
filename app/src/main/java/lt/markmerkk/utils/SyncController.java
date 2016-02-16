@@ -12,8 +12,8 @@ import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.RemoteFetchMerger;
-import lt.markmerkk.storage2.RemotePushMerger;
+import lt.markmerkk.storage2.RemoteLogFetchMerger;
+import lt.markmerkk.storage2.RemoteLogPushMerger;
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
@@ -48,7 +48,7 @@ public class SyncController {
 
   @PostConstruct
   public void init() {
-    reinitJiraClient();
+    clientObservable();
   }
 
   @PreDestroy
@@ -85,7 +85,13 @@ public class SyncController {
         endTime = storage.getTargetDate().plusDays(1);
     }
 
-    reinitJiraClient();
+    clientObservable().subscribe(
+        jiraClient -> SyncController.this.jiraClient = jiraClient,
+        error -> {
+          logger.info(error.getMessage());
+          remoteLoadListener.onError(error.getMessage());
+        }
+    );
 
     if (jiraClient == null)
       return;
@@ -96,20 +102,20 @@ public class SyncController {
         endTime
     );
 
-    RemoteFetchMerger remoteFetchMerger = new RemoteFetchMerger(dbExecutor);
-    RemotePushMerger remotePushMerger = new RemotePushMerger(dbExecutor, jiraClient);
+    RemoteLogFetchMerger remoteLogFetchMerger = new RemoteLogFetchMerger(dbExecutor);
+    RemoteLogPushMerger remoteLogPushMerger = new RemoteLogPushMerger(dbExecutor, jiraClient);
 
     Observable<String> downloadObservable =
         JiraObservables.remoteWorklogs(jiraClient, filterer, startTime, endTime)
             .map(pair -> {
               for (WorkLog workLog : pair.getValue())
-                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
+                remoteLogFetchMerger.merge(pair.getKey().getKey(), workLog);
               return null;
             });
 
     Observable<String> uploadObservable = Observable.from(storage.getData())
         .map(simpleLog -> {
-          remotePushMerger.merge(simpleLog);
+          remoteLogPushMerger.merge(simpleLog);
           return null;
         });
 
@@ -133,23 +139,6 @@ public class SyncController {
 
   //region Convenience
 
-  /**
-   * Reinitializes jira client
-   */
-  public void reinitJiraClient() {
-    // Forming jira client
-    Observable.create(new JiraConnector(
-        settings.getHost(),
-        settings.getUsername(),
-        settings.getPassword()
-    )).subscribe(
-        jiraClient -> SyncController.this.jiraClient = jiraClient,
-        error -> {
-          logger.info(error.getMessage());
-          remoteLoadListener.onError(error.getMessage());
-        }
-    );
-  }
 
   //endregion
 
@@ -199,5 +188,22 @@ public class SyncController {
   };
 
   //endregion
+
+  //region Observables
+
+  /**
+   * Returns an observable for jira client initialization
+   */
+  public Observable<JiraClient> clientObservable() {
+    // Forming jira client
+    return Observable.create(new JiraConnector(
+        settings.getHost(),
+        settings.getUsername(),
+        settings.getPassword()
+    ));
+  }
+
+  //endregion
+
 
 }

@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
  * 2. Update local log with the data from sever
  * 3. All pulled data should contain dirty = 0.
  */
-public class RemoteFetchMerger {
-  Logger logger = LoggerFactory.getLogger(RemoteFetchMerger.class);
+public class RemoteLogFetchMerger {
+  Logger logger = LoggerFactory.getLogger(RemoteLogFetchMerger.class);
 
   IExecutor executor;
 
-  public RemoteFetchMerger(IExecutor executor) {
+  public RemoteLogFetchMerger(IExecutor executor) {
     if (executor == null)
       throw new IllegalArgumentException("executor == null");
     this.executor = executor;
@@ -31,15 +31,15 @@ public class RemoteFetchMerger {
   /**
    * Merges remote {@link WorkLog} and local {@link SimpleLog}
    */
-  public void merge(String remoteIssue, WorkLog remoteLog) {
+  public void merge(String remoteIssueKey, WorkLog remoteLog) {
     SimpleLog localLog = getLocalEntity(getRemoteId(remoteLog));
     if (localLog == null) {
-      SimpleLog newLog = newLog(remoteIssue, remoteLog);
+      SimpleLog newLog = newLog(remoteIssueKey, remoteLog);
       executor.execute(new InsertJob(SimpleLog.class, newLog));
       logger.info("New remote log: " + newLog);
       return;
     }
-    SimpleLog updateLog = updateLog(localLog, remoteIssue, remoteLog);
+    SimpleLog updateLog = updateLog(localLog, remoteIssueKey, remoteLog);
     executor.execute(new UpdateJob(SimpleLog.class, updateLog));
     logger.info("Updating old log: " + updateLog);
   }
@@ -55,7 +55,7 @@ public class RemoteFetchMerger {
   }
 
   long getRemoteId(WorkLog worklog) {
-    return SimpleLogBuilder.parseWorklogUri(worklog.getSelf().toString());
+    return SimpleLogBuilder.parseUri(worklog.getSelf().toString());
   }
 
   /**

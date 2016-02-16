@@ -29,8 +29,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
+import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.Main;
 import lt.markmerkk.storage2.BasicLogStorage;
+import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.utils.IssueSearchAdapter;
@@ -59,6 +61,8 @@ public class ClockPresenter implements Initializable {
   @Inject
   SyncController syncController;
   @Inject
+  DBProdExecutor dbProdExecutor;
+  @Inject
   UserSettings settings;
 
   @FXML
@@ -76,17 +80,19 @@ public class ClockPresenter implements Initializable {
   @FXML
   Button buttonSearch;
   @FXML
+  Button buttonRefresh;
+  @FXML
   Button buttonSettings;
 
   @FXML ProgressIndicator taskLoadIndicator;
-  @FXML ComboBox<Issue> inputTaskCombo;
+  @FXML ComboBox<LocalIssue> inputTaskCombo;
 
   IssueSearchAdapter issueSearchAdapter;
   Listener listener;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    issueSearchAdapter = new IssueSearchAdapter(syncController, inputTaskCombo, taskLoadIndicator);
+    issueSearchAdapter = new IssueSearchAdapter(syncController, inputTaskCombo, taskLoadIndicator, dbProdExecutor);
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)
@@ -112,8 +118,10 @@ public class ClockPresenter implements Initializable {
         "\n\nEnable/disable work timer."));
     buttonEnter.setTooltip(new Tooltip("Enter " +
         "\n\nEnters currently running work."));
+    buttonRefresh.setTooltip(new Tooltip("Refresh search cache " +
+        "\n\nRefresh issue search cache."));
     buttonOpen.setTooltip(new Tooltip("Forward " +
-        "\n\nOpen selected issue details."));
+        "\n\nOpen selected issue details for more details."));
     buttonSettings.setTooltip(new Tooltip("Settings. " +
         "\n\nSetting up remote host, user credentials."));
     inputComment.setTooltip(new Tooltip("Comment" +
@@ -160,7 +168,7 @@ public class ClockPresenter implements Initializable {
   }
 
   public void onClickSearch() {
-    issueSearchAdapter.doSearch();
+    issueSearchAdapter.doRefresh();
   }
 
   public void onClickSettings() {

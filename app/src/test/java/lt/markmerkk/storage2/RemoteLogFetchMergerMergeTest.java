@@ -17,14 +17,14 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mariusmerkevicius on 11/29/15.
  */
-public class RemoteFetchMergerMergeTest {
+public class RemoteLogFetchMergerMergeTest {
   @Test public void testNew() throws Exception {
     // Arrange
     IExecutor executor = mock(IExecutor.class);
     String remoteIssue = "TT-123";
     WorkLog remoteWorklog = mock(WorkLog.class);
 
-    RemoteFetchMerger merger = spy(new RemoteFetchMerger(executor));
+    RemoteLogFetchMerger merger = spy(new RemoteLogFetchMerger(executor));
     doReturn(null).when(merger).getLocalEntity(any(Long.class));
     doReturn(1234L).when(merger).getRemoteId(any(WorkLog.class));
     doReturn(new SimpleLog()).when(merger).newLog(anyString(), any(WorkLog.class));
@@ -44,8 +44,8 @@ public class RemoteFetchMergerMergeTest {
     String remoteIssue = "TT-123";
     WorkLog remoteWorklog = mock(WorkLog.class);
 
-    RemoteFetchMerger merger = spy(
-        new RemoteFetchMerger(executor));
+    RemoteLogFetchMerger merger = spy(
+        new RemoteLogFetchMerger(executor));
     doReturn(mock(SimpleLog.class)).when(merger).getLocalEntity(any(Long.class));
     doReturn(1234L).when(merger).getRemoteId(any(WorkLog.class));
     doReturn(new SimpleLog()).when(merger).newLog(anyString(), any(WorkLog.class));
