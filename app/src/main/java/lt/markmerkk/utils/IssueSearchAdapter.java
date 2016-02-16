@@ -1,6 +1,7 @@
 package lt.markmerkk.utils;
 
 import com.google.common.base.Strings;
+import com.google.common.eventbus.Subscribe;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
-import javafx.util.StringConverter;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.events.StartSyncEvent;
 import lt.markmerkk.storage2.IssueSplit;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.RemoteFetchIssue;
@@ -41,7 +42,6 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   IssueSplit issueSplit = new IssueSplit();
 
   Subscription refreshSubscription;
-  Subscription searchSubscription;
 
   ObservableList<LocalIssue> issues;
 
@@ -52,41 +52,9 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
     super(comboBox, progressIndicator);
     this.syncController = controller;
     this.dbExecutor = executor;
+    registerSearchObservable(comboBox);
 
-
-    searchSubscription = JavaFxObservable.fromObservableValue(comboBox.getEditor().textProperty())
-        .filter(phrase -> (comboBox.getSelectionModel().getSelectedItem() == null))
-        .filter(phrase -> !Strings.isNullOrEmpty(phrase))
-        .debounce(200, TimeUnit.MILLISECONDS)
-        .flatMap(phrase -> {
-          return Observable.create(new Observable.OnSubscribe<List<LocalIssue>>() {
-            @Override
-            public void call(Subscriber<? super List<LocalIssue>> subscriber) {
-              try {
-                Map<String, String> out = issueSplit.split(phrase);
-                QueryListJob<LocalIssue> queryListJob =
-                    new QueryListJob<LocalIssue>(LocalIssue.class,
-                        () -> String.format("(%s like '%%%s%%' OR %s like '%%%s%%') ORDER BY %s DESC",
-                            LocalIssue.KEY_DESCRIPTION, out.get(IssueSplit.DESCRIPTION_KEY),
-                            LocalIssue.KEY_KEY, out.get(IssueSplit.KEY_KEY),
-                            LocalIssue.KEY_CREATE_DATE)
-                    );
-                dbExecutor.executeOrThrow(queryListJob);
-                subscriber.onNext(queryListJob.result());
-                subscriber.onCompleted();
-              } catch (ClassNotFoundException e) {
-                subscriber.onError(e);
-              } catch (SQLException e) {
-                subscriber.onError(e);
-              }
-            }
-          });
-        })
-        .subscribe(localIssues -> {
-          notifyDateChange(FXCollections.observableArrayList(localIssues));
-        }, error -> {
-          System.out.println("Error:  " + error);
-        });
+    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   /**
@@ -95,6 +63,15 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   public void doRefresh() {
     refreshCache();
   }
+
+  //region Events
+
+  @Subscribe
+  public void onEvent(StartSyncEvent startSyncEvent) {
+    doRefresh();
+  }
+
+  //endregion
 
   //region Abs implementation
 
@@ -178,6 +155,50 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
               logger.debug("Complete!");
               changeLoadState(false);
             });
+  }
+
+  //endregion
+
+  //region Listeners
+
+  /**
+   * Registers a search observable that queries local database for results
+   * @param comboBox
+   */
+  void registerSearchObservable(ComboBox<LocalIssue> comboBox) {
+    JavaFxObservable.fromObservableValue(comboBox.getEditor().textProperty())
+        .filter(phrase -> (comboBox.getSelectionModel().getSelectedItem() == null))
+        .filter(phrase -> !Strings.isNullOrEmpty(phrase))
+        .debounce(200, TimeUnit.MILLISECONDS)
+        .flatMap(phrase -> {
+          return Observable.create(new Observable.OnSubscribe<List<LocalIssue>>() {
+            @Override
+            public void call(Subscriber<? super List<LocalIssue>> subscriber) {
+              try {
+                Map<String, String> out = issueSplit.split(phrase);
+                QueryListJob<LocalIssue> queryListJob =
+                    new QueryListJob<LocalIssue>(LocalIssue.class,
+                        () -> String.format("(%s like '%%%s%%' OR %s like '%%%s%%') ORDER BY %s DESC",
+                            LocalIssue.KEY_DESCRIPTION, out.get(IssueSplit.DESCRIPTION_KEY),
+                            LocalIssue.KEY_KEY, out.get(IssueSplit.KEY_KEY),
+                            LocalIssue.KEY_CREATE_DATE)
+                    );
+                dbExecutor.executeOrThrow(queryListJob);
+                subscriber.onNext(queryListJob.result());
+                subscriber.onCompleted();
+              } catch (ClassNotFoundException e) {
+                subscriber.onError(e);
+              } catch (SQLException e) {
+                subscriber.onError(e);
+              }
+            }
+          });
+        })
+        .subscribe(localIssues -> {
+          notifyDateChange(FXCollections.observableArrayList(localIssues));
+        }, error -> {
+          System.out.println("Error:  " + error);
+        });
   }
 
   //endregion

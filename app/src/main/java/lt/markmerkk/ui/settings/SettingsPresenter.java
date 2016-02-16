@@ -1,5 +1,6 @@
 package lt.markmerkk.ui.settings;
 
+import com.google.common.eventbus.Subscribe;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -19,9 +20,11 @@ import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
+import lt.markmerkk.events.StartSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
+import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import org.apache.log4j.AppenderSkeleton;
@@ -84,9 +87,11 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     Logger.getRootLogger().addAppender(guiAppender);
     onLoadChange(syncController.isLoading());
     syncController.addLoadingListener(this);
+    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   @Override public void destroy() {
+    SyncEventBus.getInstance().getEventBus().unregister(this);
     syncController.removeLoadingListener(this);
     Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
@@ -94,6 +99,21 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     settings.setPassword(inputPassword.getText());
     guiAppender.close();
   }
+
+  //region Events
+
+  /**
+   * Called when {@link SyncEventBus} calls {@link StartSyncEvent}
+   * @param event
+   */
+  @Subscribe
+  public void onEvent(StartSyncEvent event) {
+    if (syncController.isLoading())
+      return;
+    syncController.sync();
+  }
+
+  //endregion
 
   //region Listeners
 
@@ -111,7 +131,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
       settings.setHost(inputHost.getText());
       settings.setUsername(inputUsername.getText());
       settings.setPassword(inputPassword.getText());
-      syncController.sync();
+      SyncEventBus.getInstance().getEventBus().post(new StartSyncEvent());
     }
   };
 
