@@ -30,7 +30,7 @@ public class JiraObservables {
   public static Observable<Pair<Issue, List<WorkLog>>> remoteWorklogs(
       JiraClient client, JiraLogFilterer filterer, DateTime start, DateTime end) {
     return JiraObservables.issueSearchDateRangeObservable(start, end, client.getSelf())
-        .flatMap(jql -> Observable.create(new JiraSearchJQL(client, jql)))
+        .flatMap(jql -> Observable.create(new JiraSearchJQL(client, jql, "*navigable")))
         .flatMap(searchResult -> {
           return Observable.from(searchResult.issues);
         })
@@ -106,7 +106,7 @@ public class JiraObservables {
    * @return
    */
   public static Observable<Issue> userIssues(JiraClient client, String jql) {
-    return Observable.create(new JiraSearchJQL(client, jql))
+    return Observable.create(new JiraSearchJQL(client, jql, "summary,project,createdDate,updatedDate"))
         .flatMap(searchResult -> {
           if (searchResult.issues.size() == 0)
             return Observable.empty();
