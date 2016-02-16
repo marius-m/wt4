@@ -1,5 +1,8 @@
 package lt.markmerkk.storage2;
 
+import java.util.Date;
+import net.rcarz.jiraclient.Issue;
+
 /**
  * Created by mariusmerkevicius on 11/22/15.
  * A helper class to validate and build {@link LocalIssue} object
@@ -8,6 +11,8 @@ public class LocalIssueBuilder {
   private String project;
   private String key;
   private String description;
+  private long createDate;
+  private long updateDate;
 
   private long _id;
   private long id;
@@ -34,32 +39,36 @@ public class LocalIssueBuilder {
     this.errorMessage = null;
   }
 
-//  public SimpleIssueBuilder(Issue remoteIssue) {
-//    this.project = remoteIssue.getProject().getKey();
-//    this.key = remoteIssue.getKey();
-//    this.description = remoteIssue.getSummary();
-//
-//    this.uri = remoteIssue.getSelf().toString();
-//    this.id = remoteIssue.getId();
-//    this.deleted = false;
-//    this.dirty = false;
-//    this.error = false;
-//    this.errorMessage = null;
-//  }
+  public LocalIssueBuilder(Issue remoteIssue) {
+    this.project = remoteIssue.getProject().getKey();
+    this.key = remoteIssue.getKey();
+    this.description = remoteIssue.getSummary();
+    this.createDate = extractDate(remoteIssue.getCreatedDate());
+    this.updateDate = extractDate(remoteIssue.getUpdatedDate());
 
-//  public SimpleIssueBuilder(SimpleIssue oldIssue, Issue remoteIssue) {
-//    this._id = oldIssue._id;
-//    this.project = remoteIssue.getProject().getKey();
-//    this.key = remoteIssue.getKey();
-//    this.description = remoteIssue.getSummary();
-//
-//    this.uri = remoteIssue.getSelf().toString();
-//    this.id = remoteIssue.getId();
-//    this.deleted = false;
-//    this.dirty = false;
-//    this.error = false;
-//    this.errorMessage = null;
-//  }
+    this.uri = remoteIssue.getSelf().toString();
+    this.id = SimpleLogBuilder.parseUri(remoteIssue.getId());
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
+
+  public LocalIssueBuilder(LocalIssue oldIssue, Issue remoteIssue) {
+    this._id = oldIssue._id;
+    this.project = remoteIssue.getProject().getKey();
+    this.key = remoteIssue.getKey();
+    this.description = remoteIssue.getSummary();
+    this.createDate = extractDate(remoteIssue.getCreatedDate());
+    this.updateDate = extractDate(remoteIssue.getUpdatedDate());
+
+    this.uri = remoteIssue.getSelf().toString();
+    this.id = SimpleLogBuilder.parseUri(remoteIssue.getId());
+    this.deleted = false;
+    this.dirty = false;
+    this.error = false;
+    this.errorMessage = null;
+  }
 
   public LocalIssueBuilder setProject(String project) {
     this.project = project;
@@ -92,6 +101,8 @@ public class LocalIssueBuilder {
     newIssue.project = this.project;
     newIssue.key = this.key;
     newIssue.description = this.description;
+    newIssue.createDate = this.createDate;
+    newIssue.updateDate = this.updateDate;
 
     newIssue.uri = this.uri;
     newIssue.id = this.id;
@@ -104,5 +115,19 @@ public class LocalIssueBuilder {
       newIssue._id = this._id;
     return newIssue;
   }
+
+  //region Convenience
+
+  /**
+   * Extracts date from the {@link Issue} field
+   * @param date
+   * @return
+   */
+  long extractDate(Date date) {
+    if (date == null) return 0L;
+    return date.getTime();
+  }
+
+  //endregion
 
 }

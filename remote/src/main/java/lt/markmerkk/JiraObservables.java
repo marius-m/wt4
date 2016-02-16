@@ -106,7 +106,7 @@ public class JiraObservables {
    * @return
    */
   public static Observable<Issue> userIssues(JiraClient client, String jql) {
-    return Observable.create(new JiraSearchJQL(client, jql, "summary,project,createdDate,updatedDate"))
+    return Observable.create(new JiraSearchJQL(client, jql, "summary,project,created,updated"))
         .flatMap(searchResult -> {
           if (searchResult.issues.size() == 0)
             return Observable.empty();

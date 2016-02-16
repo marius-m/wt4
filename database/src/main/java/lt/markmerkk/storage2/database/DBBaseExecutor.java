@@ -18,20 +18,27 @@ public abstract class DBBaseExecutor implements IExecutor {
 
   private static final Logger logger = LoggerFactory.getLogger(DBBaseExecutor.class);
 
+  Connection connection;
+
   public DBBaseExecutor() { }
 
   protected abstract String database();
+
+  @Override
+  public void executeOrThrow(IQueryJob queryJob) throws ClassNotFoundException, UnsupportedOperationException, IllegalArgumentException, SQLException {
+    logger.debug("Trying to run query: "+queryJob.query());
+    connection = open(database());
+    if (connection == null) throw new IllegalArgumentException("connection == null");
+    if (queryJob == null) throw new IllegalArgumentException("queryJob == null");
+    executeQuery(queryJob, connection);
+  }
 
   /**
    * Runs a database execution
    */
   public void execute(IQueryJob queryJob) {
-    Connection connection = null;
     try {
-      connection = open(database());
-      if (connection == null) return;
-      if (queryJob == null) return;
-      executeQuery(queryJob, connection);
+      executeOrThrow(queryJob);
     } catch (ClassNotFoundException e) { // Might throw when connecting to database
       logger.error("Cant connect to database!"+e.getMessage());
     } catch (UnsupportedOperationException e) { // Might throw when using wrong forming method

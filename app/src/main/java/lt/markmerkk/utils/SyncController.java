@@ -12,8 +12,8 @@ import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.RemoteFetchMerger;
-import lt.markmerkk.storage2.RemotePushMerger;
+import lt.markmerkk.storage2.RemoteLogFetchMerger;
+import lt.markmerkk.storage2.RemoteLogPushMerger;
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
@@ -102,20 +102,20 @@ public class SyncController {
         endTime
     );
 
-    RemoteFetchMerger remoteFetchMerger = new RemoteFetchMerger(dbExecutor);
-    RemotePushMerger remotePushMerger = new RemotePushMerger(dbExecutor, jiraClient);
+    RemoteLogFetchMerger remoteLogFetchMerger = new RemoteLogFetchMerger(dbExecutor);
+    RemoteLogPushMerger remoteLogPushMerger = new RemoteLogPushMerger(dbExecutor, jiraClient);
 
     Observable<String> downloadObservable =
         JiraObservables.remoteWorklogs(jiraClient, filterer, startTime, endTime)
             .map(pair -> {
               for (WorkLog workLog : pair.getValue())
-                remoteFetchMerger.merge(pair.getKey().getKey(), workLog);
+                remoteLogFetchMerger.merge(pair.getKey().getKey(), workLog);
               return null;
             });
 
     Observable<String> uploadObservable = Observable.from(storage.getData())
         .map(simpleLog -> {
-          remotePushMerger.merge(simpleLog);
+          remoteLogPushMerger.merge(simpleLog);
           return null;
         });
 
