@@ -27,6 +27,10 @@ public class RemoteFetchIssue extends RemoteFetch<LocalIssue, Issue> {
     this.downloadMillis = downloadMillis;
   }
 
+  public long getDownloadMillis() {
+    return downloadMillis;
+  }
+
   @Override
   protected boolean entityNew(Issue remoteEntity) {
     logger.debug("Adding new issue: "+remoteEntity);

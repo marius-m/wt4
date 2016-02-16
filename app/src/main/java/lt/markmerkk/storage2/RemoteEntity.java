@@ -13,15 +13,15 @@ import lt.markmerkk.storage2.database.annotations.Table;
  */
 @Table
 public abstract class RemoteEntity extends BaseDBEntity {
-  private static final String KEY_DOWNLOAD_MILLIS = "download_millis";
+  public static final String KEY_DOWNLOAD_MILLIS = "download_millis";
 
-  private static final String KEY_ID = "id";
-  private static final String KEY_URI = "uri";
+  public static final String KEY_ID = "id";
+  public static final String KEY_URI = "uri";
 
-  private static final String KEY_DELETE = "deleted";
-  private static final String KEY_DIRTY = "dirty";
-  private static final String KEY_ERROR = "error";
-  private static final String KEY_ERROR_MESSAGE = "errorMessage";
+  public static final String KEY_DELETE = "deleted";
+  public static final String KEY_DIRTY = "dirty";
+  public static final String KEY_ERROR = "error";
+  public static final String KEY_ERROR_MESSAGE = "errorMessage";
 
   // Server id
   @Column(value = FieldType.INTEGER)
@@ -44,6 +44,7 @@ public abstract class RemoteEntity extends BaseDBEntity {
   // Error message
   @Column(value = FieldType.TEXT)
   String errorMessage;
+  // Downloaded time in millis
   @Column(value = FieldType.INTEGER)
   long download_millis; // Reflects when did this issue was downloaded
 
