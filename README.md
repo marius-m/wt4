@@ -2,23 +2,46 @@
 
 App to speed up time tracking and logging work with ease.
 
-The project is still in development, but main features are already completely/partially done. 
+The project is still in development, but main features are already done. 
 
-* Tracking time, logging work
-* Create/update/delete work locally
-* Basic JIRA synchronization (Though still lacks deletion feature reflect on remote)
+* Simple work tracking on JIRA issues
+* Work offline
+* Reflect changes on remote
+* Create/read/update/delete work
+* Issue search (caches open issues from remote)
+* Automatic app updates
+* Day/week overview
 
 ## Download
 
-All downloads are in public folder. You should use the latest version that is available for best compatibility. 
+All downloads are in public folder. 
 
-* https://www.dropbox.com/sh/k7xvmljd2mkmn9b/AAAIJr-YzUm1t9izYlv1a7CZa?dl=0
+* MacOSX: https://www.dropbox.com/sh/y1ilqiz15b437bs/AAB2U0fLaQaQTpiqkpjdxFyDa?dl=0
+* Windows: https://www.dropbox.com/sh/vweuktq3qcx9e02/AACTx0kr8pOQ-c5wSrrG0nela?dl=0
+
+App automatically updates whenever there is a new version. 
 
 ## Issues
 
 All issues/requests can be logged to:
 
 * https://bitbucket.org/mmerkevicius/wt4/issues?status=new&status=open
+
+## Behing the project
+
+This app serves me as a sandbox for trying out various java/javafx stuff. As a side effect app was born that is being used for easier time tracking. So feel free copying / contributing / using code for your own pleasure. 
+
+Tricks that were being tackled in this project: 
+
+* JavaFX
+* Java8
+* RXJava
+* Afterburner - a must have for JavaFX
+* Dagger2 - (didnt survive much, as afterburner killed it)
+* A bit of Guava - such an essential library, so little time to learn. 
+* Gradle scripting - connects app bunding using https://bitbucket.org/shemnon/javafx-gradle and my own scripting for exporting project with auto update.
+* UpdateFX - Automatic updates for the app. (https://github.com/vinumeris/updatefx)
+* JFXTras - cool 'Agenda' view (http://jfxtras.org/)
 
 ## How to use it
 
@@ -27,13 +50,9 @@ In theory app should be self explanatory, in practice this is not always the cas
 ### Basic use
 
 * To start/stop timer press "Play"
-* You can edit time whenever clock is running
-* Issue field works as a search (Must be synced with remote). 
-	* If task cant be found, just put in issue number
-	* Issue details can be viewed by pressing 'Forward' (next to search)
-	* New issue can be created by pressing 'New'
-	* Setting can be opened by hitting 'Settings'
-* Logs are updated automatically (Can change behavior in the settings) or can 'force' update manually by pressing on the status bar below
+* Edit time/date whenever clock is running
+* Issue field works as a search (If no issues are found, try refreshing!)
+* Logs can update automatically or by manual trigger by pressing 'Update' button.
 * Logged work is shown in the table below.
 	* Right click lets you update/delete/clone a log
 	* Bubbles indicate the state log is in
@@ -44,6 +63,8 @@ In theory app should be self explanatory, in practice this is not always the cas
 ![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-09_16.24.29.png)
 
 ### Setting up remote
+
+Before you can synchronize with remote, first you have to set up your JIRA account credentials. 
 
 * Input host/username/password for successful remote access
 	* Hostname ex.: https://jira.ito.lt
@@ -56,20 +77,16 @@ In theory app should be self explanatory, in practice this is not always the cas
 
 ## Shortcomings
 
-* Still there is an original JIRA API restriction of reflecting the changes on remote when trying to edit/delete a task that has been already uploaded. Need to extend API with additional functionality.
 * Bundling without JRE
-* Auto update
 * Database migrations
-* Export project not to be coupled only with JIRA
 
 ## FAQ
 
 * Q: Why does it weight so much ?
 * A: It is bundled with Java8, so for most part its java that weights so much. It is done, so you don't have to download it separately. 
-* Q: I'm getting 403, 401 status code when trying to log in!
-* A: Either you're: 
-	* Entering wrong user credentials
-	* Must sign out/in into JIRA through Web (JIRA resets user to as CAPTCHA, to identify its not a spam bot, which this app is what it is)
+* Q: I have problems synchronizing with the remote server!
+* A: Try checking settings window, as most of the stuff that is done in the background are printed out. That might give you an idea when might not be working.
+
 	
  
 
