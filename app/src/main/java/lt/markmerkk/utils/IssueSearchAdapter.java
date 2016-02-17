@@ -14,16 +14,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
-import lt.markmerkk.events.StartSyncEvent;
+import lt.markmerkk.events.StartIssueSyncEvent;
+import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.storage2.IssueSplit;
 import lt.markmerkk.storage2.LocalIssue;
-import lt.markmerkk.storage2.LocalIssueBuilder;
 import lt.markmerkk.storage2.RemoteEntity;
 import lt.markmerkk.storage2.RemoteFetchIssue;
-import lt.markmerkk.storage2.database.helpers.DBQueryDeleteIfExist;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
-import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
 import net.rcarz.jiraclient.Issue;
@@ -67,14 +65,16 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * Does a search with {@link ComboBox} input text
    */
   public void doRefresh() {
+    if (syncController.isLoading())
+      return;
     refreshCache();
   }
 
   //region Events
 
   @Subscribe
-  public void onEvent(StartSyncEvent startSyncEvent) {
-    doRefresh();
+  public void onEvent(StartIssueSyncEvent startLogSyncEvent) {
+    //doRefresh();
   }
 
   //endregion

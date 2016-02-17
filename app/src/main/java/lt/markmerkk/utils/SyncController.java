@@ -10,6 +10,7 @@ import lt.markmerkk.JiraConnector;
 import lt.markmerkk.JiraLogFilterer;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteLogFetchMerger;
@@ -134,6 +135,7 @@ public class SyncController {
               logger.info("Sync complete! ");
               remoteLoadListener.onLoadChange(false);
               storage.notifyDataChange();
+              SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
             });
   }
 

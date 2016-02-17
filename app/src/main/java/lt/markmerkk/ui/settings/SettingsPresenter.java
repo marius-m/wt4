@@ -20,7 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
-import lt.markmerkk.events.StartSyncEvent;
+import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.utils.SyncController;
@@ -103,11 +103,11 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   //region Events
 
   /**
-   * Called when {@link SyncEventBus} calls {@link StartSyncEvent}
+   * Called when {@link SyncEventBus} calls {@link StartLogSyncEvent}
    * @param event
    */
   @Subscribe
-  public void onEvent(StartSyncEvent event) {
+  public void onEvent(StartLogSyncEvent event) {
     if (syncController.isLoading())
       return;
     syncController.sync();
@@ -131,7 +131,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
       settings.setHost(inputHost.getText());
       settings.setUsername(inputUsername.getText());
       settings.setPassword(inputPassword.getText());
-      SyncEventBus.getInstance().getEventBus().post(new StartSyncEvent());
+      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
     }
   };
 

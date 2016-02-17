@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
-import lt.markmerkk.events.StartSyncEvent;
+import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -87,11 +87,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   //region Events
 
   /**
-   * Called when {@link SyncEventBus} calls {@link StartSyncEvent}
+   * Called when {@link SyncEventBus} calls {@link StartLogSyncEvent}
    * @param event
    */
   @Subscribe
-  public void onEvent(StartSyncEvent event) {
+  public void onEvent(StartLogSyncEvent event) {
     if (syncController.isLoading())
       return;
     syncController.sync();
@@ -152,7 +152,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
-      SyncEventBus.getInstance().getEventBus().post(new StartSyncEvent());
+      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
     }
   };
 

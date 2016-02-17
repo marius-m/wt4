@@ -34,8 +34,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9'
-def versionCode = '2'
+version = '0.9.9.1'
+def versionCode = '3'
 
 javafx {
     appID 'WT4'
@@ -247,8 +247,8 @@ task versionOutput() {
     }
 }
 
-//task makeJar(dependsOn:[processJar]) { }
-task makeJar(dependsOn:[processJarForWin]) { }
+task makeJar(dependsOn:[processJar]) { }
+//task makeJar(dependsOn:[processJarForWin]) { }
 compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
