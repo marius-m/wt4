@@ -25,7 +25,8 @@ public abstract class DBBaseExecutor implements IExecutor {
   protected abstract String database();
 
   @Override
-  public void executeOrThrow(IQueryJob queryJob) throws ClassNotFoundException, UnsupportedOperationException, IllegalArgumentException, SQLException {
+  public synchronized void executeOrThrow(IQueryJob queryJob)
+      throws ClassNotFoundException, UnsupportedOperationException, IllegalArgumentException, SQLException {
     logger.debug("Trying to run query: "+queryJob.query());
     connection = open(database());
     if (connection == null) throw new IllegalArgumentException("connection == null");

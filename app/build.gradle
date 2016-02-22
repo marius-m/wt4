@@ -247,8 +247,8 @@ task versionOutput() {
     }
 }
 
-task makeJar(dependsOn:[processJar]) { }
-//task makeJar(dependsOn:[processJarForWin]) { }
+//task makeJar(dependsOn:[processJar]) { }
+task makeJar(dependsOn:[processJarForWin]) { }
 compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 

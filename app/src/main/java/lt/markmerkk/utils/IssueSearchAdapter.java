@@ -65,16 +65,16 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * Does a search with {@link ComboBox} input text
    */
   public void doRefresh() {
-    if (syncController.isLoading())
-      return;
+//    if (syncController.isLoading())
+//      return;
     refreshCache();
   }
 
   //region Events
 
   @Subscribe
-  public void onEvent(StartIssueSyncEvent startLogSyncEvent) {
-    //doRefresh();
+  public void onEvent(StartLogSyncEvent startLogSyncEvent) {
+    doRefresh();
   }
 
   //endregion
