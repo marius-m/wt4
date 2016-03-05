@@ -20,9 +20,15 @@ public class DBMockExecutor extends DBBaseExecutor {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    migrate();
   }
 
   @Override protected String database() {
     return FILE;
+  }
+
+  @Override
+  protected String migrationScript() {
+    return "/changelog_1.xml";
   }
 }

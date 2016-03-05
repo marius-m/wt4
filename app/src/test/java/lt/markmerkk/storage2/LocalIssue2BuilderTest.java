@@ -37,21 +37,21 @@ public class LocalIssue2BuilderTest {
     }
   }
 
-  @Test public void testMissingDownloadMillis() throws Exception {
-    // Arrange
-    // Act
-    // Assert
-    try {
-      LocalIssue issue = new LocalIssueBuilder()
-          .setProject("valid_project")
-          .setKey("valid_key")
-          .setDescription("valid_description")
-          .build();
-      fail("Should not build issue");
-    } catch (Exception e) {
-      assertThat(e).hasMessage("downloadMillis == 0");
-    }
-  }
+//  @Test public void testMissingDownloadMillis() throws Exception {
+//    // Arrange
+//    // Act
+//    // Assert
+//    try {
+//      LocalIssue issue = new LocalIssueBuilder()
+//          .setProject("valid_project")
+//          .setKey("valid_key")
+//          .setDescription("valid_description")
+//          .build();
+//      fail("Should not build issue");
+//    } catch (Exception e) {
+//      assertThat(e).hasMessage("downloadMillis == 0");
+//    }
+//  }
 
   @Test public void testMissingKey() throws Exception {
     // Arrange

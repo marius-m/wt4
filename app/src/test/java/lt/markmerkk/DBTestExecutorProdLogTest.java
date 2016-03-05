@@ -79,7 +79,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log = builder.build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+    //executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
 
     QueryJob<SimpleLog> queryJob = new QueryJob<SimpleLog>(SimpleLog.class, () -> "_id = 1");
