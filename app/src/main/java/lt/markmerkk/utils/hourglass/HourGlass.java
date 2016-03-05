@@ -10,12 +10,15 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusm on 10/30/14.
  * Represents the logic and core functionality of the clock
  */
 public class HourGlass {
+  public static final Logger logger = LoggerFactory.getLogger(HourGlass.class);
   public static final String DATE_SHORT_FORMAT = "HH:mm";
   public static final String DATE_LONG_FORMAT = "yyyy-MM-dd HH:mm";
 
@@ -93,6 +96,7 @@ public class HourGlass {
     start();
     startMillis = lastEnd;
     endMillis = current();
+    logger.debug("Restarting timer. Start: {} / End: {}", startMillis, endMillis);
     update();
     return true;
   }
@@ -129,7 +133,9 @@ public class HourGlass {
       endMillis += calcTimeIncrease();
       long delay = endMillis - startMillis;
       if (listener != null) listener.onTick(startMillis, endMillis, delay);
+      logger.debug("Tick tock: start {} / end {}", startMillis, endMillis);
     } catch (TimeCalcError e) {
+      logger.debug("Timer update error: start {} / end {}", startMillis, endMillis);
       lastTick = current();
       if (listener != null) listener.onError(e.getError());
     }
