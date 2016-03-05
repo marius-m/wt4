@@ -96,8 +96,8 @@ public class LocalIssueBuilder {
       throw new IllegalArgumentException("Project must be provided!");
     if (this.key == null)
       throw new IllegalArgumentException("Key must be provided!");
-    if (downloadMillis <= 0)
-      throw new IllegalArgumentException("downloadMillis == 0");
+//    if (downloadMillis <= 0)
+//      throw new IllegalArgumentException("downloadMillis == 0");
     newIssue.project = this.project;
     newIssue.key = this.key;
     newIssue.description = this.description;

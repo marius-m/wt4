@@ -23,7 +23,14 @@ public class DBTestExecutor extends DBBaseExecutor {
     }
   }
 
-  @Override protected String database() {
-    return FILE;
+
+  @Override
+  protected String database() {
+    return "test_database.db";
+  }
+
+  @Override
+  protected String migrationScript() {
+    return "/changelog_1.xml";
   }
 }

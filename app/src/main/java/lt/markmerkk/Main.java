@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
+  // All before, including this version code does not have database versioning, so running
+  // depending on running version, database file should be deleted to work properly.
+  public static int LAST_VERSIONCODE_WITHOUT_DB_VERSIONING = 3;
   public static final String LOG_LAYOUT = "%d{ABSOLUTE} %5p %c{1}:%L - %m%n";
   public static boolean DEBUG = true;
   public static String CFG_PATH;
