@@ -34,8 +34,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.1'
-def versionCode = '3'
+version = '0.9.9.2'
+def versionCode = '4'
 
 javafx {
     appID 'WT4'
