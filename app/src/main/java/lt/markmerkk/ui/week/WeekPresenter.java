@@ -4,9 +4,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,7 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import jfxtras.internal.scene.control.skin.agenda.AgendaWeekSkin;
 import jfxtras.scene.control.agenda.Agenda;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
@@ -44,15 +40,15 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
 
   // fixme : VERY VERY WEIRD AND DIRTY IMPLEMENTATION OF SKIN WORKAROUND :/
   public static DateTime targetDate = null;
+  private CustomAgendaWeekView weekSkin;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     storage.register(storageListener);
     targetDate = new DateTime(storage.getTargetDate());
     agenda = new Agenda();
     agenda.setLocale(new java.util.Locale("en"));
-    CustomAgendaWeekView weekSkin = new CustomAgendaWeekView(agenda);
+    weekSkin = new CustomAgendaWeekView(agenda);
     agenda.setSkin(weekSkin);
-//		agenda.setSkin(new AgendaDaySkin(agenda));
 		agenda.setAllowDragging(false);
 		agenda.setAllowResize(false);
     agenda.editAppointmentCallbackProperty().set(agendaCallbackListener);
@@ -169,9 +165,13 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
   public void onLoadChange(boolean loading) {
     Platform.runLater(() -> {
       if (!loading) {
+        boolean needRefresh = !weekSkin.isTargetBetween(storage.getTargetDate());
         agenda.appointments().clear();
         agenda.appointments().addAll(appointments);
-        agenda.setSkin(new CustomAgendaWeekView(agenda));
+        if (needRefresh) {
+          weekSkin = new CustomAgendaWeekView(agenda);
+          agenda.setSkin(weekSkin);
+        }
       }
     });
   }
