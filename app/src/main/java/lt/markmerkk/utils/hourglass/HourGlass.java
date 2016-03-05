@@ -96,7 +96,9 @@ public class HourGlass {
     start();
     startMillis = lastEnd;
     endMillis = current();
-    logger.debug("Restarting timer. Start: {} / End: {}", startMillis, endMillis);
+    if (startMillis > endMillis)
+      startMillis = endMillis; // Sanity check if logging time in the future.
+    //logger.debug("Restarting timer. Start: {} / End: {}", startMillis, endMillis);
     update();
     return true;
   }
@@ -133,9 +135,9 @@ public class HourGlass {
       endMillis += calcTimeIncrease();
       long delay = endMillis - startMillis;
       if (listener != null) listener.onTick(startMillis, endMillis, delay);
-      logger.debug("Tick tock: start {} / end {}", startMillis, endMillis);
+      //logger.debug("Tick tock: start {} / end {}", startMillis, endMillis);
     } catch (TimeCalcError e) {
-      logger.debug("Timer update error: start {} / end {}", startMillis, endMillis);
+      //logger.debug("Timer update error: start {} / end {}", startMillis, endMillis);
       lastTick = current();
       if (listener != null) listener.onError(e.getError());
     }
