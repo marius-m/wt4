@@ -21,16 +21,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DBTestExecutorProdLogTest {
   @Test public void shouldCreateTable() throws Exception {
     // Arrange
-    DBMockExecutor
-        executor = new lt.markmerkk.storage2.database.DBMockExecutor();
+    DBTestExecutor
+        executor = new DBTestExecutor();
     // Act
     // Assert
-    executor.execute(new CreateJob<>(SimpleLog.class));
+    //executor.execute(new CreateJob<>(SimpleLog.class));
   }
 
   @Test public void shouldInsert() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLog log = new SimpleLogBuilder()
         .setStart(1000)
         .setEnd(2000)
@@ -40,13 +40,13 @@ public class DBTestExecutorProdLogTest {
 
     // Act
     // Assert
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
   }
 
   @Test public void shouldInsertMany() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
 
     // Act
     // Assert
@@ -58,7 +58,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log = builder.build();
     SimpleLog log2 = builder.build();
     SimpleLog log3 = builder.build();
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log));
     executor.execute(new InsertJob(SimpleLog.class, log2));
     executor.execute(new InsertJob(SimpleLog.class, log3));
@@ -70,7 +70,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldInsertQuery() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setStart(1000)
         .setEnd(2000)
@@ -99,7 +99,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldInsertWithRemoteDate() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setStart(1000)
         .setEnd(2000)
@@ -128,7 +128,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldQueryNonExisting() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setStart(1000)
         .setEnd(2000)
@@ -137,7 +137,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log = builder.build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
 
     QueryJob<SimpleLog> queryJob = new QueryJob<SimpleLog>(SimpleLog.class, () -> "_id = 1");
     executor.execute(queryJob);
@@ -146,7 +146,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldQueryList() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setTask("TT-182");
     SimpleLog log1 = builder.setStart(1000).setEnd(2000).setComment("Some comment1").build();
@@ -154,7 +154,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log3 = builder.setStart(3000).setEnd(4000).setComment("Some comment3").build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));
     executor.execute(new InsertJob(SimpleLog.class, log2));
     executor.execute(new InsertJob(SimpleLog.class, log3));
@@ -173,7 +173,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldQueryListDelete() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setTask("TT-182");
     SimpleLog log1 = builder.setStart(1000).setEnd(2000).setComment("Some comment1").build();
@@ -181,7 +181,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log3 = builder.setStart(3000).setEnd(4000).setComment("Some comment3").build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));
     executor.execute(new InsertJob(SimpleLog.class, log2));
     executor.execute(new InsertJob(SimpleLog.class, log3));
@@ -206,7 +206,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldQuerySpecific() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setTask("TT-182");
     SimpleLog log1 = builder.setStart(1000).setEnd(2000).setComment("Some comment1").build();
@@ -214,7 +214,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log3 = builder.setStart(3000).setEnd(4000).setComment("Some comment3").build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));
     executor.execute(new InsertJob(SimpleLog.class, log2));
     executor.execute(new InsertJob(SimpleLog.class, log3));
@@ -235,7 +235,7 @@ public class DBTestExecutorProdLogTest {
 
   @Test public void shouldUpdate() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     SimpleLogBuilder builder = new SimpleLogBuilder()
         .setTask("TT-182");
     SimpleLog log1 = builder.setStart(1000).setEnd(2000).setComment("Some comment1").build();
@@ -243,7 +243,7 @@ public class DBTestExecutorProdLogTest {
     SimpleLog log3 = builder.setStart(3000).setEnd(4000).setComment("Some comment3").build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
+//    executor.execute(new CreateJobIfNeeded<>(SimpleLog.class));
     executor.execute(new InsertJob(SimpleLog.class, log1));
     executor.execute(new InsertJob(SimpleLog.class, log2));
     executor.execute(new InsertJob(SimpleLog.class, log3));

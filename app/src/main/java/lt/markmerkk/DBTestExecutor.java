@@ -1,9 +1,13 @@
 package lt.markmerkk;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import lt.markmerkk.storage2.database.DBBaseExecutor;
 
 /**
@@ -21,6 +25,7 @@ public class DBTestExecutor extends DBBaseExecutor {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    migrate();
   }
 
 
@@ -30,7 +35,18 @@ public class DBTestExecutor extends DBBaseExecutor {
   }
 
   @Override
-  protected String migrationScript() {
-    return "/changelog_1.xml";
+  protected URI migrationScriptPath() {
+    return Paths.get("src/main/resources/" + "changelog_1.xml").toUri();
   }
+
+  @Override
+  protected URI migrationExportPath() {
+    try {
+      return getClass().getResource("/").toURI();
+    } catch (URISyntaxException e) {
+      return null;
+    }
+  }
+
+
 }

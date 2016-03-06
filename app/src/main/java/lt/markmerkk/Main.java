@@ -26,9 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
-  // All before, including this version code does not have database versioning, so running
-  // depending on running version, database file should be deleted to work properly.
-  public static int LAST_VERSIONCODE_WITHOUT_DB_VERSIONING = 3;
   public static final String LOG_LAYOUT = "%d{ABSOLUTE} %5p %c{1}:%L - %m%n";
   public static boolean DEBUG = true;
   public static String CFG_PATH;
@@ -63,8 +60,9 @@ public class Main extends Application {
 
     MainView mainView = new MainView(stage);
     Scene scene = new Scene(mainView.getView());
-    scene.getStylesheets().add(
-        getClass().getResource("/text-field-red-border.css").toExternalForm());
+    String cssResource1 = getClass().getResource("/text-field-red-border.css").toExternalForm();
+    scene.getStylesheets().add(cssResource1);
+    logger.debug("Loading external resource: {}", cssResource1);
     stage.setWidth(SCENE_WIDTH);
     stage.setHeight(SCENE_HEIGHT);
     stage.setMinWidth(SCENE_WIDTH);

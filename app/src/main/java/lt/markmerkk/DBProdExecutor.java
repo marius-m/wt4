@@ -1,9 +1,12 @@
 package lt.markmerkk;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -26,27 +29,32 @@ public class DBProdExecutor extends DBBaseExecutor {
     logger.debug("Applying database migrations");
     if (settings.getVersion() <= 0) {
       logger.debug("Found unversioned database! Flushing database with new version.");
-      // We have a case where database was not versioned.
-      Path path = FileSystems.getDefault().getPath(database());
-      try {
-        boolean result = Files.deleteIfExists(path);
-      } catch (IOException e) { }
       settings.setVersion(Main.VERSION_CODE);
     }
     migrate();
   }
 
   @PreDestroy
-  private void destroy() { }
-
-  @Override
-  protected String database() {
-    return Main.CFG_PATH + "wt4.db";
+  private void destroy() {
   }
 
   @Override
-  protected String migrationScript() {
-    return "/changelog_1.xml";
+  protected String database() {
+    return Main.CFG_PATH + "wt4_1.db";
+  }
+
+  @Override
+  protected URI migrationScriptPath() {
+    try {
+      return getClass().getResource("/changelog_1.xml").toURI();
+    } catch (URISyntaxException e) {
+      return null;
+    }
+  }
+
+  @Override
+  protected URI migrationExportPath() {
+    return Paths.get(Main.CFG_PATH).toUri();
   }
 
 }

@@ -37,6 +37,26 @@ group = 'lt.markmerkk'
 version = '0.9.9.2'
 def versionCode = '4'
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+
 javafx {
     appID 'WT4'
     appName 'WT4'
@@ -247,9 +267,9 @@ task versionOutput() {
     }
 }
 
-//task makeJar(dependsOn:[processJar]) { }
-task makeJar(dependsOn:[processJarForWin]) { }
-compileJava.dependsOn versionOutput
+task makeJar(dependsOn:[processJar]) { }
+//task makeJar(dependsOn:[processJarForWin]) { }
+//compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
 

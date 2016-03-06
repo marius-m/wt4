@@ -1,6 +1,7 @@
 package lt.markmerkk.storage2.database;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +21,7 @@ public class DBMockExecutor extends DBBaseExecutor {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    migrate();
+    //migrate();
   }
 
   @Override protected String database() {
@@ -28,7 +29,12 @@ public class DBMockExecutor extends DBBaseExecutor {
   }
 
   @Override
-  protected String migrationScript() {
-    return "/changelog_1.xml";
+  protected URI migrationScriptPath() {
+    return null;
+  }
+
+  @Override
+  protected URI migrationExportPath() {
+    return null;
   }
 }

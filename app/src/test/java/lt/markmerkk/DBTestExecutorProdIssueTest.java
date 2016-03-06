@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DBTestExecutorProdIssueTest {
   @Test public void shouldCreateTable() throws Exception {
     // Arrange
-    DBMockExecutor
-        executor = new DBMockExecutor();
+    DBTestExecutor
+        executor = new DBTestExecutor();
     // Act
     // Assert
     executor.execute(new CreateJob<>(LocalIssue.class));
@@ -30,7 +30,7 @@ public class DBTestExecutorProdIssueTest {
 
   @Test public void shouldInsertQuery() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     LocalIssue issue = new LocalIssueBuilder()
         .setProject("TT")
         .setKey("TT-12")
@@ -38,7 +38,7 @@ public class DBTestExecutorProdIssueTest {
         .build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
+//    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
     executor.execute(new InsertJob(LocalIssue.class, issue));
 
     QueryJob<LocalIssue> queryJob = new QueryJob<LocalIssue>(LocalIssue.class, () -> "_id = 1");
@@ -58,7 +58,7 @@ public class DBTestExecutorProdIssueTest {
 
   @Test public void shouldQueryNonExisting() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     LocalIssue issue = new LocalIssueBuilder()
         .setProject("TT")
         .setKey("TT-12")
@@ -66,7 +66,7 @@ public class DBTestExecutorProdIssueTest {
         .build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
+//    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
 
     QueryJob<LocalIssue> queryJob = new QueryJob<LocalIssue>(LocalIssue.class, () -> "_id = 1");
     executor.execute(queryJob);
@@ -75,7 +75,7 @@ public class DBTestExecutorProdIssueTest {
 
   @Test public void shouldQueryList() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     LocalIssueBuilder builder = new LocalIssueBuilder()
         .setProject("TT")
         .setKey("TT-12")
@@ -85,7 +85,7 @@ public class DBTestExecutorProdIssueTest {
     LocalIssue issue3 = builder.build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
+//    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
     executor.execute(new InsertJob(LocalIssue.class, issue1));
     executor.execute(new InsertJob(LocalIssue.class, issue2));
     executor.execute(new InsertJob(LocalIssue.class, issue3));
@@ -104,7 +104,7 @@ public class DBTestExecutorProdIssueTest {
 
   @Test public void shouldQueryListDelete() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     LocalIssueBuilder builder = new LocalIssueBuilder()
         .setProject("TT")
         .setKey("TT-12")
@@ -114,7 +114,7 @@ public class DBTestExecutorProdIssueTest {
     LocalIssue issue3 = builder.build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
+//    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
     executor.execute(new InsertJob(LocalIssue.class, issue1));
     executor.execute(new InsertJob(LocalIssue.class, issue2));
     executor.execute(new InsertJob(LocalIssue.class, issue3));
@@ -139,7 +139,7 @@ public class DBTestExecutorProdIssueTest {
 
   @Test public void shouldUpdate() throws Exception {
     // Arrange
-    DBMockExecutor executor = new DBMockExecutor();
+    DBTestExecutor executor = new DBTestExecutor();
     LocalIssueBuilder builder = new LocalIssueBuilder()
         .setProject("TT")
         .setKey("TT-12")
@@ -149,7 +149,7 @@ public class DBTestExecutorProdIssueTest {
     LocalIssue issue3 = builder.build();
 
     // Act
-    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
+//    executor.execute(new CreateJobIfNeeded<>(LocalIssue.class));
     executor.execute(new InsertJob(LocalIssue.class, issue1));
     executor.execute(new InsertJob(LocalIssue.class, issue2));
     executor.execute(new InsertJob(LocalIssue.class, issue3));

@@ -1,9 +1,20 @@
 package lt.markmerkk.storage2.database;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -15,8 +26,6 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.FileSystemResourceAccessor;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.database.interfaces.IQueryJob;
-import org.apache.log4j.Priority;
-import org.apache.log4j.RollingFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +41,8 @@ public abstract class DBBaseExecutor implements IExecutor {
 
   public DBBaseExecutor() { }
 
+  //region Abstract
+
   /**
    * Defines database name
    * @return
@@ -42,7 +53,15 @@ public abstract class DBBaseExecutor implements IExecutor {
    * Defines migration script name
    * @return
    */
-  protected abstract String migrationScript();
+  protected abstract URI migrationScriptPath();
+
+  /**
+   * Defines migration storage path
+   * @return
+   */
+  protected abstract URI migrationExportPath();
+
+  //endregion
 
   @Override
   public synchronized void executeOrThrow(IQueryJob queryJob)
@@ -53,30 +72,7 @@ public abstract class DBBaseExecutor implements IExecutor {
     executeQuery(queryJob, connection);
   }
 
-  /**
-   * Runs a migration sequence
-   */
-  protected void migrate() {
-    try {
-      Connection connection = open(database());
-      Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-      String changeLogFilePath = getClass().getResource(migrationScript()).getPath();
-      Liquibase liquibase = new Liquibase(
-          changeLogFilePath,
-          new FileSystemResourceAccessor(),
-          database);
-      liquibase.update(new Contexts(), new LabelExpression());
-      close(connection);
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } catch (DatabaseException e) {
-      e.printStackTrace();
-    } catch (LiquibaseException e) {
-      e.printStackTrace();
-    }
-  }
+
 
   /**
    * Runs a database execution
@@ -139,4 +135,111 @@ public abstract class DBBaseExecutor implements IExecutor {
   }
 
   //endregion
+
+  //region Migration convenience functions
+
+  /**
+   * Runs a migration sequence
+   */
+  protected void migrate() {
+    try {
+      Connection connection = open(database());
+      Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+
+      logger.debug("Running migration from: " + migrationScriptPath());
+      logger.debug("Running migration to: " + migrationExportPath().getPath());
+
+      // Extracting migrations
+      String targetMigrationFilePath = migrationScriptPath().toString().contains("jar")
+          ? extractMigrationsFromJar() : extractMigrationsFromFilesystem();
+      if (targetMigrationFilePath == null)
+        throw new IllegalArgumentException("Migration file cannot be found!");
+      Liquibase liquibase = new Liquibase(
+          targetMigrationFilePath,
+          new FileSystemResourceAccessor(),
+          database);
+      liquibase.update(new Contexts(), new LabelExpression());
+      close(connection);
+    } catch (ClassNotFoundException e) {
+      logger.error("Migration error! ", e);
+    } catch (SQLException e) {
+      logger.error("Migration error! ", e);
+    } catch (DatabaseException e) {
+      logger.error("Migration error! ", e);
+    } catch (LiquibaseException e) {
+      logger.error("Migration error! ", e);
+    }
+  }
+
+  /**
+   * Extracts migrations from regular file system.
+   * @return
+   * @throws IOException
+   */
+  String extractMigrationsFromFilesystem() {
+    try {
+      String targetMigration;
+      Path migrationScriptFile = Paths.get(migrationScriptPath());
+      Path targetFile = Paths.get(migrationExportPath().getPath() + migrationScriptFile.getFileName());
+      Files.deleteIfExists(targetFile);
+      Files.copy(migrationScriptFile, targetFile);
+      targetMigration = targetFile.toString();
+      return targetMigration;
+    } catch (IOException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Extracts migration files from jar archive
+   * @return
+   */
+  String extractMigrationsFromJar() {
+    InputStream is = null;
+    FileOutputStream fos = null;
+    try {
+      JarFile jar = new JarFile(jarPathFromUri(migrationScriptPath().toString()));
+      Enumeration enumEntries = jar.entries();
+      while (enumEntries.hasMoreElements()) {
+        JarEntry jarEntry = (JarEntry) enumEntries.nextElement();
+        if (!jarEntry.getName().contains("changelog_1.xml")) continue;
+        is = jar.getInputStream(jarEntry);
+        fos = new FileOutputStream(new File(migrationExportPath().getPath() + jarEntry.getName()));
+        String targetMigration = migrationExportPath().getPath() + jarEntry.getName();
+        while (is.available() > 0)
+          fos.write(is.read());
+        return targetMigration;
+      }
+    } catch (IOException e) {
+      logger.error("Error extracting migrations to dir!", e);
+    } finally {
+      try {
+        if (is != null)
+          is.close();
+        if (fos != null)
+          fos.close();
+      } catch (IOException e) { }
+    }
+    return null;
+  }
+
+  /**
+   * Extracts raw jar path from specified uri
+   * @param rawPath
+   * @return
+   */
+  static String jarPathFromUri(String rawPath) {
+    if (rawPath == null)
+      throw new IllegalArgumentException("Error extracting jar!");
+    try {
+      rawPath = rawPath.replaceAll("jar:", "");
+      URI fileUri = new URI(rawPath.split("!")[0]);
+      return fileUri.getPath();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Malformed uri!");
+    }
+  }
+
+  //endregion
+
 }

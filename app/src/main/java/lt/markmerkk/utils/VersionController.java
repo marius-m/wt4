@@ -44,7 +44,7 @@ public class VersionController {
   @PostConstruct
   public void init() {
     // On init we check if we have any updates
-    checkForUpdate();
+    //checkForUpdate();
   }
 
   @PreDestroy
