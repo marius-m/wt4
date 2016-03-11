@@ -106,6 +106,8 @@ dependencies {
     compile project(':database')
     compile project(':remote')
 
+    // Google analytics
+    compile 'com.brsanthu:google-analytics-java:1.1.2'
 
     compile 'io.reactivex:rxjavafx:0.0.2'
     compile 'io.reactivex:rxjava:1.1.0'
@@ -260,16 +262,22 @@ task updateRemote() {
 }
 
 task versionOutput() {
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+
     def versionFile = new File("${projectDir}/src/main/resources","version.properties")
     doLast {
         versionFile.write"version_code=${versionCode}\n"
-        versionFile << "version_name=${version}"
+        versionFile << "version_name=${version}\n"
+        versionFile << "ga="+deployProps.getProperty("ga")
     }
 }
 
 task makeJar(dependsOn:[processJar]) { }
 //task makeJar(dependsOn:[processJarForWin]) { }
-//compileJava.dependsOn versionOutput
+compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
 

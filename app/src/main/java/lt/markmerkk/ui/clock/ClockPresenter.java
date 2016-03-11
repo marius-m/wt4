@@ -35,11 +35,13 @@ import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import net.rcarz.jiraclient.Issue;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -215,6 +217,12 @@ public class ClockPresenter implements Initializable {
       inputTo.requestFocus();
       inputFrom.requestFocus();
       inputComment.requestFocus();
+      SimpleTracker.getInstance().getTracker().sendEvent(
+          SimpleTracker.CATEGORY_BUTTON,
+          SimpleTracker.ACTION_ENTER,
+          (logStorage.getDisplayType() == DisplayType.DAY) ? SimpleTracker.LABEL_VIEW_DAY : SimpleTracker.LABEL_VIEW_WEEK,
+          -1
+      );
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
