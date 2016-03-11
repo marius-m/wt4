@@ -22,6 +22,7 @@ import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.joda.time.DateTime;
 
 /**
@@ -43,6 +44,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
   private CustomAgendaWeekView weekSkin;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_WEEK);
     storage.register(storageListener);
     targetDate = new DateTime(storage.getTargetDate());
     agenda = new Agenda();

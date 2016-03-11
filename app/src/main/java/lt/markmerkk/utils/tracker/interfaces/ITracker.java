@@ -23,6 +23,12 @@ public interface ITracker {
   void sendEvent(String category, String action);
 
   /**
+   * Sents an app view that is currently visible
+   * @param contentDescription
+   */
+  void sendView(String contentDescription);
+
+  /**
    * Stops tracker from working
    */
   void stop();

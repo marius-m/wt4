@@ -16,5 +16,8 @@ public class NullTracker implements ITracker {
   public void sendEvent(String category, String action) { }
 
   @Override
+  public void sendView(String contentDescription) { }
+
+  @Override
   public void stop() { }
 }

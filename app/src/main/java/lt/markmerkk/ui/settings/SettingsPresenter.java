@@ -57,6 +57,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   public SettingsPresenter() { }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_SETTINGS);
     refreshCombo.setItems(autoSync.getSelectionKeys());
     refreshCombo.getSelectionModel().select(autoSync.currentSelection());
     refreshCombo.valueProperty().addListener(refreshChangeListener);

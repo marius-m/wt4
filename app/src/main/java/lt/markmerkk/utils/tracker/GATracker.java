@@ -1,7 +1,10 @@
 package lt.markmerkk.utils.tracker;
 
+import com.brsanthu.googleanalytics.AppViewHit;
 import com.brsanthu.googleanalytics.EventHit;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
+import com.brsanthu.googleanalytics.PageViewHit;
+import com.google.common.base.Strings;
 import lt.markmerkk.Main;
 import lt.markmerkk.utils.tracker.interfaces.ITracker;
 
@@ -20,14 +23,22 @@ public class GATracker implements ITracker {
 
   @Override
   public void sendEvent(String category, String action, String label, int value) {
-    EventHit eventHit = new EventHit(category, action, label, value);
-    analytics.postAsync(eventHit);
+    if (Strings.isNullOrEmpty(category)) return;
+    if (Strings.isNullOrEmpty(action)) return;
+    if (Strings.isNullOrEmpty(label)) return;
+    analytics.postAsync(new EventHit(category, action, label, value));
   }
 
   @Override
   public void sendEvent(String category, String action) {
-    EventHit eventHit = new EventHit(category, action);
-    analytics.postAsync(eventHit);
+    if (Strings.isNullOrEmpty(category)) return;
+    if (Strings.isNullOrEmpty(action)) return;
+    analytics.postAsync(new EventHit(category, action));
+  }
+
+  public void sendView(String contentDescription) {
+    if (Strings.isNullOrEmpty(contentDescription)) return;
+    analytics.postAsync(new AppViewHit(Main.APP_NAME, Main.VERSION_NAME, contentDescription));
   }
 
   @Override

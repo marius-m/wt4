@@ -18,6 +18,10 @@ public class SimpleTracker {
   public static final String ACTION_SYNC_SETTINGS = "SYNC_SETTINGS";
   public static final String ACTION_SEARCH_REFRESH = "SEARCH_REFRESH";
   public static final String ACTION_START = "START";
+
+  public static final String VIEW_DAY = "VIEW_DAY";
+  public static final String VIEW_WEEK = "VIEW_WEEK";
+  public static final String VIEW_SETTINGS = "VIEW_SETTINGS";
 //  public static final String LABEL_VIEW_DAY = "VIEW_DAY";
 //  public static final String LABEL_VIEW_WEEK = "VIEW_WEEK";
 

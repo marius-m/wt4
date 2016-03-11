@@ -1,6 +1,7 @@
 package lt.markmerkk.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.brsanthu.googleanalytics.PageViewHit;
 import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,6 +36,7 @@ import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
 import lt.markmerkk.utils.VersionController;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.

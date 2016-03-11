@@ -14,6 +14,7 @@ import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.utils.LogDisplayController;
 import lt.markmerkk.utils.TableDisplayController;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.
@@ -26,6 +27,7 @@ public class DisplayLogPresenter implements Initializable, IPresenter {
   UpdateListener updateListener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_DAY);
     tableView.setTooltip(new Tooltip("Worklog display" +
         "\n\nToday's current work log"));
     LogDisplayController logDisplayController =
