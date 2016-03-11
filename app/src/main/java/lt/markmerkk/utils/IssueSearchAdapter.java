@@ -24,6 +24,7 @@ import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import net.rcarz.jiraclient.Issue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,10 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   public void doRefresh() {
 //    if (syncController.isLoading())
 //      return;
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SEARCH_REFRESH
+    );
     refreshCache();
   }
 

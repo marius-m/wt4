@@ -11,9 +11,12 @@ import lt.markmerkk.utils.tracker.interfaces.ITracker;
 public class SimpleTracker {
   public static final String CATEGORY_BUTTON = "BUTTON";
   public static final String CATEGORY_GENERIC = "GENERIC";
-  public static final String ACTION_ENTER = "ENTER_FROM_DAY";
+  //public static final String ACTION_ENTER = "ENTER_FROM_DAY";
   public static final String ACTION_ENTER_FROM_DAY = "ENTER_FROM_DAY";
   public static final String ACTION_ENTER_FROM_WEEK = "ENTER_FROM_WEEK";
+  public static final String ACTION_SYNC_MAIN = "SYNC_MAIN";
+  public static final String ACTION_SYNC_SETTINGS = "SYNC_SETTINGS";
+  public static final String ACTION_SEARCH_REFRESH = "SEARCH_REFRESH";
   public static final String ACTION_START = "START";
 //  public static final String LABEL_VIEW_DAY = "VIEW_DAY";
 //  public static final String LABEL_VIEW_WEEK = "VIEW_WEEK";

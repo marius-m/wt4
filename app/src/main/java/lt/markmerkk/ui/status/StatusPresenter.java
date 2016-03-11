@@ -27,6 +27,7 @@ import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -94,6 +95,10 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   public void onEvent(StartLogSyncEvent event) {
     if (syncController.isLoading())
       return;
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SYNC_MAIN
+    );
     syncController.sync();
   }
 

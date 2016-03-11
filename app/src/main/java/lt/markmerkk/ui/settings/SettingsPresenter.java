@@ -27,6 +27,7 @@ import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
@@ -110,6 +111,10 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   public void onEvent(StartLogSyncEvent event) {
     if (syncController.isLoading())
       return;
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SYNC_SETTINGS
+    );
     syncController.sync();
   }
 
