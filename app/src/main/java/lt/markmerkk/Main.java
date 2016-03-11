@@ -82,10 +82,6 @@ public class Main extends Application {
 
   @Override
   public void stop() throws Exception {
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_GENERIC,
-        SimpleTracker.ACTION_START
-    );
     SimpleTracker.getInstance().getTracker().stop();
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
     org.apache.log4j.Logger.getRootLogger().removeAppender(errorAppender);

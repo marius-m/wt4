@@ -219,9 +219,7 @@ public class ClockPresenter implements Initializable {
       inputComment.requestFocus();
       SimpleTracker.getInstance().getTracker().sendEvent(
           SimpleTracker.CATEGORY_BUTTON,
-          SimpleTracker.ACTION_ENTER,
-          (logStorage.getDisplayType() == DisplayType.DAY) ? SimpleTracker.LABEL_VIEW_DAY : SimpleTracker.LABEL_VIEW_WEEK,
-          -1
+          (logStorage.getDisplayType() == DisplayType.DAY) ? SimpleTracker.ACTION_ENTER_FROM_DAY : SimpleTracker.ACTION_ENTER_FROM_WEEK
       );
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
