@@ -22,6 +22,8 @@ import lt.markmerkk.AutoSync2;
 import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
+import lt.markmerkk.events.StartAllSyncEvent;
+import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
@@ -109,7 +111,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
     settings.setIssueJql(inputJQL.getText());
-    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+    SyncEventBus.getInstance().getEventBus().post(new StartAllSyncEvent());
   }
 
   /**
@@ -118,7 +120,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   public void onClickResetJQL() {
     inputJQL.setText(JiraSearchJQL.DEFAULT_JQL_USER_ISSUES);
     settings.setIssueJql(inputJQL.getText());
-    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+    SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }
 
   //endregion

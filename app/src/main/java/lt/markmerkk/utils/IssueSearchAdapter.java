@@ -13,7 +13,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import lt.markmerkk.JiraObservables;
-import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.storage2.IssueSplit;
@@ -68,8 +68,6 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * Does a search with {@link ComboBox} input text
    */
   public void doRefresh() {
-//    if (syncController.isLoading())
-//      return;
     SimpleTracker.getInstance().getTracker().sendEvent(
         SimpleTracker.CATEGORY_BUTTON,
         SimpleTracker.ACTION_SEARCH_REFRESH
@@ -80,12 +78,21 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   //region Events
 
   @Subscribe
-  public void onEvent(StartLogSyncEvent startLogSyncEvent) {
-//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
-//      refreshSubscription.unsubscribe();
-//      return;
-//    }
-//    doRefresh();
+  public void onEvent(StartIssueSyncEvent event) {
+    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+      refreshSubscription.unsubscribe();
+      return;
+    }
+    doRefresh();
+  }
+
+  @Subscribe
+  public void onEvent(StartAllSyncEvent event) {
+    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+      refreshSubscription.unsubscribe();
+      return;
+    }
+    doRefresh();
   }
 
   //endregion

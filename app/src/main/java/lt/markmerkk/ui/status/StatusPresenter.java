@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
+import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
@@ -87,13 +88,17 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
 
   //region Events
 
-  /**
-   * Called when {@link SyncEventBus} calls {@link StartLogSyncEvent}
-   * @param event
-   */
   @Subscribe
   public void onEvent(StartLogSyncEvent event) {
-    logger.debug("Starting sync!");
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SYNC_MAIN
+    );
+    syncController.sync();
+  }
+
+  @Subscribe
+  public void onEvent(StartAllSyncEvent event) {
     SimpleTracker.getInstance().getTracker().sendEvent(
         SimpleTracker.CATEGORY_BUTTON,
         SimpleTracker.ACTION_SYNC_MAIN

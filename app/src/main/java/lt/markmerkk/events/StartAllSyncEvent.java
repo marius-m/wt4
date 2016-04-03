@@ -7,7 +7,7 @@ import lt.markmerkk.utils.SyncEventBus;
  * Created by mariusmerkevicius on 2/16/16.
  * An event that is sent over {@link EventBus} using {@link SyncEventBus}
  *
- * Sends an event to sync logs.
+ * Sends an event to sync everything.
  */
-public class StartLogSyncEvent {
+public class StartAllSyncEvent {
 }
