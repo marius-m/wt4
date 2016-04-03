@@ -1,0 +1,5 @@
+.button {
+  -fx-background-image: url("help_2_fill.png");
+  -fx-background-repeat: no-repeat;
+  -fx-background-position:center;
+}

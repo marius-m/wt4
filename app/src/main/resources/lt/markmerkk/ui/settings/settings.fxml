@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
@@ -10,15 +11,15 @@
    <children>
       <HBox>
          <children>
-            <Button fx:id="buttonRefresh" mnemonicParsing="false" text="Refresh" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonRefresh" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../sync.css" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
                <graphic>
-                  <ProgressIndicator fx:id="outputProgress" prefHeight="18.0" prefWidth="18.0" visible="false" />
+                  <ProgressIndicator fx:id="outputProgress" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false" />
                </graphic>
             </Button>
-            <ComboBox fx:id="refreshCombo" maxWidth="1.7976931348623157E308" promptText="Auto sync" HBox.hgrow="ALWAYS">
+            <ComboBox fx:id="refreshCombo" maxWidth="1.7976931348623157E308" minHeight="32.0" prefHeight="32.0" promptText="Auto sync" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
@@ -28,35 +29,87 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </HBox>
-      <HBox>
-         <children>
-            <TextField fx:id="inputHost" maxWidth="1.7976931348623157E308" promptText="https://hostname" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </TextField>
-            <TextField fx:id="inputUsername" maxWidth="1.7976931348623157E308" promptText="Username" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </TextField>
-            <PasswordField fx:id="inputPassword" maxWidth="1.7976931348623157E308" promptText="Password">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </PasswordField>
-         </children>
+      <Separator>
          <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" />
+            <Insets bottom="5.0" />
          </padding>
-      </HBox>
-      <TextArea fx:id="outputLogger" editable="false" promptText="Console log" VBox.vgrow="ALWAYS">
-         <font>
-            <Font name="Monospaced Regular" size="10.0" />
-         </font>
+      </Separator>
+      <VBox maxWidth="1.7976931348623157E308">
+         <children>
+            <TextField fx:id="inputHost" maxWidth="1.7976931348623157E308" promptText="https://hostname" />
+            <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="Hostname">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Text>
+         </children>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" />
          </VBox.margin>
-      </TextArea>
+      </VBox>
+      <VBox maxWidth="1.7976931348623157E308">
+         <children>
+            <TextField fx:id="inputUsername" maxWidth="1.7976931348623157E308" promptText="Username" />
+            <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="Username">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Text>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox maxWidth="1.7976931348623157E308">
+         <children>
+            <PasswordField fx:id="inputPassword" maxWidth="1.7976931348623157E308" promptText="Password" />
+            <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="Password">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Text>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox maxWidth="1.7976931348623157E308">
+         <children>
+            <TextField maxWidth="1.7976931348623157E308" promptText="JQL" />
+            <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="Issue search JQL">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Text>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
+      </VBox>
+      <Separator>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </Separator>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <children>
+            <TextArea fx:id="outputLogger" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Console log" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font name="Monospaced Regular" size="10.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </TextArea>
+            <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="History log">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Text>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
+      </VBox>
    </children>
 </VBox>

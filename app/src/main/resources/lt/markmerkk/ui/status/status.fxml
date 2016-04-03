@@ -10,39 +10,34 @@
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
          <children>
-            <Button fx:id="buttonAbout" mnemonicParsing="false" text="?">
+            <Button fx:id="buttonAbout" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../help_empty.css">
                <font>
                   <Font size="11.0" />
                </font>
-               <HBox.margin>
-                  <Insets right="2.0" />
-               </HBox.margin>
-               <graphic>
-                  <ProgressIndicator fx:id="versionLoadIndicator" prefHeight="10.0" prefWidth="10.0" visible="false" />
-               </graphic>
-            </Button>
-            <ProgressIndicator fx:id="outputProgress" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="14.0" visible="false">
-               <HBox.margin>
-                  <Insets left="5.0" right="5.0" />
-               </HBox.margin>
-            </ProgressIndicator>
-            <Button fx:id="buttonRefresh" mnemonicParsing="false" text="Last update: Never">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
-               <font>
-                  <Font size="11.0" />
-               </font>
+               <graphic>
+                  <ProgressIndicator fx:id="versionLoadIndicator" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false" />
+               </graphic>
             </Button>
-            <Button fx:id="buttonViewToggle" mnemonicParsing="false" text="View: day">
-               <font>
-                  <Font size="11.0" />
-               </font>
+            <Button fx:id="buttonRefresh" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../sync.css">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <graphic>
+                  <ProgressIndicator fx:id="outputProgress" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false" />
+               </graphic>
             </Button>
-            <Button fx:id="buttonToday" disable="true" mnemonicParsing="false" text="Total: 20h">
+            <ToggleButton fx:id="buttonViewToggle" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../view_type.css">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </ToggleButton>
+            <Button fx:id="buttonToday" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" stylesheets="@../../../../sum.css" text="20h">
                <font>
                   <Font size="11.0" />
                </font>

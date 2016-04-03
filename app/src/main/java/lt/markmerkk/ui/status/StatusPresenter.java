@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
@@ -45,7 +46,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
   @FXML Button buttonRefresh;
-  @FXML Button buttonViewToggle;
+  @FXML ToggleButton buttonViewToggle;
   @FXML Button buttonToday;
   @FXML Button buttonAbout;
 
@@ -110,9 +111,10 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    * Convenience method to update current status
    */
   void updateStatus() {
-    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput()));
-    buttonToday.setText(String.format("Total: %s", total));
-    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
+    //buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
+    buttonToday.setText(String.format("%s", total));
+    //buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
+    buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
 
   //endregion
@@ -129,10 +131,10 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
     if (updateSummary != null && updateSummary.highestVersion > Main.VERSION_CODE) {
-      buttonAbout.setText("!");
+      //buttonAbout.setText("!"); // todo : fix this in time, when update is more stable
       return;
     }
-    buttonAbout.setText("?");
+    //buttonAbout.setText("?");
   }
 
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
