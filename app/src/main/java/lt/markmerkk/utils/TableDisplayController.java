@@ -12,6 +12,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 
@@ -31,14 +32,14 @@ public abstract class TableDisplayController<Type> {
         table.setEditable(false);
 
         final ContextMenu contextMenu = new ContextMenu();
-        MenuItem updateItem = new MenuItem("Update");
+        MenuItem updateItem = new MenuItem("Update", new ImageView(new Image(getClass().getResource("/update_2.png").toString())));
         updateItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 if (table.getSelectionModel().getSelectedItem() != null && listener != null)
                     listener.onUpdate(table.getSelectionModel().getSelectedItem());
             }
         });
-        MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem deleteItem = new MenuItem("Delete", new ImageView(new Image(getClass().getResource("/delete_2.png").toString())));
         deleteItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 if (table.getSelectionModel().getSelectedItem() != null && listener != null)
@@ -46,7 +47,7 @@ public abstract class TableDisplayController<Type> {
 //                System.out.println("Delete "+table.getSelectionModel().getSelectedItem());
             }
         });
-        MenuItem cloneItem = new MenuItem("Clone");
+        MenuItem cloneItem = new MenuItem("Clone", new ImageView(new Image(getClass().getResource("/clone_2.png").toString())));
         cloneItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 if (table.getSelectionModel().getSelectedItem() != null && listener != null)

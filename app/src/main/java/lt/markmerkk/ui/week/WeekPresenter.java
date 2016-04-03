@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javax.annotation.PreDestroy;
@@ -90,21 +92,21 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
       if (updateListener == null) return null;
       if (!(appointment instanceof AppointmentSimpleLog)) return null;
       ContextMenu contextMenu = new ContextMenu();
-      MenuItem updateItem = new MenuItem("Update");
+      MenuItem updateItem = new MenuItem("Update", new ImageView(new Image(getClass().getResource("/update_2.png").toString())));
       updateItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
           updateListener.onUpdate(((AppointmentSimpleLog) appointment).getSimpleLog());
         }
       });
-      MenuItem deleteItem = new MenuItem("Delete");
+      MenuItem deleteItem = new MenuItem("Delete", new ImageView(new Image(getClass().getResource("/delete_2.png").toString())));
       deleteItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
           updateListener.onDelete(((AppointmentSimpleLog) appointment).getSimpleLog());
         }
       });
-      MenuItem cloneItem = new MenuItem("Clone");
+      MenuItem cloneItem = new MenuItem("Clone", new ImageView(new Image(getClass().getResource("/clone_2.png").toString())));
       cloneItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;

@@ -50,7 +50,7 @@ public class UpdateLogPresenter {
     });
     commentInput.setText(entity.getComment());
     taskInput.setText(entity.getTask());
-    outputInfo.setText((entity.isError()) ? entity.getErrorMessage() : "Updating: "+entity.toString());
+    outputInfo.setText((entity.isError()) ? entity.getErrorMessage() : "Log: "+entity.toString());
     update();
     updateLock();
   }
@@ -83,8 +83,10 @@ public class UpdateLogPresenter {
           .setComment(commentInput.getText())
           .build();
       updateSaveTitle(entity.getPrettyDuration());
+      buttonOk.setDisable(false);
     } catch (IllegalArgumentException e) {
       updateSaveTitle("Error: " + e.getMessage());
+      buttonOk.setDisable(true);
     }
   }
 
@@ -94,10 +96,10 @@ public class UpdateLogPresenter {
    */
   void updateSaveTitle(String message) {
     if (message == null) {
-      buttonOk.setText("Save");
+      buttonOk.setText("");
       return;
     }
-    buttonOk.setText(String.format("Save (%s)", message));
+    buttonOk.setText(String.format("%s", message));
   }
 
   //endregion
