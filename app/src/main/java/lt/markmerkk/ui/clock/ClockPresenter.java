@@ -31,6 +31,7 @@ import javafx.util.StringConverter;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.SimpleLog;
@@ -106,28 +107,15 @@ public class ClockPresenter implements Initializable {
           buttonOpen.setManaged(visible);
         });
 
-    inputFrom.setTooltip(new Tooltip("Worklog start" +
-        "\n\nStart time for the current log. " +
-        "It can be edited whenever timer is running. " +
-        "\nThis timer acts as today's date, " +
-        "changing this will change display for the whole work log."));
-    inputTo.setTooltip(new Tooltip("Worklog end" +
-        "\n\nEnd time for the current log." +
-        "It can be edited whenever timer is running. "));
-    inputTaskCombo.setTooltip(new Tooltip("Issue search bar " +
-        "\n\nType in issue number, title to begin searching."));
-    buttonClock.setTooltip(new Tooltip("Start/Stop " +
-        "\n\nEnable/disable work timer."));
-    buttonEnter.setTooltip(new Tooltip("Enter " +
-        "\n\nEnters currently running work."));
-    buttonRefresh.setTooltip(new Tooltip("Refresh search cache " +
-        "\n\nRefresh issue search cache."));
-    buttonOpen.setTooltip(new Tooltip("Forward " +
-        "\n\nOpen selected issue details for more details."));
-    buttonSettings.setTooltip(new Tooltip("Settings. " +
-        "\n\nSetting up remote host, user credentials."));
-    inputComment.setTooltip(new Tooltip("Comment" +
-        "\n\nEnter comment here for the work log."));
+    inputFrom.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_from")));
+    inputTo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_to")));
+    inputTaskCombo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_search_combo")));
+    buttonClock.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_startstop")));
+    buttonEnter.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_enter")));
+    buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_refresh")));
+    buttonOpen.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_open")));
+    buttonSettings.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_settings")));
+    inputComment.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_comment")));
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
     inputFrom.getEditor().textProperty().addListener(timeChangeListener);
@@ -191,7 +179,9 @@ public class ClockPresenter implements Initializable {
     inputTo.setEditable(!disableElement);
     inputTo.setDisable(disableElement);
     inputComment.setEditable(!disableElement);
-    inputComment.setPromptText((disableElement) ? "Start timer to log work!" : "Go go go!");
+    inputComment.setPromptText((disableElement)
+        ? Translation.getInstance().getString("clock_prompt_comment_idle")
+        : Translation.getInstance().getString("clock_prompt_comment_running"));
     buttonEnter.setDisable(disableElement);
   }
 
@@ -201,9 +191,9 @@ public class ClockPresenter implements Initializable {
   private void logWork() {
     try {
       if (hourGlass.getState() == HourGlass.State.STOPPED)
-        throw new IllegalArgumentException("Please run timer first!");
+        throw new IllegalArgumentException(Translation.getInstance().getString("clock_error_timer_not_running"));
       if (!hourGlass.isValid())
-        throw new IllegalArgumentException("Error calculating time!");
+        throw new IllegalArgumentException(Translation.getInstance().getString("clock_error_timer_calculation"));
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
           .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))

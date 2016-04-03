@@ -61,6 +61,8 @@ public class Main extends Application {
     initStaticPaths();
     initLoggerSettings();
 
+    Translation.getInstance(); // Initializing translations on first launch
+
     hostServices = HostServicesFactory.getInstance(this);
 
     MainView mainView = new MainView(stage);
