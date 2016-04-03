@@ -10,23 +10,19 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
@@ -43,7 +39,6 @@ import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
-import net.rcarz.jiraclient.Issue;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +90,7 @@ public class ClockPresenter implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    issueSearchAdapter = new IssueSearchAdapter(syncController, inputTaskCombo, taskLoadIndicator, dbProdExecutor);
+    issueSearchAdapter = new IssueSearchAdapter(settings, syncController, inputTaskCombo, taskLoadIndicator, dbProdExecutor);
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)
@@ -122,6 +117,7 @@ public class ClockPresenter implements Initializable {
     inputTo.getEditor().textProperty().addListener(timeChangeListener);
     inputFrom.setConverter(startDateConverter);
     inputTo.setConverter(endDateConverter);
+    taskLoadIndicator.setOnMousePressed(refreshProgressClickListener);
 
     Platform.runLater(() -> {
       taskLoadIndicator.setManaged(false);
@@ -219,6 +215,13 @@ public class ClockPresenter implements Initializable {
   //endregion
 
   //region Listeners
+
+  EventHandler<MouseEvent> refreshProgressClickListener = new EventHandler<MouseEvent>() {
+    @Override
+    public void handle(MouseEvent event) {
+      buttonRefresh.fire();
+    }
+  };
 
   StringConverter startDateConverter = new StringConverter<LocalDate>() {
     @Override

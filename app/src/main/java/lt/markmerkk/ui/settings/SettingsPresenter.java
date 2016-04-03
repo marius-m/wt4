@@ -19,6 +19,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
+import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartLogSyncEvent;
@@ -46,11 +47,11 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   @Inject SyncController syncController;
   @Inject AutoSync2 autoSync;
 
-  @FXML TextField inputHost, inputUsername;
+  @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
   @FXML TextArea outputLogger;
   @FXML ProgressIndicator outputProgress;
-  @FXML Button buttonRefresh;
+  @FXML Button buttonRefresh, buttonResetJQL;
   @FXML ComboBox<String> refreshCombo;
 
   Appender guiAppender;
@@ -68,11 +69,13 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     inputPassword.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_password")));
     buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_refresh")));
     outputLogger.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_output_console")));
+    inputJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_jql")));
+    buttonResetJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_reset_jql")));
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getUsername());
     inputPassword.setText(settings.getPassword());
-    buttonRefresh.setOnMouseClicked(refreshClickListener);
+    inputJQL.setText(settings.getIssueJql());
 
     guiAppender = new SimpleAppender();
     guiAppender.setLayout(new PatternLayout(Main.LOG_LAYOUT));
@@ -92,24 +95,30 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
+    settings.setIssueJql(inputJQL.getText());
     guiAppender.close();
   }
 
-  //region Events
+  //region Keyboard input
 
   /**
-   * Called when {@link SyncEventBus} calls {@link StartLogSyncEvent}
-   * @param event
+   * A button event when user clicks on refresh
    */
-  @Subscribe
-  public void onEvent(StartLogSyncEvent event) {
-    if (syncController.isLoading())
-      return;
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_BUTTON,
-        SimpleTracker.ACTION_SYNC_SETTINGS
-    );
-    syncController.sync();
+  public void onClickRefresh() {
+    settings.setHost(inputHost.getText());
+    settings.setUsername(inputUsername.getText());
+    settings.setPassword(inputPassword.getText());
+    settings.setIssueJql(inputJQL.getText());
+    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+  }
+
+  /**
+   * A button event when user clicks on reset JQL
+   */
+  public void onClickResetJQL() {
+    inputJQL.setText(JiraSearchJQL.DEFAULT_JQL_USER_ISSUES);
+    settings.setIssueJql(inputJQL.getText());
+    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
   }
 
   //endregion
@@ -121,16 +130,6 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     public void changed(ObservableValue ov, String t, String t1) {
       String selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
       autoSync.setCurrentSelection(selectedItem);
-    }
-  };
-
-  EventHandler<MouseEvent> refreshClickListener = new EventHandler<MouseEvent>() {
-    @Override
-    public void handle(MouseEvent event) {
-      settings.setHost(inputHost.getText());
-      settings.setUsername(inputUsername.getText());
-      settings.setPassword(inputPassword.getText());
-      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
     }
   };
 

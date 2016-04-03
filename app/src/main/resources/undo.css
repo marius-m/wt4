@@ -1,0 +1,5 @@
+.button {
+  -fx-background-image: url("undo_2.png");
+  -fx-background-repeat: no-repeat;
+  -fx-background-position:center;
+}

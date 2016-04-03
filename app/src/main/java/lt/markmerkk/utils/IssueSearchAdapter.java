@@ -42,6 +42,7 @@ import rx.schedulers.Schedulers;
 public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
+  UserSettings settings;
   SyncController syncController;
   IExecutor dbExecutor;
   IssueSplit issueSplit = new IssueSplit();
@@ -50,11 +51,12 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   ObservableList<LocalIssue> issues;
 
-  public IssueSearchAdapter(SyncController controller,
+  public IssueSearchAdapter(UserSettings settings, SyncController controller,
                             ComboBox<LocalIssue> comboBox,
                             ProgressIndicator progressIndicator,
                             IExecutor executor) {
     super(comboBox, progressIndicator);
+    this.settings = settings;
     this.syncController = controller;
     this.dbExecutor = executor;
     registerSearchObservable(comboBox);
@@ -79,7 +81,11 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   @Subscribe
   public void onEvent(StartLogSyncEvent startLogSyncEvent) {
-    doRefresh();
+//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+//      refreshSubscription.unsubscribe();
+//      return;
+//    }
+//    doRefresh();
   }
 
   //endregion
@@ -200,7 +206,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
         syncController.clientObservable()
             .observeOn(Schedulers.computation())
             .subscribeOn(Schedulers.computation())
-            .flatMap(jiraClient -> JiraObservables.userIssues(jiraClient, JiraSearchJQL.DEFAULT_JQL_USER_ISSUES))
+            .flatMap(jiraClient -> JiraObservables.userIssues(jiraClient, settings.getIssueJql()))
             .flatMap(issue -> {
               fetchIssue.merge(issue);
               return Observable.empty();

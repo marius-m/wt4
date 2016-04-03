@@ -2,6 +2,7 @@ package lt.markmerkk.utils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.listeners.WorldEvents;
 
 /**
@@ -13,6 +14,7 @@ public class UserSettings implements WorldEvents {
   public static final String USER = "USER";
   public static final String PASS = "PASS";
   public static final String VERSION = "VERSION";
+  public static final String ISSUE_JQL = "ISSUE_JQL";
 
   AdvHashSettings settings;
 
@@ -20,6 +22,7 @@ public class UserSettings implements WorldEvents {
   String host;
   String username;
   String password;
+  String issueJql;
   int version = -1;
 
   public UserSettings() {
@@ -27,6 +30,17 @@ public class UserSettings implements WorldEvents {
   }
 
   //region Getters / Setters
+
+
+  public String getIssueJql() {
+    if (issueJql == null) return JiraSearchJQL.DEFAULT_JQL_USER_ISSUES;
+    return issueJql;
+  }
+
+  public void setIssueJql(String issueJql) {
+    this.issueJql = issueJql;
+    settings.save();
+  }
 
   public String getHost() {
     if (host == null) return "";
@@ -85,6 +99,7 @@ public class UserSettings implements WorldEvents {
     password = settings.get(PASS);
     String versionString = settings.get(VERSION);
     version = (versionString == null) ? -1 : Integer.parseInt(versionString);
+    issueJql = settings.get(ISSUE_JQL);
   }
 
   @PreDestroy
@@ -93,6 +108,7 @@ public class UserSettings implements WorldEvents {
     settings.set(USER, getUsername());
     settings.set(PASS, getPassword());
     settings.set(VERSION, String.valueOf(version));
+    settings.set(ISSUE_JQL, getIssueJql());
     settings.save();
   }
 

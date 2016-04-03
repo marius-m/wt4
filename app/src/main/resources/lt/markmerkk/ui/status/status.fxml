@@ -21,7 +21,7 @@
                   <ProgressIndicator fx:id="versionLoadIndicator" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false" />
                </graphic>
             </Button>
-            <Button fx:id="buttonRefresh" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../sync.css">
+            <Button fx:id="buttonRefresh" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onClickRefresh" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../sync.css">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
@@ -29,7 +29,7 @@
                   <Font size="11.0" />
                </font>
                <graphic>
-                  <ProgressIndicator fx:id="outputProgress" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false" />
+                  <ProgressIndicator fx:id="outputProgress" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="20.0" minWidth="20.0" onMouseClicked="#onClickRefresh" prefHeight="20.0" prefWidth="20.0" visible="false" />
                </graphic>
             </Button>
             <ToggleButton fx:id="buttonViewToggle" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../view_type.css">

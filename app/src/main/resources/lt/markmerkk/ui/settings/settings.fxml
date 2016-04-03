@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.layout.*?>
@@ -11,12 +12,12 @@
    <children>
       <HBox>
          <children>
-            <Button fx:id="buttonRefresh" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../sync.css" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonRefresh" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onClickRefresh" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../sync.css" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
                <graphic>
-                  <ProgressIndicator fx:id="outputProgress" minHeight="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" visible="false" />
+                  <ProgressIndicator fx:id="outputProgress" minHeight="20.0" minWidth="20.0" onMouseClicked="#onClickRefresh" prefHeight="20.0" prefWidth="20.0" visible="false" />
                </graphic>
             </Button>
             <ComboBox fx:id="refreshCombo" maxWidth="1.7976931348623157E308" minHeight="32.0" prefHeight="32.0" promptText="Auto sync" HBox.hgrow="ALWAYS">
@@ -75,7 +76,16 @@
       </VBox>
       <VBox maxWidth="1.7976931348623157E308">
          <children>
-            <TextField maxWidth="1.7976931348623157E308" promptText="JQL" />
+            <HBox>
+               <children>
+                  <TextField fx:id="inputJQL" maxWidth="1.7976931348623157E308" promptText="JQL" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="buttonResetJQL" minHeight="26.0" minWidth="26.0" mnemonicParsing="false" onAction="#onClickResetJQL" prefHeight="26.0" prefWidth="26.0" stylesheets="@../../../../undo.css">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
             <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="Issue search JQL">
                <font>
                   <Font size="9.0" />
