@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
@@ -81,6 +82,8 @@ public class ClockPresenter implements Initializable {
   Button buttonRefresh;
   @FXML
   Button buttonSettings;
+  @FXML
+  Text outputJQL;
 
   @FXML ProgressIndicator taskLoadIndicator;
   @FXML ComboBox<LocalIssue> inputTaskCombo;
@@ -90,7 +93,8 @@ public class ClockPresenter implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    issueSearchAdapter = new IssueSearchAdapter(settings, syncController, inputTaskCombo, taskLoadIndicator, dbProdExecutor);
+    issueSearchAdapter = new IssueSearchAdapter(settings, syncController, inputTaskCombo,
+        taskLoadIndicator, dbProdExecutor, outputJQL);
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)

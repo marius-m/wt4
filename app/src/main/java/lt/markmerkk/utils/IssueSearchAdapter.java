@@ -6,13 +6,16 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import lt.markmerkk.JiraObservables;
+import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.events.StartLogSyncEvent;
@@ -23,6 +26,7 @@ import lt.markmerkk.storage2.RemoteFetchIssue;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
+import lt.markmerkk.storage2.jobs.RowCountJob;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import net.rcarz.jiraclient.Issue;
@@ -38,7 +42,10 @@ import rx.schedulers.Schedulers;
 /**
  * Created by mariusmerkevicius on 2/3/16.
  * {@link Issue} searchable combo box.
+ *
+ * @deprecated - this class should be refactored as soon as possible for its overwhelming functionality.
  */
+@Deprecated
 public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
@@ -47,19 +54,24 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   IExecutor dbExecutor;
   IssueSplit issueSplit = new IssueSplit();
 
+  Text viewInfo; // Will hold some minor info below the search adapter
+
   Subscription refreshSubscription;
 
-  ObservableList<LocalIssue> issues;
+  long totalIssues;
 
   public IssueSearchAdapter(UserSettings settings, SyncController controller,
                             ComboBox<LocalIssue> comboBox,
                             ProgressIndicator progressIndicator,
-                            IExecutor executor) {
+                            IExecutor executor, Text viewInfo) {
     super(comboBox, progressIndicator);
     this.settings = settings;
     this.syncController = controller;
     this.dbExecutor = executor;
+    this.viewInfo = viewInfo;
     registerSearchObservable(comboBox);
+
+    setTotalIssues(refreshTotalCount());
 
     SyncEventBus.getInstance().getEventBus().register(this);
   }
@@ -132,7 +144,29 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   //endregion
 
+  //region Getters / Setters
+
+  public void setTotalIssues(long totalIssues) {
+    this.totalIssues = totalIssues;
+    Platform.runLater(() -> {
+      viewInfo.setText(String.format(Translation.getInstance().getString("clock_jql_info"), totalIssues));
+    });
+  }
+
+
+  //endregion
+
   //region Convenience
+
+  /**
+   * Returns total count of the issues in the database
+   * @return
+   */
+  int refreshTotalCount() {
+    RowCountJob<LocalIssue> issueCount = new RowCountJob<>(LocalIssue.class);
+    dbExecutor.execute(issueCount);
+    return issueCount.result();
+  }
 
   /**
    * Clears out old database cache
@@ -227,6 +261,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
               logger.debug("Complete!");
               clearOldCache(fetchIssue.getDownloadMillis());
               changeLoadState(false);
+              setTotalIssues(refreshTotalCount());
             });
   }
 

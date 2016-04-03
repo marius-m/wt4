@@ -11,6 +11,7 @@ import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
+import lt.markmerkk.storage2.jobs.RowCountJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
 import lt.markmerkk.utils.Utils;
 
@@ -21,6 +22,7 @@ import lt.markmerkk.utils.Utils;
 public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   @Inject DBProdExecutor executor;
 
+  long totalIssues;
   ObservableList<LocalIssue> issues;
   List<IDataListener<LocalIssue>> listeners;
 
@@ -32,7 +34,7 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   }
 
   @PostConstruct
-  void initualize() { }
+  void initialize() { }
 
   @PreDestroy
   void destroy() {
