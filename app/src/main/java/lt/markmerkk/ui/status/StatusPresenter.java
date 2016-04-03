@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
@@ -55,18 +56,12 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    buttonRefresh.setTooltip(new Tooltip("Status" +
-        "\n\nTime since last update. Current sum of today's work log." +
-        "\n\nPress to activate/cancel synchronization with remote."));
+    buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_status")));
     buttonRefresh.setOnMouseClicked(outputClickListener);
-    buttonViewToggle.setTooltip(new Tooltip("Toggle display view" +
-        "\n\nToggles the display view."));
+    buttonViewToggle.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_toggle_view")));
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
-    buttonToday.setTooltip(new Tooltip("Total" +
-        "\n\nTotal work duration."));
-    buttonAbout.setTooltip(new Tooltip("About" +
-        "\n\nAbout the app." +
-        "\nCheck for automatic updates!"));
+    buttonToday.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_total")));
+    buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
     storage.register(loggerListener);

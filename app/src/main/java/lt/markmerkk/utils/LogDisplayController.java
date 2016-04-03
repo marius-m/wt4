@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import lt.markmerkk.Translation;
 import lt.markmerkk.storage2.SimpleLog;
 
 /**
@@ -25,28 +26,28 @@ public class LogDisplayController extends TableDisplayController<SimpleLog> {
     protected void init() {
         table.getColumns().add(insertImageColumn(26));
         table.getColumns().add(insertTableColumn(
-                "Task",
+            Translation.getInstance().getString("general_task"),
                 "task",
                 7
         ));
         table.getColumns().add(insertTableColumn(
-                "Start",
+            Translation.getInstance().getString("general_start"),
                 "shortStart",
                 7
         ));
 
         table.getColumns().add(insertTableColumn(
-                "End",
+            Translation.getInstance().getString("general_end"),
                 "shortEnd",
                 6
         ));
         table.getColumns().add(insertTableColumn(
-                "Duration",
+            Translation.getInstance().getString("general_duration"),
                 "prettyDuration",
                 6
         ));
         table.getColumns().add(insertTableColumn(
-                "Comment",
+            Translation.getInstance().getString("general_comment"),
                 "comment",
                 3
         ));

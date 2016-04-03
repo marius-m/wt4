@@ -21,7 +21,7 @@
             </Button>
             <VBox HBox.hgrow="ALWAYS">
                <children>
-                  <ComboBox fx:id="inputTaskCombo" editable="true" maxWidth="1.7976931348623157E308" minHeight="30.0" promptText="Live search. Enter issue and press ENTER" stylesheets="@../../../../live_search.css" />
+                  <ComboBox fx:id="inputTaskCombo" editable="true" maxWidth="1.7976931348623157E308" minHeight="30.0" promptText="Issue search." stylesheets="@../../../../live_search.css" />
                   <Text fx:id="outputJQL" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="JQL: ">
                      <font>
                         <Font size="9.0" />

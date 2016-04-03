@@ -11,6 +11,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.utils.VersionController;
@@ -88,18 +89,18 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
     if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
-      buttonUpdate.setText("Updating...");
+      buttonUpdate.setText(Translation.getInstance().getString("about_status_updating"));
       return;
     }
     if (updateSummary == null) {
-      buttonUpdate.setText("No information about the update!");
+      buttonUpdate.setText(Translation.getInstance().getString("about_status_no_info"));
       return;
     }
     if (updateSummary.highestVersion > Main.VERSION_CODE) {
-      buttonUpdate.setText("New updates are available! Update? (Will restart the app).");
+      buttonUpdate.setText(Translation.getInstance().getString("about_status_update_available"));
       return;
     }
-    buttonUpdate.setText("App is up to date!");
+    buttonUpdate.setText(Translation.getInstance().getString("about_status_update_unavailable"));
   }
 
   //region Listeners

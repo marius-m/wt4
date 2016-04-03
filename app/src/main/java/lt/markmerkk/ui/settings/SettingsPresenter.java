@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
@@ -61,20 +62,12 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     refreshCombo.setItems(autoSync.getSelectionKeys());
     refreshCombo.getSelectionModel().select(autoSync.currentSelection());
     refreshCombo.valueProperty().addListener(refreshChangeListener);
-    refreshCombo.setTooltip(new Tooltip("Auto refresh timer " +
-        "\n\nChanging this will automatically sync with remote after time interval. "));
-    inputHost.setTooltip(new Tooltip("JIRA hostname " +
-        "\n\nEnter your hostname for the jira. For ex.: https://jira.ito.lt"));
-    inputUsername.setTooltip(new Tooltip("JIRA user username " +
-        "\n\nEnter username for the user you will be using."));
-    inputPassword.setTooltip(new Tooltip("JIRA user password " +
-        "\n\nEnter password for the user you will be using."));
-    buttonRefresh.setTooltip(new Tooltip("JIRA sync start/cancel" +
-        "\n\nTest remote connection by synchronizing with the remote. " +
-        "\nWorks the same way as the button in status bar."));
-    outputLogger.setTooltip(new Tooltip("JIRA Connection output" +
-        "\n\nLog for the remote connection and sync status. " +
-        "\nCan be used for testing/checking remote connection problems."));
+    refreshCombo.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_autorefresh")));
+    inputHost.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_hostname")));
+    inputUsername.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_username")));
+    inputPassword.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_password")));
+    buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_refresh")));
+    outputLogger.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_output_console")));
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getUsername());

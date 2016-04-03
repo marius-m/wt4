@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javax.inject.Inject;
+import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
@@ -28,8 +29,7 @@ public class DisplayLogPresenter implements Initializable, IPresenter {
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_DAY);
-    tableView.setTooltip(new Tooltip("Worklog display" +
-        "\n\nToday's current work log"));
+    tableView.setTooltip(new Tooltip(Translation.getInstance().getString("daylog_tooltip_title")));
     LogDisplayController logDisplayController =
         new LogDisplayController(tableView, storage.getData(), new TableDisplayController.Listener<SimpleLog>() {
           @Override public void onUpdate(SimpleLog object) {

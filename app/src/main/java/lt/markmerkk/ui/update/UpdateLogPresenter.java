@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javax.inject.Inject;
+import lt.markmerkk.Translation;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
@@ -68,7 +69,7 @@ public class UpdateLogPresenter {
     commentInput.setEditable(false);
     outputInfo.setEditable(false);
     buttonOk.setDisable(true);
-    outputInfo.setText("Can't update logs that were uploaded!");
+    outputInfo.setText(Translation.getInstance().getString("update_error_cant_update_uploaded"));
   }
 
   /**

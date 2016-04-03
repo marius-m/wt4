@@ -18,6 +18,7 @@ import javafx.util.Callback;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import jfxtras.scene.control.agenda.Agenda;
+import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
@@ -92,21 +93,24 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
       if (updateListener == null) return null;
       if (!(appointment instanceof AppointmentSimpleLog)) return null;
       ContextMenu contextMenu = new ContextMenu();
-      MenuItem updateItem = new MenuItem("Update", new ImageView(new Image(getClass().getResource("/update_2.png").toString())));
+      MenuItem updateItem = new MenuItem(Translation.getInstance().getString("general_update"),
+          new ImageView(new Image(getClass().getResource("/update_2.png").toString())));
       updateItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
           updateListener.onUpdate(((AppointmentSimpleLog) appointment).getSimpleLog());
         }
       });
-      MenuItem deleteItem = new MenuItem("Delete", new ImageView(new Image(getClass().getResource("/delete_2.png").toString())));
+      MenuItem deleteItem = new MenuItem(Translation.getInstance().getString("general_delete"),
+          new ImageView(new Image(getClass().getResource("/delete_2.png").toString())));
       deleteItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
           updateListener.onDelete(((AppointmentSimpleLog) appointment).getSimpleLog());
         }
       });
-      MenuItem cloneItem = new MenuItem("Clone", new ImageView(new Image(getClass().getResource("/clone_2.png").toString())));
+      MenuItem cloneItem = new MenuItem(Translation.getInstance().getString("general_clone"),
+          new ImageView(new Image(getClass().getResource("/clone_2.png").toString())));
       cloneItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
