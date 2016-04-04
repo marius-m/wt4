@@ -34,7 +34,7 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.3'
+version = '0.9.9.3-EAP'
 def versionCode = '5'
 
 sourceSets {
