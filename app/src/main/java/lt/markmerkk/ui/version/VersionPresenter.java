@@ -49,6 +49,8 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     versionController.removeListener(this);
   }
 
+  //region Action input
+
   public void onClickClose() {
     destroy();
     if (dialogListener == null) return;
@@ -58,18 +60,18 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   public void onClickSave() { }
 
   public void onClickTitle() {
-    if (Main.hostServices != null)
-      Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
   }
 
   public void onClickAuthor() {
-    if (Main.hostServices != null)
-      Main.hostServices.showDocument("https://github.com/marius-m");
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://github.com/marius-m");
   }
 
   public void onClickPlace() {
-    if (Main.hostServices != null)
-      Main.hostServices.showDocument("http://ito.lt");
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("http://ito.lt");
   }
 
   public void onClickUpdate() {
@@ -80,6 +82,50 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     }
     versionController.checkForUpdate();
   }
+
+  // todo : fix hyperlinks
+
+  public void onHyperlinkGoogle1() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkGoogle2() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkJFX1() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkJFX2() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkJFX3() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkAfterburner1() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkAfterburner2() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  public void onHyperlinkOthers() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  //endregion
 
   @Override
   public void onProgressChange(double progressChange) {

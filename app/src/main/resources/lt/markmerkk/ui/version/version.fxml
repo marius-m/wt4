@@ -137,7 +137,7 @@
                               <Font size="10.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonUpdate1" onAction="#onClickUpdate" text="material design icons">
+                        <Hyperlink onAction="#onHyperlinkGoogle1" text="material design icons">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -147,7 +147,7 @@
                               <Font size="12.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonUpdate11" onAction="#onClickUpdate" text="(LICENSE)">
+                        <Hyperlink onAction="#onHyperlinkGoogle2" text="(LICENSE)">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -156,7 +156,7 @@
                   </HBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <Hyperlink fx:id="buttonUpdate112" onAction="#onClickUpdate" text="JFXtras">
+                        <Hyperlink onAction="#onHyperlinkJFX1" text="JFXtras">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -166,7 +166,7 @@
                               <Font size="10.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonUpdate11" onAction="#onClickUpdate" text="&quot;agenda view&quot;">
+                        <Hyperlink onAction="#onHyperlinkJFX2" text="&quot;agenda view&quot;">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -176,7 +176,7 @@
                               <Font size="12.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonUpdate111" onAction="#onClickUpdate" text="(LICENSE)">
+                        <Hyperlink onAction="#onHyperlinkJFX3" text="(LICENSE)">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -185,7 +185,7 @@
                   </HBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <Hyperlink fx:id="buttonUpdate1121" onAction="#onClickUpdate" text="afterburner.fx">
+                        <Hyperlink onAction="#onHyperlinkAfterburner1" text="afterburner.fx">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -200,7 +200,7 @@
                               <Font size="12.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonUpdate1111" onAction="#onClickUpdate" text="(LICENSE)">
+                        <Hyperlink onAction="#onHyperlinkAfterburner2" text="(LICENSE)">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -214,7 +214,7 @@
                               <Font size="10.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonUpdate11111" onAction="#onClickUpdate" text="others">
+                        <Hyperlink onAction="#onHyperlinkOthers" text="others">
                            <font>
                               <Font size="10.0" />
                            </font>
