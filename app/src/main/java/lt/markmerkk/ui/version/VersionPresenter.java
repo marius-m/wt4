@@ -87,37 +87,22 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
 
   public void onHyperlinkGoogle1() {
     if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+    Main.hostServices.showDocument("https://design.google.com/icons/");
   }
 
   public void onHyperlinkGoogle2() {
     if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+    Main.hostServices.showDocument("https://creativecommons.org/licenses/by/4.0/");
   }
 
   public void onHyperlinkJFX1() {
     if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+    Main.hostServices.showDocument("https://github.com/JFXtras/jfxtras");
   }
 
   public void onHyperlinkJFX2() {
     if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
-  }
-
-  public void onHyperlinkJFX3() {
-    if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
-  }
-
-  public void onHyperlinkAfterburner1() {
-    if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
-  }
-
-  public void onHyperlinkAfterburner2() {
-    if (Main.hostServices == null) return;
-    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+    Main.hostServices.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29");
   }
 
   public void onHyperlinkOthers() {

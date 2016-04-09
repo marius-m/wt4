@@ -123,9 +123,9 @@
                   <Separator prefWidth="200.0" />
                   <HBox alignment="CENTER">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Thank you:">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Thank you!">
                            <font>
-                              <Font size="12.0" />
+                              <Font size="14.0" />
                            </font>
                         </Text>
                      </children>
@@ -161,36 +161,7 @@
                               <Font size="10.0" />
                            </font>
                         </Hyperlink>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="for beautiful">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Hyperlink onAction="#onHyperlinkJFX2" text="&quot;agenda view&quot;">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Hyperlink>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="!">
-                           <font>
-                              <Font size="12.0" />
-                           </font>
-                        </Text>
-                        <Hyperlink onAction="#onHyperlinkJFX3" text="(LICENSE)">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Hyperlink>
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER">
-                     <children>
-                        <Hyperlink onAction="#onHyperlinkAfterburner1" text="afterburner.fx">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Hyperlink>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="for MVP arch">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="for beautiful &quot;agenda&quot; view">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -200,7 +171,7 @@
                               <Font size="12.0" />
                            </font>
                         </Text>
-                        <Hyperlink onAction="#onHyperlinkAfterburner2" text="(LICENSE)">
+                        <Hyperlink onAction="#onHyperlinkJFX2" text="(LICENSE)">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -209,7 +180,7 @@
                   </HBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="...and">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="...and many">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -219,9 +190,9 @@
                               <Font size="10.0" />
                            </font>
                         </Hyperlink>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="who were a great addition!">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="who were a wonderful contribution!">
                            <font>
-                              <Font size="12.0" />
+                              <Font size="10.0" />
                            </font>
                         </Text>
                      </children>
