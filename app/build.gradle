@@ -97,17 +97,14 @@ javafx {
             ]
         }
 
-        linux {
-            // linux doesn't care about id, it goes un-used at the moment
-            category = 'Accessories'
-            // good luck finding a standard location for the JDK
-            //javaRuntime = '/usr/lib/jvm/java-7-oracle'
-
-            bundleArguments = [
-                    // for DEB bundles
-                    'email' : 'merkevicius.marius@gmail.com', // This is the email used for the deb maintainer field.
-            ]
-        }
+//        linux {
+//            category = 'Accessories'
+//
+//            bundleArguments = [
+//                    // for DEB bundles
+//                    'email' : 'merkevicius.marius@gmail.com', // This is the email used for the deb maintainer field.
+//            ]
+//        }
     }
 }
 
