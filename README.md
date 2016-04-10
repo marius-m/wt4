@@ -61,7 +61,7 @@ In theory app should be self explanatory, in practice this is not always the cas
 	* Green - sync success
 	* Red - sync fail
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2016-04-09 04.05.10.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_1.png)
 
 ### Settings
 
@@ -74,7 +74,21 @@ For the app to work correctly, set up your credentials and personal preferences 
 * Press "cloud" to sync
 * Enter custom "JQL" for the issue search or use the default suggested one (can be reset with the "restore" button)
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2016-04-09 04.05.16.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_2.png)
+
+### Update
+
+Logs can be updated by pressing the right mouse button on the target log. 
+
+* Every option that will be changed when saving changes
+* Only logs that were not sync'ed can be edited (still a drawback of one way sync)
+* Header will indicate the log status and error (if there is any)
+
+### Week view / Day view
+
+By pressing little "calendar" at the bottom, you can change view's from day to a whole week view. 
+
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_4.png)
 
 ## FAQ
 
