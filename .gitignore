@@ -53,3 +53,4 @@ first.properties
 app/src/main/resources/version.properties
 app/error.log
 database/error.log
+deploy.properties

@@ -11,11 +11,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
+import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
@@ -26,7 +29,11 @@ import lt.markmerkk.utils.LastUpdateController;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.VersionController;
+import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
+import lt.markmerkk.utils.tracker.SimpleTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -34,6 +41,8 @@ import lt.markmerkk.utils.hourglass.KeepAliveController;
  */
 public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener,
     VersionController.UpgradeListener {
+  public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
+
   @Inject BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject SyncController syncController;
@@ -44,7 +53,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
   @FXML Button buttonRefresh;
-  @FXML Button buttonViewToggle;
+  @FXML ToggleButton buttonViewToggle;
   @FXML Button buttonToday;
   @FXML Button buttonAbout;
 
@@ -53,18 +62,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    buttonRefresh.setTooltip(new Tooltip("Status" +
-        "\n\nTime since last update. Current sum of today's work log." +
-        "\n\nPress to activate/cancel synchronization with remote."));
-    buttonRefresh.setOnMouseClicked(outputClickListener);
-    buttonViewToggle.setTooltip(new Tooltip("Toggle display view" +
-        "\n\nToggles the display view."));
+    buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_status")));
+    buttonViewToggle.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_toggle_view")));
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
-    buttonToday.setTooltip(new Tooltip("Total" +
-        "\n\nTotal work duration."));
-    buttonAbout.setTooltip(new Tooltip("About" +
-        "\n\nAbout the app." +
-        "\nCheck for automatic updates!"));
+    buttonToday.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_total")));
+    buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
     storage.register(loggerListener);
@@ -86,15 +88,33 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
 
   //region Events
 
-  /**
-   * Called when {@link SyncEventBus} calls {@link StartLogSyncEvent}
-   * @param event
-   */
   @Subscribe
   public void onEvent(StartLogSyncEvent event) {
-    if (syncController.isLoading())
-      return;
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SYNC_MAIN
+    );
     syncController.sync();
+  }
+
+  @Subscribe
+  public void onEvent(StartAllSyncEvent event) {
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SYNC_MAIN
+    );
+    syncController.sync();
+  }
+
+  //endregion
+
+  //region Keyboard input
+
+  /**
+   * A button event when user clicks on refresh
+   */
+  public void onClickRefresh() {
+    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
   }
 
   //endregion
@@ -105,14 +125,22 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    * Convenience method to update current status
    */
   void updateStatus() {
-    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput()));
-    buttonToday.setText(String.format("Total: %s", total));
-    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
+    //buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
+    buttonToday.setText(String.format("%s", total));
+    //buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
+    buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
 
   //endregion
 
   //region Listeners
+
+//  EventHandler<MouseEvent> outputProgressClickListener = new EventHandler<MouseEvent>() {
+//    @Override
+//    public void handle(MouseEvent event) {
+//      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+//    }
+//  };
 
   @Override
   public void onProgressChange(double progressChange) {
@@ -124,10 +152,10 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
     if (updateSummary != null && updateSummary.highestVersion > Main.VERSION_CODE) {
-      buttonAbout.setText("!");
+      //buttonAbout.setText("!"); // todo : fix this in time, when update is more stable
       return;
     }
-    buttonAbout.setText("?");
+    //buttonAbout.setText("?");
   }
 
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
@@ -149,12 +177,12 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     }
   };
 
-  EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
-    @Override
-    public void handle(MouseEvent event) {
-      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
-    }
-  };
+//  EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
+//    @Override
+//    public void handle(MouseEvent event) {
+//      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+//    }
+//  };
 
   EventHandler<MouseEvent> aboutClickListener = new EventHandler<MouseEvent>() {
     @Override

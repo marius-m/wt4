@@ -1,0 +1,5 @@
+.button {
+  -fx-background-image: url("refresh_3.png");
+  -fx-background-repeat: no-repeat;
+  -fx-background-position:center;
+}

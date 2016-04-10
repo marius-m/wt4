@@ -11,74 +11,70 @@ The project is still in development, but main features are already done.
 * Issue search (caches open issues from remote)
 * Automatic app updates
 * Day/week overview
+* Archived for all major platforms
 
 ## Download
 
 All downloads are in public folder. 
 
-* MacOSX: https://www.dropbox.com/sh/y1ilqiz15b437bs/AAB2U0fLaQaQTpiqkpjdxFyDa?dl=0
-* Windows: https://www.dropbox.com/sh/vweuktq3qcx9e02/AACTx0kr8pOQ-c5wSrrG0nela?dl=0
+* MacOSX: [https://www.dropbox.com/sh/y1ilqiz15b437bs/AAB2U0fLaQaQTpiqkpjdxFyDa?dl=0](https://www.dropbox.com/sh/y1ilqiz15b437bs/AAB2U0fLaQaQTpiqkpjdxFyDa?dl=0)
+* Windows: [https://www.dropbox.com/sh/vweuktq3qcx9e02/AACTx0kr8pOQ-c5wSrrG0nela?dl=0](https://www.dropbox.com/sh/vweuktq3qcx9e02/AACTx0kr8pOQ-c5wSrrG0nela?dl=0)
+* Linux (Ubuntu): [https://www.dropbox.com/sh/zojzamei7e1mk8x/AAATAxAskFyXJKfQH0MglkoJa?dl=0](https://www.dropbox.com/sh/zojzamei7e1mk8x/AAATAxAskFyXJKfQH0MglkoJa?dl=0)
 
 App automatically updates whenever there is a new version. 
 
 ## Issues
 
-All issues/requests can be logged to:
+Track issues / feature requests [here](https://bitbucket.org/mmerkevicius/wt4/issues?status=new&status=open)
 
-* https://bitbucket.org/mmerkevicius/wt4/issues?status=new&status=open
+## Behind the project (Attributions)
 
-## Behing the project
-
-This app serves me as a sandbox for trying out various java/javafx stuff. As a side effect app was born that is being used for easier time tracking. So feel free copying / contributing / using code for your own pleasure. 
+This app serves me as a sandbox for trying out various java stuff that I find interesting. As a side effect app was born that is being used for easier time tracking. So feel free copying / contributing / using code for your own pleasure. 
 
 Tricks that were being tackled in this project: 
 
-* JavaFX
-* Java8
-* RXJava
-* Afterburner - a must have for JavaFX
-* Dagger2 - (didnt survive much, as afterburner killed it)
-* A bit of Guava - such an essential library, so little time to learn. 
-* Gradle scripting - connects app bunding using https://bitbucket.org/shemnon/javafx-gradle and my own scripting for exporting project with auto update.
-* UpdateFX - Automatic updates for the app. (https://github.com/vinumeris/updatefx)
-* JFXTras - cool 'Agenda' view (http://jfxtras.org/)
+* [JavaFX](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm)
+* [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
+* [Google material design](https://design.google.com/icons/) - Icons for easier use and clear purpose! [LICENSE: CC-BY](https://creativecommons.org/licenses/by/4.0/)
+* [RXJava](https://github.com/ReactiveX/RxJava) (Very cool programming [paradigm](http://reactivex.io/)) - [LICENSE: Apache 2.0](https://github.com/ReactiveX/RxJava/blob/1.x/LICENSE)
+* [Afterburner](https://github.com/AdamBien/afterburner.fx) - MVP pattern for javafx and small DI framework. - [LICENSE: Apache 2.0](http://afterburner.adam-bien.com/)
+* [UpdateFX](https://github.com/vinumeris/updatefx) - Automatic updates for the app. - [LICENSE: Apache 2.0](https://github.com/vinumeris/updatefx/blob/master/LICENSE)
+* [JFXTras](https://github.com/JFXtras/jfxtras) - cool 'Agenda' view - [LICENSE: new BSD](https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29)
+* [Guava](https://github.com/google/guava) - such an essential library, so little time to learn. - [LICENSE: Apache 2.0](https://github.com/google/guava/blob/master/COPYING)
+* [Dagger2](https://github.com/google/dagger) - (didnt survive much, as afterburner killed it) - [LICENSE: Apache 2.0](https://github.com/google/dagger/blob/master/LICENSE.txt)
+* Gradle scripting - app [bunding](https://bitbucket.org/shemnon/javafx-gradle) and my own scripting for project export and update
 
 ## How to use it
 
 In theory app should be self explanatory, in practice this is not always the case. Below you can find a simple overview for the features.
 
-### Basic use
+### Basic
 
-* To start/stop timer press "Play"
-* Edit time/date whenever clock is running
-* Issue field works as a search (If no issues are found, try refreshing!)
-* Logs can update automatically or by manual trigger by pressing 'Update' button.
-* Logged work is shown in the table below.
-	* Right click lets you update/delete/clone a log
-	* Bubbles indicate the state log is in
-		* Yellow - locally stored log
-		* Green - synced with remote
-		* Red - error syncing with remote
+* Press "clock" icon to start the timer
+* Press "enter" to log work 
+* Edit changes by pressing right mouse button for the entered log
+* Synchronize changes on the remote JIRA server by pressing "cloud" button at the bottom
+* Toggle your "view" with the button at the bottom
+* Search for issues at the "search" bar at the top ([need sync first!](#.settings))
+* Bubbles will indicate the sync state
+	* Yellow - ready for sync
+	* Green - sync success
+	* Red - sync fail
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-09_16.24.29.png)
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2016-04-09 04.05.10.png)
 
-### Setting up remote
+### Settings
 
-Before you can synchronize with remote, first you have to set up your JIRA account credentials. 
+For the app to work correctly, set up your credentials and personal preferences how it should work.
 
-* Input host/username/password for successful remote access
+* Input host/username/password for remote access
 	* Hostname ex.: https://jira.ito.lt
 	* Username ex.: marius.m@ito.lt
 	* Password ex.: (if you can't figure this one out, you should not be using this anyway)
-* To test remote access, press refresh
-* Console ouput will display all the sync process info (and errors)
+* Press "cloud" to sync
+* Enter custom "JQL" for the issue search or use the default suggested one (can be reset with the "restore" button)
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot_2016-01-09_16.25.23.png)
-
-## Shortcomings
-
-* Bundling without JRE
-* Database migrations
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/Screenshot 2016-04-09 04.05.16.png)
 
 ## FAQ
 

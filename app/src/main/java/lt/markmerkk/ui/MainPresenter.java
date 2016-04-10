@@ -1,6 +1,7 @@
 package lt.markmerkk.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.brsanthu.googleanalytics.PageViewHit;
 import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,12 +36,17 @@ import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
 import lt.markmerkk.utils.VersionController;
+import lt.markmerkk.utils.tracker.SimpleTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the main presenter of the app
  */
 public class MainPresenter implements Initializable {
+  public static final Logger logger = LoggerFactory.getLogger(MainPresenter.class);
+
   @Inject BasicLogStorage storage;
 
   @FXML TabPane tabPane;
@@ -141,7 +147,7 @@ public class MainPresenter implements Initializable {
   UpdateListener updateListener = new UpdateListener() {
     @Override public void onUpdate(SimpleLog object) {
       UpdateLogView updateLogView = new UpdateLogView(updateWindowDialogListener, object);
-      openDialog(updateLogView);
+      openDialog(updateLogView, 450, 300); //fixme hardcoded size
     }
 
     @Override
@@ -170,7 +176,7 @@ public class MainPresenter implements Initializable {
     @Override
     public void onAbout() {
       VersionView versionView = new VersionView(versionWindowDialogListener);
-      openDialog(versionView);
+      openDialog(versionView, 450, 400); //fixme hardcoded size
     }
   });
 
@@ -181,14 +187,14 @@ public class MainPresenter implements Initializable {
   /**
    * Opens dialog view
    */
-  private void openDialog(FXMLView view) {
+  private void openDialog(FXMLView view, int width, int height) {
     if (view == null) return;
     dialog = new Stage(StageStyle.TRANSPARENT);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initOwner(stage);
     // Need to adjust position
     // Need buttons to disable views
-    Scene updateScene = new Scene(view.getView(), 450, 300);
+    Scene updateScene = new Scene(view.getView(), width, height);
     dialog.setScene(updateScene);
     dialog.setX(stage.getX() + stage.getWidth() / 2 - updateScene.getWidth() / 2);
     dialog.setY(stage.getY() + stage.getHeight() / 2 - updateScene.getHeight() / 2);

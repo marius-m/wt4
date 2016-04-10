@@ -10,37 +10,36 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
-import net.rcarz.jiraclient.Issue;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +82,8 @@ public class ClockPresenter implements Initializable {
   Button buttonRefresh;
   @FXML
   Button buttonSettings;
+  @FXML
+  Text outputJQL;
 
   @FXML ProgressIndicator taskLoadIndicator;
   @FXML ComboBox<LocalIssue> inputTaskCombo;
@@ -92,7 +93,8 @@ public class ClockPresenter implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    issueSearchAdapter = new IssueSearchAdapter(syncController, inputTaskCombo, taskLoadIndicator, dbProdExecutor);
+    issueSearchAdapter = new IssueSearchAdapter(settings, syncController, inputTaskCombo,
+        taskLoadIndicator, dbProdExecutor, outputJQL);
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)
@@ -104,34 +106,22 @@ public class ClockPresenter implements Initializable {
           buttonOpen.setManaged(visible);
         });
 
-    inputFrom.setTooltip(new Tooltip("Worklog start" +
-        "\n\nStart time for the current log. " +
-        "It can be edited whenever timer is running. " +
-        "\nThis timer acts as today's date, " +
-        "changing this will change display for the whole work log."));
-    inputTo.setTooltip(new Tooltip("Worklog end" +
-        "\n\nEnd time for the current log." +
-        "It can be edited whenever timer is running. "));
-    inputTaskCombo.setTooltip(new Tooltip("Issue search bar " +
-        "\n\nType in issue number, title to begin searching."));
-    buttonClock.setTooltip(new Tooltip("Start/Stop " +
-        "\n\nEnable/disable work timer."));
-    buttonEnter.setTooltip(new Tooltip("Enter " +
-        "\n\nEnters currently running work."));
-    buttonRefresh.setTooltip(new Tooltip("Refresh search cache " +
-        "\n\nRefresh issue search cache."));
-    buttonOpen.setTooltip(new Tooltip("Forward " +
-        "\n\nOpen selected issue details for more details."));
-    buttonSettings.setTooltip(new Tooltip("Settings. " +
-        "\n\nSetting up remote host, user credentials."));
-    inputComment.setTooltip(new Tooltip("Comment" +
-        "\n\nEnter comment here for the work log."));
+    inputFrom.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_from")));
+    inputTo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_to")));
+    inputTaskCombo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_search_combo")));
+    buttonClock.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_startstop")));
+    buttonEnter.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_enter")));
+    buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_refresh")));
+    buttonOpen.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_open")));
+    buttonSettings.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_settings")));
+    inputComment.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_comment")));
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
     inputFrom.getEditor().textProperty().addListener(timeChangeListener);
     inputTo.getEditor().textProperty().addListener(timeChangeListener);
     inputFrom.setConverter(startDateConverter);
     inputTo.setConverter(endDateConverter);
+    taskLoadIndicator.setOnMousePressed(refreshProgressClickListener);
 
     Platform.runLater(() -> {
       taskLoadIndicator.setManaged(false);
@@ -189,7 +179,9 @@ public class ClockPresenter implements Initializable {
     inputTo.setEditable(!disableElement);
     inputTo.setDisable(disableElement);
     inputComment.setEditable(!disableElement);
-    inputComment.setPromptText((disableElement) ? "Start timer to log work!" : "Go go go!");
+    inputComment.setPromptText((disableElement)
+        ? Translation.getInstance().getString("clock_prompt_comment_idle")
+        : Translation.getInstance().getString("clock_prompt_comment_running"));
     buttonEnter.setDisable(disableElement);
   }
 
@@ -199,9 +191,9 @@ public class ClockPresenter implements Initializable {
   private void logWork() {
     try {
       if (hourGlass.getState() == HourGlass.State.STOPPED)
-        throw new IllegalArgumentException("Please run timer first!");
+        throw new IllegalArgumentException(Translation.getInstance().getString("clock_error_timer_not_running"));
       if (!hourGlass.isValid())
-        throw new IllegalArgumentException("Error calculating time!");
+        throw new IllegalArgumentException(Translation.getInstance().getString("clock_error_timer_calculation"));
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
           .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
@@ -215,6 +207,10 @@ public class ClockPresenter implements Initializable {
       inputTo.requestFocus();
       inputFrom.requestFocus();
       inputComment.requestFocus();
+      SimpleTracker.getInstance().getTracker().sendEvent(
+          SimpleTracker.CATEGORY_BUTTON,
+          (logStorage.getDisplayType() == DisplayType.DAY) ? SimpleTracker.ACTION_ENTER_FROM_DAY : SimpleTracker.ACTION_ENTER_FROM_WEEK
+      );
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
@@ -223,6 +219,13 @@ public class ClockPresenter implements Initializable {
   //endregion
 
   //region Listeners
+
+  EventHandler<MouseEvent> refreshProgressClickListener = new EventHandler<MouseEvent>() {
+    @Override
+    public void handle(MouseEvent event) {
+      buttonRefresh.fire();
+    }
+  };
 
   StringConverter startDateConverter = new StringConverter<LocalDate>() {
     @Override

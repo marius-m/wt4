@@ -1,7 +1,7 @@
 .toggle-button {
-  -fx-graphic: url('play.png');
+  -fx-graphic: url('play_2.png');
 }
 
 .toggle-button:selected {
-  -fx-graphic: url('pause.png');
+  -fx-graphic: url('pause_2.png');
 }

@@ -6,16 +6,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import lt.markmerkk.JiraObservables;
-import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.Translation;
+import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
-import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.storage2.IssueSplit;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.RemoteEntity;
@@ -23,7 +25,9 @@ import lt.markmerkk.storage2.RemoteFetchIssue;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
+import lt.markmerkk.storage2.jobs.RowCountJob;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import net.rcarz.jiraclient.Issue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,26 +41,36 @@ import rx.schedulers.Schedulers;
 /**
  * Created by mariusmerkevicius on 2/3/16.
  * {@link Issue} searchable combo box.
+ *
+ * @deprecated - this class should be refactored as soon as possible for its overwhelming functionality.
  */
+@Deprecated
 public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
+  UserSettings settings;
   SyncController syncController;
   IExecutor dbExecutor;
   IssueSplit issueSplit = new IssueSplit();
 
+  Text viewInfo; // Will hold some minor info below the search adapter
+
   Subscription refreshSubscription;
 
-  ObservableList<LocalIssue> issues;
+  long totalIssues;
 
-  public IssueSearchAdapter(SyncController controller,
+  public IssueSearchAdapter(UserSettings settings, SyncController controller,
                             ComboBox<LocalIssue> comboBox,
                             ProgressIndicator progressIndicator,
-                            IExecutor executor) {
+                            IExecutor executor, Text viewInfo) {
     super(comboBox, progressIndicator);
+    this.settings = settings;
     this.syncController = controller;
     this.dbExecutor = executor;
+    this.viewInfo = viewInfo;
     registerSearchObservable(comboBox);
+
+    setTotalIssues(refreshTotalCount());
 
     SyncEventBus.getInstance().getEventBus().register(this);
   }
@@ -65,15 +79,30 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * Does a search with {@link ComboBox} input text
    */
   public void doRefresh() {
-//    if (syncController.isLoading())
-//      return;
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_BUTTON,
+        SimpleTracker.ACTION_SEARCH_REFRESH
+    );
     refreshCache();
   }
 
   //region Events
 
   @Subscribe
-  public void onEvent(StartLogSyncEvent startLogSyncEvent) {
+  public void onEvent(StartIssueSyncEvent event) {
+    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+      refreshSubscription.unsubscribe();
+      return;
+    }
+    doRefresh();
+  }
+
+  @Subscribe
+  public void onEvent(StartAllSyncEvent event) {
+    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+      refreshSubscription.unsubscribe();
+      return;
+    }
     doRefresh();
   }
 
@@ -114,41 +143,28 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   //endregion
 
+  //region Getters / Setters
+
+  public void setTotalIssues(long totalIssues) {
+    this.totalIssues = totalIssues;
+    Platform.runLater(() -> {
+      viewInfo.setText(String.format(Translation.getInstance().getString("clock_jql_info"), totalIssues));
+    });
+  }
+
+
+  //endregion
+
   //region Convenience
 
   /**
-   * Clears out old database cache
+   * Returns total count of the issues in the database
+   * @return
    */
-  void clearOldCache(long downloadMillis) {
-    Observable.just(downloadMillis)
-        .subscribeOn(Schedulers.computation())
-        .flatMap(download -> {
-          return Observable.create(new Observable.OnSubscribe<LocalIssue>() {
-            @Override
-            public void call(Subscriber<? super LocalIssue> subscriber) {
-              try {
-                QueryListJob<LocalIssue> issueQueryListJob =
-                    new QueryListJob<LocalIssue>(LocalIssue.class, () -> {
-                      return String.format("%s < %d", RemoteEntity.KEY_DOWNLOAD_MILLIS, download);
-                    });
-                dbExecutor.executeOrThrow(issueQueryListJob);
-                for (LocalIssue localIssue : issueQueryListJob.result())
-                  subscriber.onNext(localIssue);
-                subscriber.onCompleted();
-              } catch (ClassNotFoundException e) {
-                subscriber.onError(e);
-              } catch (SQLException e) {
-                 subscriber.onError(e);
-              }
-            }
-          });
-        })
-        .flatMap(oldIssue -> {
-          logger.debug("Deleting old issue: "+oldIssue);
-          DeleteJob deleteJob = new DeleteJob(LocalIssue.class, oldIssue);
-          dbExecutor.execute(deleteJob);
-          return Observable.just(oldIssue);
-        }).subscribe();
+  int refreshTotalCount() {
+    RowCountJob<LocalIssue> issueCount = new RowCountJob<>(LocalIssue.class);
+    dbExecutor.execute(issueCount);
+    return issueCount.result();
   }
 
   /**
@@ -190,16 +206,11 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
       return;
     }
     changeLoadState(true);
-    RemoteFetchIssue fetchIssue = new RemoteFetchIssue(dbExecutor, System.currentTimeMillis());
+    long downloadMillis = System.currentTimeMillis();
     refreshSubscription =
-        syncController.clientObservable()
+        Observable.merge(searchIssues(settings.getIssueJql(), downloadMillis), clearOldCacheObservable(downloadMillis))
             .observeOn(Schedulers.computation())
             .subscribeOn(Schedulers.computation())
-            .flatMap(jiraClient -> JiraObservables.userIssues(jiraClient, JiraSearchJQL.DEFAULT_JQL_USER_ISSUES))
-            .flatMap(issue -> {
-              fetchIssue.merge(issue);
-              return Observable.empty();
-            })
             .subscribe(noResult -> {
               // Need cleanup of old issues
             }, error -> {
@@ -207,7 +218,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
               changeLoadState(false);
             }, () -> {
               logger.debug("Complete!");
-              clearOldCache(fetchIssue.getDownloadMillis());
+              setTotalIssues(refreshTotalCount());
               changeLoadState(false);
             });
   }
@@ -257,5 +268,58 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   }
 
   //endregion
+
+  //region Observables
+
+  /**
+   * Searches for issues from the remote
+   * @return
+   */
+  Observable searchIssues(String issueJql, long downloadMillis) {
+    RemoteFetchIssue fetchIssue = new RemoteFetchIssue(dbExecutor, downloadMillis);
+    return syncController.clientObservable()
+        .flatMap(jiraClient -> JiraObservables.userIssues(jiraClient, issueJql))
+        .flatMap(issue -> {
+          fetchIssue.merge(issue);
+          return Observable.empty();
+        });
+  }
+
+  /**
+   * Clears out issues that have older download date
+   * @param downloadMillis
+   * @return
+   */
+  Observable clearOldCacheObservable(long downloadMillis) {
+    return Observable.just(downloadMillis)
+        .subscribeOn(Schedulers.computation())
+        .flatMap(download -> {
+          return Observable.create(new Observable.OnSubscribe<LocalIssue>() {
+            @Override
+            public void call(Subscriber<? super LocalIssue> subscriber) {
+              try {
+                QueryListJob<LocalIssue> issueQueryListJob =
+                    new QueryListJob<LocalIssue>(LocalIssue.class, () -> {
+                      return String.format("%s < %d", RemoteEntity.KEY_DOWNLOAD_MILLIS, download);
+                    });
+                dbExecutor.executeOrThrow(issueQueryListJob);
+                for (LocalIssue localIssue : issueQueryListJob.result())
+                  subscriber.onNext(localIssue);
+                subscriber.onCompleted();
+              } catch (ClassNotFoundException e) {
+                subscriber.onError(e);
+              } catch (SQLException e) {
+                subscriber.onError(e);
+              }
+            }
+          });
+        })
+        .flatMap(oldIssue -> {
+          logger.debug("Deleting old issue: " + oldIssue);
+          DeleteJob deleteJob = new DeleteJob(LocalIssue.class, oldIssue);
+          dbExecutor.execute(deleteJob);
+          return Observable.just(oldIssue);
+        });
+  }
 
 }

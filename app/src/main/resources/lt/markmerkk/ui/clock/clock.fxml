@@ -11,7 +11,7 @@
    <children>
       <HBox>
          <children>
-            <Button fx:id="buttonRefresh" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#onClickSearch" stylesheets="@../../../../forward.css">
+            <Button fx:id="buttonRefresh" minHeight="38.0" minWidth="38.0" mnemonicParsing="false" onAction="#onClickSearch" stylesheets="@../../../../refresh.css">
                <HBox.margin>
                   <Insets left="5.0" top="5.0" />
                </HBox.margin>
@@ -19,17 +19,25 @@
                   <ProgressIndicator fx:id="taskLoadIndicator" minHeight="20.0" minWidth="20.0" onMouseClicked="#onClickSearch" prefHeight="20.0" prefWidth="20.0" visible="false" />
                </graphic>
             </Button>
-            <ComboBox fx:id="inputTaskCombo" editable="true" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="30.0" promptText="Live search. Enter issue and press ENTER" stylesheets="@../../../../live_search.css" HBox.hgrow="ALWAYS">
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <ComboBox fx:id="inputTaskCombo" editable="true" maxWidth="1.7976931348623157E308" minHeight="30.0" promptText="Issue search." stylesheets="@../../../../live_search.css" />
+                  <Text fx:id="outputJQL" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="JQL: ">
+                     <font>
+                        <Font size="9.0" />
+                     </font>
+                  </Text>
+               </children>
                <HBox.margin>
                   <Insets left="5.0" top="5.0" />
                </HBox.margin>
-            </ComboBox>
-            <Button fx:id="buttonOpen" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#onClickOpen" stylesheets="@../../../../forward.css">
+            </VBox>
+            <Button fx:id="buttonOpen" minHeight="38.0" minWidth="38.0" mnemonicParsing="false" onAction="#onClickOpen" stylesheets="@../../../../open.css">
                <HBox.margin>
                   <Insets left="5.0" top="5.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="buttonSettings" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#onClickSettings" stylesheets="@../../../../settings.css">
+            <Button fx:id="buttonSettings" minHeight="38.0" minWidth="38.0" mnemonicParsing="false" onAction="#onClickSettings" stylesheets="@../../../../settings.css">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
@@ -54,7 +62,7 @@
             </DatePicker>
          </children>
          <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            <Insets bottom="5.0" left="5.0" right="5.0" />
          </VBox.margin>
       </HBox>
       <TextArea fx:id="inputComment" prefHeight="300.0" prefWidth="200.0" promptText="Comment" wrapText="true" VBox.vgrow="ALWAYS">
@@ -64,7 +72,7 @@
       </TextArea>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Button fx:id="buttonEnter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickEnter" text="Enter" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonEnter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickEnter" stylesheets="@../../../../enter.css" text="Enter" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </HBox.margin>

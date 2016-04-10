@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
@@ -31,8 +32,12 @@ public class Main extends Application {
   public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
+
   public static int VERSION_CODE = 1; // Will be updated on init
   public static String VERSION_NAME = "Unknown";  // Will be updated on init
+  public static String GA_KEY = null;
+  public static final String APP_NAME = "WT4";
+
   public static int SCENE_WIDTH = 600;
   public static int SCENE_HEIGHT = 500;
 
@@ -56,6 +61,8 @@ public class Main extends Application {
     initStaticPaths();
     initLoggerSettings();
 
+    Translation.getInstance(); // Initializing translations on first launch
+
     hostServices = HostServicesFactory.getInstance(this);
 
     MainView mainView = new MainView(stage);
@@ -69,10 +76,16 @@ public class Main extends Application {
     stage.setMinHeight(SCENE_HEIGHT);
     stage.setScene(scene);
     stage.show();
+    stage.setTitle("WT4");
+    SimpleTracker.getInstance().getTracker().sendEvent(
+        SimpleTracker.CATEGORY_GENERIC,
+        SimpleTracker.ACTION_START
+    );
   }
 
   @Override
   public void stop() throws Exception {
+    SimpleTracker.getInstance().getTracker().stop();
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
     org.apache.log4j.Logger.getRootLogger().removeAppender(errorAppender);
     super.stop();
@@ -140,6 +153,7 @@ public class Main extends Application {
     versionProperties.load(resourceAsStream);
     VERSION_CODE = Integer.parseInt(versionProperties.getProperty("version_code"));
     VERSION_NAME = versionProperties.getProperty("version_name");
+    GA_KEY = versionProperties.getProperty("ga");
     logger.info("Running version %s with version code %d", VERSION_NAME, VERSION_CODE);
   }
 

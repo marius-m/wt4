@@ -19,7 +19,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
+import lt.markmerkk.JiraSearchJQL;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
+import lt.markmerkk.events.StartAllSyncEvent;
+import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
@@ -27,6 +31,7 @@ import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
@@ -44,11 +49,11 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   @Inject SyncController syncController;
   @Inject AutoSync2 autoSync;
 
-  @FXML TextField inputHost, inputUsername;
+  @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
   @FXML TextArea outputLogger;
   @FXML ProgressIndicator outputProgress;
-  @FXML Button buttonRefresh;
+  @FXML Button buttonRefresh, buttonResetJQL;
   @FXML ComboBox<String> refreshCombo;
 
   Appender guiAppender;
@@ -56,28 +61,23 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   public SettingsPresenter() { }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_SETTINGS);
     refreshCombo.setItems(autoSync.getSelectionKeys());
     refreshCombo.getSelectionModel().select(autoSync.currentSelection());
     refreshCombo.valueProperty().addListener(refreshChangeListener);
-    refreshCombo.setTooltip(new Tooltip("Auto refresh timer " +
-        "\n\nChanging this will automatically sync with remote after time interval. "));
-    inputHost.setTooltip(new Tooltip("JIRA hostname " +
-        "\n\nEnter your hostname for the jira. For ex.: https://jira.ito.lt"));
-    inputUsername.setTooltip(new Tooltip("JIRA user username " +
-        "\n\nEnter username for the user you will be using."));
-    inputPassword.setTooltip(new Tooltip("JIRA user password " +
-        "\n\nEnter password for the user you will be using."));
-    buttonRefresh.setTooltip(new Tooltip("JIRA sync start/cancel" +
-        "\n\nTest remote connection by synchronizing with the remote. " +
-        "\nWorks the same way as the button in status bar."));
-    outputLogger.setTooltip(new Tooltip("JIRA Connection output" +
-        "\n\nLog for the remote connection and sync status. " +
-        "\nCan be used for testing/checking remote connection problems."));
+    refreshCombo.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_autorefresh")));
+    inputHost.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_hostname")));
+    inputUsername.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_username")));
+    inputPassword.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_password")));
+    buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_refresh")));
+    outputLogger.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_output_console")));
+    inputJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_jql")));
+    buttonResetJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_reset_jql")));
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getUsername());
     inputPassword.setText(settings.getPassword());
-    buttonRefresh.setOnMouseClicked(refreshClickListener);
+    inputJQL.setText(settings.getIssueJql());
 
     guiAppender = new SimpleAppender();
     guiAppender.setLayout(new PatternLayout(Main.LOG_LAYOUT));
@@ -97,20 +97,30 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
+    settings.setIssueJql(inputJQL.getText());
     guiAppender.close();
   }
 
-  //region Events
+  //region Keyboard input
 
   /**
-   * Called when {@link SyncEventBus} calls {@link StartLogSyncEvent}
-   * @param event
+   * A button event when user clicks on refresh
    */
-  @Subscribe
-  public void onEvent(StartLogSyncEvent event) {
-    if (syncController.isLoading())
-      return;
-    syncController.sync();
+  public void onClickRefresh() {
+    settings.setHost(inputHost.getText());
+    settings.setUsername(inputUsername.getText());
+    settings.setPassword(inputPassword.getText());
+    settings.setIssueJql(inputJQL.getText());
+    SyncEventBus.getInstance().getEventBus().post(new StartAllSyncEvent());
+  }
+
+  /**
+   * A button event when user clicks on reset JQL
+   */
+  public void onClickResetJQL() {
+    inputJQL.setText(JiraSearchJQL.DEFAULT_JQL_USER_ISSUES);
+    settings.setIssueJql(inputJQL.getText());
+    SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }
 
   //endregion
@@ -122,16 +132,6 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     public void changed(ObservableValue ov, String t, String t1) {
       String selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
       autoSync.setCurrentSelection(selectedItem);
-    }
-  };
-
-  EventHandler<MouseEvent> refreshClickListener = new EventHandler<MouseEvent>() {
-    @Override
-    public void handle(MouseEvent event) {
-      settings.setHost(inputHost.getText());
-      settings.setUsername(inputUsername.getText());
-      settings.setPassword(inputPassword.getText());
-      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
     }
   };
 

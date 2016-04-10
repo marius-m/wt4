@@ -1,0 +1,9 @@
+#unsync {
+  -fx-background-color: yellow;
+}
+#insync {
+  -fx-background-color: green;
+}
+#error {
+  -fx-background-color: red;
+}

@@ -34,8 +34,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.2'
-def versionCode = '4'
+version = '0.9.9.3'
+def versionCode = '6'
 
 sourceSets {
     main {
@@ -69,7 +69,7 @@ javafx {
     // deploy/info attributes
     category = 'Productivity'
     copyright = 'Copyright (c) 2016 Marius Merkevicius'
-    description = 'Time tracking with WT4'
+    description = 'WT4 Work Tracker for JIRA'
     licenseType = 'Apache 2.0'
     vendor = 'Marius Merkevicius'
     installSystemWide = true
@@ -97,6 +97,14 @@ javafx {
             ]
         }
 
+//        linux {
+//            category = 'Accessories'
+//
+//            bundleArguments = [
+//                    // for DEB bundles
+//                    'email' : 'merkevicius.marius@gmail.com', // This is the email used for the deb maintainer field.
+//            ]
+//        }
     }
 }
 
@@ -106,6 +114,8 @@ dependencies {
     compile project(':database')
     compile project(':remote')
 
+    // Google analytics
+    compile 'com.brsanthu:google-analytics-java:1.1.2'
 
     compile 'io.reactivex:rxjavafx:0.0.2'
     compile 'io.reactivex:rxjava:1.1.0'
@@ -260,16 +270,22 @@ task updateRemote() {
 }
 
 task versionOutput() {
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+
     def versionFile = new File("${projectDir}/src/main/resources","version.properties")
     doLast {
         versionFile.write"version_code=${versionCode}\n"
-        versionFile << "version_name=${version}"
+        versionFile << "version_name=${version}\n"
+        versionFile << "ga="+deployProps.getProperty("ga")
     }
 }
 
-task makeJar(dependsOn:[processJar]) { }
-//task makeJar(dependsOn:[processJarForWin]) { }
-//compileJava.dependsOn versionOutput
+//task makeJar(dependsOn:[processJar]) { }
+task makeJar(dependsOn:[processJarForWin]) { }
+compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
 

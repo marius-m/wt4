@@ -135,7 +135,6 @@ public class SyncController {
               logger.info("Sync complete! ");
               remoteLoadListener.onLoadChange(false);
               storage.notifyDataChange();
-              SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
             });
   }
 

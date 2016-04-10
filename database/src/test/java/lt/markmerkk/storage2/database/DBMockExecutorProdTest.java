@@ -12,6 +12,7 @@ import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryDistinctListJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
+import lt.markmerkk.storage2.jobs.RowCountJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
 import org.junit.Test;
 
@@ -424,6 +425,85 @@ public class DBMockExecutorProdTest {
     // Assert
     assertThat(result).isNotNull();
     assertThat(result.size()).isEqualTo(2);
+  }
+
+  @Test public void shouldQueryRowCountMock4() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock4 mock1 = new Mock4(
+        20L,
+        30L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock2 = new Mock4(
+        21L,
+        31L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock3 = new Mock4(
+        22L,
+        32L,
+        "some_parent_param",
+        "different_title",
+        "some_name"
+    );
+    executor.execute(new CreateJobIfNeeded<>(Mock4.class));
+    executor.execute(new InsertJob(Mock4.class, mock1));
+    executor.execute(new InsertJob(Mock4.class, mock2));
+    executor.execute(new InsertJob(Mock4.class, mock3));
+    RowCountJob<Mock4> rowCountJob = new RowCountJob<Mock4>(Mock4.class);
+    executor.executeOrThrow(rowCountJob);
+    Integer result = rowCountJob.result();
+
+    // Assert
+    assertThat(result).isNotNull();
+    assertThat(result).isEqualTo(3);
+  }
+
+  @Test public void shouldQueryRowCountMock4_wrongTable() throws Exception {
+    // Arrange
+    DBMockExecutor executor = new DBMockExecutor();
+
+    // Act
+    Mock4 mock1 = new Mock4(
+        20L,
+        30L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock2 = new Mock4(
+        21L,
+        31L,
+        "some_parent_param",
+        "some_title",
+        "some_name"
+    );
+    Mock4 mock3 = new Mock4(
+        22L,
+        32L,
+        "some_parent_param",
+        "different_title",
+        "some_name"
+    );
+    executor.execute(new CreateJobIfNeeded<>(Mock3.class));
+    executor.execute(new CreateJobIfNeeded<>(Mock4.class));
+    executor.execute(new InsertJob(Mock4.class, mock1));
+    executor.execute(new InsertJob(Mock4.class, mock2));
+    executor.execute(new InsertJob(Mock4.class, mock3));
+    RowCountJob<Mock3> rowCountJob = new RowCountJob<Mock3>(Mock3.class); // Querying the wrong table
+    executor.executeOrThrow(rowCountJob);
+    Integer result = rowCountJob.result();
+
+    // Assert
+    assertThat(result).isNotNull();
+    assertThat(result).isEqualTo(0);
   }
 
 

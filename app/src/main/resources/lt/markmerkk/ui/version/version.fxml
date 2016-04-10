@@ -9,11 +9,11 @@
 
 <StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.version.VersionPresenter">
    <children>
-      <VBox alignment="TOP_RIGHT" maxHeight="300.0" maxWidth="450.0" minHeight="300.0" minWidth="450.0" style="-fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10 0 0 0; -fx-background-radius: 10 0 0 0;">
+      <VBox alignment="TOP_RIGHT" maxHeight="400.0" maxWidth="450.0" minHeight="400.0" minWidth="450.0" style="-fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10 0 0 0; -fx-background-radius: 10 0 0 0;">
          <children>
             <HBox alignment="TOP_RIGHT">
                <children>
-                  <Button fx:id="buttonClose" mnemonicParsing="false" onAction="#onClickClose" text="x">
+                  <Button fx:id="buttonClose" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onClickClose" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../close.css">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
@@ -111,17 +111,94 @@
                         </Text>
                      </children>
                   </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Hyperlink fx:id="buttonUpdate" onAction="#onClickUpdate" text="No new updates.">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Thank you!">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Google for its">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Text>
+                        <Hyperlink onAction="#onHyperlinkGoogle1" text="material design icons">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="!">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Text>
+                        <Hyperlink onAction="#onHyperlinkGoogle2" text="(LICENSE)">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Hyperlink onAction="#onHyperlinkJFX1" text="JFXtras">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="for beautiful &quot;agenda&quot; view">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Text>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="!">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Text>
+                        <Hyperlink onAction="#onHyperlinkJFX2" text="(LICENSE)">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="...and many">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Text>
+                        <Hyperlink onAction="#onHyperlinkOthers" text="others">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="who were a wonderful contribution!">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
-            <HBox alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-               <children>
-                  <Hyperlink fx:id="buttonUpdate" onAction="#onClickUpdate" text="No new updates.">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Hyperlink>
-               </children>
-            </HBox>
          </children>
       </VBox>
    </children>

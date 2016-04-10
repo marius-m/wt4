@@ -11,6 +11,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
+import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.utils.VersionController;
@@ -48,6 +49,8 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     versionController.removeListener(this);
   }
 
+  //region Action input
+
   public void onClickClose() {
     destroy();
     if (dialogListener == null) return;
@@ -57,18 +60,18 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   public void onClickSave() { }
 
   public void onClickTitle() {
-    if (Main.hostServices != null)
-      Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
   }
 
   public void onClickAuthor() {
-    if (Main.hostServices != null)
-      Main.hostServices.showDocument("https://github.com/marius-m");
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://github.com/marius-m");
   }
 
   public void onClickPlace() {
-    if (Main.hostServices != null)
-      Main.hostServices.showDocument("http://ito.lt");
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("http://ito.lt");
   }
 
   public void onClickUpdate() {
@@ -80,6 +83,35 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     versionController.checkForUpdate();
   }
 
+  // todo : fix hyperlinks
+
+  public void onHyperlinkGoogle1() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://design.google.com/icons/");
+  }
+
+  public void onHyperlinkGoogle2() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://creativecommons.org/licenses/by/4.0/");
+  }
+
+  public void onHyperlinkJFX1() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://github.com/JFXtras/jfxtras");
+  }
+
+  public void onHyperlinkJFX2() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29");
+  }
+
+  public void onHyperlinkOthers() {
+    if (Main.hostServices == null) return;
+    Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4");
+  }
+
+  //endregion
+
   @Override
   public void onProgressChange(double progressChange) {
     progressIndicator.setProgress((progressChange <= 0) ? 0 : progressChange);
@@ -88,18 +120,18 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
     if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
-      buttonUpdate.setText("Updating...");
+      buttonUpdate.setText(Translation.getInstance().getString("about_status_updating"));
       return;
     }
     if (updateSummary == null) {
-      buttonUpdate.setText("No information about the update!");
+      buttonUpdate.setText(Translation.getInstance().getString("about_status_no_info"));
       return;
     }
     if (updateSummary.highestVersion > Main.VERSION_CODE) {
-      buttonUpdate.setText("New updates are available! Update? (Will restart the app).");
+      buttonUpdate.setText(Translation.getInstance().getString("about_status_update_available"));
       return;
     }
-    buttonUpdate.setText("App is up to date!");
+    buttonUpdate.setText(Translation.getInstance().getString("about_status_update_unavailable"));
   }
 
   //region Listeners

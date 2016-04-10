@@ -11,17 +11,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import jfxtras.scene.control.agenda.Agenda;
+import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.joda.time.DateTime;
 
 /**
@@ -43,6 +47,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
   private CustomAgendaWeekView weekSkin;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_WEEK);
     storage.register(storageListener);
     targetDate = new DateTime(storage.getTargetDate());
     agenda = new Agenda();
@@ -88,21 +93,24 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
       if (updateListener == null) return null;
       if (!(appointment instanceof AppointmentSimpleLog)) return null;
       ContextMenu contextMenu = new ContextMenu();
-      MenuItem updateItem = new MenuItem("Update");
+      MenuItem updateItem = new MenuItem(Translation.getInstance().getString("general_update"),
+          new ImageView(new Image(getClass().getResource("/update_2.png").toString())));
       updateItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
           updateListener.onUpdate(((AppointmentSimpleLog) appointment).getSimpleLog());
         }
       });
-      MenuItem deleteItem = new MenuItem("Delete");
+      MenuItem deleteItem = new MenuItem(Translation.getInstance().getString("general_delete"),
+          new ImageView(new Image(getClass().getResource("/delete_2.png").toString())));
       deleteItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
           updateListener.onDelete(((AppointmentSimpleLog) appointment).getSimpleLog());
         }
       });
-      MenuItem cloneItem = new MenuItem("Clone");
+      MenuItem cloneItem = new MenuItem(Translation.getInstance().getString("general_clone"),
+          new ImageView(new Image(getClass().getResource("/clone_2.png").toString())));
       cloneItem.setOnAction(new EventHandler<ActionEvent>() {
         public void handle(ActionEvent e) {
           if (updateListener == null) return;
