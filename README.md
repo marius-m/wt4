@@ -84,6 +84,8 @@ Logs can be updated by pressing the right mouse button on the target log.
 * Only logs that were not sync'ed can be edited (still a drawback of one way sync)
 * Header will indicate the log status and error (if there is any)
 
+![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_3.png)
+
 ### Week view / Day view
 
 By pressing little "calendar" at the bottom, you can change view's from day to a whole week view. 
