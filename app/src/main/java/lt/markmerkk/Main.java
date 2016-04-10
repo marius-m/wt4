@@ -76,6 +76,7 @@ public class Main extends Application {
     stage.setMinHeight(SCENE_HEIGHT);
     stage.setScene(scene);
     stage.show();
+    stage.setTitle("WT4");
     SimpleTracker.getInstance().getTracker().sendEvent(
         SimpleTracker.CATEGORY_GENERIC,
         SimpleTracker.ACTION_START
