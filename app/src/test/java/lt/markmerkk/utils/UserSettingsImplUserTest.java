@@ -3,8 +3,6 @@ package lt.markmerkk.utils;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -12,13 +10,13 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mariusmerkevicius on 12/21/15.
  */
-public class UserSettingsHostTest {
+public class UserSettingsImplUserTest {
   @Test public void testNoInput() throws Exception {
     // Arrange
-    UserSettings settings = new UserSettings();
+    UserSettingsImpl settings = new UserSettingsImpl();
 
     // Act
-    String var = settings.getHost();
+    String var = settings.getUsername();
 
     // Assert
     assertThat(var).isEmpty();
@@ -26,7 +24,7 @@ public class UserSettingsHostTest {
 
   @Test public void testValidLoad() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
@@ -34,51 +32,51 @@ public class UserSettingsHostTest {
 
     // Assert
     verify(settings.settings).load();
-    verify(settings.settings).get(settings.HOST);
+    verify(settings.settings).get(settings.USER);
   }
 
   @Test public void testValidSave() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
     settings.onStart();
-    settings.setHost("valid_host");
+    settings.setUsername("valid_username");
     settings.onStop();
 
     // Assert
-    verify(settings.settings).set(eq(settings.HOST), eq("valid_host"));
+    verify(settings.settings).set(eq(settings.USER), eq("valid_username"));
     verify(settings.settings).save();
   }
 
   @Test public void testInvalidSaveEmpty() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
     settings.onStart();
-    settings.setHost("");
+    settings.setUsername("");
     settings.onStop();
 
     // Assert
-    verify(settings.settings).set(eq(settings.HOST), eq(""));
+    verify(settings.settings).set(eq(settings.USER), eq(""));
     verify(settings.settings).save();
   }
 
   @Test public void testInvalidSaveNull() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
     settings.onStart();
-    settings.setHost(null);
+    settings.setUsername(null);
     settings.onStop();
 
     // Assert
-    verify(settings.settings).set(eq(settings.HOST), eq(""));
+    verify(settings.settings).set(eq(settings.USER), eq(""));
     verify(settings.settings).save();
   }
 }

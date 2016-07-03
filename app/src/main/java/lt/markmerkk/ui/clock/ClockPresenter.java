@@ -36,7 +36,7 @@ import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.SyncController;
-import lt.markmerkk.utils.UserSettings;
+import lt.markmerkk.utils.UserSettingsImpl;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
@@ -62,7 +62,7 @@ public class ClockPresenter implements Initializable {
   @Inject
   DBProdExecutor dbProdExecutor;
   @Inject
-  UserSettings settings;
+  UserSettingsImpl settings;
 
   @FXML
   DatePicker inputTo;

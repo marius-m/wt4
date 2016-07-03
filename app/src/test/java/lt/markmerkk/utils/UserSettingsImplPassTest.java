@@ -3,7 +3,6 @@ package lt.markmerkk.utils;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -11,13 +10,13 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mariusmerkevicius on 12/21/15.
  */
-public class UserSettingsUserTest {
+public class UserSettingsImplPassTest {
   @Test public void testNoInput() throws Exception {
     // Arrange
-    UserSettings settings = new UserSettings();
+    UserSettingsImpl settings = new UserSettingsImpl();
 
     // Act
-    String var = settings.getUsername();
+    String var = settings.getPassword();
 
     // Assert
     assertThat(var).isEmpty();
@@ -25,7 +24,7 @@ public class UserSettingsUserTest {
 
   @Test public void testValidLoad() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
@@ -33,51 +32,51 @@ public class UserSettingsUserTest {
 
     // Assert
     verify(settings.settings).load();
-    verify(settings.settings).get(settings.USER);
+    verify(settings.settings).get(settings.PASS);
   }
 
   @Test public void testValidSave() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
     settings.onStart();
-    settings.setUsername("valid_username");
+    settings.setPassword("valid_password");
     settings.onStop();
 
     // Assert
-    verify(settings.settings).set(eq(settings.USER), eq("valid_username"));
+    verify(settings.settings).set(eq(settings.PASS), eq("valid_password"));
     verify(settings.settings).save();
   }
 
   @Test public void testInvalidSaveEmpty() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
     settings.onStart();
-    settings.setUsername("");
+    settings.setPassword("");
     settings.onStop();
 
     // Assert
-    verify(settings.settings).set(eq(settings.USER), eq(""));
+    verify(settings.settings).set(eq(settings.PASS), eq(""));
     verify(settings.settings).save();
   }
 
   @Test public void testInvalidSaveNull() throws Exception {
     // Arrange
-    UserSettings settings = spy(new UserSettings());
+    UserSettingsImpl settings = spy(new UserSettingsImpl());
     settings.settings = spy(settings.settings);
 
     // Act
     settings.onStart();
-    settings.setUsername(null);
+    settings.setPassword(null);
     settings.onStop();
 
     // Assert
-    verify(settings.settings).set(eq(settings.USER), eq(""));
+    verify(settings.settings).set(eq(settings.PASS), eq(""));
     verify(settings.settings).save();
   }
 }

@@ -10,7 +10,6 @@ import lt.markmerkk.JiraConnector;
 import lt.markmerkk.JiraLogFilterer;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchJQL;
-import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteLogFetchMerger;
@@ -33,7 +32,7 @@ public class SyncController {
   private static final Logger logger = LoggerFactory.getLogger(JiraSearchJQL.class);
 
   @Inject
-  UserSettings settings;
+  UserSettingsImpl settings;
   @Inject
   DBProdExecutor dbExecutor;
   @Inject

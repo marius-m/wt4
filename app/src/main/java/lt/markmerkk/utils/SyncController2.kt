@@ -177,9 +177,10 @@ class SyncController2(
     fun clientObservable(): Observable<JiraClient> {
         if (jiraClient == null) {
             return Observable.create(JiraConnector(
-                    settings.getHost(),
-                    settings.getUsername(),
-                    settings.getPassword()))
+                    settings.host,
+                    settings.username,
+                    settings.password)
+            )
         }
         return Observable.just(jiraClient)
     }

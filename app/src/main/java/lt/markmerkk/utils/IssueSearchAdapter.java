@@ -48,7 +48,7 @@ import rx.schedulers.Schedulers;
 public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
-  UserSettings settings;
+  UserSettingsImpl settings;
   SyncController syncController;
   IExecutor dbExecutor;
   IssueSplit issueSplit = new IssueSplit();
@@ -59,7 +59,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   long totalIssues;
 
-  public IssueSearchAdapter(UserSettings settings, SyncController controller,
+  public IssueSearchAdapter(UserSettingsImpl settings, SyncController controller,
                             ComboBox<LocalIssue> comboBox,
                             ProgressIndicator progressIndicator,
                             IExecutor executor, Text viewInfo) {

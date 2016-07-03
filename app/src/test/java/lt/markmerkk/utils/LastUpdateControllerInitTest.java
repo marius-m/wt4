@@ -3,8 +3,6 @@ package lt.markmerkk.utils;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -17,7 +15,7 @@ public class LastUpdateControllerInitTest {
   public void init_storageOutputValid_valid() throws Exception {
     // Arrange
     LastUpdateController controller = new LastUpdateController();
-    controller.settings = mock(UserSettings.class);
+    controller.settings = mock(UserSettingsImpl.class);
     doReturn("12345").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
 
     // Act
@@ -31,7 +29,7 @@ public class LastUpdateControllerInitTest {
   public void init_storageOutputNull_setDefaultValue() throws Exception {
     // Arrange
     LastUpdateController controller = new LastUpdateController();
-    controller.settings = mock(UserSettings.class);
+    controller.settings = mock(UserSettingsImpl.class);
     doReturn(null).when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
 
     // Act
@@ -45,7 +43,7 @@ public class LastUpdateControllerInitTest {
   public void init_storageOutputEmpty_setDefaultValue() throws Exception {
     // Arrange
     LastUpdateController controller = new LastUpdateController();
-    controller.settings = mock(UserSettings.class);
+    controller.settings = mock(UserSettingsImpl.class);
     doReturn("").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
 
     // Act
@@ -59,7 +57,7 @@ public class LastUpdateControllerInitTest {
   public void init_storageOutputMalformed_setDefaultValue() throws Exception {
     // Arrange
     LastUpdateController controller = new LastUpdateController();
-    controller.settings = mock(UserSettings.class);
+    controller.settings = mock(UserSettingsImpl.class);
     doReturn("asdf").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
 
     // Act

@@ -22,7 +22,7 @@ public class LastUpdateControllerUpdateTest {
 
   @Before
   public void setUp() {
-    controller.settings = mock(UserSettings.class);
+    controller.settings = mock(UserSettingsImpl.class);
     doReturn("0").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
     controller.init();
   }

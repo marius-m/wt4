@@ -8,13 +8,14 @@ import org.joda.time.DateTime;
 /**
  * Created by mariusmerkevicius on 1/5/16.
  * Simple controller for printing out last update.
- * Has a dependency for {@link UserSettings} as that is where
+ * Has a dependency for {@link UserSettingsImpl} as that is where
  * persistent data is stored.
  */
 public class LastUpdateController {
   public static final String LAST_UPDATE = "LAST_UPDATE";
 
-  @Inject UserSettings settings;
+  @Inject
+  UserSettings settings;
 
   String error;
   boolean loading = false;

@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.utils.LastUpdateController;
-import lt.markmerkk.utils.UserSettings;
+import lt.markmerkk.utils.UserSettingsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,8 @@ public class AutoSync2 {
   public static final long TERM_60 = TERM_MINUTE * 60;
 
   @Inject LastUpdateController lastUpdateController;
-  @Inject UserSettings settings;
+  @Inject
+  UserSettingsImpl settings;
 
   Map<String, Long> selections;
   String currentSelection = null;
