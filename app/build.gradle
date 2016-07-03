@@ -130,7 +130,7 @@ dependencies {
     compile 'com.vinumeris:updatefx:1.5'
     compile 'com.airhacks:afterburner.fx:1.6.0'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.jfxtras:jfxtras-agenda:8.0-r5-SNAPSHOT'
+    compile 'org.jfxtras:jfxtras-agenda:8.0-r5'
 
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
