@@ -1,17 +1,13 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.DBProdExecutor
 import lt.markmerkk.JiraConnector
 import lt.markmerkk.JiraSearchJQL
 import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.storage2.BasicLogStorage
 import lt.markmerkk.storage2.IDataStorage
 import lt.markmerkk.storage2.SimpleLog
 import lt.markmerkk.storage2.database.interfaces.IExecutor
-import lt.markmerkk.ui.utils.DisplayType
 import net.rcarz.jiraclient.JiraClient
 import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -19,7 +15,6 @@ import rx.Subscription
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
-import javax.inject.Inject
 
 /**
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
@@ -57,7 +52,7 @@ class SyncController2(
             uiScheduler: Scheduler,
             ioScheduler: Scheduler
     ) {
-        clientObservable()
+        clientObservable
                 .doOnSubscribe { remoteLoadListener.onLoadChange(true) }
                 .doOnUnsubscribe { remoteLoadListener.onLoadChange(false) }
                 .subscribeOn(ioScheduler)
@@ -174,16 +169,17 @@ class SyncController2(
     /**
      * Returns an observable for jira client initialization
      */
-    fun clientObservable(): Observable<JiraClient> {
-        if (jiraClient == null) {
-            return Observable.create(JiraConnector(
-                    settings.host,
-                    settings.username,
-                    settings.password)
-            )
+    val clientObservable: Observable<JiraClient>
+        get() {
+            if (jiraClient == null) {
+                return Observable.create(JiraConnector(
+                        settings.host,
+                        settings.username,
+                        settings.password)
+                )
+            }
+            return Observable.just(jiraClient)
         }
-        return Observable.just(jiraClient)
-    }
 
     //endregion
 
