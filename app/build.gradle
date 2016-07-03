@@ -6,22 +6,6 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at http://gradle.org/docs/2.5/userguide/tutorial_java_projects.html
  */
-buildscript {
-    ext.kotlin_version = '1.0.3'
-    ext.kotlin_test_version = '0.5.1'
-
-    repositories {
-        mavenLocal()
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
-    }
-
-}
-apply plugin: 'kotlin'
-apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
@@ -124,8 +108,6 @@ dependencies {
     compile 'com.brsanthu:google-analytics-java:1.1.2'
 
     compile 'io.reactivex:rxjavafx:0.0.2'
-    compile 'io.reactivex:rxjava:1.1.0'
-    //compile 'io.reactivex:rxjava-async-util:0.21.0'
 
     compile 'joda-time:joda-time:2.9.1'
     compile 'com.vinumeris:updatefx:1.5'
@@ -133,15 +115,6 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'org.jfxtras:jfxtras-agenda:8.0-r5'
 
-    compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'org.slf4j:slf4j-log4j12:1.7.12'
-//    compile group: 'org.slf4j', name: 'slf4j-jdk14', version:'1.7.12'
-
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    testCompile "com.nhaarman:mockito-kotlin:$kotlin_test_version"
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.5'
-    testCompile 'org.assertj:assertj-core:2.2.0'
 }
 tasks.withType(JavaExec) {
     systemProperties project.getProperties()

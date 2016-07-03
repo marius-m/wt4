@@ -7,20 +7,28 @@
  * user guide available at https://docs.gradle.org/2.7/userguide/tutorial_java_projects.html
  */
 
+buildscript {
+  ext.kotlin_version = '1.0.3'
+  ext.kotlin_test_version = '0.5.1'
 
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+  }
+}
 
 allprojects {
   apply plugin: 'maven'
-
-//  group = 'com.atlassian.jira'
-//  version = '3.0.1-SNAPSHOT'
-}
-
-subprojects {
+  apply plugin: 'kotlin'
   apply plugin: 'java'
+
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
-
 
   repositories {
     mavenLocal()
@@ -35,5 +43,15 @@ subprojects {
 //  configurations.all {}
   dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '10.0.1'
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'org.slf4j:slf4j-log4j12:1.7.12'
+
+    compile 'io.reactivex:rxjava:1.1.0'
+
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "com.nhaarman:mockito-kotlin:$kotlin_test_version"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.assertj:assertj-core:2.2.0'
   }
 }
