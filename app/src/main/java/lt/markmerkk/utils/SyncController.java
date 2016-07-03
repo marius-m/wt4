@@ -38,7 +38,7 @@ public class SyncController {
   @Inject
   BasicLogStorage storage;
   @Inject
-  LastUpdateController lastUpdateController;
+  LastUpdateControllerImpl lastUpdateController;
 
   List<IRemoteLoadListener> remoteLoadListeners = new ArrayList<>();
   Subscription subscription;

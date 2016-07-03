@@ -25,11 +25,10 @@ import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
-import lt.markmerkk.utils.LastUpdateController;
+import lt.markmerkk.utils.LastUpdateControllerImpl;
 import lt.markmerkk.utils.SyncController;
 import lt.markmerkk.utils.SyncEventBus;
 import lt.markmerkk.utils.VersionController;
-import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.slf4j.Logger;
@@ -44,7 +43,8 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
 
   @Inject BasicLogStorage storage;
-  @Inject LastUpdateController lastUpdateController;
+  @Inject
+  LastUpdateControllerImpl lastUpdateController;
   @Inject SyncController syncController;
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;

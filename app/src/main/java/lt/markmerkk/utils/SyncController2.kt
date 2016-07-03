@@ -152,16 +152,16 @@ class SyncController2(
         override fun onLoadChange(loading: Boolean) {
             this@SyncController2.isLoading = loading
             if (loading)
-                lastUpdateController.setError(null)
+                lastUpdateController.error = null
             if (!loading)
                 lastUpdateController.refresh()
-            lastUpdateController.setLoading(loading)
+            lastUpdateController.loading = loading
             for (remoteListeners in this@SyncController2.remoteLoadListeners)
                 remoteListeners.onLoadChange(loading)
         }
 
         override fun onError(error: String) {
-            lastUpdateController.setError(error)
+            lastUpdateController.error = error
             for (remoteListeners in this@SyncController2.remoteLoadListeners)
                 remoteListeners.onError(error)
         }

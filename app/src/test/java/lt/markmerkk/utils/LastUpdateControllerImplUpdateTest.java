@@ -15,15 +15,15 @@ import static org.mockito.Mockito.mock;
  * Created by mariusmerkevicius on 1/5/16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class LastUpdateControllerUpdateTest {
+public class LastUpdateControllerImplUpdateTest {
 
   @Spy
-  private LastUpdateController controller = new LastUpdateController();
+  private LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
 
   @Before
   public void setUp() {
     controller.settings = mock(UserSettingsImpl.class);
-    doReturn("0").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
+    doReturn("0").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
     controller.init();
   }
 

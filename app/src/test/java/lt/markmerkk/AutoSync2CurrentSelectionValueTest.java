@@ -1,13 +1,12 @@
 package lt.markmerkk;
 
-import lt.markmerkk.utils.LastUpdateController;
+import lt.markmerkk.utils.LastUpdateControllerImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
 
 /**
@@ -16,7 +15,7 @@ import static org.mockito.Mockito.spy;
 public class AutoSync2CurrentSelectionValueTest {
 
   @Mock
-  LastUpdateController updateController;
+  LastUpdateControllerImpl updateController;
 
   private AutoSync2 sync2;
 

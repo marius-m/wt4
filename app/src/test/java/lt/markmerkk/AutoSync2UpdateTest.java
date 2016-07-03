@@ -1,6 +1,6 @@
 package lt.markmerkk;
 
-import lt.markmerkk.utils.LastUpdateController;
+import lt.markmerkk.utils.LastUpdateControllerImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,7 +16,8 @@ import static org.mockito.Mockito.verify;
  */
 public class AutoSync2UpdateTest {
 
-  @Mock LastUpdateController updateController;
+  @Mock
+  LastUpdateControllerImpl updateController;
 
   private AutoSync2 sync2;
 

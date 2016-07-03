@@ -3,6 +3,9 @@ package lt.markmerkk.utils;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 /**
@@ -11,7 +14,7 @@ import org.joda.time.DateTime;
  * Has a dependency for {@link UserSettingsImpl} as that is where
  * persistent data is stored.
  */
-public class LastUpdateController {
+public class LastUpdateControllerImpl implements LastUpdateController {
   public static final String LAST_UPDATE = "LAST_UPDATE";
 
   @Inject
@@ -45,6 +48,7 @@ public class LastUpdateController {
   /**
    * Called whenever last update should be refreshed
    */
+  @Override
   public void refresh() {
     lastUpdate = now();
     settings.setCustom(LAST_UPDATE, String.format("%d", lastUpdate));
@@ -66,14 +70,28 @@ public class LastUpdateController {
 
   //region Getters / Setters
 
+  @Override
   public void setLoading(boolean loading) {
     this.loading = loading;
+  }
+
+  @Override
+  public boolean getLoading() {
+    return loading;
   }
 
   public void setError(String error) {
     this.error = error;
   }
 
+  @Nullable
+  @Override
+  public String getError() {
+    return error;
+  }
+
+  @NotNull
+  @Override
   public String getOutput() {
     if (loading) return "Loading...";
     if (error != null) return "Error. "+error;
@@ -81,6 +99,7 @@ public class LastUpdateController {
     return Utils.formatShortDuration(durationTillLastUpdate());
   }
 
+  @Override
   public long durationTillLastUpdate() {
     return now() - lastUpdate;
   }

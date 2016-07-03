@@ -10,13 +10,13 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by mariusmerkevicius on 1/5/16.
  */
-public class LastUpdateControllerInitTest {
+public class LastUpdateControllerImplInitTest {
   @Test
   public void init_storageOutputValid_valid() throws Exception {
     // Arrange
-    LastUpdateController controller = new LastUpdateController();
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
     controller.settings = mock(UserSettingsImpl.class);
-    doReturn("12345").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
+    doReturn("12345").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
     controller.init();
@@ -28,9 +28,9 @@ public class LastUpdateControllerInitTest {
   @Test
   public void init_storageOutputNull_setDefaultValue() throws Exception {
     // Arrange
-    LastUpdateController controller = new LastUpdateController();
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
     controller.settings = mock(UserSettingsImpl.class);
-    doReturn(null).when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
+    doReturn(null).when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
     controller.init();
@@ -42,9 +42,9 @@ public class LastUpdateControllerInitTest {
   @Test
   public void init_storageOutputEmpty_setDefaultValue() throws Exception {
     // Arrange
-    LastUpdateController controller = new LastUpdateController();
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
     controller.settings = mock(UserSettingsImpl.class);
-    doReturn("").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
+    doReturn("").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
     controller.init();
@@ -56,9 +56,9 @@ public class LastUpdateControllerInitTest {
   @Test
   public void init_storageOutputMalformed_setDefaultValue() throws Exception {
     // Arrange
-    LastUpdateController controller = new LastUpdateController();
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
     controller.settings = mock(UserSettingsImpl.class);
-    doReturn("asdf").when(controller.settings).getCustom(eq(LastUpdateController.LAST_UPDATE));
+    doReturn("asdf").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
     controller.init();
