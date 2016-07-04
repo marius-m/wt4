@@ -1,7 +1,5 @@
 package lt.markmerkk.ui.week;
 
-import lt.markmerkk.BaseExecutor2;
-
 /**
  * Created by mariusmerkevicius on 1/23/16.
  * Simple custom {@link Runnable} executor with {@link LoadListener}
