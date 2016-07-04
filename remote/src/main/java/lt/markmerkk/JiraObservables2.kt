@@ -5,6 +5,8 @@ import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 
@@ -37,12 +39,14 @@ class JiraObservables2(
         }
     }
 
-    fun remoteWorklogs(start: DateTime, end: DateTime, client: JiraClient): Observable<Pair<Issue, List<WorkLog>>> {
-        return Observable.empty()
-    }
-
-    fun searchJqlForWorklog(jql: String, client: JiraClient): Observable<Issue.SearchResult> {
-        return Observable.create<Issue.SearchResult>(JiraSearchJQL(client, jql))
+    fun searchJqlForWorklog(start: DateTime, end:DateTime, client: JiraClient): Observable<Any> {
+        return Observable.create<Issue.SearchResult>(JiraSearchJQL(client, jqlForWorkIssuesFromDateObservable(start, end)))
+                .filter { it.issues.size != 0 }
+                .flatMap { Observable.from(it.issues) }
+                .map { it.key }
+                .flatMap { Observable.just(client.getIssue(it)) }
+                .flatMap({ Observable.just(it.allWorkLogs) },
+                        { issue, worklogs -> Pair<Issue, List<WorkLog>>(issue, worklogs) })
     }
 
     fun jqlForWorkIssuesFromDateObservable(
@@ -52,6 +56,10 @@ class JiraObservables2(
         val startFormat = JiraSearchJQL.dateFormat.print(start.millis)
         val endFormat = JiraSearchJQL.dateFormat.print(end.millis)
         return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"$username\")"
+    }
+
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger("JiraObservables2")
     }
 
 }

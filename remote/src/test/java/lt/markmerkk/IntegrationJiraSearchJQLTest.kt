@@ -4,6 +4,7 @@ import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.slf4j.LoggerFactory
@@ -16,6 +17,7 @@ import java.util.*
 /**
  * Created by mariusmerkevicius on 1/29/16.
  */
+@Ignore
 class IntegrationJiraSearchJQLTest {
     private lateinit var connector: JiraConnector
 

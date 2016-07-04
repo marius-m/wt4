@@ -4,6 +4,7 @@ import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.slf4j.Logger
@@ -18,6 +19,7 @@ import java.util.*
  * *
  * @since 2016-07-03
  */
+@Ignore
 class IntegrationJiraObservables2SearchForWorklogTest {
 
     val logger: Logger = LoggerFactory.getLogger(IntegrationJiraObservables2SearchForWorklogTest::class.java)
@@ -45,17 +47,12 @@ class IntegrationJiraObservables2SearchForWorklogTest {
     fun searchIssues() {
         val testSubscriber = TestSubscriber<Any>()
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-        val startDate = DateTime(formatter.parseDateTime("2010-04-25"))
-        val endDate = DateTime(formatter.parseDateTime("2010-04-26"))
+        val startDate = DateTime(formatter.parseDateTime("2016-03-25"))
+        val endDate = DateTime(formatter.parseDateTime("2016-04-26"))
 
         observableGen
                 .clientObservable()
-                .flatMap {
-                    observableGen.searchJqlForWorklog(
-                            observableGen.jqlForWorkIssuesFromDateObservable(startDate, endDate),
-                            it
-                    )
-                }
+                .flatMap { observableGen.searchJqlForWorklog(startDate, endDate, it) }
                 .subscribe({
                     logger.debug("Result: $it")
                 }, {
