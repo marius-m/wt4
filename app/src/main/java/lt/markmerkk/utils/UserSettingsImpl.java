@@ -34,7 +34,7 @@ public class UserSettingsImpl implements UserSettings, WorldEvents {
 
     @Override
     public String getIssueJql() {
-        if (issueJql == null) return JiraSearchJQL.DEFAULT_JQL_USER_ISSUES;
+        if (issueJql == null) return JiraSearchJQL.Companion.getDEFAULT_JQL_USER_ISSUES();
         return issueJql;
     }
 

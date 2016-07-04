@@ -17,6 +17,7 @@ import rx.functions.Func2;
  * Created by mariusmerkevicius on 1/30/16.
  * A static class that forms component observables
  */
+@Deprecated // Use JiraObservables2 instead
 public class JiraObservables {
 
   /**
@@ -90,9 +91,9 @@ public class JiraObservables {
         }
         DateTime startSearchDate = start.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
         DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-        subscriber.onNext(String.format(JiraSearchJQL.DEFAULT_JQL_WORKLOG_TEMPLATE,
-            JiraSearchJQL.dateFormat.print(startSearchDate.getMillis()),
-            JiraSearchJQL.dateFormat.print(endSearchDate.getMillis()),
+        subscriber.onNext(String.format(JiraSearchJQL.Companion.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
+            JiraSearchJQL.Companion.getDateFormat().print(startSearchDate.getMillis()),
+            JiraSearchJQL.Companion.getDateFormat().print(endSearchDate.getMillis()),
             user
         ));
         subscriber.onCompleted();

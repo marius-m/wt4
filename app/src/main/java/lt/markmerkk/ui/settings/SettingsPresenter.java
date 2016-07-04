@@ -116,7 +116,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
    * A button event when user clicks on reset JQL
    */
   public void onClickResetJQL() {
-    inputJQL.setText(JiraSearchJQL.DEFAULT_JQL_USER_ISSUES);
+    inputJQL.setText(JiraSearchJQL.Companion.getDEFAULT_JQL_USER_ISSUES());
     settings.setIssueJql(inputJQL.getText());
     SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }

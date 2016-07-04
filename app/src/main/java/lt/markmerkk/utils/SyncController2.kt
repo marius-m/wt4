@@ -1,6 +1,7 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.JiraConnector
+import lt.markmerkk.JiraObservables2
 import lt.markmerkk.JiraSearchJQL
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.storage2.IDataStorage
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
+import rx.schedulers.JavaFxScheduler
+import rx.schedulers.Schedulers
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -29,10 +32,7 @@ class SyncController2(
     val remoteLoadListeners: MutableList<IRemoteLoadListener> = ArrayList()
     var subscription: Subscription? = null
 
-    var jiraClient: JiraClient? = null
-        private set
-
-    var isLoading = false
+   var isLoading = false
         private set
 
     @PostConstruct
@@ -52,12 +52,18 @@ class SyncController2(
             uiScheduler: Scheduler,
             ioScheduler: Scheduler
     ) {
-        clientObservable
+        val observables = JiraObservables2(
+                settings.host,
+                settings.username,
+                settings.password,
+                Schedulers.computation(),
+                JavaFxScheduler.getInstance()
+        )
+        observables.clientObservable()
                 .doOnSubscribe { remoteLoadListener.onLoadChange(true) }
                 .doOnUnsubscribe { remoteLoadListener.onLoadChange(false) }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
-                .map { this.jiraClient = it }
                 .subscribe({
                     logger.info("Success!")
                 }, {
@@ -161,25 +167,6 @@ class SyncController2(
                 remoteListeners.onError(error)
         }
     }
-
-    //endregion
-
-    //region Observables
-
-    /**
-     * Returns an observable for jira client initialization
-     */
-    val clientObservable: Observable<JiraClient>
-        get() {
-            if (jiraClient == null) {
-                return Observable.create(JiraConnector(
-                        settings.host,
-                        settings.username,
-                        settings.password)
-                )
-            }
-            return Observable.just(jiraClient)
-        }
 
     //endregion
 
