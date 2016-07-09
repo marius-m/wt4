@@ -1,30 +1,27 @@
 package lt.markmerkk
 
-import javafx.util.Pair
+import lt.markmerkk.entities.JiraWork
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
-import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.Observable
-import rx.Scheduler
+import rx.Single
 
 /**
  * @author mariusmerkevicius
  * @since 2016-07-03
  */
-class JiraObservables2(
+open class JiraInteractorImpl(
         val host: String,
         val username: String,
-        val password: String,
-        val ioScheduler: Scheduler,
-        val uiScheduler: Scheduler
-) {
-    var jiraClient: JiraClient? = null
-        private set
+        val password: String
+) : JiraInteractor {
 
-    private val clientObservable: Observable<JiraClient>
+    var jiraClient: JiraClient? = null
+
+    val clientObservable: Observable<JiraClient> // Cache client
         get() {
             if (jiraClient == null) {
                 return Observable.create(JiraConnector(host, username, password))
@@ -32,24 +29,44 @@ class JiraObservables2(
             return Observable.just(jiraClient)
         }
 
-    fun clientObservable(): Observable<JiraClient> {
+    //region Observables
+
+    open fun clientObservable(): Observable<JiraClient> {
         return clientObservable.flatMap {
             jiraClient = it
             Observable.just(it)
         }
     }
 
-    fun searchJqlForWorklog(start: DateTime, end:DateTime, client: JiraClient): Observable<Pair<Issue, List<WorkLog>>> {
-        return Observable.create<Issue.SearchResult>(JiraSearchJQL(client, jqlForWorkIssuesFromDateObservable(start, end)))
-                .subscribeOn(ioScheduler)
-                .observeOn(uiScheduler)
+    fun searchJqlForWorklog(start: DateTime, end: DateTime): Observable<List<JiraWork>> {
+        return clientObservable.flatMap {
+            Observable.create<Issue.SearchResult>(
+                    JiraSearchJQL(it, jqlForWorkIssuesFromDateObservable(start, end))
+            )
+        }
                 .filter { it.issues.size != 0 }
                 .flatMap { Observable.from(it.issues) }
                 .map { it.key }
-                .flatMap { Observable.just(client.getIssue(it)) }
-                .flatMap({ Observable.just(it.allWorkLogs) },
-                        { issue, worklogs -> Pair<Issue, List<WorkLog>>(issue, worklogs) })
+                .flatMap { Observable.just(jiraClient?.getIssue(it)) }
+                .flatMap({ Observable.just(it?.allWorkLogs) },
+                        { issue, worklogs ->
+                            JiraWork(issue, worklogs)
+                        }
+                )
+                .filter { it.valid() }
+                .reduce(
+                        mutableListOf<JiraWork>(),
+                        { accumulator, next ->
+                            accumulator.add(next)
+                            accumulator
+                        }
+                )
+                .map { it.toList() }
     }
+
+    //endregion
+
+    //region Convenience
 
     fun jqlForWorkIssuesFromDateObservable(
             start: DateTime,
@@ -59,6 +76,8 @@ class JiraObservables2(
         val endFormat = JiraSearchJQL.dateFormat.print(end.millis)
         return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"$username\")"
     }
+
+    //endregion
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger("JiraObservables2")

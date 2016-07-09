@@ -1,6 +1,5 @@
 package lt.markmerkk
 
-import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.Before
@@ -10,7 +9,6 @@ import org.mockito.MockitoAnnotations
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.observers.TestSubscriber
-import rx.schedulers.Schedulers
 import java.io.FileInputStream
 import java.util.*
 
@@ -19,11 +17,10 @@ import java.util.*
  * *
  * @since 2016-07-03
  */
-@Ignore
-class IntegrationJiraObservables2SearchForWorklogTest {
+class IntegrationJiraInteractorImplSearchForWorklogTest {
 
-    val logger: Logger = LoggerFactory.getLogger(IntegrationJiraObservables2SearchForWorklogTest::class.java)
-    lateinit var observableGen: JiraObservables2
+    val logger: Logger = LoggerFactory.getLogger(IntegrationJiraInteractorImplSearchForWorklogTest::class.java)
+    lateinit var observableGen: JiraInteractorImpl
 
     @Before
     @Throws(Exception::class)
@@ -34,12 +31,10 @@ class IntegrationJiraObservables2SearchForWorklogTest {
         val properties = Properties()
         properties.load(inputStream)
 
-        observableGen = JiraObservables2(
+        observableGen = JiraInteractorImpl(
                 host = properties["host"].toString(),
                 username = properties["username"].toString(),
-                password = properties["password"].toString(),
-                ioScheduler = Schedulers.immediate(),
-                uiScheduler = Schedulers.immediate()
+                password = properties["password"].toString()
         )
     }
 
@@ -50,9 +45,7 @@ class IntegrationJiraObservables2SearchForWorklogTest {
         val startDate = DateTime(formatter.parseDateTime("2016-03-25"))
         val endDate = DateTime(formatter.parseDateTime("2016-04-26"))
 
-        observableGen
-                .clientObservable()
-                .flatMap { observableGen.searchJqlForWorklog(startDate, endDate, it) }
+        observableGen.searchJqlForWorklog(startDate, endDate)
                 .subscribe({
                     logger.debug("Result: $it")
                 }, {

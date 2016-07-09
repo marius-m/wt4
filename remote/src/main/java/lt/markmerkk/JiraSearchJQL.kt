@@ -25,12 +25,15 @@ class JiraSearchJQL(
             logger.info("Doing search: " + jql)
             var batchCurrent = 0
             val batchSize = 50
-            var batchTotal = batchSize
+            var batchTotal = 0
             do {
                 if (subscriber.isUnsubscribed)
                     break
 
                 val sr = client.searchIssues(jql, searchFields, batchSize, batchCurrent)
+                if (sr == null) throw IllegalStateException("Search result is empty")
+                if (sr.issues == null) throw IllegalStateException("Search result is empty")
+                if (sr.issues.size == 0) throw IllegalStateException("Search result is empty")
                 logger.info("Found issues " + sr.issues.size + " that have been worked on.")
                 subscriber.onNext(sr)
 
@@ -38,8 +41,12 @@ class JiraSearchJQL(
                 batchTotal = sr.total
             } while (batchCurrent < batchTotal)
             subscriber.onCompleted()
+        } catch (e: IllegalStateException) {
+            logger.error("Jira search error: ${e.message}")
+            subscriber.onCompleted()
         } catch (e: JiraException) {
-            subscriber.onError(e)
+            logger.error("Jira error: $e")
+            subscriber.onCompleted()
         }
 
     }

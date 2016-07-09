@@ -20,13 +20,11 @@ import kotlin.test.assertEquals
  * *
  * @since 2016-07-03
  */
-class JiraObservables2RemoteClientInitTest {
-    val observableGen = JiraObservables2(
+class JiraInteractorImplRemoteClientInitTest {
+    val observableGen = JiraInteractorImpl(
             host = "fake_host",
             username = "fake_username",
-            password = "fake_password",
-            ioScheduler = Schedulers.immediate(),
-            uiScheduler = Schedulers.immediate()
+            password = "fake_password"
     )
 
     @Test
@@ -62,12 +60,10 @@ class JiraObservables2RemoteClientInitTest {
 
     @Test
     fun invalidClient_initJiraClient() {
-        val observableGen2 = JiraObservables2(
+        val observableGen2 = JiraInteractorImpl(
                 host = "", // invalid
                 username = "", // invalid
-                password = "", // invalid
-                ioScheduler = Schedulers.immediate(),
-                uiScheduler = Schedulers.immediate()
+                password = ""
         )
         val testSubscriber = TestSubscriber<JiraClient>()
 
@@ -75,7 +71,7 @@ class JiraObservables2RemoteClientInitTest {
                 .clientObservable()
                 .subscribe(testSubscriber)
 
-        testSubscriber.assertError(JiraException::class.java)
+        testSubscriber.assertError(IllegalStateException::class.java)
     }
 
 }

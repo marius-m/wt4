@@ -37,7 +37,20 @@ public class JiraConnectorCallTest {
     observable.subscribe(subscriber);
 
     // Assert
-    subscriber.assertError(JiraException.class);
+    subscriber.assertError(IllegalStateException.class);
+  }
+
+  @Test
+  public void init_inputHostnameEmpty_shouldCreate() throws Exception {
+    // Arrange
+    TestSubscriber<JiraClient> subscriber = new TestSubscriber<>();
+    Observable<JiraClient> observable = Observable.create(new JiraConnector("", "marius.m@marius.lt", "somepass"));
+
+    // Act
+    observable.subscribe(subscriber);
+
+    // Assert
+    subscriber.assertError(IllegalStateException.class);
   }
 
   @Test
@@ -50,7 +63,20 @@ public class JiraConnectorCallTest {
     observable.subscribe(subscriber);
 
     // Assert
-    subscriber.assertError(JiraException.class);
+    subscriber.assertError(IllegalStateException.class);
+  }
+
+  @Test
+  public void init_inputUsernameEmpty_shouldCreate() throws Exception {
+    // Arrange
+    TestSubscriber<JiraClient> subscriber = new TestSubscriber<>();
+    Observable<JiraClient> observable = Observable.create(new JiraConnector("hostname", "", "somepass"));
+
+    // Act
+    observable.subscribe(subscriber);
+
+    // Assert
+    subscriber.assertError(IllegalStateException.class);
   }
 
   @Test
@@ -63,7 +89,20 @@ public class JiraConnectorCallTest {
     observable.subscribe(subscriber);
 
     // Assert
-    subscriber.assertError(JiraException.class);
+    subscriber.assertError(IllegalStateException.class);
+  }
+
+  @Test
+  public void init_inputPasswordEmpty_shouldCreate() throws Exception {
+    // Arrange
+    TestSubscriber<JiraClient> subscriber = new TestSubscriber<>();
+    Observable<JiraClient> observable = Observable.create(new JiraConnector("hostname", "marius.m@marius.lt", ""));
+
+    // Act
+    observable.subscribe(subscriber);
+
+    // Assert
+    subscriber.assertError(IllegalStateException.class);
   }
 
 }

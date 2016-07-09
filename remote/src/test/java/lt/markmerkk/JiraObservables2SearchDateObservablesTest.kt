@@ -12,12 +12,10 @@ import rx.schedulers.Schedulers
  * @since 2016-07-03
  */
 class JiraObservables2SearchDateObservablesTest {
-    val observableGen = JiraObservables2(
+    val observableGen = JiraInteractorImpl(
             host = "fake_host",
             username = "fake_username",
-            password = "fake_password",
-            ioScheduler = Schedulers.immediate(),
-            uiScheduler = Schedulers.immediate()
+            password = "fake_password"
     )
 
     @Test
