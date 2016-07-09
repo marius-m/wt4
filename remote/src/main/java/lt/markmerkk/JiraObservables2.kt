@@ -41,6 +41,8 @@ class JiraObservables2(
 
     fun searchJqlForWorklog(start: DateTime, end:DateTime, client: JiraClient): Observable<Pair<Issue, List<WorkLog>>> {
         return Observable.create<Issue.SearchResult>(JiraSearchJQL(client, jqlForWorkIssuesFromDateObservable(start, end)))
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
                 .filter { it.issues.size != 0 }
                 .flatMap { Observable.from(it.issues) }
                 .map { it.key }
