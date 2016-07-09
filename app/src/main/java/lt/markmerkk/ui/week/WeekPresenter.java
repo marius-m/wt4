@@ -1,9 +1,5 @@
 package lt.markmerkk.ui.week;
 
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,8 +11,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import jfxtras.scene.control.agenda.Agenda;
 import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.Destroyable;
@@ -26,13 +20,22 @@ import lt.markmerkk.storage2.IDataListener;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.utils.tracker.SimpleTracker;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import rx.schedulers.JavaFxScheduler;
+import rx.schedulers.Schedulers;
+
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable, Destroyable, IPresenter, SimpleAsyncExecutor.LoadListener {
+public class WeekPresenter implements Initializable, Destroyable, IPresenter, AgendaView {
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
@@ -40,11 +43,17 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
 
   Agenda.AppointmentImplLocal[] appointments;
   UpdateListener updateListener;
-  SimpleAsyncExecutor asyncExecutor;
+//  SimpleAsyncExecutor asyncExecutor;
 
   // fixme : VERY VERY WEIRD AND DIRTY IMPLEMENTATION OF SKIN WORKAROUND :/
   public static DateTime targetDate = null;
   private CustomAgendaWeekView weekSkin;
+
+  private AgendaPresenter agendaPresenter;
+
+  public WeekPresenter() {
+
+  }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_WEEK);
@@ -58,10 +67,16 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
 		agenda.setAllowResize(false);
     agenda.editAppointmentCallbackProperty().set(agendaCallbackListener);
     mainContainer.getChildren().add(agenda);
-    asyncExecutor = new SimpleAsyncExecutor();
-    asyncExecutor.setListener(this);
-    asyncExecutor.onStart();
-    asyncExecutor.executeInBackground(updateRunnable);
+    agendaPresenter = new AgendaPresenterImpl(
+            this,
+            agenda.appointmentGroups().get(0),
+            agenda.appointmentGroups().get(10),
+            agenda.appointmentGroups().get(13),
+            Schedulers.computation(),
+            JavaFxScheduler.getInstance()
+    );
+    agendaPresenter.onAttach();
+    agendaPresenter.reloadView(storage.getData());
   }
 
   public void setUpdateListener(UpdateListener updateListener) {
@@ -71,7 +86,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
   @PreDestroy
   @Override
   public void destroy() {
-    asyncExecutor.onStop();
+    agendaPresenter.onDetatch();
     storage.unregister(storageListener);
   }
 
@@ -81,9 +96,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
     @Override
     public void onDataChange(ObservableList<SimpleLog> data) {
       targetDate = new DateTime(storage.getTargetDate());
-      if (asyncExecutor.isLoading())
-        asyncExecutor.cancel();
-      asyncExecutor.executeInBackground(updateRunnable);
+      agendaPresenter.reloadView(storage.getData());
     }
   };
 
@@ -123,65 +136,15 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Si
     }
   };
 
-  //endregion
-
-  //region Runnables
-
-  Runnable updateRunnable = new Runnable() {
-    @Override
-    public void run() {
-      long start = System.currentTimeMillis();
-      appointments = new Agenda.AppointmentImplLocal[storage.getData().size()];
-      for (int i = 0; i < storage.getData().size(); i++) {
-        SimpleLog simpleLog = storage.getData().get(i);
-        DateTime startTime = new DateTime(simpleLog.getStart());
-        DateTime endTime = new DateTime(simpleLog.getEnd());
-        Agenda.AppointmentGroup group = null;
-        switch (simpleLog.getStateImageUrl()) {
-          case "/red.png":
-            group = agenda.appointmentGroups().get(0);
-            break;
-          case "/yellow.png":
-            group = agenda.appointmentGroups().get(10);
-            break;
-          case "/green.png":
-            group = agenda.appointmentGroups().get(13);
-            break;
-        }
-        appointments[i] = new AppointmentSimpleLog(simpleLog)
-            .withStartLocalDateTime(
-                LocalDateTime.of(
-                    startTime.getYear(),
-                    startTime.getMonthOfYear(),
-                    startTime.getDayOfMonth(),
-                    startTime.getHourOfDay(),
-                    startTime.getMinuteOfHour()))
-            .withEndLocalDateTime(
-                LocalDateTime.of(
-                    endTime.getYear(),
-                    endTime.getMonthOfYear(),
-                    endTime.getDayOfMonth(),
-                    endTime.getHourOfDay(),
-                    endTime.getMinuteOfHour()))
-            .withAppointmentGroup(group)
-            .withSummary(simpleLog.getTask()+"\n"+simpleLog.getComment());
-      }
-    }
-  };
-
   @Override
-  public void onLoadChange(boolean loading) {
-    Platform.runLater(() -> {
-      if (!loading) {
-        boolean needRefresh = !weekSkin.isTargetBetween(storage.getTargetDate());
-        agenda.appointments().clear();
-        agenda.appointments().addAll(appointments);
-        if (needRefresh) {
-          weekSkin = new CustomAgendaWeekView(agenda);
-          agenda.setSkin(weekSkin);
-        }
-      }
-    });
+  public void updateAgenda(@NotNull List<? extends Agenda.AppointmentImplLocal> appointments) {
+    boolean needRefresh = !weekSkin.isTargetBetween(storage.getTargetDate());
+    agenda.appointments().clear();
+    agenda.appointments().addAll(appointments);
+    if (needRefresh) {
+      weekSkin = new CustomAgendaWeekView(agenda);
+      agenda.setSkin(weekSkin);
+    }
   }
 
   //endregion
