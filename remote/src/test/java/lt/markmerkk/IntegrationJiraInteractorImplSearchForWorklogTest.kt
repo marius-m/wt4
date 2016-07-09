@@ -17,6 +17,7 @@ import java.util.*
  * *
  * @since 2016-07-03
  */
+@Ignore
 class IntegrationJiraInteractorImplSearchForWorklogTest {
 
     val logger: Logger = LoggerFactory.getLogger(IntegrationJiraInteractorImplSearchForWorklogTest::class.java)
@@ -31,10 +32,15 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         val properties = Properties()
         properties.load(inputStream)
 
-        observableGen = JiraInteractorImpl(
+        val clientProvider = JiraClientProviderImpl(
                 host = properties["host"].toString(),
                 username = properties["username"].toString(),
                 password = properties["password"].toString()
+        )
+        observableGen = JiraInteractorImpl(
+                jiraClientProvider = clientProvider,
+                jiraSearchSubsciber = JiraSearchSubscriberImpl(clientProvider),
+                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider)
         )
     }
 
@@ -45,7 +51,7 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         val startDate = DateTime(formatter.parseDateTime("2016-03-25"))
         val endDate = DateTime(formatter.parseDateTime("2016-04-26"))
 
-        observableGen.searchJqlForWorklog(startDate, endDate)
+        observableGen.jiraWorks(startDate, endDate)
                 .subscribe({
                     logger.debug("Result: $it")
                 }, {

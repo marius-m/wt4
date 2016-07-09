@@ -7,6 +7,7 @@
  * user guide available at http://gradle.org/docs/2.5/userguide/tutorial_java_projects.html
  */
 apply plugin: 'application'
+apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
 apply from: 'javafx.plugin'
@@ -42,6 +43,7 @@ sourceSets {
             srcDirs = ['src/main/resources']
         }
     }
+    main.java.srcDirs += 'src/main/kotlin'
 }
 
 

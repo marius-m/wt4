@@ -18,8 +18,8 @@ import java.util.*
  * Created by mariusmerkevicius on 1/29/16.
  */
 @Ignore
-class IntegrationJiraSearchJQLTest {
-    private lateinit var connector: JiraConnector
+class IntegrationJiraSearchSubscriberImplTest {
+    private lateinit var clientProvider: JiraClientProvider
 
     @Before
     fun setUp() {
@@ -29,7 +29,7 @@ class IntegrationJiraSearchJQLTest {
         val properties = Properties()
         properties.load(inputStream)
 
-        connector = JiraConnector(
+        clientProvider = JiraClientProviderImpl(
                 properties["host"] as String,
                 properties["username"] as String,
                 properties["password"] as String
@@ -45,18 +45,7 @@ class IntegrationJiraSearchJQLTest {
         val endDate = DateTime(formatter.parseDateTime("2015-05-26"))
 
         // Act
-        Observable.create(connector)
-                .flatMap {
-                    Observable.create(JiraSearchJQL(
-                            it,
-                            String.format(
-                                    JiraSearchJQL.DEFAULT_JQL_WORKLOG_TEMPLATE,
-                                    formatter.print(startDate),
-                                    formatter.print(endDate),
-                                    connector.username
-                            ),
-                            "*all"))
-                }
+        Observable.create(JiraSearchSubscriberImpl(clientProvider))
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.immediate())
                 .subscribe(subscriber)
@@ -68,7 +57,7 @@ class IntegrationJiraSearchJQLTest {
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(IntegrationJiraSearchJQLTest::class.java)
+        val logger = LoggerFactory.getLogger(IntegrationJiraSearchSubscriberImplTest::class.java)
     }
 
 }

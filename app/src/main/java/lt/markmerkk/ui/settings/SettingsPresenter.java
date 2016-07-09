@@ -17,7 +17,7 @@ import javafx.scene.control.Tooltip;
 
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
-import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.JiraSearchSubscriberImpl;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartAllSyncEvent;
@@ -116,7 +116,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
    * A button event when user clicks on reset JQL
    */
   public void onClickResetJQL() {
-    inputJQL.setText(JiraSearchJQL.Companion.getDEFAULT_JQL_USER_ISSUES());
+    inputJQL.setText(JiraSearchSubscriberImpl.Companion.getDEFAULT_JQL_USER_ISSUES());
     settings.setIssueJql(inputJQL.getText());
     SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }

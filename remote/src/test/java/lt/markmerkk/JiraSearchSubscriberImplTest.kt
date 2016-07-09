@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
+import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -18,23 +19,22 @@ import kotlin.test.assertEquals
  * *
  * @since 2016-07-09
  */
-class JiraSearchJQLTest {
+class JiraSearchSubscriberImplTest {
     val jiraClient: JiraClient = mock()
     val testSubscriber = TestSubscriber<Issue.SearchResult>()
-    val issueSearcher = JiraSearchJQL(
-            jiraClient,
-            "fake_jql"
-    )
+    val jiraClientProvider: JiraClientProvider = mock()
+    val issueSearcher = JiraSearchSubscriberImpl(jiraClientProvider)
 
     @Before
     fun setUp() {
+        doReturn(Observable.just(jiraClient)).whenever(jiraClientProvider).clientObservable()
     }
 
     @Test
     fun noSearchResult_noValues() {
         // Arrange
         // Act
-        Observable.create(issueSearcher)
+        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
                 .subscribe(testSubscriber)
 
         // Assert
@@ -48,7 +48,7 @@ class JiraSearchJQLTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenThrow(JiraException("valid_exception"))
 
         // Act
-        Observable.create(issueSearcher)
+        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
                 .subscribe(testSubscriber)
 
         // Assert
@@ -63,7 +63,7 @@ class JiraSearchJQLTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenReturn(searchResult)
 
         // Act
-        Observable.create(issueSearcher)
+        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
                 .subscribe(testSubscriber)
 
         // Assert
@@ -80,7 +80,7 @@ class JiraSearchJQLTest {
         searchResult.issues = issues
 
         // Act
-        Observable.create(issueSearcher)
+        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
                 .subscribe(testSubscriber)
 
         // Assert
@@ -98,7 +98,7 @@ class JiraSearchJQLTest {
         searchResult.issues = issues
 
         // Act
-        Observable.create(issueSearcher)
+        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
                 .subscribe(testSubscriber)
 
         // Assert
@@ -128,7 +128,7 @@ class JiraSearchJQLTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenReturn(searchResult1, searchResult2, searchResult3)
 
         // Act
-        Observable.create(issueSearcher)
+        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
                 .subscribe(testSubscriber)
 
         // Assert

@@ -1,18 +1,11 @@
 package lt.markmerkk
 
-import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.reset
-import com.nhaarman.mockito_kotlin.verify
-import lt.markmerkk.interfaces.IRemoteLoadListener
 import net.rcarz.jiraclient.JiraClient
-import net.rcarz.jiraclient.JiraException
-import org.joda.time.DateTime
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import rx.observers.TestSubscriber
-import rx.schedulers.Schedulers
 import kotlin.test.assertEquals
 
 /**
@@ -20,8 +13,8 @@ import kotlin.test.assertEquals
  * *
  * @since 2016-07-03
  */
-class JiraInteractorImplRemoteClientInitTest {
-    val observableGen = JiraInteractorImpl(
+class JiraClientProviderImplInitTest {
+    val jiraClientProvider = JiraClientProviderImpl(
             host = "fake_host",
             username = "fake_username",
             password = "fake_password"
@@ -29,45 +22,45 @@ class JiraInteractorImplRemoteClientInitTest {
 
     @Test
     fun validClient_initJiraClient() {
-        assertNull(observableGen.jiraClient)
+        assertNull(jiraClientProvider.jiraClient)
 
-        observableGen
+        jiraClientProvider
                 .clientObservable()
                 .subscribe()
 
-        assertNotNull(observableGen.jiraClient)
+        assertNotNull(jiraClientProvider.jiraClient)
     }
 
     @Test
     fun reuseJiraClient_multipleSync() {
-        assertNull(observableGen.jiraClient)
+        assertNull(jiraClientProvider.jiraClient)
 
-        observableGen
+        jiraClientProvider
                 .clientObservable()
                 .subscribe()
 
-        val newJiraClient = observableGen.jiraClient
+        val newJiraClient = jiraClientProvider.jiraClient
 
-        observableGen
+        jiraClientProvider
                 .clientObservable()
                 .subscribe()
-        observableGen
+        jiraClientProvider
                 .clientObservable()
                 .subscribe()
 
-        assertEquals(newJiraClient, observableGen.jiraClient)
+        assertEquals(newJiraClient, jiraClientProvider.jiraClient)
     }
 
     @Test
     fun invalidClient_initJiraClient() {
-        val observableGen2 = JiraInteractorImpl(
+        val clientProvider = JiraClientProviderImpl(
                 host = "", // invalid
                 username = "", // invalid
                 password = ""
         )
         val testSubscriber = TestSubscriber<JiraClient>()
 
-        observableGen2
+        clientProvider
                 .clientObservable()
                 .subscribe(testSubscriber)
 
