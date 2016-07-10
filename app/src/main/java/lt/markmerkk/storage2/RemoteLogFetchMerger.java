@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by mariusmerkevicius on 11/28/15. Responsible for merging / updating database {@link
+ * Created by mariusmerkevicius on 11/28/15.
+ *
+ * Responsible for merging / updating database {@link
  * SimpleLog} entities with the remote ones.
  *
  * This class should follow these rules for merging
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
  * 2. Update local log with the data from sever
  * 3. All pulled data should contain dirty = 0.
  */
+@Deprecated // user RemoteLogPull2 instead
 public class RemoteLogFetchMerger {
   Logger logger = LoggerFactory.getLogger(RemoteLogFetchMerger.class);
 
