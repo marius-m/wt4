@@ -14,17 +14,13 @@ import rx.Scheduler
 open class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
         val jiraSearchSubsciber: JiraSearchSubsciber,
-        val jiraWorklogSubscriber: JiraWorklogSubscriber,
-        val ioScheduler: Scheduler,
-        val uiScheduler: Scheduler
+        val jiraWorklogSubscriber: JiraWorklogSubscriber
 ) : JiraInteractor {
 
     //region Observables
 
     fun jiraWorks(start: DateTime, end: DateTime): Observable<List<JiraWork>> {
         return jiraClientProvider.clientObservable()
-                .subscribeOn(ioScheduler)
-                .observeOn(uiScheduler)
                 .flatMap { jiraSearchSubsciber.searchResultObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
                 .filter { it.valid() }

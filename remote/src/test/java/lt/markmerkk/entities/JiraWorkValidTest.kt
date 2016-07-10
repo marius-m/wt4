@@ -1,6 +1,8 @@
 package lt.markmerkk.entities
 
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.junit.Assert.*
@@ -16,6 +18,7 @@ class JiraWorkValidTest {
     fun valid_returnTrue() {
         // Arrange
         val fakeIssue: Issue = mock()
+        doReturn("valid_key").whenever(fakeIssue).key
         val fakeWorklogs: List<WorkLog> = mock()
 
         // Act
@@ -26,6 +29,22 @@ class JiraWorkValidTest {
 
         // Assert
         assertTrue(result.valid())
+    }
+
+    @Test
+    fun brokenIssueNoKey_returnFalse() {
+        // Arrange
+        val fakeIssue: Issue = mock()
+        val fakeWorklogs: List<WorkLog> = mock()
+
+        // Act
+        val result = JiraWork(
+                issue = fakeIssue,
+                worklogs = fakeWorklogs
+        )
+
+        // Assert
+        assertFalse(result.valid())
     }
 
     @Test

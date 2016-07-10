@@ -41,9 +41,7 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         observableGen = JiraInteractorImpl(
                 jiraClientProvider = clientProvider,
                 jiraSearchSubsciber = JiraSearchSubscriberImpl(clientProvider),
-                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider),
-                ioScheduler = Schedulers.immediate(),
-                uiScheduler = Schedulers.immediate()
+                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider)
         )
     }
 
