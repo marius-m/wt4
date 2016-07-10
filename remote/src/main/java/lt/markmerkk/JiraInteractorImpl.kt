@@ -5,6 +5,7 @@ import org.joda.time.DateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.Observable
+import rx.Scheduler
 
 /**
  * @author mariusmerkevicius
@@ -13,14 +14,17 @@ import rx.Observable
 open class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
         val jiraSearchSubsciber: JiraSearchSubsciber,
-        val jiraWorklogSubscriber: JiraWorklogSubscriber
+        val jiraWorklogSubscriber: JiraWorklogSubscriber,
+        val ioScheduler: Scheduler,
+        val uiScheduler: Scheduler
 ) : JiraInteractor {
-
 
     //region Observables
 
-    open fun jiraWorks(start: DateTime, end: DateTime): Observable<List<JiraWork>> {
+    fun jiraWorks(start: DateTime, end: DateTime): Observable<List<JiraWork>> {
         return jiraClientProvider.clientObservable()
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
                 .flatMap { jiraSearchSubsciber.searchResultObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
                 .filter { it.valid() }

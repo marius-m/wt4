@@ -74,7 +74,7 @@ class JiraSearchSubscriberImpl : JiraSearchSubsciber, Observable.OnSubscribe<Iss
                     Observable.create<Issue.SearchResult>(
                             JiraSearchSubscriberImpl(
                                     jiraClientProvider = jiraClientProvider,
-                                    jql = jqlForWorkIssuesFromDateObservable(start, end),
+                                    jql = jqlForWorkIssuesFromDateObservable(start, end, it),
                                     jiraClient = it
                             )
                     )
@@ -83,11 +83,12 @@ class JiraSearchSubscriberImpl : JiraSearchSubsciber, Observable.OnSubscribe<Iss
 
     fun jqlForWorkIssuesFromDateObservable(
             start: DateTime,
-            end: DateTime
+            end: DateTime,
+            client: JiraClient
     ): String {
         val startFormat = JiraSearchSubscriberImpl.dateFormat.print(start.millis)
         val endFormat = JiraSearchSubscriberImpl.dateFormat.print(end.millis)
-        return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"${jiraClient?.self}\")"
+        return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"${client.self}\")"
     }
 
     companion object {

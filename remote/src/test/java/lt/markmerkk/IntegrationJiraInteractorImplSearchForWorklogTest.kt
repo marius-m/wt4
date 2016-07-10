@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.observers.TestSubscriber
+import rx.schedulers.Schedulers
 import java.io.FileInputStream
 import java.util.*
 
@@ -40,7 +41,9 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         observableGen = JiraInteractorImpl(
                 jiraClientProvider = clientProvider,
                 jiraSearchSubsciber = JiraSearchSubscriberImpl(clientProvider),
-                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider)
+                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider),
+                ioScheduler = Schedulers.immediate(),
+                uiScheduler = Schedulers.immediate()
         )
     }
 
