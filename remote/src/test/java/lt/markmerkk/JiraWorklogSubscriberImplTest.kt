@@ -33,6 +33,7 @@ class JiraWorklogSubscriberImplTest {
         // Arrange
         val worklog: WorkLog = mock()
         val issue: Issue = mock()
+        doReturn("valid_key").whenever(issue).key
         val worklogs: List<WorkLog> = listOf(worklog, worklog, worklog)
         doReturn(worklogs).whenever(issue).allWorkLogs
         searchResult.issues = listOf(issue)
