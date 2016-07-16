@@ -28,8 +28,14 @@ class RemoteLogMerger(
         if (!remoteIssue.valid()) return
         val worklogs = remoteIssue.worklogs ?: return
         for (remoteWorklog in worklogs) {
-            if (!remoteIssue.validWorklog(remoteWorklog)) continue
-            if (!remoteLogFilter.valid(remoteWorklog)) continue
+            if (!remoteIssue.validWorklog(remoteWorklog)) {
+                logger.info("Invalid worklog: $remoteWorklog")
+                continue
+            }
+            if (!remoteLogFilter.valid(remoteWorklog)) {
+                logger.info("Filtering out as invalid worklog: $remoteWorklog")
+                continue
+            }
             val oldLog = mergeExecutor.localEntityFromRemote(remoteWorklog)
             if (oldLog == null) {
                 mergeExecutor.createLog(SimpleLogBuilder(remoteIssue.issue!!.key, remoteWorklog).build())
