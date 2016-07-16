@@ -12,20 +12,19 @@ class JiraLogFilter(
         val user: String,
         val start: DateTime,
         val end: DateTime
-) {
+) : JiraFilter<WorkLog> {
 
-
-    fun valid(workLog: WorkLog?): Boolean {
+    override fun valid(input: WorkLog?): Boolean {
         try {
-            if (workLog == null) throw FilterErrorException("Worklog is invalid")
-            if (workLog.started == null) throw FilterErrorException("Worklog is invalid")
-            if (workLog.author == null) throw FilterErrorException("Worklog is invalid")
-            if (workLog.author.name != user) throw FilterErrorException("Worklog does not belong to the user")
-            if (start.isAfter(workLog.started.time)) throw FilterErrorException("Start time is after worklog date")
-            if (end.isBefore(workLog.started.time)) throw FilterErrorException("End time is before worklog date")
+            if (input == null) throw FilterErrorException("Worklog is invalid")
+            if (input.started == null) throw FilterErrorException("Worklog is invalid")
+            if (input.author == null) throw FilterErrorException("Worklog is invalid")
+            if (input.author.name != user) throw FilterErrorException("Worklog does not belong to the user")
+            if (start.isAfter(input.started.time)) throw FilterErrorException("Start time is after worklog date")
+            if (end.isBefore(input.started.time)) throw FilterErrorException("End time is before worklog date")
             return true
         } catch (e: FilterErrorException) {
-            logger.debug("Ignoring " + workLog + " for because " + e.message)
+            logger.debug("Ignoring " + input + " for because " + e.message)
             return false
         }
     }
@@ -44,3 +43,4 @@ class JiraLogFilter(
     //endregion
 
 }
+

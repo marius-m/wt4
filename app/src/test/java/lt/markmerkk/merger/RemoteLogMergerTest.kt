@@ -1,6 +1,7 @@
 package lt.markmerkk.merger
 
 import com.nhaarman.mockito_kotlin.*
+import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.storage2.SimpleLog
 import net.rcarz.jiraclient.Issue
@@ -14,7 +15,33 @@ import java.util.*
  * *
  * @since 2016-07-10
  */
-class RemoteLogPull2Test {
+class RemoteLogMergerTest {
+
+    val remoteFilter: JiraFilter<WorkLog> = mock()
+    val mergeExecutor: RemoteMergeExecutor = mock()
+
+    @Test
+    fun filterInvalidWorklog_noChange() {
+        // Arrange
+        val fakeIssue: Issue = mock()
+        doReturn("valid_key").whenever(fakeIssue).key
+        val fakeWorkLog: WorkLog = mock()
+        doReturn(Date(1000)).whenever(fakeWorkLog).started
+        doReturn(false).whenever(remoteFilter).valid(any())
+        val puller = RemoteLogMerger(
+                mergeExecutor,
+                remoteFilter,
+                JiraWork(fakeIssue, listOf(fakeWorkLog))
+        )
+
+        // Act
+        puller.run()
+
+        // Assert
+        verify(mergeExecutor, never()).createLog(any())
+        verify(mergeExecutor, never()).updateLog(any())
+    }
+
     @Test
     fun validNewEntry_triggerNew() {
         // Arrange
@@ -22,12 +49,11 @@ class RemoteLogPull2Test {
         doReturn("valid_key").whenever(fakeIssue).key
         val fakeWorkLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(fakeWorkLog).started
-        val mergeExecutor: RemoteMergeExecutor = mock()
-        val puller = RemoteLogPull2(
+        doReturn(true).whenever(remoteFilter).valid(any())
+        val puller = RemoteLogMerger(
                 mergeExecutor,
-                JiraWork(fakeIssue, listOf(
-                        fakeWorkLog
-                ))
+                remoteFilter,
+                JiraWork(fakeIssue, listOf(fakeWorkLog))
         )
 
         // Act
@@ -46,14 +72,13 @@ class RemoteLogPull2Test {
         val fakeWorkLog: WorkLog = mock()
         doReturn("valid_self").whenever(fakeWorkLog).self
         doReturn(Date(1000)).whenever(fakeWorkLog).started
-        val mergeExecutor: RemoteMergeExecutor = mock()
         val oldLog: SimpleLog = mock()
         doReturn(oldLog).whenever(mergeExecutor).localEntityFromRemote(any())
-        val puller = RemoteLogPull2(
+        doReturn(true).whenever(remoteFilter).valid(any())
+        val puller = RemoteLogMerger(
                 mergeExecutor,
-                JiraWork(fakeIssue, listOf(
-                        fakeWorkLog
-                ))
+                remoteFilter,
+                JiraWork(fakeIssue, listOf(fakeWorkLog))
         )
 
         // Act
@@ -70,9 +95,10 @@ class RemoteLogPull2Test {
         val fakeIssue: Issue = mock()
         val fakeWorkLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(fakeWorkLog).started
-        val mergeExecutor: RemoteMergeExecutor = mock()
-        val puller = RemoteLogPull2(
+        doReturn(true).whenever(remoteFilter).valid(any())
+        val puller = RemoteLogMerger(
                 mergeExecutor,
+                remoteFilter,
                 JiraWork(fakeIssue, listOf(
                         fakeWorkLog
                 )) // invalid entry
@@ -89,9 +115,9 @@ class RemoteLogPull2Test {
     @Test
     fun invalidEntryIssueNull_noTrigger() {
         // Arrange
-        val mergeExecutor: RemoteMergeExecutor = mock()
-        val puller = RemoteLogPull2(
+        val puller = RemoteLogMerger(
                 mergeExecutor,
+                remoteFilter,
                 JiraWork(null, emptyList()) // invalid entry
         )
 
@@ -107,9 +133,9 @@ class RemoteLogPull2Test {
     fun invalidEntryNullWorklogs_noTrigger() {
         // Arrange
         val fakeIssue: Issue = mock()
-        val mergeExecutor: RemoteMergeExecutor = mock()
-        val puller = RemoteLogPull2(
+        val puller = RemoteLogMerger(
                 mergeExecutor,
+                remoteFilter,
                 JiraWork(fakeIssue, null) // invalid entry
         )
 
