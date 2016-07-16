@@ -28,7 +28,9 @@ class SyncController2SyncTest {
             settings,
             dbExecutor,
             dbStorage,
-            lastUpdateController
+            lastUpdateController,
+            Schedulers.immediate(),
+            Schedulers.immediate()
     )
 
     @Before

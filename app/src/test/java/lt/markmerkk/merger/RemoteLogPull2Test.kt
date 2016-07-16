@@ -44,6 +44,7 @@ class RemoteLogPull2Test {
         val fakeIssue: Issue = mock()
         doReturn("valid_key").whenever(fakeIssue).key
         val fakeWorkLog: WorkLog = mock()
+        doReturn("valid_self").whenever(fakeWorkLog).self
         doReturn(Date(1000)).whenever(fakeWorkLog).started
         val mergeExecutor: RemoteMergeExecutor = mock()
         val oldLog: SimpleLog = mock()

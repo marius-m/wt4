@@ -87,7 +87,7 @@ public class SimpleLogBuilder {
     this.task = Utils.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
 
-    this.uri = remoteLog.getSelf().toString();
+    this.uri = remoteLog.getSelf();
     this.id = parseUri(this.uri);
     this.deleted = false;
     this.dirty = false;
