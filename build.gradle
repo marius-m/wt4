@@ -49,6 +49,7 @@ allprojects {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxjava-async-util:0.21.0'
 
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "com.nhaarman:mockito-kotlin:$kotlin_test_version"

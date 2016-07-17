@@ -24,10 +24,7 @@ import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
-import lt.markmerkk.utils.SyncController;
-import lt.markmerkk.utils.SyncEventBus;
-import lt.markmerkk.utils.UserSettingsImpl;
-import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Priority;
@@ -43,8 +40,9 @@ import org.apache.log4j.PatternLayout;
 public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoadListener {
 
   @Inject
-  UserSettingsImpl settings;
-  @Inject SyncController syncController;
+  UserSettings settings;
+  @Inject
+  SyncController2 syncController;
   @Inject AutoSync2 autoSync;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
@@ -59,6 +57,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
   public SettingsPresenter() { }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    Main.getComponent().presenterComponent().inject(this);
     SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_SETTINGS);
     refreshCombo.setItems(autoSync.getSelectionKeys());
     refreshCombo.getSelectionModel().select(autoSync.currentSelection());

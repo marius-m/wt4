@@ -8,6 +8,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BackgroundFill;
 import javax.inject.Inject;
+
+import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
@@ -37,6 +39,7 @@ public class UpdateLogPresenter {
   SimpleLog entity;
 
   protected void initWithEntity(SimpleLog entity) {
+    Main.getComponent().presenterComponent().inject(this);
     this.entity = entity;
 
     startInput.setText(entity.getLongStart());

@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
+import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
@@ -23,19 +24,17 @@ import org.joda.time.DateTimeConstants;
  * Represents the storage for simple use.
  */
 public class BasicLogStorage implements IDataStorage<SimpleLog> {
-  @Inject DBProdExecutor executor;
+  IExecutor executor;
 
   ObservableList<SimpleLog> logs;
   List<IDataListener<SimpleLog>> listeners;
   DateTime targetDate;
   DisplayType displayType = DisplayType.DAY;
 
-  public BasicLogStorage() {
+  public BasicLogStorage(IExecutor executor) {
+    if (executor == null) throw new IllegalArgumentException("Executor == null");
+    this.executor = executor;
     listeners = new ArrayList<>();
-  }
-
-  @PostConstruct
-  void initualize() {
     setTargetDate(HourGlass.longFormat.print(DateTime.now()));
   }
 

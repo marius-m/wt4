@@ -1,18 +1,14 @@
 package lt.markmerkk;
 
 import com.airhacks.afterburner.injection.Injector;
-import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
 import com.vinumeris.updatefx.AppDirectory;
 import com.vinumeris.updatefx.UpdateFX;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.Properties;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lt.markmerkk.dagger.components.AppComponent;
+import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
@@ -22,9 +18,14 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
-import org.apache.log4j.SimpleLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Properties;
 
 public class Main extends Application {
   public static final String LOG_LAYOUT = "%d{ABSOLUTE} %5p %c{1}:%L - %m%n";
@@ -45,6 +46,8 @@ public class Main extends Application {
   private RollingFileAppender fileAppender;
   private RollingFileAppender errorAppender;
 
+  public static AppComponent sComponent = null;
+
   public Main() { }
 
   @Override
@@ -63,7 +66,9 @@ public class Main extends Application {
 
     Translation.getInstance(); // Initializing translations on first launch
 
-    hostServices = HostServicesFactory.getInstance(this);
+//    hostServices = HostServicesFactory.getInstance(this);
+    sComponent = DaggerAppComponent.create();
+    sComponent.inject(this);
 
     MainView mainView = new MainView(stage);
     Scene scene = new Scene(mainView.getView());
@@ -100,6 +105,10 @@ public class Main extends Application {
 
   public static void realMain(String[] args) {
     launch(args);
+  }
+
+  public static AppComponent getComponent() {
+      return sComponent;
   }
 
   //region Convenience

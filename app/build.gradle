@@ -29,7 +29,7 @@ def versionCode = '6'
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java']
+            srcDirs = ['src/main/java', 'build/generated']
         }
         resources {
             srcDirs = ['src/main/resources']
@@ -110,10 +110,13 @@ dependencies {
     compile 'com.brsanthu:google-analytics-java:1.1.2'
 
     compile 'io.reactivex:rxjavafx:0.0.2'
+    compile 'com.google.dagger:dagger:2.2'
+    kapt 'com.google.dagger:dagger-compiler:2.2'
+//    provided 'org.glassfish:javax.annotation:10.0-b28'
 
     compile 'joda-time:joda-time:2.9.1'
     compile 'com.vinumeris:updatefx:1.5'
-    compile 'com.airhacks:afterburner.fx:1.6.0'
+    compile 'com.airhacks:afterburner.fx:1.7.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.jfxtras:jfxtras-agenda:8.0-r5'
 
@@ -267,8 +270,8 @@ task versionOutput() {
 }
 
 //task makeJar(dependsOn:[processJar]) { }
-task makeJar(dependsOn:[processJarForWin]) { }
-compileJava.dependsOn versionOutput
-jfxDeploy.dependsOn makeJar
+//task makeJar(dependsOn:[processJarForWin]) { }
+//compileJava.dependsOn versionOutput
+//jfxDeploy.dependsOn makeJar
 
 

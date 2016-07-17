@@ -1,6 +1,6 @@
 package lt.markmerkk.utils;
 
-import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.JiraSearchSubscriberImpl;
 import lt.markmerkk.listeners.WorldEvents;
 
 import javax.annotation.PostConstruct;
@@ -34,7 +34,7 @@ public class UserSettingsImpl implements UserSettings, WorldEvents {
 
     @Override
     public String getIssueJql() {
-        if (issueJql == null) return JiraSearchJQL.Companion.getDEFAULT_JQL_USER_ISSUES();
+        if (issueJql == null) return JiraSearchSubscriberImpl.Companion.getDEFAULT_JQL_USER_ISSUES();
         return issueJql;
     }
 

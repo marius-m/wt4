@@ -17,13 +17,17 @@ import org.joda.time.DateTime;
 public class LastUpdateControllerImpl implements LastUpdateController {
   public static final String LAST_UPDATE = "LAST_UPDATE";
 
-  @Inject
-  UserSettings settings;
+  final UserSettings settings;
 
   String error;
   boolean loading = false;
   //boolean error = false;
   long lastUpdate = 0;
+
+  public LastUpdateControllerImpl(UserSettings userSettings) {
+    if (userSettings == null) throw new IllegalArgumentException("userSettings == null");
+    this.settings = userSettings;
+  }
 
   //region World event
 

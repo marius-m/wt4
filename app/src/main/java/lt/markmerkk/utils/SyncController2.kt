@@ -1,14 +1,16 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.JiraConnector
-import lt.markmerkk.JiraObservables2
-import lt.markmerkk.JiraSearchJQL
+import lt.markmerkk.*
 import lt.markmerkk.interfaces.IRemoteLoadListener
+import lt.markmerkk.merger.RemoteLogMerger
+import lt.markmerkk.merger.RemoteMergeExecutorImpl
+import lt.markmerkk.storage2.BasicLogStorage
 import lt.markmerkk.storage2.IDataStorage
 import lt.markmerkk.storage2.SimpleLog
 import lt.markmerkk.storage2.database.interfaces.IExecutor
-import net.rcarz.jiraclient.JiraClient
+import lt.markmerkk.ui.utils.DisplayType
 import org.joda.time.DateTime
+import org.joda.time.DateTimeConstants
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -25,14 +27,16 @@ import javax.annotation.PreDestroy
 class SyncController2(
         val settings: UserSettings,
         val dbExecutor: IExecutor,
-        val logStorage: IDataStorage<SimpleLog>,
-        val lastUpdateController: LastUpdateController
+        val logStorage: BasicLogStorage,
+        val lastUpdateController: LastUpdateController,
+        val ioScheduler: Scheduler,
+        val uiScheduler: Scheduler
 ) {
 
     val remoteLoadListeners: MutableList<IRemoteLoadListener> = ArrayList()
     var subscription: Subscription? = null
 
-   var isLoading = false
+    var isLoading = false
         private set
 
     @PostConstruct
@@ -41,6 +45,16 @@ class SyncController2(
     @PreDestroy
     fun destroy() {
         subscription?.unsubscribe()
+    }
+
+
+    fun sync() {
+        sync(
+                startDay(),
+                endDay(),
+                Schedulers.computation(),
+                JavaFxScheduler.getInstance()
+        )
     }
 
     /**
@@ -52,22 +66,45 @@ class SyncController2(
             uiScheduler: Scheduler,
             ioScheduler: Scheduler
     ) {
-        val observables = JiraObservables2(
-                settings.host,
-                settings.username,
-                settings.password,
-                Schedulers.computation(),
-                JavaFxScheduler.getInstance()
+        if (isLoading) {
+            logger.info("Sync is already loading")
+            return
+        }
+        val jiraClientProvider = JiraClientProviderImpl(
+                host = settings.host,
+                username = settings.username,
+                password = settings.password
         )
-        observables.clientObservable()
-                .doOnSubscribe { remoteLoadListener.onLoadChange(true) }
-                .doOnUnsubscribe { remoteLoadListener.onLoadChange(false) }
+        val jiraInteractor = JiraInteractorImpl(
+                jiraClientProvider = jiraClientProvider,
+                jiraSearchSubsciber = JiraSearchSubscriberImpl(jiraClientProvider),
+                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(jiraClientProvider)
+        )
+        val remoteMergeExecutor = RemoteMergeExecutorImpl(dbExecutor)
+        subscription = jiraInteractor.jiraWorks(start, end)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
+                .doOnSubscribe {
+                    isLoading = true
+                    remoteLoadListener.onLoadChange(true)
+                }
+                .doOnUnsubscribe {
+                    isLoading = false
+                    remoteLoadListener.onLoadChange(false)
+                }
+                .flatMap { Observable.from(it) }
+                .flatMap {
+                    rx.util.async.Async.fromRunnable(
+                            RemoteLogMerger(
+                                    remoteMergeExecutor,
+                                    JiraLogFilter(jiraClientProvider.username!!, start, end),
+                                    it),
+                            it)
+                }
                 .subscribe({
                     logger.info("Success!")
                 }, {
-                    logger.info(it.message)
+                    logger.info("Error synchronizing: ${it.message}")
                     remoteLoadListener.onError(it.message)
                 })
 
@@ -117,19 +154,19 @@ class SyncController2(
 
     //region Convenience
 
-//    fun startDay(): DateTime {
-//        when (storage.displayType) {
-//            DisplayType.WEEK -> return storage.targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
-//            else -> return storage.targetDate
-//        }
-//    }
+    fun startDay(): DateTime {
+        when (logStorage.displayType) {
+            DisplayType.WEEK -> return logStorage.targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
+            else -> return logStorage.targetDate
+        }
+    }
 
-//    fun endDay(): DateTime {
-//        when (storage.displayType) {
-//            DisplayType.WEEK -> return storage.targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay()
-//            else -> return storage.targetDate.plusDays(1)
-//        }
-//    }
+    fun endDay(): DateTime {
+        when (logStorage.displayType) {
+            DisplayType.WEEK -> return logStorage.targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay()
+            else -> return logStorage.targetDate.plusDays(1)
+        }
+    }
 
     //endregion
 
@@ -171,7 +208,7 @@ class SyncController2(
     //endregion
 
     companion object {
-        private val logger = LoggerFactory.getLogger(JiraSearchJQL::class.java)
+        private val logger = LoggerFactory.getLogger(JiraSearchSubscriberImpl::class.java)
     }
 
 }

@@ -1,12 +1,6 @@
 package lt.markmerkk.ui.clock;
 
 import com.google.common.base.Strings;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,29 +8,21 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import javax.inject.Inject;
-import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
-import lt.markmerkk.utils.SyncController;
-import lt.markmerkk.utils.UserSettingsImpl;
+import lt.markmerkk.utils.SyncController2;
+import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
@@ -44,6 +30,14 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.observables.JavaFxObservable;
+
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.ResourceBundle;
 
 /**
  * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
@@ -56,13 +50,13 @@ public class ClockPresenter implements Initializable {
   @Inject
   HourGlass hourGlass;
   @Inject
+  SyncController2 syncController;
+  @Inject
   BasicLogStorage logStorage;
   @Inject
-  SyncController syncController;
+  IExecutor dbProdExecutor;
   @Inject
-  DBProdExecutor dbProdExecutor;
-  @Inject
-  UserSettingsImpl settings;
+  UserSettings settings;
 
   @FXML
   DatePicker inputTo;
@@ -93,8 +87,14 @@ public class ClockPresenter implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    issueSearchAdapter = new IssueSearchAdapter(settings, syncController, inputTaskCombo,
-        taskLoadIndicator, dbProdExecutor, outputJQL);
+    Main.getComponent().presenterComponent().inject(this);
+    issueSearchAdapter = new IssueSearchAdapter(
+            settings,
+            inputTaskCombo,
+            taskLoadIndicator,
+            dbProdExecutor,
+            outputJQL
+    );
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)

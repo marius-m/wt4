@@ -7,9 +7,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javax.inject.Inject;
+
+import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.storage2.BasicLogStorage;
+import lt.markmerkk.storage2.IDataStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.UpdateListener;
@@ -22,12 +25,15 @@ import lt.markmerkk.utils.tracker.SimpleTracker;
  * Represents the presenter to display the log list
  */
 public class DisplayLogPresenter implements Initializable, IPresenter {
-  @Inject BasicLogStorage storage;
-  @FXML TableView<SimpleLog> tableView;
+  @Inject
+  IDataStorage<SimpleLog> storage;
+  @FXML
+  TableView<SimpleLog> tableView;
 
   UpdateListener updateListener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+      Main.getComponent().presenterComponent().inject(this);
     SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_DAY);
     tableView.setTooltip(new Tooltip(Translation.getInstance().getString("daylog_tooltip_title")));
     LogDisplayController logDisplayController =

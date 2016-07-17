@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import jfxtras.scene.control.agenda.Agenda;
+import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
@@ -22,6 +23,8 @@ import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
 
@@ -36,6 +39,7 @@ import java.util.ResourceBundle;
  * Represents the presenter to display the log list
  */
 public class WeekPresenter implements Initializable, Destroyable, IPresenter, AgendaView {
+  public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
   @Inject BasicLogStorage storage;
 
   @FXML VBox mainContainer;
@@ -56,6 +60,7 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ag
   }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    Main.getComponent().presenterComponent().inject(this);
     SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_WEEK);
     storage.register(storageListener);
     targetDate = new DateTime(storage.getTargetDate());
