@@ -3,9 +3,6 @@ package lt.markmerkk.utils
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.merger.RemoteLogMerger
-import lt.markmerkk.merger.RemoteLogMergerImpl
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -14,9 +11,9 @@ import rx.schedulers.Schedulers
 /**
  * @author mariusmerkevicius
  * *
- * @since 2016-07-03
+ * @since 2016-08-07
  */
-class SyncController2SyncTest {
+class SyncController2FetchMergeTest {
     val settings: UserSettings = mock()
     val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
@@ -35,8 +32,6 @@ class SyncController2SyncTest {
 
     @Before
     fun setUp() {
-        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraWorks(any(), any())
-
         doReturn("test_host").whenever(settings).host
         doReturn("test_user").whenever(settings).username
         doReturn("test_pass").whenever(settings).password
@@ -46,17 +41,26 @@ class SyncController2SyncTest {
     }
 
     @Test
-    fun sync_triggerLoadings() {
-        val remoteLoadingListener: IRemoteLoadListener = mock()
-        controller.addLoadingListener(remoteLoadingListener)
+    fun emptyResult_noTrigger() {
+        reset(jiraInteractor)
+        val validWorks = Observable.empty<List<JiraWork>>()
+        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
 
-        controller.sync(
-                Schedulers.immediate(),
-                Schedulers.immediate()
-        )
+        controller.sync(Schedulers.immediate(), Schedulers.immediate())
 
-        verify(remoteLoadingListener).onLoadChange(true)
-        verify(remoteLoadingListener).onLoadChange(false)
+        verify(remoteMergeToolsProvider, never()).fetchMerger(any(), any())
+    }
+
+    @Test
+    fun validResuult_triggerMerge() {
+        reset(jiraInteractor)
+        val fakeWork = JiraWork()
+        val validWorks = Observable.just(listOf(fakeWork))
+        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+
+        controller.sync(Schedulers.immediate(), Schedulers.immediate())
+
+        verify(remoteMergeToolsProvider).fetchMerger(any(), any())
     }
 
 }

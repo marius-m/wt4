@@ -32,7 +32,10 @@ class SyncController2(
     var subscription: Subscription? = null
 
     var isLoading = false
-        private set
+        set(value) {
+            field = value
+            remoteLoadListener.onLoadChange(value)
+        }
 
     @PostConstruct
     fun init() { }
@@ -61,33 +64,25 @@ class SyncController2(
             logger.info("Sync is already loading")
             return
         }
-        subscription = jiraInteractor.jiraWorks(
-                dayProvider.startDay(),
-                dayProvider.endDay()
-        )
+        subscription = jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay())
                 .subscribeOn(ioScheduler)
-                .observeOn(uiScheduler)
-                .doOnSubscribe {
-                    isLoading = true
-                    remoteLoadListener.onLoadChange(true)
-                }
-                .doOnUnsubscribe {
-                    isLoading = false
-                    remoteLoadListener.onLoadChange(false)
-                }
-                .flatMap { Observable.from(it) }
+                .doOnSubscribe { isLoading = true }
+                .doOnUnsubscribe { isLoading = false }
                 .flatMap {
-                    rx.util.async.Async.fromRunnable(
-                            remoteMergeToolsProvider.fetchMerger(
+                    Observable.from(it)
+                }
+                .flatMap {
+                    val fetchMerger = remoteMergeToolsProvider.fetchMerger(
                                     it,
                                     JiraLogFilter(
                                             user = userSettings.username,
                                             start = dayProvider.startDay(),
                                             end = dayProvider.endDay()
                                     )
-                            ),
-                            it)
+                            )
+                    rx.util.async.Async.fromCallable(fetchMerger)
                 }
+                .observeOn(uiScheduler)
                 .subscribe({
                     logger.info("Success!")
                 }, {
@@ -157,7 +152,6 @@ class SyncController2(
 
     internal val remoteLoadListener: IRemoteLoadListener = object : IRemoteLoadListener {
         override fun onLoadChange(loading: Boolean) {
-            this@SyncController2.isLoading = loading
             if (loading)
                 lastUpdateController.error = null
             if (!loading)

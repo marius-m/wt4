@@ -15,7 +15,7 @@ import java.util.*
  * *
  * @since 2016-07-10
  */
-class RemoteLogMergerTest {
+class RemoteLogMergerImplTest {
 
     val remoteFilter: JiraFilter<WorkLog> = mock()
     val mergeExecutor: RemoteMergeExecutor = mock()
@@ -28,14 +28,14 @@ class RemoteLogMergerTest {
         val fakeWorkLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(fakeWorkLog).started
         doReturn(false).whenever(remoteFilter).valid(any())
-        val puller = RemoteLogMerger(
+        val puller = RemoteLogMergerImpl(
                 mergeExecutor,
                 remoteFilter,
                 JiraWork(fakeIssue, listOf(fakeWorkLog))
         )
 
         // Act
-        puller.run()
+        puller.call()
 
         // Assert
         verify(mergeExecutor, never()).createLog(any())
@@ -50,14 +50,14 @@ class RemoteLogMergerTest {
         val fakeWorkLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(fakeWorkLog).started
         doReturn(true).whenever(remoteFilter).valid(any())
-        val puller = RemoteLogMerger(
+        val puller = RemoteLogMergerImpl(
                 mergeExecutor,
                 remoteFilter,
                 JiraWork(fakeIssue, listOf(fakeWorkLog))
         )
 
         // Act
-        puller.run()
+        puller.call()
 
         // Assert
         verify(mergeExecutor).createLog(any())
@@ -75,14 +75,14 @@ class RemoteLogMergerTest {
         val oldLog: SimpleLog = mock()
         doReturn(oldLog).whenever(mergeExecutor).localEntityFromRemote(any())
         doReturn(true).whenever(remoteFilter).valid(any())
-        val puller = RemoteLogMerger(
+        val puller = RemoteLogMergerImpl(
                 mergeExecutor,
                 remoteFilter,
                 JiraWork(fakeIssue, listOf(fakeWorkLog))
         )
 
         // Act
-        puller.run()
+        puller.call()
 
         // Assert
         verify(mergeExecutor, never()).createLog(any())
@@ -96,7 +96,7 @@ class RemoteLogMergerTest {
         val fakeWorkLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(fakeWorkLog).started
         doReturn(true).whenever(remoteFilter).valid(any())
-        val puller = RemoteLogMerger(
+        val puller = RemoteLogMergerImpl(
                 mergeExecutor,
                 remoteFilter,
                 JiraWork(fakeIssue, listOf(
@@ -105,7 +105,7 @@ class RemoteLogMergerTest {
         )
 
         // Act
-        puller.run()
+        puller.call()
 
         // Assert
         verify(mergeExecutor, never()).createLog(any())
@@ -115,14 +115,14 @@ class RemoteLogMergerTest {
     @Test
     fun invalidEntryIssueNull_noTrigger() {
         // Arrange
-        val puller = RemoteLogMerger(
+        val puller = RemoteLogMergerImpl(
                 mergeExecutor,
                 remoteFilter,
                 JiraWork(null, emptyList()) // invalid entry
         )
 
         // Act
-        puller.run()
+        puller.call()
 
         // Assert
         verify(mergeExecutor, never()).createLog(any())
@@ -133,14 +133,14 @@ class RemoteLogMergerTest {
     fun invalidEntryNullWorklogs_noTrigger() {
         // Arrange
         val fakeIssue: Issue = mock()
-        val puller = RemoteLogMerger(
+        val puller = RemoteLogMergerImpl(
                 mergeExecutor,
                 remoteFilter,
                 JiraWork(fakeIssue, null) // invalid entry
         )
 
         // Act
-        puller.run()
+        puller.call()
 
         // Assert
         verify(mergeExecutor, never()).createLog(any())
