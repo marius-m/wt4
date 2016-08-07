@@ -10,5 +10,5 @@ import rx.Observable
  * @since 2016-07-09
  */
 interface JiraSearchSubsciber {
-    fun searchResultObservable(start: DateTime, end: DateTime): Observable<Issue.SearchResult>
+    fun searchResultObservable(start: Long, end: Long): Observable<Issue.SearchResult>
 }

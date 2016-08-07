@@ -49,8 +49,8 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
     fun searchIssues() {
         val testSubscriber = TestSubscriber<Any>()
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-        val startDate = DateTime(formatter.parseDateTime("2016-03-25"))
-        val endDate = DateTime(formatter.parseDateTime("2016-04-26"))
+        val startDate = DateTime(formatter.parseDateTime("2016-03-25")).millis
+        val endDate = DateTime(formatter.parseDateTime("2016-04-26")).millis
 
         observableGen.jiraWorks(startDate, endDate)
                 .subscribe({

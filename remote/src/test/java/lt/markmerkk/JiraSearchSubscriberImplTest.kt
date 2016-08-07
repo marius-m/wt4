@@ -34,7 +34,7 @@ class JiraSearchSubscriberImplTest {
     fun noSearchResult_noValues() {
         // Arrange
         // Act
-        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
+        issueSearcher.searchResultObservable(1000L, 2000L)
                 .subscribe(testSubscriber)
 
         // Assert
@@ -48,7 +48,7 @@ class JiraSearchSubscriberImplTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenThrow(JiraException("valid_exception"))
 
         // Act
-        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
+        issueSearcher.searchResultObservable(1000L, 2000L)
                 .subscribe(testSubscriber)
 
         // Assert
@@ -63,7 +63,7 @@ class JiraSearchSubscriberImplTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenReturn(searchResult)
 
         // Act
-        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
+        issueSearcher.searchResultObservable(1000L, 2000L)
                 .subscribe(testSubscriber)
 
         // Assert
@@ -80,7 +80,7 @@ class JiraSearchSubscriberImplTest {
         searchResult.issues = issues
 
         // Act
-        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
+        issueSearcher.searchResultObservable(1000L, 2000L)
                 .subscribe(testSubscriber)
 
         // Assert
@@ -98,7 +98,7 @@ class JiraSearchSubscriberImplTest {
         searchResult.issues = issues
 
         // Act
-        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
+        issueSearcher.searchResultObservable(1000L, 2000L)
                 .subscribe(testSubscriber)
 
         // Assert
@@ -128,7 +128,7 @@ class JiraSearchSubscriberImplTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenReturn(searchResult1, searchResult2, searchResult3)
 
         // Act
-        issueSearcher.searchResultObservable(DateTime(1000), DateTime(2000))
+        issueSearcher.searchResultObservable(1000L, 2000L)
                 .subscribe(testSubscriber)
 
         // Assert

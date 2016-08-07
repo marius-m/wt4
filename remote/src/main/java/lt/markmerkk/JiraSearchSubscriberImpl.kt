@@ -68,7 +68,7 @@ class JiraSearchSubscriberImpl : JiraSearchSubsciber, Observable.OnSubscribe<Iss
 
     }
 
-    override fun searchResultObservable(start: DateTime, end: DateTime): Observable<Issue.SearchResult> {
+    override fun searchResultObservable(start: Long, end: Long): Observable<Issue.SearchResult> {
         return jiraClientProvider.clientObservable()
                 .flatMap {
                     Observable.create<Issue.SearchResult>(
@@ -82,12 +82,12 @@ class JiraSearchSubscriberImpl : JiraSearchSubsciber, Observable.OnSubscribe<Iss
     }
 
     fun jqlForWorkIssuesFromDateObservable(
-            start: DateTime,
-            end: DateTime,
+            start: Long,
+            end: Long,
             client: JiraClient
     ): String {
-        val startFormat = JiraSearchSubscriberImpl.dateFormat.print(start.millis)
-        val endFormat = JiraSearchSubscriberImpl.dateFormat.print(end.millis)
+        val startFormat = JiraSearchSubscriberImpl.dateFormat.print(start)
+        val endFormat = JiraSearchSubscriberImpl.dateFormat.print(end)
         return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"${client.self}\")"
     }
 

@@ -10,18 +10,20 @@ import org.slf4j.LoggerFactory
  */
 class JiraLogFilter(
         val user: String,
-        val start: DateTime,
-        val end: DateTime
+        val start: Long,
+        val end: Long
 ) : JiraFilter<WorkLog> {
 
     override fun valid(input: WorkLog?): Boolean {
         try {
+            val startDateTime = DateTime(start)
+            val endDateTime = DateTime(end)
             if (input == null) throw FilterErrorException("Worklog is invalid")
             if (input.started == null) throw FilterErrorException("Worklog is invalid")
             if (input.author == null) throw FilterErrorException("Worklog is invalid")
             if (input.author.name != user) throw FilterErrorException("Worklog does not belong to the user")
-            if (start.isAfter(input.started.time)) throw FilterErrorException("Start time is after worklog date")
-            if (end.isBefore(input.started.time)) throw FilterErrorException("End time is before worklog date")
+            if (startDateTime.isAfter(input.started.time)) throw FilterErrorException("Start time is after worklog date")
+            if (endDateTime.isBefore(input.started.time)) throw FilterErrorException("End time is before worklog date")
             return true
         } catch (e: FilterErrorException) {
             logger.debug("Ignoring " + input + " for because " + e.message)

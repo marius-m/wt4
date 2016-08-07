@@ -38,7 +38,7 @@ class JiraLogFilterTest {
     @Test
     fun valid_returnTrue() {
         // Arrange
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -50,7 +50,7 @@ class JiraLogFilterTest {
     @Test
     fun endEqualCreate_returnTrue() {
         // Arrange
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(1000))
+        val filterer = JiraLogFilter("valid_username", 500L, 1000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -62,7 +62,7 @@ class JiraLogFilterTest {
     @Test
     fun startEqualCreate_returnTrue() {
         // Arrange
-        val filterer = JiraLogFilter("valid_username", DateTime(1000), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 1000L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -74,7 +74,7 @@ class JiraLogFilterTest {
     @Test
     fun endBeforeCreate_returnFalse() {
         // Arrange
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(900))
+        val filterer = JiraLogFilter("valid_username", 500L, 900L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -86,7 +86,7 @@ class JiraLogFilterTest {
     @Test
     fun startAfterCreate_returnFalse() {
         // Arrange
-        val filterer = JiraLogFilter("valid_username", DateTime(1200), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 1200L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -98,7 +98,7 @@ class JiraLogFilterTest {
     @Test
     fun invalidUser_returnFalse() {
         // Arrange
-        val filterer = JiraLogFilter("invalid_username", DateTime(500), DateTime(2000))
+        val filterer = JiraLogFilter("invalid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -110,7 +110,7 @@ class JiraLogFilterTest {
     @Test
     fun nullWorkLog_returnFalse() {
         // Arrange
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(null)
@@ -125,7 +125,7 @@ class JiraLogFilterTest {
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(null).whenever(invalidWorklog).started
         doReturn(user).whenever(invalidWorklog).author
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(invalidWorklog)
@@ -140,7 +140,7 @@ class JiraLogFilterTest {
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started
         doReturn(null).whenever(invalidWorklog).author
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(invalidWorklog)
@@ -156,7 +156,7 @@ class JiraLogFilterTest {
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started
         doReturn(user).whenever(invalidWorklog).author
         doReturn(null).whenever(user).name
-        val filterer = JiraLogFilter("valid_username", DateTime(500), DateTime(2000))
+        val filterer = JiraLogFilter("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(invalidWorklog)
