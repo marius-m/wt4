@@ -12,7 +12,7 @@ import rx.Scheduler
  * @author mariusmerkevicius
  * @since 2016-07-03
  */
-open class JiraInteractorImpl(
+class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
         val jiraSearchSubsciber: JiraSearchSubsciber,
         val jiraWorklogSubscriber: JiraWorklogSubscriber
@@ -20,7 +20,7 @@ open class JiraInteractorImpl(
 
     //region Observables
 
-    fun jiraWorks(start: DateTime, end: DateTime): Observable<List<JiraWork>> {
+    override fun jiraWorks(start: Long, end: Long): Observable<List<JiraWork>> {
         return jiraClientProvider.clientObservable()
                 .flatMap { jiraSearchSubsciber.searchResultObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
@@ -35,7 +35,7 @@ open class JiraInteractorImpl(
                 .map { it.toList() }
     }
 
-    fun jiraIssues(): Observable<Issue> {
+    override fun jiraIssues(): Observable<Issue> { // todo : incomplete
         return Observable.empty<Issue>()
     }
 
