@@ -123,9 +123,9 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    * Convenience method to update current status
    */
   void updateStatus() {
-    //buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
+//    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
     buttonToday.setText(String.format("%s", total));
-    //buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
+//    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
     buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
 
@@ -212,8 +212,8 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     Platform.runLater(() -> {
       outputProgress.setManaged(loading);
       outputProgress.setVisible(loading);
+      updateStatus();
     });
-    updateStatus();
   }
 
   @Override

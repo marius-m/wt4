@@ -5,6 +5,7 @@ import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.storage2.BasicLogStorage
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -22,10 +23,12 @@ class SyncController2FetchMergeTest {
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
     val jiraClientProvider: JiraClientProvider = mock()
+    val logStorage: BasicLogStorage = mock()
 
     val controller = SyncController2(
             jiraClientProvider = jiraClientProvider,
             jiraInteractor = jiraInteractor,
+            logStorage = logStorage,
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,
             lastUpdateController = lastUpdateController,

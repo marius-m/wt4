@@ -83,11 +83,13 @@ class SyncModule {
             dayProvider: DayProvider,
             lastUpdateController: LastUpdateController,
             jiraInteractor: JiraInteractor,
-            jiraClientProvider: JiraClientProvider
+            jiraClientProvider: JiraClientProvider,
+            logStorage: BasicLogStorage
     ): SyncController2 {
         return SyncController2(
                 jiraClientProvider = jiraClientProvider,
                 jiraInteractor = jiraInteractor,
+                logStorage = logStorage,
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
                 lastUpdateController = lastUpdateController,

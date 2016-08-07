@@ -7,6 +7,7 @@ import lt.markmerkk.JiraSearchSubscriberImpl
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeExecutor
 import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.storage2.BasicLogStorage
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -24,6 +25,7 @@ class SyncController2(
         private val jiraClientProvider: JiraClientProvider,
         private val jiraInteractor: JiraInteractor,
         private val userSettings: UserSettings,
+        private val logStorage: BasicLogStorage,
         private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
         private val lastUpdateController: LastUpdateController,
         private val dayProvider: DayProvider,
@@ -51,8 +53,8 @@ class SyncController2(
 
     fun syncWithDefaultValues() {
         sync(
-                Schedulers.computation(),
-                JavaFxScheduler.getInstance()
+                uiScheduler = JavaFxScheduler.getInstance(),
+                ioScheduler = Schedulers.computation()
         )
     }
 
@@ -92,6 +94,8 @@ class SyncController2(
                 }, {
                     logger.info("Error synchronizing: ${it.message}")
                     remoteLoadListener.onError(it.message)
+                }, {
+                    logStorage.notifyDataChange()
                 })
     }
 
