@@ -22,7 +22,7 @@ import javax.inject.Singleton
 )
 interface AppComponent {
 
-    fun inject(application: Application)
+    fun inject(application: Main)
 
     fun presenterComponent(): PresenterComponent
 

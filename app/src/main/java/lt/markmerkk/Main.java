@@ -9,8 +9,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
+import lt.markmerkk.listeners.WorldEvents;
+import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
+import lt.markmerkk.utils.HashSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.apache.commons.io.FileUtils;
@@ -21,6 +24,7 @@ import org.apache.log4j.RollingFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +52,9 @@ public class Main extends Application {
 
   public static AppComponent sComponent = null;
 
+  @Inject
+  public UserSettings settings;
+
   public Main() { }
 
   @Override
@@ -70,6 +77,7 @@ public class Main extends Application {
     sComponent = DaggerAppComponent.create();
     sComponent.inject(this);
 
+    ((WorldEvents)settings).onStart();
     MainView mainView = new MainView(stage);
     Scene scene = new Scene(mainView.getView());
     String cssResource1 = getClass().getResource("/text-field-red-border.css").toExternalForm();
@@ -90,6 +98,7 @@ public class Main extends Application {
 
   @Override
   public void stop() throws Exception {
+    ((WorldEvents)settings).onStop();
     SimpleTracker.getInstance().getTracker().stop();
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
     org.apache.log4j.Logger.getRootLogger().removeAppender(errorAppender);
