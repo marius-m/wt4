@@ -7,9 +7,9 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.JiraConnector;
-import lt.markmerkk.JiraLogFilterer;
+import lt.markmerkk.JiraLogFilter;
 import lt.markmerkk.JiraObservables;
-import lt.markmerkk.JiraSearchJQL;
+import lt.markmerkk.JiraSearchSubscriberImpl;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.RemoteLogFetchMerger;
@@ -28,8 +28,9 @@ import rx.schedulers.Schedulers;
 /**
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
+@Deprecated
 public class SyncController {
-  private static final Logger logger = LoggerFactory.getLogger(JiraSearchJQL.class);
+  private static final Logger logger = LoggerFactory.getLogger(JiraSearchSubscriberImpl.class);
 
   @Inject
   UserSettingsImpl settings;
@@ -96,10 +97,10 @@ public class SyncController {
     if (jiraClient == null)
       return;
 
-    JiraLogFilterer filterer = new JiraLogFilterer(
+    JiraLogFilter filterer = new JiraLogFilter(
         settings.getUsername(),
-        startTime,
-        endTime
+        startTime.getMillis(),
+        endTime.getMillis()
     );
 
     RemoteLogFetchMerger remoteLogFetchMerger = new RemoteLogFetchMerger(dbExecutor);

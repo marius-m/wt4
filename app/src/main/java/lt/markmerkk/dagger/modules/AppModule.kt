@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
+import lt.markmerkk.JiraInteractor
 import lt.markmerkk.storage2.BasicLogStorage
 import lt.markmerkk.storage2.IDataStorage
 import lt.markmerkk.storage2.SimpleLog
@@ -77,20 +78,9 @@ class AppModule {
     }
 
     @Provides
-    fun provicesSyncController(
-            settings: UserSettings,
-            dbExecutor: IExecutor,
-            logStorage: BasicLogStorage,
-            lastUpdateController: LastUpdateController
-    ): SyncController2 {
-        return SyncController2(
-                settings = settings,
-                dbExecutor = dbExecutor,
-                logStorage = logStorage,
-                lastUpdateController = lastUpdateController,
-                ioScheduler = Schedulers.computation(),
-                uiScheduler = JavaFxScheduler.getInstance()
-        )
+    @Singleton
+    fun provideDayProvider(logStorage: BasicLogStorage): DayProvider {
+        return DayProviderImpl(logStorage)
     }
 
 }

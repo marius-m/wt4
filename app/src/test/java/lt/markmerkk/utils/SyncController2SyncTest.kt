@@ -1,18 +1,13 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.*
+import lt.markmerkk.JiraInteractor
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.storage2.BasicLogStorage
-import lt.markmerkk.storage2.IDataStorage
-import lt.markmerkk.storage2.SimpleLog
-import lt.markmerkk.storage2.database.interfaces.IExecutor
-import org.joda.time.DateTime
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import rx.Observable
 import rx.schedulers.Schedulers
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 /**
  * @author mariusmerkevicius
@@ -21,21 +16,24 @@ import kotlin.test.assertNull
  */
 class SyncController2SyncTest {
     val settings: UserSettings = mock()
-    val dbExecutor: IExecutor = mock()
-    val dbStorage: BasicLogStorage = mock()
     val lastUpdateController: LastUpdateController = mock()
+    val dayProvider: DayProvider = mock()
+    val jiraInteractor: JiraInteractor = mock()
+    val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
 
     val controller = SyncController2(
-            settings,
-            dbExecutor,
-            dbStorage,
-            lastUpdateController,
-            Schedulers.immediate(),
-            Schedulers.immediate()
+            jiraInteractor = jiraInteractor,
+            userSettings = settings,
+            remoteMergeToolsProvider = remoteMergeToolsProvider,
+            lastUpdateController = lastUpdateController,
+            dayProvider = dayProvider,
+            uiScheduler = Schedulers.immediate(),
+            ioScheduler = Schedulers.immediate()
     )
 
     @Before
     fun setUp() {
+        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraWorks(any(), any())
         doReturn("test_host").whenever(settings).host
         doReturn("test_user").whenever(settings).username
         doReturn("test_pass").whenever(settings).password
@@ -47,8 +45,6 @@ class SyncController2SyncTest {
         controller.addLoadingListener(remoteLoadingListener)
 
         controller.sync(
-                DateTime(1000),
-                DateTime(2000),
                 Schedulers.immediate(),
                 Schedulers.immediate()
         )
@@ -56,5 +52,23 @@ class SyncController2SyncTest {
         verify(remoteLoadingListener).onLoadChange(true)
         verify(remoteLoadingListener).onLoadChange(false)
     }
+
+//    @Test
+//    fun validResuult_triggerMerge() {
+//        reset(jiraInteractor)
+//        val validWorks = Observable.just(
+//                listOf(
+//                        JiraWork()
+//                )
+//        )
+//        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+//
+//        controller.sync(
+//                Schedulers.immediate(),
+//                Schedulers.immediate()
+//        )
+//
+//        verify(dbExecutor).execute(any())
+//    }
 
 }

@@ -1,16 +1,10 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.*
+import lt.markmerkk.JiraInteractor
+import lt.markmerkk.JiraLogFilter
+import lt.markmerkk.JiraSearchSubscriberImpl
 import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.merger.RemoteLogMerger
-import lt.markmerkk.merger.RemoteMergeExecutorImpl
-import lt.markmerkk.storage2.BasicLogStorage
-import lt.markmerkk.storage2.IDataStorage
-import lt.markmerkk.storage2.SimpleLog
-import lt.markmerkk.storage2.database.interfaces.IExecutor
-import lt.markmerkk.ui.utils.DisplayType
-import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
+import lt.markmerkk.merger.RemoteMergeExecutor
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -25,12 +19,13 @@ import javax.annotation.PreDestroy
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
 class SyncController2(
-        val settings: UserSettings,
-        val dbExecutor: IExecutor,
-        val logStorage: BasicLogStorage,
-        val lastUpdateController: LastUpdateController,
-        val ioScheduler: Scheduler,
-        val uiScheduler: Scheduler
+        private val jiraInteractor: JiraInteractor,
+        private val userSettings: UserSettings,
+        private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
+        private val lastUpdateController: LastUpdateController,
+        private val dayProvider: DayProvider,
+        private val ioScheduler: Scheduler,
+        private val uiScheduler: Scheduler
 ) {
 
     val remoteLoadListeners: MutableList<IRemoteLoadListener> = ArrayList()
@@ -48,10 +43,8 @@ class SyncController2(
     }
 
 
-    fun sync() {
+    fun syncWithDefaultValues() {
         sync(
-                startDay(),
-                endDay(),
                 Schedulers.computation(),
                 JavaFxScheduler.getInstance()
         )
@@ -61,8 +54,6 @@ class SyncController2(
      * Main method to start synchronization
      */
     fun sync(
-            start: DateTime,
-            end: DateTime,
             uiScheduler: Scheduler,
             ioScheduler: Scheduler
     ) {
@@ -70,18 +61,10 @@ class SyncController2(
             logger.info("Sync is already loading")
             return
         }
-        val jiraClientProvider = JiraClientProviderImpl(
-                host = settings.host,
-                username = settings.username,
-                password = settings.password
+        subscription = jiraInteractor.jiraWorks(
+                dayProvider.startDay(),
+                dayProvider.endDay()
         )
-        val jiraInteractor = JiraInteractorImpl(
-                jiraClientProvider = jiraClientProvider,
-                jiraSearchSubsciber = JiraSearchSubscriberImpl(jiraClientProvider),
-                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(jiraClientProvider)
-        )
-        val remoteMergeExecutor = RemoteMergeExecutorImpl(dbExecutor)
-        subscription = jiraInteractor.jiraWorks(start, end)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe {
@@ -95,10 +78,14 @@ class SyncController2(
                 .flatMap { Observable.from(it) }
                 .flatMap {
                     rx.util.async.Async.fromRunnable(
-                            RemoteLogMerger(
-                                    remoteMergeExecutor,
-                                    JiraLogFilter(jiraClientProvider.username!!, start, end),
-                                    it),
+                            remoteMergeToolsProvider.fetchMerger(
+                                    it,
+                                    JiraLogFilter(
+                                            user = userSettings.username,
+                                            start = dayProvider.startDay(),
+                                            end = dayProvider.endDay()
+                                    )
+                            ),
                             it)
                 }
                 .subscribe({
@@ -151,24 +138,6 @@ class SyncController2(
 //                    storage!!.notifyDataChange()
 //                }
     }
-
-    //region Convenience
-
-    fun startDay(): DateTime {
-        when (logStorage.displayType) {
-            DisplayType.WEEK -> return logStorage.targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
-            else -> return logStorage.targetDate
-        }
-    }
-
-    fun endDay(): DateTime {
-        when (logStorage.displayType) {
-            DisplayType.WEEK -> return logStorage.targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay()
-            else -> return logStorage.targetDate.plusDays(1)
-        }
-    }
-
-    //endregion
 
     //region Getters / Setters
 
