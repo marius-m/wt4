@@ -1,6 +1,7 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.JiraWork
+import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,6 +33,10 @@ open class JiraInteractorImpl(
                         }
                 )
                 .map { it.toList() }
+    }
+
+    fun jiraIssues(): Observable<Issue> {
+        return Observable.empty<Issue>()
     }
 
     //endregion

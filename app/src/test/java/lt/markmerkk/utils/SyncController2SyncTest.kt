@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.interfaces.IRemoteLoadListener
+import lt.markmerkk.storage2.BasicLogStorage
 import lt.markmerkk.storage2.IDataStorage
 import lt.markmerkk.storage2.SimpleLog
 import lt.markmerkk.storage2.database.interfaces.IExecutor
@@ -21,7 +22,7 @@ import kotlin.test.assertNull
 class SyncController2SyncTest {
     val settings: UserSettings = mock()
     val dbExecutor: IExecutor = mock()
-    val dbStorage: IDataStorage<SimpleLog> = mock()
+    val dbStorage: BasicLogStorage = mock()
     val lastUpdateController: LastUpdateController = mock()
 
     val controller = SyncController2(

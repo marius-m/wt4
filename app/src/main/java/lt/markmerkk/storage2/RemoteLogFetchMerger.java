@@ -18,8 +18,10 @@ import org.slf4j.LoggerFactory;
  * 1. Create new local log if there is not current one
  * 2. Update local log with the data from sever
  * 3. All pulled data should contain dirty = 0.
+ *
+ * @deprecated use {@link lt.markmerkk.merger.RemoteLogMerger}
  */
-@Deprecated // user RemoteLogPull2 instead
+@Deprecated // use RemoteLogPull2 instead
 public class RemoteLogFetchMerger {
   Logger logger = LoggerFactory.getLogger(RemoteLogFetchMerger.class);
 

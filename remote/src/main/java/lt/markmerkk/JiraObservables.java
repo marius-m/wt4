@@ -1,6 +1,5 @@
 package lt.markmerkk;
 
-import java.util.List;
 import javafx.util.Pair;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
@@ -8,6 +7,8 @@ import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import rx.Observable;
 import rx.Subscriber;
+
+import java.util.List;
 
 /**
  * Created by mariusmerkevicius on 1/30/16.
@@ -94,11 +95,14 @@ public class JiraObservables {
         }
         DateTime startSearchDate = start.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
         DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-        subscriber.onNext(String.format(JiraSearchSubscriberImpl.Companion.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
-            JiraSearchSubscriberImpl.Companion.getDateFormat().print(startSearchDate.getMillis()),
-            JiraSearchSubscriberImpl.Companion.getDateFormat().print(endSearchDate.getMillis()),
-            user
-        ));
+        subscriber.onNext(
+                String.format(
+                        JiraSearchSubscriberImpl.Companion.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
+                        JiraSearchSubscriberImpl.Companion.getDateFormat().print(startSearchDate.getMillis()),
+                        JiraSearchSubscriberImpl.Companion.getDateFormat().print(endSearchDate.getMillis()),
+                        user
+                )
+        );
         subscriber.onCompleted();
       }
     });

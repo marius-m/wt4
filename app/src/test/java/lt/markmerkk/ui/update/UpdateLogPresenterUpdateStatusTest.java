@@ -79,6 +79,7 @@ public class UpdateLogPresenterUpdateStatusTest {
   public void updateStatus_inputError_shouldSetError() throws Exception {
     // Arrange
     doReturn(true).when(entity).isError();
+    doReturn("valid_error_msg").when(entity).getErrorMessage();
     doReturn(NO_SERVER_ID).when(entity).getId();
 
     // Act
@@ -94,6 +95,7 @@ public class UpdateLogPresenterUpdateStatusTest {
   public void updateStatus_inputErrorWithServer_shouldSetError() throws Exception {
     // Arrange
     doReturn(true).when(entity).isError();
+    doReturn("valid_error_msg").when(entity).getErrorMessage();
     doReturn(VALID_SERVER_ID).when(entity).getId();
 
     // Act

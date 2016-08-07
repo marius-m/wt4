@@ -14,8 +14,7 @@ public class LastUpdateControllerImplInitTest {
   @Test
   public void init_storageOutputValid_valid() throws Exception {
     // Arrange
-    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
-    controller.settings = mock(UserSettingsImpl.class);
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettingsImpl.class));
     doReturn("12345").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
@@ -28,8 +27,7 @@ public class LastUpdateControllerImplInitTest {
   @Test
   public void init_storageOutputNull_setDefaultValue() throws Exception {
     // Arrange
-    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
-    controller.settings = mock(UserSettingsImpl.class);
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettings.class));
     doReturn(null).when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
@@ -42,8 +40,7 @@ public class LastUpdateControllerImplInitTest {
   @Test
   public void init_storageOutputEmpty_setDefaultValue() throws Exception {
     // Arrange
-    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
-    controller.settings = mock(UserSettingsImpl.class);
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettings.class));
     doReturn("").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act
@@ -56,8 +53,7 @@ public class LastUpdateControllerImplInitTest {
   @Test
   public void init_storageOutputMalformed_setDefaultValue() throws Exception {
     // Arrange
-    LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
-    controller.settings = mock(UserSettingsImpl.class);
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettings.class));
     doReturn("asdf").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act

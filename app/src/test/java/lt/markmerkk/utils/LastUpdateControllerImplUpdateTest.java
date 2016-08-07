@@ -18,11 +18,10 @@ import static org.mockito.Mockito.mock;
 public class LastUpdateControllerImplUpdateTest {
 
   @Spy
-  private LastUpdateControllerImpl controller = new LastUpdateControllerImpl();
+  private LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettings.class));
 
   @Before
   public void setUp() {
-    controller.settings = mock(UserSettingsImpl.class);
     doReturn("0").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
     controller.init();
   }

@@ -1,5 +1,6 @@
 package lt.markmerkk.storage2;
 
+import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,7 +13,7 @@ public class BasicLogStorageRegisterTest {
 
   @Test public void testValidRegister() throws Exception {
     // Arrange
-    BasicLogStorage storage = new BasicLogStorage();
+    BasicLogStorage storage = new BasicLogStorage(mock(IExecutor.class));
     IDataListener listener = mock(IDataListener.class);
 
     // Act
@@ -25,7 +26,7 @@ public class BasicLogStorageRegisterTest {
 
   @Test public void testValidUnregister() throws Exception {
     // Arrange
-    BasicLogStorage storage = new BasicLogStorage();
+    BasicLogStorage storage = new BasicLogStorage(mock(IExecutor.class));
     IDataListener listener = mock(IDataListener.class);
 
     // Act
@@ -44,7 +45,7 @@ public class BasicLogStorageRegisterTest {
 
   @Test public void testUnregisterNoSuchListener() throws Exception {
     // Arrange
-    BasicLogStorage storage = new BasicLogStorage();
+    BasicLogStorage storage = new BasicLogStorage(mock(IExecutor.class));
     IDataListener listener = mock(IDataListener.class);
 
     // Act
@@ -56,7 +57,7 @@ public class BasicLogStorageRegisterTest {
 
   @Test public void testRegisterNull() throws Exception {
     // Arrange
-    BasicLogStorage storage = new BasicLogStorage();
+    BasicLogStorage storage = new BasicLogStorage(mock(IExecutor.class));
     IDataListener listener = mock(IDataListener.class);
 
     // Act
@@ -68,7 +69,7 @@ public class BasicLogStorageRegisterTest {
 
   @Test public void testUnregisterNull() throws Exception {
     // Arrange
-    BasicLogStorage storage = new BasicLogStorage();
+    BasicLogStorage storage = new BasicLogStorage(mock(IExecutor.class));
     IDataListener listener = mock(IDataListener.class);
 
     // Act
