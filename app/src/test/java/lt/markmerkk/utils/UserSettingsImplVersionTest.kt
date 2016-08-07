@@ -12,7 +12,7 @@ import org.junit.Test
  * *
  * @since 2016-08-07
  */
-class UserSettingsImplVersion2Test {
+class UserSettingsImplVersionTest {
 
     val coreSettings: HashSettings = mock()
 
