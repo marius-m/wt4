@@ -68,7 +68,7 @@ class SyncController2(
             return
         }
         jiraClientProvider.reset()
-        subscription = jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay())
+        subscription = Observable.defer { jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay()) }
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
@@ -93,49 +93,6 @@ class SyncController2(
                     logger.info("Error synchronizing: ${it.message}")
                     remoteLoadListener.onError(it.message)
                 })
-
-//        if (jiraClient == null)
-//            return
-
-//        val filterer = JiraLogFilterer(
-//                settings!!.getUsername(),
-//                startTime,
-//                endTime)
-
-//        val remoteLogFetchMerger = RemoteLogFetchMerger(dbExecutor)
-//        val remoteLogPushMerger = RemoteLogPushMerger(dbExecutor, jiraClient)
-
-//        val downloadObservable = JiraObservables
-//                .remoteWorklogs(jiraClient, filterer, startTime, endTime)
-//                .map<String>({ pair ->
-//                    for (workLog in pair.getValue())
-//                        remoteLogFetchMerger.merge(pair.getKey().getKey(), workLog)
-//                    null
-//                })
-
-//        val uploadObservable = Observable.from(storage!!.data)
-//                .map<String>({ simpleLog ->
-//                    remoteLogPushMerger.merge(simpleLog)
-//                    null
-//                })
-
-//        remoteLoadListener.onLoadChange(true)
-//        subscription = downloadObservable
-//                .startWith(uploadObservable)
-//                .subscribeOn(Schedulers.computation())
-//                .observeOn(JavaFxScheduler.getInstance())
-//                .subscribe({ output ->
-//                    logger.info(output);
-//                },
-//                        { error ->
-//                            logger.info("Sync error!  " + error)
-//                            remoteLoadListener.onLoadChange(false)
-//                            remoteLoadListener.onError(error.message)
-//                        }) {
-//                    logger.info("Sync complete! ")
-//                    remoteLoadListener.onLoadChange(false)
-//                    storage!!.notifyDataChange()
-//                }
     }
 
     //region Getters / Setters
