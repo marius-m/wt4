@@ -1,10 +1,12 @@
 package lt.markmerkk.utils
 
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraLogFilter
 import lt.markmerkk.JiraSearchSubscriberImpl
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeExecutor
+import lt.markmerkk.mvp.UserSettings
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -19,6 +21,7 @@ import javax.annotation.PreDestroy
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
 class SyncController2(
+        private val jiraClientProvider: JiraClientProvider,
         private val jiraInteractor: JiraInteractor,
         private val userSettings: UserSettings,
         private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
@@ -64,6 +67,7 @@ class SyncController2(
             logger.info("Sync is already loading")
             return
         }
+        jiraClientProvider.reset()
         subscription = jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay())
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe { isLoading = true }

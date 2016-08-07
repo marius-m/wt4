@@ -105,6 +105,7 @@ dependencies {
     compile project(':jira-client')
     compile project(':database')
     compile project(':remote')
+    compile project(':models')
 
     // Google analytics
     compile 'com.brsanthu:google-analytics-java:1.1.2'

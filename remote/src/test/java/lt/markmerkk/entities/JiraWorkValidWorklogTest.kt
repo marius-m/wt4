@@ -3,6 +3,7 @@ package lt.markmerkk.entities
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import lt.markmerkk.JiraWork
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.junit.Assert.*

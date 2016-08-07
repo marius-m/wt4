@@ -1,8 +1,10 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.*
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
-import lt.markmerkk.entities.JiraWork
+import lt.markmerkk.JiraWork
+import lt.markmerkk.mvp.UserSettings
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -19,8 +21,10 @@ class SyncController2FetchMergeTest {
     val dayProvider: DayProvider = mock()
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
+    val jiraClientProvider: JiraClientProvider = mock()
 
     val controller = SyncController2(
+            jiraClientProvider = jiraClientProvider,
             jiraInteractor = jiraInteractor,
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,

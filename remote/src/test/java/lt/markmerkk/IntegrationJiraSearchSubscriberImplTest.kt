@@ -1,5 +1,9 @@
 package lt.markmerkk
 
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
+import lt.markmerkk.mvp.UserSettings
 import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -29,11 +33,11 @@ class IntegrationJiraSearchSubscriberImplTest {
         val properties = Properties()
         properties.load(inputStream)
 
-        clientProvider = JiraClientProviderImpl(
-                properties["host"] as String,
-                properties["username"] as String,
-                properties["password"] as String
-        )
+        val userSettings: UserSettings = mock()
+        doReturn(properties["host"].toString()).whenever(userSettings).host
+        doReturn(properties["username"].toString()).whenever(userSettings).username
+        doReturn(properties["password"].toString()).whenever(userSettings).password
+        clientProvider = JiraClientProviderImpl(userSettings)
     }
 
     @Test

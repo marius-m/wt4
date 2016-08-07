@@ -1,7 +1,7 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.JiraFilter
-import lt.markmerkk.entities.JiraWork
+import lt.markmerkk.JiraWork
 import lt.markmerkk.merger.RemoteLogMerger
 import net.rcarz.jiraclient.WorkLog
 

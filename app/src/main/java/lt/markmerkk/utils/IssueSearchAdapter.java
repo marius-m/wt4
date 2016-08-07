@@ -14,14 +14,13 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import lt.markmerkk.JiraObservables;
 import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
+import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.storage2.IssueSplit;
 import lt.markmerkk.storage2.LocalIssue;
 import lt.markmerkk.storage2.RemoteEntity;
-import lt.markmerkk.storage2.RemoteFetchIssue;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.storage2.jobs.DeleteJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
@@ -48,8 +47,8 @@ import rx.schedulers.Schedulers;
 public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
-  UserSettingsImpl settings;
-  SyncController syncController;
+  UserSettings settings;
+//  SyncController syncController;
   IExecutor dbExecutor;
   IssueSplit issueSplit = new IssueSplit();
 
@@ -59,13 +58,12 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   long totalIssues;
 
-  public IssueSearchAdapter(UserSettingsImpl settings, SyncController controller,
+  public IssueSearchAdapter(UserSettings settings,
                             ComboBox<LocalIssue> comboBox,
                             ProgressIndicator progressIndicator,
                             IExecutor executor, Text viewInfo) {
     super(comboBox, progressIndicator);
     this.settings = settings;
-    this.syncController = controller;
     this.dbExecutor = executor;
     this.viewInfo = viewInfo;
     registerSearchObservable(comboBox);
@@ -276,13 +274,15 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * @return
    */
   Observable searchIssues(String issueJql, long downloadMillis) {
-    RemoteFetchIssue fetchIssue = new RemoteFetchIssue(dbExecutor, downloadMillis);
-    return syncController.clientObservable()
-        .flatMap(jiraClient -> JiraObservables.userIssues(jiraClient, issueJql))
-        .flatMap(issue -> {
-          fetchIssue.merge(issue);
-          return Observable.empty();
-        });
+      // todo incomplete
+    return Observable.empty();
+//    RemoteFetchIssue fetchIssue = new RemoteFetchIssue(dbExecutor, downloadMillis);
+//    return syncController.clientObservable()
+//        .flatMap(jiraClient -> JiraObservables.userIssues(jiraClient, issueJql))
+//        .flatMap(issue -> {
+//          fetchIssue.merge(issue);
+//          return Observable.empty();
+//        });
   }
 
   /**

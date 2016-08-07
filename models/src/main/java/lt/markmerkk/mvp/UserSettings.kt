@@ -1,4 +1,4 @@
-package lt.markmerkk.utils
+package lt.markmerkk.mvp
 
 /**
  * @author mariusmerkevicius
@@ -10,6 +10,6 @@ interface UserSettings {
     var username: String
     var password: String
     var version: Int
-    fun setCustom(key: String?, value: String?)
-    fun getCustom(key: String?): String?
+    fun setCustom(key: String, value: String)
+    fun getCustom(key: String): String?
 }

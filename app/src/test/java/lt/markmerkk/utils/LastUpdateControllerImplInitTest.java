@@ -1,5 +1,6 @@
 package lt.markmerkk.utils;
 
+import lt.markmerkk.mvp.UserSettings;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +15,7 @@ public class LastUpdateControllerImplInitTest {
   @Test
   public void init_storageOutputValid_valid() throws Exception {
     // Arrange
-    LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettingsImpl.class));
+    LastUpdateControllerImpl controller = new LastUpdateControllerImpl(mock(UserSettings.class));
     doReturn("12345").when(controller.settings).getCustom(eq(LastUpdateControllerImpl.LAST_UPDATE));
 
     // Act

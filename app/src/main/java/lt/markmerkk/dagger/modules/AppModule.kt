@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
-import lt.markmerkk.JiraInteractor
+import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.storage2.BasicLogStorage
 import lt.markmerkk.storage2.IDataStorage
 import lt.markmerkk.storage2.SimpleLog
@@ -12,8 +12,6 @@ import lt.markmerkk.storage2.database.interfaces.IExecutor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.hourglass.KeepAliveController
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
 /**
@@ -26,7 +24,9 @@ class AppModule {
     @Provides
     @Singleton
     fun providesUserPrefs(): UserSettings {
-        return UserSettingsImpl()
+        return UserSettingsImpl(
+                settings = AdvHashSettings()
+        )
     }
 
     @Provides

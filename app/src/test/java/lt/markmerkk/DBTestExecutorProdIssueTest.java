@@ -11,6 +11,7 @@ import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by mariusmerkevicius on 11/22/15.
  */
+@Ignore // Integration tests
 public class DBTestExecutorProdIssueTest {
   @Test public void shouldCreateTable() throws Exception {
     // Arrange

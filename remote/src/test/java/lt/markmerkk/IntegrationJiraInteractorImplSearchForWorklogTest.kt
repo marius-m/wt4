@@ -1,5 +1,9 @@
 package lt.markmerkk
 
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
+import lt.markmerkk.mvp.UserSettings
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.Before
@@ -33,11 +37,11 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         val properties = Properties()
         properties.load(inputStream)
 
-        val clientProvider = JiraClientProviderImpl(
-                host = properties["host"].toString(),
-                username = properties["username"].toString(),
-                password = properties["password"].toString()
-        )
+        val userSettings: UserSettings = mock()
+        doReturn(properties["host"].toString()).whenever(userSettings).host
+        doReturn(properties["username"].toString()).whenever(userSettings).username
+        doReturn(properties["password"].toString()).whenever(userSettings).password
+        val clientProvider = JiraClientProviderImpl(userSettings)
         observableGen = JiraInteractorImpl(
                 jiraClientProvider = clientProvider,
                 jiraSearchSubsciber = JiraSearchSubscriberImpl(clientProvider),

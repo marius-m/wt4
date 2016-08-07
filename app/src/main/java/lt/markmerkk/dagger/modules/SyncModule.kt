@@ -5,6 +5,7 @@ import dagger.Provides
 import lt.markmerkk.*
 import lt.markmerkk.merger.RemoteMergeExecutor
 import lt.markmerkk.merger.RemoteMergeExecutorImpl
+import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.storage2.BasicLogStorage
 import lt.markmerkk.storage2.database.interfaces.IExecutor
 import lt.markmerkk.utils.*
@@ -24,11 +25,7 @@ class SyncModule {
     fun providesClientProvider(
             userSettings: UserSettings
     ): JiraClientProvider {
-        return JiraClientProviderImpl(
-                userSettings.host,
-                userSettings.username,
-                userSettings.password
-        )
+        return JiraClientProviderImpl(userSettings)
     }
 
     @Provides
@@ -85,9 +82,11 @@ class SyncModule {
             remoteMergeToolsProvider: RemoteMergeToolsProvider,
             dayProvider: DayProvider,
             lastUpdateController: LastUpdateController,
-            jiraInteractor: JiraInteractor
+            jiraInteractor: JiraInteractor,
+            jiraClientProvider: JiraClientProvider
     ): SyncController2 {
         return SyncController2(
+                jiraClientProvider = jiraClientProvider,
                 jiraInteractor = jiraInteractor,
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,

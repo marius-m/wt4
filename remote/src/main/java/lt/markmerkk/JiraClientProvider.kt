@@ -8,6 +8,9 @@ import rx.Observable
  * @since 2016-07-09
  */
 interface JiraClientProvider {
+
+    fun reset()
+
     /**
      * Will return a client and cache it
      */

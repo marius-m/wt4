@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import lt.markmerkk.mvp.UserSettings
 import net.rcarz.jiraclient.BasicCredentials
 import net.rcarz.jiraclient.JiraClient
 import rx.Observable
@@ -9,9 +10,7 @@ import rx.Observable
  * @since 2016-07-09
  */
 class JiraClientProviderImpl(
-        val host: String?,
-        val username: String?,
-        val password: String?
+        private val userSettings: UserSettings
 ) : JiraClientProvider {
 
     var jiraClient: JiraClient? = null
@@ -19,7 +18,13 @@ class JiraClientProviderImpl(
     val clientObservable: Observable<JiraClient> // Cache client
         get() {
             if (jiraClient == null) {
-                return Observable.create(JiraConnector(host, username, password))
+                return Observable.create(
+                        JiraConnector(
+                                hostname = userSettings.host,
+                                username = userSettings.username,
+                                password = userSettings.password
+                        )
+                )
             }
             return Observable.just(jiraClient)
         }
@@ -29,6 +34,10 @@ class JiraClientProviderImpl(
             jiraClient = it
             Observable.just(it)
         }
+    }
+
+    override fun reset() {
+        jiraClient = null
     }
 
 }
