@@ -36,7 +36,8 @@ class JiraInteractorImpl(
     }
 
     override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
-        return Observable.from(localStorage.dataAsList)
+        return Observable.defer { Observable.just(jiraClientProvider.client()) }
+                .flatMap { Observable.from(localStorage.dataAsList) }
                 .toList()
     }
 
