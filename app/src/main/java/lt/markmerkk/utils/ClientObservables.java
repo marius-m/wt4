@@ -16,7 +16,7 @@ public class ClientObservables {
     return Observable.just(phrase)
         .filter(searchPhrase -> searchPhrase != null)
         .map(searchPhrase -> {
-          String key = Utils.validateTaskTitle(searchPhrase);
+          String key = LogUtils.INSTANCE.validateTaskTitle(searchPhrase);
           if (!Strings.isNullOrEmpty(key))
             return String.format("summary ~ \"%s\" OR key = \"%s\"", searchPhrase, key);
           return String.format("summary ~ \"%s\"", searchPhrase);

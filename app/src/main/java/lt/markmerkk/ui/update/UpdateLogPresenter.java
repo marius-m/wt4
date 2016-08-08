@@ -15,6 +15,7 @@ import lt.markmerkk.storage2.BasicLogStorage;
 import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.DialogListener;
+import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,8 +131,8 @@ public class UpdateLogPresenter {
   private void update() {
     try {
       entity = new SimpleLogBuilder(entity)
-          .setStart(HourGlass.longFormat.parseDateTime(startInput.getText()).getMillis())
-          .setEnd(HourGlass.longFormat.parseDateTime(endInput.getText()).getMillis())
+          .setStart(LogFormatters.INSTANCE.getLongFormat().parseDateTime(startInput.getText()).getMillis())
+          .setEnd(LogFormatters.INSTANCE.getLongFormat().parseDateTime(endInput.getText()).getMillis())
           .setTask(taskInput.getText())
           .setComment(commentInput.getText())
           .build();

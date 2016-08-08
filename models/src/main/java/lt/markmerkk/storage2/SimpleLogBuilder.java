@@ -2,7 +2,8 @@ package lt.markmerkk.storage2;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import lt.markmerkk.utils.Utils;
+
+import lt.markmerkk.utils.LogUtils;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
@@ -58,7 +59,7 @@ public class SimpleLogBuilder {
     this.end = new DateTime(remoteLog.getStarted().getTime())
         .withFieldAdded(DurationFieldType.seconds(), remoteLog.getTimeSpentSeconds())
         .getMillis();
-    this.task = Utils.validateTaskTitle(task);
+    this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
     this.uri = remoteLog.getSelf();
     this.id = parseUri(this.uri);
@@ -84,7 +85,7 @@ public class SimpleLogBuilder {
     this.end = new DateTime(remoteLog.getStarted().getTime())
         .withFieldAdded(DurationFieldType.seconds(), remoteLog.getTimeSpentSeconds())
         .getMillis();
-    this.task = Utils.validateTaskTitle(task);
+    this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
 
     this.uri = remoteLog.getSelf();
@@ -126,7 +127,7 @@ public class SimpleLogBuilder {
   }
 
   public SimpleLogBuilder setTask(String task) {
-    this.task = Utils.validateTaskTitle(task);
+    this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     return this;
   }
 
@@ -140,7 +141,7 @@ public class SimpleLogBuilder {
    * @return
    */
   public static long parseUri(String url) {
-    if (Utils.isEmpty(url)) return 0;
+    if (EntityKt.isEmpty(url)) return 0;
     try {
       URI uri = new URI(url);
       String[] segments = uri.getPath().split("/");

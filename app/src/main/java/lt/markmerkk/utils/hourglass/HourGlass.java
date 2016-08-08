@@ -4,6 +4,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javax.annotation.PreDestroy;
+
+import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
 import org.joda.time.DateTime;
@@ -19,11 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HourGlass {
   public static final Logger logger = LoggerFactory.getLogger(HourGlass.class);
-  public static final String DATE_SHORT_FORMAT = "HH:mm";
-  public static final String DATE_LONG_FORMAT = "yyyy-MM-dd HH:mm";
-
-  public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern(DATE_SHORT_FORMAT);
-  public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern(DATE_LONG_FORMAT);
 
   public static final int DEFAULT_TICK = 1000;
 
@@ -237,7 +234,7 @@ public class HourGlass {
       throw new IllegalArgumentException("Incorrect updateTimers use!");
     // Parsing start time
     try {
-      DateTime start = shortFormat.parseDateTime(startTime).withDate(
+      DateTime start = LogFormatters.INSTANCE.getShortFormat().parseDateTime(startTime).withDate(
           today.year().get(),
           today.monthOfYear().get(),
           today.dayOfMonth().get()
@@ -249,7 +246,7 @@ public class HourGlass {
 
     // Parsing end time
     try {
-      DateTime end = shortFormat.parseDateTime(endTime).withDate(
+      DateTime end = LogFormatters.INSTANCE.getShortFormat().parseDateTime(endTime).withDate(
           today.year().get(),
           today.monthOfYear().get(),
           today.dayOfMonth().get()
@@ -278,7 +275,7 @@ public class HourGlass {
       throw new IllegalArgumentException("Incorrect updateTimers use!");
     // Parsing start time
     try {
-      DateTime start = longFormat.parseDateTime(startTime);
+      DateTime start = LogFormatters.INSTANCE.getLongFormat().parseDateTime(startTime);
       startMillis = start.getMillis();
     } catch (IllegalArgumentException e) {
       startMillis = -1;
@@ -286,7 +283,7 @@ public class HourGlass {
 
     // Parsing end time
     try {
-      DateTime end = longFormat.parseDateTime(endTime);
+      DateTime end = LogFormatters.INSTANCE.getLongFormat().parseDateTime(endTime);
       endMillis = end.getMillis();
 
       // Correct time with current millis
@@ -345,7 +342,7 @@ public class HourGlass {
   public static long parseMillisFromText(String time) {
     if (Utils.isEmpty(time)) return -1;
     try {
-      return longFormat.parseDateTime(time).getMillis();
+      return LogFormatters.INSTANCE.getLongFormat().parseDateTime(time).getMillis();
     } catch (IllegalArgumentException e) {
       return -1;
     }

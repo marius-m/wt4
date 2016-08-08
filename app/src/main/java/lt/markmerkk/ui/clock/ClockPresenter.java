@@ -21,9 +21,7 @@ import lt.markmerkk.storage2.SimpleLog;
 import lt.markmerkk.storage2.SimpleLogBuilder;
 import lt.markmerkk.storage2.database.interfaces.IExecutor;
 import lt.markmerkk.ui.utils.DisplayType;
-import lt.markmerkk.utils.IssueSearchAdapter;
-import lt.markmerkk.utils.SyncController2;
-import lt.markmerkk.utils.Utils;
+import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.joda.time.DateTime;
@@ -230,19 +228,19 @@ public class ClockPresenter implements Initializable {
   StringConverter startDateConverter = new StringConverter<LocalDate>() {
     @Override
     public String toString(LocalDate date) {
-      if (date == null) return HourGlass.longFormat.print(DateTime.now());
+      if (date == null) return LogFormatters.INSTANCE.getLongFormat().print(DateTime.now());
       DateTime updateTime = new DateTime(hourGlass.getStartMillis()).withDate(
           date.getYear(),
           date.getMonthValue(),
           date.getDayOfMonth()
       );
-      return HourGlass.longFormat.print(updateTime);
+      return LogFormatters.INSTANCE.getLongFormat().print(updateTime);
     }
 
     @Override
     public LocalDate fromString(String string) {
       try {
-        DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
+        DateTime dateTime = LogFormatters.INSTANCE.getLongFormat().parseDateTime(string);
         return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
       } catch (IllegalArgumentException e) {
         DateTime oldTime = DateTime.now();
@@ -254,19 +252,19 @@ public class ClockPresenter implements Initializable {
   StringConverter endDateConverter = new StringConverter<LocalDate>() {
     @Override
     public String toString(LocalDate date) {
-      if (date == null) return HourGlass.longFormat.print(DateTime.now());
+      if (date == null) return LogFormatters.INSTANCE.getLongFormat().print(DateTime.now());
       DateTime updateTime = new DateTime(hourGlass.getEndMillis()).withDate(
           date.getYear(),
           date.getMonthValue(),
           date.getDayOfMonth()
       );
-      return HourGlass.longFormat.print(updateTime);
+      return LogFormatters.INSTANCE.getLongFormat().print(updateTime);
     }
 
     @Override
     public LocalDate fromString(String string) {
       try {
-        DateTime dateTime = HourGlass.longFormat.parseDateTime(string);
+        DateTime dateTime = LogFormatters.INSTANCE.getLongFormat().parseDateTime(string);
         return LocalDate.of(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
       } catch (IllegalArgumentException e) {
         DateTime oldTime = DateTime.now();
@@ -287,9 +285,9 @@ public class ClockPresenter implements Initializable {
   private HourGlass.Listener hourglassListener = new HourGlass.Listener() {
     @Override
     public void onStart(long start, long end, long duration) {
-      inputFrom.getEditor().setText(HourGlass.longFormat.print(start));
-      inputTo.getEditor().setText(HourGlass.longFormat.print(end));
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(
+      inputFrom.getEditor().setText(LogFormatters.INSTANCE.getLongFormat().print(start));
+      inputTo.getEditor().setText(LogFormatters.INSTANCE.getLongFormat().print(end));
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, LogUtils.INSTANCE.formatShortDuration(
           duration)));
     }
 
@@ -297,23 +295,23 @@ public class ClockPresenter implements Initializable {
     public void onStop(long start, long end, long duration) {
       inputFrom.getEditor().setText("");
       inputTo.getEditor().setText("");
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, Utils.formatShortDuration(duration)));
+      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, LogUtils.INSTANCE.formatShortDuration(duration)));
     }
 
     @Override
     public void onTick(final long start, final long end, final long duration) {
       clearError(inputFrom.getEditor());
       clearError(inputTo.getEditor());
-      String newFrom = HourGlass.longFormat.print(start);
+      String newFrom = LogFormatters.INSTANCE.getLongFormat().print(start);
       if (!newFrom.equals(inputFrom.getEditor().getText()) && !inputFrom.isFocused()) {
         inputFrom.getEditor().setText(newFrom);
       }
-      String newTo = HourGlass.longFormat.print(end);
+      String newTo = LogFormatters.INSTANCE.getLongFormat().print(end);
       if (!newTo.equals(inputTo.getEditor().getText()) && !inputTo.isFocused()) {
         inputTo.getEditor().setText(newTo);
       }
       buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER,
-          Utils.formatShortDuration(duration)));
+          LogUtils.INSTANCE.formatShortDuration(duration)));
     }
 
     @Override

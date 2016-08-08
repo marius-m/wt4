@@ -3,6 +3,8 @@ package lt.markmerkk.storage2;
 import com.google.common.base.Strings;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 
@@ -23,8 +25,8 @@ public class TimeSplit {
   public static String addStamp(long start, long end, String rawComment) {
     if (Strings.isNullOrEmpty(rawComment)) return null;
     rawComment = removeStamp(rawComment); // Will remove older comment if found one
-    return String.format("%s - %s "+TimeSplit.SEPERATOR+" %s", HourGlass.shortFormat.print(start),
-        HourGlass.shortFormat.print(end), rawComment);
+    return String.format("%s - %s "+TimeSplit.SEPERATOR+" %s", LogFormatters.INSTANCE.getShortFormat().print(start),
+        LogFormatters.INSTANCE.getShortFormat().print(end), rawComment);
   }
 
   /**

@@ -14,6 +14,8 @@ import lt.markmerkk.storage2.jobs.InsertJob;
 import lt.markmerkk.storage2.jobs.QueryListJob;
 import lt.markmerkk.storage2.jobs.UpdateJob;
 import lt.markmerkk.ui.utils.DisplayType;
+import lt.markmerkk.utils.LogFormatters;
+import lt.markmerkk.utils.LogUtils;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import org.joda.time.DateTime;
@@ -35,7 +37,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     if (executor == null) throw new IllegalArgumentException("Executor == null");
     this.executor = executor;
     listeners = new ArrayList<>();
-    setTargetDate(HourGlass.longFormat.print(DateTime.now()));
+    setTargetDate(LogFormatters.INSTANCE.getLongFormat().print(DateTime.now()));
   }
 
   @PreDestroy
@@ -46,7 +48,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
   public void setTargetDate(String targetDate) {
     if (targetDate == null) return;
     try {
-      DateTime newTime = HourGlass.longFormat.parseDateTime(targetDate);
+      DateTime newTime = LogFormatters.INSTANCE.getLongFormat().parseDateTime(targetDate);
       if (this.targetDate != null
           && this.targetDate.getYear() == newTime.getYear()
           && this.targetDate.getMonthOfYear() == newTime.getMonthOfYear()
@@ -152,7 +154,7 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
   //endregion
 
   public String getTotal() {
-    return Utils.formatShortDuration(countTotal());
+    return LogUtils.INSTANCE.formatShortDuration(countTotal());
   }
 
   //region Convenience

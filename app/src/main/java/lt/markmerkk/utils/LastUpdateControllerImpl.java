@@ -100,7 +100,7 @@ public class LastUpdateControllerImpl implements LastUpdateController {
     if (loading) return "Loading...";
     if (error != null) return "Error. "+error;
     if (lastUpdate == 0) return "Never";
-    return Utils.formatShortDuration(durationTillLastUpdate());
+    return LogUtils.INSTANCE.formatShortDuration(durationTillLastUpdate());
   }
 
   @Override

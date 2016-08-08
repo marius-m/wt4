@@ -12,15 +12,15 @@ class JiraUploadValidatorTest {
 
     val validator = JiraUploadValidator()
 
-    @Test
-    fun valid_returnTrue() {
-        // Arrange
-        val validSimpleLog = SimpleLog()
-
-        // Act
-        val result = validator.valid(validSimpleLog)
-
-        // Assert
-        assertTrue(result)
-    }
+//    @Test
+//    fun valid_returnTrue() {
+//        // Arrange
+//        val validSimpleLog = SimpleLog()
+//
+//        // Act
+//        val result = validator.valid(validSimpleLog)
+//
+//        // Assert
+//        assertTrue(result)
+//    }
 }

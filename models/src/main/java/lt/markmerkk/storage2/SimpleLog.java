@@ -3,14 +3,11 @@ package lt.markmerkk.storage2;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import javafx.scene.image.ImageView;
 import lt.markmerkk.storage2.database.annotations.Column;
 import lt.markmerkk.storage2.database.annotations.FieldType;
 import lt.markmerkk.storage2.database.annotations.Table;
-import lt.markmerkk.utils.Utils;
-import lt.markmerkk.utils.hourglass.HourGlass;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import lt.markmerkk.utils.LogFormatters;
+import lt.markmerkk.utils.LogUtils;
 
 /**
  * Created by mariusmerkevicius on 11/20/15.
@@ -42,23 +39,23 @@ public class SimpleLog extends RemoteEntity {
   //region Getters / Setters
 
   public String getLongStart() {
-    return HourGlass.longFormat.print(start);
+    return LogFormatters.INSTANCE.getLongFormat().print(start);
   }
 
   public String getShortStart() {
-    return HourGlass.shortFormat.print(start);
+    return LogFormatters.INSTANCE.getShortFormat().print(start);
   }
 
   public String getLongEnd() {
-    return HourGlass.longFormat.print(end);
+    return LogFormatters.INSTANCE.getLongFormat().print(end);
   }
 
   public String getShortEnd() {
-    return HourGlass.shortFormat.print(end);
+    return LogFormatters.INSTANCE.getShortFormat().print(end);
   }
 
   public String getPrettyDuration() {
-    return Utils.formatShortDuration(duration);
+    return LogUtils.INSTANCE.formatShortDuration(duration);
   }
 
   public long getStart() {
@@ -121,9 +118,9 @@ public class SimpleLog extends RemoteEntity {
 
   @Override public String toString() {
     return task + " : " +
-        HourGlass.longFormat.print(start) +
-        " + " + HourGlass.longFormat.print(end) +
-        " = " + Utils.formatShortDuration(duration) +
+        LogFormatters.INSTANCE.getLongFormat().print(start) +
+        " + " + LogFormatters.INSTANCE.getLongFormat().print(end) +
+        " = " + LogUtils.INSTANCE.formatShortDuration(duration) +
         " / \"" + comment + "\"";
   }
 }
