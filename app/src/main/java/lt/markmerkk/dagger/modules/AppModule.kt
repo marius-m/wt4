@@ -6,7 +6,7 @@ import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
-import lt.markmerkk.entities.IDataStorage
+import lt.markmerkk.mvp.IDataStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.*

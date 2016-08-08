@@ -12,9 +12,12 @@ import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.InsertJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.UpdateJob;
+import lt.markmerkk.mvp.IDataListener;
+import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 
@@ -130,10 +133,13 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
 
   //region Getters / Setters
 
+  @NotNull
   @Override public ObservableList<SimpleLog> getData() {
     return logs;
   }
 
+  @NotNull
+  @Override
   public List<SimpleLog> getDataAsList() {
     ArrayList<SimpleLog> simpleLogs = new ArrayList<>();
     simpleLogs.addAll(logs);

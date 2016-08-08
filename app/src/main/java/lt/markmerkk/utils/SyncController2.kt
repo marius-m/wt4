@@ -77,7 +77,7 @@ class SyncController2(
     }
 
     fun downloadObservable(): Observable<List<JiraWork>> {
-        return jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay())
+        return jiraInteractor.jiraRemoteWorks(dayProvider.startDay(), dayProvider.endDay())
                 .flatMap { Observable.from(it) }
                 .flatMap {
                     val fetchMerger = remoteMergeToolsProvider.pullMerger(

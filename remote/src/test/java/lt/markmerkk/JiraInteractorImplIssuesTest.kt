@@ -1,6 +1,8 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.mock
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.mvp.IDataStorage
 import net.rcarz.jiraclient.Issue
 import org.junit.Assert.*
 import org.junit.Ignore
@@ -19,10 +21,12 @@ class JiraInteractorImplIssuesTest {
         // Arrange
         val testSubscriber = TestSubscriber<Issue>()
         val clientProvider: JiraClientProvider = mock()
-        val searchSubscriber: JiraSearchSubsciber = mock()
+        val searchSubscriber: JiraSearchSubscriber = mock()
         val worklogSubscriber: JiraWorklogSubscriber = mock()
+        val dataStorage: IDataStorage<SimpleLog> = mock()
         val interactor = JiraInteractorImpl(
                 clientProvider,
+                dataStorage,
                 searchSubscriber,
                 worklogSubscriber
         )

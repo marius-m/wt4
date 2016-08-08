@@ -3,6 +3,8 @@ package lt.markmerkk
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.mvp.IDataStorage
 import lt.markmerkk.mvp.UserSettings
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -42,9 +44,11 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         doReturn(properties["username"].toString()).whenever(userSettings).username
         doReturn(properties["password"].toString()).whenever(userSettings).password
         val clientProvider = JiraClientProviderImpl(userSettings)
+        val dataStorage: IDataStorage<SimpleLog> = mock()
         observableGen = JiraInteractorImpl(
                 jiraClientProvider = clientProvider,
-                jiraSearchSubsciber = JiraSearchSubscriberImpl(clientProvider),
+                localStorage = dataStorage,
+                jiraSearchSubscriber = JiraSearchSubscriberImpl(clientProvider),
                 jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider)
         )
     }
@@ -56,7 +60,7 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
         val startDate = DateTime(formatter.parseDateTime("2016-03-25")).millis
         val endDate = DateTime(formatter.parseDateTime("2016-04-26")).millis
 
-        observableGen.jiraWorks(startDate, endDate)
+        observableGen.jiraRemoteWorks(startDate, endDate)
                 .subscribe({
                     logger.debug("Result: $it")
                 }, {

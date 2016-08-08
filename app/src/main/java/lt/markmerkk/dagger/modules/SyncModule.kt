@@ -34,7 +34,7 @@ class SyncModule {
     @Singleton
     fun providesSearchSubscriber(
             jiraClientProvider: JiraClientProvider
-    ): JiraSearchSubsciber {
+    ): JiraSearchSubscriber {
         return JiraSearchSubscriberImpl(jiraClientProvider)
     }
 
@@ -65,13 +65,15 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesInteractor(
+            dataStorage: BasicLogStorage,
             jiraClientProvider: JiraClientProvider,
-            jiraSearchSubsciber: JiraSearchSubsciber,
+            jiraSearchSubscriber: JiraSearchSubscriber,
             jiraWorklogSubscriber: JiraWorklogSubscriber
     ): JiraInteractor {
         return JiraInteractorImpl(
+                localStorage = dataStorage,
                 jiraClientProvider = jiraClientProvider,
-                jiraSearchSubsciber = jiraSearchSubsciber,
+                jiraSearchSubscriber = jiraSearchSubscriber,
                 jiraWorklogSubscriber = jiraWorklogSubscriber
         )
     }

@@ -42,7 +42,7 @@ class SyncController2SyncTest {
 
     @Before
     fun setUp() {
-        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
         doReturn("test_host").whenever(settings).host
         doReturn("test_user").whenever(settings).username

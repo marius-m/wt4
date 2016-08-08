@@ -1,5 +1,7 @@
 package lt.markmerkk
 
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.mvp.IDataStorage
 import net.rcarz.jiraclient.Issue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,15 +13,16 @@ import rx.Observable
  */
 class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
-        val jiraSearchSubsciber: JiraSearchSubsciber,
+        val localStorage: IDataStorage<SimpleLog>,
+        val jiraSearchSubscriber: JiraSearchSubscriber,
         val jiraWorklogSubscriber: JiraWorklogSubscriber
 ) : JiraInteractor {
 
     //region Observables
 
-    override fun jiraWorks(start: Long, end: Long): Observable<List<JiraWork>> {
-        return Observable.just(jiraClientProvider.client())
-                .flatMap { jiraSearchSubsciber.searchResultObservable(start, end) }
+    override fun jiraRemoteWorks(start: Long, end: Long): Observable<List<JiraWork>> {
+        return Observable.defer { Observable.just(jiraClientProvider.client()) }
+                .flatMap { jiraSearchSubscriber.searchResultObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
                 .filter { it.valid() }
                 .reduce(
@@ -30,6 +33,11 @@ class JiraInteractorImpl(
                         }
                 )
                 .map { it.toList() }
+    }
+
+    override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
+        return Observable.from(localStorage.dataAsList)
+                .toList()
     }
 
     override fun jiraIssues(): Observable<Issue> { // todo : incomplete

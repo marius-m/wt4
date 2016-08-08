@@ -58,7 +58,7 @@ class SyncController2DownloadTest {
     @Test
     fun emptyResult_noTrigger() {
         reset(jiraInteractor)
-        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
         controller.downloadObservable()
                 .subscribeOn(Schedulers.immediate())
@@ -73,7 +73,7 @@ class SyncController2DownloadTest {
     fun validResult_triggerMerge() {
         reset(jiraInteractor)
         val validWorks = Observable.just(listOf(fakeWork))
-        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
         controller.downloadObservable()
                 .subscribeOn(Schedulers.immediate())
@@ -88,7 +88,7 @@ class SyncController2DownloadTest {
     fun validResult_triggerMerge_moreEntities() {
         reset(jiraInteractor)
         val validWorks = Observable.just(listOf(fakeWork, fakeWork, fakeWork, fakeWork))
-        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
         controller.downloadObservable()
                 .subscribeOn(Schedulers.immediate())
@@ -103,7 +103,7 @@ class SyncController2DownloadTest {
     fun noWorks_emitOutputOnce() {
         reset(jiraInteractor)
         val validWorks = Observable.just(emptyList<JiraWork>())
-        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
         val testSubscriber = TestSubscriber<Any>()
 
         controller.downloadObservable()
@@ -118,7 +118,7 @@ class SyncController2DownloadTest {
     fun validResults_emitOutputOnce() {
         reset(jiraInteractor)
         val validWorks = Observable.just(listOf(fakeWork, fakeWork, fakeWork, fakeWork))
-        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
         val testSubscriber = TestSubscriber<Any>()
 
         controller.downloadObservable()

@@ -12,7 +12,10 @@ import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.InsertJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.UpdateJob;
+import lt.markmerkk.mvp.IDataListener;
+import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by mariusmerkevicius on 1/6/16.
@@ -100,6 +103,12 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   @Override
   public ObservableList<LocalIssue> getData() {
     return issues;
+  }
+
+  @NotNull
+  @Override
+  public List<LocalIssue> getDataAsList() {
+    return new ArrayList<>(issues);
   }
 
   //region Convenience

@@ -12,7 +12,7 @@ import rx.Subscriber
 /**
  * Created by mariusmerkevicius on 1/23/16.
  */
-class JiraSearchSubscriberImpl : JiraSearchSubsciber, Observable.OnSubscribe<Issue.SearchResult> {
+class JiraSearchSubscriberImpl : JiraSearchSubscriber, Observable.OnSubscribe<Issue.SearchResult> {
 
     val jiraClientProvider: JiraClientProvider
     val searchFields: String = "*all"

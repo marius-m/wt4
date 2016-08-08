@@ -23,7 +23,7 @@ import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.entities.BasicLogStorage;
-import lt.markmerkk.entities.IDataListener;
+import lt.markmerkk.mvp.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
