@@ -95,12 +95,13 @@ class JiraUploadValidatorTest {
         assertFalse(result)
     }
 
-    @Test(expected = JiraFilter.FilterErrorException::class)
+    @Test
     fun alreadyInSync_returnFalse() {
         // Arrange
         val validRemoteLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(validRemoteLog).started
         doReturn(60).whenever(validRemoteLog).timeSpentSeconds
+        doReturn("valid_comment").whenever(validRemoteLog).comment
         val fromRemoteLog = SimpleLogBuilder("TT-12", validRemoteLog)
                 .build()
 

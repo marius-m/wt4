@@ -24,6 +24,7 @@ class RemoteLogPushImplTest {
         // Arrange
         val validOutWorklog: WorkLog = mock()
         doReturn(validOutWorklog).whenever(client).uploadLog(any())
+        doReturn(true).whenever(uploadValidator).valid(any())
         val validLog = SimpleLog()
         val push = RemoteLogPushImpl(
                 remoteMergeClient = client,
@@ -79,6 +80,27 @@ class RemoteLogPushImplTest {
         // Assert
         verify(client).uploadLog(any())
         verify(executor).markAsError(eq(validLog), any())
+        verify(executor, never()).recreateLog(any(), any())
+    }
+
+    @Test
+    fun validationFail_notAnError_doNotUpload() {
+        // Arrange
+        val validLog = SimpleLog()
+        doReturn(false).whenever(uploadValidator).valid(any())
+        val push = RemoteLogPushImpl(
+                remoteMergeClient = client,
+                remoteMergeExecutor = executor,
+                uploadValidator = uploadValidator,
+                localLog = validLog
+        )
+
+        // Act
+        push.call()
+
+        // Assert
+        verify(client, never()).uploadLog(any())
+        verify(executor, never()).markAsError(eq(validLog), any())
         verify(executor, never()).recreateLog(any(), any())
     }
 }

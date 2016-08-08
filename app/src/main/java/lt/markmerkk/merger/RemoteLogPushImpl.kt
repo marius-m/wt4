@@ -18,10 +18,13 @@ class RemoteLogPushImpl(
 
     override fun call(): SimpleLog {
         try {
-            uploadValidator.valid(localLog)
-            val outWorklog = remoteMergeClient.uploadLog(localLog)
-            remoteMergeExecutor.recreateLog(localLog, outWorklog)
-            logger.info("Success uploading $localLog!")
+            if (uploadValidator.valid(localLog)) {
+                val outWorklog = remoteMergeClient.uploadLog(localLog)
+                remoteMergeExecutor.recreateLog(localLog, outWorklog)
+                logger.info("Success uploading $localLog!")
+            } else {
+                logger.info("Log $localLog not eligable for upload!")
+            }
         } catch (e: JiraFilter.FilterErrorException) {
             logger.info("Skipping upload $localLog due to: ${e.message}")
             remoteMergeExecutor.markAsError(localLog, e)

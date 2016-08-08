@@ -1,6 +1,7 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.SimpleLog
+import org.slf4j.LoggerFactory
 
 /**
  * @author mariusmerkevicius
@@ -12,7 +13,15 @@ class JiraUploadValidator() : JiraFilter<SimpleLog> {
         if (input.task.isNullOrEmpty()) throw JiraFilter.FilterErrorException("Task id is empty!")
         if (input.comment.isNullOrEmpty()) throw JiraFilter.FilterErrorException("Comment is empty!")
         if (input.isError) throw JiraFilter.FilterErrorException("Already has an error!")
-        if (!input.isDirty) throw JiraFilter.FilterErrorException("Already in sync!")
+        if (!input.isDirty) {
+            logger.info("Already in sync: $input")
+            return false
+        }
         return true
     }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(JiraUploadValidator::class.java)!!
+    }
+
 }
