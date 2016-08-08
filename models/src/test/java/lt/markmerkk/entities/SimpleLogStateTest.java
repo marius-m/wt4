@@ -1,5 +1,6 @@
 package lt.markmerkk.entities;
 
+import lt.markmerkk.entities.SimpleLog;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

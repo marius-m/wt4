@@ -1,6 +1,9 @@
 package lt.markmerkk.entities;
 
 import java.util.Date;
+
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogBuilder;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
