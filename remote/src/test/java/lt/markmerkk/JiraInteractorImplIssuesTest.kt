@@ -8,6 +8,7 @@ import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
 import rx.observers.TestSubscriber
+import rx.schedulers.Schedulers
 
 /**
  * @author mariusmerkevicius
@@ -28,7 +29,8 @@ class JiraInteractorImplIssuesTest {
                 clientProvider,
                 dataStorage,
                 searchSubscriber,
-                worklogSubscriber
+                worklogSubscriber,
+                Schedulers.immediate()
         )
 
         // Act

@@ -49,7 +49,8 @@ class IntegrationJiraInteractorImplSearchForWorklogTest {
                 jiraClientProvider = clientProvider,
                 localStorage = dataStorage,
                 jiraSearchSubscriber = JiraSearchSubscriberImpl(clientProvider),
-                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider)
+                jiraWorklogSubscriber = JiraWorklogSubscriberImpl(clientProvider),
+                ioScheduler = Schedulers.immediate()
         )
     }
 

@@ -31,7 +31,8 @@ class JiraInteractorImplRemoteWorksTest {
             clientProvider,
             dataStorage,
             searchSubscriber,
-            worklogSubscriber
+            worklogSubscriber,
+            Schedulers.immediate()
     )
 
     @Before

@@ -6,6 +6,7 @@ import net.rcarz.jiraclient.Issue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.Observable
+import rx.Scheduler
 
 /**
  * @author mariusmerkevicius
@@ -15,13 +16,15 @@ class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
         val localStorage: IDataStorage<SimpleLog>,
         val jiraSearchSubscriber: JiraSearchSubscriber,
-        val jiraWorklogSubscriber: JiraWorklogSubscriber
+        val jiraWorklogSubscriber: JiraWorklogSubscriber,
+        val ioScheduler: Scheduler
 ) : JiraInteractor {
 
     //region Observables
 
     override fun jiraRemoteWorks(start: Long, end: Long): Observable<List<JiraWork>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
+                .subscribeOn(ioScheduler)
                 .flatMap { jiraSearchSubscriber.searchResultObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
                 .filter { it.valid() }
@@ -37,6 +40,7 @@ class JiraInteractorImpl(
 
     override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
+                .subscribeOn(ioScheduler)
                 .flatMap { Observable.from(localStorage.dataAsList) }
                 .toList()
     }

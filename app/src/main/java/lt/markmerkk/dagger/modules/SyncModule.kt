@@ -74,7 +74,8 @@ class SyncModule {
                 localStorage = dataStorage,
                 jiraClientProvider = jiraClientProvider,
                 jiraSearchSubscriber = jiraSearchSubscriber,
-                jiraWorklogSubscriber = jiraWorklogSubscriber
+                jiraWorklogSubscriber = jiraWorklogSubscriber,
+                ioScheduler = Schedulers.computation()
         )
     }
 

@@ -26,7 +26,8 @@ class JiraInteractorImplLocalWorksTest {
             clientProvider,
             dataStorage,
             searchSubscriber,
-            worklogSubscriber
+            worklogSubscriber,
+            Schedulers.immediate()
     )
 
     @Before

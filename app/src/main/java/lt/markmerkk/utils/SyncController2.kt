@@ -55,14 +55,14 @@ class SyncController2(
             return
         }
         jiraClientProvider.reset()
-        subscription = downloadObservable(
-                JiraDownloadWorklogValidator(
-                        userSettings.username,
-                        dayProvider.startDay(),
-                        dayProvider.endDay()
-                )
+        val uploadValidator = JiraUploadValidator()
+        val downloadValidator = JiraDownloadWorklogValidator(
+                userSettings.username,
+                dayProvider.startDay(),
+                dayProvider.endDay()
         )
-                .subscribeOn(ioScheduler)
+        subscription = uploadObservable(uploadValidator)
+                .flatMap { downloadObservable(downloadValidator) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)

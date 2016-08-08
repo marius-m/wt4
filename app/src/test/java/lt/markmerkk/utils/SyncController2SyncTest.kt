@@ -9,6 +9,7 @@ import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPullImpl
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.SimpleLog
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -43,6 +44,7 @@ class SyncController2SyncTest {
     @Before
     fun setUp() {
         doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
+        doReturn(Observable.empty<List<SimpleLog>>()).whenever(jiraInteractor).jiraLocalWorks()
 
         doReturn("test_host").whenever(settings).host
         doReturn("test_user").whenever(settings).username
