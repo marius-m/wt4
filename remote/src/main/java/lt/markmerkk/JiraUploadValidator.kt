@@ -1,6 +1,6 @@
 package lt.markmerkk
 
-import org.apache.commons.logging.impl.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 
 /**
  * @author mariusmerkevicius
@@ -8,6 +8,11 @@ import org.apache.commons.logging.impl.SimpleLog
  */
 class JiraUploadValidator() : JiraFilter<SimpleLog> {
     override fun valid(input: SimpleLog?): Boolean {
-        return false
+        if (input == null) throw JiraFilter.FilterErrorException("Object is invalid!")
+        if (input.task.isNullOrEmpty()) throw JiraFilter.FilterErrorException("Task id is empty!")
+        if (input.comment.isNullOrEmpty()) throw JiraFilter.FilterErrorException("Comment is empty!")
+        if (input.isError) throw JiraFilter.FilterErrorException("Already has an error!")
+        if (!input.isDirty) throw JiraFilter.FilterErrorException("Already in sync!")
+        return true
     }
 }
