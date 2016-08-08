@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * Responsible for merging remote {@link Issue} with local {@link LocalIssue}
  */
 public class RemoteFetchIssue extends RemoteFetch<LocalIssue, Issue> {
-  Logger logger = LoggerFactory.getLogger(RemoteLogFetchMerger.class);
+  Logger logger = LoggerFactory.getLogger(RemoteFetchIssue.class);
 
   IExecutor executor;
   long downloadMillis;
