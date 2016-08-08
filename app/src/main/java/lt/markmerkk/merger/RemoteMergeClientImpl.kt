@@ -15,25 +15,22 @@ import org.slf4j.LoggerFactory
 class RemoteMergeClientImpl(
         private val jiraClient: JiraClient
 ) : RemoteMergeClient {
-    override fun uploadLog(simpleLog: SimpleLog): WorkLog? {
-        try {
-            val issue = jiraClient.getIssue(simpleLog.task)
-            val comment = TimeSplit.addStamp(
-                    simpleLog.start,
-                    simpleLog.end,
-                    simpleLog.comment
-            )
-            val remoteLog = issue.addWorkLog(
-                    comment,
-                    DateTime(simpleLog.start),
-                    simpleLog.duration / 1000
-            )
-            logger.info("Success adding $issue worklog!")
-            return remoteLog
-        } catch (e: JiraException) {
-            logger.info("Error adding adding worklog! ${e.message}")
-            return null
-        }
+
+    @Throws(JiraException::class)
+    override fun uploadLog(simpleLog: SimpleLog): WorkLog {
+        val issue = jiraClient.getIssue(simpleLog.task)
+        val comment = TimeSplit.addStamp(
+                simpleLog.start,
+                simpleLog.end,
+                simpleLog.comment
+        )
+        val remoteLog = issue.addWorkLog(
+                comment,
+                DateTime(simpleLog.start),
+                simpleLog.duration / 1000
+        )
+        logger.info("Success adding $issue worklog!")
+        return remoteLog
     }
 
     companion object {

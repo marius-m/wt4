@@ -2,6 +2,8 @@ package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.SimpleLog
+import net.rcarz.jiraclient.JiraException
+import org.slf4j.LoggerFactory
 
 /**
  * @author mariusmerkevicius
@@ -15,11 +17,23 @@ class RemoteLogPushImpl(
 ) : RemoteLogPush {
 
     override fun call(): SimpleLog {
-        val outWorklog = remoteMergeClient.uploadLog(localLog)
-        if (outWorklog != null) {
+        try {
+            uploadValidator.valid(localLog)
+            val outWorklog = remoteMergeClient.uploadLog(localLog)
             remoteMergeExecutor.recreateLog(localLog, outWorklog)
+            logger.info("Success uploading $localLog!")
+        } catch (e: JiraFilter.FilterErrorException) {
+            logger.info("Skipping upload $localLog due to: ${e.message}")
+            remoteMergeExecutor.markAsError(localLog, e)
+        } catch (e: JiraException) {
+            logger.info("Error uploading $localLog due to: ${e.message}")
+            remoteMergeExecutor.markAsError(localLog, e)
         }
         return localLog
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(RemoteLogPushImpl::class.java)!!
     }
 
 }

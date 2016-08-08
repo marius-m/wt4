@@ -3,6 +3,7 @@ package lt.markmerkk.merger
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.SimpleLog
+import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.WorkLog
 import org.junit.Ignore
 import org.junit.Test
@@ -19,7 +20,6 @@ class RemoteLogPushImplTest {
     val uploadValidator: JiraFilter<SimpleLog> = mock()
 
     @Test
-    @Ignore // todo : Incomplete test
     fun valid_triggerUpload() {
         // Arrange
         val validOutWorklog: WorkLog = mock()
@@ -41,15 +41,15 @@ class RemoteLogPushImplTest {
     }
 
     @Test
-    @Ignore // todo : Incomplete test
-    fun noIssueKey_triggerError() {
+    fun invalidLog_triggerError() {
         // Arrange
-        val noIssueLog = SimpleLog()
+        val invalidLog = SimpleLog()
+        doThrow(JiraFilter.FilterErrorException("invalid_log")).whenever(uploadValidator).valid(any())
         val push = RemoteLogPushImpl(
                 remoteMergeClient = client,
                 remoteMergeExecutor = executor,
                 uploadValidator = uploadValidator,
-                localLog = noIssueLog
+                localLog = invalidLog
         )
 
         // Act
@@ -57,6 +57,28 @@ class RemoteLogPushImplTest {
 
         // Assert
         verify(client, never()).uploadLog(any())
-        verify(executor).markAsError(eq(noIssueLog), any())
+        verify(executor).markAsError(eq(invalidLog), any())
+    }
+
+    @Test
+    fun errorUploading_triggerError() {
+        // Arrange
+        val validLog = SimpleLog()
+        doReturn(true).whenever(uploadValidator).valid(any())
+        doThrow(JiraException("error_uploading")).whenever(client).uploadLog(any())
+        val push = RemoteLogPushImpl(
+                remoteMergeClient = client,
+                remoteMergeExecutor = executor,
+                uploadValidator = uploadValidator,
+                localLog = validLog
+        )
+
+        // Act
+        push.call()
+
+        // Assert
+        verify(client).uploadLog(any())
+        verify(executor).markAsError(eq(validLog), any())
+        verify(executor, never()).recreateLog(any(), any())
     }
 }
