@@ -6,10 +6,14 @@ import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.merger.RemoteLogPull
+import net.rcarz.jiraclient.WorkLog
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
+import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
+import kotlin.test.assertEquals
 
 /**
  * @author mariusmerkevicius
@@ -24,6 +28,9 @@ class SyncController2FetchMergeTest {
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
     val jiraClientProvider: JiraClientProvider = mock()
     val logStorage: BasicLogStorage = mock()
+
+    val remoteLogPull: RemoteLogPull = mock()
+    val fakeWork = JiraWork()
 
     val controller = SyncController2(
             jiraClientProvider = jiraClientProvider,
@@ -45,29 +52,83 @@ class SyncController2FetchMergeTest {
 
         doReturn(1000L).whenever(dayProvider).startDay()
         doReturn(2000L).whenever(dayProvider).endDay()
+
+        doReturn(fakeWork).whenever(remoteLogPull).call()
+        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).fetchMerger(any(), any())
     }
 
     @Test
     fun emptyResult_noTrigger() {
         reset(jiraInteractor)
-        val validWorks = Observable.empty<List<JiraWork>>()
-        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraWorks(any(), any())
 
-        controller.sync()
+        controller.downloadObservable()
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(TestSubscriber())
 
         verify(remoteMergeToolsProvider, never()).fetchMerger(any(), any())
+        verify(remoteLogPull, never()).call()
     }
 
     @Test
-    fun validResuult_triggerMerge() {
+    fun validResult_triggerMerge() {
         reset(jiraInteractor)
-        val fakeWork = JiraWork()
         val validWorks = Observable.just(listOf(fakeWork))
         doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
 
-        controller.sync()
+        controller.downloadObservable()
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(TestSubscriber())
 
         verify(remoteMergeToolsProvider).fetchMerger(any(), any())
+        verify(remoteLogPull).call()
+    }
+
+    @Test
+    fun validResult_triggerMerge_moreEntities() {
+        reset(jiraInteractor)
+        val validWorks = Observable.just(listOf(fakeWork, fakeWork, fakeWork, fakeWork))
+        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+
+        controller.downloadObservable()
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(TestSubscriber())
+
+        verify(remoteMergeToolsProvider, times(4)).fetchMerger(any(), any())
+        verify(remoteLogPull, times(4)).call()
+    }
+
+    @Test
+    fun noWorks_emitOutputOnce() {
+        reset(jiraInteractor)
+        val validWorks = Observable.just(emptyList<JiraWork>())
+        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        val testSubscriber = TestSubscriber<Any>()
+
+        controller.downloadObservable()
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(testSubscriber)
+
+        testSubscriber.assertValueCount(1)
+    }
+
+    @Test
+    fun validResults_emitOutputOnce() {
+        reset(jiraInteractor)
+        val validWorks = Observable.just(listOf(fakeWork, fakeWork, fakeWork, fakeWork))
+        doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
+        val testSubscriber = TestSubscriber<Any>()
+
+        controller.downloadObservable()
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(testSubscriber)
+
+        testSubscriber.assertValueCount(1)
     }
 
 }

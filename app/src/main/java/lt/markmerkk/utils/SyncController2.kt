@@ -1,9 +1,6 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.JiraDownloadWorklogValidator
-import lt.markmerkk.JiraInteractor
-import lt.markmerkk.JiraSearchSubscriberImpl
+import lt.markmerkk.*
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeExecutor
 import lt.markmerkk.mvp.UserSettings
@@ -59,24 +56,11 @@ class SyncController2(
             return
         }
         jiraClientProvider.reset()
-        subscription = Observable.defer { jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay()) }
+        subscription = downloadObservable()
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
-                .flatMap {
-                    Observable.from(it)
-                }
-                .flatMap {
-                    val fetchMerger = remoteMergeToolsProvider.fetchMerger(
-                                    it,
-                                    JiraDownloadWorklogValidator(
-                                            user = userSettings.username,
-                                            start = dayProvider.startDay(),
-                                            end = dayProvider.endDay()
-                                    )
-                            )
-                    rx.util.async.Async.fromCallable(fetchMerger)
-                }
+
                 .observeOn(uiScheduler)
                 .subscribe({
                     logger.info("Success!")
@@ -87,6 +71,29 @@ class SyncController2(
                     logStorage.notifyDataChange()
                 })
     }
+
+    //region Observables
+
+    fun downloadObservable(): Observable<List<JiraWork>> {
+        return Observable.defer { jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay()) }
+                .flatMap {
+                    Observable.from(it)
+                }
+                .flatMap {
+                    val fetchMerger = remoteMergeToolsProvider.fetchMerger(
+                            it,
+                            JiraDownloadWorklogValidator(
+                                    user = userSettings.username,
+                                    start = dayProvider.startDay(),
+                                    end = dayProvider.endDay()
+                            )
+                    )
+                    rx.util.async.Async.fromCallable(fetchMerger, uiScheduler)
+                }
+                .toList()
+    }
+
+    //endregion
 
     //region Getters / Setters
 
