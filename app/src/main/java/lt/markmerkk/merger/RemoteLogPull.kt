@@ -7,5 +7,5 @@ import java.util.concurrent.Callable
  * @author mariusmerkevicius
  * @since 2016-08-07
  */
-interface RemoteLogMerger : Callable<JiraWork> {
+interface RemoteLogPull : Callable<JiraWork> {
 }

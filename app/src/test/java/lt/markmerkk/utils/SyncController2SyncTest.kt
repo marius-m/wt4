@@ -5,7 +5,7 @@ import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.merger.RemoteLogMerger
+import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogMergerImpl
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.storage2.BasicLogStorage

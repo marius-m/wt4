@@ -22,7 +22,7 @@ class RemoteLogMergerImpl(
         val mergeExecutor: RemoteMergeExecutor,
         val remoteLogFilter: JiraFilter<WorkLog>,
         val remoteIssue: JiraWork
-) : RemoteLogMerger {
+) : RemoteLogPull {
 
     override fun call(): JiraWork {
         if (!remoteIssue.valid()) return remoteIssue
