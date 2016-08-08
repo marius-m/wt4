@@ -5,7 +5,7 @@ import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.mvp.UserSettings
-import lt.markmerkk.storage2.BasicLogStorage
+import lt.markmerkk.entities.BasicLogStorage
 import org.junit.Before
 import org.junit.Test
 import rx.Observable

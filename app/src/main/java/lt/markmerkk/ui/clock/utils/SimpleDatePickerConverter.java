@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javafx.scene.control.DatePicker;
 import javafx.util.StringConverter;
-import lt.markmerkk.storage2.SimpleLog;
-import org.joda.time.DateTime;
 
 /**
  * Created by mariusmerkevicius on 12/11/15.

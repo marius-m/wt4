@@ -6,17 +6,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BackgroundFill;
+
 import javax.inject.Inject;
 
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.SimpleLog;
-import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.entities.BasicLogStorage;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.utils.LogFormatters;
-import lt.markmerkk.utils.hourglass.HourGlass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

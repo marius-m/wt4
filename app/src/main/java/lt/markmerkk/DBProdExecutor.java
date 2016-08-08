@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import lt.markmerkk.storage2.database.DBBaseExecutor;
+import lt.markmerkk.entities.database.DBBaseExecutor;
 import lt.markmerkk.utils.UserSettingsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

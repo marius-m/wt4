@@ -7,7 +7,7 @@ import lt.markmerkk.JiraSearchSubscriberImpl
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeExecutor
 import lt.markmerkk.mvp.UserSettings
-import lt.markmerkk.storage2.BasicLogStorage
+import lt.markmerkk.entities.BasicLogStorage
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler

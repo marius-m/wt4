@@ -1,6 +1,6 @@
 package lt.markmerkk.ui.week
 
-import lt.markmerkk.storage2.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 
 /**
  * @author mariusmerkevicius

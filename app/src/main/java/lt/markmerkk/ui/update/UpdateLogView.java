@@ -1,7 +1,7 @@
 package lt.markmerkk.ui.update;
 
 import com.airhacks.afterburner.views.FXMLView;
-import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.ui.interfaces.DialogListener;
 
 /**

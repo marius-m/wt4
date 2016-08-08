@@ -1,6 +1,6 @@
 package lt.markmerkk.ui.update;
 
-import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.entities.SimpleLog;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

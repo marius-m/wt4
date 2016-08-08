@@ -1,16 +1,14 @@
 package lt.markmerkk;
 
 import java.util.List;
-import lt.markmerkk.storage2.LocalIssue;
-import lt.markmerkk.storage2.LocalIssueBuilder;
-import lt.markmerkk.storage2.database.DBMockExecutor;
-import lt.markmerkk.storage2.jobs.CreateJob;
-import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
-import lt.markmerkk.storage2.jobs.DeleteJob;
-import lt.markmerkk.storage2.jobs.InsertJob;
-import lt.markmerkk.storage2.jobs.QueryJob;
-import lt.markmerkk.storage2.jobs.QueryListJob;
-import lt.markmerkk.storage2.jobs.UpdateJob;
+import lt.markmerkk.entities.LocalIssue;
+import lt.markmerkk.entities.LocalIssueBuilder;
+import lt.markmerkk.entities.jobs.CreateJob;
+import lt.markmerkk.entities.jobs.DeleteJob;
+import lt.markmerkk.entities.jobs.InsertJob;
+import lt.markmerkk.entities.jobs.QueryJob;
+import lt.markmerkk.entities.jobs.QueryListJob;
+import lt.markmerkk.entities.jobs.UpdateJob;
 import org.junit.Ignore;
 import org.junit.Test;
 

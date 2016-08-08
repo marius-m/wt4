@@ -3,7 +3,7 @@ package lt.markmerkk.merger
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraWork
-import lt.markmerkk.storage2.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.junit.Assert.*

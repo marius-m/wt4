@@ -8,7 +8,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPullImpl
 import lt.markmerkk.mvp.UserSettings
-import lt.markmerkk.storage2.BasicLogStorage
+import lt.markmerkk.entities.BasicLogStorage
 import org.junit.Before
 import org.junit.Test
 import rx.Observable

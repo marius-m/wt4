@@ -9,7 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import lt.markmerkk.Translation;
-import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.entities.SimpleLog;
 
 /**
  * Created by mariusm on 1/19/15.

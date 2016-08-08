@@ -1,7 +1,7 @@
 package lt.markmerkk.ui.week
 
 import jfxtras.scene.control.agenda.Agenda
-import lt.markmerkk.storage2.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 import org.joda.time.DateTime
 import rx.Observable
 import rx.Scheduler

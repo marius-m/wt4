@@ -1,6 +1,6 @@
 package lt.markmerkk.merger
 
-import lt.markmerkk.storage2.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.WorkLog
 
 interface RemoteMergeExecutor {

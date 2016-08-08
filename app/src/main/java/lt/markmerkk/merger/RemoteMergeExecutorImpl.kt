@@ -1,13 +1,13 @@
 package lt.markmerkk.merger
 
-import lt.markmerkk.storage2.SimpleLog
-import lt.markmerkk.storage2.SimpleLogBuilder
-import lt.markmerkk.storage2.database.interfaces.DBIndexable
-import lt.markmerkk.storage2.database.interfaces.IExecutor
-import lt.markmerkk.storage2.jobs.DeleteJob
-import lt.markmerkk.storage2.jobs.InsertJob
-import lt.markmerkk.storage2.jobs.QueryJob
-import lt.markmerkk.storage2.jobs.UpdateJob
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.entities.database.interfaces.DBIndexable
+import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.entities.jobs.DeleteJob
+import lt.markmerkk.entities.jobs.InsertJob
+import lt.markmerkk.entities.jobs.QueryJob
+import lt.markmerkk.entities.jobs.UpdateJob
 import net.rcarz.jiraclient.WorkLog
 
 /**

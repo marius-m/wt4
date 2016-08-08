@@ -2,7 +2,7 @@ package lt.markmerkk.ui.week
 
 import jfxtras.scene.control.agenda.Agenda
 import jfxtras.scene.control.agenda.Agenda.AppointmentImplLocal
-import lt.markmerkk.storage2.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 
 /**
  * Created by mariusmerkevicius on 1/22/16.

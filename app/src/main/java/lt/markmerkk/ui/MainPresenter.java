@@ -1,14 +1,12 @@
 package lt.markmerkk.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.brsanthu.googleanalytics.PageViewHit;
-import com.vinumeris.updatefx.UpdateSummary;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -18,9 +16,9 @@ import javax.inject.Inject;
 import lt.markmerkk.Main;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
-import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.SimpleLog;
-import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.entities.BasicLogStorage;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
@@ -35,8 +33,6 @@ import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
-import lt.markmerkk.utils.VersionController;
-import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

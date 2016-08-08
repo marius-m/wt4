@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.anyList
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import jfxtras.scene.control.agenda.Agenda
-import lt.markmerkk.storage2.SimpleLogBuilder
+import lt.markmerkk.entities.SimpleLogBuilder
 import org.junit.Test
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers

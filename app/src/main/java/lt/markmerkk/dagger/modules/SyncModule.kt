@@ -6,8 +6,8 @@ import lt.markmerkk.*
 import lt.markmerkk.merger.RemoteMergeExecutor
 import lt.markmerkk.merger.RemoteMergeExecutorImpl
 import lt.markmerkk.mvp.UserSettings
-import lt.markmerkk.storage2.BasicLogStorage
-import lt.markmerkk.storage2.database.interfaces.IExecutor
+import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.*
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers

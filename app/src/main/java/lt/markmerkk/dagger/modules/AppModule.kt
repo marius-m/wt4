@@ -5,10 +5,10 @@ import dagger.Provides
 import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
 import lt.markmerkk.mvp.UserSettings
-import lt.markmerkk.storage2.BasicLogStorage
-import lt.markmerkk.storage2.IDataStorage
-import lt.markmerkk.storage2.SimpleLog
-import lt.markmerkk.storage2.database.interfaces.IExecutor
+import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.IDataStorage
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.hourglass.KeepAliveController

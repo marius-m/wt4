@@ -2,7 +2,7 @@ package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraWork
-import lt.markmerkk.storage2.SimpleLogBuilder
+import lt.markmerkk.entities.SimpleLogBuilder
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

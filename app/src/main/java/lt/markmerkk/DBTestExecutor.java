@@ -1,6 +1,5 @@
 package lt.markmerkk;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,7 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import lt.markmerkk.storage2.database.DBBaseExecutor;
+import lt.markmerkk.entities.database.DBBaseExecutor;
 
 /**
  * Created by mariusmerkevicius on 11/21/15.

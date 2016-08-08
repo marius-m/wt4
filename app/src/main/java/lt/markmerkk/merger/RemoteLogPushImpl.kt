@@ -1,7 +1,7 @@
 package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
-import lt.markmerkk.storage2.SimpleLog
+import lt.markmerkk.entities.SimpleLog
 
 /**
  * @author mariusmerkevicius

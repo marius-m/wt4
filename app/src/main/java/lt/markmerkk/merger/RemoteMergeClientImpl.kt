@@ -1,7 +1,7 @@
 package lt.markmerkk.merger
 
-import lt.markmerkk.storage2.SimpleLog
-import lt.markmerkk.storage2.TimeSplit
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.TimeSplit
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.WorkLog
