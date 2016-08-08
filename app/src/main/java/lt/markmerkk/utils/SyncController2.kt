@@ -1,8 +1,8 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.JiraDownloadWorklogValidator
 import lt.markmerkk.JiraInteractor
-import lt.markmerkk.JiraLogFilter
 import lt.markmerkk.JiraSearchSubscriberImpl
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeExecutor
@@ -69,7 +69,7 @@ class SyncController2(
                 .flatMap {
                     val fetchMerger = remoteMergeToolsProvider.fetchMerger(
                                     it,
-                                    JiraLogFilter(
+                                    JiraDownloadWorklogValidator(
                                             user = userSettings.username,
                                             start = dayProvider.startDay(),
                                             end = dayProvider.endDay()

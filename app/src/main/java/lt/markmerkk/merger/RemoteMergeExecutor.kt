@@ -20,4 +20,14 @@ interface RemoteMergeExecutor {
      */
     fun localEntityFromRemote(remoteWorklog: WorkLog): SimpleLog?
 
+    /**
+     * Recreates a local log with new worklog data
+     */
+    fun recreateLog(oldLocalLog: SimpleLog, remoteWorklog: WorkLog)
+
+    /**
+     * Marks log as error
+     */
+    fun markAsError(oldLocalLog: SimpleLog, error: Throwable)
+
 }

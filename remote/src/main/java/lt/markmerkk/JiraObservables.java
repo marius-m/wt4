@@ -27,7 +27,7 @@ public class JiraObservables {
    */
   @Deprecated
   public static Observable<Pair<Issue, List<WorkLog>>> remoteWorklogs(
-          JiraClient client, JiraLogFilter filterer, DateTime start, DateTime end) {
+          JiraClient client, JiraDownloadWorklogValidator filterer, DateTime start, DateTime end) {
     return Observable.empty();
 //    return JiraObservables.issueSearchDateRangeObservable(start, end, client.getSelf())
 //        .flatMap(jql -> Observable.create(

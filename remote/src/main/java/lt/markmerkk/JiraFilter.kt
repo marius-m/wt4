@@ -3,6 +3,6 @@ package lt.markmerkk
 /**
  * Generic jira filter
  */
-interface JiraFilter<T> {
+interface JiraFilter<in T> {
     fun valid(input: T?): Boolean
 }

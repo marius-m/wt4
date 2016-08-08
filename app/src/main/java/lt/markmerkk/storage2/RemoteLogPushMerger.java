@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by mariusmerkevicius on 11/28/15. Responsible for merging / updating database {@link
  * SimpleLog} entities with the remote ones.
+ * @deprecated use {@link lt.markmerkk.merger.RemoteLogPushImpl} instead
  */
+@Deprecated
 public class RemoteLogPushMerger {
   Logger logger = LoggerFactory.getLogger(RemoteLogPushMerger.class);
   IExecutor executor;

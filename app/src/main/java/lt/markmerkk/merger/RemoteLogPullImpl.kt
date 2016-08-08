@@ -1,7 +1,6 @@
 package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
-import lt.markmerkk.JiraLogFilter
 import lt.markmerkk.JiraWork
 import lt.markmerkk.storage2.SimpleLogBuilder
 import net.rcarz.jiraclient.WorkLog
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory
  * 2. Update local log with the data from sever
  * 3. All pulled data should contain dirty = 0.
  */
-class RemoteLogMergerImpl(
+class RemoteLogPullImpl(
         val mergeExecutor: RemoteMergeExecutor,
         val remoteLogFilter: JiraFilter<WorkLog>,
         val remoteIssue: JiraWork

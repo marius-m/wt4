@@ -7,7 +7,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.JiraConnector;
-import lt.markmerkk.JiraLogFilter;
+import lt.markmerkk.JiraDownloadWorklogValidator;
 import lt.markmerkk.JiraObservables;
 import lt.markmerkk.JiraSearchSubscriberImpl;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
@@ -97,7 +97,7 @@ public class SyncController {
     if (jiraClient == null)
       return;
 
-    JiraLogFilter filterer = new JiraLogFilter(
+    JiraDownloadWorklogValidator filterer = new JiraDownloadWorklogValidator(
         settings.getUsername(),
         startTime.getMillis(),
         endTime.getMillis()

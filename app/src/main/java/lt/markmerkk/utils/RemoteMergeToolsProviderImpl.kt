@@ -2,7 +2,7 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraWork
-import lt.markmerkk.merger.RemoteLogMergerImpl
+import lt.markmerkk.merger.RemoteLogPullImpl
 import lt.markmerkk.merger.RemoteMergeExecutor
 import net.rcarz.jiraclient.WorkLog
 
@@ -16,8 +16,8 @@ class RemoteMergeToolsProviderImpl(
     override fun fetchMerger(
             remoteLog: JiraWork,
             jiraLogFilter: JiraFilter<WorkLog>
-    ): RemoteLogMergerImpl {
-        return RemoteLogMergerImpl(
+    ): RemoteLogPullImpl {
+        return RemoteLogPullImpl(
                 mergeExecutor = mergeExecutor,
                 remoteLogFilter = jiraLogFilter,
                 remoteIssue = remoteLog

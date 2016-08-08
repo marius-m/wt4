@@ -7,8 +7,9 @@ import org.slf4j.LoggerFactory
 
 /**
  * Created by mariusmerkevicius on 1/30/16.
+ * Assures that [WorkLog] is valid for download and local storage
  */
-class JiraLogFilter(
+class JiraDownloadWorklogValidator(
         val user: String,
         val start: Long,
         val end: Long
@@ -34,7 +35,7 @@ class JiraLogFilter(
     //region Classes
 
     companion object {
-        var logger: Logger = LoggerFactory.getLogger(JiraLogFilter::class.java)
+        var logger: Logger = LoggerFactory.getLogger(JiraDownloadWorklogValidator::class.java)
     }
 
     /**

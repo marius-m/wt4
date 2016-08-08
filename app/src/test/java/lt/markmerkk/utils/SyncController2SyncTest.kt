@@ -6,7 +6,7 @@ import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteLogPull
-import lt.markmerkk.merger.RemoteLogMergerImpl
+import lt.markmerkk.merger.RemoteLogPullImpl
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.storage2.BasicLogStorage
 import org.junit.Before
@@ -57,10 +57,7 @@ class SyncController2SyncTest {
         val remoteLoadingListener: IRemoteLoadListener = mock()
         controller.addLoadingListener(remoteLoadingListener)
 
-        controller.sync(
-                Schedulers.immediate(),
-                Schedulers.immediate()
-        )
+        controller.sync()
 
         verify(remoteLoadingListener).onLoadChange(true)
         verify(remoteLoadingListener).onLoadChange(false)

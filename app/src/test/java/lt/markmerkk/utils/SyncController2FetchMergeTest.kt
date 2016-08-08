@@ -53,7 +53,7 @@ class SyncController2FetchMergeTest {
         val validWorks = Observable.empty<List<JiraWork>>()
         doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
 
-        controller.sync(Schedulers.immediate(), Schedulers.immediate())
+        controller.sync()
 
         verify(remoteMergeToolsProvider, never()).fetchMerger(any(), any())
     }
@@ -65,7 +65,7 @@ class SyncController2FetchMergeTest {
         val validWorks = Observable.just(listOf(fakeWork))
         doReturn(validWorks).whenever(jiraInteractor).jiraWorks(any(), any())
 
-        controller.sync(Schedulers.immediate(), Schedulers.immediate())
+        controller.sync()
 
         verify(remoteMergeToolsProvider).fetchMerger(any(), any())
     }
