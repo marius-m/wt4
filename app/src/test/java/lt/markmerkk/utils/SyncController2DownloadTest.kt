@@ -2,11 +2,13 @@ package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.mvp.UserSettings
+import net.rcarz.jiraclient.WorkLog
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -29,6 +31,8 @@ class SyncController2DownloadTest {
 
     val remoteLogPull: RemoteLogPull = mock()
     val fakeWork = JiraWork()
+
+    val validFilter: JiraFilter<WorkLog> = mock()
 
     val controller = SyncController2(
             jiraClientProvider = jiraClientProvider,
@@ -53,6 +57,7 @@ class SyncController2DownloadTest {
 
         doReturn(fakeWork).whenever(remoteLogPull).call()
         doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).pullMerger(any(), any())
+        doReturn(true).whenever(validFilter).valid(any())
     }
 
     @Test
@@ -60,7 +65,7 @@ class SyncController2DownloadTest {
         reset(jiraInteractor)
         doReturn(Observable.empty<List<JiraWork>>()).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
-        controller.downloadObservable()
+        controller.downloadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
@@ -75,7 +80,7 @@ class SyncController2DownloadTest {
         val validWorks = Observable.just(listOf(fakeWork))
         doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
-        controller.downloadObservable()
+        controller.downloadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
@@ -90,7 +95,7 @@ class SyncController2DownloadTest {
         val validWorks = Observable.just(listOf(fakeWork, fakeWork, fakeWork, fakeWork))
         doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
 
-        controller.downloadObservable()
+        controller.downloadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
@@ -106,7 +111,7 @@ class SyncController2DownloadTest {
         doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
         val testSubscriber = TestSubscriber<Any>()
 
-        controller.downloadObservable()
+        controller.downloadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
@@ -121,7 +126,7 @@ class SyncController2DownloadTest {
         doReturn(validWorks).whenever(jiraInteractor).jiraRemoteWorks(any(), any())
         val testSubscriber = TestSubscriber<Any>()
 
-        controller.downloadObservable()
+        controller.downloadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)

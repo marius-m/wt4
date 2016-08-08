@@ -1,20 +1,18 @@
 package lt.markmerkk.utils
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
-import javafx.collections.ObservableList
+import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteLogPull
+import lt.markmerkk.merger.RemoteLogPush
 import lt.markmerkk.mvp.UserSettings
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import rx.Observable
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 
@@ -34,6 +32,7 @@ class SyncController2UploadTest {
 
     val remoteLogPull: RemoteLogPull = mock()
     val fakeWork = JiraWork()
+    val validFilter: JiraFilter<SimpleLog> = mock()
 
     val controller = SyncController2(
             jiraClientProvider = jiraClientProvider,
@@ -58,20 +57,26 @@ class SyncController2UploadTest {
 
         doReturn(fakeWork).whenever(remoteLogPull).call()
         doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).pullMerger(any(), any())
+        doReturn(true).whenever(validFilter).valid(any())
     }
 
     @Test
     fun emitItems_outputOnce() {
         // Arrange
-        doReturn(listOf(
-                SimpleLog(),
-                SimpleLog(),
-                SimpleLog()
-        )).whenever(logStorage).dataAsList
+        val remotePushMerge: RemoteLogPush = mock()
+        doReturn(SimpleLog()).whenever(remotePushMerge).call()
+        doReturn(remotePushMerge).whenever(remoteMergeToolsProvider).pushMerger(any(), any())
+        doReturn(Observable.just(
+                listOf(
+                        SimpleLog(),
+                        SimpleLog(),
+                        SimpleLog()
+                )
+        )).whenever(jiraInteractor).jiraLocalWorks()
         val testSubscriber = TestSubscriber<Any>()
 
         // Act
-        controller.uploadObservable()
+        controller.uploadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
@@ -81,13 +86,40 @@ class SyncController2UploadTest {
     }
 
     @Test
-    fun noItems_outputOnce() {
+    fun valid_triggerMerge() {
         // Arrange
-        doReturn(emptyList<SimpleLog>()).whenever(logStorage).dataAsList
+        doReturn(Observable.just(
+                listOf(
+                        SimpleLog(),
+                        SimpleLog(),
+                        SimpleLog()
+                )
+        )).whenever(jiraInteractor).jiraLocalWorks()
+        val remotePushMerge: RemoteLogPush = mock()
+        doReturn(SimpleLog()).whenever(remotePushMerge).call()
+        doReturn(remotePushMerge).whenever(remoteMergeToolsProvider).pushMerger(any(), any())
         val testSubscriber = TestSubscriber<Any>()
 
         // Act
-        controller.uploadObservable()
+        controller.uploadObservable(validFilter)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(testSubscriber)
+
+        // Assert
+        verify(remoteMergeToolsProvider, times(3)).pushMerger(any(), any())
+        verify(remotePushMerge, times(3)).call()
+    }
+
+    @Test
+    fun noItems_outputOnce() {
+        // Arrange
+        doReturn(Observable.just(emptyList<SimpleLog>()))
+                .whenever(jiraInteractor).jiraLocalWorks()
+        val testSubscriber = TestSubscriber<Any>()
+
+        // Act
+        controller.uploadObservable(validFilter)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)

@@ -5,6 +5,7 @@ import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.mvp.UserSettings
+import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -54,7 +55,13 @@ class SyncController2(
             return
         }
         jiraClientProvider.reset()
-        subscription = downloadObservable()
+        subscription = downloadObservable(
+                JiraDownloadWorklogValidator(
+                        userSettings.username,
+                        dayProvider.startDay(),
+                        dayProvider.endDay()
+                )
+        )
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
@@ -71,24 +78,28 @@ class SyncController2(
 
     //region Observables
 
-    fun uploadObservable(): Observable<List<SimpleLog>> {
-        return Observable.from(logStorage.dataAsList)
+    fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<List<SimpleLog>> {
+        return jiraInteractor.jiraLocalWorks()
+                .flatMap { Observable.from(it) }
+                .flatMap {
+                    val pushMerger = remoteMergeToolsProvider.pushMerger(
+                            localLog = it,
+                            filter = filter
+                    )
+                    rx.util.async.Async.fromCallable(pushMerger, uiScheduler)
+                }
                 .toList()
     }
 
-    fun downloadObservable(): Observable<List<JiraWork>> {
+    fun downloadObservable(filter: JiraFilter<WorkLog>): Observable<List<JiraWork>> {
         return jiraInteractor.jiraRemoteWorks(dayProvider.startDay(), dayProvider.endDay())
                 .flatMap { Observable.from(it) }
                 .flatMap {
-                    val fetchMerger = remoteMergeToolsProvider.pullMerger(
+                    val pullMerger = remoteMergeToolsProvider.pullMerger(
                             it,
-                            JiraDownloadWorklogValidator(
-                                    user = userSettings.username,
-                                    start = dayProvider.startDay(),
-                                    end = dayProvider.endDay()
-                            )
+                            filter
                     )
-                    rx.util.async.Async.fromCallable(fetchMerger, uiScheduler)
+                    rx.util.async.Async.fromCallable(pullMerger, uiScheduler)
                 }
                 .toList()
     }
