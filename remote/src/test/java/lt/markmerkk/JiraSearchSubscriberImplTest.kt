@@ -27,7 +27,7 @@ class JiraSearchSubscriberImplTest {
 
     @Before
     fun setUp() {
-        doReturn(Observable.just(jiraClient)).whenever(jiraClientProvider).clientObservable()
+        doReturn(jiraClient).whenever(jiraClientProvider).client()
     }
 
     @Test

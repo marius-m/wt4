@@ -1,12 +1,9 @@
 package lt.markmerkk
 
-import lt.markmerkk.JiraWork
 import net.rcarz.jiraclient.Issue
-import org.joda.time.DateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.Observable
-import rx.Scheduler
 
 /**
  * @author mariusmerkevicius
@@ -21,7 +18,7 @@ class JiraInteractorImpl(
     //region Observables
 
     override fun jiraWorks(start: Long, end: Long): Observable<List<JiraWork>> {
-        return jiraClientProvider.clientObservable()
+        return Observable.just(jiraClientProvider.client())
                 .flatMap { jiraSearchSubsciber.searchResultObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
                 .filter { it.valid() }

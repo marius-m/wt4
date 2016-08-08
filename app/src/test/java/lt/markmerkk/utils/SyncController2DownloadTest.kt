@@ -4,23 +4,21 @@ import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.JiraWork
-import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.merger.RemoteLogPull
-import net.rcarz.jiraclient.WorkLog
+import lt.markmerkk.mvp.UserSettings
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
-import kotlin.test.assertEquals
 
 /**
  * @author mariusmerkevicius
  * *
  * @since 2016-08-07
  */
-class SyncController2FetchMergeTest {
+class SyncController2DownloadTest {
     val settings: UserSettings = mock()
     val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
@@ -54,7 +52,7 @@ class SyncController2FetchMergeTest {
         doReturn(2000L).whenever(dayProvider).endDay()
 
         doReturn(fakeWork).whenever(remoteLogPull).call()
-        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).fetchMerger(any(), any())
+        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).pullMerger(any(), any())
     }
 
     @Test
@@ -67,7 +65,7 @@ class SyncController2FetchMergeTest {
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
 
-        verify(remoteMergeToolsProvider, never()).fetchMerger(any(), any())
+        verify(remoteMergeToolsProvider, never()).pullMerger(any(), any())
         verify(remoteLogPull, never()).call()
     }
 
@@ -82,7 +80,7 @@ class SyncController2FetchMergeTest {
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
 
-        verify(remoteMergeToolsProvider).fetchMerger(any(), any())
+        verify(remoteMergeToolsProvider).pullMerger(any(), any())
         verify(remoteLogPull).call()
     }
 
@@ -97,7 +95,7 @@ class SyncController2FetchMergeTest {
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
 
-        verify(remoteMergeToolsProvider, times(4)).fetchMerger(any(), any())
+        verify(remoteMergeToolsProvider, times(4)).pullMerger(any(), any())
         verify(remoteLogPull, times(4)).call()
     }
 

@@ -1,5 +1,6 @@
 package lt.markmerkk.merger
 
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.TimeSplit
 import net.rcarz.jiraclient.JiraClient
@@ -13,12 +14,14 @@ import org.slf4j.LoggerFactory
  * @since 2016-08-08
  */
 class RemoteMergeClientImpl(
-        private val jiraClient: JiraClient
+        private val jiraClientProvider: JiraClientProvider
 ) : RemoteMergeClient {
 
     @Throws(JiraException::class)
     override fun uploadLog(simpleLog: SimpleLog): WorkLog {
-        val issue = jiraClient.getIssue(simpleLog.task)
+        val issue = jiraClientProvider
+                .client()
+                .getIssue(simpleLog.task)
         val comment = TimeSplit.addStamp(
                 simpleLog.start,
                 simpleLog.end,

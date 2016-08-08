@@ -10,6 +10,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import rx.Observable
 import rx.observers.TestSubscriber
 import kotlin.test.assertEquals
 
@@ -35,8 +36,7 @@ class JiraClientProviderImplInitTest {
     fun validClient_initJiraClient() {
         assertNull(jiraClientProvider.jiraClient)
 
-        jiraClientProvider
-                .clientObservable()
+        Observable.just(jiraClientProvider.client())
                 .subscribe()
 
         assertNotNull(jiraClientProvider.jiraClient)
@@ -46,17 +46,14 @@ class JiraClientProviderImplInitTest {
     fun reuseJiraClient_multipleSync() {
         assertNull(jiraClientProvider.jiraClient)
 
-        jiraClientProvider
-                .clientObservable()
+        Observable.just(jiraClientProvider.client())
                 .subscribe()
 
         val newJiraClient = jiraClientProvider.jiraClient
 
-        jiraClientProvider
-                .clientObservable()
+        Observable.just(jiraClientProvider.client())
                 .subscribe()
-        jiraClientProvider
-                .clientObservable()
+        Observable.just(jiraClientProvider.client())
                 .subscribe()
 
         assertEquals(newJiraClient, jiraClientProvider.jiraClient)
@@ -71,8 +68,7 @@ class JiraClientProviderImplInitTest {
         val clientProvider = JiraClientProviderImpl(fakeUserSettings)
         val testSubscriber = TestSubscriber<JiraClient>()
 
-        clientProvider
-                .clientObservable()
+        Observable.defer { Observable.just(clientProvider.client()) }
                 .subscribe(testSubscriber)
 
         testSubscriber.assertError(IllegalStateException::class.java)

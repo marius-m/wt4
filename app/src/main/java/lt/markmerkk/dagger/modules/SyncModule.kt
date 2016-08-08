@@ -8,6 +8,8 @@ import lt.markmerkk.merger.RemoteMergeExecutorImpl
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.merger.RemoteMergeClient
+import lt.markmerkk.merger.RemoteMergeClientImpl
 import lt.markmerkk.utils.*
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
@@ -54,6 +56,14 @@ class SyncModule {
 
     @Provides
     @Singleton
+    fun providesRemoteMergeClient(
+            jiraClientProvider: JiraClientProvider
+    ): RemoteMergeClient {
+        return RemoteMergeClientImpl(jiraClientProvider)
+    }
+
+    @Provides
+    @Singleton
     fun providesInteractor(
             jiraClientProvider: JiraClientProvider,
             jiraSearchSubsciber: JiraSearchSubsciber,
@@ -69,10 +79,12 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesRemoteMergeToolsProvider(
+            remoteMergeClient: RemoteMergeClient,
             remoteMergeExecutor: RemoteMergeExecutor
     ): RemoteMergeToolsProvider {
         return RemoteMergeToolsProviderImpl(
-                mergeExecutor = remoteMergeExecutor
+                remoteMergeClient = remoteMergeClient,
+                remoteMergeExecutor = remoteMergeExecutor
         )
     }
 

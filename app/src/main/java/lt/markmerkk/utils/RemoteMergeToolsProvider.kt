@@ -2,7 +2,9 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteLogPull
+import lt.markmerkk.merger.RemoteLogPush
 import net.rcarz.jiraclient.WorkLog
 
 /**
@@ -10,5 +12,6 @@ import net.rcarz.jiraclient.WorkLog
  * @since 2016-08-07
  */
 interface RemoteMergeToolsProvider {
-    fun fetchMerger(remoteLog: JiraWork, jiraLogFilter: JiraFilter<WorkLog>): RemoteLogPull
+    fun pullMerger(remoteLog: JiraWork, jiraLogFilter: JiraFilter<WorkLog>): RemoteLogPull
+    fun pushMerger(localLog: SimpleLog, filter: JiraFilter<SimpleLog>): RemoteLogPush
 }

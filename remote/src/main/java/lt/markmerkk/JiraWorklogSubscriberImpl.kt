@@ -1,6 +1,5 @@
 package lt.markmerkk
 
-import lt.markmerkk.JiraWork
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
@@ -59,7 +58,7 @@ class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<
     }
 
     override fun worklogResultObservable(searchResult: Issue.SearchResult): Observable<JiraWork> {
-        return jiraClientProvider.clientObservable()
+        return Observable.just(jiraClientProvider.client())
                 .flatMap { Observable.create(JiraWorklogSubscriberImpl(jiraClientProvider, searchResult, it)) }
     }
 

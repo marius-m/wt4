@@ -15,25 +15,14 @@ class JiraClientProviderImpl(
 
     var jiraClient: JiraClient? = null
 
-    val clientObservable: Observable<JiraClient> // Cache client
-        get() {
-            if (jiraClient == null) {
-                return Observable.create(
-                        JiraConnector(
-                                hostname = userSettings.host,
-                                username = userSettings.username,
-                                password = userSettings.password
-                        )
-                )
-            }
-            return Observable.just(jiraClient)
+    override fun client(): JiraClient {
+        if (jiraClient == null) {
+            if (userSettings.host.isNullOrEmpty()) throw IllegalStateException("Hostname cannot be empty")
+            if (userSettings.username.isNullOrEmpty()) throw IllegalStateException("Username cannot be empty")
+            if (userSettings.password.isNullOrEmpty()) throw IllegalStateException("Password cannot be empty")
+            jiraClient = JiraClient(userSettings.host, BasicCredentials(userSettings.username, userSettings.password))
         }
-
-    override fun clientObservable(): Observable<JiraClient> {
-        return clientObservable.flatMap {
-            jiraClient = it
-            Observable.just(it)
-        }
+        return jiraClient!!
     }
 
     override fun reset() {

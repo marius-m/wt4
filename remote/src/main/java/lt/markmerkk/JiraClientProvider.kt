@@ -9,11 +9,9 @@ import rx.Observable
  */
 interface JiraClientProvider {
 
-    fun reset()
+    @Throws(IllegalStateException::class)
+    fun client(): JiraClient
 
-    /**
-     * Will return a client and cache it
-     */
-    fun clientObservable(): Observable<JiraClient>
+    fun reset()
 
 }

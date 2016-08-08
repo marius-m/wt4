@@ -1,16 +1,14 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.*
-import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.merger.RemoteMergeExecutor
-import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.interfaces.IRemoteLoadListener
+import lt.markmerkk.mvp.UserSettings
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -60,7 +58,6 @@ class SyncController2(
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
-
                 .observeOn(uiScheduler)
                 .subscribe({
                     logger.info("Success!")
@@ -74,13 +71,16 @@ class SyncController2(
 
     //region Observables
 
+    fun uploadObservable(): Observable<List<SimpleLog>> {
+        return Observable.from(logStorage.dataAsList)
+                .toList()
+    }
+
     fun downloadObservable(): Observable<List<JiraWork>> {
-        return Observable.defer { jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay()) }
+        return jiraInteractor.jiraWorks(dayProvider.startDay(), dayProvider.endDay())
+                .flatMap { Observable.from(it) }
                 .flatMap {
-                    Observable.from(it)
-                }
-                .flatMap {
-                    val fetchMerger = remoteMergeToolsProvider.fetchMerger(
+                    val fetchMerger = remoteMergeToolsProvider.pullMerger(
                             it,
                             JiraDownloadWorklogValidator(
                                     user = userSettings.username,

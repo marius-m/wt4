@@ -3,7 +3,6 @@ package lt.markmerkk
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
-import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -69,7 +68,7 @@ class JiraSearchSubscriberImpl : JiraSearchSubsciber, Observable.OnSubscribe<Iss
     }
 
     override fun searchResultObservable(start: Long, end: Long): Observable<Issue.SearchResult> {
-        return jiraClientProvider.clientObservable()
+        return Observable.just(jiraClientProvider.client())
                 .flatMap {
                     Observable.create<Issue.SearchResult>(
                             JiraSearchSubscriberImpl(

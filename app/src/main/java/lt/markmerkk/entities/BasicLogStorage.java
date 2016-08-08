@@ -134,6 +134,13 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     return logs;
   }
 
+  public List<SimpleLog> getDataAsList() {
+    ArrayList<SimpleLog> simpleLogs = new ArrayList<>();
+    simpleLogs.addAll(logs);
+    return simpleLogs;
+
+  }
+
   public DateTime getTargetDate() {
     return targetDate;
   }
