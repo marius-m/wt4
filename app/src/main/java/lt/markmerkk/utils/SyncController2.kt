@@ -50,21 +50,10 @@ class SyncController2(
         subscription?.unsubscribe()
     }
 
-
-    fun syncWithDefaultValues() {
-        sync(
-                uiScheduler = JavaFxScheduler.getInstance(),
-                ioScheduler = Schedulers.computation()
-        )
-    }
-
     /**
      * Main method to start synchronization
      */
-    fun sync(
-            uiScheduler: Scheduler,
-            ioScheduler: Scheduler
-    ) {
+    fun sync() {
         if (isLoading) {
             logger.info("Sync is already loading")
             return

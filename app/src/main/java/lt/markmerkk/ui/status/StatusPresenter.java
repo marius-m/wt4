@@ -92,7 +92,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
         SimpleTracker.CATEGORY_BUTTON,
         SimpleTracker.ACTION_SYNC_MAIN
     );
-    syncController.syncWithDefaultValues();
+    syncController.sync();
   }
 
   @Subscribe
@@ -101,7 +101,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
         SimpleTracker.CATEGORY_BUTTON,
         SimpleTracker.ACTION_SYNC_MAIN
     );
-    syncController.syncWithDefaultValues();
+    syncController.sync();
   }
 
   //endregion
@@ -194,7 +194,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     @Override
     public void onUpdate() {
       if (!syncController.isLoading() && autoSync.isSyncNeeded())
-        syncController.syncWithDefaultValues();
+        syncController.sync();
       updateStatus();
     }
   };
