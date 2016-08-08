@@ -71,7 +71,7 @@ class JiraDownloadWorklogValidatorTest {
         assertTrue(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun endBeforeCreate_returnFalse() {
         // Arrange
         val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 900L)
@@ -83,7 +83,7 @@ class JiraDownloadWorklogValidatorTest {
         assertFalse(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun startAfterCreate_returnFalse() {
         // Arrange
         val filterer = JiraDownloadWorklogValidator("valid_username", 1200L, 2000L)
@@ -95,7 +95,7 @@ class JiraDownloadWorklogValidatorTest {
         assertFalse(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun invalidUser_returnFalse() {
         // Arrange
         val filterer = JiraDownloadWorklogValidator("invalid_username", 500L, 2000L)
@@ -107,7 +107,7 @@ class JiraDownloadWorklogValidatorTest {
         assertFalse(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun nullWorkLog_returnFalse() {
         // Arrange
         val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 2000L)
@@ -119,7 +119,7 @@ class JiraDownloadWorklogValidatorTest {
         assertFalse(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun invalidWorkLogStartedNull_returnFalse() {
         // Arrange
         val invalidWorklog = mock(WorkLog::class.java)
@@ -134,7 +134,7 @@ class JiraDownloadWorklogValidatorTest {
         assertFalse(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun invalidWorkLogAuthorNull_returnFalse() {
         // Arrange
         val invalidWorklog = mock(WorkLog::class.java)
@@ -149,7 +149,7 @@ class JiraDownloadWorklogValidatorTest {
         assertFalse(out)
     }
 
-    @Test
+    @Test(expected = JiraFilter.FilterErrorException::class)
     fun invalidWorkLogAuthorNameNull_returnFalse() {
         // Arrange
         val invalidWorklog = mock(WorkLog::class.java)

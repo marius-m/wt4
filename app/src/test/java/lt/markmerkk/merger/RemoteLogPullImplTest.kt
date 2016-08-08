@@ -27,7 +27,7 @@ class RemoteLogPullImplTest {
         doReturn("valid_key").whenever(fakeIssue).key
         val fakeWorkLog: WorkLog = mock()
         doReturn(Date(1000)).whenever(fakeWorkLog).started
-        doReturn(false).whenever(remoteFilter).valid(any())
+        doThrow(JiraFilter.FilterErrorException("invalid_error")).whenever(remoteFilter).valid(any())
         val puller = RemoteLogPullImpl(
                 mergeExecutor,
                 remoteFilter,

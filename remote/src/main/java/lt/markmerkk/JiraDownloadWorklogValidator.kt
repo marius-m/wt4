@@ -15,21 +15,17 @@ class JiraDownloadWorklogValidator(
         val end: Long
 ) : JiraFilter<WorkLog> {
 
+    @Throws(JiraFilter.FilterErrorException::class)
     override fun valid(input: WorkLog?): Boolean {
-        try {
-            val startDateTime = DateTime(start)
-            val endDateTime = DateTime(end)
-            if (input == null) throw FilterErrorException("Worklog is invalid")
-            if (input.started == null) throw FilterErrorException("Worklog is invalid")
-            if (input.author == null) throw FilterErrorException("Worklog is invalid")
-            if (input.author.name != user) throw FilterErrorException("Worklog does not belong to the user")
-            if (startDateTime.isAfter(input.started.time)) throw FilterErrorException("Start time is after worklog date")
-            if (endDateTime.isBefore(input.started.time)) throw FilterErrorException("End time is before worklog date")
-            return true
-        } catch (e: FilterErrorException) {
-            logger.debug("Ignoring " + input + " for because " + e.message)
-            return false
-        }
+        val startDateTime = DateTime(start)
+        val endDateTime = DateTime(end)
+        if (input == null) throw JiraFilter.FilterErrorException("Worklog is invalid")
+        if (input.started == null) throw JiraFilter.FilterErrorException("Worklog is invalid")
+        if (input.author == null) throw JiraFilter.FilterErrorException("Worklog is invalid")
+        if (input.author.name != user) throw JiraFilter.FilterErrorException("Worklog does not belong to the user")
+        if (startDateTime.isAfter(input.started.time)) throw JiraFilter.FilterErrorException("Start time is after worklog date")
+        if (endDateTime.isBefore(input.started.time)) throw JiraFilter.FilterErrorException("End time is before worklog date")
+        return true
     }
 
     //region Classes
@@ -37,11 +33,6 @@ class JiraDownloadWorklogValidator(
     companion object {
         var logger: Logger = LoggerFactory.getLogger(JiraDownloadWorklogValidator::class.java)
     }
-
-    /**
-     * Thrown whenever there is a problem filtering some [WorkLog]
-     */
-    inner class FilterErrorException(message: String) : Exception(message)
 
     //endregion
 
