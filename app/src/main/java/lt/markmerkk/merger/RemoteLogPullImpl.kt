@@ -28,13 +28,13 @@ class RemoteLogPullImpl(
         val worklogs = remoteIssue.worklogs ?: return remoteIssue
         for (remoteWorklog in worklogs) {
             if (!remoteIssue.validWorklog(remoteWorklog)) {
-                logger.info("Invalid worklog: $remoteWorklog")
+                logger.info("Invalid worklog (remote malform): $remoteWorklog")
                 continue
             }
             try {
                 remoteLogFilter.valid(remoteWorklog)
             } catch(e: JiraFilter.FilterErrorException) {
-                logger.info("Filtering out as invalid worklog: $remoteWorklog (${e.message})")
+                logger.info("Filtering out as invalid worklog: $remoteWorklog / (${e.message})")
                 continue
             }
             val oldLog = mergeExecutor.localEntityFromRemote(remoteWorklog)

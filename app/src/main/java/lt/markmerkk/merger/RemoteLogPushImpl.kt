@@ -21,15 +21,15 @@ class RemoteLogPushImpl(
             if (uploadValidator.valid(localLog)) {
                 val outWorklog = remoteMergeClient.uploadLog(localLog)
                 remoteMergeExecutor.recreateLog(localLog, outWorklog)
-                logger.info("Success uploading $localLog!")
+                logger.info("Success uploading: $localLog!")
             } else {
-                logger.info("Log $localLog not eligable for upload!")
+                logger.info("Not eligable for upload: $localLog")
             }
         } catch (e: JiraFilter.FilterErrorException) {
-            logger.info("Skipping upload $localLog due to: ${e.message}")
+            logger.info("Error uploading: $localLog / (${e.message})")
             remoteMergeExecutor.markAsError(localLog, e)
         } catch (e: JiraException) {
-            logger.info("Error uploading $localLog due to: ${e.message}")
+            logger.info("Error uploading: $localLog / (${e.message})")
             remoteMergeExecutor.markAsError(localLog, e)
         }
         return localLog
