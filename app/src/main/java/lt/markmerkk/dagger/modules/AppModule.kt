@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
+import lt.markmerkk.entities.BasicIssueStorage
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.mvp.IDataStorage
@@ -37,14 +38,14 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesLogStorage(dbExecutor: IExecutor): IDataStorage<SimpleLog> {
+    fun provideBasicLogStorage(dbExecutor: IExecutor): BasicLogStorage { // todo : temp solution
         return BasicLogStorage(dbExecutor)
     }
 
     @Provides
     @Singleton
-    fun provideBasicLogStorage(genericDataStorage: IDataStorage<SimpleLog>): BasicLogStorage { // todo : temp solution
-        return genericDataStorage as BasicLogStorage
+    fun provideBasicIssueStorage(dbExecutor: IExecutor): BasicIssueStorage {
+        return BasicIssueStorage(dbExecutor)
     }
 
     @Provides

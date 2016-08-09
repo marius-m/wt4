@@ -2,10 +2,6 @@ package lt.markmerkk.utils;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.Subscribe;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,16 +11,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import lt.markmerkk.Translation;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartIssueSyncEvent;
-import lt.markmerkk.mvp.IssueSyncMvp;
-import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.entities.LocalIssue;
 import lt.markmerkk.entities.RemoteEntity;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.RowCountJob;
+import lt.markmerkk.events.StartAllSyncEvent;
+import lt.markmerkk.events.StartIssueSyncEvent;
+import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import net.rcarz.jiraclient.Issue;
@@ -37,6 +32,11 @@ import rx.observables.JavaFxObservable;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
 
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by mariusmerkevicius on 2/3/16.
  * {@link Issue} searchable combo box.
@@ -44,8 +44,7 @@ import rx.schedulers.Schedulers;
  * @deprecated - this class should be refactored as soon as possible for its overwhelming functionality.
  */
 @Deprecated
-public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue>
-        implements IssueSyncMvp.View {
+public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
   UserSettings settings;
@@ -89,19 +88,19 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue>
 
   @Subscribe
   public void onEvent(StartIssueSyncEvent event) {
-    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
-      refreshSubscription.unsubscribe();
-      return;
-    }
+//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+//      refreshSubscription.unsubscribe();
+//      return;
+//    }
     doRefresh();
   }
 
   @Subscribe
   public void onEvent(StartAllSyncEvent event) {
-    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
-      refreshSubscription.unsubscribe();
-      return;
-    }
+//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+//      refreshSubscription.unsubscribe();
+//      return;
+//    }
     doRefresh();
   }
 
@@ -198,28 +197,28 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue>
    * Traverses current jira issues for user issues
    */
   public void refreshCache() {
-    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
-      refreshSubscription.unsubscribe();
-      logger.debug("Cancelled!");
-      changeLoadState(false);
-      return;
-    }
-    changeLoadState(true);
-    long downloadMillis = System.currentTimeMillis();
-    refreshSubscription =
-        Observable.merge(searchIssues(settings.getIssueJql(), downloadMillis), clearOldCacheObservable(downloadMillis))
-            .observeOn(Schedulers.computation())
-            .subscribeOn(Schedulers.computation())
-            .subscribe(noResult -> {
-              // Need cleanup of old issues
-            }, error -> {
-              logger.error("Error!", error);
-              changeLoadState(false);
-            }, () -> {
-              logger.debug("Complete!");
-              setTotalIssues(refreshTotalCount());
-              changeLoadState(false);
-            });
+//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
+//      refreshSubscription.unsubscribe();
+//      logger.debug("Cancelled!");
+//      changeLoadState(false);
+//      return;
+//    }
+//    changeLoadState(true);
+//    long downloadMillis = System.currentTimeMillis();
+//    refreshSubscription =
+//        Observable.merge(searchIssues(settings.getIssueJql(), downloadMillis), clearOldCacheObservable(downloadMillis))
+//            .observeOn(Schedulers.computation())
+//            .subscribeOn(Schedulers.computation())
+//            .subscribe(noResult -> {
+//               Need cleanup of old issues
+//            }, error -> {
+//              logger.error("Error!", error);
+//              changeLoadState(false);
+//            }, () -> {
+//              logger.debug("Complete!");
+//              setTotalIssues(refreshTotalCount());
+//              changeLoadState(false);
+//            });
   }
 
   //endregion
@@ -323,13 +322,4 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue>
         });
   }
 
-  @Override
-  public void showProgress() {
-
-  }
-
-  @Override
-  public void hideProgress() {
-
-  }
 }

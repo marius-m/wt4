@@ -1,9 +1,9 @@
 package lt.markmerkk
 
+import lt.markmerkk.entities.JiraCreds
 import lt.markmerkk.mvp.UserSettings
 import net.rcarz.jiraclient.BasicCredentials
 import net.rcarz.jiraclient.JiraClient
-import rx.Observable
 
 /**
  * @author mariusmerkevicius
@@ -15,20 +15,30 @@ class JiraClientProviderImpl(
     override val username: String
         get() = userSettings.username
 
+    var cacheCreds = JiraCreds()
+
     var jiraClient: JiraClient? = null
 
     override fun client(): JiraClient {
-        if (jiraClient == null) {
-            if (userSettings.host.isNullOrEmpty()) throw IllegalStateException("empty hostname")
-            if (userSettings.username.isNullOrEmpty()) throw IllegalStateException("empty username")
-            if (userSettings.password.isNullOrEmpty()) throw IllegalStateException("empty password")
+        if (userSettings.host.isNullOrEmpty()) throw IllegalStateException("empty hostname")
+        if (userSettings.username.isNullOrEmpty()) throw IllegalStateException("empty username")
+        if (userSettings.password.isNullOrEmpty()) throw IllegalStateException("empty password")
+
+        if (jiraClient == null || !creditsMatchCache(oldCreds = cacheCreds)) {
             jiraClient = JiraClient(userSettings.host, BasicCredentials(userSettings.username, userSettings.password))
         }
+
+        cacheCreds = JiraCreds(
+                userSettings.host,
+                userSettings.username,
+                userSettings.password
+        )
+
         return jiraClient!!
     }
 
-    override fun reset() {
-        jiraClient = null
+    fun creditsMatchCache(oldCreds: JiraCreds): Boolean {
+        return oldCreds == JiraCreds(userSettings.host, userSettings.username, userSettings.password)
     }
 
 }

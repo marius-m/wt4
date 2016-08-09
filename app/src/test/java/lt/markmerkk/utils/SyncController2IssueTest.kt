@@ -1,12 +1,14 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteIssuePull
 import lt.markmerkk.merger.RemoteMergeToolsProvider
+import lt.markmerkk.mvp.IDataStorage
+import lt.markmerkk.mvp.UserSettings
 import net.rcarz.jiraclient.Issue
 import org.junit.Assert.*
 import org.junit.Before
@@ -20,21 +22,28 @@ import rx.schedulers.Schedulers
  * *
  * @since 2016-08-09
  */
-class IssueSyncPresenterImplTest {
+class SyncController2IssueTest {
 
-    val view: IssueSyncMvp.View = mock()
     val jiraInteractor: JiraInteractor = mock()
-    val dataStorage: IDataStorage<LocalIssue> = mock()
+    val userSettings: UserSettings = mock()
+    val logStorage: IDataStorage<SimpleLog> = mock()
+    val issueStorage: IDataStorage<LocalIssue> = mock()
     val remoteToolsProvider: RemoteMergeToolsProvider = mock()
     val remoteIssueMerge: RemoteIssuePull = mock()
+    val lastUpdateController: LastUpdateController = mock()
+    val dayProvider: DayProvider = mock()
 
-    val presenter = IssueSyncPresenterImpl(
-            view,
-            remoteToolsProvider,
-            jiraInteractor,
-            dataStorage,
-            Schedulers.immediate()
+    val sync = SyncController2(
+            jiraInteractor = jiraInteractor,
+            userSettings = userSettings,
+            logStorage = logStorage,
+            issueStorage = issueStorage,
+            remoteMergeToolsProvider = remoteToolsProvider,
+            lastUpdateController = lastUpdateController,
+            dayProvider = dayProvider,
+            uiScheduler = Schedulers.immediate()
     )
+
 
     @Before
     fun setUp() {
@@ -52,7 +61,7 @@ class IssueSyncPresenterImplTest {
     fun valid_triggerMerge() {
         // Assemble
         // Act
-        presenter.sync()
+        sync.syncIssues()
 
         // Assert
         verify(remoteToolsProvider, times(3)).issuePullMerger(any(), any())
@@ -66,7 +75,7 @@ class IssueSyncPresenterImplTest {
         val testSubscriber = TestSubscriber<List<Issue>>()
 
         // Act
-        presenter.issueCacheObservable(filter)
+        sync.issueCacheObservable(filter)
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
@@ -79,10 +88,10 @@ class IssueSyncPresenterImplTest {
         // Assemble
 
         // Act
-        presenter.sync()
+        sync.syncIssues()
 
         // Assert
-        verify(dataStorage).notifyDataChange()
+        verify(issueStorage).notifyDataChange()
     }
 
     @Test
@@ -95,9 +104,9 @@ class IssueSyncPresenterImplTest {
                 )
 
         // Act
-        presenter.sync()
+        sync.syncIssues()
 
         // Assert
-        verify(dataStorage).notifyDataChange()
+        verify(issueStorage).notifyDataChange()
     }
 }

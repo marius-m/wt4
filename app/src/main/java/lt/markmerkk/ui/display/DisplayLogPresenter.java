@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
+import lt.markmerkk.entities.BasicLogStorage;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.entities.SimpleLog;
@@ -24,7 +25,7 @@ import lt.markmerkk.utils.tracker.SimpleTracker;
  */
 public class DisplayLogPresenter implements Initializable, IPresenter {
   @Inject
-  IDataStorage<SimpleLog> storage;
+  BasicLogStorage storage;
   @FXML
   TableView<SimpleLog> tableView;
 

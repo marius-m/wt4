@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.DBProdExecutor;
+import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.InsertJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * Holds all downloaded issues for use
  */
 public class BasicIssueStorage implements IDataStorage<LocalIssue> {
-  @Inject DBProdExecutor executor;
+  IExecutor executor;
 
   long totalIssues;
   ObservableList<LocalIssue> issues;
@@ -30,7 +31,8 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
 
   String filter;
 
-  public BasicIssueStorage() {
+  public BasicIssueStorage(IExecutor executor) {
+    this.executor = executor;
     issues = FXCollections.observableArrayList();
     listeners = new ArrayList<>();
   }
@@ -85,7 +87,9 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   public void notifyDataChange() {
     QueryListJob<LocalIssue> queryJob = new QueryListJob<>(LocalIssue.class);
     issues.clear();
-    if (Utils.isEmpty(filter) && filter.length() <= 2) {
+    if (Utils.isEmpty(filter)) {
+      queryJob = new QueryListJob<>(LocalIssue.class);
+    } else if (filter.length() <= 2) {
       queryJob = new QueryListJob<>(LocalIssue.class);
     } else {
       queryJob = new QueryListJob<>(LocalIssue.class, () -> "("

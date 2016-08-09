@@ -3,6 +3,7 @@ package lt.markmerkk.dagger.modules
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
+import lt.markmerkk.entities.BasicIssueStorage
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.entities.SimpleLog
@@ -109,18 +110,17 @@ class SyncModule {
             dayProvider: DayProvider,
             lastUpdateController: LastUpdateController,
             jiraInteractor: JiraInteractor,
-            jiraClientProvider: JiraClientProvider,
-            logStorage: BasicLogStorage
+            logStorage: BasicLogStorage,
+            issueStorage: BasicIssueStorage
     ): SyncController2 {
         return SyncController2(
-                jiraClientProvider = jiraClientProvider,
                 jiraInteractor = jiraInteractor,
                 logStorage = logStorage,
+                issueStorage = issueStorage,
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
                 lastUpdateController = lastUpdateController,
                 dayProvider = dayProvider,
-                ioScheduler = Schedulers.computation(),
                 uiScheduler = JavaFxScheduler.getInstance()
         )
     }

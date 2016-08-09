@@ -1,12 +1,12 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.*
-import lt.markmerkk.entities.BasicLogStorage
-import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.*
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
+import lt.markmerkk.mvp.IDataStorage
 import lt.markmerkk.mvp.UserSettings
+import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
 import rx.Observable
@@ -20,19 +20,18 @@ import javax.annotation.PreDestroy
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
 class SyncController2(
-        private val jiraClientProvider: JiraClientProvider,
         private val jiraInteractor: JiraInteractor,
         private val userSettings: UserSettings,
-        private val logStorage: BasicLogStorage,
+        private val issueStorage: IDataStorage<LocalIssue>,
+        private val logStorage: IDataStorage<SimpleLog>,
         private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
         private val lastUpdateController: LastUpdateController,
         private val dayProvider: DayProvider,
-        private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
 
     val remoteLoadListeners: MutableList<IRemoteLoadListener> = ArrayList()
-    var logSubscription: Subscription? = null
+    var subscription: Subscription? = null
 
     var isLoading = false
         set(value) {
@@ -45,7 +44,7 @@ class SyncController2(
 
     @PreDestroy
     fun destroy() {
-        logSubscription?.unsubscribe()
+        subscription?.unsubscribe()
     }
 
     /**
@@ -56,25 +55,47 @@ class SyncController2(
             logger.info("Sync is already loading")
             return
         }
-        jiraClientProvider.reset()
         val uploadValidator = JiraFilterSimpleLog()
         val downloadValidator = JiraFilterWorklog(
                 userSettings.username,
                 dayProvider.startDay(),
                 dayProvider.endDay()
         )
-        logSubscription = uploadObservable(uploadValidator)
+        subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Sync complete!")
+                    logger.info("Log sync success!")
                 }, {
-                    logger.info("Sync terminate due to: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
+                    logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
+                    logger.error("Log sync error data: ", it)
                     remoteLoadListener.onError(it.message)
+                    logStorage.notifyDataChange()
                 }, {
                     logStorage.notifyDataChange()
+                })
+    }
+
+    fun syncIssues() {
+        if (isLoading) {
+            logger.info("Issues already syncing")
+            return
+        }
+        val filter = JiraFilterIssue()
+        subscription = issueCacheObservable(filter)
+                .doOnSubscribe { isLoading = true }
+                .doOnUnsubscribe { isLoading = false }
+                .observeOn(uiScheduler)
+                .subscribe({
+                    logger.info("Issue sync success!")
+                }, {
+                    logger.info("Issue sync error: ${it.message}")
+                    logger.error("Log sync error data: ", it)
+                    issueStorage.notifyDataChange()
+                }, {
+                    issueStorage.notifyDataChange()
                 })
     }
 
@@ -102,6 +123,16 @@ class SyncController2(
                             filter
                     )
                     rx.util.async.Async.fromCallable(pullMerger, uiScheduler)
+                }
+                .toList()
+    }
+
+    fun issueCacheObservable(filter: JiraFilter<Issue>): Observable<List<Issue>> {
+        return jiraInteractor.jiraIssues()
+                .flatMap { Observable.from(it) }
+                .flatMap {
+                    val merger = remoteMergeToolsProvider.issuePullMerger(it, filter)
+                    Observable.fromCallable(merger)
                 }
                 .toList()
     }

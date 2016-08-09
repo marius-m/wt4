@@ -3,6 +3,7 @@ package lt.markmerkk.utils
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
+import lt.markmerkk.entities.BasicIssueStorage
 import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteLogPull
@@ -27,19 +28,18 @@ class SyncController2SyncTest {
     val dayProvider: DayProvider = mock()
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
-    val jiraClientProvider: JiraClientProvider = mock()
     val logStorage: BasicLogStorage = mock()
+    val issueStorage: BasicIssueStorage = mock()
 
     val controller = SyncController2(
-            jiraClientProvider = jiraClientProvider,
             jiraInteractor = jiraInteractor,
             logStorage = logStorage,
+            issueStorage = issueStorage,
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,
             lastUpdateController = lastUpdateController,
             dayProvider = dayProvider,
-            uiScheduler = Schedulers.immediate(),
-            ioScheduler = Schedulers.immediate()
+            uiScheduler = Schedulers.immediate()
     )
 
     @Before

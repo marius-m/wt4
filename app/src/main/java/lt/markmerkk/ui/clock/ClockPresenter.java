@@ -1,6 +1,7 @@
 package lt.markmerkk.ui.clock;
 
 import com.google.common.base.Strings;
+import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,13 +13,14 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
+import lt.markmerkk.JiraInteractor;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
+import lt.markmerkk.entities.*;
+import lt.markmerkk.events.StartAllSyncEvent;
+import lt.markmerkk.events.StartIssueSyncEvent;
+import lt.markmerkk.merger.RemoteMergeToolsProvider;
 import lt.markmerkk.mvp.UserSettings;
-import lt.markmerkk.entities.BasicLogStorage;
-import lt.markmerkk.entities.LocalIssue;
-import lt.markmerkk.entities.SimpleLog;
-import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.*;
@@ -28,7 +30,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.observables.JavaFxObservable;
+import rx.schedulers.JavaFxScheduler;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,9 +56,15 @@ public class ClockPresenter implements Initializable {
   @Inject
   BasicLogStorage logStorage;
   @Inject
+  BasicIssueStorage issueStorage;
+  @Inject
   IExecutor dbProdExecutor;
   @Inject
   UserSettings settings;
+  @Inject
+  RemoteMergeToolsProvider remoteMergeToolsProvider;
+  @Inject
+  JiraInteractor jiraInteractor;
 
   @FXML
   DatePicker inputTo;
@@ -93,6 +103,13 @@ public class ClockPresenter implements Initializable {
             dbProdExecutor,
             outputJQL
     );
+//    issueSyncPresenter = new IssueSyncPresenterImpl(
+//            this,
+//            remoteMergeToolsProvider,
+//            jiraInteractor,
+//            issueStorage,
+//            JavaFxScheduler.getInstance()
+//    );
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)
@@ -128,7 +145,27 @@ public class ClockPresenter implements Initializable {
       buttonOpen.setManaged(false);
     });
     updateUI();
+    SyncEventBus.getInstance().getEventBus().register(this);
   }
+
+  @PreDestroy
+  public void destroy() {
+    SyncEventBus.getInstance().getEventBus().unregister(this);
+  }
+
+  //region Events
+
+  @Subscribe
+  public void onEvent(StartIssueSyncEvent event) {
+    syncController.syncIssues();
+  }
+
+  @Subscribe
+  public void onEvent(StartAllSyncEvent event) {
+    syncController.syncIssues();
+  }
+
+  //endregion
 
   //region Keyboard input
 
@@ -156,7 +193,8 @@ public class ClockPresenter implements Initializable {
   }
 
   public void onClickSearch() {
-    issueSearchAdapter.doRefresh();
+//    issueSearchAdapter.doRefresh();
+    syncController.syncIssues();
   }
 
   public void onClickSettings() {
@@ -358,7 +396,7 @@ public class ClockPresenter implements Initializable {
     styleClass.removeAll(Collections.singleton("error"));
   }
 
-  //endregion
+ //endregion
 
   /**
    * Helper listener for the clock window

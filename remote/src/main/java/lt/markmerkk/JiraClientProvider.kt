@@ -14,6 +14,4 @@ interface JiraClientProvider {
     @Throws(IllegalStateException::class)
     fun client(): JiraClient
 
-    fun reset()
-
 }
