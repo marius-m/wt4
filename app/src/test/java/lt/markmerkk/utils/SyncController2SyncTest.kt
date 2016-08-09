@@ -60,7 +60,7 @@ class SyncController2SyncTest {
         val remoteLoadingListener: IRemoteLoadListener = mock()
         controller.addLoadingListener(remoteLoadingListener)
 
-        controller.sync()
+        controller.syncLogs()
 
         verify(remoteLoadingListener).onLoadChange(true)
         verify(remoteLoadingListener).onLoadChange(false)

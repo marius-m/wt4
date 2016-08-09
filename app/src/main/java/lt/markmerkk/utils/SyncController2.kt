@@ -47,12 +47,9 @@ class SyncController2(
         subscription?.unsubscribe()
     }
 
-    /**
-     * Main method to start synchronization
-     */
-    fun sync() {
+    fun syncLogs() {
         if (isLoading) {
-            logger.info("Sync is already loading")
+            logger.info("Sync in progress")
             return
         }
         val uploadValidator = JiraFilterSimpleLog()
@@ -80,7 +77,7 @@ class SyncController2(
 
     fun syncIssues() {
         if (isLoading) {
-            logger.info("Issues already syncing")
+            logger.info("Sync in progress")
             return
         }
         val filter = JiraFilterIssue()
