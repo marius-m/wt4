@@ -32,7 +32,7 @@ class SyncController2(
 ) {
 
     val remoteLoadListeners: MutableList<IRemoteLoadListener> = ArrayList()
-    var subscription: Subscription? = null
+    var logSubscription: Subscription? = null
 
     var isLoading = false
         set(value) {
@@ -45,7 +45,7 @@ class SyncController2(
 
     @PreDestroy
     fun destroy() {
-        subscription?.unsubscribe()
+        logSubscription?.unsubscribe()
     }
 
     /**
@@ -63,7 +63,7 @@ class SyncController2(
                 dayProvider.startDay(),
                 dayProvider.endDay()
         )
-        subscription = uploadObservable(uploadValidator)
+        logSubscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }

@@ -8,6 +8,7 @@ import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.slf4j.LoggerFactory
@@ -20,6 +21,7 @@ import java.util.*
 /**
  * Created by mariusmerkevicius on 1/29/16.
  */
+@Ignore // Integration tests
 class IntegrationJiraSearchSubscriberImplTest {
     private lateinit var clientProvider: JiraClientProvider
     val userSettings: UserSettings = mock()
