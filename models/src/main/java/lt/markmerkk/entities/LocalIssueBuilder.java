@@ -116,6 +116,14 @@ public class LocalIssueBuilder {
     return newIssue;
   }
 
+  public LocalIssue buildWithError(String errorMessage) {
+    LocalIssue issue = build();
+    issue.dirty = false;
+    issue.error = true;
+    issue.errorMessage = errorMessage;
+    return issue;
+  }
+
   //region Convenience
 
   /**

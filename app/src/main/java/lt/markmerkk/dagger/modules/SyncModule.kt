@@ -49,10 +49,18 @@ class SyncModule {
 
     @Provides
     @Singleton
-    fun providesRemoteMergeExecutor(
+    fun providesRemoteIssueMergeExecutor(
             executor: IExecutor
-    ): RemoteMergeExecutorImpl {
-        return RemoteMergeExecutorImpl(executor)
+    ): RemoteIssueMergeExecutorImpl {
+        return RemoteIssueMergeExecutorImpl(executor)
+    }
+
+    @Provides
+    @Singleton
+    fun providesRemoteLogMergeExecutor(
+            executor: IExecutor
+    ): RemoteLogMergeExecutorImpl {
+        return RemoteLogMergeExecutorImpl(executor)
     }
 
     @Provides
@@ -84,11 +92,11 @@ class SyncModule {
     @Singleton
     fun providesRemoteMergeToolsProvider(
             remoteMergeClient: RemoteMergeClient,
-            remoteMergeExecutor: RemoteMergeExecutorImpl
+            remoteLogMergeExecutor: RemoteLogMergeExecutorImpl
     ): RemoteMergeToolsProvider {
         return RemoteMergeToolsProviderImpl(
                 remoteMergeClient = remoteMergeClient,
-                remoteMergeExecutor = remoteMergeExecutor
+                remoteMergeExecutor = remoteLogMergeExecutor
         )
     }
 

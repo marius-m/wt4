@@ -14,7 +14,7 @@ import net.rcarz.jiraclient.WorkLog
  * @author mariusmerkevicius
  * @since 2016-07-10
  */
-class RemoteMergeExecutorImpl(
+class RemoteLogMergeExecutorImpl(
         val dbExecutor: IExecutor
 ) : RemoteMergeExecutor<SimpleLog, WorkLog> {
 
