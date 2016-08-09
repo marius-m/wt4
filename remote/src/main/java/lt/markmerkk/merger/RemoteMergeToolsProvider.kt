@@ -1,4 +1,4 @@
-package lt.markmerkk.utils
+package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.JiraWork

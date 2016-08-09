@@ -97,7 +97,7 @@ public class JiraObservables {
         DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
         subscriber.onNext(
                 String.format(
-                        JiraSearchSubscriberImpl.Companion.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
+                        Const.INSTANCE.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
                         JiraSearchSubscriberImpl.Companion.getDateFormat().print(startSearchDate.getMillis()),
                         JiraSearchSubscriberImpl.Companion.getDateFormat().print(endSearchDate.getMillis()),
                         user

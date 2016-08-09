@@ -9,6 +9,7 @@ import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPush
+import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.mvp.UserSettings
 import org.junit.Before
 import org.junit.Test

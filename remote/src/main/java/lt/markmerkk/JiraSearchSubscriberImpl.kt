@@ -93,8 +93,6 @@ class JiraSearchSubscriberImpl : JiraSearchSubscriber, Observable.OnSubscribe<Is
     companion object {
         private val logger: Logger = LoggerFactory.getLogger("JiraSearchJQL")
         val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
-        val DEFAULT_JQL_WORKLOG_TEMPLATE = "key in workedIssues(\"%s\", \"%s\", \"%s\")"
-        val DEFAULT_JQL_USER_ISSUES = "(status not in (closed, resolved)) AND (assignee = currentUser() OR reporter = currentUser())"
-    }
+   }
 
 }

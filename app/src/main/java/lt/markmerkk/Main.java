@@ -9,14 +9,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
-import lt.markmerkk.listeners.WorldEvents;
+import lt.markmerkk.utils.WorldEvents;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
-import lt.markmerkk.utils.HashSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.SimpleTracker;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
@@ -32,9 +30,10 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 public class Main extends Application {
-  public static final String LOG_LAYOUT = "%d{ABSOLUTE} %5p %c{1}:%L - %m%n";
-  public static boolean DEBUG = true;
-  public static String CFG_PATH;
+  public static final String LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n";
+  public static final String LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n";
+//  public static boolean DEBUG = true;
+//  public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
 
@@ -47,7 +46,8 @@ public class Main extends Application {
   public static int SCENE_HEIGHT = 500;
 
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
-  private RollingFileAppender fileAppender;
+  private RollingFileAppender fileAppenderProd;
+  private RollingFileAppender fileAppenderDebug;
   private RollingFileAppender errorAppender;
 
   public static AppComponent sComponent = null;
@@ -59,8 +59,8 @@ public class Main extends Application {
 
   @Override
   public void start(Stage stage) throws Exception {
-    DEBUG = ("false".equals(System.getProperty("release")));
-    logger.info("Running in DEBUG=" + DEBUG);
+    Const.INSTANCE.setDEBUG("false".equals(System.getProperty("release")));
+    logger.info("Running in DEBUG=" + Const.INSTANCE.getDEBUG());
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
     initVersionSettings();
     if (isFirstLaunch()) {
@@ -68,7 +68,6 @@ public class Main extends Application {
 //      UpdateFX.restartApp();
 //      return;
     }
-    initStaticPaths();
     initLoggerSettings();
 
     Translation.getInstance(); // Initializing translations on first launch
@@ -100,7 +99,7 @@ public class Main extends Application {
   public void stop() throws Exception {
     ((WorldEvents)settings).onStop();
     SimpleTracker.getInstance().getTracker().stop();
-    org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppender);
+    org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppenderProd);
     org.apache.log4j.Logger.getRootLogger().removeAppender(errorAppender);
     super.stop();
     hostServices = null;
@@ -128,13 +127,19 @@ public class Main extends Application {
    */
   private void initLoggerSettings() throws IOException {
     PropertyConfigurator.configure(getClass().getResource("/custom_log4j.properties"));
-    fileAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT), CFG_PATH + "info.log", true);
-    fileAppender.setMaxFileSize("1000KB");
-    fileAppender.setMaxBackupIndex(1);
-    fileAppender.setThreshold(Priority.INFO);
-    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+    fileAppenderProd = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_PROD), Const.INSTANCE.getCfgHome() + "info_prod.log", true);
+    fileAppenderProd.setMaxFileSize("100KB");
+    fileAppenderProd.setMaxBackupIndex(1);
+    fileAppenderProd.setThreshold(Priority.INFO);
+    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderProd);
 
-    errorAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT), CFG_PATH + "debug.log", true);
+    fileAppenderDebug = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_DEBUG), Const.INSTANCE.getCfgHome() + "info.log", true);
+    fileAppenderDebug.setMaxFileSize("1000KB");
+    fileAppenderDebug.setMaxBackupIndex(1);
+    fileAppenderDebug.setThreshold(Priority.INFO);
+    org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderDebug);
+
+    errorAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_DEBUG), Const.INSTANCE.getCfgHome() + "debug.log", true);
     errorAppender.setMaxFileSize("100000KB");
     errorAppender.setMaxBackupIndex(1);
     errorAppender.setThreshold(Priority.toPriority(Priority.ALL_INT));
@@ -145,7 +150,7 @@ public class Main extends Application {
    * Prepares an update directory
    */
   static boolean isFirstLaunch() throws IOException {
-    if (DEBUG) {
+    if (Const.INSTANCE.getDEBUG()) {
       logger.info("Running debug version! Skipping first launch check!");
       return false;
     }
@@ -173,19 +178,6 @@ public class Main extends Application {
     VERSION_NAME = versionProperties.getProperty("version_name");
     GA_KEY = versionProperties.getProperty("ga");
     logger.info("Running version %s with version code %d", VERSION_NAME, VERSION_CODE);
-  }
-
-  /**
-   * Initializes main constant static's for later use
-   */
-  private void initStaticPaths() {
-    String home = System.getProperty("user.home");
-    try {
-      File file = new File(home + ((DEBUG) ? "/.wt4_debug/" : "/.wt4/"));
-      FileUtils.forceMkdir(file);
-      CFG_PATH = file.getAbsolutePath()+"/";
-      CFG_PATH = (CFG_PATH == null) ? "" : CFG_PATH;
-    } catch (IOException e) { }
   }
 
   //endregion

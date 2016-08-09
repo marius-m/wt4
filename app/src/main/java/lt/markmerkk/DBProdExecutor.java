@@ -36,7 +36,7 @@ public class DBProdExecutor extends DBBaseExecutor {
 
   @Override
   protected String database() {
-    return Main.CFG_PATH + "wt4_1.db";
+    return Const.INSTANCE.getCfgHome() + "wt4_1.db";
   }
 
   @Override
@@ -50,7 +50,7 @@ public class DBProdExecutor extends DBBaseExecutor {
 
   @Override
   protected URI migrationExportPath() {
-    return Paths.get(Main.CFG_PATH).toUri();
+    return Paths.get(Const.INSTANCE.getCfgHome()).toUri();
   }
 
 }

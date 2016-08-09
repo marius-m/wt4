@@ -16,10 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 
 import javax.inject.Inject;
-import lt.markmerkk.AutoSync2;
-import lt.markmerkk.JiraSearchSubscriberImpl;
-import lt.markmerkk.Main;
-import lt.markmerkk.Translation;
+
+import lt.markmerkk.*;
 import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
@@ -78,7 +76,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     inputJQL.setText(settings.getIssueJql());
 
     guiAppender = new SimpleAppender();
-    guiAppender.setLayout(new PatternLayout(Main.LOG_LAYOUT));
+    guiAppender.setLayout(new PatternLayout(Main.LOG_LAYOUT_PROD));
     outputLogger.clear();
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
@@ -116,7 +114,7 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
    * A button event when user clicks on reset JQL
    */
   public void onClickResetJQL() {
-    inputJQL.setText(JiraSearchSubscriberImpl.Companion.getDEFAULT_JQL_USER_ISSUES());
+    inputJQL.setText(Const.INSTANCE.getDEFAULT_JQL_USER_ISSUES());
     settings.setIssueJql(inputJQL.getText());
     SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }

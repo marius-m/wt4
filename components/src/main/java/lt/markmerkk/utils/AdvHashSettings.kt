@@ -1,6 +1,6 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.Main
+import lt.markmerkk.Const
 import java.util.*
 
 /**
@@ -22,7 +22,7 @@ class AdvHashSettings : BaseSettings(), HashSettings {
     }
 
     override fun propertyPath(): String {
-        return Main.CFG_PATH + PROPERTIES_PATH
+        return Const.cfgHome + PROPERTIES_PATH
     }
 
     override fun onLoad(properties: Properties) {
@@ -30,7 +30,7 @@ class AdvHashSettings : BaseSettings(), HashSettings {
         for (o in properties.keys)
             if (o is String) {
                 val property = properties.getProperty(o)
-                if (Utils.isEmpty(property)) continue
+                if (property.isNullOrEmpty()) continue
                 val decodeBytes = Base64.decode(property, 0)
                 val decodeValue = String(decodeBytes)
                 keyValues.put(o, decodeValue)

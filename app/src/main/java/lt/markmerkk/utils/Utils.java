@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javafx.scene.control.TextArea;
+import lt.markmerkk.Const;
 import lt.markmerkk.Main;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.joda.time.DurationFieldType;
@@ -63,7 +64,7 @@ public class Utils {
         try {
             int maxLines = 150;
             int lineCount = 0;
-            File file = new File(Main.CFG_PATH + "info.log");
+            File file = new File(Const.INSTANCE.getCfgHome() + "info_prod.log");
             ReversedLinesFileReader object = new ReversedLinesFileReader(file);
             while (lineCount < maxLines) {
                 String line = object.readLine();

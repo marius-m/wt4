@@ -1,6 +1,7 @@
 package lt.markmerkk.utils.tracker;
 
 import com.brsanthu.googleanalytics.GoogleAnalytics;
+import lt.markmerkk.Const;
 import lt.markmerkk.Main;
 import lt.markmerkk.utils.tracker.interfaces.ITracker;
 
@@ -29,7 +30,7 @@ public class SimpleTracker {
   private ITracker tracker;
 
   private SimpleTracker() {
-    tracker = (Main.DEBUG) ? new NullTracker() : new GATracker();
+    tracker = (Const.INSTANCE.getDEBUG()) ? new NullTracker() : new GATracker();
   }
 
   public static SimpleTracker getInstance() {

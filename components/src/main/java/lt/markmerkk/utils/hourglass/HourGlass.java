@@ -5,13 +5,11 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javax.annotation.PreDestroy;
 
+import lt.markmerkk.entities.EntityKt;
 import lt.markmerkk.utils.LogFormatters;
-import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -340,7 +338,7 @@ public class HourGlass {
    * @return
    */
   public static long parseMillisFromText(String time) {
-    if (Utils.isEmpty(time)) return -1;
+    if (EntityKt.isEmpty(time)) return -1;
     try {
       return LogFormatters.INSTANCE.getLongFormat().parseDateTime(time).getMillis();
     } catch (IllegalArgumentException e) {

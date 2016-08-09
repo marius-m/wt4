@@ -1,8 +1,6 @@
 package lt.markmerkk.utils
 
 import java.util.Properties
-import lt.markmerkk.Main
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.*
 

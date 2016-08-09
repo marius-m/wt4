@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
+import lt.markmerkk.Const;
 import lt.markmerkk.Main;
 import org.bouncycastle.math.ec.ECPoint;
 import org.slf4j.Logger;
@@ -54,7 +56,7 @@ public class VersionController {
   }
 
   public void checkForUpdate() {
-    if (Main.DEBUG) {
+    if (Const.INSTANCE.getDEBUG()) {
       logger.info("Running debug version! Skipping update check!");
       return;
     }
@@ -77,7 +79,7 @@ public class VersionController {
    * Does the app upgrade
    */
   public void upgrade() {
-    if (Main.DEBUG) {
+    if (Const.INSTANCE.getDEBUG()) {
       logger.info("Running debug version! Skipping upgrade!");
       return;
     }

@@ -1,7 +1,6 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.JiraSearchSubscriberImpl
-import lt.markmerkk.listeners.WorldEvents
+import lt.markmerkk.Const
 import lt.markmerkk.mvp.UserSettings
 
 import javax.annotation.PostConstruct
@@ -30,7 +29,7 @@ class UserSettingsImpl(
             field = value
             settings.save()
         }
-    override var issueJql: String = JiraSearchSubscriberImpl.DEFAULT_JQL_USER_ISSUES
+    override var issueJql: String = Const.DEFAULT_JQL_USER_ISSUES
         set(value) {
             field = value
             settings.save()
@@ -73,7 +72,7 @@ class UserSettingsImpl(
         } else {
             version = -1
         }
-        issueJql = settings.get(ISSUE_JQL) ?: JiraSearchSubscriberImpl.DEFAULT_JQL_USER_ISSUES
+        issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
     }
 
     @PreDestroy
