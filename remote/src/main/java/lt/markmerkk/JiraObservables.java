@@ -78,34 +78,35 @@ public class JiraObservables {
    * @return
    */
   public static Observable<String> issueSearchDateRangeObservable(DateTime start, DateTime end, String user) {
-    return Observable.create(new Observable.OnSubscribe<String>() {
-      @Override
-      public void call(Subscriber<? super String> subscriber) {
-        if (start == null) {
-          subscriber.onError(new IllegalArgumentException("Start date invalid"));
-          return;
-        }
-        if (end == null) {
-          subscriber.onError(new IllegalArgumentException("End date invalid"));
-          return;
-        }
-        if (user == null) {
-          subscriber.onError(new IllegalArgumentException("Invalid user"));
-          return;
-        }
-        DateTime startSearchDate = start.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-        DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-        subscriber.onNext(
-                String.format(
-                        Const.INSTANCE.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
-                        JiraSearchSubscriberImpl.Companion.getDateFormat().print(startSearchDate.getMillis()),
-                        JiraSearchSubscriberImpl.Companion.getDateFormat().print(endSearchDate.getMillis()),
-                        user
-                )
-        );
-        subscriber.onCompleted();
-      }
-    });
+//    return Observable.create(new Observable.OnSubscribe<String>() {
+//      @Override
+//      public void call(Subscriber<? super String> subscriber) {
+//        if (start == null) {
+//          subscriber.onError(new IllegalArgumentException("Start date invalid"));
+//          return;
+//        }
+//        if (end == null) {
+//          subscriber.onError(new IllegalArgumentException("End date invalid"));
+//          return;
+//        }
+//        if (user == null) {
+//          subscriber.onError(new IllegalArgumentException("Invalid user"));
+//          return;
+//        }
+//        DateTime startSearchDate = start.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+//        DateTime endSearchDate = end.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+//        subscriber.onNext(
+//                String.format(
+//                        Const.INSTANCE.getDEFAULT_JQL_WORKLOG_TEMPLATE(),
+//                        JiraSearchSubscriberImpl.Companion.getDateFormat().print(startSearchDate.getMillis()),
+//                        JiraSearchSubscriberImpl.Companion.getDateFormat().print(endSearchDate.getMillis()),
+//                        user
+//                )
+//        );
+//        subscriber.onCompleted();
+//      }
+//    });
+    return Observable.empty();
   }
 
   /**

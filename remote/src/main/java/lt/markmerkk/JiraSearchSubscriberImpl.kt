@@ -1,9 +1,9 @@
 package lt.markmerkk
 
+import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.utils.LogFormatters
 import net.rcarz.jiraclient.Issue
-import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
-import org.joda.time.format.DateTimeFormat
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.Observable
@@ -12,87 +12,66 @@ import rx.Subscriber
 /**
  * Created by mariusmerkevicius on 1/23/16.
  */
-class JiraSearchSubscriberImpl : JiraSearchSubscriber, Observable.OnSubscribe<Issue.SearchResult> {
-
-    val jiraClientProvider: JiraClientProvider
-    val searchFields: String = "*all"
-    var jiraClient: JiraClient? = null
-    var jql: String? = ""
-
-    constructor(
-            jiraClientProvider: JiraClientProvider
-    ) {
-        this.jiraClientProvider = jiraClientProvider
-    }
-
-    private constructor(
-            jiraClientProvider: JiraClientProvider,
-            jql: String,
-            jiraClient: JiraClient
-    ) {
-        this.jiraClientProvider = jiraClientProvider
-        this.jql = jql
-        this.jiraClient = jiraClient
-    }
-
+class JiraSearchSubscriberImpl(
+        private val jiraClientProvider: JiraClientProvider,
+        private val searchFields: String = "*all",
+        private var jql: String = ""
+) : JiraSearchSubscriber, Observable.OnSubscribe<Issue.SearchResult> {
 
     override fun call(subscriber: Subscriber<in Issue.SearchResult>) {
         try {
+            if (jql.isNullOrEmpty()) throw IllegalArgumentException("JQL is empty!")
             logger.info("Doing search: " + jql)
-            var batchCurrent = 0
-            val batchSize = 50
-            var batchTotal = 0
+            var startAt = 0
+            val max = 50
+            var total: Int
             do {
                 if (subscriber.isUnsubscribed)
                     break
 
-                val sr = jiraClient?.searchIssues(jql, searchFields, batchSize, batchCurrent)
-                if (sr == null) throw IllegalStateException("Search result is empty")
-                if (sr.issues == null) throw IllegalStateException("Search result is empty")
-                if (sr.issues.size == 0) throw IllegalStateException("Search result is empty")
-                logger.info("Found issues " + sr.issues.size + " that have been worked on.")
+                val sr = jiraClientProvider.client().searchIssues(jql, searchFields, max, startAt)
+                if (sr == null) throw IllegalStateException("result is empty")
+                if (sr.issues == null) throw IllegalStateException("result is empty")
+                if (sr.issues.size == 0) throw IllegalStateException("result is empty")
+                logger.info("Found ${sr.issues.size} issues.")
                 subscriber.onNext(sr)
 
-                batchCurrent += sr.max
-                batchTotal = sr.total
-            } while (batchCurrent < batchTotal)
+                startAt += sr.max
+                total = sr.total
+            } while (startAt < total)
             subscriber.onCompleted()
+        } catch (e: IllegalArgumentException) {
+            logger.error("Jira search error: ${e.message}", e)
+            subscriber.onError(e)
         } catch (e: IllegalStateException) {
-            logger.info("Jira search error: ${e.message}")
+            logger.info("Jira search ${e.message}")
             subscriber.onCompleted()
         } catch (e: JiraException) {
-            logger.error("Jira error: $e")
-            subscriber.onCompleted()
+            logger.error("Jira error: ${e.message}", e)
+            subscriber.onError(e)
         }
-
     }
 
-    override fun searchResultObservable(start: Long, end: Long): Observable<Issue.SearchResult> {
-        return Observable.just(jiraClientProvider.client())
-                .flatMap {
-                    Observable.create<Issue.SearchResult>(
-                            JiraSearchSubscriberImpl(
-                                    jiraClientProvider = jiraClientProvider,
-                                    jql = jqlForWorkIssuesFromDateObservable(start, end, it),
-                                    jiraClient = it
-                            )
-                    )
-                }
+    override fun workedIssuesObservable(start: Long, end: Long): Observable<Issue.SearchResult> {
+        return Observable.create(
+                JiraSearchSubscriberImpl(
+                        jiraClientProvider = jiraClientProvider,
+                        jql = jqlForWorkIssuesFromDateObservable(start, end)
+                )
+        )
     }
 
     fun jqlForWorkIssuesFromDateObservable(
             start: Long,
-            end: Long,
-            client: JiraClient
+            end: Long
     ): String {
-        val startFormat = JiraSearchSubscriberImpl.dateFormat.print(start)
-        val endFormat = JiraSearchSubscriberImpl.dateFormat.print(end)
-        return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"${client.self}\")"
+        val startFormat = LogFormatters.shortFormatDate.print(start)
+        val endFormat = LogFormatters.shortFormatDate.print(end)
+        return "key in workedIssues(\"$startFormat\", \"$endFormat\", \"${jiraClientProvider.username}\")"
     }
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger("JiraSearchJQL")
-        val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
-   }
+    }
 
 }

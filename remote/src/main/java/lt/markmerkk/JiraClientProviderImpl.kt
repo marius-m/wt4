@@ -12,6 +12,8 @@ import rx.Observable
 class JiraClientProviderImpl(
         private val userSettings: UserSettings
 ) : JiraClientProvider {
+    override val username: String
+        get() = userSettings.username
 
     var jiraClient: JiraClient? = null
 

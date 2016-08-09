@@ -26,7 +26,7 @@ class JiraInteractorImpl(
     override fun jiraRemoteWorks(start: Long, end: Long): Observable<List<JiraWork>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
                 .subscribeOn(ioScheduler)
-                .flatMap { jiraSearchSubscriber.searchResultObservable(start, end) }
+                .flatMap { jiraSearchSubscriber.workedIssuesObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
                 .filter { it.valid() }
                 .reduce(

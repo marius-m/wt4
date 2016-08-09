@@ -21,7 +21,6 @@ import java.util.*
 /**
  * Created by mariusmerkevicius on 1/29/16.
  */
-@Ignore
 class IntegrationJiraSearchSubscriberImplTest {
     private lateinit var clientProvider: JiraClientProvider
 
@@ -61,7 +60,7 @@ class IntegrationJiraSearchSubscriberImplTest {
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(IntegrationJiraSearchSubscriberImplTest::class.java)
+        val logger = LoggerFactory.getLogger(IntegrationJiraSearchSubscriberImplTest::class.java)!!
     }
 
 }

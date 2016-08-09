@@ -52,7 +52,7 @@ class JiraInteractorImplRemoteWorksTest {
         // Assemble
         val fakeJiraWork = fakeJiraWork()
         val fakeIssueResult: Issue.SearchResult = mock()
-        whenever(searchSubscriber.searchResultObservable(any(), any()))
+        whenever(searchSubscriber.workedIssuesObservable(any(), any()))
                 .thenReturn(Observable.just(fakeIssueResult))
         whenever(worklogSubscriber.worklogResultObservable(any()))
                 .thenReturn(Observable.from(listOf(fakeJiraWork, fakeJiraWork, fakeJiraWork)))
@@ -74,7 +74,7 @@ class JiraInteractorImplRemoteWorksTest {
         // Assemble
         val fakeJiraWork = fakeJiraWork()
         val fakeIssueResult: Issue.SearchResult = mock()
-        whenever(searchSubscriber.searchResultObservable(any(), any()))
+        whenever(searchSubscriber.workedIssuesObservable(any(), any()))
                 .thenReturn(Observable.just(fakeIssueResult))
         whenever(worklogSubscriber.worklogResultObservable(any()))
                 .thenReturn(Observable.from(listOf(fakeJiraWork, fakeJiraWork, fakeJiraWork)))
@@ -96,7 +96,7 @@ class JiraInteractorImplRemoteWorksTest {
         // Assemble
         val invalidJiraWork = invalidFakeJiraWork()
         val fakeIssueResult: Issue.SearchResult = mock()
-        whenever(searchSubscriber.searchResultObservable(any(), any()))
+        whenever(searchSubscriber.workedIssuesObservable(any(), any()))
                 .thenReturn(Observable.just(fakeIssueResult))
         whenever(worklogSubscriber.worklogResultObservable(any()))
                 .thenReturn(Observable.from(listOf(invalidJiraWork, invalidJiraWork)))
@@ -118,7 +118,7 @@ class JiraInteractorImplRemoteWorksTest {
         // Assemble
         val invalidJiraWork = invalidFakeJiraWork()
         val fakeIssueResult: Issue.SearchResult = mock()
-        whenever(searchSubscriber.searchResultObservable(any(), any()))
+        whenever(searchSubscriber.workedIssuesObservable(any(), any()))
                 .thenReturn(Observable.just(fakeIssueResult))
         whenever(worklogSubscriber.worklogResultObservable(any()))
                 .thenReturn(Observable.from(listOf(invalidJiraWork, invalidJiraWork)))

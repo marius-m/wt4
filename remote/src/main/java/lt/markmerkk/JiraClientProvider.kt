@@ -9,6 +9,8 @@ import rx.Observable
  */
 interface JiraClientProvider {
 
+    val username: String
+
     @Throws(IllegalStateException::class)
     fun client(): JiraClient
 

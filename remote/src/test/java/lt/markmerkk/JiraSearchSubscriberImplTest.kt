@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import rx.Observable
 import rx.observers.TestSubscriber
+import rx.schedulers.Schedulers
 import kotlin.test.assertEquals
 
 /**
@@ -34,11 +35,27 @@ class JiraSearchSubscriberImplTest {
     fun noSearchResult_noValues() {
         // Arrange
         // Act
-        issueSearcher.searchResultObservable(1000L, 2000L)
+        issueSearcher.workedIssuesObservable(1000L, 2000L)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
         // Assert
         testSubscriber.assertNoErrors()
+        testSubscriber.assertNoValues()
+    }
+
+    @Test
+    fun noJQL_throwError() {
+        // Arrange
+        // Act
+        Observable.create(JiraSearchSubscriberImpl(jiraClientProvider))
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(testSubscriber)
+
+        // Assert
+        testSubscriber.assertError(IllegalArgumentException::class.java)
         testSubscriber.assertNoValues()
     }
 
@@ -48,11 +65,13 @@ class JiraSearchSubscriberImplTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenThrow(JiraException("valid_exception"))
 
         // Act
-        issueSearcher.searchResultObservable(1000L, 2000L)
+        issueSearcher.workedIssuesObservable(1000L, 2000L)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
         // Assert
-        testSubscriber.assertNoErrors()
+        testSubscriber.assertError(JiraException::class.java)
         testSubscriber.assertNoValues()
     }
 
@@ -63,7 +82,9 @@ class JiraSearchSubscriberImplTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenReturn(searchResult)
 
         // Act
-        issueSearcher.searchResultObservable(1000L, 2000L)
+        issueSearcher.workedIssuesObservable(1000L, 2000L)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
         // Assert
@@ -80,7 +101,9 @@ class JiraSearchSubscriberImplTest {
         searchResult.issues = issues
 
         // Act
-        issueSearcher.searchResultObservable(1000L, 2000L)
+        issueSearcher.workedIssuesObservable(1000L, 2000L)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
         // Assert
@@ -98,7 +121,9 @@ class JiraSearchSubscriberImplTest {
         searchResult.issues = issues
 
         // Act
-        issueSearcher.searchResultObservable(1000L, 2000L)
+        issueSearcher.workedIssuesObservable(1000L, 2000L)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
         // Assert
@@ -128,7 +153,9 @@ class JiraSearchSubscriberImplTest {
         whenever(jiraClient.searchIssues(any(), any(), any(), any())).thenReturn(searchResult1, searchResult2, searchResult3)
 
         // Act
-        issueSearcher.searchResultObservable(1000L, 2000L)
+        issueSearcher.workedIssuesObservable(1000L, 2000L)
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
 
         // Assert
