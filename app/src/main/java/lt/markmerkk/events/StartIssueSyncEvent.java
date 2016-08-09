@@ -1,7 +1,6 @@
 package lt.markmerkk.events;
 
 import com.google.common.eventbus.EventBus;
-import lt.markmerkk.utils.SyncEventBus;
 
 /**
  * Created by mariusmerkevicius on 2/16/16.

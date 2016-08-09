@@ -87,12 +87,10 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     Logger.getRootLogger().addAppender(guiAppender);
     onLoadChange(syncController.isLoading());
     syncController.addLoadingListener(this);
-    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   @PreDestroy
   public void destroy() {
-    SyncEventBus.getInstance().getEventBus().unregister(this);
     syncController.removeLoadingListener(this);
     Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
@@ -112,7 +110,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
     settings.setIssueJql(inputJQL.getText());
-    SyncEventBus.getInstance().getEventBus().post(new StartAllSyncEvent());
+    syncController.syncAll();
   }
 
   /**
@@ -121,7 +119,6 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   public void onClickResetJQL() {
     inputJQL.setText(Const.INSTANCE.getDEFAULT_JQL_USER_ISSUES());
     settings.setIssueJql(inputJQL.getText());
-    SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }
 
   //endregion

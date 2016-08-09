@@ -66,10 +66,10 @@ class SyncController2(
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Log sync success!")
+                    logger.info("Sync all success!")
                 }, {
-                    logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
-                    logger.error("Log sync error data: ", it)
+                    logger.info("Sync all error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
+                    logger.error("Sync all error data: ", it)
                     remoteLoadListener.onError(it.message)
                     logStorage.notifyDataChange()
                     issueStorage.notifyDataChange()

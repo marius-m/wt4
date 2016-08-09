@@ -69,8 +69,6 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
     registerSearchObservable(comboBox);
 
     setTotalIssues(refreshTotalCount());
-
-    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   /**
@@ -83,28 +81,6 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
     );
     refreshCache();
   }
-
-  //region Events
-
-  @Subscribe
-  public void onEvent(StartIssueSyncEvent event) {
-//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
-//      refreshSubscription.unsubscribe();
-//      return;
-//    }
-    doRefresh();
-  }
-
-  @Subscribe
-  public void onEvent(StartAllSyncEvent event) {
-//    if (refreshSubscription != null && !refreshSubscription.isUnsubscribed()) {
-//      refreshSubscription.unsubscribe();
-//      return;
-//    }
-    doRefresh();
-  }
-
-  //endregion
 
   //region Abs implementation
 

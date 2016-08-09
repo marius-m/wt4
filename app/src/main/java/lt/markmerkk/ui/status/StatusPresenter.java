@@ -74,34 +74,12 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     onLoadChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
     versionController.addListener(this);
-
-    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   @Override public void destroy() {
     versionController.removeListener(this);
     syncController.removeLoadingListener(this);
     storage.unregister(loggerListener);
-  }
-
-  //region Events
-
-  @Subscribe
-  public void onEvent(StartLogSyncEvent event) {
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_BUTTON,
-        SimpleTracker.ACTION_SYNC_MAIN
-    );
-    syncController.syncLogs();
-  }
-
-  @Subscribe
-  public void onEvent(StartAllSyncEvent event) {
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_BUTTON,
-        SimpleTracker.ACTION_SYNC_MAIN
-    );
-    syncController.syncLogs();
   }
 
   //endregion
@@ -112,7 +90,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    * A button event when user clicks on refresh
    */
   public void onClickRefresh() {
-    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+    syncController.syncLogs();
   }
 
   //endregion

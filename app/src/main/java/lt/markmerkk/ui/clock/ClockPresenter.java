@@ -145,27 +145,11 @@ public class ClockPresenter implements Initializable {
       buttonOpen.setManaged(false);
     });
     updateUI();
-    SyncEventBus.getInstance().getEventBus().register(this);
   }
 
   @PreDestroy
   public void destroy() {
-    SyncEventBus.getInstance().getEventBus().unregister(this);
   }
-
-  //region Events
-
-  @Subscribe
-  public void onEvent(StartIssueSyncEvent event) {
-    syncController.syncIssues();
-  }
-
-  @Subscribe
-  public void onEvent(StartAllSyncEvent event) {
-    syncController.syncAll();
-  }
-
-  //endregion
 
   //region Keyboard input
 
@@ -193,7 +177,6 @@ public class ClockPresenter implements Initializable {
   }
 
   public void onClickSearch() {
-//    issueSearchAdapter.doRefresh();
     syncController.syncIssues();
   }
 
