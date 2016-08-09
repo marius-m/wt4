@@ -17,6 +17,7 @@ class JiraFilterIssue : JiraFilter<Issue> {
         if (input.summary == null) throw JiraFilter.FilterErrorException("no summary")
         if (input.createdDate == null) throw JiraFilter.FilterErrorException("no create date")
         if (input.updatedDate == null) throw JiraFilter.FilterErrorException("no create date")
+        if (input.self == null) throw JiraFilter.FilterErrorException("invalid remote (internal error)")
         return true
     }
 }

@@ -4,6 +4,7 @@ import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.LocalIssueBuilder
 import net.rcarz.jiraclient.Issue
+import org.slf4j.LoggerFactory
 
 /**
  * @author mariusmerkevicius
@@ -16,9 +17,23 @@ class RemoteIssuePullImpl(
 ) : RemoteIssuePull {
 
     override fun call(): Issue {
-        remoteMergeExecutor.create(
-                LocalIssueBuilder(issue).build()
-        )
+        try {
+            if (filter.valid(issue)) {
+                val oldIssue = remoteMergeExecutor.localEntityFromRemote(issue)
+                if (oldIssue == null) {
+                    remoteMergeExecutor.create(LocalIssueBuilder(issue).build())
+                } else {
+                    remoteMergeExecutor.update(LocalIssueBuilder(oldIssue).build())
+                }
+            }
+        } catch (e: JiraFilter.FilterErrorException) {
+            logger.debug("Skip issue due to ${e.message}")
+        }
         return issue
     }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(RemoteIssuePullImpl::class.java)!!
+    }
+
 }

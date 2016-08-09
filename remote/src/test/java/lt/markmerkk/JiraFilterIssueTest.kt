@@ -29,6 +29,7 @@ class JiraFilterIssueTest {
         doReturn("valid_summary").whenever(validIssue).summary
         doReturn(Date(1000)).whenever(validIssue).createdDate
         doReturn(Date(1000)).whenever(validIssue).updatedDate
+        doReturn("valid_self").whenever(validIssue).self
 
         // Act
         val result = filter.valid(validIssue)
@@ -47,6 +48,26 @@ class JiraFilterIssueTest {
         doReturn("valid_key").whenever(validProject).key
         doReturn("valid_summary").whenever(validIssue).summary
         doReturn(Date(1000)).whenever(validIssue).createdDate
+        doReturn("valid_self").whenever(validIssue).self
+
+        // Act
+        val result = filter.valid(validIssue)
+
+        // Assert
+        assertFalse(result)
+    }
+
+    @Test(expected = JiraFilter.FilterErrorException::class)
+    fun noSelf_throwError() {
+        // Arrange
+        val validIssue: Issue = mock()
+        val validProject: Project = mock()
+        doReturn(validProject).whenever(validIssue).project
+        doReturn("valid_key").whenever(validIssue).key
+        doReturn("valid_key").whenever(validProject).key
+        doReturn("valid_summary").whenever(validIssue).summary
+        doReturn(Date(1000)).whenever(validIssue).createdDate
+        doReturn(Date(1000)).whenever(validIssue).updatedDate
 
         // Act
         val result = filter.valid(validIssue)
@@ -65,6 +86,7 @@ class JiraFilterIssueTest {
         doReturn("valid_key").whenever(validProject).key
         doReturn("valid_summary").whenever(validIssue).summary
         doReturn(Date(1000)).whenever(validIssue).updatedDate
+        doReturn("valid_self").whenever(validIssue).self
 
         // Act
         val result = filter.valid(validIssue)
@@ -83,6 +105,7 @@ class JiraFilterIssueTest {
         doReturn("valid_key").whenever(validProject).key
         doReturn(Date(1000)).whenever(validIssue).createdDate
         doReturn(Date(1000)).whenever(validIssue).updatedDate
+        doReturn("valid_self").whenever(validIssue).self
 
         // Act
         val result = filter.valid(validIssue)
@@ -101,6 +124,7 @@ class JiraFilterIssueTest {
         doReturn("valid_summary").whenever(validIssue).summary
         doReturn(Date(1000)).whenever(validIssue).createdDate
         doReturn(Date(1000)).whenever(validIssue).updatedDate
+        doReturn("valid_self").whenever(validIssue).self
 
         // Act
         val result = filter.valid(validIssue)
@@ -119,6 +143,7 @@ class JiraFilterIssueTest {
         doReturn("valid_summary").whenever(validIssue).summary
         doReturn(Date(1000)).whenever(validIssue).createdDate
         doReturn(Date(1000)).whenever(validIssue).updatedDate
+        doReturn("valid_self").whenever(validIssue).self
 
         // Act
         val result = filter.valid(validIssue)
@@ -137,6 +162,7 @@ class JiraFilterIssueTest {
         doReturn("valid_summary").whenever(validIssue).summary
         doReturn(Date(1000)).whenever(validIssue).createdDate
         doReturn(Date(1000)).whenever(validIssue).updatedDate
+        doReturn("valid_self").whenever(validIssue).self
 
         // Act
         val result = filter.valid(validIssue)
