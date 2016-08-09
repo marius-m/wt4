@@ -9,6 +9,7 @@
 
 dependencies {
     compile project(':jira-client')
+    compile project(':components')
     compile project(':models')
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
