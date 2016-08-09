@@ -40,12 +40,12 @@ class JiraSearchSubscriberImpl(
                 total = sr.total
             } while (startAt < total)
             subscriber.onCompleted()
-        } catch (e: IllegalArgumentException) {
-            logger.error("Jira search error: ${e.message}", e)
-            subscriber.onError(e)
         } catch (e: IllegalStateException) {
             logger.info("Jira search ${e.message}")
             subscriber.onCompleted()
+        } catch (e: IllegalArgumentException) {
+            logger.error("Jira search error: ${e.message}", e)
+            subscriber.onError(e)
         } catch (e: JiraException) {
             logger.error("Jira error: ${e.message}", e)
             subscriber.onError(e)

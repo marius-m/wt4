@@ -8,7 +8,6 @@ import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.slf4j.LoggerFactory
@@ -48,7 +47,13 @@ class IntegrationJiraSearchSubscriberImplTest {
         val endDate = DateTime(formatter.parseDateTime("2015-05-26"))
 
         // Act
-        Observable.create(JiraSearchSubscriberImpl(clientProvider))
+        Observable.defer {
+            JiraSearchSubscriberImpl(clientProvider)
+                    .workedIssuesObservable(
+                            startDate.millis,
+                            endDate.millis
+                    )
+        }
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.immediate())
                 .subscribe(subscriber)
