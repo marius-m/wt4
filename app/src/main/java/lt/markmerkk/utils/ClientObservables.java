@@ -6,6 +6,7 @@ import rx.Observable;
 /**
  * Created by mariusmerkevicius on 2/2/16.
  */
+@Deprecated
 public class ClientObservables {
 
   /**
