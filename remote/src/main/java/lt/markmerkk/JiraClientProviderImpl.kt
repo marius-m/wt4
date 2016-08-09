@@ -19,9 +19,9 @@ class JiraClientProviderImpl(
 
     override fun client(): JiraClient {
         if (jiraClient == null) {
-            if (userSettings.host.isNullOrEmpty()) throw IllegalStateException("Hostname cannot be empty")
-            if (userSettings.username.isNullOrEmpty()) throw IllegalStateException("Username cannot be empty")
-            if (userSettings.password.isNullOrEmpty()) throw IllegalStateException("Password cannot be empty")
+            if (userSettings.host.isNullOrEmpty()) throw IllegalStateException("empty hostname")
+            if (userSettings.username.isNullOrEmpty()) throw IllegalStateException("empty username")
+            if (userSettings.password.isNullOrEmpty()) throw IllegalStateException("empty password")
             jiraClient = JiraClient(userSettings.host, BasicCredentials(userSettings.username, userSettings.password))
         }
         return jiraClient!!

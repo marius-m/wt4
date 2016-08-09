@@ -44,10 +44,10 @@ class JiraSearchSubscriberImpl(
             logger.info("Jira search ${e.message}")
             subscriber.onCompleted()
         } catch (e: IllegalArgumentException) {
-            logger.error("Jira search error: ${e.message}", e)
+            logger.error("Jira search error: ${e.message}")
             subscriber.onError(e)
         } catch (e: JiraException) {
-            logger.error("Jira error: ${e.message}", e)
+            logger.error("Jira error: ${e.message}")
             subscriber.onError(e)
         }
     }

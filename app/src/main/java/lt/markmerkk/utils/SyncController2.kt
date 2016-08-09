@@ -69,9 +69,9 @@ class SyncController2(
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Success!")
+                    logger.info("Sync complete!")
                 }, {
-                    logger.info("Error synchronizing: ${it.message}")
+                    logger.info("Sync terminate due to: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
                     remoteLoadListener.onError(it.message)
                 }, {
                     logStorage.notifyDataChange()
