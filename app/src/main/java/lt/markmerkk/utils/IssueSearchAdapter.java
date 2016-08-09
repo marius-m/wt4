@@ -17,6 +17,7 @@ import javafx.util.StringConverter;
 import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
+import lt.markmerkk.mvp.IssueSyncMvp;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.entities.LocalIssue;
 import lt.markmerkk.entities.RemoteEntity;
@@ -43,7 +44,8 @@ import rx.schedulers.Schedulers;
  * @deprecated - this class should be refactored as soon as possible for its overwhelming functionality.
  */
 @Deprecated
-public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> {
+public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue>
+        implements IssueSyncMvp.View {
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
   UserSettings settings;
@@ -228,7 +230,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * Registers a search observable that queries local database for results
    * @param comboBox
    */
-  void registerSearchObservable(ComboBox<LocalIssue> comboBox) {
+  void registerSearchObservable(ComboBox<LocalIssue> comboBox) { // todo : needs refactor
     JavaFxObservable.fromObservableValue(comboBox.getEditor().textProperty())
         .filter(phrase -> (comboBox.getSelectionModel().getSelectedItem() == null))
         .filter(phrase -> !Strings.isNullOrEmpty(phrase))
@@ -321,4 +323,13 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
         });
   }
 
+  @Override
+  public void showProgress() {
+
+  }
+
+  @Override
+  public void hideProgress() {
+
+  }
 }

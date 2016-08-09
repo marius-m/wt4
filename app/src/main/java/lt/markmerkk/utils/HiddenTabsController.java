@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
+import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.listeners.Destroyable;
 
 /**
@@ -53,8 +54,7 @@ public class HiddenTabsController {
     tabPane.getSelectionModel().select(newTab);
     newTab.setOnClosed(new EventHandler<Event>() {
       @Override public void handle(Event event) {
-        if (view.getPresenter() instanceof Destroyable)
-          ((Destroyable) view.getPresenter()).destroy();
+        InjectorNoDI.forget(view.getPresenter());
       }
     });
   }

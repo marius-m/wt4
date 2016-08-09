@@ -5,7 +5,10 @@ package lt.markmerkk.mvp
  * @since 2016-08-09
  */
 interface IssueSyncMvp {
-    interface View
+    interface View {
+        fun showProgress()
+        fun hideProgress()
+    }
     interface Presenter {
         fun onAttach()
         fun onDetach()

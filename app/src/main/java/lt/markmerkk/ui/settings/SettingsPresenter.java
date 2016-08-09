@@ -15,6 +15,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import lt.markmerkk.*;
@@ -31,12 +33,14 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to edit settings
  */
-public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoadListener {
+public class SettingsPresenter implements Initializable, IRemoteLoadListener {
+  public static final org.slf4j.Logger logger = LoggerFactory.getLogger(SettingsPresenter.class);
 
   @Inject
   UserSettings settings;
@@ -86,7 +90,8 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     SyncEventBus.getInstance().getEventBus().register(this);
   }
 
-  @Override public void destroy() {
+  @PreDestroy
+  public void destroy() {
     SyncEventBus.getInstance().getEventBus().unregister(this);
     syncController.removeLoadingListener(this);
     Logger.getRootLogger().removeAppender(guiAppender);

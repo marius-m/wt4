@@ -7,6 +7,7 @@ import com.vinumeris.updatefx.UpdateFX;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.utils.WorldEvents;
@@ -99,11 +100,12 @@ public class Main extends Application {
   public void stop() throws Exception {
     ((WorldEvents)settings).onStop();
     SimpleTracker.getInstance().getTracker().stop();
+    InjectorNoDI.forgetAll();
+    org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppenderDebug);
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppenderProd);
     org.apache.log4j.Logger.getRootLogger().removeAppender(errorAppender);
     super.stop();
     hostServices = null;
-    Injector.forgetAll();
   }
 
   public static void main(String[] args) throws IOException {

@@ -2,10 +2,11 @@ package lt.markmerkk.afterburner;
 
 import com.airhacks.afterburner.configuration.Configurator;
 import com.airhacks.afterburner.injection.Injector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,7 @@ import java.util.function.Function;
  * Works the same as {@link Injector} but does not use DI for inner objects
  */
 public class InjectorNoDI {
+    private static final Logger logger = LoggerFactory.getLogger(InjectorNoDI.class);
 
     private static final Map<Class<?>, Object> modelsAndServices = new WeakHashMap<>();
     private static final Set<Object> presenters = Collections.newSetFromMap(new WeakHashMap<>());
@@ -158,12 +160,14 @@ public class InjectorNoDI {
         Class<? extends Object> clazz = instance.getClass();
         invokeMethodWithAnnotation(clazz, instance, PostConstruct.class
         );
+        logger.debug("Init obj: "+instance);
     }
 
     static void destroy(Object instance) {
         Class<? extends Object> clazz = instance.getClass();
         invokeMethodWithAnnotation(clazz, instance, PreDestroy.class
         );
+        logger.debug("Destroy obj: "+instance);
     }
 
     static void invokeMethodWithAnnotation(Class<?> clazz, final Object instance, final Class<? extends Annotation> annotationClass) throws IllegalStateException, SecurityException {
@@ -187,6 +191,14 @@ public class InjectorNoDI {
         if (superclass != null) {
             invokeMethodWithAnnotation(superclass, instance, annotationClass);
         }
+    }
+
+    public static void forget(Object presenter) {
+        if (!presenters.contains(presenter)) {
+            return;
+        }
+        destroy(presenter);
+        presenters.remove(presenter);
     }
 
     public static void forgetAll() {

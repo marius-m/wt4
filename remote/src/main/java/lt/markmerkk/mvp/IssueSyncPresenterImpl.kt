@@ -36,6 +36,8 @@ class IssueSyncPresenterImpl(
     override fun sync() {
         val filter = JiraFilterIssue()
         subscription = issueCacheObservable(filter)
+                .doOnSubscribe { view.showProgress() }
+                .doOnUnsubscribe { view.hideProgress() }
                 .observeOn(uiScheduler)
                 .subscribe({
                     logger.info("Issue sync success!")
