@@ -54,15 +54,15 @@ class IssueSplit {
          * @return picked comment part
          */
         fun pickMessage(message: String, regex: String?): String? {
-            var message = message
+            var rawMessage = message
             if (regex == null)
                 throw IllegalArgumentException("Regex cannot be null!")
-            if (message.isNullOrEmpty())
+            if (rawMessage.isNullOrEmpty())
                 return null
             // Cleaning line breaks
-            message = message.replace("\\n".toRegex(), "")
+            rawMessage = rawMessage.replace("\\n".toRegex(), "")
             val pattern = Pattern.compile(regex)
-            val matcher = pattern.matcher(message.trim { it <= ' ' })
+            val matcher = pattern.matcher(rawMessage.trim { it <= ' ' })
             if (matcher.find()) {
                 var found = matcher.group()
                 found = cleanSeparators(found, VALID_MESSAGE_SEPARATORS)
@@ -82,10 +82,10 @@ class IssueSplit {
          * @return comment without separators
          */
         fun cleanSeparators(input: String, separators: Array<String>): String {
-            var input = input
+            var rawInput = input
             for (validSeparator in separators)
-                input = input.replace(validSeparator, "")
-            return input
+                rawInput = rawInput.replace(validSeparator, "")
+            return rawInput
         }
     }
 

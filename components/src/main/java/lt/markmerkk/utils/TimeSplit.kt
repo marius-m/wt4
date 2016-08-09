@@ -19,8 +19,8 @@ object TimeSplit {
      * *
      * @return
      */
-    fun addStamp(start: Long, end: Long, rawComment: String): String? {
-        var rawComment = rawComment
+    fun addStamp(start: Long, end: Long, comment: String): String? {
+        var rawComment = comment
         if (Strings.isNullOrEmpty(rawComment)) return null
         rawComment = removeStamp(rawComment) ?: "" // Will remove older comment if found one
         return String.format(
@@ -53,15 +53,15 @@ object TimeSplit {
      * @return picked comment part
      */
     internal fun pickMessage(message: String, regex: String?): String? {
-        var message = message
+        var rawComment = message
         if (regex == null)
             throw IllegalArgumentException("Regex cannot be null!")
-        if (message.isNullOrEmpty())
+        if (rawComment.isNullOrEmpty())
             return null
         // Cleaning line breaks
-        message = message.replace("\\n".toRegex(), "")
+        rawComment = rawComment.replace("\\n".toRegex(), "")
         val pattern = Pattern.compile(regex)
-        val matcher = pattern.matcher(message.trim { it <= ' ' })
+        val matcher = pattern.matcher(rawComment.trim { it <= ' ' })
         if (matcher.find()) {
             var found = matcher.group()
             found = cleanSeparators(found, VALID_MESSAGE_SEPARATORS)
@@ -81,10 +81,10 @@ object TimeSplit {
      * @return comment without separators
      */
     internal fun cleanSeparators(input: String, separators: Array<String>): String {
-        var input = input
+        var rawInput = input
         for (validSeparator in separators)
-            input = input.replace(validSeparator, "")
-        return input
+            rawInput = rawInput.replace(validSeparator, "")
+        return rawInput
     }
 
 }
