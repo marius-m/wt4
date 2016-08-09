@@ -162,7 +162,7 @@ public class ClockPresenter implements Initializable {
 
   @Subscribe
   public void onEvent(StartAllSyncEvent event) {
-    syncController.syncIssues();
+    syncController.syncAll();
   }
 
   //endregion

@@ -39,12 +39,44 @@ class SyncController2(
             remoteLoadListener.onLoadChange(value)
         }
 
-    @PostConstruct
+    @PostConstruct // todo : replace with mvp attach/de methods
     fun init() { }
 
-    @PreDestroy
+    @PreDestroy // todo : replace with mvp attach/de methods
     fun destroy() {
         subscription?.unsubscribe()
+    }
+
+    fun syncAll() {
+        if (isLoading) {
+            logger.info("Sync in progress")
+            return
+        }
+        val uploadValidator = JiraFilterSimpleLog()
+        val downloadValidator = JiraFilterWorklog(
+                userSettings.username,
+                dayProvider.startDay(),
+                dayProvider.endDay()
+        )
+        val issueValidator = JiraFilterIssue()
+        subscription = uploadObservable(uploadValidator)
+                .flatMap { downloadObservable(downloadValidator) }
+                .flatMap { issueCacheObservable(issueValidator) }
+                .doOnSubscribe { isLoading = true }
+                .doOnUnsubscribe { isLoading = false }
+                .observeOn(uiScheduler)
+                .subscribe({
+                    logger.info("Log sync success!")
+                }, {
+                    logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
+                    logger.error("Log sync error data: ", it)
+                    remoteLoadListener.onError(it.message)
+                    logStorage.notifyDataChange()
+                    issueStorage.notifyDataChange()
+                }, {
+                    logStorage.notifyDataChange()
+                    issueStorage.notifyDataChange()
+                })
     }
 
     fun syncLogs() {
