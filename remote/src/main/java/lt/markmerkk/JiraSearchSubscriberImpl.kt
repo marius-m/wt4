@@ -58,7 +58,8 @@ class JiraSearchSubscriberImpl(
                 JiraSearchSubscriberImpl(
                         jiraClientProvider = jiraClientProvider,
                         userSettings = userSettings,
-                        jql = jqlForWorkIssuesFromDateObservable(start, end)
+                        jql = jqlForWorkIssuesFromDateObservable(start, end),
+                        searchFields = "*all"
                 )
         )
     }
@@ -68,7 +69,8 @@ class JiraSearchSubscriberImpl(
                 JiraSearchSubscriberImpl(
                         jiraClientProvider = jiraClientProvider,
                         userSettings = userSettings,
-                        jql = userSettings.issueJql
+                        jql = userSettings.issueJql,
+                        searchFields = "summary,project,created,updated"
                 )
         )
     }
