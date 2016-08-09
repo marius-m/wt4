@@ -40,10 +40,10 @@ class RemoteLogPullImpl(
             }
             val oldLog = mergeExecutor.localEntityFromRemote(remoteWorklog)
             if (oldLog == null) {
-                mergeExecutor.createLog(SimpleLogBuilder(remoteIssue.issue!!.key, remoteWorklog).build())
+                mergeExecutor.create(SimpleLogBuilder(remoteIssue.issue!!.key, remoteWorklog).build())
                 logger.info("Creating new log: $remoteWorklog")
             } else {
-                mergeExecutor.updateLog(SimpleLogBuilder(oldLog, remoteIssue.issue!!.key, remoteWorklog).build())
+                mergeExecutor.update(SimpleLogBuilder(oldLog, remoteIssue.issue!!.key, remoteWorklog).build())
                 logger.info("Updating old log with: $remoteWorklog")
             }
         }

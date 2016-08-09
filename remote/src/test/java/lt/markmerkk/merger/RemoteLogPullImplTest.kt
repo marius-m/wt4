@@ -38,8 +38,8 @@ class RemoteLogPullImplTest {
         puller.call()
 
         // Assert
-        verify(mergeExecutor, never()).createLog(any())
-        verify(mergeExecutor, never()).updateLog(any())
+        verify(mergeExecutor, never()).create(any())
+        verify(mergeExecutor, never()).update(any())
     }
 
     @Test
@@ -60,8 +60,8 @@ class RemoteLogPullImplTest {
         puller.call()
 
         // Assert
-        verify(mergeExecutor).createLog(any())
-        verify(mergeExecutor, never()).updateLog(any())
+        verify(mergeExecutor).create(any())
+        verify(mergeExecutor, never()).update(any())
     }
 
     @Test
@@ -85,8 +85,8 @@ class RemoteLogPullImplTest {
         puller.call()
 
         // Assert
-        verify(mergeExecutor, never()).createLog(any())
-        verify(mergeExecutor).updateLog(any())
+        verify(mergeExecutor, never()).create(any())
+        verify(mergeExecutor).update(any())
     }
 
     @Test
@@ -108,8 +108,8 @@ class RemoteLogPullImplTest {
         puller.call()
 
         // Assert
-        verify(mergeExecutor, never()).createLog(any())
-        verify(mergeExecutor, never()).updateLog(any())
+        verify(mergeExecutor, never()).create(any())
+        verify(mergeExecutor, never()).update(any())
     }
 
     @Test
@@ -125,8 +125,8 @@ class RemoteLogPullImplTest {
         puller.call()
 
         // Assert
-        verify(mergeExecutor, never()).createLog(any())
-        verify(mergeExecutor, never()).updateLog(any())
+        verify(mergeExecutor, never()).create(any())
+        verify(mergeExecutor, never()).update(any())
     }
 
     @Test
@@ -143,7 +143,7 @@ class RemoteLogPullImplTest {
         puller.call()
 
         // Assert
-        verify(mergeExecutor, never()).createLog(any())
-        verify(mergeExecutor, never()).updateLog(any())
+        verify(mergeExecutor, never()).create(any())
+        verify(mergeExecutor, never()).update(any())
     }
 }

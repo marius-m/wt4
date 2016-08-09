@@ -21,7 +21,7 @@ class RemoteLogPushImpl(
         try {
             if (uploadValidator.valid(localLog)) {
                 val outWorklog = remoteMergeClient.uploadLog(localLog)
-                remoteMergeExecutor.recreateLog(localLog, outWorklog)
+                remoteMergeExecutor.recreate(localLog, outWorklog)
                 logger.info("Success uploading: $localLog!")
             } else {
                 logger.info("Not eligable for upload: $localLog")

@@ -26,7 +26,6 @@ class IssueSyncPresenterImpl(
     }
 
     override fun sync() {
-        // todo : incomplete logic
     }
 
 }

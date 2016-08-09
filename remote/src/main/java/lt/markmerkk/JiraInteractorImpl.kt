@@ -48,6 +48,7 @@ class JiraInteractorImpl(
 
     override fun jiraIssues(): Observable<List<Issue>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
+                .subscribeOn(ioScheduler)
                 .flatMap { jiraSearchSubscriber.userIssuesObservable() }
                 .flatMap { Observable.from(it.issues) }
                 .toList()

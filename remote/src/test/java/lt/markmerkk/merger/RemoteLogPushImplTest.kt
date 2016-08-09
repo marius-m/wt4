@@ -38,7 +38,7 @@ class RemoteLogPushImplTest {
 
         // Assert
         verify(client).uploadLog(eq(validLog))
-        verify(executor).recreateLog(eq(validLog), any())
+        verify(executor).recreate(eq(validLog), any())
     }
 
     @Test
@@ -80,7 +80,7 @@ class RemoteLogPushImplTest {
         // Assert
         verify(client).uploadLog(any())
         verify(executor).markAsError(eq(validLog), any())
-        verify(executor, never()).recreateLog(any(), any())
+        verify(executor, never()).recreate(any(), any())
     }
 
     @Test
@@ -101,6 +101,6 @@ class RemoteLogPushImplTest {
         // Assert
         verify(client, never()).uploadLog(any())
         verify(executor, never()).markAsError(eq(validLog), any())
-        verify(executor, never()).recreateLog(any(), any())
+        verify(executor, never()).recreate(any(), any())
     }
 }

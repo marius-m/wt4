@@ -18,37 +18,37 @@ class RemoteMergeExecutorImpl(
         val dbExecutor: IExecutor
 ) : RemoteMergeExecutor<SimpleLog, WorkLog> {
 
-    override fun createLog(simpleLog: SimpleLog) {
-        dbExecutor.execute(InsertJob(SimpleLog::class.java, simpleLog))
+    override fun create(entry: SimpleLog) {
+        dbExecutor.execute(InsertJob(SimpleLog::class.java, entry))
     }
 
-    override fun updateLog(simpleLog: SimpleLog) {
-        dbExecutor.execute(UpdateJob(SimpleLog::class.java, simpleLog));
+    override fun update(entry: SimpleLog) {
+        dbExecutor.execute(UpdateJob(SimpleLog::class.java, entry));
     }
 
-    override fun localEntityFromRemote(remoteWorklog: WorkLog): SimpleLog? {
-        val remoteId = SimpleLogBuilder.parseUri(remoteWorklog.self.toString())
+    override fun localEntityFromRemote(remoteEntry: WorkLog): SimpleLog? {
+        val remoteId = SimpleLogBuilder.parseUri(remoteEntry.self.toString())
         if (remoteId <= 0) return null
         val queryJob = QueryJob<SimpleLog>(SimpleLog::class.java, DBIndexable { "id = " + remoteId })
         dbExecutor.execute(queryJob)
         return queryJob.result()
     }
 
-    override fun recreateLog(oldLocalLog: SimpleLog, remoteWorklog: WorkLog) {
-        dbExecutor.execute(DeleteJob(SimpleLog::class.java, oldLocalLog))
+    override fun recreate(oldLocalEntry: SimpleLog, remoteEntry: WorkLog) {
+        dbExecutor.execute(DeleteJob(SimpleLog::class.java, oldLocalEntry))
         dbExecutor.execute(
                 InsertJob(
                         SimpleLog::class.java,
-                        SimpleLogBuilder(oldLocalLog.task, remoteWorklog).build()
+                        SimpleLogBuilder(oldLocalEntry.task, remoteEntry).build()
                 )
         )
     }
 
-    override fun markAsError(oldLocalLog: SimpleLog, error: Throwable) {
+    override fun markAsError(oldLocalEntry: SimpleLog, error: Throwable) {
         dbExecutor.execute(
                 UpdateJob(
                         SimpleLog::class.java,
-                        SimpleLogBuilder(oldLocalLog).buildWithError(error.message)
+                        SimpleLogBuilder(oldLocalEntry).buildWithError(error.message)
                 )
         )
     }
