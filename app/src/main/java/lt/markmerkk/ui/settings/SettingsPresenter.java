@@ -20,10 +20,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import lt.markmerkk.*;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.tracker.SimpleTracker;

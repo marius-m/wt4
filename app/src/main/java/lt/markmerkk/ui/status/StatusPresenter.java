@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.status;
 
-import com.google.common.eventbus.Subscribe;
 import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,8 +17,6 @@ import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartLogSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.entities.BasicLogStorage;
@@ -27,7 +24,6 @@ import lt.markmerkk.mvp.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
-import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

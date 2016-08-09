@@ -1,26 +1,19 @@
 package lt.markmerkk.ui.clock;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import lt.markmerkk.JiraInteractor;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.entities.*;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.merger.RemoteMergeToolsProvider;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.ui.utils.DisplayType;
@@ -31,7 +24,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.observables.JavaFxObservable;
-import rx.schedulers.JavaFxScheduler;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;

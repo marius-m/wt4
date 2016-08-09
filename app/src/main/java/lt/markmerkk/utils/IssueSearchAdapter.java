@@ -1,12 +1,10 @@
 package lt.markmerkk.utils;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
@@ -17,11 +15,8 @@ import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.RowCountJob;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
-import lt.markmerkk.utils.tracker.SimpleTracker;
 import net.rcarz.jiraclient.Issue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
