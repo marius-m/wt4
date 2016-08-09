@@ -17,13 +17,10 @@ public abstract class SearchableComboBoxDecorator<T> {
   protected ComboBox<T> comboBox;
   protected ProgressIndicator loadProgressIndicator;
 
-  public SearchableComboBoxDecorator(ComboBox<T> comboBox, ProgressIndicator progressIndicator) {
+  public SearchableComboBoxDecorator(ComboBox<T> comboBox) {
     if (comboBox == null)
       throw new IllegalArgumentException("comboBox == null");
-    if (progressIndicator == null)
-      throw new IllegalArgumentException("progressIndicator == null");
     this.comboBox = comboBox;
-    this.loadProgressIndicator = progressIndicator;
     init(comboBox);
   }
 

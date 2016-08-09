@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
  * Has a dependency for {@link UserSettingsImpl} as that is where
  * persistent data is stored.
  */
+@Deprecated // wtf class ?
 public class LastUpdateControllerImpl implements LastUpdateController {
   public static final String LAST_UPDATE = "LAST_UPDATE";
 

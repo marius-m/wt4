@@ -19,6 +19,7 @@ import lt.markmerkk.Translation;
 import lt.markmerkk.entities.*;
 import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
+import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.merger.RemoteMergeToolsProvider;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
@@ -45,7 +46,7 @@ import java.util.ResourceBundle;
  * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
  * info.
  */
-public class ClockPresenter implements Initializable {
+public class ClockPresenter implements Initializable, IRemoteLoadListener {
   public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
@@ -56,15 +57,9 @@ public class ClockPresenter implements Initializable {
   @Inject
   BasicLogStorage logStorage;
   @Inject
-  BasicIssueStorage issueStorage;
-  @Inject
   IExecutor dbProdExecutor;
   @Inject
   UserSettings settings;
-  @Inject
-  RemoteMergeToolsProvider remoteMergeToolsProvider;
-  @Inject
-  JiraInteractor jiraInteractor;
 
   @FXML
   DatePicker inputTo;
@@ -99,17 +94,9 @@ public class ClockPresenter implements Initializable {
     issueSearchAdapter = new IssueSearchAdapter(
             settings,
             inputTaskCombo,
-            taskLoadIndicator,
             dbProdExecutor,
             outputJQL
     );
-//    issueSyncPresenter = new IssueSyncPresenterImpl(
-//            this,
-//            remoteMergeToolsProvider,
-//            jiraInteractor,
-//            issueStorage,
-//            JavaFxScheduler.getInstance()
-//    );
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
         .subscribe(newString -> {
           if (newString != null && newString.length() <= 2)
@@ -136,19 +123,20 @@ public class ClockPresenter implements Initializable {
     inputTo.getEditor().textProperty().addListener(timeChangeListener);
     inputFrom.setConverter(startDateConverter);
     inputTo.setConverter(endDateConverter);
-    taskLoadIndicator.setOnMousePressed(refreshProgressClickListener);
 
     Platform.runLater(() -> {
-      taskLoadIndicator.setManaged(false);
-      taskLoadIndicator.setVisible(false);
       buttonOpen.setVisible(false);
       buttonOpen.setManaged(false);
     });
     updateUI();
+
+    onLoadChange(syncController.isLoading());
+    syncController.addLoadingListener(this);
   }
 
   @PreDestroy
   public void destroy() {
+    syncController.removeLoadingListener(this);
   }
 
   //region Keyboard input
@@ -238,13 +226,6 @@ public class ClockPresenter implements Initializable {
   //endregion
 
   //region Listeners
-
-  EventHandler<MouseEvent> refreshProgressClickListener = new EventHandler<MouseEvent>() {
-    @Override
-    public void handle(MouseEvent event) {
-      buttonRefresh.fire();
-    }
-  };
 
   StringConverter startDateConverter = new StringConverter<LocalDate>() {
     @Override
@@ -379,7 +360,19 @@ public class ClockPresenter implements Initializable {
     styleClass.removeAll(Collections.singleton("error"));
   }
 
- //endregion
+  @Override
+  public void onLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      logger.debug("Clock onLoad: "+loading);
+      taskLoadIndicator.setManaged(loading);
+      taskLoadIndicator.setVisible(loading);
+    });
+ }
+
+  @Override
+  public void onError(String error) { }
+
+  //endregion
 
   /**
    * Helper listener for the clock window

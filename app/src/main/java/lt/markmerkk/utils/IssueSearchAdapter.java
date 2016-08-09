@@ -60,9 +60,10 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   public IssueSearchAdapter(UserSettings settings,
                             ComboBox<LocalIssue> comboBox,
-                            ProgressIndicator progressIndicator,
-                            IExecutor executor, Text viewInfo) {
-    super(comboBox, progressIndicator);
+                            IExecutor executor,
+                            Text viewInfo
+  ) {
+    super(comboBox);
     this.settings = settings;
     this.dbExecutor = executor;
     this.viewInfo = viewInfo;
@@ -71,16 +72,16 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
     setTotalIssues(refreshTotalCount());
   }
 
-  /**
-   * Does a search with {@link ComboBox} input text
-   */
-  public void doRefresh() {
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_BUTTON,
-        SimpleTracker.ACTION_SEARCH_REFRESH
-    );
-    refreshCache();
-  }
+//  /**
+//   * Does a search with {@link ComboBox} input text
+//   */
+//  public void doRefresh() {
+//    SimpleTracker.getInstance().getTracker().sendEvent(
+//        SimpleTracker.CATEGORY_BUTTON,
+//        SimpleTracker.ACTION_SEARCH_REFRESH
+//    );
+//    refreshCache();
+//  }
 
   //region Abs implementation
 

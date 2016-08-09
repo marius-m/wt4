@@ -104,6 +104,7 @@ class SyncModule {
     }
 
     @Provides
+    @Singleton
     fun provicesSyncController(
             settings: UserSettings,
             remoteMergeToolsProvider: RemoteMergeToolsProvider,

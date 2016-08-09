@@ -188,6 +188,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @Override
   public void onLoadChange(boolean loading) {
     Platform.runLater(() -> {
+      logger.debug("Status onLoad: "+loading);
       outputProgress.setManaged(loading);
       outputProgress.setVisible(loading);
       updateStatus();

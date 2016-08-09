@@ -30,13 +30,13 @@ class SyncController2(
         private val uiScheduler: Scheduler
 ) {
 
-    val remoteLoadListeners: MutableList<IRemoteLoadListener> = ArrayList()
+    val remoteLoadListeners = mutableListOf<IRemoteLoadListener>()
     var subscription: Subscription? = null
 
     var isLoading = false
         set(value) {
             field = value
-            remoteLoadListener.onLoadChange(value)
+            remoteLoadListeners.forEach { it.onLoadChange(value) }
         }
 
     @PostConstruct // todo : replace with mvp attach/de methods
@@ -70,7 +70,8 @@ class SyncController2(
                 }, {
                     logger.info("Sync all error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
                     logger.error("Sync all error data: ", it)
-                    remoteLoadListener.onError(it.message)
+                    val errorMsg = it.message
+                    remoteLoadListeners.forEach { it.onError(errorMsg) }
                     logStorage.notifyDataChange()
                     issueStorage.notifyDataChange()
                 }, {
@@ -100,7 +101,6 @@ class SyncController2(
                 }, {
                     logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
                     logger.error("Log sync error data: ", it)
-                    remoteLoadListener.onError(it.message)
                     logStorage.notifyDataChange()
                 }, {
                     logStorage.notifyDataChange()
@@ -178,28 +178,6 @@ class SyncController2(
     fun removeLoadingListener(listener: IRemoteLoadListener?) {
         if (listener == null) return
         remoteLoadListeners.remove(listener)
-    }
-
-    //endregion
-
-    //region Listeners
-
-    internal val remoteLoadListener: IRemoteLoadListener = object : IRemoteLoadListener {
-        override fun onLoadChange(loading: Boolean) {
-            if (loading)
-                lastUpdateController.error = null
-            if (!loading)
-                lastUpdateController.refresh()
-            lastUpdateController.loading = loading
-            for (remoteListeners in this@SyncController2.remoteLoadListeners)
-                remoteListeners.onLoadChange(loading)
-        }
-
-        override fun onError(error: String) {
-            lastUpdateController.error = error
-            for (remoteListeners in this@SyncController2.remoteLoadListeners)
-                remoteListeners.onError(error)
-        }
     }
 
     //endregion

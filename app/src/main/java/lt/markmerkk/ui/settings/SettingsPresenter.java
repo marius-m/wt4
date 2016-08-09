@@ -85,6 +85,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     outputLogger.setText(Utils.lastLog());
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
+
     onLoadChange(syncController.isLoading());
     syncController.addLoadingListener(this);
   }
@@ -92,6 +93,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   @PreDestroy
   public void destroy() {
     syncController.removeLoadingListener(this);
+
     Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
