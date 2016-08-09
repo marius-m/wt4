@@ -106,6 +106,7 @@ dependencies {
     compile project(':database')
     compile project(':remote')
     compile project(':models')
+    compile project(':components')
 
     // Google analytics
     compile 'com.brsanthu:google-analytics-java:1.1.2'

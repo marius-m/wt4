@@ -16,4 +16,5 @@ include ':jira-client'
 include ':database'
 include ':remote'
 include ':models'
+include 'components'
 
