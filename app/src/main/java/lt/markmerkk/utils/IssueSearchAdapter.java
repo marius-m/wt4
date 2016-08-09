@@ -18,7 +18,6 @@ import lt.markmerkk.Translation;
 import lt.markmerkk.events.StartAllSyncEvent;
 import lt.markmerkk.events.StartIssueSyncEvent;
 import lt.markmerkk.mvp.UserSettings;
-import lt.markmerkk.entities.IssueSplit;
 import lt.markmerkk.entities.LocalIssue;
 import lt.markmerkk.entities.RemoteEntity;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
@@ -243,8 +242,8 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
                 QueryListJob<LocalIssue> queryListJob =
                     new QueryListJob<LocalIssue>(LocalIssue.class,
                         () -> String.format("(%s like '%%%s%%' OR %s like '%%%s%%') ORDER BY %s DESC",
-                            LocalIssue.KEY_DESCRIPTION, out.get(IssueSplit.DESCRIPTION_KEY),
-                            LocalIssue.KEY_KEY, out.get(IssueSplit.KEY_KEY),
+                            LocalIssue.KEY_DESCRIPTION, out.get(IssueSplit.Companion.getDESCRIPTION_KEY()),
+                            LocalIssue.KEY_KEY, out.get(IssueSplit.Companion.getKEY_KEY()),
                             LocalIssue.KEY_CREATE_DATE)
                     );
                 dbExecutor.executeOrThrow(queryListJob);
