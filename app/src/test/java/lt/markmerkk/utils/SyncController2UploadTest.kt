@@ -57,7 +57,7 @@ class SyncController2UploadTest {
         doReturn(2000L).whenever(dayProvider).endDay()
 
         doReturn(fakeWork).whenever(remoteLogPull).call()
-        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).pullMerger(any(), any())
+        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).logPullMerger(any(), any())
         doReturn(true).whenever(validFilter).valid(any())
     }
 
@@ -66,7 +66,7 @@ class SyncController2UploadTest {
         // Arrange
         val remotePushMerge: RemoteLogPush = mock()
         doReturn(SimpleLog()).whenever(remotePushMerge).call()
-        doReturn(remotePushMerge).whenever(remoteMergeToolsProvider).pushMerger(any(), any())
+        doReturn(remotePushMerge).whenever(remoteMergeToolsProvider).logPushMerger(any(), any())
         doReturn(Observable.just(
                 listOf(
                         SimpleLog(),
@@ -98,7 +98,7 @@ class SyncController2UploadTest {
         )).whenever(jiraInteractor).jiraLocalWorks()
         val remotePushMerge: RemoteLogPush = mock()
         doReturn(SimpleLog()).whenever(remotePushMerge).call()
-        doReturn(remotePushMerge).whenever(remoteMergeToolsProvider).pushMerger(any(), any())
+        doReturn(remotePushMerge).whenever(remoteMergeToolsProvider).logPushMerger(any(), any())
         val testSubscriber = TestSubscriber<Any>()
 
         // Act
@@ -108,7 +108,7 @@ class SyncController2UploadTest {
                 .subscribe(testSubscriber)
 
         // Assert
-        verify(remoteMergeToolsProvider, times(3)).pushMerger(any(), any())
+        verify(remoteMergeToolsProvider, times(3)).logPushMerger(any(), any())
         verify(remotePushMerge, times(3)).call()
     }
 

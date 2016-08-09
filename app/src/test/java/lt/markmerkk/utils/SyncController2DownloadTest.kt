@@ -57,7 +57,7 @@ class SyncController2DownloadTest {
         doReturn(2000L).whenever(dayProvider).endDay()
 
         doReturn(fakeWork).whenever(remoteLogPull).call()
-        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).pullMerger(any(), any())
+        doReturn(remoteLogPull).whenever(remoteMergeToolsProvider).logPullMerger(any(), any())
         doReturn(true).whenever(validFilter).valid(any())
     }
 
@@ -71,7 +71,7 @@ class SyncController2DownloadTest {
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
 
-        verify(remoteMergeToolsProvider, never()).pullMerger(any(), any())
+        verify(remoteMergeToolsProvider, never()).logPullMerger(any(), any())
         verify(remoteLogPull, never()).call()
     }
 
@@ -86,7 +86,7 @@ class SyncController2DownloadTest {
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
 
-        verify(remoteMergeToolsProvider).pullMerger(any(), any())
+        verify(remoteMergeToolsProvider).logPullMerger(any(), any())
         verify(remoteLogPull).call()
     }
 
@@ -101,7 +101,7 @@ class SyncController2DownloadTest {
                 .observeOn(Schedulers.immediate())
                 .subscribe(TestSubscriber())
 
-        verify(remoteMergeToolsProvider, times(4)).pullMerger(any(), any())
+        verify(remoteMergeToolsProvider, times(4)).logPullMerger(any(), any())
         verify(remoteLogPull, times(4)).call()
     }
 

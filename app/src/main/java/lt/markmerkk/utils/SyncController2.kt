@@ -84,7 +84,7 @@ class SyncController2(
         return jiraInteractor.jiraLocalWorks()
                 .flatMap { Observable.from(it) }
                 .flatMap {
-                    val pushMerger = remoteMergeToolsProvider.pushMerger(
+                    val pushMerger = remoteMergeToolsProvider.logPushMerger(
                             localLog = it,
                             filter = filter
                     )
@@ -97,7 +97,7 @@ class SyncController2(
         return jiraInteractor.jiraRemoteWorks(dayProvider.startDay(), dayProvider.endDay())
                 .flatMap { Observable.from(it) }
                 .flatMap {
-                    val pullMerger = remoteMergeToolsProvider.pullMerger(
+                    val pullMerger = remoteMergeToolsProvider.logPullMerger(
                             it,
                             filter
                     )

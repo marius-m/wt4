@@ -2,8 +2,9 @@ package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.JiraWork
+import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.merger.*
+import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 
 /**
@@ -12,28 +13,42 @@ import net.rcarz.jiraclient.WorkLog
  */
 class RemoteMergeToolsProviderImpl(
         private val remoteMergeClient: RemoteMergeClient,
-        private val remoteMergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>
+        private val remoteLogMergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>,
+        private val remoteIssueMergeExecutor: RemoteMergeExecutor<LocalIssue, Issue>
 ) : RemoteMergeToolsProvider {
-    override fun pushMerger(
+
+    override fun logPushMerger(
             localLog: SimpleLog,
             filter: JiraFilter<SimpleLog>
     ): RemoteLogPush {
         return RemoteLogPushImpl(
                 remoteMergeClient = remoteMergeClient,
-                remoteMergeExecutor = remoteMergeExecutor,
+                remoteMergeExecutor = remoteLogMergeExecutor,
                 localLog = localLog,
                 uploadValidator = filter
         )
     }
 
-    override fun pullMerger(
+    override fun logPullMerger(
             remoteLog: JiraWork,
-            jiraLogFilter: JiraFilter<WorkLog>
+            filter: JiraFilter<WorkLog>
     ): RemoteLogPullImpl {
         return RemoteLogPullImpl(
-                mergeExecutor = remoteMergeExecutor,
-                remoteLogFilter = jiraLogFilter,
+                mergeExecutor = remoteLogMergeExecutor,
+                remoteLogFilter = filter,
                 remoteIssue = remoteLog
         )
     }
+
+    override fun issuePullMerger(
+            issue: Issue,
+            filter: JiraFilter<Issue>
+    ): RemoteIssuePull {
+        return RemoteIssuePullImpl(
+                remoteMergeExecutor = remoteIssueMergeExecutor,
+                filter = filter,
+                issue = issue
+        )
+    }
+
 }
