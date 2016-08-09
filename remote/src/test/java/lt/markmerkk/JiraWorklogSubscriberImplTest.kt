@@ -1,7 +1,7 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException

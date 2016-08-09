@@ -3,7 +3,7 @@ package lt.markmerkk.utils
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraInteractor
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPullImpl

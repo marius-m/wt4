@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.IDataStorage
 import net.rcarz.jiraclient.Issue

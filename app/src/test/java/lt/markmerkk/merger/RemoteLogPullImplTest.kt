@@ -2,7 +2,7 @@ package lt.markmerkk.merger
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraFilter
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog

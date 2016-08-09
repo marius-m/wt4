@@ -1,4 +1,4 @@
-package lt.markmerkk
+package lt.markmerkk.entities
 
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog

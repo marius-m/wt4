@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraInteractor
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.mvp.UserSettings

@@ -1,7 +1,7 @@
 package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import net.rcarz.jiraclient.WorkLog

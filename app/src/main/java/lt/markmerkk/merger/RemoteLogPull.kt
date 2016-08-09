@@ -1,6 +1,6 @@
 package lt.markmerkk.merger
 
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import java.util.concurrent.Callable
 
 /**

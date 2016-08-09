@@ -1,6 +1,6 @@
 package lt.markmerkk
 
-import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.Issue
 import rx.Observable

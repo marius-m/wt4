@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.*
 import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.mvp.UserSettings
