@@ -14,6 +14,7 @@ import rx.Subscriber
  */
 class JiraSearchSubscriberImpl(
         private val jiraClientProvider: JiraClientProvider,
+        private val userSettings: UserSettings,
         private val searchFields: String = "*all",
         private var jql: String = ""
 ) : JiraSearchSubscriber, Observable.OnSubscribe<Issue.SearchResult> {
@@ -56,7 +57,18 @@ class JiraSearchSubscriberImpl(
         return Observable.create(
                 JiraSearchSubscriberImpl(
                         jiraClientProvider = jiraClientProvider,
+                        userSettings = userSettings,
                         jql = jqlForWorkIssuesFromDateObservable(start, end)
+                )
+        )
+    }
+
+    override fun userIssuesObservable(): Observable<Issue.SearchResult> {
+        return Observable.create(
+                JiraSearchSubscriberImpl(
+                        jiraClientProvider = jiraClientProvider,
+                        userSettings = userSettings,
+                        jql = userSettings.issueJql
                 )
         )
     }

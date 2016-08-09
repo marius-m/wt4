@@ -22,6 +22,7 @@ import java.util.*
  */
 class IntegrationJiraSearchSubscriberImplTest {
     private lateinit var clientProvider: JiraClientProvider
+    val userSettings: UserSettings = mock()
 
     @Before
     fun setUp() {
@@ -31,15 +32,15 @@ class IntegrationJiraSearchSubscriberImplTest {
         val properties = Properties()
         properties.load(inputStream)
 
-        val userSettings: UserSettings = mock()
         doReturn(properties["host"].toString()).whenever(userSettings).host
         doReturn(properties["username"].toString()).whenever(userSettings).username
         doReturn(properties["password"].toString()).whenever(userSettings).password
+        doReturn(Const.DEFAULT_JQL_USER_ISSUES).whenever(userSettings).issueJql
         clientProvider = JiraClientProviderImpl(userSettings)
     }
 
     @Test
-    fun test_observer() {
+    fun issuesWithWorklogs() {
         // Arrange
         val subscriber = TestSubscriber<Issue.SearchResult>()
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
@@ -48,7 +49,7 @@ class IntegrationJiraSearchSubscriberImplTest {
 
         // Act
         Observable.defer {
-            JiraSearchSubscriberImpl(clientProvider)
+            JiraSearchSubscriberImpl(clientProvider, userSettings)
                     .workedIssuesObservable(
                             startDate.millis,
                             endDate.millis
@@ -61,6 +62,36 @@ class IntegrationJiraSearchSubscriberImplTest {
         // Assert
         val results = subscriber.onNextEvents
         logger.debug("Result: " + results)
+        results.forEach {
+            it.issues.forEach {
+                logger.debug(it.toString())
+            }
+        }
+        subscriber.assertNoErrors() // Should create successfully
+    }
+
+    @Test
+    fun userIssues() {
+        // Arrange
+        val subscriber = TestSubscriber<Issue.SearchResult>()
+
+        // Act
+        Observable.defer {
+            JiraSearchSubscriberImpl(clientProvider, userSettings)
+                    .userIssuesObservable()
+        }
+                .observeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.immediate())
+                .subscribe(subscriber)
+
+        // Assert
+        val results = subscriber.onNextEvents
+        logger.debug("Result: " + results)
+        results.forEach {
+            it.issues.forEach {
+                logger.debug(it.toString())
+            }
+        }
         subscriber.assertNoErrors() // Should create successfully
     }
 

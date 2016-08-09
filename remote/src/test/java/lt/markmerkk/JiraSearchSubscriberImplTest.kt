@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import lt.markmerkk.mvp.UserSettings
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
@@ -24,7 +25,8 @@ class JiraSearchSubscriberImplTest {
     val jiraClient: JiraClient = mock()
     val testSubscriber = TestSubscriber<Issue.SearchResult>()
     val jiraClientProvider: JiraClientProvider = mock()
-    val issueSearcher = JiraSearchSubscriberImpl(jiraClientProvider)
+    val userSettings: UserSettings = mock()
+    val issueSearcher = JiraSearchSubscriberImpl(jiraClientProvider, userSettings)
 
     @Before
     fun setUp() {
@@ -49,7 +51,7 @@ class JiraSearchSubscriberImplTest {
     fun noJQL_throwError() {
         // Arrange
         // Act
-        Observable.create(JiraSearchSubscriberImpl(jiraClientProvider))
+        Observable.create(JiraSearchSubscriberImpl(jiraClientProvider, userSettings))
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)

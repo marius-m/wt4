@@ -33,9 +33,10 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesSearchSubscriber(
-            jiraClientProvider: JiraClientProvider
+            jiraClientProvider: JiraClientProvider,
+            userSettings: UserSettings
     ): JiraSearchSubscriber {
-        return JiraSearchSubscriberImpl(jiraClientProvider)
+        return JiraSearchSubscriberImpl(jiraClientProvider, userSettings)
     }
 
     @Provides
