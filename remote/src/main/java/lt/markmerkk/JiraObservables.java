@@ -6,7 +6,6 @@ import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.WorkLog;
 import org.joda.time.DateTime;
 import rx.Observable;
-import rx.Subscriber;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class JiraObservables {
    */
   @Deprecated
   public static Observable<Pair<Issue, List<WorkLog>>> remoteWorklogs(
-          JiraClient client, JiraDownloadWorklogValidator filterer, DateTime start, DateTime end) {
+          JiraClient client, JiraFilterWorklog filterer, DateTime start, DateTime end) {
     return Observable.empty();
 //    return JiraObservables.issueSearchDateRangeObservable(start, end, client.getSelf())
 //        .flatMap(jql -> Observable.create(

@@ -57,8 +57,8 @@ class SyncController2(
             return
         }
         jiraClientProvider.reset()
-        val uploadValidator = JiraUploadValidator()
-        val downloadValidator = JiraDownloadWorklogValidator(
+        val uploadValidator = JiraFilterSimpleLog()
+        val downloadValidator = JiraFilterWorklog(
                 userSettings.username,
                 dayProvider.startDay(),
                 dayProvider.endDay()

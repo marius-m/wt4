@@ -15,9 +15,9 @@ import java.util.*
  * *
  * @since 2016-08-08
  */
-class JiraUploadValidatorTest {
+class JiraFilterSimpleLogTest {
 
-    val validator = JiraUploadValidator()
+    val validator = JiraFilterSimpleLog()
 
     @Test
     fun valid_returnTrue() {

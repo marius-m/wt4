@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
  * @author mariusmerkevicius
  * @since 2016-08-08
  */
-class JiraUploadValidator() : JiraFilter<SimpleLog> {
+class JiraFilterSimpleLog() : JiraFilter<SimpleLog> {
     override fun valid(input: SimpleLog?): Boolean {
         if (input == null) throw JiraFilter.FilterErrorException("Object is invalid!")
         if (input.task.isNullOrEmpty()) throw JiraFilter.FilterErrorException("Task id is empty!")
@@ -21,7 +21,7 @@ class JiraUploadValidator() : JiraFilter<SimpleLog> {
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(JiraUploadValidator::class.java)!!
+        val logger = LoggerFactory.getLogger(JiraFilterSimpleLog::class.java)!!
     }
 
 }

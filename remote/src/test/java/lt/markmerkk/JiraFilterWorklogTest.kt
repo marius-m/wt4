@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 /**
  * Created by mariusmerkevicius on 1/30/16.
  */
-class JiraDownloadWorklogValidatorTest {
+class JiraFilterWorklogTest {
     lateinit var user: User
     lateinit var validWorklog: WorkLog
     val worklogTime: Long = 1000
@@ -38,7 +38,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test
     fun valid_returnTrue() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -50,7 +50,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test
     fun endEqualCreate_returnTrue() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 1000L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 1000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -62,7 +62,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test
     fun startEqualCreate_returnTrue() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("valid_username", 1000L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 1000L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -74,7 +74,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test(expected = JiraFilter.FilterErrorException::class)
     fun endBeforeCreate_returnFalse() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 900L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 900L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -86,7 +86,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test(expected = JiraFilter.FilterErrorException::class)
     fun startAfterCreate_returnFalse() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("valid_username", 1200L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 1200L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -98,7 +98,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test(expected = JiraFilter.FilterErrorException::class)
     fun invalidUser_returnFalse() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("invalid_username", 500L, 2000L)
+        val filterer = JiraFilterWorklog("invalid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(validWorklog)
@@ -110,7 +110,7 @@ class JiraDownloadWorklogValidatorTest {
     @Test(expected = JiraFilter.FilterErrorException::class)
     fun nullWorkLog_returnFalse() {
         // Arrange
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(null)
@@ -125,7 +125,7 @@ class JiraDownloadWorklogValidatorTest {
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(null).whenever(invalidWorklog).started
         doReturn(user).whenever(invalidWorklog).author
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(invalidWorklog)
@@ -140,7 +140,7 @@ class JiraDownloadWorklogValidatorTest {
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started
         doReturn(null).whenever(invalidWorklog).author
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(invalidWorklog)
@@ -156,7 +156,7 @@ class JiraDownloadWorklogValidatorTest {
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started
         doReturn(user).whenever(invalidWorklog).author
         doReturn(null).whenever(user).name
-        val filterer = JiraDownloadWorklogValidator("valid_username", 500L, 2000L)
+        val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
         // Act
         val out = filterer.valid(invalidWorklog)

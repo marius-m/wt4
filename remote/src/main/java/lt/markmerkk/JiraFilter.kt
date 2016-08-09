@@ -5,8 +5,8 @@ package lt.markmerkk
  */
 interface JiraFilter<in T> {
     /**
-     * Will output a true if validation succeeds
-     * or throws an error with an error message indicating a problem
+     * Will output a true if validation succeeds, false otherwise
+     * Throws an error with an error message indicating a problem
      */
     @Throws(FilterErrorException::class)
     fun valid(input: T?): Boolean
