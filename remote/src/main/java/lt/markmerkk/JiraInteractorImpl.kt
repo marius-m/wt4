@@ -46,8 +46,11 @@ class JiraInteractorImpl(
                 .toList()
     }
 
-    override fun jiraIssues(): Observable<Issue> { // todo : incomplete
-        return Observable.empty<Issue>()
+    override fun jiraIssues(): Observable<List<Issue>> {
+        return Observable.defer { Observable.just(jiraClientProvider.client()) }
+                .flatMap { jiraSearchSubscriber.userIssuesObservable() }
+                .flatMap { Observable.from(it.issues) }
+                .toList()
     }
 
     //endregion
