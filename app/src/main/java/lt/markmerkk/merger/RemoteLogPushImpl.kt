@@ -3,6 +3,7 @@ package lt.markmerkk.merger
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.JiraException
+import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
 
 /**
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory
  */
 class RemoteLogPushImpl(
         private val remoteMergeClient: RemoteMergeClient,
-        private val remoteMergeExecutor: RemoteMergeExecutor,
+        private val remoteMergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>,
         private val uploadValidator: JiraFilter<SimpleLog>,
         private val localLog: SimpleLog
 ) : RemoteLogPush {

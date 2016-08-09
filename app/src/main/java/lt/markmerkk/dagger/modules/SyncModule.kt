@@ -3,16 +3,16 @@ package lt.markmerkk.dagger.modules
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
-import lt.markmerkk.merger.RemoteMergeExecutor
-import lt.markmerkk.merger.RemoteMergeExecutorImpl
 import lt.markmerkk.mvp.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.merger.RemoteMergeClient
-import lt.markmerkk.merger.RemoteMergeClientImpl
+import lt.markmerkk.merger.*
 import lt.markmerkk.utils.*
+import net.rcarz.jiraclient.WorkLog
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -50,7 +50,7 @@ class SyncModule {
     @Singleton
     fun providesRemoteMergeExecutor(
             executor: IExecutor
-    ): RemoteMergeExecutor {
+    ): RemoteMergeExecutorImpl {
         return RemoteMergeExecutorImpl(executor)
     }
 
@@ -83,7 +83,7 @@ class SyncModule {
     @Singleton
     fun providesRemoteMergeToolsProvider(
             remoteMergeClient: RemoteMergeClient,
-            remoteMergeExecutor: RemoteMergeExecutor
+            remoteMergeExecutor: RemoteMergeExecutorImpl
     ): RemoteMergeToolsProvider {
         return RemoteMergeToolsProviderImpl(
                 remoteMergeClient = remoteMergeClient,

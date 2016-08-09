@@ -16,7 +16,7 @@ import net.rcarz.jiraclient.WorkLog
  */
 class RemoteMergeExecutorImpl(
         val dbExecutor: IExecutor
-) : RemoteMergeExecutor {
+) : RemoteMergeExecutor<SimpleLog, WorkLog> {
 
     override fun createLog(simpleLog: SimpleLog) {
         dbExecutor.execute(InsertJob(SimpleLog::class.java, simpleLog))

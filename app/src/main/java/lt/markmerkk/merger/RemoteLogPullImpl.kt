@@ -2,6 +2,7 @@ package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.JiraWork
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.Logger
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory
  * 3. All pulled data should contain dirty = 0.
  */
 class RemoteLogPullImpl(
-        val mergeExecutor: RemoteMergeExecutor,
+        val mergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>,
         val remoteLogFilter: JiraFilter<WorkLog>,
         val remoteIssue: JiraWork
 ) : RemoteLogPull {

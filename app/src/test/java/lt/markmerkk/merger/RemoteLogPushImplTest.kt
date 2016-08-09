@@ -15,7 +15,7 @@ import org.junit.Test
  */
 class RemoteLogPushImplTest {
 
-    val executor: RemoteMergeExecutor = mock()
+    val executor: RemoteMergeExecutor<SimpleLog, WorkLog> = mock()
     val client: RemoteMergeClient = mock()
     val uploadValidator: JiraFilter<SimpleLog> = mock()
 

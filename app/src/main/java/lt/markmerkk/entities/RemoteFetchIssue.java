@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  * Created by mariusmerkevicius on 2/16/16.
  * Responsible for merging remote {@link Issue} with local {@link LocalIssue}
  */
+@Deprecated
 public class RemoteFetchIssue extends RemoteFetch<LocalIssue, Issue> {
   Logger logger = LoggerFactory.getLogger(RemoteFetchIssue.class);
 

@@ -4,6 +4,7 @@ package lt.markmerkk.entities;
  * Created by mariusmerkevicius on 2/16/16. Responsible for fetching remote objects and inserting /
  * updating them in database
  */
+@Deprecated
 public abstract class RemoteFetch<LocalEntityType, RemoteEntityType> {
 
   /**

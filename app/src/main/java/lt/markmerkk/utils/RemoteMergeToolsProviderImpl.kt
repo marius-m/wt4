@@ -12,7 +12,7 @@ import net.rcarz.jiraclient.WorkLog
  */
 class RemoteMergeToolsProviderImpl(
         private val remoteMergeClient: RemoteMergeClient,
-        private val remoteMergeExecutor: RemoteMergeExecutor
+        private val remoteMergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>
 ) : RemoteMergeToolsProvider {
     override fun pushMerger(
             localLog: SimpleLog,

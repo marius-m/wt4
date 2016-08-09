@@ -18,7 +18,7 @@ import java.util.*
 class RemoteLogPullImplTest {
 
     val remoteFilter: JiraFilter<WorkLog> = mock()
-    val mergeExecutor: RemoteMergeExecutor = mock()
+    val mergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog> = mock()
 
     @Test
     fun filterInvalidWorklog_noChange() {
