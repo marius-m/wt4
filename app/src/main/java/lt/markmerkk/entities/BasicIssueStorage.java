@@ -1,13 +1,7 @@
 package lt.markmerkk.entities;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import lt.markmerkk.DBProdExecutor;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.InsertJob;
@@ -17,6 +11,11 @@ import lt.markmerkk.mvp.IDataListener;
 import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.utils.Utils;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mariusmerkevicius on 1/6/16.
@@ -123,6 +122,17 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   void reportDataChange() {
     for (IDataListener<LocalIssue> listener : listeners)
       listener.onDataChange(issues);
+  }
+
+  @NotNull
+  @Override
+  public List<LocalIssue> customQuery(@NotNull String queryPredicate) {
+    QueryListJob<LocalIssue> query = new QueryListJob<LocalIssue>(
+            LocalIssue.class,
+            () -> queryPredicate
+    );
+    executor.execute(query);
+    return query.result();
   }
 
   //endregion

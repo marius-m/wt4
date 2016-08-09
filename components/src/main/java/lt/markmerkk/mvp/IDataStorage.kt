@@ -54,4 +54,5 @@ interface IDataStorage<T> {
      */
     val dataAsList: List<T>
 
+    fun customQuery(queryPredicate: String): List<T>
 }

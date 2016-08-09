@@ -201,6 +201,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
    * Registers a search observable that queries local database for results
    * @param comboBox
    */
+  // todo : convert to mvp
   void registerSearchObservable(ComboBox<LocalIssue> comboBox) { // todo : needs refactor
     JavaFxObservable.fromObservableValue(comboBox.getEditor().textProperty())
         .filter(phrase -> (comboBox.getSelectionModel().getSelectedItem() == null))

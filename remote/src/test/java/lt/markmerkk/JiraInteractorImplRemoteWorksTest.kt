@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.JiraWork
+import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.IDataStorage
 import net.rcarz.jiraclient.Issue
@@ -28,9 +29,11 @@ class JiraInteractorImplRemoteWorksTest {
     val searchSubscriber: JiraSearchSubscriber = mock()
     val worklogSubscriber: JiraWorklogSubscriber = mock()
     val dataStorage: IDataStorage<SimpleLog> = mock()
+    val issueStorage: IDataStorage<LocalIssue> = mock()
     val interactor = JiraInteractorImpl(
             clientProvider,
             dataStorage,
+            issueStorage,
             searchSubscriber,
             worklogSubscriber,
             Schedulers.immediate()

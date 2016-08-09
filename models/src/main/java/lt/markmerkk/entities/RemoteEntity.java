@@ -72,6 +72,10 @@ public abstract class RemoteEntity extends BaseDBEntity {
     return errorMessage;
   }
 
+  public long getDownload_millis() {
+    return download_millis;
+  }
+
   @Override public Map<String, Object> pack() throws IllegalArgumentException {
     Map<String, Object> pack = super.pack();
     pack.put(KEY_ID, id);

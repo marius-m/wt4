@@ -1,6 +1,8 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.JiraWork
+import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.RemoteEntity
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.IDataStorage
 import net.rcarz.jiraclient.Issue
@@ -15,7 +17,8 @@ import rx.Scheduler
  */
 class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
-        val localStorage: IDataStorage<SimpleLog>,
+        val logStorage: IDataStorage<SimpleLog>,
+        val issueStorage: IDataStorage<LocalIssue>,
         val jiraSearchSubscriber: JiraSearchSubscriber,
         val jiraWorklogSubscriber: JiraWorklogSubscriber,
         val ioScheduler: Scheduler
@@ -42,7 +45,7 @@ class JiraInteractorImpl(
     override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
                 .subscribeOn(ioScheduler)
-                .flatMap { Observable.from(localStorage.dataAsList) }
+                .flatMap { Observable.from(logStorage.dataAsList) }
                 .toList()
     }
 
@@ -51,6 +54,20 @@ class JiraInteractorImpl(
                 .subscribeOn(ioScheduler)
                 .flatMap { jiraSearchSubscriber.userIssuesObservable() }
                 .flatMap { Observable.from(it.issues) }
+                .toList()
+    }
+
+    override fun jiraLocalIssuesOld(filterTime: Long): Observable<List<LocalIssue>> {
+        return Observable.from(
+                issueStorage.customQuery(
+                        String.format(
+                                "%s < %d",
+                                RemoteEntity.KEY_DOWNLOAD_MILLIS,
+                                filterTime
+                        )
+                ))
+                .filter { filterTime < it.download_millis }
+                .subscribeOn(ioScheduler)
                 .toList()
     }
 

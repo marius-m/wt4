@@ -75,13 +75,15 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesInteractor(
-            dataStorage: BasicLogStorage,
+            localStorage: BasicLogStorage,
+            issueStorage: BasicIssueStorage,
             jiraClientProvider: JiraClientProvider,
             jiraSearchSubscriber: JiraSearchSubscriber,
             jiraWorklogSubscriber: JiraWorklogSubscriber
     ): JiraInteractor {
         return JiraInteractorImpl(
-                localStorage = dataStorage,
+                logStorage = localStorage,
+                issueStorage = issueStorage,
                 jiraClientProvider = jiraClientProvider,
                 jiraSearchSubscriber = jiraSearchSubscriber,
                 jiraWorklogSubscriber = jiraWorklogSubscriber,

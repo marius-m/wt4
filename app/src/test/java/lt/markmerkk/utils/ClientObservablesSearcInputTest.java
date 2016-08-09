@@ -1,11 +1,9 @@
 package lt.markmerkk.utils;
 
-import lt.markmerkk.JiraObservables;
 import org.junit.Test;
 import rx.observers.TestSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * Created by mariusmerkevicius on 2/2/16.

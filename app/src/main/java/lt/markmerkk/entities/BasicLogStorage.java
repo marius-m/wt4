@@ -180,6 +180,17 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     }
   }
 
+  @NotNull
+  @Override
+  public List<SimpleLog> customQuery(@NotNull String queryPredicate) {
+    QueryListJob<SimpleLog> query = new QueryListJob<SimpleLog>(
+            SimpleLog.class,
+            () -> queryPredicate
+    );
+    executor.execute(query);
+    return query.result();
+  }
+
   //endregion
 
 
