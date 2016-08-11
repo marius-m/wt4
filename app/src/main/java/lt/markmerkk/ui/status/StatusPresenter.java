@@ -24,6 +24,7 @@ import lt.markmerkk.LogStorage;
 import lt.markmerkk.DisplayType;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
-    total = String.valueOf(storage.total());
+    total = LogUtils.INSTANCE.formatShortDuration(storage.total());
 
     updateStatus();
     onLoadChange(syncController.isLoading());
@@ -99,7 +100,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    */
   void updateStatus() {
 //    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
-    buttonToday.setText(String.format("%s", total));
+    buttonToday.setText(LogUtils.INSTANCE.formatShortDuration(storage.total()));
 //    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
     buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
@@ -145,7 +146,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   IDataListener loggerListener = new IDataListener() {
     @Override
     public void onDataChange(List data) {
-      total = String.valueOf(storage.total());
+      total = LogUtils.INSTANCE.formatShortDuration(storage.total());
       updateStatus();
     }
   };
