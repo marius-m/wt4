@@ -1,26 +1,27 @@
-package lt.markmerkk
+package lt.markmerkk.entities
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import org.junit.Ignore
+import org.junit.Assert.*
 import org.junit.Test
 
 /**
- * Created by mariusmerkevicius on 12/13/15.
+ * @author mariusmerkevicius
+ * *
+ * @since 2016-08-11
  */
-class LogStorageTest {
+class BasicIssueStorageTest {
 
     val executor: IExecutor = mock()
-    val storage = LogStorage(executor)
+    val storage = BasicIssueStorage(executor)
 
     @Test
     fun insert_triggerExecutor() {
         // Arrange
         // Act
-        storage.insert(SimpleLog())
+        storage.insert(LocalIssue())
 
         // Assert
         verify(executor, times(2)).execute(any()) // insert/notify
@@ -30,7 +31,7 @@ class LogStorageTest {
     fun delete_triggerExecutor() {
         // Arrange
         // Act
-        storage.delete(SimpleLog())
+        storage.delete(LocalIssue())
 
         // Assert
         verify(executor, times(2)).execute(any()) // insert/notify
@@ -40,7 +41,7 @@ class LogStorageTest {
     fun update_triggerExecutor() {
         // Arrange
         // Act
-        storage.update(SimpleLog())
+        storage.update(LocalIssue())
 
         // Assert
         verify(executor, times(2)).execute(any()) // insert/notify
@@ -49,11 +50,11 @@ class LogStorageTest {
     @Test
     fun register_triggerListener() {
         // Arrange
-        val dataListener: IDataListener<SimpleLog> = mock()
+        val dataListener: IDataListener<LocalIssue> = mock()
 
         // Act
         storage.register(dataListener)
-        storage.update(SimpleLog())
+        storage.update(LocalIssue())
         storage.unregister(dataListener)
 
         // Assert
@@ -63,15 +64,14 @@ class LogStorageTest {
     @Test
     fun registerUnregister_noListenerTrigger() {
         // Arrange
-        val dataListener: IDataListener<SimpleLog> = mock()
+        val dataListener: IDataListener<LocalIssue> = mock()
 
         // Act
         storage.register(dataListener)
         storage.unregister(dataListener)
-        storage.update(SimpleLog())
+        storage.update(LocalIssue())
 
         // Assert
         verify(dataListener, never()).onDataChange(any())
     }
-
 }

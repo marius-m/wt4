@@ -15,7 +15,7 @@ import org.joda.time.DateTimeConstants
  * Represents the storage for simple use.
  */
 class LogStorage(
-        var executor: IExecutor
+        private var executor: IExecutor
 ) : IDataStorage<SimpleLog> {
 
     override var data = mutableListOf<SimpleLog>()
