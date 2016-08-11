@@ -12,10 +12,10 @@ import org.junit.Test
  * *
  * @since 2016-08-11
  */
-class BasicIssueStorageTest {
+class IssueStorageTest {
 
     val executor: IExecutor = mock()
-    val storage = BasicIssueStorage(executor)
+    val storage = IssueStorage(executor)
 
     @Test
     fun insert_triggerExecutor() {

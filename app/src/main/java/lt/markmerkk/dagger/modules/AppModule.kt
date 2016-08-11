@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
-import lt.markmerkk.entities.BasicIssueStorage
+import lt.markmerkk.entities.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
@@ -42,8 +42,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideBasicIssueStorage(dbExecutor: IExecutor): BasicIssueStorage {
-        return BasicIssueStorage(dbExecutor)
+    fun provideBasicIssueStorage(dbExecutor: IExecutor): IssueStorage {
+        return IssueStorage(dbExecutor)
     }
 
     @Provides

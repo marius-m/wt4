@@ -12,7 +12,7 @@ import lt.markmerkk.entities.jobs.UpdateJob
  * Created by mariusmerkevicius on 1/6/16.
  * Holds all downloaded issues for use
  */
-class BasicIssueStorage(
+class IssueStorage(
         private var executor: IExecutor
 ) : IDataStorage<LocalIssue> {
 

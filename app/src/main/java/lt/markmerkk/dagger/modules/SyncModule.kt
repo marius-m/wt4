@@ -3,7 +3,7 @@ package lt.markmerkk.dagger.modules
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
-import lt.markmerkk.entities.BasicIssueStorage
+import lt.markmerkk.entities.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
@@ -73,7 +73,7 @@ class SyncModule {
     @Singleton
     fun providesInteractor(
             localStorage: LogStorage,
-            issueStorage: BasicIssueStorage,
+            issueStorage: IssueStorage,
             jiraClientProvider: JiraClientProvider,
             jiraSearchSubscriber: JiraSearchSubscriber,
             jiraWorklogSubscriber: JiraWorklogSubscriber
@@ -111,7 +111,7 @@ class SyncModule {
             lastUpdateController: LastUpdateController,
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
-            issueStorage: BasicIssueStorage
+            issueStorage: IssueStorage
     ): SyncController2 {
         return SyncController2(
                 jiraInteractor = jiraInteractor,
