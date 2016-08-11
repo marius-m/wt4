@@ -1,6 +1,6 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.LogStorage
 import lt.markmerkk.ui.utils.DisplayType
 import org.joda.time.DateTimeConstants
 
@@ -9,7 +9,7 @@ import org.joda.time.DateTimeConstants
  * @since 2016-08-07
  */
 class DayProviderImpl(
-        private val logStorage: BasicLogStorage
+        private val logStorage: LogStorage
 ) : DayProvider {
     override fun startDay(): Long {
         when (logStorage.displayType) {

@@ -1,17 +1,11 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.JiraFilter
-import lt.markmerkk.JiraInteractor
-import lt.markmerkk.entities.BasicIssueStorage
-import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.BasicLogStorage
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.*
+import lt.markmerkk.entities.*
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPush
 import lt.markmerkk.merger.RemoteMergeToolsProvider
-import lt.markmerkk.UserSettings
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -29,8 +23,8 @@ class SyncController2UploadTest {
     val dayProvider: DayProvider = mock()
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
-    val logStorage: BasicLogStorage = mock()
-    val issueStorage: BasicIssueStorage = mock()
+    val logStorage: IDataStorage<SimpleLog> = mock()
+    val issueStorage: IDataStorage<LocalIssue> = mock()
 
     val remoteLogPull: RemoteLogPull = mock()
     val fakeWork = JiraWork()

@@ -10,7 +10,7 @@ import lt.markmerkk.IDataListener
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.Main
 import lt.markmerkk.Translation
-import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.LogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.listeners.IPresenter
 import lt.markmerkk.ui.interfaces.UpdateListener
@@ -29,7 +29,7 @@ import java.util.ResourceBundle
  */
 class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> {
     @Inject
-    lateinit var storage: BasicLogStorage
+    lateinit var storage: LogStorage
 
     @FXML
     lateinit var tableView: TableView<SimpleLog>

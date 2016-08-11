@@ -9,10 +9,10 @@ import org.junit.Test
 /**
  * Created by mariusmerkevicius on 12/13/15.
  */
-class BasicLogStorageTest {
+class LogStorageTest {
 
     val executor: IExecutor = mock()
-    val storage = BasicLogStorage(executor)
+    val storage = LogStorage(executor)
 
     @Test
     fun insert_triggerExecutor() {

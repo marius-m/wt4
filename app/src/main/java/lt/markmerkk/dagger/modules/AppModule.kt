@@ -6,7 +6,7 @@ import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
 import lt.markmerkk.entities.BasicIssueStorage
 import lt.markmerkk.UserSettings
-import lt.markmerkk.entities.BasicLogStorage
+import lt.markmerkk.entities.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -36,8 +36,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideBasicLogStorage(dbExecutor: IExecutor): BasicLogStorage { // todo : temp solution
-        return BasicLogStorage(dbExecutor)
+    fun provideBasicLogStorage(dbExecutor: IExecutor): LogStorage { // todo : temp solution
+        return LogStorage(dbExecutor)
     }
 
     @Provides
@@ -78,7 +78,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideDayProvider(logStorage: BasicLogStorage): DayProvider {
+    fun provideDayProvider(logStorage: LogStorage): DayProvider {
         return DayProviderImpl(logStorage)
     }
 

@@ -1,6 +1,5 @@
 package lt.markmerkk.entities
 
-import javafx.collections.FXCollections
 import lt.markmerkk.IDataListener
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
@@ -17,7 +16,7 @@ import org.joda.time.DateTimeConstants
  * Created by mariusmerkevicius on 12/13/15.
  * Represents the storage for simple use.
  */
-class BasicLogStorage(
+class LogStorage(
         var executor: IExecutor
 ) : IDataStorage<SimpleLog> {
 

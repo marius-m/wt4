@@ -20,7 +20,7 @@ import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
-import lt.markmerkk.entities.BasicLogStorage;
+import lt.markmerkk.entities.LogStorage;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
@@ -36,7 +36,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
 
   @Inject
-  BasicLogStorage storage;
+  LogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;

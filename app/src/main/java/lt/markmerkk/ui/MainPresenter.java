@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import lt.markmerkk.Main;
 import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.listeners.IPresenter;
-import lt.markmerkk.entities.BasicLogStorage;
+import lt.markmerkk.entities.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.ui.clock.ClockPresenter;
@@ -44,7 +44,7 @@ public class MainPresenter implements Initializable {
   public static final Logger logger = LoggerFactory.getLogger(MainPresenter.class);
 
   @Inject
-  BasicLogStorage storage;
+  LogStorage storage;
 
   @FXML TabPane tabPane;
   @FXML BorderPane northPane;

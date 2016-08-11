@@ -15,7 +15,7 @@ import lt.markmerkk.IDataListener;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.listeners.IPresenter;
-import lt.markmerkk.entities.BasicLogStorage;
+import lt.markmerkk.entities.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.utils.tracker.SimpleTracker;
@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
 public class WeekPresenter implements Initializable, IPresenter, AgendaView {
   public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
   @Inject
-  BasicLogStorage storage;
+  LogStorage storage;
 
   @FXML VBox mainContainer;
   Agenda agenda;

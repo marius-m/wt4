@@ -12,10 +12,10 @@ import org.junit.Test
  * *
  * @since 2016-08-11
  */
-class BasicLogStorageSuggestTargetDateTest {
+class LogStorageSuggestTargetDateTest {
 
     val executor: IExecutor = mock()
-    val storage = BasicLogStorage(executor)
+    val storage = LogStorage(executor)
 
     @Test
     fun differentDay_changeTargetDate() {

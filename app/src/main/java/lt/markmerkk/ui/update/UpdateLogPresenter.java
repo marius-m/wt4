@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.entities.BasicLogStorage;
+import lt.markmerkk.entities.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.DialogListener;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class UpdateLogPresenter {
   public static final Logger logger = LoggerFactory.getLogger(UpdateLogPresenter.class);
   @Inject
-  BasicLogStorage storage;
+  LogStorage storage;
 
   @FXML TextField taskInput;
   @FXML TextField startInput;

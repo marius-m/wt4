@@ -53,7 +53,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @Inject
   SyncController2 syncController;
   @Inject
-  BasicLogStorage logStorage;
+  LogStorage logStorage;
   @Inject
   BasicIssueStorage issueStorage;
   @Inject
