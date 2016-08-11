@@ -16,6 +16,7 @@ import lt.markmerkk.entities.*;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.InsertJob;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
+import lt.markmerkk.mvp.IDataListener;
 import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
@@ -24,6 +25,7 @@ import lt.markmerkk.utils.LogUtils;
 import lt.markmerkk.utils.SyncController2;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +44,7 @@ import java.util.ResourceBundle;
  * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
  * info.
  */
-public class ClockPresenter implements Initializable, IRemoteLoadListener {
+public class ClockPresenter implements Initializable, IRemoteLoadListener, IDataListener<LocalIssue> {
   public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
@@ -52,6 +54,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener {
   SyncController2 syncController;
   @Inject
   BasicLogStorage logStorage;
+  @Inject
+  BasicIssueStorage issueStorage;
   @Inject
   IExecutor dbProdExecutor;
   @Inject
@@ -87,18 +91,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     Main.getComponent().presenterComponent().inject(this);
-    // fixme remove test data inject
-    dbProdExecutor.execute(
-            new InsertJob(
-                    LocalIssue.class,
-                    new LocalIssueBuilder()
-                            .setProject("test")
-                            .setKey("test-111")
-                            .setDownloadMillis(1000)
-                            .setDescription("test")
-                            .build()
-            )
-    );
     issueSearchAdapter = new IssueSearchAdapter(
             settings,
             inputTaskCombo,
@@ -138,12 +130,14 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener {
     });
     updateUI();
 
+    issueStorage.register(this);
     onLoadChange(syncController.isLoading());
     syncController.addLoadingListener(this);
   }
 
   @PreDestroy
   public void destroy() {
+    issueStorage.unregister(this);
     syncController.removeLoadingListener(this);
   }
 
@@ -379,6 +373,11 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener {
 
   @Override
   public void onError(String error) { }
+
+  @Override
+  public void onDataChange(@NotNull ObservableList<LocalIssue> data) {
+    issueSearchAdapter.setTotalIssues(data.size());
+  }
 
   //endregion
 
