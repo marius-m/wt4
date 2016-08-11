@@ -1,6 +1,7 @@
-package lt.markmerkk.entities
+package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.mock
+import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime

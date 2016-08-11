@@ -10,7 +10,7 @@ import lt.markmerkk.IDataListener
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.Main
 import lt.markmerkk.Translation
-import lt.markmerkk.entities.LogStorage
+import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.listeners.IPresenter
 import lt.markmerkk.ui.interfaces.UpdateListener
@@ -37,12 +37,12 @@ class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> 
     private val logs: ObservableList<SimpleLog> = FXCollections.observableArrayList()
     private var updateListener: UpdateListener? = null
 
-    override fun initialize(location: URL, resources: ResourceBundle) {
+    override fun initialize(location: URL, resources: ResourceBundle?) {
         Main.getComponent().presenterComponent().inject(this)
-        logs.addAll(storage.data)
         SimpleTracker.getInstance().tracker.sendView(SimpleTracker.VIEW_DAY)
-        tableView.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
+        logs.addAll(storage.data)
 
+        tableView?.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
         LogDisplayController(tableView, logs, object : TableDisplayController.Listener<SimpleLog> {
             override fun onUpdate(updateableObject: SimpleLog) {
                 updateListener?.onUpdate(updateableObject)
@@ -63,7 +63,6 @@ class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> 
     fun destroy() {
         storage.unregister(this)
     }
-
 
     fun setUpdateListener(updateListener: UpdateListener) {
         this.updateListener = updateListener

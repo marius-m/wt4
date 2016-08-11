@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.entities.LogStorage;
+import lt.markmerkk.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.DialogListener;

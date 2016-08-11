@@ -1,7 +1,7 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.entities.LogStorage
-import lt.markmerkk.ui.utils.DisplayType
+import lt.markmerkk.LogStorage
+import lt.markmerkk.DisplayType
 import org.joda.time.DateTimeConstants
 
 /**

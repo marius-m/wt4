@@ -6,7 +6,7 @@ import lt.markmerkk.AutoSync2
 import lt.markmerkk.DBProdExecutor
 import lt.markmerkk.entities.BasicIssueStorage
 import lt.markmerkk.UserSettings
-import lt.markmerkk.entities.LogStorage
+import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
