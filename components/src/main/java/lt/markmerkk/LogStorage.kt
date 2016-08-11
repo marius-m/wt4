@@ -26,11 +26,15 @@ class LogStorage(
             field = value
             notifyDataChange()
         }
-    var targetDate = DateTime()
+    var targetDate = DateTime().withTime(0, 0, 0, 0)
         set(value) {
-            field = value
+            field = value.withTime(0, 0, 0, 0)
             notifyDataChange()
         }
+
+    init {
+        notifyDataChange()
+    }
 
     fun suggestTargetDate(dateAsString: String) {
         try {
@@ -40,7 +44,7 @@ class LogStorage(
                     && targetDate.dayOfMonth == newTime.dayOfMonth) {
                 return
             }
-            targetDate = newTime.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
+            targetDate = newTime
         } catch (e: IllegalArgumentException) {
         }
     }
@@ -52,12 +56,6 @@ class LogStorage(
     override fun unregister(listener: IDataListener<SimpleLog>) {
         listeners.remove(listener)
     }
-
-    //region Custom impl
-
-    fun total() = data.sumBy { it.duration.toInt() }
-
-    //endregion
 
     override fun insert(dataEntity: SimpleLog) {
         executor.execute(InsertJob(SimpleLog::class.java, dataEntity))
@@ -85,7 +83,7 @@ class LogStorage(
                 })
             }
             else -> queryJob = QueryListJob(SimpleLog::class.java, {
-                "(start > ${targetDate.millis} AND start < ${targetDate.plusDays(1).millis}"
+                "(start > ${targetDate.millis} AND start < ${targetDate.plusDays(1).millis})"
             })
         }
         executor.execute(queryJob)
@@ -102,5 +100,10 @@ class LogStorage(
         return query.result()
     }
 
+    //region Custom impl
+
+    fun total() = data.sumBy { it.duration.toInt() }
+
+    //endregion
 
 }

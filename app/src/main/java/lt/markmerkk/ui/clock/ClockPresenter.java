@@ -362,7 +362,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @Override
   public void onLoadChange(boolean loading) {
     Platform.runLater(() -> {
-      logger.debug("Clock onLoad: "+loading);
       taskLoadIndicator.setManaged(loading);
       taskLoadIndicator.setVisible(loading);
     });
