@@ -1,8 +1,10 @@
-package lt.markmerkk.entities
+package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.IDataListener
+import lt.markmerkk.IssueStorage
 import lt.markmerkk.LogStorage
+import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import org.junit.Assert.*
 import org.junit.Test

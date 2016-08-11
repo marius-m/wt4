@@ -3,7 +3,7 @@ package lt.markmerkk.dagger.modules
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
-import lt.markmerkk.entities.IssueStorage
+import lt.markmerkk.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor

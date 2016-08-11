@@ -1,7 +1,6 @@
-package lt.markmerkk.entities
+package lt.markmerkk
 
-import lt.markmerkk.IDataListener
-import lt.markmerkk.IDataStorage
+import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.entities.jobs.DeleteJob
 import lt.markmerkk.entities.jobs.InsertJob
