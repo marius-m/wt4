@@ -1,7 +1,9 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.*
-import lt.markmerkk.entities.*
+import lt.markmerkk.entities.JiraWork
+import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.mvp.IDataStorage
@@ -12,7 +14,6 @@ import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -52,6 +53,7 @@ class SyncController2(
             logger.info("Sync in progress")
             return
         }
+        val syncStart = System.currentTimeMillis()
         val uploadValidator = JiraFilterSimpleLog()
         val downloadValidator = JiraFilterWorklog(
                 userSettings.username,
@@ -61,12 +63,13 @@ class SyncController2(
         val issueValidator = JiraFilterIssue()
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
-                .flatMap { issueCacheObservable(issueValidator) }
+                .flatMap { issueCacheObservable(issueValidator, syncStart) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Sync all success!")
+                    val syncEnd = System.currentTimeMillis()
+                    logger.info("Sync all success in ${syncEnd - syncStart}ms!")
                 }, {
                     logger.info("Sync all error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
                     logger.error("Sync all error data: ", it)
@@ -91,13 +94,15 @@ class SyncController2(
                 dayProvider.startDay(),
                 dayProvider.endDay()
         )
+        val syncStart = System.currentTimeMillis()
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Log sync success!")
+                    val syncEnd = System.currentTimeMillis()
+                    logger.info("Log sync success in ${syncEnd - syncStart}ms!")
                 }, {
                     logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
                     logger.error("Log sync error data: ", it)
@@ -112,13 +117,15 @@ class SyncController2(
             logger.info("Sync in progress")
             return
         }
+        val syncStart = System.currentTimeMillis()
         val filter = JiraFilterIssue()
-        subscription = issueCacheObservable(filter)
+        subscription = issueCacheObservable(filter, syncStart)
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Issue sync success!")
+                    val syncEnd = System.currentTimeMillis()
+                    logger.info("Issue sync success in ${syncEnd - syncStart}ms!")
                 }, {
                     logger.info("Issue sync error: ${it.message}")
                     logger.error("Log sync error data: ", it)
@@ -130,7 +137,7 @@ class SyncController2(
 
     //region Observables
 
-    fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<List<SimpleLog>> {
+    fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<*> {
         return jiraInteractor.jiraLocalWorks()
                 .flatMap { Observable.from(it) }
                 .flatMap {
@@ -143,7 +150,7 @@ class SyncController2(
                 .toList()
     }
 
-    fun downloadObservable(filter: JiraFilter<WorkLog>): Observable<List<JiraWork>> {
+    fun downloadObservable(filter: JiraFilter<WorkLog>): Observable<*> {
         return jiraInteractor.jiraRemoteWorks(dayProvider.startDay(), dayProvider.endDay())
                 .flatMap { Observable.from(it) }
                 .flatMap {
@@ -156,14 +163,17 @@ class SyncController2(
                 .toList()
     }
 
-    fun issueCacheObservable(filter: JiraFilter<Issue>): Observable<List<Issue>> {
-        return jiraInteractor.jiraIssues()
+    fun issueCacheObservable(filter: JiraFilter<Issue>, syncStart: Long): Observable<*> {
+        val pullObservable = jiraInteractor.jiraIssues()
                 .flatMap { Observable.from(it) }
                 .flatMap {
                     val merger = remoteMergeToolsProvider.issuePullMerger(it, filter)
                     Observable.fromCallable(merger)
                 }
-                .toList()
+        val removeOldObservable = jiraInteractor.jiraLocalIssuesOld(syncStart)
+                .flatMap { Observable.from(it) }
+                .map { issueStorage.delete(it) }
+        return Observable.merge(pullObservable, removeOldObservable).toList()
     }
 
     //endregion
