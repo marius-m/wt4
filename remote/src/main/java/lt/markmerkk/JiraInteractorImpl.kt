@@ -57,16 +57,16 @@ class JiraInteractorImpl(
                 .toList()
     }
 
-    override fun jiraLocalIssuesOld(filterTime: Long): Observable<List<LocalIssue>> {
+    override fun jiraLocalIssuesOld(startSync: Long): Observable<List<LocalIssue>> {
         return Observable.from(
                 issueStorage.customQuery(
                         String.format(
                                 "%s < %d",
                                 RemoteEntity.KEY_DOWNLOAD_MILLIS,
-                                filterTime
+                                startSync
                         )
                 ))
-                .filter { filterTime < it.download_millis }
+                .filter { startSync > it.download_millis } // assuring old items, not necessary
                 .subscribeOn(ioScheduler)
                 .toList()
     }

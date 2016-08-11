@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 class RemoteIssuePullImpl(
         private val remoteMergeExecutor: RemoteMergeExecutor<LocalIssue, Issue>,
         private val filter: JiraFilter<Issue>,
+        private val downloadMillis: Long,
         private val issue: Issue
 ) : RemoteIssuePull {
 
@@ -21,9 +22,17 @@ class RemoteIssuePullImpl(
             if (filter.valid(issue)) {
                 val oldIssue = remoteMergeExecutor.localEntityFromRemote(issue)
                 if (oldIssue == null) {
-                    remoteMergeExecutor.create(LocalIssueBuilder(issue).build())
+                    remoteMergeExecutor.create(
+                            LocalIssueBuilder(issue)
+                                    .setDownloadMillis(downloadMillis)
+                                    .build()
+                    )
                 } else {
-                    remoteMergeExecutor.update(LocalIssueBuilder(oldIssue).build())
+                    remoteMergeExecutor.update(
+                            LocalIssueBuilder(oldIssue)
+                                    .setDownloadMillis(downloadMillis)
+                                    .build()
+                    )
                 }
             }
         } catch (e: JiraFilter.FilterErrorException) {

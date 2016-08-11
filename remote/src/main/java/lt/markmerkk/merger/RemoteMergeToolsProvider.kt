@@ -15,5 +15,5 @@ import net.rcarz.jiraclient.WorkLog
 interface RemoteMergeToolsProvider {
     fun logPullMerger(remoteLog: JiraWork, filter: JiraFilter<WorkLog>): RemoteLogPull
     fun logPushMerger(localLog: SimpleLog, filter: JiraFilter<SimpleLog>): RemoteLogPush
-    fun issuePullMerger(issue: Issue, filter: JiraFilter<Issue>): RemoteIssuePull
+    fun issuePullMerger(downloadMillis: Long, issue: Issue, filter: JiraFilter<Issue>): RemoteIssuePull
 }

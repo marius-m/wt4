@@ -23,8 +23,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.3'
-def versionCode = '6'
+version = '0.9.9.4-EAP'
+def versionCode = '7'
 
 sourceSets {
     main {

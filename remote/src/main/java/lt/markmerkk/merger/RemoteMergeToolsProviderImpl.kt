@@ -41,12 +41,14 @@ class RemoteMergeToolsProviderImpl(
     }
 
     override fun issuePullMerger(
+            downloadMillis: Long,
             issue: Issue,
             filter: JiraFilter<Issue>
     ): RemoteIssuePull {
         return RemoteIssuePullImpl(
                 remoteMergeExecutor = remoteIssueMergeExecutor,
                 filter = filter,
+                downloadMillis = downloadMillis,
                 issue = issue
         )
     }

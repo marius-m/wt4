@@ -64,6 +64,7 @@ class SyncController2(
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
                 .flatMap { issueCacheObservable(issueValidator, syncStart) }
+                .flatMap { clearOldIssueCacheObservable(syncStart) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
@@ -120,6 +121,7 @@ class SyncController2(
         val syncStart = System.currentTimeMillis()
         val filter = JiraFilterIssue()
         subscription = issueCacheObservable(filter, syncStart)
+                .flatMap { clearOldIssueCacheObservable(syncStart) }
                 .doOnSubscribe { isLoading = true }
                 .doOnUnsubscribe { isLoading = false }
                 .observeOn(uiScheduler)
@@ -137,7 +139,7 @@ class SyncController2(
 
     //region Observables
 
-    fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<*> {
+    fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<List<SimpleLog>> {
         return jiraInteractor.jiraLocalWorks()
                 .flatMap { Observable.from(it) }
                 .flatMap {
@@ -150,7 +152,7 @@ class SyncController2(
                 .toList()
     }
 
-    fun downloadObservable(filter: JiraFilter<WorkLog>): Observable<*> {
+    fun downloadObservable(filter: JiraFilter<WorkLog>): Observable<List<JiraWork>> {
         return jiraInteractor.jiraRemoteWorks(dayProvider.startDay(), dayProvider.endDay())
                 .flatMap { Observable.from(it) }
                 .flatMap {
@@ -163,17 +165,24 @@ class SyncController2(
                 .toList()
     }
 
-    fun issueCacheObservable(filter: JiraFilter<Issue>, syncStart: Long): Observable<*> {
-        val pullObservable = jiraInteractor.jiraIssues()
+    fun issueCacheObservable(filter: JiraFilter<Issue>, syncStart: Long): Observable<List<Issue>> {
+        return jiraInteractor.jiraIssues()
                 .flatMap { Observable.from(it) }
                 .flatMap {
-                    val merger = remoteMergeToolsProvider.issuePullMerger(it, filter)
+                    val merger = remoteMergeToolsProvider.issuePullMerger(syncStart, it, filter)
                     Observable.fromCallable(merger)
                 }
-        val removeOldObservable = jiraInteractor.jiraLocalIssuesOld(syncStart)
+                .toList()
+    }
+
+    fun clearOldIssueCacheObservable(syncStart: Long): Observable<List<LocalIssue>> {
+        return jiraInteractor.jiraLocalIssuesOld(syncStart)
                 .flatMap { Observable.from(it) }
-                .map { issueStorage.delete(it) }
-        return Observable.merge(pullObservable, removeOldObservable).toList()
+                .flatMap {
+                    issueStorage.delete(it)
+                    Observable.just(it)
+                }
+                .toList()
     }
 
     //endregion

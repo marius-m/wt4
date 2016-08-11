@@ -1,9 +1,11 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.LocalIssueBuilder
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.IDataStorage
 import org.junit.Test
@@ -37,7 +39,7 @@ class JiraInteractorImplLocalIssuesOldTest {
     fun noItems_emitEmptyList() {
         // Arrange
         // Act
-        interactor.jiraLocalIssuesOld(1000)
+        interactor.jiraLocalIssuesOld(1000L)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
@@ -47,17 +49,19 @@ class JiraInteractorImplLocalIssuesOldTest {
     }
 
     @Test
-    fun valid_emitItems() {
+    fun valid_emitOldItems() {
         // Arrange
-        val validIssue: LocalIssue = mock()
-        whenever(validIssue.download_millis).thenReturn(1100)
+        val validIssue = LocalIssueBuilder()
+                .setDownloadMillis(900L)
+                .setKey("test_key")
+                .setProject("test")
+                .setDescription("test_issue")
+                .build()
         whenever(issueStorage.customQuery(any()))
-                .thenReturn(listOf(
-                        validIssue, validIssue, validIssue
-                ))
+                .thenReturn(listOf(validIssue, validIssue, validIssue))
 
         // Act
-        interactor.jiraLocalIssuesOld(1000)
+        interactor.jiraLocalIssuesOld(1000L)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(Schedulers.immediate())
                 .subscribe(testSubscriber)
@@ -71,15 +75,27 @@ class JiraInteractorImplLocalIssuesOldTest {
     fun filter_onlyOldItems() {
         // Arrange
         val now = 1000L
-        val newIssue: LocalIssue = mock()
-        whenever(newIssue.download_millis)
-                .thenReturn(1100)
-        val oldIssue: LocalIssue = mock()
-        whenever(oldIssue.download_millis)
-                .thenReturn(900)
+        val oldIssue = LocalIssueBuilder()
+                .setDownloadMillis(900L)
+                .setKey("test_key")
+                .setProject("test")
+                .setDescription("test_issue")
+                .build()
+        val newIssue = LocalIssueBuilder()
+                .setDownloadMillis(1100L)
+                .setKey("test_key")
+                .setProject("test")
+                .setDescription("test_issue")
+                .build()
+        val currentIssue = LocalIssueBuilder()
+                .setDownloadMillis(1000L)
+                .setKey("test_key")
+                .setProject("test")
+                .setDescription("test_issue")
+                .build()
         whenever(issueStorage.customQuery(any()))
                 .thenReturn(listOf(
-                        newIssue, oldIssue, newIssue, oldIssue
+                        newIssue, oldIssue, currentIssue, newIssue, oldIssue, currentIssue
                 ))
 
         // Act
@@ -91,7 +107,7 @@ class JiraInteractorImplLocalIssuesOldTest {
         // Assert
         assertEquals(2, testSubscriber.onNextEvents[0].size)
         testSubscriber.onNextEvents[0].forEach {
-            assertEquals(newIssue, it)
+            assertEquals(oldIssue, it)
         }
     }
 

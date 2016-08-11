@@ -53,6 +53,8 @@ class SyncController2AllTest {
                 .thenReturn(Observable.empty())
         whenever(jiraInteractor.jiraRemoteWorks(any(), any()))
                 .thenReturn(Observable.empty())
+        whenever(jiraInteractor.jiraLocalIssuesOld(any()))
+                .thenReturn(Observable.empty())
 
         doReturn("test_host").whenever(userSettings).host
         doReturn("test_user").whenever(userSettings).username

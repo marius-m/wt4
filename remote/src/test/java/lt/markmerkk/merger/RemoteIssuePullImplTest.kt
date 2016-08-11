@@ -21,6 +21,7 @@ class RemoteIssuePullImplTest {
     val executor: RemoteMergeExecutor<LocalIssue, Issue> = mock()
     val filter: JiraFilter<Issue> = mock()
     val validIssue: Issue = mock()
+    val downloadMillis = 1000L
     lateinit var validOldIssue: LocalIssue
 
     @Before
@@ -41,7 +42,7 @@ class RemoteIssuePullImplTest {
     @Test
     fun validNewIssue_triggerInsertNew() {
         // Arrange
-        val pull = RemoteIssuePullImpl(executor, filter, validIssue)
+        val pull = RemoteIssuePullImpl(executor, filter, downloadMillis, validIssue)
 
         // Act
         pull.call()
@@ -56,7 +57,7 @@ class RemoteIssuePullImplTest {
         // Arrange
         whenever(executor.localEntityFromRemote(any()))
                 .thenReturn(validOldIssue)
-        val pull = RemoteIssuePullImpl(executor, filter, validIssue)
+        val pull = RemoteIssuePullImpl(executor, filter, downloadMillis, validIssue)
 
         // Act
         pull.call()
@@ -74,7 +75,7 @@ class RemoteIssuePullImplTest {
                 .thenThrow(JiraFilter.FilterErrorException("validate error"))
         whenever(executor.localEntityFromRemote(any()))
                 .thenReturn(validOldIssue)
-        val pull = RemoteIssuePullImpl(executor, filter, validIssue)
+        val pull = RemoteIssuePullImpl(executor, filter, downloadMillis, validIssue)
 
         // Act
         pull.call()
@@ -91,7 +92,7 @@ class RemoteIssuePullImplTest {
         whenever(filter.valid(any())).thenReturn(false)
         whenever(executor.localEntityFromRemote(any()))
                 .thenReturn(validOldIssue)
-        val pull = RemoteIssuePullImpl(executor, filter, validIssue)
+        val pull = RemoteIssuePullImpl(executor, filter, downloadMillis, validIssue)
 
         // Act
         pull.call()
