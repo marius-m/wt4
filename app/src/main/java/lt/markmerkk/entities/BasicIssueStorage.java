@@ -25,7 +25,7 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   IExecutor executor;
 
   long totalIssues;
-  ObservableList<LocalIssue> issues;
+  List<LocalIssue> issues;
   List<IDataListener<LocalIssue>> listeners;
 
   String filter;
@@ -50,14 +50,12 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   }
 
   @Override
-  public void register(IDataListener<LocalIssue> listener) {
-    if (listener == null) return;
+  public void register(@NotNull IDataListener<LocalIssue> listener) {
     listeners.add(listener);
   }
 
   @Override
-  public void unregister(IDataListener<LocalIssue> listener) {
-    if (listener == null) return;
+  public void unregister(@NotNull IDataListener<LocalIssue> listener) {
     listeners.remove(listener);
   }
 
@@ -104,14 +102,8 @@ public class BasicIssueStorage implements IDataStorage<LocalIssue> {
   }
 
   @Override
-  public ObservableList<LocalIssue> getData() {
+  public List<LocalIssue> getData() {
     return issues;
-  }
-
-  @NotNull
-  @Override
-  public List<LocalIssue> getDataAsList() {
-    return new ArrayList<>(issues);
   }
 
   //region Convenience

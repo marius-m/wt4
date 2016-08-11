@@ -11,6 +11,5 @@ interface IDataListener<T> {
      * Called when new data is available
      * @param data
      */
-    fun onDataChange(data: ObservableList<T>)
-
+    fun onDataChange(data: List<T>)
 }

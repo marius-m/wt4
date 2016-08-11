@@ -29,7 +29,7 @@ import java.util.ResourceBundle
  */
 class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> {
     @Inject
-    lateinit var storage: IDataStorage<SimpleLog>
+    lateinit var storage: BasicLogStorage
 
     @FXML
     lateinit var tableView: TableView<SimpleLog>
@@ -39,7 +39,7 @@ class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> 
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         Main.getComponent().presenterComponent().inject(this)
-        logs.addAll(storage.dataAsList)
+        logs.addAll(storage.data)
         SimpleTracker.getInstance().tracker.sendView(SimpleTracker.VIEW_DAY)
         tableView.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
 
@@ -69,7 +69,7 @@ class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> 
         this.updateListener = updateListener
     }
 
-    override fun onDataChange(data: ObservableList<SimpleLog>) {
+    override fun onDataChange(data: List<SimpleLog>) {
         logs.clear()
         logs.addAll(data)
     }

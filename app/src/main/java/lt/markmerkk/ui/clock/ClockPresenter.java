@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -281,7 +282,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     public void changed(ObservableValue<? extends String> observable, String oldValue,
                         String newValue) {
       hourGlass.updateTimers(inputFrom.getEditor().getText(), inputTo.getEditor().getText());
-      logStorage.setTargetDate(inputFrom.getEditor().getText());
+      logStorage.suggestTargetDate(inputFrom.getEditor().getText());
     }
   };
 
@@ -374,7 +375,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   public void onError(String error) { }
 
   @Override
-  public void onDataChange(@NotNull ObservableList<LocalIssue> data) {
+  public void onDataChange(@NotNull List<? extends LocalIssue> data) {
     issueSearchAdapter.setTotalIssues(data.size());
   }
 

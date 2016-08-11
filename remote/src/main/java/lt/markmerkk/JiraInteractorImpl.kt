@@ -45,7 +45,7 @@ class JiraInteractorImpl(
     override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
                 .subscribeOn(ioScheduler)
-                .flatMap { Observable.from(logStorage.dataAsList) }
+                .flatMap { Observable.from(logStorage.data) }
                 .toList()
     }
 

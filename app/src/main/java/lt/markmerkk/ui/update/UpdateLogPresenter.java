@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateLogPresenter {
   public static final Logger logger = LoggerFactory.getLogger(UpdateLogPresenter.class);
-  @Inject BasicLogStorage storage;
+  @Inject
+  BasicLogStorage storage;
 
   @FXML TextField taskInput;
   @FXML TextField startInput;

@@ -15,7 +15,6 @@ import javafx.stage.StageStyle;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
 import lt.markmerkk.afterburner.InjectorNoDI;
-import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.entities.BasicLogStorage;
 import lt.markmerkk.entities.SimpleLog;
@@ -44,7 +43,8 @@ import org.slf4j.LoggerFactory;
 public class MainPresenter implements Initializable {
   public static final Logger logger = LoggerFactory.getLogger(MainPresenter.class);
 
-  @Inject BasicLogStorage storage;
+  @Inject
+  BasicLogStorage storage;
 
   @FXML TabPane tabPane;
   @FXML BorderPane northPane;

@@ -47,7 +47,7 @@ class JiraInteractorImplRemoteWorksTest {
                         SimpleLog(),
                         SimpleLog()
                 )
-        ).whenever(dataStorage).dataAsList
+        ).whenever(dataStorage).data
     }
 
     @Test

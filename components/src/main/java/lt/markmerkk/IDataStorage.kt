@@ -47,12 +47,10 @@ interface IDataStorage<T> {
     /**
      * Get currently loaded logs
      */
-    val data: ObservableList<T>
+    val data: List<T>
 
     /**
-     * Get data as simple list
+     * Executes a custom query
      */
-    val dataAsList: List<T>
-
     fun customQuery(queryPredicate: String): List<T>
 }

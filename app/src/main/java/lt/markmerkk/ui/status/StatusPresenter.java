@@ -2,9 +2,9 @@ package lt.markmerkk.ui.status;
 
 import com.vinumeris.updatefx.UpdateSummary;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,7 +35,8 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     VersionController.UpgradeListener {
   public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
 
-  @Inject BasicLogStorage storage;
+  @Inject
+  BasicLogStorage storage;
   @Inject LastUpdateController lastUpdateController;
   @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;
@@ -63,7 +64,7 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
-    total = storage.getTotal();
+    total = String.valueOf(storage.total());
 
     updateStatus();
     onLoadChange(syncController.isLoading());
@@ -143,8 +144,8 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
 
   IDataListener loggerListener = new IDataListener() {
     @Override
-    public void onDataChange(ObservableList data) {
-      total = storage.getTotal();
+    public void onDataChange(List data) {
+      total = String.valueOf(storage.total());
       updateStatus();
     }
   };

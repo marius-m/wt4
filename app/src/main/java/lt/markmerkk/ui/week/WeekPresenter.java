@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.week;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,7 +14,6 @@ import jfxtras.scene.control.agenda.Agenda;
 import lt.markmerkk.IDataListener;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.entities.BasicLogStorage;
 import lt.markmerkk.entities.SimpleLog;
@@ -40,14 +38,14 @@ import java.util.ResourceBundle;
  */
 public class WeekPresenter implements Initializable, IPresenter, AgendaView {
   public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
-  @Inject BasicLogStorage storage;
+  @Inject
+  BasicLogStorage storage;
 
   @FXML VBox mainContainer;
   Agenda agenda;
 
   Agenda.AppointmentImplLocal[] appointments;
   UpdateListener updateListener;
-//  SimpleAsyncExecutor asyncExecutor;
 
   // fixme : VERY VERY WEIRD AND DIRTY IMPLEMENTATION OF SKIN WORKAROUND :/
   public static DateTime targetDate = null;
@@ -98,7 +96,7 @@ public class WeekPresenter implements Initializable, IPresenter, AgendaView {
 
   IDataListener<SimpleLog> storageListener = new IDataListener<SimpleLog>() {
     @Override
-    public void onDataChange(ObservableList<SimpleLog> data) {
+    public void onDataChange(@NotNull List<? extends SimpleLog> data) {
       targetDate = new DateTime(storage.getTargetDate());
       agendaPresenter.reloadView(storage.getData());
     }
