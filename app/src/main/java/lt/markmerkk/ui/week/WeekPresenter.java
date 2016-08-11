@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable, Destroyable, IPresenter, AgendaView {
+public class WeekPresenter implements Initializable, IPresenter, AgendaView {
   public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
   @Inject BasicLogStorage storage;
 
@@ -89,7 +89,6 @@ public class WeekPresenter implements Initializable, Destroyable, IPresenter, Ag
   }
 
   @PreDestroy
-  @Override
   public void destroy() {
     agendaPresenter.onDetatch();
     storage.unregister(storageListener);

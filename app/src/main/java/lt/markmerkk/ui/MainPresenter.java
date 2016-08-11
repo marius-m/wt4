@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
+import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.entities.BasicLogStorage;
@@ -75,8 +76,7 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    if (displayPresenter instanceof Destroyable)
-      ((Destroyable) displayPresenter).destroy();
+    InjectorNoDI.forget(displayPresenter);
     displayPresenter = null;
     switch (storage.getDisplayType()) {
       case DAY:

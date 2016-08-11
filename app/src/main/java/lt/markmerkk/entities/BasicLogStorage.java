@@ -40,10 +40,11 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     setTargetDate(LogFormatters.INSTANCE.getLongFormat().print(DateTime.now()));
   }
 
-  @PreDestroy
-  void destroy() {
-    listeners.clear();
-  }
+  // Simple components are not destroyed by DI!!
+//  @PreDestroy
+//  void destroy() {
+//    listeners.clear();
+//  }
 
   public void setTargetDate(String targetDate) {
     if (targetDate == null) return;
@@ -62,12 +63,12 @@ public class BasicLogStorage implements IDataStorage<SimpleLog> {
     } catch (IllegalArgumentException e) { }
   }
 
-  @Override public void register(IDataListener listener) {
+  @Override public void register(IDataListener<SimpleLog> listener) {
     if (listener == null) return;
     listeners.add(listener);
   }
 
-  @Override public void unregister(IDataListener listener) {
+  @Override public void unregister(IDataListener<SimpleLog> listener) {
     if (listener == null) return;
     listeners.remove(listener);
   }
