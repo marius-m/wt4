@@ -1,10 +1,11 @@
 package lt.markmerkk.entities;
 
-import java.util.ArrayList;
 import javafx.collections.ObservableList;
+import lt.markmerkk.IDataListener;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
-import lt.markmerkk.mvp.IDataListener;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;

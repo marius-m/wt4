@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.mvp.IDataStorage
+import lt.markmerkk.IDataStorage
 import net.rcarz.jiraclient.Issue
 import org.junit.Assert.*
 import org.junit.Test

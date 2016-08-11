@@ -15,7 +15,7 @@ import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.RowCountJob;
-import lt.markmerkk.mvp.UserSettings;
+import lt.markmerkk.UserSettings;
 import lt.markmerkk.utils.abs.SearchableComboBoxDecorator;
 import net.rcarz.jiraclient.Issue;
 import org.slf4j.Logger;

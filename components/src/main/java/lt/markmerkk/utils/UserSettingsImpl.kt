@@ -1,7 +1,7 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.Const
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy

@@ -4,16 +4,13 @@ import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
 import lt.markmerkk.entities.BasicIssueStorage
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.merger.*
 import lt.markmerkk.utils.*
-import net.rcarz.jiraclient.WorkLog
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**

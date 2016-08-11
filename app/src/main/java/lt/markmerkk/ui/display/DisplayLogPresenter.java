@@ -12,7 +12,6 @@ import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.entities.BasicLogStorage;
 import lt.markmerkk.listeners.IPresenter;
-import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.utils.LogDisplayController;

@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.mvp.IDataStorage
+import lt.markmerkk.IDataStorage
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

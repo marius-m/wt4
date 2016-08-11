@@ -1,7 +1,7 @@
 package lt.markmerkk.entities;
 
+import lt.markmerkk.IDataListener;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
-import lt.markmerkk.mvp.IDataListener;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

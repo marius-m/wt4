@@ -1,6 +1,6 @@
 package lt.markmerkk
 
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import lt.markmerkk.utils.LogFormatters
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraException

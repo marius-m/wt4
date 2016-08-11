@@ -7,13 +7,13 @@ import javafx.collections.ObservableList;
 
 import javax.annotation.PreDestroy;
 
+import lt.markmerkk.IDataListener;
+import lt.markmerkk.IDataStorage;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.InsertJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.UpdateJob;
-import lt.markmerkk.mvp.IDataListener;
-import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;

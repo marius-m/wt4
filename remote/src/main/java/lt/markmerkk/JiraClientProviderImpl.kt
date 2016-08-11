@@ -1,7 +1,7 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.JiraCreds
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.BasicCredentials
 import net.rcarz.jiraclient.JiraClient
 

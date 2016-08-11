@@ -11,7 +11,7 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPush
 import lt.markmerkk.merger.RemoteMergeToolsProvider
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import org.junit.Before
 import org.junit.Test
 import rx.Observable

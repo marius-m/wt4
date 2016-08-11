@@ -1,6 +1,5 @@
 package lt.markmerkk;
 
-import com.airhacks.afterburner.injection.Injector;
 import com.sun.javafx.application.HostServicesDelegate;
 import com.vinumeris.updatefx.AppDirectory;
 import com.vinumeris.updatefx.UpdateFX;
@@ -11,7 +10,6 @@ import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.utils.WorldEvents;
-import lt.markmerkk.mvp.UserSettings;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;

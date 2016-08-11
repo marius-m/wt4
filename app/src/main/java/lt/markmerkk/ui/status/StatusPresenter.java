@@ -15,12 +15,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
+import lt.markmerkk.IDataListener;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.entities.BasicLogStorage;
-import lt.markmerkk.mvp.IDataListener;
 import lt.markmerkk.ui.utils.DisplayType;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.hourglass.KeepAliveController;
@@ -63,19 +63,19 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
     syncController.addLoadingListener(this);
-    storage.register(loggerListener);
     total = storage.getTotal();
 
     updateStatus();
     onLoadChange(syncController.isLoading());
     keepAliveController.setListener(keepAliveListener);
     versionController.addListener(this);
+    storage.register(loggerListener);
   }
 
   @Override public void destroy() {
+    storage.unregister(loggerListener);
     versionController.removeListener(this);
     syncController.removeLoadingListener(this);
-    storage.unregister(loggerListener);
   }
 
   //endregion

@@ -8,7 +8,7 @@ import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPullImpl
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteMergeToolsProvider

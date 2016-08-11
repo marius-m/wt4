@@ -2,7 +2,7 @@ package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import org.junit.Assert.*
 import org.junit.Test
 

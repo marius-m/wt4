@@ -1,4 +1,4 @@
-package lt.markmerkk.mvp
+package lt.markmerkk
 
 import javafx.collections.ObservableList
 

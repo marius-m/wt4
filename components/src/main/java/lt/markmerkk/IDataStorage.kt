@@ -1,7 +1,7 @@
-package lt.markmerkk.mvp
+package lt.markmerkk
 
 import javafx.collections.ObservableList
-import lt.markmerkk.mvp.IDataListener
+import lt.markmerkk.IDataListener
 
 /**
  * Created by mariusmerkevicius on 12/13/15.

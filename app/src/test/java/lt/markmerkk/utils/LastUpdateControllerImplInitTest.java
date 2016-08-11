@@ -1,6 +1,6 @@
 package lt.markmerkk.utils;
 
-import lt.markmerkk.mvp.UserSettings;
+import lt.markmerkk.UserSettings;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

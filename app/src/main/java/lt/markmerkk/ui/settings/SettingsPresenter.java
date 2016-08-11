@@ -15,13 +15,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import lt.markmerkk.*;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.mvp.UserSettings;
+import lt.markmerkk.UserSettings;
 import lt.markmerkk.utils.*;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.apache.log4j.AppenderSkeleton;

@@ -8,8 +8,8 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteIssuePull
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteMergeToolsProvider
-import lt.markmerkk.mvp.IDataStorage
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.IDataStorage
+import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.Issue
 import org.junit.Before
 import org.junit.Test

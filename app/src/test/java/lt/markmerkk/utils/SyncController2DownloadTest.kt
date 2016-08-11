@@ -9,7 +9,7 @@ import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.BasicLogStorage
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteMergeToolsProvider
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.WorkLog
 import org.junit.Before
 import org.junit.Test

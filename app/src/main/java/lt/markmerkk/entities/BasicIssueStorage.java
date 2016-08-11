@@ -2,13 +2,13 @@ package lt.markmerkk.entities;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lt.markmerkk.IDataListener;
+import lt.markmerkk.IDataStorage;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.jobs.DeleteJob;
 import lt.markmerkk.entities.jobs.InsertJob;
 import lt.markmerkk.entities.jobs.QueryListJob;
 import lt.markmerkk.entities.jobs.UpdateJob;
-import lt.markmerkk.mvp.IDataListener;
-import lt.markmerkk.mvp.IDataStorage;
 import lt.markmerkk.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 

@@ -3,7 +3,7 @@ package lt.markmerkk.utils;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import lt.markmerkk.mvp.UserSettings;
+import lt.markmerkk.UserSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;

@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.whenever
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.JiraClient
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull

@@ -6,8 +6,8 @@ import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
-import lt.markmerkk.mvp.IDataStorage
-import lt.markmerkk.mvp.UserSettings
+import lt.markmerkk.IDataStorage
+import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
