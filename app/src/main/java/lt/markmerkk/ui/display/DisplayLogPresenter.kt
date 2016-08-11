@@ -42,7 +42,7 @@ class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> 
         SimpleTracker.getInstance().tracker.sendView(SimpleTracker.VIEW_DAY)
         logs.addAll(storage.data)
 
-        tableView?.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
+        tableView.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
         LogDisplayController(tableView, logs, object : TableDisplayController.Listener<SimpleLog> {
             override fun onUpdate(updateableObject: SimpleLog) {
                 updateListener?.onUpdate(updateableObject)
