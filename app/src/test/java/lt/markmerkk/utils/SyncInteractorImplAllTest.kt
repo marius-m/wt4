@@ -38,7 +38,6 @@ class SyncInteractorImplAllTest {
             logStorage = logStorage,
             issueStorage = issueStorage,
             remoteMergeToolsProvider = remoteToolsProvider,
-            lastUpdateController = lastUpdateController,
             dayProvider = dayProvider,
             uiScheduler = Schedulers.immediate()
     )

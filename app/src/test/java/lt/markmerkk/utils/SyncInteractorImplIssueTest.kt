@@ -29,7 +29,6 @@ class SyncInteractorImplIssueTest {
     val issueStorage: IDataStorage<LocalIssue> = mock()
     val remoteToolsProvider: RemoteMergeToolsProvider = mock()
     val remoteIssueMerge: RemoteIssuePull = mock()
-    val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
 
     val sync = SyncInteractorImpl(
@@ -38,7 +37,6 @@ class SyncInteractorImplIssueTest {
             logStorage = logStorage,
             issueStorage = issueStorage,
             remoteMergeToolsProvider = remoteToolsProvider,
-            lastUpdateController = lastUpdateController,
             dayProvider = dayProvider,
             uiScheduler = Schedulers.immediate()
     )

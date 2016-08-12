@@ -109,7 +109,6 @@ class SyncModule {
             settings: UserSettings,
             remoteMergeToolsProvider: RemoteMergeToolsProvider,
             dayProvider: DayProvider,
-            lastUpdateController: LastUpdateController,
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
             issueStorage: IssueStorage
@@ -120,7 +119,6 @@ class SyncModule {
                 issueStorage = issueStorage,
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
-                lastUpdateController = lastUpdateController,
                 dayProvider = dayProvider,
                 uiScheduler = JavaFxScheduler.getInstance()
         )

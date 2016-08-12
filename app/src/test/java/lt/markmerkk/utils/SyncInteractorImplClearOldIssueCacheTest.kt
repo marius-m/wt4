@@ -29,7 +29,6 @@ class SyncInteractorImplClearOldIssueCacheTest {
     val logStorage: IDataStorage<SimpleLog> = mock()
     val issueStorage: IDataStorage<LocalIssue> = mock()
     val remoteToolsProvider: RemoteMergeToolsProvider = mock()
-    val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
 
     val sync = SyncInteractorImpl(
@@ -38,7 +37,6 @@ class SyncInteractorImplClearOldIssueCacheTest {
             logStorage = logStorage,
             issueStorage = issueStorage,
             remoteMergeToolsProvider = remoteToolsProvider,
-            lastUpdateController = lastUpdateController,
             dayProvider = dayProvider,
             uiScheduler = Schedulers.immediate()
     )

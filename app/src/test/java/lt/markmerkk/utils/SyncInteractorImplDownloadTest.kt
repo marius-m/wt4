@@ -22,7 +22,6 @@ import rx.schedulers.Schedulers
  */
 class SyncInteractorImplDownloadTest {
     val settings: UserSettings = mock()
-    val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
@@ -40,7 +39,6 @@ class SyncInteractorImplDownloadTest {
             issueStorage = issueStorage,
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,
-            lastUpdateController = lastUpdateController,
             dayProvider = dayProvider,
             uiScheduler = Schedulers.immediate()
     )
