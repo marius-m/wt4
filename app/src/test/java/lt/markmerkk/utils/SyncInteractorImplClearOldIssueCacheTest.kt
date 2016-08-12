@@ -22,7 +22,7 @@ import rx.schedulers.Schedulers
  * *
  * @since 2016-08-11
  */
-class SyncControllerImplClearOldIssueCacheTest {
+class SyncInteractorImplClearOldIssueCacheTest {
 
     val jiraInteractor: JiraInteractor = mock()
     val userSettings: UserSettings = mock()
@@ -32,7 +32,7 @@ class SyncControllerImplClearOldIssueCacheTest {
     val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
 
-    val sync = SyncControllerImpl(
+    val sync = SyncInteractorImpl(
             jiraInteractor = jiraInteractor,
             userSettings = userSettings,
             logStorage = logStorage,

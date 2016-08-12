@@ -19,7 +19,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import lt.markmerkk.*;
-import lt.markmerkk.interactors.SyncController;
+import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.UserSettings;
 import lt.markmerkk.utils.*;
@@ -42,7 +42,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   @Inject
   UserSettings settings;
   @Inject
-  SyncController syncController;
+  SyncInteractor syncInteractor;
   @Inject AutoSync2 autoSync;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
@@ -83,13 +83,13 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
 
-    onLoadChange(syncController.isLoading());
-    syncController.addLoadingListener(this);
+    onLoadChange(syncInteractor.isLoading());
+    syncInteractor.addLoadingListener(this);
   }
 
   @PreDestroy
   public void destroy() {
-    syncController.removeLoadingListener(this);
+    syncInteractor.removeLoadingListener(this);
 
     Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
@@ -109,7 +109,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
     settings.setIssueJql(inputJQL.getText());
-    syncController.syncAll();
+    syncInteractor.syncAll();
   }
 
   /**

@@ -8,7 +8,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.UserSettings
-import lt.markmerkk.interactors.SyncController
+import lt.markmerkk.interactors.SyncInteractor
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
@@ -21,7 +21,7 @@ import javax.annotation.PreDestroy
 /**
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
-class SyncControllerImpl(
+class SyncInteractorImpl(
         private val jiraInteractor: JiraInteractor,
         private val userSettings: UserSettings,
         private val issueStorage: IDataStorage<LocalIssue>,
@@ -30,7 +30,7 @@ class SyncControllerImpl(
         private val lastUpdateController: LastUpdateController,
         private val dayProvider: DayProvider,
         private val uiScheduler: Scheduler
-) : SyncController {
+) : SyncInteractor {
 
     val remoteLoadListeners = mutableListOf<IRemoteLoadListener>()
     var subscription: Subscription? = null

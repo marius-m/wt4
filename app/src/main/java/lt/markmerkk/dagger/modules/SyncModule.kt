@@ -7,7 +7,7 @@ import lt.markmerkk.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.interactors.SyncController
+import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.merger.*
 import lt.markmerkk.utils.*
 import rx.schedulers.JavaFxScheduler
@@ -113,8 +113,8 @@ class SyncModule {
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
             issueStorage: IssueStorage
-    ): SyncController {
-        return SyncControllerImpl(
+    ): SyncInteractor {
+        return SyncInteractorImpl(
                 jiraInteractor = jiraInteractor,
                 logStorage = logStorage,
                 issueStorage = issueStorage,

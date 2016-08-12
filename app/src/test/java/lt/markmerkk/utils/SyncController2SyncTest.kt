@@ -29,7 +29,7 @@ class SyncController2SyncTest {
     val logStorage: IDataStorage<SimpleLog> = mock()
     val issueStorage: IDataStorage<LocalIssue> = mock()
 
-    val controller = SyncControllerImpl(
+    val controller = SyncInteractorImpl(
             jiraInteractor = jiraInteractor,
             logStorage = logStorage,
             issueStorage = issueStorage,

@@ -22,7 +22,7 @@ import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.interactors.KeepAliveInteractor;
-import lt.markmerkk.interactors.SyncController;
+import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.DisplayType;
@@ -46,7 +46,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   @Inject AutoSync2 autoSync;
   @Inject VersionController versionController;
   @Inject
-  SyncController syncController;
+  SyncInteractor syncInteractor;
   @Inject
   KeepAliveInteractor keepAliveInteractor;
 
@@ -69,11 +69,11 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     buttonToday.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_total")));
     buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
-    syncController.addLoadingListener(this);
+    syncInteractor.addLoadingListener(this);
     total = LogUtils.INSTANCE.formatShortDuration(storage.total());
 
     updateStatus();
-    onLoadChange(syncController.isLoading());
+    onLoadChange(syncInteractor.isLoading());
     versionController.addListener(this);
     storage.register(loggerListener);
     keepAliveInteractor.register(this);
@@ -84,7 +84,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
     versionController.removeListener(this);
-    syncController.removeLoadingListener(this);
+    syncInteractor.removeLoadingListener(this);
   }
 
   //endregion
@@ -95,7 +95,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
    * A button event when user clicks on refresh
    */
   public void onClickRefresh() {
-    syncController.syncLogs();
+    syncInteractor.syncLogs();
   }
 
   //endregion
@@ -198,8 +198,8 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   @Override
   public void update() {
-    if (!syncController.isLoading() && autoSync.isSyncNeeded())
-      syncController.syncLogs();
+    if (!syncInteractor.isLoading() && autoSync.isSyncNeeded())
+      syncInteractor.syncLogs();
     updateStatus();
   }
 

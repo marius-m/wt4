@@ -43,7 +43,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
   public static final Logger logger = LoggerFactory.getLogger(IssueSearchAdapter.class);
 
   UserSettings settings;
-//  SyncController syncController;
+//  SyncInteractor syncController;
   IExecutor dbExecutor;
   IssueSplit issueSplit = new IssueSplit();
 

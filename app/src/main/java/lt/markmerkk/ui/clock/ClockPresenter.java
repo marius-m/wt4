@@ -13,13 +13,12 @@ import javafx.util.StringConverter;
 import lt.markmerkk.*;
 import lt.markmerkk.entities.*;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
-import lt.markmerkk.interactors.SyncController;
+import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
-import lt.markmerkk.utils.SyncControllerImpl;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +48,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @Inject
   HourGlass hourGlass;
   @Inject
-  SyncController syncController;
+  SyncInteractor syncInteractor;
   @Inject
   LogStorage logStorage;
   @Inject
@@ -129,8 +128,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     updateUI();
 
     issueStorage.register(this);
-    onLoadChange(syncController.isLoading());
-    syncController.addLoadingListener(this);
+    onLoadChange(syncInteractor.isLoading());
+    syncInteractor.addLoadingListener(this);
   }
 
   @PreDestroy
@@ -148,7 +147,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       hourGlass.stop();
     }
     issueStorage.unregister(this);
-    syncController.removeLoadingListener(this);
+    syncInteractor.removeLoadingListener(this);
   }
 
   //region Keyboard input
@@ -177,7 +176,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   }
 
   public void onClickSearch() {
-    syncController.syncIssues();
+    syncInteractor.syncIssues();
   }
 
   public void onClickSettings() {

@@ -6,7 +6,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
  * @author mariusmerkevicius
  * @since 2016-08-12
  */
-interface SyncController {
+interface SyncInteractor {
     fun isLoading(): Boolean
 
     fun onAttach()
