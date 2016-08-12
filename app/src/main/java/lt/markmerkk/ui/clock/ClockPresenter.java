@@ -134,6 +134,18 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   @PreDestroy
   public void destroy() {
+    if (hourGlass.getState() == HourGlass.State.RUNNING) {
+      try {
+        SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
+                .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
+                .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
+                .setTask(inputTaskCombo.getEditor().getText())
+                .setComment(inputComment.getText() + "(abnormal app close)").build();
+        logStorage.insert(log);
+      } catch (IllegalArgumentException e) {
+      }
+      hourGlass.stop();
+    }
     issueStorage.unregister(this);
     syncController.removeLoadingListener(this);
   }
