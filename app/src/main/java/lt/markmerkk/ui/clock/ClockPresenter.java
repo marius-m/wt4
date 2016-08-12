@@ -107,9 +107,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             outputJQL
     );
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
-            .subscribe(phrase -> {
-              issueSearchPresenter.search(phrase);
-            });
+            .subscribe(phrase -> { issueSearchPresenter.search(phrase); });
+    inputTaskCombo.setItems(searchIssues);
 
 //    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
 //        .subscribe(newString -> {
@@ -407,12 +406,15 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   @Override
   public void showIssues(@NotNull List<? extends LocalIssue> result) {
-//    inputTaskCombo.setItems();
+    searchIssues.clear();
+    searchIssues.addAll(result);
+    inputTaskCombo.show();
   }
 
   @Override
   public void hideIssues() {
-
+    searchIssues.clear();
+    inputTaskCombo.hide();
   }
 
   //endregion
