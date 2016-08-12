@@ -20,7 +20,7 @@ class UserSettingsImplVersionTest {
     fun noInput_returnDefault() {
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.version
 
         assertEquals(-1, result)
@@ -31,7 +31,7 @@ class UserSettingsImplVersionTest {
         doReturn("1").whenever(coreSettings).get(UserSettingsImpl.VERSION)
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.version
 
         assertEquals(1, result)
@@ -43,7 +43,7 @@ class UserSettingsImplVersionTest {
         doReturn("malformed_value").whenever(coreSettings).get(UserSettingsImpl.VERSION)
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.version
 
         assertEquals(-1, result)

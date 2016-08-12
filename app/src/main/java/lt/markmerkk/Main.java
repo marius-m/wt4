@@ -11,7 +11,6 @@ import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.interactors.KeepAliveInteractor;
 import lt.markmerkk.interactors.SyncInteractor;
-import lt.markmerkk.utils.WorldEvents;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
@@ -81,7 +80,7 @@ public class Main extends Application {
     sComponent = DaggerAppComponent.create();
     sComponent.inject(this);
 
-    ((WorldEvents)settings).onStart();
+    settings.onAttach();
     keepAliveInteractor.onAttach();
     syncInteractor.onAttach();
 
@@ -107,7 +106,7 @@ public class Main extends Application {
   public void stop() throws Exception {
     syncInteractor.onDetach();
     keepAliveInteractor.onDetach();
-    ((WorldEvents)settings).onStop();
+    settings.onDetach();
     SimpleTracker.getInstance().getTracker().stop();
     InjectorNoDI.forgetAll();
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppenderDebug);

@@ -20,7 +20,7 @@ class UserSettingsImplPass2Test {
     fun noInput_returnEmpty() {
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.password
 
         assertEquals("", result)
@@ -31,7 +31,7 @@ class UserSettingsImplPass2Test {
         doReturn("valid_value").whenever(coreSettings).get(UserSettingsImpl.PASS)
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.password
 
         assertEquals("valid_value", result)

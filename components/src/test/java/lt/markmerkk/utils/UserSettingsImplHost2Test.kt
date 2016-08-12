@@ -20,7 +20,7 @@ class UserSettingsImplHost2Test {
     fun noInput_returnEmpty() {
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.host
 
         assertEquals("", result)
@@ -31,7 +31,7 @@ class UserSettingsImplHost2Test {
         doReturn("valid_value").whenever(coreSettings).get(UserSettingsImpl.HOST)
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.onStart()
+        settings.onAttach()
         val result = settings.host
 
         assertEquals("valid_value", result)

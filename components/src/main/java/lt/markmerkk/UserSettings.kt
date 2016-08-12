@@ -5,6 +5,9 @@ package lt.markmerkk
  * @since 2016-07-03
  */
 interface UserSettings {
+    fun onAttach()
+    fun onDetach()
+
     var issueJql: String
     var host: String
     var username: String

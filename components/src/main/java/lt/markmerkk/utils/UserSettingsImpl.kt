@@ -12,7 +12,33 @@ import javax.annotation.PreDestroy
  */
 class UserSettingsImpl(
         private val settings: HashSettings
-) : UserSettings, WorldEvents {
+) : UserSettings {
+    override fun onAttach() {
+        settings.load()
+        host = settings.get(HOST) ?: ""
+        username = settings.get(USER) ?: ""
+        password = settings.get(PASS) ?: ""
+        val versionString = settings.get(VERSION)
+        if (versionString != null) {
+            try {
+                version = Integer.parseInt(versionString)
+            } catch (e: NumberFormatException) {
+                version = -1
+            }
+        } else {
+            version = -1
+        }
+        issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
+    }
+
+    override fun onDetach() {
+        settings.set(HOST, host)
+        settings.set(USER, username)
+        settings.set(PASS, password)
+        settings.set(VERSION, version.toString())
+        settings.set(ISSUE_JQL, issueJql)
+        settings.save()
+    }
 
     override var host: String = ""
         set(value) {
@@ -54,37 +80,6 @@ class UserSettingsImpl(
 
     //endregion
 
-    //region World events
-
-    @PostConstruct
-    override fun onStart() {
-        settings.load()
-        host = settings.get(HOST) ?: ""
-        username = settings.get(USER) ?: ""
-        password = settings.get(PASS) ?: ""
-        val versionString = settings.get(VERSION)
-        if (versionString != null) {
-            try {
-                version = Integer.parseInt(versionString)
-            } catch (e: NumberFormatException) {
-                version = -1
-            }
-        } else {
-            version = -1
-        }
-        issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
-    }
-
-    @PreDestroy
-    override fun onStop() {
-        settings.set(HOST, host)
-        settings.set(USER, username)
-        settings.set(PASS, password)
-        settings.set(VERSION, version.toString())
-        settings.set(ISSUE_JQL, issueJql)
-        settings.save()
-    }
-
     companion object {
         val HOST = "HOST"
         val USER = "USER"
@@ -92,6 +87,4 @@ class UserSettingsImpl(
         val VERSION = "VERSION"
         val ISSUE_JQL = "ISSUE_JQL"
     }
-
-    //endregion
 }
