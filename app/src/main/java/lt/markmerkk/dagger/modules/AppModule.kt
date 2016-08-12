@@ -8,9 +8,13 @@ import lt.markmerkk.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.interactors.KeepAliveInteractor
+import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.hourglass.KeepAliveController
+import rx.schedulers.JavaFxScheduler
+import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
 /**
@@ -62,6 +66,15 @@ class AppModule {
     @Singleton
     fun provideKeepAliveController(): KeepAliveController {
         return KeepAliveController()
+    }
+
+    @Provides
+    @Singleton
+    fun provideKeepAliveInteractor(): KeepAliveInteractor {
+        return KeepAliveInteractorImpl(
+                uiSCheduler = JavaFxScheduler.getInstance(),
+                ioScheduler = Schedulers.computation()
+        )
     }
 
     @Provides

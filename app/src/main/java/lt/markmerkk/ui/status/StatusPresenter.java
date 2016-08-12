@@ -13,18 +13,20 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.AutoSync2;
 import lt.markmerkk.IDataListener;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.interactors.KeepAliveInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.DisplayType;
 import lt.markmerkk.utils.*;
-import lt.markmerkk.utils.hourglass.KeepAliveController;
-import org.joda.time.DateTime;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +34,20 @@ import org.slf4j.LoggerFactory;
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener,
-    VersionController.UpgradeListener {
+public class StatusPresenter implements Initializable, IRemoteLoadListener,
+    VersionController.UpgradeListener, KeepAliveInteractor.Listener {
   public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
 
   @Inject
   LogStorage storage;
   @Inject LastUpdateController lastUpdateController;
-  @Inject KeepAliveController keepAliveController;
+//  @Inject KeepAliveController keepAliveController;
   @Inject AutoSync2 autoSync;
   @Inject VersionController versionController;
   @Inject
   SyncController2 syncController;
+  @Inject
+  KeepAliveInteractor keepAliveInteractor;
 
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
@@ -69,12 +73,14 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
 
     updateStatus();
     onLoadChange(syncController.isLoading());
-    keepAliveController.setListener(keepAliveListener);
     versionController.addListener(this);
     storage.register(loggerListener);
+    keepAliveInteractor.register(this);
   }
 
-  @Override public void destroy() {
+  @PreDestroy
+  public void destroy() {
+    keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
     versionController.removeListener(this);
     syncController.removeLoadingListener(this);
@@ -143,9 +149,9 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     }
   };
 
-  IDataListener loggerListener = new IDataListener() {
+  IDataListener<SimpleLog> loggerListener = new IDataListener<SimpleLog>() {
     @Override
-    public void onDataChange(List data) {
+    public void onDataChange(@NotNull List<? extends SimpleLog> data) {
       total = LogUtils.INSTANCE.formatShortDuration(storage.total());
       updateStatus();
     }
@@ -163,15 +169,6 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     public void handle(MouseEvent event) {
       if (listener == null) return;
       listener.onAbout();
-    }
-  };
-
-  KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
-    @Override
-    public void onUpdate() {
-      if (!syncController.isLoading() && autoSync.isSyncNeeded())
-        syncController.syncLogs();
-      updateStatus();
     }
   };
 
@@ -195,6 +192,13 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
 
   @Override
   public void onError(String error) {
+    updateStatus();
+  }
+
+  @Override
+  public void update() {
+    if (!syncController.isLoading() && autoSync.isSyncNeeded())
+      syncController.syncLogs();
     updateStatus();
   }
 

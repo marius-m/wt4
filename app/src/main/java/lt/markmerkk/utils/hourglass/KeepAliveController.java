@@ -11,7 +11,9 @@ import lt.markmerkk.utils.hourglass.exceptions.TimeCalcError;
  * Created by mariusmerkevicius on 1/9/16.
  * A controller that ticks once per minute to update
  * some settings.
+ * @deprecated use {@link lt.markmerkk.mvp.KeepAliveMvp} instead
  */
+@Deprecated
 public class KeepAliveController {
   public static final int DEFAULT_TICK = 1000;
   public static final int MINUTE = DEFAULT_TICK * 60;

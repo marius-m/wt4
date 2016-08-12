@@ -40,10 +40,7 @@ class SyncController2(
             remoteLoadListeners.forEach { it.onLoadChange(value) }
         }
 
-    @PostConstruct // todo : replace with mvp attach/de methods
-    fun init() { }
-
-    @PreDestroy // todo : replace with mvp attach/de methods
+    // todo : replace with mvp attach/de methods
     fun destroy() {
         subscription?.unsubscribe()
     }

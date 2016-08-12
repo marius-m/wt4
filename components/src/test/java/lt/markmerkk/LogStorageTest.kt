@@ -19,6 +19,8 @@ class LogStorageTest {
     @Test
     fun insert_triggerExecutor() {
         // Arrange
+        reset(executor)
+
         // Act
         storage.insert(SimpleLog())
 
@@ -29,6 +31,8 @@ class LogStorageTest {
     @Test
     fun delete_triggerExecutor() {
         // Arrange
+        reset(executor)
+
         // Act
         storage.delete(SimpleLog())
 
@@ -39,6 +43,8 @@ class LogStorageTest {
     @Test
     fun update_triggerExecutor() {
         // Arrange
+        reset(executor)
+
         // Act
         storage.update(SimpleLog())
 
