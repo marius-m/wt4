@@ -12,7 +12,6 @@ import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
-import lt.markmerkk.utils.hourglass.KeepAliveController
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import javax.inject.Singleton
@@ -60,12 +59,6 @@ class AppModule {
     @Singleton
     fun provideHourGlass(): HourGlass {
         return HourGlass()
-    }
-
-    @Provides
-    @Singleton
-    fun provideKeepAliveController(): KeepAliveController {
-        return KeepAliveController()
     }
 
     @Provides
