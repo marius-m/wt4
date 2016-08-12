@@ -1,6 +1,7 @@
-package lt.markmerkk.utils
+package lt.markmerkk.interactors
 
 import com.nhaarman.mockito_kotlin.*
+import lt.markmerkk.DayProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.LocalIssue
@@ -10,6 +11,7 @@ import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.UserSettings
+import lt.markmerkk.interactors.SyncInteractorImpl
 import net.rcarz.jiraclient.Issue
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +31,6 @@ class SyncInteractorImplAllTest {
     val issueStorage: IDataStorage<LocalIssue> = mock()
     val remoteToolsProvider: RemoteMergeToolsProvider = mock()
     val remoteIssueMerge: RemoteIssuePull = mock()
-    val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
 
     val sync = SyncInteractorImpl(

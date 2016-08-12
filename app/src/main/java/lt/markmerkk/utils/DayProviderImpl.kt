@@ -1,5 +1,6 @@
 package lt.markmerkk.utils
 
+import lt.markmerkk.DayProvider
 import lt.markmerkk.LogStorage
 import lt.markmerkk.DisplayType
 import org.joda.time.DateTimeConstants

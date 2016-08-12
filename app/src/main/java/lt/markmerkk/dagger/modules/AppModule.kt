@@ -2,11 +2,7 @@ package lt.markmerkk.dagger.modules
 
 import dagger.Module
 import dagger.Provides
-import lt.markmerkk.AutoSync2
-import lt.markmerkk.DBProdExecutor
-import lt.markmerkk.IssueStorage
-import lt.markmerkk.UserSettings
-import lt.markmerkk.LogStorage
+import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl

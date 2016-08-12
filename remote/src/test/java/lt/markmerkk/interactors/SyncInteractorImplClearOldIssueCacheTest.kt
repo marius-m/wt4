@@ -1,6 +1,7 @@
-package lt.markmerkk.utils
+package lt.markmerkk.interactors
 
 import com.nhaarman.mockito_kotlin.*
+import lt.markmerkk.DayProvider
 import lt.markmerkk.JiraInteractor
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
@@ -8,6 +9,7 @@ import lt.markmerkk.merger.RemoteIssuePull
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.UserSettings
+import lt.markmerkk.interactors.SyncInteractorImpl
 import net.rcarz.jiraclient.Issue
 import org.junit.Assert.*
 import org.junit.Before

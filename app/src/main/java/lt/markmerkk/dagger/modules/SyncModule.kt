@@ -8,6 +8,7 @@ import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.SyncInteractor
+import lt.markmerkk.interactors.SyncInteractorImpl
 import lt.markmerkk.merger.*
 import lt.markmerkk.utils.*
 import rx.schedulers.JavaFxScheduler

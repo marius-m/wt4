@@ -1,4 +1,4 @@
-package lt.markmerkk.utils
+package lt.markmerkk
 
 /**
  * @author mariusmerkevicius

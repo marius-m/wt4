@@ -1,4 +1,4 @@
-package lt.markmerkk.utils
+package lt.markmerkk.interactors
 
 import lt.markmerkk.*
 import lt.markmerkk.entities.JiraWork
@@ -8,15 +8,13 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.UserSettings
-import lt.markmerkk.interactors.SyncInteractor
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
+import rx.util.async.Async
 
 /**
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
@@ -145,7 +143,7 @@ class SyncInteractorImpl(
                             localLog = it,
                             filter = filter
                     )
-                    rx.util.async.Async.fromCallable(pushMerger, uiScheduler)
+                    Async.fromCallable(pushMerger, uiScheduler)
                 }
                 .toList()
     }
@@ -158,7 +156,7 @@ class SyncInteractorImpl(
                             it,
                             filter
                     )
-                    rx.util.async.Async.fromCallable(pullMerger, uiScheduler)
+                    Async.fromCallable(pullMerger, uiScheduler)
                 }
                 .toList()
     }
