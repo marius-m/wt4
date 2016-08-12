@@ -10,6 +10,7 @@ import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.interactors.KeepAliveInteractor;
+import lt.markmerkk.interactors.SyncController;
 import lt.markmerkk.utils.WorldEvents;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
@@ -56,6 +57,8 @@ public class Main extends Application {
   public UserSettings settings;
   @Inject
   public KeepAliveInteractor keepAliveInteractor;
+  @Inject
+  SyncController syncController;
 
   public Main() { }
 
@@ -80,6 +83,7 @@ public class Main extends Application {
 
     ((WorldEvents)settings).onStart();
     keepAliveInteractor.onAttach();
+    syncController.onAttach();
 
     MainView mainView = new MainView(stage);
     Scene scene = new Scene(mainView.getView());
@@ -101,6 +105,7 @@ public class Main extends Application {
 
   @Override
   public void stop() throws Exception {
+    syncController.onDetach();
     keepAliveInteractor.onDetach();
     ((WorldEvents)settings).onStop();
     SimpleTracker.getInstance().getTracker().stop();
