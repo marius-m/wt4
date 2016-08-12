@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,9 +14,12 @@ import javafx.util.StringConverter;
 import lt.markmerkk.*;
 import lt.markmerkk.entities.*;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
+import lt.markmerkk.interactors.IssueSearchInteractorImpl;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.DisplayType;
+import lt.markmerkk.mvp.IssueSearchMvp;
+import lt.markmerkk.mvp.IssueSearchPresenterImpl;
 import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
@@ -26,6 +30,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.observables.JavaFxObservable;
+import rx.schedulers.JavaFxScheduler;
+import rx.schedulers.Schedulers;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -41,7 +47,7 @@ import java.util.ResourceBundle;
  * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
  * info.
  */
-public class ClockPresenter implements Initializable, IRemoteLoadListener, IDataListener<LocalIssue> {
+public class ClockPresenter implements Initializable, IRemoteLoadListener, IDataListener<LocalIssue>, IssueSearchMvp.View {
   public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
   public static final String BUTTON_LABEL_ENTER = "Enter";
 
@@ -51,8 +57,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   SyncInteractor syncInteractor;
   @Inject
   LogStorage logStorage;
-  @Inject
-  IssueStorage issueStorage;
   @Inject
   IExecutor dbProdExecutor;
   @Inject
@@ -82,12 +86,20 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @FXML ProgressIndicator taskLoadIndicator;
   @FXML ComboBox<LocalIssue> inputTaskCombo;
 
+  IssueSearchMvp.Presenter issueSearchPresenter;
+  ObservableList<LocalIssue> searchIssues = FXCollections.observableArrayList();
   IssueSearchAdapter issueSearchAdapter;
   Listener listener;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     Main.getComponent().presenterComponent().inject(this);
+    issueSearchPresenter = new IssueSearchPresenterImpl(
+            this,
+            new IssueSearchInteractorImpl(dbProdExecutor),
+            Schedulers.computation(),
+            JavaFxScheduler.getInstance()
+    );
     issueSearchAdapter = new IssueSearchAdapter(
             settings,
             inputTaskCombo,
@@ -95,15 +107,20 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             outputJQL
     );
     JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
-        .subscribe(newString -> {
-          if (newString != null && newString.length() <= 2)
-            inputTaskCombo.getSelectionModel().clearSelection();
-          if (Strings.isNullOrEmpty(newString))
-            inputTaskCombo.getSelectionModel().clearSelection();
-          boolean visible = inputTaskCombo.getSelectionModel().getSelectedItem() != null;
-          buttonOpen.setVisible(visible);
-          buttonOpen.setManaged(visible);
-        });
+            .subscribe(phrase -> {
+              issueSearchPresenter.search(phrase);
+            });
+
+//    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
+//        .subscribe(newString -> {
+//          if (newString != null && newString.length() <= 2)
+//            inputTaskCombo.getSelectionModel().clearSelection();
+//          if (Strings.isNullOrEmpty(newString))
+//            inputTaskCombo.getSelectionModel().clearSelection();
+//          boolean visible = inputTaskCombtSelectionModel().getSelectedItem() != null;
+//          buttonOpen.setVisible(visible);
+//          buttonOpen.setManaged(visible);
+//        });
 
     inputFrom.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_from")));
     inputTo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_to")));
@@ -127,13 +144,14 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     });
     updateUI();
 
-    issueStorage.register(this);
     onLoadChange(syncInteractor.isLoading());
     syncInteractor.addLoadingListener(this);
+    issueSearchPresenter.onAttach();
   }
 
   @PreDestroy
   public void destroy() {
+    issueSearchPresenter.onDetach();
     if (hourGlass.getState() == HourGlass.State.RUNNING) {
       try {
         SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
@@ -146,7 +164,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       }
       hourGlass.stop();
     }
-    issueStorage.unregister(this);
     syncInteractor.removeLoadingListener(this);
   }
 
@@ -384,7 +401,18 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   @Override
   public void onDataChange(@NotNull List<? extends LocalIssue> data) {
+    // fixme incorrect usage. Issues are filtered in this storage, will return false value
     issueSearchAdapter.setTotalIssues(data.size());
+  }
+
+  @Override
+  public void showIssues(@NotNull List<? extends LocalIssue> result) {
+//    inputTaskCombo.setItems();
+  }
+
+  @Override
+  public void hideIssues() {
+
   }
 
   //endregion

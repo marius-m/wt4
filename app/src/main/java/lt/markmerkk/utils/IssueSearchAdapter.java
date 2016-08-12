@@ -59,7 +59,7 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
     this.settings = settings;
     this.dbExecutor = executor;
     this.viewInfo = viewInfo;
-    registerSearchObservable(comboBox);
+//    registerSearchObservable(comboBox);
 
     setTotalIssues(refreshTotalCount());
   }
