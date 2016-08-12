@@ -20,7 +20,7 @@ import rx.schedulers.Schedulers
  * *
  * @since 2016-08-07
  */
-class SyncController2DownloadTest {
+class SyncControllerImplDownloadTest {
     val settings: UserSettings = mock()
     val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
@@ -34,7 +34,7 @@ class SyncController2DownloadTest {
 
     val validFilter: JiraFilter<WorkLog> = mock()
 
-    val controller = SyncController2(
+    val controller = SyncControllerImpl(
             jiraInteractor = jiraInteractor,
             logStorage = logStorage,
             issueStorage = issueStorage,

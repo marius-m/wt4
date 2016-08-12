@@ -22,6 +22,7 @@ import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.interactors.KeepAliveInteractor;
+import lt.markmerkk.interactors.SyncController;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.DisplayType;
@@ -45,7 +46,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   @Inject AutoSync2 autoSync;
   @Inject VersionController versionController;
   @Inject
-  SyncController2 syncController;
+  SyncController syncController;
   @Inject
   KeepAliveInteractor keepAliveInteractor;
 

@@ -8,6 +8,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.UserSettings
+import lt.markmerkk.interactors.SyncController
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
@@ -20,7 +21,7 @@ import javax.annotation.PreDestroy
 /**
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
-class SyncController2(
+class SyncControllerImpl(
         private val jiraInteractor: JiraInteractor,
         private val userSettings: UserSettings,
         private val issueStorage: IDataStorage<LocalIssue>,
@@ -29,24 +30,25 @@ class SyncController2(
         private val lastUpdateController: LastUpdateController,
         private val dayProvider: DayProvider,
         private val uiScheduler: Scheduler
-) {
+) : SyncController {
 
     val remoteLoadListeners = mutableListOf<IRemoteLoadListener>()
     var subscription: Subscription? = null
 
-    var isLoading = false
+    var loading = false
         set(value) {
             field = value
             remoteLoadListeners.forEach { it.onLoadChange(value) }
         }
 
-    // todo : replace with mvp attach/de methods
-    fun destroy() {
+    override fun onAttach() { }
+
+    override fun onDetach() {
         subscription?.unsubscribe()
     }
 
-    fun syncAll() {
-        if (isLoading) {
+    override fun syncAll() {
+        if (loading) {
             logger.info("Sync in progress")
             return
         }
@@ -62,8 +64,8 @@ class SyncController2(
                 .flatMap { downloadObservable(downloadValidator) }
                 .flatMap { issueCacheObservable(issueValidator, syncStart) }
                 .flatMap { clearOldIssueCacheObservable(syncStart) }
-                .doOnSubscribe { isLoading = true }
-                .doOnUnsubscribe { isLoading = false }
+                .doOnSubscribe { loading = true }
+                .doOnUnsubscribe { loading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
@@ -81,8 +83,8 @@ class SyncController2(
                 })
     }
 
-    fun syncLogs() {
-        if (isLoading) {
+    override fun syncLogs() {
+        if (loading) {
             logger.info("Sync in progress")
             return
         }
@@ -95,8 +97,8 @@ class SyncController2(
         val syncStart = System.currentTimeMillis()
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
-                .doOnSubscribe { isLoading = true }
-                .doOnUnsubscribe { isLoading = false }
+                .doOnSubscribe { loading = true }
+                .doOnUnsubscribe { loading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
@@ -110,8 +112,8 @@ class SyncController2(
                 })
     }
 
-    fun syncIssues() {
-        if (isLoading) {
+    override fun syncIssues() {
+        if (loading) {
             logger.info("Sync in progress")
             return
         }
@@ -119,8 +121,8 @@ class SyncController2(
         val filter = JiraFilterIssue()
         subscription = issueCacheObservable(filter, syncStart)
                 .flatMap { clearOldIssueCacheObservable(syncStart) }
-                .doOnSubscribe { isLoading = true }
-                .doOnUnsubscribe { isLoading = false }
+                .doOnSubscribe { loading = true }
+                .doOnUnsubscribe { loading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
@@ -184,19 +186,15 @@ class SyncController2(
 
     //endregion
 
-    //region Getters / Setters
-
-    fun addLoadingListener(listener: IRemoteLoadListener?) {
-        if (listener == null) return
+    override fun addLoadingListener(listener: IRemoteLoadListener) {
         remoteLoadListeners.add(listener)
     }
 
-    fun removeLoadingListener(listener: IRemoteLoadListener?) {
-        if (listener == null) return
+    override fun removeLoadingListener(listener: IRemoteLoadListener) {
         remoteLoadListeners.remove(listener)
     }
 
-    //endregion
+    override fun isLoading(): Boolean = loading
 
     companion object {
         private val logger = LoggerFactory.getLogger(JiraSearchSubscriberImpl::class.java)

@@ -17,7 +17,7 @@ import rx.schedulers.Schedulers
  * *
  * @since 2016-08-08
  */
-class SyncController2UploadTest {
+class SyncControllerImplUploadTest {
     val settings: UserSettings = mock()
     val lastUpdateController: LastUpdateController = mock()
     val dayProvider: DayProvider = mock()
@@ -30,7 +30,7 @@ class SyncController2UploadTest {
     val fakeWork = JiraWork()
     val validFilter: JiraFilter<SimpleLog> = mock()
 
-    val controller = SyncController2(
+    val controller = SyncControllerImpl(
             jiraInteractor = jiraInteractor,
             logStorage = logStorage,
             issueStorage = issueStorage,

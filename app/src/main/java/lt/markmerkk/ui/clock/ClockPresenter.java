@@ -13,12 +13,13 @@ import javafx.util.StringConverter;
 import lt.markmerkk.*;
 import lt.markmerkk.entities.*;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
+import lt.markmerkk.interactors.SyncController;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.DisplayType;
 import lt.markmerkk.utils.IssueSearchAdapter;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
-import lt.markmerkk.utils.SyncController2;
+import lt.markmerkk.utils.SyncControllerImpl;
 import lt.markmerkk.utils.hourglass.HourGlass;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @Inject
   HourGlass hourGlass;
   @Inject
-  SyncController2 syncController;
+  SyncController syncController;
   @Inject
   LogStorage logStorage;
   @Inject

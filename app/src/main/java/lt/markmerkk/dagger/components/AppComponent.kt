@@ -5,7 +5,7 @@ import javafx.application.Application
 import lt.markmerkk.Main
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.SyncModule
-import lt.markmerkk.utils.SyncController2
+import lt.markmerkk.utils.SyncControllerImpl
 import javax.inject.Provider
 import javax.inject.Singleton
 
