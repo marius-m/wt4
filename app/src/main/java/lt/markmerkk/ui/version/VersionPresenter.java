@@ -9,10 +9,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
+
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.listeners.Destroyable;
 import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.utils.VersionController;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by mariusmerkevicius on 12/14/15. Represents the presenter to update the log
  */
-public class VersionPresenter implements Initializable, Destroyable, VersionController.UpgradeListener {
+public class VersionPresenter implements Initializable, VersionController.UpgradeListener {
   Logger logger = LoggerFactory.getLogger(VersionPresenter.class);
 
   @Inject VersionController versionController;
@@ -44,7 +45,7 @@ public class VersionPresenter implements Initializable, Destroyable, VersionCont
     onSummaryUpdate(versionController.getSummary());
   }
 
-  @Override
+  @PreDestroy
   public void destroy() {
     versionController.removeListener(this);
   }

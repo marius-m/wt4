@@ -9,7 +9,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
 import lt.markmerkk.afterburner.InjectorNoDI;
-import lt.markmerkk.listeners.Destroyable;
 
 /**
  * Created by mariusmerkevicius on 1/6/16.

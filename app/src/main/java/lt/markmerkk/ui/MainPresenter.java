@@ -15,7 +15,6 @@ import javafx.stage.StageStyle;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
 import lt.markmerkk.afterburner.InjectorNoDI;
-import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
@@ -50,7 +49,7 @@ public class MainPresenter implements Initializable {
   @FXML BorderPane northPane;
   @FXML BorderPane southPane;
 
-  IPresenter displayPresenter;
+  FXMLView logsView;
 
   Stage stage;
   Stage dialog;
@@ -76,18 +75,20 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    InjectorNoDI.forget(displayPresenter);
-    displayPresenter = null;
+    if (logsView != null) {
+      InjectorNoDI.forget(logsView.getPresenter());
+    }
+    logsView = null;
     switch (storage.getDisplayType()) {
       case DAY:
         DisplayLogView simpleLogView = new DisplayLogView(updateListener);
         southPane.setCenter(simpleLogView.getView());
-        displayPresenter = (IPresenter) simpleLogView.getPresenter();
+        logsView = simpleLogView;
         break;
       case WEEK:
         WeekView weekView = new WeekView(updateListener);
         southPane.setCenter(weekView.getView());
-        displayPresenter = (IPresenter) weekView.getPresenter();
+        logsView = weekView;
         break;
     }
   }

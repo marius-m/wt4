@@ -7,12 +7,10 @@ import javafx.fxml.Initializable
 import javafx.scene.control.TableView
 import javafx.scene.control.Tooltip
 import lt.markmerkk.IDataListener
-import lt.markmerkk.IDataStorage
 import lt.markmerkk.Main
 import lt.markmerkk.Translation
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.listeners.IPresenter
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.utils.LogDisplayController
 import lt.markmerkk.utils.TableDisplayController
@@ -27,7 +25,7 @@ import java.util.ResourceBundle
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-class DisplayLogPresenter : Initializable, IPresenter, IDataListener<SimpleLog> {
+class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
     @Inject
     lateinit var storage: LogStorage
 

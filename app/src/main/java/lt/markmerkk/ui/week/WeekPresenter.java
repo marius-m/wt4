@@ -14,7 +14,6 @@ import jfxtras.scene.control.agenda.Agenda;
 import lt.markmerkk.IDataListener;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.listeners.IPresenter;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
@@ -36,7 +35,7 @@ import java.util.ResourceBundle;
  * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
-public class WeekPresenter implements Initializable, IPresenter, AgendaView {
+public class WeekPresenter implements Initializable, AgendaView {
   public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
   @Inject
   LogStorage storage;
