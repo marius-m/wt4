@@ -25,6 +25,7 @@ class SyncInteractorImplTest {
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
     val logStorage: IDataStorage<SimpleLog> = mock()
     val issueStorage: IDataStorage<LocalIssue> = mock()
+    val autoUpdateInteractor: AutoUpdateInteractor = mock()
 
     val controller = SyncInteractorImpl(
             jiraInteractor = jiraInteractor,
@@ -33,7 +34,8 @@ class SyncInteractorImplTest {
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,
             dayProvider = dayProvider,
-            uiScheduler = Schedulers.immediate()
+            uiScheduler = Schedulers.immediate(),
+            autoUpdateInteractor = autoUpdateInteractor
     )
 
     @Before

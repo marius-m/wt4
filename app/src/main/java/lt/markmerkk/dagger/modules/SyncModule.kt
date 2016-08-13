@@ -7,6 +7,8 @@ import lt.markmerkk.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.interactors.AutoUpdateInteractorImpl
+import lt.markmerkk.interactors.AutoUpdateInteractor
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interactors.SyncInteractorImpl
 import lt.markmerkk.merger.*
@@ -106,13 +108,24 @@ class SyncModule {
 
     @Provides
     @Singleton
+    fun providesAutoUpdateInteractor(
+            userSettings: UserSettings
+    ): AutoUpdateInteractor {
+        return AutoUpdateInteractorImpl(
+                userSettings = userSettings
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provicesSyncController(
             settings: UserSettings,
             remoteMergeToolsProvider: RemoteMergeToolsProvider,
             dayProvider: DayProvider,
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
-            issueStorage: IssueStorage
+            issueStorage: IssueStorage,
+            autoUpdateInteractor: AutoUpdateInteractor
     ): SyncInteractor {
         return SyncInteractorImpl(
                 jiraInteractor = jiraInteractor,
@@ -121,7 +134,8 @@ class SyncModule {
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
                 dayProvider = dayProvider,
-                uiScheduler = JavaFxScheduler.getInstance()
+                uiScheduler = JavaFxScheduler.getInstance(),
+                autoUpdateInteractor = autoUpdateInteractor
         )
     }
 

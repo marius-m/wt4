@@ -26,6 +26,7 @@ class SyncInteractorImpl(
         private val logStorage: IDataStorage<SimpleLog>,
         private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
         private val dayProvider: DayProvider,
+        private val autoUpdateInteractor: AutoUpdateInteractor,
         private val uiScheduler: Scheduler
 ) : SyncInteractor {
 

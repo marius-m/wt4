@@ -8,7 +8,7 @@ import lt.markmerkk.UserSettings
  */
 class AutoUpdateInteractorImpl(
         private val userSettings: UserSettings
-) : AutoupdateInteractor {
+) : AutoUpdateInteractor {
 
     override fun notifyUpdateComplete(lastUpdateMillis: Long) {
         userSettings.lastUpdate = lastUpdateMillis
