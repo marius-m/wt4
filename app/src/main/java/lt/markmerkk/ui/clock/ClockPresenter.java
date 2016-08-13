@@ -21,7 +21,7 @@ import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.mvp.IssueSearchMvp;
 import lt.markmerkk.mvp.IssueSearchPresenterImpl;
-import lt.markmerkk.utils.IssueSearchAdapter;
+import lt.markmerkk.utils.IssueSplit;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
 import lt.markmerkk.utils.hourglass.HourGlass;
@@ -85,8 +85,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @FXML ComboBox<LocalIssue> inputTaskCombo;
 
   IssueSearchMvp.Presenter issueSearchPresenter;
+  IssueSplit issueSplit = new IssueSplit();
   ObservableList<LocalIssue> searchIssues = FXCollections.observableArrayList();
-  IssueSearchAdapter issueSearchAdapter;
   Listener listener;
 
   @Override
@@ -98,12 +98,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             Schedulers.computation(),
             JavaFxScheduler.getInstance()
     );
-//    issueSearchAdapter = new IssueSearchAdapter(
-//            settings,
-//            inputTaskCombo,
-//            dbProdExecutor,
-//            outputJQL
-//    );
     inputTaskCombo.setOnKeyReleased(event -> {
       switch (event.getCode()) {
         case ENTER:
@@ -157,7 +151,9 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
         SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
                 .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
                 .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
-                .setTask("") // fixme - provide proper issue id
+                .setTask(
+                        issueSplit.split(inputTaskCombo.getEditor().getText()).get(IssueSplit.Companion.getKEY_KEY())
+                )
                 .setComment(inputComment.getText() + "(abnormal app close)").build();
         logStorage.insert(log);
       } catch (IllegalArgumentException e) {
@@ -232,7 +228,9 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
           .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
-          .setTask("")// fixme provide proper issue id
+          .setTask(
+                  issueSplit.split(inputTaskCombo.getEditor().getText()).get(IssueSplit.Companion.getKEY_KEY())
+          )
           .setComment(inputComment.getText()).build();
       logStorage.insert(log);
 
