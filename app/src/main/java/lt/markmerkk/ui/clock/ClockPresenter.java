@@ -12,12 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import lt.markmerkk.*;
-import lt.markmerkk.entities.*;
+import lt.markmerkk.entities.LocalIssue;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.interactors.IssueSearchInteractorImpl;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.DisplayType;
 import lt.markmerkk.mvp.IssueSearchMvp;
 import lt.markmerkk.mvp.IssueSearchPresenterImpl;
 import lt.markmerkk.utils.IssueSearchAdapter;
@@ -29,14 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.observables.JavaFxObservable;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -106,21 +104,22 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             dbProdExecutor,
             outputJQL
     );
-    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
-            .subscribe(phrase -> { issueSearchPresenter.search(phrase); });
+    inputTaskCombo.setOnKeyReleased(event -> {
+      switch (event.getCode()) {
+        case ENTER:
+          break;
+        case DOWN:
+        case UP:
+          inputTaskCombo.show();
+          break;
+        default:
+          String typedText = event.getText().replaceAll("\r", "");
+          if (!Strings.isNullOrEmpty(typedText)) {
+            issueSearchPresenter.search(inputTaskCombo.getEditor().getText());
+          }
+      }
+    });
     inputTaskCombo.setItems(searchIssues);
-
-//    JavaFxObservable.fromObservableValue(inputTaskCombo.getEditor().textProperty())
-//        .subscribe(newString -> {
-//          if (newString != null && newString.length() <= 2)
-//            inputTaskCombo.getSelectionModel().clearSelection();
-//          if (Strings.isNullOrEmpty(newString))
-//            inputTaskCombo.getSelectionModel().clearSelection();
-//          boolean visible = inputTaskCombtSelectionModel().getSelectedItem() != null;
-//          buttonOpen.setVisible(visible);
-//          buttonOpen.setManaged(visible);
-//        });
-
     inputFrom.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_from")));
     inputTo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_to")));
     inputTaskCombo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_search_combo")));
@@ -156,7 +155,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
         SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
                 .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
                 .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
-                .setTask(inputTaskCombo.getEditor().getText())
+                .setTask("") // fixme - provide proper issue id
                 .setComment(inputComment.getText() + "(abnormal app close)").build();
         logStorage.insert(log);
       } catch (IllegalArgumentException e) {
@@ -180,15 +179,15 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   }
 
   public void onClickOpen() {
-    if (inputTaskCombo.getSelectionModel().getSelectedItem() == null) return;
-    if (Strings.isNullOrEmpty(settings.getHost())) return;
-    URI issuePath = null;
-    try {
-      issuePath = new URI(settings.getHost()+"/browse/"+inputTaskCombo.getSelectionModel().getSelectedItem().getKey());
-      Main.hostServices.showDocument(issuePath.toString());
-    } catch (URISyntaxException e) {
-      logger.error("Cant open issue! ", e);
-    }
+//    if (inputTaskCombo.getSelectionModel().getSelectedItem() == null) return;
+//    if (Strings.isNullOrEmpty(settings.getHost())) return;
+//    URI issuePath = null;
+//    try {
+//      issuePath = new URI(settings.getHost()+"/browse/"+inputTaskCombo.getSelectionModel().getSelectedItem().getKey());
+//      Main.hostServices.showDocument(issuePath.toString());
+//    } catch (URISyntaxException e) {
+//      logger.error("Cant open issue! ", e);
+//    }
   }
 
   public void onClickSearch() {
@@ -231,7 +230,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       SimpleLog log = new SimpleLogBuilder(DateTime.now().getMillis())
           .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
           .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
-          .setTask(inputTaskCombo.getEditor().getText())
+          .setTask("")// fixme provide proper issue id
           .setComment(inputComment.getText()).build();
       logStorage.insert(log);
 
@@ -406,7 +405,13 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   @Override
   public void showIssues(@NotNull List<? extends LocalIssue> result) {
-    searchIssues.clear();
+    if (inputTaskCombo.getSelectionModel() != null
+            && inputTaskCombo.getSelectionModel().getSelectedItem() != null) {
+      LocalIssue selectIssue = inputTaskCombo.getSelectionModel().getSelectedItem();
+      searchIssues.removeIf(localIssue -> localIssue != selectIssue);
+    } else {
+      searchIssues.clear();
+    }
     searchIssues.addAll(result);
     inputTaskCombo.show();
   }

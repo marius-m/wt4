@@ -44,7 +44,6 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   UserSettings settings;
   IExecutor dbExecutor;
-  IssueSplit issueSplit = new IssueSplit();
 
   Text viewInfo; // Will hold some minor info below the search adapter
 
@@ -68,16 +67,16 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
 
   @Override
   protected void onKeyEvent(KeyEvent keyEvent) {
-    switch (keyEvent.getCode()) {
-      case ENTER:
-        keyEvent.consume();
-        break;
-      case DOWN:
-      case UP:
-        comboBox.show();
-        keyEvent.consume();
-        break;
-    }
+//    switch (keyEvent.getCode()) {
+//      case ENTER:
+//        keyEvent.consume();
+//        break;
+//      case DOWN:
+//      case UP:
+//        comboBox.show();
+//        keyEvent.consume();
+//        break;
+//    }
 
   }
 
@@ -123,65 +122,65 @@ public class IssueSearchAdapter extends SearchableComboBoxDecorator<LocalIssue> 
     return issueCount.result();
   }
 
-  /**
-   * Changes data on the combo box on the JavaFX thread
-   */
-  void notifyDateChange(ObservableList<LocalIssue> issues) {
-    Observable.just(issues)
-        .subscribeOn(JavaFxScheduler.getInstance())
-        .subscribe(localIssues -> {
-          comboBox.setItems(localIssues);
-          if (issues.size() > 0)
-            comboBox.show();
-          else
-            comboBox.hide();
-        });
-  }
-
+//  /**
+//   * Changes data on the combo box on the JavaFX thread
+//   */
+//  void notifyDateChange(ObservableList<LocalIssue> issues) {
+//    Observable.just(issues)
+//        .subscribeOn(JavaFxScheduler.getInstance())
+//        .subscribe(localIssues -> {
+//          comboBox.setItems(localIssues);
+//          if (issues.size() > 0)
+//            comboBox.show();
+//          else
+//            comboBox.hide();
+//        });
+//  }
+//
   //endregion
 
   //region Listeners
 
-  /**
-   * Registers a search observable that queries local database for results
-   * @param comboBox
-   */
-  // todo : convert to mvp
-  void registerSearchObservable(ComboBox<LocalIssue> comboBox) { // todo : needs refactor
-    JavaFxObservable.fromObservableValue(comboBox.getEditor().textProperty())
-        .filter(phrase -> (comboBox.getSelectionModel().getSelectedItem() == null))
-        .filter(phrase -> !Strings.isNullOrEmpty(phrase))
-        .debounce(200, TimeUnit.MILLISECONDS)
-        .flatMap(phrase -> {
-          return Observable.create(new Observable.OnSubscribe<List<LocalIssue>>() {
-            @Override
-            public void call(Subscriber<? super List<LocalIssue>> subscriber) {
-              try {
-                Map<String, String> out = issueSplit.split(phrase);
-                QueryListJob<LocalIssue> queryListJob =
-                    new QueryListJob<LocalIssue>(LocalIssue.class,
-                        () -> String.format("(%s like '%%%s%%' OR %s like '%%%s%%') ORDER BY %s DESC",
-                            LocalIssue.KEY_DESCRIPTION, out.get(IssueSplit.Companion.getDESCRIPTION_KEY()),
-                            LocalIssue.KEY_KEY, out.get(IssueSplit.Companion.getKEY_KEY()),
-                            LocalIssue.KEY_CREATE_DATE)
-                    );
-                dbExecutor.executeOrThrow(queryListJob);
-                subscriber.onNext(queryListJob.result());
-                subscriber.onCompleted();
-              } catch (ClassNotFoundException e) {
-                subscriber.onError(e);
-              } catch (SQLException e) {
-                subscriber.onError(e);
-              }
-            }
-          });
-        })
-        .subscribe(localIssues -> {
-          notifyDateChange(FXCollections.observableArrayList(localIssues));
-        }, error -> {
-          System.out.println("Error:  " + error);
-        });
-  }
+//  /**
+//   * Registers a search observable that queries local database for results
+//   * @param comboBox
+//   */
+//  // todo : convert to mvp
+//  void registerSearchObservable(ComboBox<LocalIssue> comboBox) { // todo : needs refactor
+//    JavaFxObservable.fromObservableValue(comboBox.getEditor().textProperty())
+//        .filter(phrase -> (comboBox.getSelectionModel().getSelectedItem() == null))
+//        .filter(phrase -> !Strings.isNullOrEmpty(phrase))
+//        .debounce(200, TimeUnit.MILLISECONDS)
+//        .flatMap(phrase -> {
+//          return Observable.create(new Observable.OnSubscribe<List<LocalIssue>>() {
+//            @Override
+//            public void call(Subscriber<? super List<LocalIssue>> subscriber) {
+//              try {
+//                Map<String, String> out = issueSplit.split(phrase);
+//                QueryListJob<LocalIssue> queryListJob =
+//                    new QueryListJob<LocalIssue>(LocalIssue.class,
+//                        () -> String.format("(%s like '%%%s%%' OR %s like '%%%s%%') ORDER BY %s DESC",
+//                            LocalIssue.KEY_DESCRIPTION, out.get(IssueSplit.Companion.getDESCRIPTION_KEY()),
+//                            LocalIssue.KEY_KEY, out.get(IssueSplit.Companion.getKEY_KEY()),
+//                            LocalIssue.KEY_CREATE_DATE)
+//                    );
+//                dbExecutor.executeOrThrow(queryListJob);
+//                subscriber.onNext(queryListJob.result());
+//                subscriber.onCompleted();
+//              } catch (ClassNotFoundException e) {
+//                subscriber.onError(e);
+//              } catch (SQLException e) {
+//                subscriber.onError(e);
+//              }
+//            }
+//          });
+//        })
+//        .subscribe(localIssues -> {
+//          notifyDateChange(FXCollections.observableArrayList(localIssues));
+//        }, error -> {
+//          System.out.println("Error:  " + error);
+//        });
+//  }
 
   //endregion
 
