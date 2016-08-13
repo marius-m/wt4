@@ -110,6 +110,10 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     settings.setPassword(inputPassword.getText());
     settings.setIssueJql(inputJQL.getText());
     syncInteractor.syncAll();
+    SimpleTracker.getInstance().getTracker().sendEvent(
+            SimpleTracker.CATEGORY_BUTTON,
+            SimpleTracker.ACTION_SYNC_SETTINGS
+    );
   }
 
   /**

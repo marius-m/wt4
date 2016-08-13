@@ -27,6 +27,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.DisplayType;
 import lt.markmerkk.utils.*;
+import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,10 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
    */
   public void onClickRefresh() {
     syncInteractor.syncLogs();
+    SimpleTracker.getInstance().getTracker().sendEvent(
+            SimpleTracker.CATEGORY_BUTTON,
+            SimpleTracker.ACTION_SYNC_MAIN
+    );
   }
 
   //endregion

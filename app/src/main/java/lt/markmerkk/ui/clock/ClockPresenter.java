@@ -190,6 +190,10 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   public void onClickSearch() {
     syncInteractor.syncIssues();
+    SimpleTracker.getInstance().getTracker().sendEvent(
+            SimpleTracker.CATEGORY_BUTTON,
+            SimpleTracker.ACTION_SEARCH_REFRESH
+    );
   }
 
   public void onClickSettings() {
@@ -241,8 +245,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       inputFrom.requestFocus();
       inputComment.requestFocus();
       SimpleTracker.getInstance().getTracker().sendEvent(
-          SimpleTracker.CATEGORY_BUTTON,
-          (logStorage.getDisplayType() == DisplayType.DAY) ? SimpleTracker.ACTION_ENTER_FROM_DAY : SimpleTracker.ACTION_ENTER_FROM_WEEK
+              SimpleTracker.CATEGORY_BUTTON,
+              SimpleTracker.ACTION_ENTER
       );
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
