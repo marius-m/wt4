@@ -1,6 +1,7 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.UserSettings
+import org.slf4j.LoggerFactory
 
 /**
  * @author mariusmerkevicius
@@ -15,12 +16,24 @@ class AutoUpdateInteractorImpl(
     }
 
     override fun isAutoUpdateTimeoutHit(now: Long): Boolean {
-        if (userSettings.autoUpdateMinutes == -1) return false // no update
-        if (userSettings.lastUpdate < 0) return true // never updated
+        logger.debug("Check if update is necessary...")
+        if (userSettings.autoUpdateMinutes == -1) {
+            logger.debug("Auto update disabled")
+            return false
+        }
+        if (userSettings.lastUpdate < 0) {
+            logger.debug("Update was never done, executing...")
+            return true
+        }
 
         val timeout = userSettings.autoUpdateMinutes * 1000 * 60
         val updateGap = now - userSettings.lastUpdate
+        logger.debug("Timeout set to ${userSettings.autoUpdateMinutes}")
         return updateGap >= timeout
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(AutoUpdateInteractorImpl::class.java)!!
     }
 
 }
