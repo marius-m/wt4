@@ -9,10 +9,7 @@ import javafx.stage.Stage;
 import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
-import lt.markmerkk.interactors.KeepAliveGASession;
-import lt.markmerkk.interactors.KeepAliveGASessionImpl;
-import lt.markmerkk.interactors.KeepAliveInteractor;
-import lt.markmerkk.interactors.SyncInteractor;
+import lt.markmerkk.interactors.*;
 import lt.markmerkk.ui.MainView;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
@@ -32,7 +29,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 
-public class Main extends Application {
+public class Main extends Application implements KeepAliveInteractor.Listener {
   public static final String LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n";
   public static final String LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n";
 //  public static boolean DEBUG = true;
@@ -63,6 +60,8 @@ public class Main extends Application {
   public KeepAliveInteractor keepAliveInteractor;
   @Inject
   public SyncInteractor syncInteractor;
+  @Inject
+  public AutoUpdateInteractor autoUpdateInteractor;
 
   public KeepAliveGASession keepAliveGASession;
 
@@ -89,6 +88,7 @@ public class Main extends Application {
 
     settings.onAttach();
     keepAliveInteractor.onAttach();
+    keepAliveInteractor.register(this);
     syncInteractor.onAttach();
 
     MainView mainView = new MainView(stage);
@@ -119,6 +119,7 @@ public class Main extends Application {
   public void stop() throws Exception {
     keepAliveGASession.onDetach();
     syncInteractor.onDetach();
+    keepAliveInteractor.unregister(this);
     keepAliveInteractor.onDetach();
     settings.onDetach();
     SimpleTracker.getInstance().getTracker().stop();
@@ -202,6 +203,13 @@ public class Main extends Application {
     VERSION_NAME = versionProperties.getProperty("version_name");
     GA_KEY = versionProperties.getProperty("ga");
     logger.info("Running version %s with version code %d", VERSION_NAME, VERSION_CODE);
+  }
+
+  @Override
+  public void update() {
+    if (autoUpdateInteractor.isAutoUpdateTimeoutHit(System.currentTimeMillis())) {
+      syncInteractor.syncAll();
+    }
   }
 
   //endregion

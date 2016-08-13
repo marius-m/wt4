@@ -118,7 +118,7 @@ class SyncModule {
 
     @Provides
     @Singleton
-    fun provicesSyncController(
+    fun providesSyncInteractor(
             settings: UserSettings,
             remoteMergeToolsProvider: RemoteMergeToolsProvider,
             dayProvider: DayProvider,

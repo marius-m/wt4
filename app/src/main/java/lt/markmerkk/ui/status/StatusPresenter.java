@@ -203,8 +203,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   @Override
   public void update() {
-    if (!syncInteractor.isLoading() && autoSync.isSyncNeeded())
-      syncInteractor.syncLogs();
     updateStatus();
   }
 

@@ -75,9 +75,11 @@ class SyncInteractorImpl(
                     remoteLoadListeners.forEach { it.onError(errorMsg) }
                     logStorage.notifyDataChange()
                     issueStorage.notifyDataChange()
+                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 }, {
                     logStorage.notifyDataChange()
                     issueStorage.notifyDataChange()
+                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })
     }
 
@@ -105,8 +107,10 @@ class SyncInteractorImpl(
                     logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
                     logger.error("Log sync error data: ", it)
                     logStorage.notifyDataChange()
+                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 }, {
                     logStorage.notifyDataChange()
+                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })
     }
 
