@@ -25,6 +25,8 @@ class AutoUpdateInteractorImplOneMinuteTest {
     @Test
     fun neverUpdated_triggerUpdate() {
         // Arrange
+        whenever(settings.lastUpdate).thenReturn(-1)
+
         // Act
         val result = interactor.isAutoUpdateTimeoutHit(1000L)
 

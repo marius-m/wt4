@@ -10,18 +10,16 @@ class AutoUpdateInteractorImpl(
         private val userSettings: UserSettings
 ) : AutoupdateInteractor {
 
-    var lastUpdateMillis = -1L
-
     override fun notifyUpdateComplete(lastUpdateMillis: Long) {
-        this.lastUpdateMillis = lastUpdateMillis
+        userSettings.lastUpdate = lastUpdateMillis
     }
 
     override fun isAutoUpdateTimeoutHit(now: Long): Boolean {
         if (userSettings.autoUpdateMinutes == -1) return false // no update
-        if (lastUpdateMillis < 0) return true // never updated
+        if (userSettings.lastUpdate < 0) return true // never updated
 
         val timeout = userSettings.autoUpdateMinutes * 1000 * 60
-        val updateGap = now - lastUpdateMillis
+        val updateGap = now - userSettings.lastUpdate
         return updateGap >= timeout
     }
 
