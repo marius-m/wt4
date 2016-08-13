@@ -39,6 +39,16 @@ class UserSettingsImpl(
         } else {
             autoUpdateMinutes = -1
         }
+        val lastUpdateString = settings.get(LAST_UPDATE)
+        if (lastUpdateString != null) {
+            try {
+                lastUpdate = lastUpdateString.toLong()
+            } catch (e: NumberFormatException) {
+                lastUpdate = -1
+            }
+        } else {
+            lastUpdate = -1
+        }
         issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
     }
 
@@ -49,6 +59,7 @@ class UserSettingsImpl(
         settings.set(VERSION, version.toString())
         settings.set(ISSUE_JQL, issueJql)
         settings.set(AUTOUPDATE_TIMEOUT, autoUpdateMinutes.toString())
+        settings.set(LAST_UPDATE, lastUpdate.toString())
         settings.save()
     }
 
@@ -85,6 +96,12 @@ class UserSettingsImpl(
             settings.save()
         }
 
+    override var lastUpdate: Long = -1
+        set(value) {
+            field = value
+            settings.save()
+        }
+
     //region Getters / Setters
 
     override fun setCustom(key: String, value: String) {
@@ -105,5 +122,6 @@ class UserSettingsImpl(
         val VERSION = "VERSION"
         val ISSUE_JQL = "ISSUE_JQL"
         val AUTOUPDATE_TIMEOUT = "AUTOUPDATE_TIMEOUT"
+        val LAST_UPDATE = "LAST_UPDATE"
     }
 }
