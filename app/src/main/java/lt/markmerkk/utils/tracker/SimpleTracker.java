@@ -2,8 +2,6 @@ package lt.markmerkk.utils.tracker;
 
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import lt.markmerkk.Const;
-import lt.markmerkk.Main;
-import lt.markmerkk.utils.tracker.interfaces.ITracker;
 
 /**
  * Created by mariusmerkevicius on 3/11/16.

@@ -26,7 +26,7 @@ class IssueStorageTest {
         storage.insert(LocalIssue())
 
         // Assert
-        verify(executor, times(2)).execute(any()) // insert/notify
+        verify(executor, times(1)).execute(any())
     }
 
     @Test
@@ -36,7 +36,7 @@ class IssueStorageTest {
         storage.delete(LocalIssue())
 
         // Assert
-        verify(executor, times(2)).execute(any()) // insert/notify
+        verify(executor, times(1)).execute(any())
     }
 
     @Test
@@ -46,7 +46,7 @@ class IssueStorageTest {
         storage.update(LocalIssue())
 
         // Assert
-        verify(executor, times(2)).execute(any()) // insert/notify
+        verify(executor, times(1)).execute(any())
     }
 
     @Test

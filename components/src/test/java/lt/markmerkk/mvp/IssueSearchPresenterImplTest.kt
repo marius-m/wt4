@@ -30,6 +30,7 @@ class IssueSearchPresenterImplTest {
 
     @Before
     fun setUp() {
+        whenever(interactor.issueCount()).thenReturn(Observable.just(5))
         presenter.onAttach()
     }
 

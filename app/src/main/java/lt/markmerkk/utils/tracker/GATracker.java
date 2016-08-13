@@ -3,10 +3,8 @@ package lt.markmerkk.utils.tracker;
 import com.brsanthu.googleanalytics.AppViewHit;
 import com.brsanthu.googleanalytics.EventHit;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
-import com.brsanthu.googleanalytics.PageViewHit;
 import com.google.common.base.Strings;
 import lt.markmerkk.Main;
-import lt.markmerkk.utils.tracker.interfaces.ITracker;
 
 /**
  * Created by mariusmerkevicius on 3/11/16.
