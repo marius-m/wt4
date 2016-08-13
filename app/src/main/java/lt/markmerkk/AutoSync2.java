@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
  * This class does not have its own executor, and will use only calculation to
  * determine when to trigger {@link WorkExecutor}
  */
+@Deprecated
 public class AutoSync2 {
   public static final String SETTINGS_UPDATE = "SETTINGS_UPDATE";
 

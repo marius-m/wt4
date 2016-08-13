@@ -13,6 +13,7 @@ import javax.annotation.PreDestroy
 class UserSettingsImpl(
         private val settings: HashSettings
 ) : UserSettings {
+
     override fun onAttach() {
         settings.load()
         host = settings.get(HOST) ?: ""
@@ -28,6 +29,16 @@ class UserSettingsImpl(
         } else {
             version = -1
         }
+        val autoUpdateString = settings.get(AUTOUPDATE_TIMEOUT)
+        if (autoUpdateString != null) {
+            try {
+                autoUpdateTimeout = Integer.parseInt(autoUpdateString)
+            } catch (e: NumberFormatException) {
+                autoUpdateTimeout = -1
+            }
+        } else {
+            autoUpdateTimeout = -1
+        }
         issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
     }
 
@@ -37,6 +48,7 @@ class UserSettingsImpl(
         settings.set(PASS, password)
         settings.set(VERSION, version.toString())
         settings.set(ISSUE_JQL, issueJql)
+        settings.set(AUTOUPDATE_TIMEOUT, autoUpdateTimeout.toString())
         settings.save()
     }
 
@@ -67,6 +79,12 @@ class UserSettingsImpl(
             settings.save()
         }
 
+    override var autoUpdateTimeout: Int = -1
+        set(value) {
+            field = value
+            settings.save()
+        }
+
     //region Getters / Setters
 
     override fun setCustom(key: String, value: String) {
@@ -86,5 +104,6 @@ class UserSettingsImpl(
         val PASS = "PASS"
         val VERSION = "VERSION"
         val ISSUE_JQL = "ISSUE_JQL"
+        val AUTOUPDATE_TIMEOUT = "AUTOUPDATE_TIMEOUT"
     }
 }

@@ -10,9 +10,9 @@ import org.junit.Test
 /**
  * @author mariusmerkevicius
  * *
- * @since 2016-08-07
+ * @since 2016-08-13
  */
-class UserSettingsImplVersionTest {
+class UserSettingsImplAutoupdateTest {
 
     val coreSettings: HashSettings = mock()
 
@@ -21,18 +21,18 @@ class UserSettingsImplVersionTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.onAttach()
-        val result = settings.version
+        val result = settings.autoUpdateTimeout
 
         assertEquals(-1, result)
     }
 
     @Test
     fun validValue_returnValue() {
-        doReturn("1").whenever(coreSettings).get(UserSettingsImpl.VERSION)
+        doReturn("1").whenever(coreSettings).get(UserSettingsImpl.AUTOUPDATE_TIMEOUT)
         val settings = UserSettingsImpl(coreSettings)
 
         settings.onAttach()
-        val result = settings.version
+        val result = settings.autoUpdateTimeout
 
         assertEquals(1, result)
         verify(coreSettings).load()
@@ -40,11 +40,11 @@ class UserSettingsImplVersionTest {
 
     @Test
     fun malformValue_returnDefault() {
-        doReturn("malformed_value").whenever(coreSettings).get(UserSettingsImpl.VERSION)
+        doReturn("malformed_value").whenever(coreSettings).get(UserSettingsImpl.AUTOUPDATE_TIMEOUT)
         val settings = UserSettingsImpl(coreSettings)
 
         settings.onAttach()
-        val result = settings.version
+        val result = settings.autoUpdateTimeout
 
         assertEquals(-1, result)
         verify(coreSettings).load()
@@ -54,9 +54,9 @@ class UserSettingsImplVersionTest {
     fun saveValue_triggerSave() {
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.version = 1
+        settings.autoUpdateTimeout = 1
 
-        assertEquals(1, settings.version)
+        assertEquals(1, settings.autoUpdateTimeout)
         verify(coreSettings).save()
     }
 
