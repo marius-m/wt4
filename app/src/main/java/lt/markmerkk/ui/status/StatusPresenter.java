@@ -16,7 +16,6 @@ import javafx.scene.input.MouseEvent;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import lt.markmerkk.AutoSync2;
 import lt.markmerkk.IDataListener;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
@@ -42,10 +41,8 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   @Inject
   LogStorage storage;
-  @Inject LastUpdateController lastUpdateController;
-//  @Inject KeepAliveController keepAliveController;
-  @Inject AutoSync2 autoSync;
-  @Inject VersionController versionController;
+  @Inject
+  VersionController versionController;
   @Inject
   SyncInteractor syncInteractor;
   @Inject

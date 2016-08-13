@@ -31,7 +31,6 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   UserSettings settings;
   @Inject
   SyncInteractor syncInteractor;
-  @Inject AutoSync2 autoSync;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;

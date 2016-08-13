@@ -47,12 +47,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesLastUpdateController(userSettings: UserSettings): LastUpdateController {
-        return LastUpdateControllerImpl(userSettings)
-    }
-
-    @Provides
-    @Singleton
     fun provideHourGlass(): HourGlass {
         return HourGlass()
     }
@@ -64,12 +58,6 @@ class AppModule {
                 uiSCheduler = JavaFxScheduler.getInstance(),
                 ioScheduler = Schedulers.computation()
         )
-    }
-
-    @Provides
-    @Singleton
-    fun provideAutoSync(): AutoSync2 {
-        return AutoSync2()
     }
 
     @Provides
