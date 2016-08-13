@@ -13,7 +13,7 @@ interface UserSettings {
     var username: String
     var password: String
     var version: Int
-    var autoUpdateTimeout: Int
+    var autoUpdateMinutes: Int
     fun setCustom(key: String, value: String)
     fun getCustom(key: String): String?
 }

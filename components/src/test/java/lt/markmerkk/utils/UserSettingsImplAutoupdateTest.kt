@@ -21,7 +21,7 @@ class UserSettingsImplAutoupdateTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.onAttach()
-        val result = settings.autoUpdateTimeout
+        val result = settings.autoUpdateMinutes
 
         assertEquals(-1, result)
     }
@@ -32,7 +32,7 @@ class UserSettingsImplAutoupdateTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.onAttach()
-        val result = settings.autoUpdateTimeout
+        val result = settings.autoUpdateMinutes
 
         assertEquals(1, result)
         verify(coreSettings).load()
@@ -44,7 +44,7 @@ class UserSettingsImplAutoupdateTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.onAttach()
-        val result = settings.autoUpdateTimeout
+        val result = settings.autoUpdateMinutes
 
         assertEquals(-1, result)
         verify(coreSettings).load()
@@ -54,9 +54,9 @@ class UserSettingsImplAutoupdateTest {
     fun saveValue_triggerSave() {
         val settings = UserSettingsImpl(coreSettings)
 
-        settings.autoUpdateTimeout = 1
+        settings.autoUpdateMinutes = 1
 
-        assertEquals(1, settings.autoUpdateTimeout)
+        assertEquals(1, settings.autoUpdateMinutes)
         verify(coreSettings).save()
     }
 

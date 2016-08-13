@@ -32,12 +32,12 @@ class UserSettingsImpl(
         val autoUpdateString = settings.get(AUTOUPDATE_TIMEOUT)
         if (autoUpdateString != null) {
             try {
-                autoUpdateTimeout = Integer.parseInt(autoUpdateString)
+                autoUpdateMinutes = Integer.parseInt(autoUpdateString)
             } catch (e: NumberFormatException) {
-                autoUpdateTimeout = -1
+                autoUpdateMinutes = -1
             }
         } else {
-            autoUpdateTimeout = -1
+            autoUpdateMinutes = -1
         }
         issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
     }
@@ -48,7 +48,7 @@ class UserSettingsImpl(
         settings.set(PASS, password)
         settings.set(VERSION, version.toString())
         settings.set(ISSUE_JQL, issueJql)
-        settings.set(AUTOUPDATE_TIMEOUT, autoUpdateTimeout.toString())
+        settings.set(AUTOUPDATE_TIMEOUT, autoUpdateMinutes.toString())
         settings.save()
     }
 
@@ -79,7 +79,7 @@ class UserSettingsImpl(
             settings.save()
         }
 
-    override var autoUpdateTimeout: Int = -1
+    override var autoUpdateMinutes: Int = -1
         set(value) {
             field = value
             settings.save()
