@@ -1,6 +1,7 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.UserSettings
+import lt.markmerkk.utils.LogUtils
 import org.slf4j.LoggerFactory
 
 /**
@@ -29,6 +30,7 @@ class AutoUpdateInteractorImpl(
         val timeout = userSettings.autoUpdateMinutes * 1000 * 60
         val updateGap = now - userSettings.lastUpdate
         logger.debug("Timeout set to ${userSettings.autoUpdateMinutes}")
+        logger.debug("Time gap of last update ${LogUtils.formatDuration(updateGap)}")
         return updateGap >= timeout
     }
 
