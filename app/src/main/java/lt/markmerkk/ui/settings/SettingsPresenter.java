@@ -1,36 +1,24 @@
 package lt.markmerkk.ui.settings;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
+import javafx.scene.control.*;
 import lt.markmerkk.*;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.UserSettings;
-import lt.markmerkk.utils.*;
+import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.SimpleTracker;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Priority;
+import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -50,7 +38,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   @FXML TextArea outputLogger;
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh, buttonResetJQL;
-  @FXML ComboBox<String> refreshCombo;
+  @FXML ComboBox<AutoUpdateValue> refreshCombo;
 
   Appender guiAppender;
 
@@ -59,8 +47,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   @Override public void initialize(URL location, ResourceBundle resources) {
     Main.getComponent().presenterComponent().inject(this);
     SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_SETTINGS);
-    refreshCombo.setItems(autoSync.getSelectionKeys());
-    refreshCombo.getSelectionModel().select(autoSync.currentSelection());
+    refreshCombo.setItems(FXCollections.observableList(AvailableAutoUpdate.INSTANCE.getValues()));
+    refreshCombo.getSelectionModel().select(AvailableAutoUpdate.INSTANCE.findAutoUpdateValueByMinute(settings.getAutoUpdateMinutes()));
     refreshCombo.valueProperty().addListener(refreshChangeListener);
     refreshCombo.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_autorefresh")));
     inputHost.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_hostname")));
@@ -128,12 +116,9 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
 
   //region Listeners
 
-  ChangeListener<String> refreshChangeListener = new ChangeListener<String>() {
-    @Override
-    public void changed(ObservableValue ov, String t, String t1) {
-      String selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
-      autoSync.setCurrentSelection(selectedItem);
-    }
+  ChangeListener<AutoUpdateValue> refreshChangeListener = (observable, oldValue, newValue) -> {
+    AutoUpdateValue selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
+    settings.setAutoUpdateMinutes(selectedItem.getTimeoutMinutes());
   };
 
   @Override
