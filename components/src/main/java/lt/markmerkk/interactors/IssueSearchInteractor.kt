@@ -10,4 +10,5 @@ import rx.Observable
 interface IssueSearchInteractor {
     fun searchIssues(byPhrase: String): Observable<List<LocalIssue>>
     fun allIssues(): Observable<List<LocalIssue>>
+    fun issueCount(): Observable<Int>
 }

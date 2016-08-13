@@ -9,6 +9,7 @@ import rx.Observable
  */
 interface IssueSearchMvp {
     interface View {
+        fun showTotalIssueCount(count: Int)
         fun showIssues(result: List<LocalIssue>)
         fun hideIssues()
     }
@@ -17,5 +18,6 @@ interface IssueSearchMvp {
         fun onDetach()
 
         fun search(issuePhrase: String)
+        fun recountIssues()
     }
 }

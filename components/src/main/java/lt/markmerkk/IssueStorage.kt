@@ -15,7 +15,7 @@ class IssueStorage(
         private var executor: IExecutor
 ) : IDataStorage<LocalIssue> {
 
-    override val data = mutableListOf<LocalIssue>()
+    override val data = emptyList<LocalIssue>() // will not hold issues, as it will fill up cache
     val listeners = mutableListOf<IDataListener<LocalIssue>>()
 
     var filter: String = ""
@@ -47,23 +47,7 @@ class IssueStorage(
         notifyDataChange()
     }
 
-    override fun notifyDataChange() {
-        data.clear()
-        if (filter.length <= 2) {
-            val query = QueryListJob(LocalIssue::class.java)
-            executor.execute(query)
-            if (query.result() != null) {
-                data.addAll(query.result())
-            }
-        } else {
-            val query = QueryListJob(LocalIssue::class.java, {
-                "(key like '%$filter%' OR description like '%$filter%')"
-            })
-            executor.execute(query)
-            if (query.result() != null) {
-                data.addAll(query.result())
-            }
-        }
+    override fun notifyDataChange() { // Should not provide data
         listeners.forEach { it.onDataChange(data) }
     }
 

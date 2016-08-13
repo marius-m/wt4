@@ -19,16 +19,16 @@ class IssueSearchPresenterImpl(
         private val uiScheduler: Scheduler
 ) : IssueSearchMvp.Presenter {
 
-    private var innerSubscription: Subscription? = null
-    private var subscription: Subscription? = null
+    private var searchSubscription: Subscription? = null
+    private val subscriptions = mutableListOf<Subscription>()
     private val searchSubject = PublishSubject.create<String>()
 
     override fun onAttach() {
-        subscription = searchSubject
+        searchSubject
                 .debounce(500, TimeUnit.MILLISECONDS, ioScheduler)
                 .subscribe({
-                    innerSubscription?.unsubscribe()
-                    innerSubscription = Observable.just(it)
+                    searchSubscription?.unsubscribe()
+                    searchSubscription = Observable.just(it)
                             .subscribeOn(ioScheduler)
                             .flatMap {
                                 if (it.isNullOrEmpty() || it.length <= 2) {
@@ -50,17 +50,29 @@ class IssueSearchPresenterImpl(
                             }, {
                                 view.hideIssues()
                             })
-                })
+                }).apply { subscriptions += this }
+        recountIssues()
     }
 
     override fun onDetach() {
         searchSubject.onCompleted()
-        innerSubscription?.unsubscribe()
-        subscription?.unsubscribe()
+        searchSubscription?.unsubscribe()
+        subscriptions.forEach { it.unsubscribe() }
     }
 
     override fun search(issuePhrase: String) {
         searchSubject.onNext(issuePhrase)
+    }
+
+    override fun recountIssues() {
+        issueSearchInteractor.issueCount()
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .subscribe({
+                    view.showTotalIssueCount(it)
+                }, {
+                    view.showTotalIssueCount(0)
+                }).apply { subscriptions += this }
     }
 
     companion object {

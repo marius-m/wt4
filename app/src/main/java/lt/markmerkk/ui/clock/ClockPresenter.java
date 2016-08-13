@@ -56,9 +56,9 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @Inject
   LogStorage logStorage;
   @Inject
-  IExecutor dbProdExecutor;
+  IssueStorage issueStorage;
   @Inject
-  UserSettings settings;
+  IExecutor dbProdExecutor;
 
   @FXML
   DatePicker inputTo;
@@ -98,12 +98,12 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             Schedulers.computation(),
             JavaFxScheduler.getInstance()
     );
-    issueSearchAdapter = new IssueSearchAdapter(
-            settings,
-            inputTaskCombo,
-            dbProdExecutor,
-            outputJQL
-    );
+//    issueSearchAdapter = new IssueSearchAdapter(
+//            settings,
+//            inputTaskCombo,
+//            dbProdExecutor,
+//            outputJQL
+//    );
     inputTaskCombo.setOnKeyReleased(event -> {
       switch (event.getCode()) {
         case ENTER:
@@ -145,10 +145,12 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     onLoadChange(syncInteractor.isLoading());
     syncInteractor.addLoadingListener(this);
     issueSearchPresenter.onAttach();
+    issueStorage.register(this);
   }
 
   @PreDestroy
   public void destroy() {
+    issueStorage.unregister(this);
     issueSearchPresenter.onDetach();
     if (hourGlass.getState() == HourGlass.State.RUNNING) {
       try {
@@ -399,8 +401,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   @Override
   public void onDataChange(@NotNull List<? extends LocalIssue> data) {
-    // fixme incorrect usage. Issues are filtered in this storage, will return false value
-    issueSearchAdapter.setTotalIssues(data.size());
+    issueSearchPresenter.recountIssues();
   }
 
   @Override
@@ -420,6 +421,11 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   public void hideIssues() {
     searchIssues.clear();
     inputTaskCombo.hide();
+  }
+
+  @Override
+  public void showTotalIssueCount(int count) {
+    outputJQL.setText(String.format(Translation.getInstance().getString("clock_jql_info"), count));
   }
 
   //endregion
