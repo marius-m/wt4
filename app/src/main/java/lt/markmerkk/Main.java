@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
+import lt.markmerkk.interactors.KeepAliveGASession;
+import lt.markmerkk.interactors.KeepAliveGASessionImpl;
 import lt.markmerkk.interactors.KeepAliveInteractor;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.ui.MainView;
@@ -21,6 +23,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.schedulers.Schedulers;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -55,9 +58,13 @@ public class Main extends Application {
   @Inject
   public UserSettings settings;
   @Inject
+  public LogStorage logStorage;
+  @Inject
   public KeepAliveInteractor keepAliveInteractor;
   @Inject
-  SyncInteractor syncInteractor;
+  public SyncInteractor syncInteractor;
+
+  public KeepAliveGASession keepAliveGASession;
 
   public Main() { }
 
@@ -100,10 +107,17 @@ public class Main extends Application {
         SimpleTracker.CATEGORY_GENERIC,
         SimpleTracker.ACTION_START
     );
+    keepAliveGASession = new KeepAliveGASessionImpl(
+            logStorage,
+            SimpleTracker.getInstance().getTracker(),
+            Schedulers.computation()
+    );
+    keepAliveGASession.onAttach();
   }
 
   @Override
   public void stop() throws Exception {
+    keepAliveGASession.onDetach();
     syncInteractor.onDetach();
     keepAliveInteractor.onDetach();
     settings.onDetach();

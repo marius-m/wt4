@@ -1,4 +1,4 @@
-package lt.markmerkk.utils.tracker.interfaces;
+package lt.markmerkk.utils.tracker;
 
 /**
  * Created by mariusmerkevicius on 3/11/16.

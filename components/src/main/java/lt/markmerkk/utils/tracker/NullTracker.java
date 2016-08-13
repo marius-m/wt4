@@ -1,7 +1,5 @@
 package lt.markmerkk.utils.tracker;
 
-import lt.markmerkk.utils.tracker.interfaces.ITracker;
-
 /**
  * Created by mariusmerkevicius on 3/11/16.
  * Empty {@link ITracker} that does not do anything.

@@ -18,6 +18,8 @@ import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
+import lt.markmerkk.interactors.KeepAliveGASession;
+import lt.markmerkk.interactors.KeepAliveGASessionImpl;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
@@ -43,7 +45,7 @@ public class MainPresenter implements Initializable {
   public static final Logger logger = LoggerFactory.getLogger(MainPresenter.class);
 
   @Inject
-  LogStorage storage;
+  LogStorage logStorage;
 
   @FXML TabPane tabPane;
   @FXML BorderPane northPane;
@@ -79,7 +81,7 @@ public class MainPresenter implements Initializable {
       InjectorNoDI.forget(logsView.getPresenter());
     }
     logsView = null;
-    switch (storage.getDisplayType()) {
+    switch (logStorage.getDisplayType()) {
       case DAY:
         DisplayLogView simpleLogView = new DisplayLogView(updateListener);
         southPane.setCenter(simpleLogView.getView());
@@ -122,7 +124,7 @@ public class MainPresenter implements Initializable {
     @Override public void onSave() {
       if (dialog.isShowing())
         dialog.hide();
-      storage.notifyDataChange();
+      logStorage.notifyDataChange();
     }
 
     @Override
@@ -150,7 +152,7 @@ public class MainPresenter implements Initializable {
 
     @Override
     public void onDelete(SimpleLog object) {
-      storage.delete(object);
+      logStorage.delete(object);
     }
 
     @Override
@@ -161,7 +163,7 @@ public class MainPresenter implements Initializable {
           .setTask(object.getTask())
           .setComment(object.getComment())
           .build();
-      storage.insert(newLog);
+      logStorage.insert(newLog);
     }
   };
 
