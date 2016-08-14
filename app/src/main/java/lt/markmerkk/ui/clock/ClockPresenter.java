@@ -310,7 +310,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     public void changed(ObservableValue<? extends String> observable, String oldValue,
                         String newValue) {
       hourGlass.updateTimers(inputFrom.getEditor().getText(), inputTo.getEditor().getText());
-      logStorage.suggestTargetDate(inputFrom.getEditor().getText());
     }
   };
 

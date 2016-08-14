@@ -1,35 +1,33 @@
 package lt.markmerkk.ui.status;
 
 import com.vinumeris.updatefx.UpdateSummary;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import lt.markmerkk.IDataListener;
-import lt.markmerkk.Main;
-import lt.markmerkk.Translation;
+import lt.markmerkk.*;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.interactors.KeepAliveInteractor;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.LogStorage;
-import lt.markmerkk.DisplayType;
-import lt.markmerkk.utils.*;
+import lt.markmerkk.ui.clock.utils.SimpleDatePickerConverter;
+import lt.markmerkk.utils.LogFormatters;
+import lt.markmerkk.utils.LogUtils;
+import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
@@ -54,6 +52,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   @FXML ToggleButton buttonViewToggle;
   @FXML Button buttonToday;
   @FXML Button buttonAbout;
+  @FXML DatePicker targetDatePicker;
 
   String total;
 
@@ -69,6 +68,14 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     buttonAbout.setOnMouseClicked(aboutClickListener);
     syncInteractor.addLoadingListener(this);
     total = LogUtils.INSTANCE.formatShortDuration(storage.total());
+    targetDatePicker.getEditor().setText(
+            LogFormatters.INSTANCE.getShortFormatDate().print(storage.getTargetDate())
+    );
+    targetDatePicker.setConverter(new SimpleDatePickerConverter());
+    targetDatePicker.getEditor().textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+      storage.suggestTargetDate(targetDatePicker.getEditor().getText());
+    });
 
     updateStatus();
     onLoadChange(syncInteractor.isLoading());
@@ -118,13 +125,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   //region Listeners
 
-//  EventHandler<MouseEvent> outputProgressClickListener = new EventHandler<MouseEvent>() {
-//    @Override
-//    public void handle(MouseEvent event) {
-//      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
-//    }
-//  };
-
   @Override
   public void onProgressChange(double progressChange) {
     boolean visible = (progressChange > 0.0f && progressChange < 1.0f);
@@ -160,13 +160,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     }
   };
 
-//  EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
-//    @Override
-//    public void handle(MouseEvent event) {
-//      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
-//    }
-//  };
-
   EventHandler<MouseEvent> aboutClickListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
@@ -186,7 +179,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   @Override
   public void onLoadChange(boolean loading) {
     Platform.runLater(() -> {
-      logger.debug("Status onLoad: "+loading);
       outputProgress.setManaged(loading);
       outputProgress.setVisible(loading);
       updateStatus();

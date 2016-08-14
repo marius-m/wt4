@@ -45,6 +45,16 @@
                   <Insets left="5.0" />
                </HBox.margin>
             </Button>
+            <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" visible="false" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Separator>
+            <DatePicker fx:id="targetDatePicker" editable="false" minHeight="32.0" minWidth="32.0">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </DatePicker>
          </children>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

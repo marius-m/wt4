@@ -9,6 +9,7 @@ import lt.markmerkk.entities.jobs.UpdateJob
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
+import org.slf4j.LoggerFactory
 
 /**
  * Created by mariusmerkevicius on 12/13/15.
@@ -38,7 +39,7 @@ class LogStorage(
 
     fun suggestTargetDate(dateAsString: String) {
         try {
-            val newTime = LogFormatters.longFormat.parseDateTime(dateAsString)
+            val newTime = LogFormatters.shortFormatDate.parseDateTime(dateAsString)
             if (targetDate.year == newTime.year
                     && targetDate.monthOfYear == newTime.monthOfYear
                     && targetDate.dayOfMonth == newTime.dayOfMonth) {
@@ -46,6 +47,7 @@ class LogStorage(
             }
             targetDate = newTime
         } catch (e: IllegalArgumentException) {
+            logger.error("Error suggesting target date!", e)
         }
     }
 
@@ -105,5 +107,9 @@ class LogStorage(
     fun total() = data.sumBy { it.duration.toInt() }
 
     //endregion
+
+    companion object {
+        val logger = LoggerFactory.getLogger(LogStorage::class.java)!!
+    }
 
 }
