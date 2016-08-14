@@ -14,6 +14,8 @@ import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
+import java.io.InputStream
+import java.util.*
 import javax.inject.Singleton
 
 /**
@@ -25,6 +27,19 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun providesConfig(): Config {
+        val config = Config(
+                debug = System.getProperty("release") != "true",
+                versionName = System.getProperty("version_name"),
+                versionCode = System.getProperty("version_code").toInt(),
+                gaKey = System.getProperty("ga_key")
+        )
+        Const.DEBUG = config.debug
+        return config
+    }
+
+    @Provides
+    @Singleton
     fun providesUserPrefs(): UserSettings {
         return UserSettingsImpl(
                 settings = AdvHashSettings()
@@ -33,8 +48,10 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesDbExecutor(): IExecutor {
-        return DBProdExecutor()
+    fun providesDbExecutor(
+            userSettings: UserSettings
+    ): IExecutor {
+        return DBProdExecutor(userSettings)
     }
 
     @Provides

@@ -65,6 +65,8 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   public AutoUpdateInteractor autoUpdateInteractor;
   @Inject
   public VersioningInteractor versioningInteractor;
+  @Inject
+  public Config config;
 
   public KeepAliveGASession keepAliveGASession;
 
@@ -72,12 +74,7 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
 
   @Override
   public void start(Stage stage) throws Exception {
-    Const.INSTANCE.setDEBUG(
-            !("true".equals(System.getProperty("release")))
-    );
-    logger.info("Running in DEBUG=" + Const.INSTANCE.getDEBUG());
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
-    initVersionSettings();
     if (isFirstLaunch()) {
       AppDirectory.initAppDir(UPDATE_DIR);
 //      UpdateFX.restartApp();
@@ -85,11 +82,11 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     }
     initLoggerSettings();
 
-    Translation.getInstance(); // Initializing translations on first launch
-
-//    hostServices = HostServicesFactory.getInstance(this);
     sComponent = DaggerAppComponent.create();
     sComponent.inject(this);
+
+    Translation.getInstance(); // Initializing translations on first launch
+    logger.info("Running in " + config);
 
     settings.onAttach();
     keepAliveInteractor.onAttach();

@@ -72,8 +72,6 @@ public abstract class DBBaseExecutor implements IExecutor {
     executeQuery(queryJob, connection);
   }
 
-
-
   /**
    * Runs a database execution
    */
