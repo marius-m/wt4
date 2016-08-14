@@ -37,6 +37,7 @@ abstract class BaseSettings {
             val props = Properties()
             props.load(inputStream)
             onLoad(props)
+            logger.info("Success loading settings from ${propertyPath()}!")
         } catch (e: FileNotFoundException) {
             logger.error("No default settings file found! " + e.message)
         } catch (e: IOException) {
@@ -57,6 +58,7 @@ abstract class BaseSettings {
             val props = Properties()
             onSave(props)
             props.store(outputStream, null)
+            logger.info("Success saving settings to ${propertyPath()}")
         } catch (e: FileNotFoundException) {
             logger.error("No default settings file found! " + e.message)
         } catch (e: IOException) {

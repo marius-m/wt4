@@ -24,7 +24,8 @@ class AdvHashSettings(
     }
 
     override fun propertyPath(): String {
-        return config.cfgPath + PROPERTIES_PATH
+        val configPath = config.cfgPath + PROPERTIES_PATH
+        return configPath
     }
 
     override fun onLoad(properties: Properties) {
