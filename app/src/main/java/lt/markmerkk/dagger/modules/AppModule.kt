@@ -8,17 +8,16 @@ import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.ui.version.UpdaterImpl
 import lt.markmerkk.ui.version.VersioningInteractor
-import lt.markmerkk.ui.version.VersioningMvp
 import lt.markmerkk.ui.version.VersioningInteractorImpl
-import lt.markmerkk.utils.*
+import lt.markmerkk.utils.AdvHashSettings
+import lt.markmerkk.utils.DayProviderImpl
+import lt.markmerkk.utils.UserSettingsImpl
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
-import java.io.InputStream
-import java.util.*
 import javax.inject.Singleton
 
 /**
@@ -31,6 +30,7 @@ class AppModule {
     @Provides
     @Singleton
     fun providesConfig(): Config {
+        println("Properties: ${System.getProperties()}")
         val config = Config(
                 debug = System.getProperty("release") != "true",
                 versionName = System.getProperty("version_name"),
@@ -68,10 +68,14 @@ class AppModule {
             config: Config,
             userSettings: UserSettings
     ): IExecutor {
-        return DBProdExecutor(
-                config = config,
-                settings = userSettings
-        )
+        if (config.debug) {
+            return DBTestExecutor()
+        } else {
+            return DBProdExecutor(
+                    config = config,
+                    settings = userSettings
+            )
+        }
     }
 
     @Provides

@@ -63,8 +63,17 @@ javafx {
     appID 'WT4'
     appName 'WT4'
     mainClass = 'lt.markmerkk.Main'
-    //systemProperties = ['release':'true']
-    //arguments = ['-l', '--fast']
+
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+    jvmArgs = [
+            "-Drelease=true",
+            "-Dversion_code=" + versionCode,
+            "-Dversion_name=" + version,
+            "-Dga_key=" + deployProps.getProperty("ga")
+    ]
 
     embedLauncher = false
 

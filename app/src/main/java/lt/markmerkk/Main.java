@@ -80,13 +80,12 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
 
     sComponent = DaggerAppComponent.create();
     sComponent.inject(this);
-
+    initLoggerSettings();
 
     DEBUG = config.getDebug();
     Translation.getInstance(); // Initializing translations on first launch
     logger.info("Running in " + config);
 
-    initLoggerSettings();
     settings.onAttach();
     keepAliveInteractor.onAttach();
     keepAliveInteractor.register(this);
