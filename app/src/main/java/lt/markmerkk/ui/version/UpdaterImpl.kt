@@ -15,7 +15,7 @@ import java.nio.file.Path
 class UpdaterImpl(
         config: Config
 ) : Updater(
-        URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"),
+        URI.create("https://dl.dropboxusercontent.com/u/60630588/updates_eap/index/"), // todo eap index
         config.versionCode.toString(),
         AppDirectory.dir(),
         UpdateFX.findCodePath(Main::class.java),

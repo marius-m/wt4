@@ -30,9 +30,8 @@ class AppModule {
     @Provides
     @Singleton
     fun providesConfig(): Config {
-        println("Properties: ${System.getProperties()}")
         val config = Config(
-                debug = System.getProperty("release") != "true",
+                debug = System.getProperty("release") == "false",
                 versionName = System.getProperty("version_name"),
                 versionCode = System.getProperty("version_code").toInt(),
                 gaKey = System.getProperty("ga_key")

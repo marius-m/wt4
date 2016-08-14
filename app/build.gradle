@@ -46,19 +46,6 @@ sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
 }
 
-run {
-    def deployPropertyFile = new File("${rootDir}","deploy.properties")
-    assert deployPropertyFile.exists()
-    Properties deployProps = new Properties()
-    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
-    jvmArgs = [
-            "-Dversion_code=$versionCode",
-            "-Dversion_name=$version",
-            "-Dga_key=" + deployProps.getProperty("ga")
-    ]
-}
-
-
 javafx {
     appID 'WT4'
     appName 'WT4'
@@ -69,7 +56,6 @@ javafx {
     Properties deployProps = new Properties()
     deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
     jvmArgs = [
-            "-Drelease=true",
             "-Dversion_code=" + versionCode,
             "-Dversion_name=" + version,
             "-Dga_key=" + deployProps.getProperty("ga")

@@ -8,7 +8,7 @@ import java.io.IOException
  * @since 2016-08-14
  */
 data class Config(
-        val debug: Boolean = true,
+        val debug: Boolean = false,
         val versionName: String = "Undefined",
         val versionCode: Int = -1,
         val gaKey: String
