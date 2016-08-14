@@ -2,8 +2,6 @@ package lt.markmerkk.ui.status;
 
 import com.vinumeris.updatefx.UpdateSummary;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,7 +16,7 @@ import lt.markmerkk.ui.clock.utils.SimpleDatePickerConverter;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
 import lt.markmerkk.utils.VersionController;
-import lt.markmerkk.utils.tracker.SimpleTracker;
+import lt.markmerkk.utils.tracker.ITracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +37,8 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   @Inject
   LogStorage storage;
+  @Inject
+  ITracker tracker;
 //  @Inject
 //  VersionController versionController;
   @Inject
@@ -101,9 +101,9 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
    */
   public void onClickRefresh() {
     syncInteractor.syncLogs();
-    SimpleTracker.getInstance().getTracker().sendEvent(
-            SimpleTracker.CATEGORY_BUTTON,
-            SimpleTracker.ACTION_SYNC_MAIN
+    tracker.sendEvent(
+            GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+            GAStatics.INSTANCE.getACTION_SYNC_MAIN()
     );
   }
 

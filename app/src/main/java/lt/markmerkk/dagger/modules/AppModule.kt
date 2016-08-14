@@ -12,6 +12,9 @@ import lt.markmerkk.ui.version.VersioningMvp
 import lt.markmerkk.ui.version.VersioningInteractorImpl
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.tracker.GATracker
+import lt.markmerkk.utils.tracker.ITracker
+import lt.markmerkk.utils.tracker.NullTracker
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import java.io.InputStream
@@ -35,6 +38,18 @@ class AppModule {
                 gaKey = System.getProperty("ga_key")
         )
         return config
+    }
+
+    @Provides
+    @Singleton
+    fun providesTracker(
+            config: Config
+    ): ITracker {
+        if (config.debug) {
+            return NullTracker()
+        } else {
+            return GATracker()
+        }
     }
 
     @Provides

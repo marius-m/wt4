@@ -10,7 +10,7 @@ import lt.markmerkk.*;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.utils.Utils;
-import lt.markmerkk.utils.tracker.SimpleTracker;
+import lt.markmerkk.utils.tracker.ITracker;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   SyncInteractor syncInteractor;
   @Inject
   Config config;
+  @Inject
+  ITracker tracker;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
@@ -47,7 +49,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
 
   @Override public void initialize(URL location, ResourceBundle resources) {
     Main.getComponent().presenterComponent().inject(this);
-    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_SETTINGS);
+    tracker.sendView(GAStatics.INSTANCE.getVIEW_SETTINGS());
     refreshCombo.setItems(FXCollections.observableList(AvailableAutoUpdate.INSTANCE.getValues()));
     refreshCombo.getSelectionModel().select(AvailableAutoUpdate.INSTANCE.findAutoUpdateValueByMinute(settings.getAutoUpdateMinutes()));
     refreshCombo.valueProperty().addListener(refreshChangeListener);
@@ -99,9 +101,9 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     settings.setPassword(inputPassword.getText());
     settings.setIssueJql(inputJQL.getText());
     syncInteractor.syncAll();
-    SimpleTracker.getInstance().getTracker().sendEvent(
-            SimpleTracker.CATEGORY_BUTTON,
-            SimpleTracker.ACTION_SYNC_SETTINGS
+    tracker.sendEvent(
+            GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+            GAStatics.INSTANCE.getACTION_SYNC_SETTINGS()
     );
   }
 

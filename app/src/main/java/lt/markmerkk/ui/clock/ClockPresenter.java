@@ -25,7 +25,7 @@ import lt.markmerkk.utils.IssueSplit;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
 import lt.markmerkk.utils.hourglass.HourGlass;
-import lt.markmerkk.utils.tracker.SimpleTracker;
+import lt.markmerkk.utils.tracker.ITracker;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -59,6 +59,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   IssueStorage issueStorage;
   @Inject
   IExecutor dbProdExecutor;
+  @Inject
+  ITracker tracker;
 
   @FXML
   DatePicker inputTo;
@@ -190,9 +192,9 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   public void onClickSearch() {
     syncInteractor.syncIssues();
-    SimpleTracker.getInstance().getTracker().sendEvent(
-            SimpleTracker.CATEGORY_BUTTON,
-            SimpleTracker.ACTION_SEARCH_REFRESH
+    tracker.sendEvent(
+            GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+            GAStatics.INSTANCE.getACTION_SEARCH_REFRESH()
     );
   }
 
@@ -244,9 +246,9 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       inputTo.requestFocus();
       inputFrom.requestFocus();
       inputComment.requestFocus();
-      SimpleTracker.getInstance().getTracker().sendEvent(
-              SimpleTracker.CATEGORY_BUTTON,
-              SimpleTracker.ACTION_ENTER
+      tracker.sendEvent(
+              GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+              GAStatics.INSTANCE.getACTION_ENTER()
       );
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());

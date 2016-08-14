@@ -14,7 +14,7 @@ import lt.markmerkk.ui.MainView;
 import lt.markmerkk.ui.version.VersioningInteractor;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
-import lt.markmerkk.utils.tracker.SimpleTracker;
+import lt.markmerkk.utils.tracker.ITracker;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
@@ -26,9 +26,7 @@ import rx.schedulers.Schedulers;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Properties;
 
 public class Main extends Application implements KeepAliveInteractor.Listener {
   public static final String LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n";
@@ -68,6 +66,8 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   public VersioningInteractor versioningInteractor;
   @Inject
   public Config config;
+  @Inject
+  public ITracker tracker;
 
   public KeepAliveGASession keepAliveGASession;
 
@@ -108,13 +108,13 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     stage.setScene(scene);
     stage.show();
     stage.setTitle("WT4");
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_GENERIC,
-        SimpleTracker.ACTION_START
+    tracker.sendEvent(
+        GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+        GAStatics.INSTANCE.getACTION_START()
     );
     keepAliveGASession = new KeepAliveGASessionImpl(
             logStorage,
-            SimpleTracker.getInstance().getTracker(),
+            tracker,
             Schedulers.computation()
     );
     keepAliveGASession.onAttach();
@@ -129,7 +129,7 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     keepAliveInteractor.unregister(this);
     keepAliveInteractor.onDetach();
     settings.onDetach();
-    SimpleTracker.getInstance().getTracker().stop();
+    tracker.stop();
     InjectorNoDI.forgetAll();
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppenderDebug);
     org.apache.log4j.Logger.getRootLogger().removeAppender(fileAppenderProd);
@@ -180,7 +180,9 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
 
   /**
    * Prepares an update directory
+   * @deprecated not sure if need this at all
    */
+  @Deprecated
   static boolean isFirstLaunch(boolean isDebug) throws IOException {
     if (isDebug) {
       logger.info("Running debug version! Skipping first launch check!");
@@ -196,26 +198,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
       return true;
     }
     return false;
-  }
-
-  /**
-   * Initializes app version settings
-   * @throws IOException
-   */
-  void initVersionSettings() throws IOException {
-    Properties versionProperties = new Properties();
-    InputStream resourceAsStream = getClass().getResourceAsStream("/version.properties");
-    versionProperties.load(resourceAsStream);
-    VERSION_CODE = Integer.parseInt(versionProperties.getProperty("version_code"));
-    VERSION_NAME = versionProperties.getProperty("version_name");
-    GA_KEY = versionProperties.getProperty("ga");
-    logger.info(
-            String.format(
-                    "Running version %s with version code %d",
-                    VERSION_NAME,
-                    VERSION_CODE
-            )
-    );
   }
 
   @Override

@@ -6,15 +6,12 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.TableView
 import javafx.scene.control.Tooltip
-import lt.markmerkk.IDataListener
-import lt.markmerkk.Main
-import lt.markmerkk.Translation
-import lt.markmerkk.LogStorage
+import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.utils.LogDisplayController
 import lt.markmerkk.utils.TableDisplayController
-import lt.markmerkk.utils.tracker.SimpleTracker
+import lt.markmerkk.utils.tracker.ITracker
 
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -28,6 +25,8 @@ import java.util.ResourceBundle
 class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
     @Inject
     lateinit var storage: LogStorage
+    @Inject
+    lateinit var tracker: ITracker
 
     @FXML
     lateinit var tableView: TableView<SimpleLog>
@@ -37,7 +36,7 @@ class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
         Main.getComponent().presenterComponent().inject(this)
-        SimpleTracker.getInstance().tracker.sendView(SimpleTracker.VIEW_DAY)
+        tracker.sendView(GAStatics.VIEW_DAY)
         logs.addAll(storage.data)
 
         tableView.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
