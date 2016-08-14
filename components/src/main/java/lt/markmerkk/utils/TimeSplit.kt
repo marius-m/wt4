@@ -1,7 +1,5 @@
 package lt.markmerkk.utils
 
-import com.google.common.base.Strings
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -21,7 +19,7 @@ object TimeSplit {
      */
     fun addStamp(start: Long, end: Long, comment: String): String? {
         var rawComment = comment
-        if (Strings.isNullOrEmpty(rawComment)) return null
+        if (rawComment.isNullOrEmpty()) return null
         rawComment = removeStamp(rawComment) ?: "" // Will remove older comment if found one
         return String.format(
                 "%s - %s " + TimeSplit.SEPERATOR + " %s",

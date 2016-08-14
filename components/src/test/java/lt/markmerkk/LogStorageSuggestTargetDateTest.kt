@@ -27,28 +27,14 @@ class LogStorageSuggestTargetDateTest {
     @Test
     fun differentDay_changeTargetDate() {
         // Arrange
-        val newDate = LogFormatters.longFormat.parseDateTime("2012-12-05 11:30")
+        val newDate = LogFormatters.shortFormatDate.parseDateTime("2012-12-05")
 
         // Act
-        storage.suggestTargetDate(LogFormatters.longFormat.print(newDate))
+        storage.suggestTargetDate(LogFormatters.shortFormatDate.print(newDate))
 
         // Assert
         val newDateWithoutTime = newDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
         assertEquals(newDateWithoutTime, storage.targetDate)
-    }
-
-    @Test
-    fun sameDay_noTrigger() {
-        // Arrange
-        val newDate = LogFormatters.longFormat.parseDateTime("2012-12-05 11:30")
-        val oldDate = newDate.minus(3000).withTime(0, 0, 0, 0) // same day, different time
-        storage.targetDate = oldDate
-
-        // Act
-        storage.suggestTargetDate(LogFormatters.longFormat.print(newDate))
-
-        // Assert
-        assertEquals(oldDate, storage.targetDate)
     }
 
     @Test

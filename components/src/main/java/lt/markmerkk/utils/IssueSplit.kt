@@ -1,8 +1,6 @@
 package lt.markmerkk.utils
 
-import com.google.common.base.Strings
 import java.util.HashMap
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -28,7 +26,7 @@ class IssueSplit {
      * @return
      */
     fun pickPart(inputPhrase: String, regex: String): String {
-        if (Strings.isNullOrEmpty(inputPhrase)) return ""
+        if (inputPhrase.isNullOrEmpty()) return ""
         var description = pickMessage(inputPhrase, regex)
         if (description == null)
             description = inputPhrase
