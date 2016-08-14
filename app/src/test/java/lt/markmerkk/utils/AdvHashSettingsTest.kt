@@ -1,5 +1,6 @@
 package lt.markmerkk.utils
 
+import lt.markmerkk.Config
 import java.util.Properties
 import org.junit.Test
 
@@ -10,10 +11,13 @@ import org.junit.Assert.*
  * Created by mariusmerkevicius on 12/21/15.
  */
 class AdvHashSettingsTest {
+
+    val config = Config(gaKey = "test_key")
+
     @Test
     fun testValidInput() {
         // Arrange
-        val settings = AdvHashSettings()
+        val settings = AdvHashSettings(config)
         val properties = Properties()
 
         // Act
@@ -32,7 +36,7 @@ class AdvHashSettingsTest {
     @Test
     fun testValidOutput() {
         // Arrange
-        val settings = AdvHashSettings()
+        val settings = AdvHashSettings(config)
 
         // Act
         val outputProperties = Properties()
@@ -50,7 +54,7 @@ class AdvHashSettingsTest {
     @Test
     fun testMalformOutput() {
         // Arrange
-        val settings = AdvHashSettings()
+        val settings = AdvHashSettings(config)
 
         // Act
         val outputProperties = Properties()
@@ -65,7 +69,7 @@ class AdvHashSettingsTest {
     @Test
     fun testEmptyOutput() {
         // Arrange
-        val settings = AdvHashSettings()
+        val settings = AdvHashSettings(config)
 
         // Act
         val outputProperties = Properties()

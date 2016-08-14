@@ -34,24 +34,29 @@ class AppModule {
                 versionCode = System.getProperty("version_code").toInt(),
                 gaKey = System.getProperty("ga_key")
         )
-        Const.DEBUG = config.debug
         return config
     }
 
     @Provides
     @Singleton
-    fun providesUserPrefs(): UserSettings {
+    fun providesUserPrefs(
+            config: Config
+    ): UserSettings {
         return UserSettingsImpl(
-                settings = AdvHashSettings()
+                settings = AdvHashSettings(config)
         )
     }
 
     @Provides
     @Singleton
     fun providesDbExecutor(
+            config: Config,
             userSettings: UserSettings
     ): IExecutor {
-        return DBProdExecutor(userSettings)
+        return DBProdExecutor(
+                config = config,
+                settings = userSettings
+        )
     }
 
     @Provides

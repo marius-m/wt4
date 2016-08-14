@@ -59,12 +59,12 @@ public class Utils {
     /**
      * Returns last logged output
      */
-    public static String lastLog() {
+    public static String lastLog(String logPath) {
         StringBuilder output = new StringBuilder();
         try {
             int maxLines = 150;
             int lineCount = 0;
-            File file = new File(Const.INSTANCE.getCfgHome() + "info_prod.log");
+            File file = new File(logPath + "info_prod.log");
             ReversedLinesFileReader object = new ReversedLinesFileReader(file);
             while (lineCount < maxLines) {
                 String line = object.readLine();

@@ -33,8 +33,6 @@ import java.util.Properties;
 public class Main extends Application implements KeepAliveInteractor.Listener {
   public static final String LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n";
   public static final String LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n";
-//  public static boolean DEBUG = true;
-//  public static String CFG_PATH;
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
 
@@ -42,6 +40,9 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   public static String VERSION_NAME = "Unknown";  // Will be updated on init
   public static String GA_KEY = null;
   public static final String APP_NAME = "WT4";
+
+  public static boolean DEBUG = false;
+
 
   public static int SCENE_WIDTH = 600;
   public static int SCENE_HEIGHT = 500;
@@ -75,19 +76,21 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   @Override
   public void start(Stage stage) throws Exception {
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
-    if (isFirstLaunch()) {
+//    if (isFirstLaunch()) {
       AppDirectory.initAppDir(UPDATE_DIR);
 //      UpdateFX.restartApp();
 //      return;
-    }
-    initLoggerSettings();
+//    }
 
     sComponent = DaggerAppComponent.create();
     sComponent.inject(this);
 
+
+    DEBUG = config.getDebug();
     Translation.getInstance(); // Initializing translations on first launch
     logger.info("Running in " + config);
 
+    initLoggerSettings();
     settings.onAttach();
     keepAliveInteractor.onAttach();
     keepAliveInteractor.register(this);
@@ -156,19 +159,19 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
    */
   private void initLoggerSettings() throws IOException {
     PropertyConfigurator.configure(getClass().getResource("/custom_log4j.properties"));
-    fileAppenderProd = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_PROD), Const.INSTANCE.getCfgHome() + "info_prod.log", true);
+    fileAppenderProd = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_PROD), config.getCfgPath() + "info_prod.log", true);
     fileAppenderProd.setMaxFileSize("100KB");
     fileAppenderProd.setMaxBackupIndex(1);
     fileAppenderProd.setThreshold(Priority.INFO);
     org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderProd);
 
-    fileAppenderDebug = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_DEBUG), Const.INSTANCE.getCfgHome() + "info.log", true);
+    fileAppenderDebug = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_DEBUG), config.getCfgPath() + "info.log", true);
     fileAppenderDebug.setMaxFileSize("1000KB");
     fileAppenderDebug.setMaxBackupIndex(1);
     fileAppenderDebug.setThreshold(Priority.INFO);
     org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderDebug);
 
-    errorAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_DEBUG), Const.INSTANCE.getCfgHome() + "debug.log", true);
+    errorAppender = new RollingFileAppender(new PatternLayout(LOG_LAYOUT_DEBUG), config.getCfgPath() + "debug.log", true);
     errorAppender.setMaxFileSize("100000KB");
     errorAppender.setMaxBackupIndex(1);
     errorAppender.setThreshold(Priority.toPriority(Priority.ALL_INT));
@@ -178,8 +181,8 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   /**
    * Prepares an update directory
    */
-  static boolean isFirstLaunch() throws IOException {
-    if (Const.INSTANCE.getDEBUG()) {
+  static boolean isFirstLaunch(boolean isDebug) throws IOException {
+    if (isDebug) {
       logger.info("Running debug version! Skipping first launch check!");
       return false;
     }

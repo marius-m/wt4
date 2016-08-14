@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
  * Created by mariusmerkevicius on 11/22/15.
  */
 class DBProdExecutor(
+        private val config: Config,
         private val settings: UserSettings
 ) : DBBaseExecutor() {
 
@@ -28,7 +29,7 @@ class DBProdExecutor(
     }
 
     override fun database(): String {
-        return Const.cfgHome + "wt4_1.db"
+        return config.cfgPath + "wt4_1.db"
     }
 
     override fun migrationScriptPath(): URI {
@@ -40,7 +41,7 @@ class DBProdExecutor(
     }
 
     override fun migrationExportPath(): URI {
-        return Paths.get(Const.cfgHome).toUri()
+        return Paths.get(config.cfgPath).toUri()
     }
 
     companion object {

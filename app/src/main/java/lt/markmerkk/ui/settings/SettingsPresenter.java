@@ -31,6 +31,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   UserSettings settings;
   @Inject
   SyncInteractor syncInteractor;
+  @Inject
+  Config config;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
@@ -66,7 +68,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     guiAppender = new SimpleAppender();
     guiAppender.setLayout(new PatternLayout(Main.LOG_LAYOUT_PROD));
     outputLogger.clear();
-    outputLogger.setText(Utils.lastLog());
+    outputLogger.setText(Utils.lastLog(config.getCfgPath()));
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
 

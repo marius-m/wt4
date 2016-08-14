@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  * Created by mariusmerkevicius on 2/3/16.
  * Responsible of downloading and controlling app versioning.
  */
+@Deprecated
 public class VersionController {
   public static final Logger logger = LoggerFactory.getLogger(VersionController.class);
 
@@ -52,7 +53,7 @@ public class VersionController {
   }
 
   public void checkForUpdate() {
-    if (Const.INSTANCE.getDEBUG()) {
+    if (false) { // debug check
       logger.info("Running debug version! Skipping update check!");
       return;
     }
@@ -75,7 +76,7 @@ public class VersionController {
    * Does the app upgrade
    */
   public void upgrade() {
-    if (Const.INSTANCE.getDEBUG()) {
+    if (false) { // debug check
       logger.info("Running debug version! Skipping upgrade!");
       return;
     }

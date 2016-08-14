@@ -1,13 +1,15 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.Const
+import lt.markmerkk.Config
 import java.util.*
 
 /**
  * Created by mariusmerkevicius on 11/24/15.
  * Stores string data
  */
-class AdvHashSettings : BaseSettings(), HashSettings {
+class AdvHashSettings(
+        private val config: Config
+) : BaseSettings(), HashSettings {
 
     val keyValues = mutableMapOf<String, String>()
 
@@ -22,7 +24,7 @@ class AdvHashSettings : BaseSettings(), HashSettings {
     }
 
     override fun propertyPath(): String {
-        return Const.cfgHome + PROPERTIES_PATH
+        return config.cfgPath + PROPERTIES_PATH
     }
 
     override fun onLoad(properties: Properties) {
