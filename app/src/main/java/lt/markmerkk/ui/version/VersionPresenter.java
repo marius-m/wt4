@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class VersionPresenter implements Initializable, VersionController.UpgradeListener {
   Logger logger = LoggerFactory.getLogger(VersionPresenter.class);
 
-  @Inject VersionController versionController;
+//  @Inject VersionController versionController;
 
   @FXML Button buttonClose;
   @FXML Hyperlink buttonTitle;
@@ -39,15 +39,15 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    versionController.addListener(this);
     labelVersion.setText(String.format("Version: %s", Main.VERSION_NAME));
-    onProgressChange(versionController.getProgress());
-    onSummaryUpdate(versionController.getSummary());
+//    onProgressChange(versionController.getProgress());
+//    onSummaryUpdate(versionController.getSummary());
+//    versionController.addListener(this);
   }
 
   @PreDestroy
   public void destroy() {
-    versionController.removeListener(this);
+//    versionController.removeListener(this);
   }
 
   //region Action input
@@ -76,12 +76,12 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
   }
 
   public void onClickUpdate() {
-    if (versionController.getSummary() != null
-        && versionController.getSummary().highestVersion > Main.VERSION_CODE) {
-      versionController.upgrade();
-      return;
-    }
-    versionController.checkForUpdate();
+//    if (versionController.getSummary() != null
+//        && versionController.getSummary().highestVersion > Main.VERSION_CODE) {
+//      versionController.upgrade();
+//      return;
+//    }
+//    versionController.checkForUpdate();
   }
 
   // todo : fix hyperlinks
@@ -120,19 +120,19 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
 
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
-      buttonUpdate.setText(Translation.getInstance().getString("about_status_updating"));
-      return;
-    }
-    if (updateSummary == null) {
-      buttonUpdate.setText(Translation.getInstance().getString("about_status_no_info"));
-      return;
-    }
-    if (updateSummary.highestVersion > Main.VERSION_CODE) {
-      buttonUpdate.setText(Translation.getInstance().getString("about_status_update_available"));
-      return;
-    }
-    buttonUpdate.setText(Translation.getInstance().getString("about_status_update_unavailable"));
+//    if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
+//      buttonUpdate.setText(Translation.getInstance().getString("about_status_updating"));
+//      return;
+//    }
+//    if (updateSummary == null) {
+//      buttonUpdate.setText(Translation.getInstance().getString("about_status_no_info"));
+//      return;
+//    }
+//    if (updateSummary.highestVersion > Main.VERSION_CODE) {
+//      buttonUpdate.setText(Translation.getInstance().getString("about_status_update_available"));
+//      return;
+//    }
+//    buttonUpdate.setText(Translation.getInstance().getString("about_status_update_unavailable"));
   }
 
   //region Listeners

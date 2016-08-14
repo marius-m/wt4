@@ -1,20 +1,8 @@
 package lt.markmerkk.utils;
 
 import com.google.common.util.concurrent.Uninterruptibles;
-import com.vinumeris.updatefx.AppDirectory;
-import com.vinumeris.updatefx.Crypto;
-import com.vinumeris.updatefx.UpdateFX;
-import com.vinumeris.updatefx.UpdateSummary;
-import com.vinumeris.updatefx.Updater;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import com.vinumeris.updatefx.*;
 import javafx.application.Platform;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import lt.markmerkk.Const;
 import lt.markmerkk.Main;
 import org.bouncycastle.math.ec.ECPoint;
@@ -25,6 +13,14 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.schedulers.JavaFxScheduler;
 import rx.schedulers.Schedulers;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mariusmerkevicius on 2/3/16.
@@ -172,8 +168,14 @@ public class VersionController {
     public void call(Subscriber<? super Updater> subscriber) {
       System.out.println("Code path: " + UpdateFX.findCodePath(Main.class));
       List<ECPoint> pubkeys = Crypto.decode("03277844CEBC197A402B292133CD20C34C8920F68CE33B93B7FA1779AE01E98D57");
-      Updater updater = new Updater(URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"), "" + Main.VERSION_CODE,
-          AppDirectory.dir(), UpdateFX.findCodePath(Main.class), pubkeys, 1) {
+      Updater updater = new Updater(
+              URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"),
+              "" + Main.VERSION_CODE,
+              AppDirectory.dir(),
+              UpdateFX.findCodePath(Main.class),
+              pubkeys,
+              1
+      ) {
         @Override
         protected void updateProgress(long workDone, long max) {
           super.updateProgress(workDone, max);

@@ -70,7 +70,7 @@ javafx {
         macosx {
             category = 'public.app-category.productivity'
 //            javaRuntime = '<NO RUNTIME>'
-            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/'
+            javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/'
             bundleArguments = [
                     'mac.category' : 'public.app-category.developer-tools',
                     'mac.CFBundleIdentifier' : 'lt.markmerkk.Main',
@@ -271,9 +271,9 @@ task versionOutput() {
     }
 }
 
-//task makeJar(dependsOn:[processJar]) { }
+task makeJar(dependsOn:[processJar]) { }
 //task makeJar(dependsOn:[processJarForWin]) { }
-//compileJava.dependsOn versionOutput
-//jfxDeploy.dependsOn makeJar
+compileJava.dependsOn versionOutput
+jfxDeploy.dependsOn makeJar
 
 

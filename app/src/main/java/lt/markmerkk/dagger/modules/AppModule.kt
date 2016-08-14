@@ -6,6 +6,10 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
+import lt.markmerkk.ui.version.UpdaterImpl
+import lt.markmerkk.ui.version.VersioningInteractor
+import lt.markmerkk.ui.version.VersioningMvp
+import lt.markmerkk.ui.version.VersioningInteractorImpl
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import rx.schedulers.JavaFxScheduler
@@ -62,8 +66,12 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideVersionController(): VersionController {
-        return VersionController()
+    fun provideVersioningPresenter(): VersioningInteractor {
+        return VersioningInteractorImpl(
+                updaterInteractor = UpdaterImpl(),
+                ioScheduler = Schedulers.computation(),
+                uiScheduler = JavaFxScheduler.getInstance()
+        )
     }
 
     @Provides

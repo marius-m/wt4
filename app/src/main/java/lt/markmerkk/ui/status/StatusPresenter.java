@@ -39,8 +39,8 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   @Inject
   LogStorage storage;
-  @Inject
-  VersionController versionController;
+//  @Inject
+//  VersionController versionController;
   @Inject
   SyncInteractor syncInteractor;
   @Inject
@@ -79,7 +79,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
     updateStatus();
     onLoadChange(syncInteractor.isLoading());
-    versionController.addListener(this);
+//    versionController.addListener(this);
     storage.register(loggerListener);
     keepAliveInteractor.register(this);
   }
@@ -88,7 +88,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   public void destroy() {
     keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
-    versionController.removeListener(this);
+//    versionController.removeListener(this);
     syncInteractor.removeLoadingListener(this);
   }
 

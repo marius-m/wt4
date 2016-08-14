@@ -11,6 +11,7 @@ import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.interactors.*;
 import lt.markmerkk.ui.MainView;
+import lt.markmerkk.ui.version.VersioningInteractor;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.SimpleTracker;
@@ -62,6 +63,8 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   public SyncInteractor syncInteractor;
   @Inject
   public AutoUpdateInteractor autoUpdateInteractor;
+  @Inject
+  public VersioningInteractor versioningInteractor;
 
   public KeepAliveGASession keepAliveGASession;
 
@@ -69,7 +72,9 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
 
   @Override
   public void start(Stage stage) throws Exception {
-    Const.INSTANCE.setDEBUG("false".equals(System.getProperty("release")));
+    Const.INSTANCE.setDEBUG(
+            !("true".equals(System.getProperty("release")))
+    );
     logger.info("Running in DEBUG=" + Const.INSTANCE.getDEBUG());
     Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
     initVersionSettings();
@@ -113,10 +118,12 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
             Schedulers.computation()
     );
     keepAliveGASession.onAttach();
+    versioningInteractor.onAttach();
   }
 
   @Override
   public void stop() throws Exception {
+    versioningInteractor.onDetach();
     keepAliveGASession.onDetach();
     syncInteractor.onDetach();
     keepAliveInteractor.unregister(this);
@@ -202,7 +209,13 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     VERSION_CODE = Integer.parseInt(versionProperties.getProperty("version_code"));
     VERSION_NAME = versionProperties.getProperty("version_name");
     GA_KEY = versionProperties.getProperty("ga");
-    logger.info("Running version %s with version code %d", VERSION_NAME, VERSION_CODE);
+    logger.info(
+            String.format(
+                    "Running version %s with version code %d",
+                    VERSION_NAME,
+                    VERSION_CODE
+            )
+    );
   }
 
   @Override
