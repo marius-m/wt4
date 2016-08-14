@@ -1,6 +1,7 @@
 package lt.markmerkk.ui.version
 
 import com.vinumeris.updatefx.*
+import lt.markmerkk.Config
 import lt.markmerkk.Main
 import org.bouncycastle.math.ec.ECPoint
 import org.slf4j.LoggerFactory
@@ -11,9 +12,11 @@ import java.nio.file.Path
  * @author mariusmerkevicius
  * @since 2016-08-14
  */
-class UpdaterImpl() : Updater(
+class UpdaterImpl(
+        config: Config
+) : Updater(
         URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"),
-        Main.VERSION_CODE.toString(),
+        config.versionCode.toString(),
         AppDirectory.dir(),
         UpdateFX.findCodePath(Main::class.java),
         Crypto.decode("03277844CEBC197A402B292133CD20C34C8920F68CE33B93B7FA1779AE01E98D57"),

@@ -33,10 +33,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   public static final String LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n";
   public static HostServicesDelegate hostServices;
   public static final String UPDATE_DIR = "WT4Update";
-
-  public static int VERSION_CODE = 1; // Will be updated on init
-  public static String VERSION_NAME = "Unknown";  // Will be updated on init
-  public static String GA_KEY = null;
   public static final String APP_NAME = "WT4";
 
   public static boolean DEBUG = false;

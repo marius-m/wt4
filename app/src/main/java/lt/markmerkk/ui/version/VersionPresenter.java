@@ -12,6 +12,8 @@ import javafx.scene.text.Text;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+
+import lt.markmerkk.Config;
 import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
 import lt.markmerkk.ui.interfaces.DialogListener;
@@ -27,6 +29,9 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
 
 //  @Inject VersionController versionController;
 
+  @Inject
+  Config config;
+
   @FXML Button buttonClose;
   @FXML Hyperlink buttonTitle;
   @FXML Hyperlink buttonAuthor;
@@ -39,7 +44,8 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    labelVersion.setText(String.format("Version: %s", Main.VERSION_NAME));
+    Main.getComponent().presenterComponent().inject(this);
+    labelVersion.setText(String.format("Version: %s", config.getVersionName()));
 //    onProgressChange(versionController.getProgress());
 //    onSummaryUpdate(versionController.getSummary());
 //    versionController.addListener(this);

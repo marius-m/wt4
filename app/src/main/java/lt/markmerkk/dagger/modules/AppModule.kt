@@ -48,7 +48,7 @@ class AppModule {
         if (config.debug) {
             return NullTracker()
         } else {
-            return GATracker()
+            return GATracker(config)
         }
     }
 
@@ -103,9 +103,11 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideVersioningPresenter(): VersioningInteractor {
+    fun provideVersioningPresenter(
+            config: Config
+    ): VersioningInteractor {
         return VersioningInteractorImpl(
-                updaterInteractor = UpdaterImpl(),
+                updaterInteractor = UpdaterImpl(config),
                 ioScheduler = Schedulers.computation(),
                 uiScheduler = JavaFxScheduler.getInstance()
         )

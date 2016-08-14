@@ -3,6 +3,7 @@ package lt.markmerkk.utils;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.vinumeris.updatefx.*;
 import javafx.application.Platform;
+import lt.markmerkk.Config;
 import lt.markmerkk.Const;
 import lt.markmerkk.Main;
 import org.bouncycastle.math.ec.ECPoint;
@@ -16,6 +17,7 @@ import rx.schedulers.Schedulers;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 @Deprecated
 public class VersionController {
   public static final Logger logger = LoggerFactory.getLogger(VersionController.class);
+
+  @Inject
+  Config config; // never injected
 
   Subscription subscription;
   UpdateSummary summary;
@@ -76,7 +81,7 @@ public class VersionController {
    * Does the app upgrade
    */
   public void upgrade() {
-    if (false) { // debug check
+    if (config.getDebug()) { // debug check
       logger.info("Running debug version! Skipping upgrade!");
       return;
     }
@@ -84,7 +89,7 @@ public class VersionController {
       logger.error("Error upgrading app!");
       return;
     }
-    if (summary.highestVersion <= Main.VERSION_CODE) {
+    if (summary.highestVersion <= config.getVersionCode()) {
       logger.error("App is up to date!");
       return;
     }
@@ -171,7 +176,7 @@ public class VersionController {
       List<ECPoint> pubkeys = Crypto.decode("03277844CEBC197A402B292133CD20C34C8920F68CE33B93B7FA1779AE01E98D57");
       Updater updater = new Updater(
               URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"),
-              "" + Main.VERSION_CODE,
+              "" + config.getVersionCode(),
               AppDirectory.dir(),
               UpdateFX.findCodePath(Main.class),
               pubkeys,

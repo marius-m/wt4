@@ -23,7 +23,7 @@ class DBProdExecutor(
         logger.debug("Applying database migrations")
         if (settings.version <= 0) {
             logger.debug("Found unversioned database! Flushing database with new version.")
-            settings.version = Main.VERSION_CODE
+            settings.version = config.versionCode
         }
         migrate()
     }

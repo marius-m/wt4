@@ -45,6 +45,8 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   SyncInteractor syncInteractor;
   @Inject
   KeepAliveInteractor keepAliveInteractor;
+  @Inject
+  Config config;
 
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
@@ -134,7 +136,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   @Override
   public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION_CODE) {
+    if (updateSummary != null && updateSummary.highestVersion > config.getVersionCode()) {
       //buttonAbout.setText("!"); // todo : fix this in time, when update is more stable
       return;
     }
