@@ -43,6 +43,7 @@ class UserSettingsImplPass2Test {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.password = "new_value"
+        settings.onDetach()
 
         assertEquals("new_value", settings.password)
         verify(coreSettings).save()

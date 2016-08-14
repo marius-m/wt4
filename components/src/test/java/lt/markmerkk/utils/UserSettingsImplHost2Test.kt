@@ -43,6 +43,7 @@ class UserSettingsImplHost2Test {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.host = "new_value"
+        settings.onDetach()
 
         assertEquals("new_value", settings.host)
         verify(coreSettings).save()

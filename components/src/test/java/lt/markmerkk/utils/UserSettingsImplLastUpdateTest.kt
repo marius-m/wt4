@@ -55,6 +55,7 @@ class UserSettingsImplLastUpdateTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.lastUpdate = 1
+        settings.onDetach()
 
         assertEquals(1, settings.lastUpdate)
         verify(coreSettings).save()

@@ -55,6 +55,7 @@ class UserSettingsImplVersionTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.version = 1
+        settings.onDetach()
 
         assertEquals(1, settings.version)
         verify(coreSettings).save()

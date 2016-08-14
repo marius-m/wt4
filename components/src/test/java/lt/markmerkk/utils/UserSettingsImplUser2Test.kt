@@ -43,6 +43,7 @@ class UserSettingsImplUser2Test {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.username = "new_value"
+        settings.onDetach()
 
         assertEquals("new_value", settings.username)
         verify(coreSettings).save()

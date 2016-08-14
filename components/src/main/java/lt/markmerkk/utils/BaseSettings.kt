@@ -1,8 +1,8 @@
 package lt.markmerkk.utils
 
-import java.util.Properties
 import org.slf4j.LoggerFactory
 import java.io.*
+import java.util.*
 
 /**
  * Created by mariusmerkevicius on 11/24/15.
@@ -31,42 +31,44 @@ abstract class BaseSettings {
      * Core method to load properties from local storage
      */
     fun load() {
-        var inputStream: InputStream? = null
-        try {
-            inputStream = FileInputStream(propertyPath())
-            val props = Properties()
-            props.load(inputStream)
-            onLoad(props)
-            logger.info("Success loading settings from ${propertyPath()}!")
-        } catch (e: FileNotFoundException) {
-            logger.error("No default settings file found! " + e.message)
-        } catch (e: IOException) {
-            logger.error("Error opening settings file!" + e.message)
-        } finally {
-            inputStream?.close()
+        synchronized(this) {
+            var inputStream: InputStream? = null
+            try {
+                inputStream = FileInputStream(propertyPath())
+                val props = Properties()
+                props.load(inputStream)
+                onLoad(props)
+                logger.info("Success loading settings from ${propertyPath()}!")
+            } catch (e: FileNotFoundException) {
+                logger.error("No default settings file found! " + e.message)
+            } catch (e: IOException) {
+                logger.error("Error opening settings file!" + e.message)
+            } finally {
+                inputStream?.close()
+            }
         }
-
     }
 
     /**
      * Core method to save properties to local storage
      */
     fun save() {
-        var outputStream: FileOutputStream? = null
-        try {
-            outputStream = FileOutputStream(propertyPath())
-            val props = Properties()
-            onSave(props)
-            props.store(outputStream, null)
-            logger.info("Success saving settings to ${propertyPath()}")
-        } catch (e: FileNotFoundException) {
-            logger.error("No default settings file found! " + e.message)
-        } catch (e: IOException) {
-            logger.error("Error opening settings file!" + e.message)
-        } finally {
-            outputStream?.close()
+        synchronized(this) {
+            var outputStream: FileOutputStream? = null
+            try {
+                outputStream = FileOutputStream(propertyPath())
+                val props = Properties()
+                onSave(props)
+                props.store(outputStream, null)
+                logger.info("Success saving settings to ${propertyPath()}")
+            } catch (e: FileNotFoundException) {
+                logger.error("No default settings file found! " + e.message)
+            } catch (e: IOException) {
+                logger.error("Error opening settings file!" + e.message)
+            } finally {
+                outputStream?.close()
+            }
         }
-
     }
 
     //endregion

@@ -55,6 +55,7 @@ class UserSettingsImplAutoupdateTest {
         val settings = UserSettingsImpl(coreSettings)
 
         settings.autoUpdateMinutes = 1
+        settings.onDetach()
 
         assertEquals(1, settings.autoUpdateMinutes)
         verify(coreSettings).save()

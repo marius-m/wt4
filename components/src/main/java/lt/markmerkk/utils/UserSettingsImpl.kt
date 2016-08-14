@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.Const
 import lt.markmerkk.UserSettings
+import org.slf4j.LoggerFactory
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -64,43 +65,18 @@ class UserSettingsImpl(
     }
 
     override var host: String = ""
-        set(value) {
-            field = value
-            settings.save()
-        }
+
     override var username: String = ""
-        set(value) {
-            field = value
-            settings.save()
-        }
+
     override var password: String = ""
-        set(value) {
-            field = value
-            settings.save()
-        }
+
     override var issueJql: String = Const.DEFAULT_JQL_USER_ISSUES
-        set(value) {
-            field = value
-            settings.save()
-        }
 
     override var version = -1
-        set(value) {
-            field = value
-            settings.save()
-        }
 
     override var autoUpdateMinutes: Int = -1
-        set(value) {
-            field = value
-            settings.save()
-        }
 
     override var lastUpdate: Long = -1
-        set(value) {
-            field = value
-            settings.save()
-        }
 
     //region Getters / Setters
 
@@ -116,6 +92,8 @@ class UserSettingsImpl(
     //endregion
 
     companion object {
+        val logger = LoggerFactory.getLogger(UserSettingsImpl::class.java)!!
+
         val HOST = "HOST"
         val USER = "USER"
         val PASS = "PASS"
