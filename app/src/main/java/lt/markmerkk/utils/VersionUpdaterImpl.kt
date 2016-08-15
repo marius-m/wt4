@@ -7,6 +7,7 @@ import lt.markmerkk.VersionSummary
 import lt.markmerkk.interactors.VersionUpdater
 import org.bouncycastle.math.ec.ECPoint
 import org.slf4j.LoggerFactory
+import rx.subjects.BehaviorSubject
 import rx.subjects.PublishSubject
 import java.net.URI
 import java.nio.file.Path
@@ -16,18 +17,19 @@ import java.nio.file.Path
  * @since 2016-08-14
  */
 class VersionUpdaterImpl(
-        config: Config
+        config: Config,
+        appDirectory: Path
 ) : VersionUpdater, Updater(
         URI.create("https://dl.dropboxusercontent.com/u/60630588/updates/index/"), // todo eap index
         config.versionCode.toString(),
-        AppDirectory.dir(),
+        appDirectory,
         UpdateFX.findCodePath(Main::class.java),
         Crypto.decode("03277844CEBC197A402B292133CD20C34C8920F68CE33B93B7FA1779AE01E98D57"),
         1
 ) {
     override var value: VersionSummary = VersionSummary() // todo : Add real result summary converter here
 
-    val progressSubject: PublishSubject<Float> = PublishSubject.create<Float>()!!
+    override val progressSubject: BehaviorSubject<Float> = BehaviorSubject.create<Float>()!!
 
     override fun updateProgress(workDone: Long, max: Long) {
         super.updateProgress(workDone, max)

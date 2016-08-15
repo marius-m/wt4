@@ -1,14 +1,12 @@
 package lt.markmerkk.dagger.modules
 
+import com.vinumeris.updatefx.AppDirectory
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.interactors.KeepAliveInteractor
-import lt.markmerkk.interactors.KeepAliveInteractorImpl
+import lt.markmerkk.interactors.*
 import lt.markmerkk.utils.VersionUpdaterImpl
-import lt.markmerkk.interactors.VersioningInteractor
-import lt.markmerkk.interactors.VersioningInteractorImpl
 import lt.markmerkk.utils.AdvHashSettings
 import lt.markmerkk.utils.DayProviderImpl
 import lt.markmerkk.utils.UserSettingsImpl
@@ -106,13 +104,25 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideVersioningPresenter(
-            config: Config
+    fun provideVersioningInteractor(
+            config: Config,
+            versionUpdater: VersionUpdater
     ): VersioningInteractor {
         return VersioningInteractorImpl(
-                versionUpdaterInteractor = VersionUpdaterImpl(config),
+                versionUpdaterInteractor = versionUpdater,
                 ioScheduler = Schedulers.computation(),
                 uiScheduler = JavaFxScheduler.getInstance()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideVersionUpdater(
+            config: Config
+    ): VersionUpdater {
+        return VersionUpdaterImpl(
+                config,
+                AppDirectory.dir()
         )
     }
 

@@ -9,6 +9,6 @@ import lt.markmerkk.ui.interfaces.DialogListener;
  */
 public class VersionView extends FXMLView {
   public VersionView(DialogListener dialogListener) {
-    ((VersionPresenter)getPresenter()).dialogListener = dialogListener;
+    ((VersionPresenter) getPresenter()).setDialogListener(dialogListener);
   }
 }

@@ -5,7 +5,9 @@ package lt.markmerkk.mvp
  * @since 2016-08-14
  */
 interface VersioningMvp {
-    interface View {}
+    interface View {
+        fun showProgress(progress: Float)
+    }
     interface Presenter {
         fun onAttach()
         fun onDetach()

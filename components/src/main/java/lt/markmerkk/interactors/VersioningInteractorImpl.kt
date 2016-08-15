@@ -1,6 +1,5 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.interactors.VersioningInteractor
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -11,7 +10,7 @@ import rx.Subscription
  * @since 2016-08-14
  */
 class VersioningInteractorImpl(
-        private val versionUpdaterInteractor: lt.markmerkk.ui.version.VersionUpdater,
+        private val versionUpdaterInteractor: VersionUpdater,
         private val uiScheduler: Scheduler,
         private val ioScheduler: Scheduler
 ) : VersioningInteractor {
