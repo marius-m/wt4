@@ -7,6 +7,9 @@ package lt.markmerkk.mvp
 interface VersioningMvp {
     interface View {
         fun showProgress(progress: Float)
+        fun showUpdateAvailable()
+        fun showUpdateInProgress()
+        fun showUpdateUnavailable()
     }
     interface Presenter {
         fun onAttach()

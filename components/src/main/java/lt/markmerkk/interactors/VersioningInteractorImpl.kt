@@ -1,5 +1,6 @@
 package lt.markmerkk.interactors
 
+import lt.markmerkk.VersionSummary
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -15,15 +16,11 @@ class VersioningInteractorImpl(
         private val ioScheduler: Scheduler
 ) : VersioningInteractor {
 
-    var loading = false
+    override var loading = false
+    override var cacheUpdateSummary: VersionSummary? = null
     var subscription: Subscription? = null
 
     override fun onAttach() {
-//        versionUpdaterInteractor.progressSubject
-//                .subscribeOn(ioScheduler)
-//                .observeOn(uiScheduler)
-//                .doOnNext { logger.debug("Status: $it") }
-//                .subscribe()
         checkVersion()
     }
 
@@ -46,9 +43,10 @@ class VersioningInteractorImpl(
                 .doOnUnsubscribe { loading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.debug("Success with ${versionUpdaterInteractor.value}!")
+                    logger.debug("Success running updater")
+                    cacheUpdateSummary = versionUpdaterInteractor.value
                 }, {
-                    logger.debug("fail")
+                    logger.debug("Failed running updater")
                 })
     }
 

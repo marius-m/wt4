@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 import lt.markmerkk.Config
 import lt.markmerkk.Main
+import lt.markmerkk.Translation
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.interactors.VersionUpdater
 import lt.markmerkk.interactors.VersioningInteractor
@@ -52,6 +53,7 @@ class VersionPresenter : Initializable, VersioningMvp.View {
         presenter = VersioningMvpPresenterImpl(
                 view = this,
                 versionUpdaterInteractor = versionUpdaterInteractor,
+                versioningInteractor = versioningInteractor,
                 ioScheduler = Schedulers.computation(),
                 uiScheduler = JavaFxScheduler.getInstance()
         )
@@ -125,8 +127,24 @@ class VersionPresenter : Initializable, VersioningMvp.View {
         Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
     }
 
+    //endregion
+
+    //region VersionPresenter
+
     override fun showProgress(progress: Float) {
         progressIndicator.progress = progress.toDouble()
+    }
+
+    override fun showUpdateInProgress() {
+        buttonUpdate.text = Translation.getInstance().getString("upgrade_in_progress")
+    }
+    
+    override fun showUpdateAvailable() {
+        buttonUpdate.text = Translation.getInstance().getString("upgrade_available")
+    }
+
+    override fun showUpdateUnavailable() {
+        buttonUpdate.text = Translation.getInstance().getString("upgrade_unavailable")
     }
 
     //endregion

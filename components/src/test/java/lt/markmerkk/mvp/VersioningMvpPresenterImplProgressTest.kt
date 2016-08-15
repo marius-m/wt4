@@ -22,6 +22,7 @@ class VersioningMvpPresenterImplProgressTest {
     val presenter = VersioningMvpPresenterImpl(
             view,
             versionUpdaterInteractor,
+            versioningInteractor, 
             Schedulers.immediate(),
             Schedulers.immediate()
     )
