@@ -11,7 +11,7 @@ import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.interactors.*;
 import lt.markmerkk.ui.MainView;
-import lt.markmerkk.ui.version.VersioningInteractor;
+import lt.markmerkk.interactors.VersioningInteractor;
 import lt.markmerkk.utils.FirstSettings;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.ITracker;

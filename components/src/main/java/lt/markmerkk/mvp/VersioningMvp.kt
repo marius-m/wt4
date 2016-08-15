@@ -1,4 +1,4 @@
-package lt.markmerkk.ui.version
+package lt.markmerkk.mvp
 
 /**
  * @author mariusmerkevicius

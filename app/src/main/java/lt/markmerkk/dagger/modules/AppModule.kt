@@ -6,9 +6,9 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
-import lt.markmerkk.ui.version.UpdaterImpl
-import lt.markmerkk.ui.version.VersioningInteractor
-import lt.markmerkk.ui.version.VersioningInteractorImpl
+import lt.markmerkk.utils.VersionUpdaterImpl
+import lt.markmerkk.interactors.VersioningInteractor
+import lt.markmerkk.interactors.VersioningInteractorImpl
 import lt.markmerkk.utils.AdvHashSettings
 import lt.markmerkk.utils.DayProviderImpl
 import lt.markmerkk.utils.UserSettingsImpl
@@ -110,7 +110,7 @@ class AppModule {
             config: Config
     ): VersioningInteractor {
         return VersioningInteractorImpl(
-                updaterInteractor = UpdaterImpl(config),
+                versionUpdaterInteractor = VersionUpdaterImpl(config),
                 ioScheduler = Schedulers.computation(),
                 uiScheduler = JavaFxScheduler.getInstance()
         )

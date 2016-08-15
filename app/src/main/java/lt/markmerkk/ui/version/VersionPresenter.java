@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by mariusmerkevicius on 12/14/15. Represents the presenter to update the log
  */
-public class VersionPresenter implements Initializable, VersionController.UpgradeListener {
+public class VersionPresenter implements Initializable {
   Logger logger = LoggerFactory.getLogger(VersionPresenter.class);
 
 //  @Inject VersionController versionController;
@@ -119,13 +119,13 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
 
   //endregion
 
-  @Override
-  public void onProgressChange(double progressChange) {
-    progressIndicator.setProgress((progressChange <= 0) ? 0 : progressChange);
-  }
+//  @Override
+//  public void onProgressChange(double progressChange) {
+//    progressIndicator.setProgress((progressChange <= 0) ? 0 : progressChange);
+//  }
 
-  @Override
-  public void onSummaryUpdate(UpdateSummary updateSummary) {
+//  @Override
+//  public void onSummaryUpdate(UpdateSummary updateSummary) {
 //    if (versionController.getProgress() > 0 && versionController.getProgress() < 1) {
 //      buttonUpdate.setText(Translation.getInstance().getString("about_status_updating"));
 //      return;
@@ -139,7 +139,7 @@ public class VersionPresenter implements Initializable, VersionController.Upgrad
 //      return;
 //    }
 //    buttonUpdate.setText(Translation.getInstance().getString("about_status_update_unavailable"));
-  }
+//  }
 
   //region Listeners
 
