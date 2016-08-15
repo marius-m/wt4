@@ -134,9 +134,6 @@ tasks.withType(JavaExec) {
     systemProperties project.getProperties()
 }
 
-/**
- * Processes jar thorugh {@link com.vinumeris.updatefx.UpdateFX}
- */
 task processJar(dependsOn:shadowJar, type: JavaExec) {
     if (System.getProperty('os.name').toLowerCase().split()[0].equals("windows"))
         return;
@@ -264,23 +261,8 @@ task updateRemote() {
     }
 }
 
-task versionOutput() {
-    def deployPropertyFile = new File("${rootDir}","deploy.properties")
-    assert deployPropertyFile.exists()
-    Properties deployProps = new Properties()
-    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
-
-    def versionFile = new File("${projectDir}/src/main/resources","version.properties")
-    doLast {
-        versionFile.write"version_code=${versionCode}\n"
-        versionFile << "version_name=${version}\n"
-        versionFile << "ga="+deployProps.getProperty("ga")
-    }
-}
-
 task makeJar(dependsOn:[processJar]) { }
 //task makeJar(dependsOn:[processJarForWin]) { }
-compileJava.dependsOn versionOutput
 jfxDeploy.dependsOn makeJar
 
 
