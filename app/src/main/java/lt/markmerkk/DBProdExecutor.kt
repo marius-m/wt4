@@ -21,11 +21,11 @@ class DBProdExecutor(
 
     init {
         logger.debug("Applying database migrations")
-        if (settings.version <= 0) {
-            logger.debug("Found unversioned database! Flushing database with new version.")
+        if (settings.version <= config.versionCode) {
+            logger.debug("Database older version, adding migrations.")
             settings.version = config.versionCode
+            migrate()
         }
-        migrate()
     }
 
     override fun database(): String {

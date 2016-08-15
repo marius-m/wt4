@@ -1,5 +1,7 @@
 package lt.markmerkk
 
+import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.SimpleLog
 import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException
@@ -7,6 +9,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 import lt.markmerkk.entities.database.DBBaseExecutor
+import lt.markmerkk.entities.jobs.CreateJobIfNeeded
 import org.slf4j.LoggerFactory
 
 /**
@@ -20,10 +23,11 @@ class DBTestExecutor : DBBaseExecutor() {
         try {
             val path = FileSystems.getDefault().getPath(FILE)
             val result = Files.deleteIfExists(path)
+            executeOrThrow(CreateJobIfNeeded(SimpleLog::class.java))
+            executeOrThrow(CreateJobIfNeeded(LocalIssue::class.java))
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        migrate()
     }
 
 
@@ -31,16 +35,12 @@ class DBTestExecutor : DBBaseExecutor() {
         return "test_database.db"
     }
 
-    override fun migrationScriptPath(): URI {
-        return Paths.get("src/main/resources/" + "changelog_1.xml").toUri()
+    override fun migrationScriptPath(): URI? {
+        return null
     }
 
-    override fun migrationExportPath(): URI {
-        try {
-            return javaClass.getResource("/").toURI()
-        } catch (e: URISyntaxException) {
-            throw IllegalStateException("Can't find migration config path")
-        }
+    override fun migrationExportPath(): URI? {
+        return null
     }
 
     companion object {
