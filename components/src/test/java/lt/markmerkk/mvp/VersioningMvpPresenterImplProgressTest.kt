@@ -17,8 +17,8 @@ import rx.subjects.BehaviorSubject
 class VersioningMvpPresenterImplProgressTest {
 
     val view: VersioningMvp.View = mock()
-    val versionUpdaterInteractor: VersionUpdater = mock()
-    val versioningInteractor: VersioningInteractor = mock()
+    val versionUpdaterInteractor: VersionUpdater<Any> = mock()
+    val versioningInteractor: VersioningInteractor<Any> = mock()
     val presenter = VersioningMvpPresenterImpl(
             view,
             versionUpdaterInteractor,

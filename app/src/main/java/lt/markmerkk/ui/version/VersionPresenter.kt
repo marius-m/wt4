@@ -1,5 +1,6 @@
 package lt.markmerkk.ui.version
 
+import com.vinumeris.updatefx.UpdateSummary
 import java.net.URL
 import java.util.ResourceBundle
 import javafx.fxml.FXML
@@ -33,9 +34,9 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     @Inject
     lateinit var config: Config
     @Inject
-    lateinit var versionUpdaterInteractor: VersionUpdater
+    lateinit var versionUpdaterInteractor: VersionUpdater<UpdateSummary>
     @Inject
-    lateinit var versioningInteractor: VersioningInteractor
+    lateinit var versioningInteractor: VersioningInteractor<UpdateSummary>
 
     @FXML lateinit var buttonClose: Button
     @FXML lateinit var buttonTitle: Hyperlink

@@ -1,7 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.VersionSummary
+import lt.markmerkk.entities.VersionSummary
 import lt.markmerkk.interactors.VersionUpdater
 import lt.markmerkk.interactors.VersioningInteractor
 import org.junit.Assert.*
@@ -18,8 +18,8 @@ import rx.subjects.BehaviorSubject
 class VersioningMvpPresenterImplUpdateStatusTest {
 
     val view: VersioningMvp.View = mock()
-    val versionUpdaterInteractor: VersionUpdater = mock()
-    val versioningInteractor: VersioningInteractor = mock()
+    val versionUpdaterInteractor: VersionUpdater<Any> = mock()
+    val versioningInteractor: VersioningInteractor<Any> = mock()
     val presenter = VersioningMvpPresenterImpl(
             view,
             versionUpdaterInteractor,
@@ -28,6 +28,7 @@ class VersioningMvpPresenterImplUpdateStatusTest {
             Schedulers.immediate()
     )
 
+    val fakeSummary: VersionSummary<Any> = mock()
     val progressSubject: BehaviorSubject<Float> = BehaviorSubject.create<Float>(0f)!!
 
     @Before
@@ -54,7 +55,7 @@ class VersioningMvpPresenterImplUpdateStatusTest {
     @Test
     fun summaryCached_updateInProgress_triggerShowProgress() {
         // Arrange
-        whenever(versioningInteractor.cacheUpdateSummary).thenReturn(VersionSummary())
+        whenever(versioningInteractor.cacheUpdateSummary).thenReturn(fakeSummary)
         whenever(versioningInteractor.loading).thenReturn(true)
 
         // Act
@@ -84,7 +85,7 @@ class VersioningMvpPresenterImplUpdateStatusTest {
     @Test
     fun cacheAvailable_notInProgress_triggerAvailable() {
         // Arrange
-        whenever(versioningInteractor.cacheUpdateSummary).thenReturn(VersionSummary())
+        whenever(versioningInteractor.cacheUpdateSummary).thenReturn(fakeSummary)
         whenever(versioningInteractor.loading).thenReturn(false)
 
         // Act
@@ -118,7 +119,7 @@ class VersioningMvpPresenterImplUpdateStatusTest {
         reset(versioningInteractor)
         reset(view)
         whenever(versioningInteractor.cacheUpdateSummary)
-                .thenReturn(VersionSummary())
+                .thenReturn(fakeSummary)
         whenever(versioningInteractor.loading)
                 .thenReturn(false)
 
@@ -130,5 +131,7 @@ class VersioningMvpPresenterImplUpdateStatusTest {
         verify(view, never()).showUpdateUnavailable()
         verify(view, never()).showUpdateInProgress()
     }
+
+    // test object
 
 }

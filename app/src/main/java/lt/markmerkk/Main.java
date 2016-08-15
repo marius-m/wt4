@@ -3,6 +3,7 @@ package lt.markmerkk;
 import com.sun.javafx.application.HostServicesDelegate;
 import com.vinumeris.updatefx.AppDirectory;
 import com.vinumeris.updatefx.UpdateFX;
+import com.vinumeris.updatefx.UpdateSummary;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -59,7 +60,7 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   @Inject
   public AutoUpdateInteractor autoUpdateInteractor;
   @Inject
-  public VersioningInteractor versioningInteractor;
+  public VersioningInteractor<UpdateSummary> versioningInteractor;
   @Inject
   public Config config;
   @Inject

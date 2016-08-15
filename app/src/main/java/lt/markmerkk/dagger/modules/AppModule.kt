@@ -1,15 +1,13 @@
 package lt.markmerkk.dagger.modules
 
 import com.vinumeris.updatefx.AppDirectory
+import com.vinumeris.updatefx.UpdateSummary
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.*
-import lt.markmerkk.utils.VersionUpdaterImpl
-import lt.markmerkk.utils.AdvHashSettings
-import lt.markmerkk.utils.DayProviderImpl
-import lt.markmerkk.utils.UserSettingsImpl
+import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
@@ -106,8 +104,8 @@ class AppModule {
     @Singleton
     fun provideVersioningInteractor(
             config: Config,
-            versionUpdater: VersionUpdater
-    ): VersioningInteractor {
+            versionUpdater: VersionUpdater<UpdateSummary>
+    ): VersioningInteractor<UpdateSummary> {
         return VersioningInteractorImpl(
                 versionUpdaterInteractor = versionUpdater,
                 ioScheduler = Schedulers.computation(),
@@ -119,7 +117,7 @@ class AppModule {
     @Singleton
     fun provideVersionUpdater(
             config: Config
-    ): VersionUpdater {
+    ): VersionUpdater<UpdateSummary> {
         return VersionUpdaterImpl(
                 config,
                 AppDirectory.dir()

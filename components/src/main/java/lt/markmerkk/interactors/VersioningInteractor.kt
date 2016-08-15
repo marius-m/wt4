@@ -1,14 +1,14 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.VersionSummary
+import lt.markmerkk.entities.VersionSummary
 
 /**
  * @author mariusmerkevicius
  * @since 2016-08-14
  */
-interface VersioningInteractor {
+interface VersioningInteractor<T> {
     val loading: Boolean
-    val cacheUpdateSummary: VersionSummary?
+    val cacheUpdateSummary: VersionSummary<T>?
 
     fun onAttach()
     fun onDetach()

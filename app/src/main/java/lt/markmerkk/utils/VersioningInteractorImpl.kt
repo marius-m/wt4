@@ -1,6 +1,9 @@
-package lt.markmerkk.interactors
+package lt.markmerkk.utils
 
-import lt.markmerkk.VersionSummary
+import com.vinumeris.updatefx.UpdateSummary
+import lt.markmerkk.entities.VersionSummary
+import lt.markmerkk.interactors.VersionUpdater
+import lt.markmerkk.interactors.VersioningInteractor
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -11,17 +14,17 @@ import rx.Subscription
  * @since 2016-08-14
  */
 class VersioningInteractorImpl(
-        private val versionUpdaterInteractor: VersionUpdater,
+        private val versionUpdaterInteractor: VersionUpdater<UpdateSummary>,
         private val uiScheduler: Scheduler,
         private val ioScheduler: Scheduler
-) : VersioningInteractor {
+) : VersioningInteractor<UpdateSummary> {
 
     override var loading = false
         set(value) {
             field = value
             loadingListener.forEach { it.onVersionLoadChange(value) }
         }
-    override var cacheUpdateSummary: VersionSummary? = null
+    override var cacheUpdateSummary: VersionSummary<UpdateSummary>? = null
     var subscription: Subscription? = null
     val loadingListener = mutableListOf<VersioningInteractor.LoadingListener>()
 
@@ -59,7 +62,7 @@ class VersioningInteractorImpl(
                     logger.debug("Success running updater")
                     cacheUpdateSummary = versionUpdaterInteractor.value
                 }, {
-                    logger.debug("Failed running updater")
+                    logger.error("Failed running updater", it)
                 })
     }
 

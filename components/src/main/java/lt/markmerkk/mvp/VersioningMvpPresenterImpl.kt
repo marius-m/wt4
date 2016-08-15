@@ -10,10 +10,10 @@ import rx.Subscription
  * @author mariusmerkevicius
  * @since 2016-08-15
  */
-class VersioningMvpPresenterImpl(
+class VersioningMvpPresenterImpl<T>(
         private val view: VersioningMvp.View,
-        private val versionUpdaterInteractor: VersionUpdater,
-        private val versioningInteractor: VersioningInteractor,
+        private val versionUpdaterInteractor: VersionUpdater<T>,
+        private val versioningInteractor: VersioningInteractor<T>,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) : VersioningMvp.Presenter, VersioningInteractor.LoadingListener {

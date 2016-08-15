@@ -46,7 +46,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   @Inject
   Config config;
   @Inject
-  VersioningInteractor versioningInteractor;
+  VersioningInteractor<UpdateSummary> versioningInteractor;
 
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
@@ -82,7 +82,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
     updateStatus();
     onVersionLoadChange(syncInteractor.isLoading());
-//    versionController.addListener(this);
     storage.register(loggerListener);
     keepAliveInteractor.register(this);
     onVersionLoadChange(versioningInteractor.getLoading());
@@ -94,7 +93,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     versioningInteractor.unregisterLoadingListener(this);
     keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
-//    versionController.removeListener(this);
     syncInteractor.removeLoadingListener(this);
   }
 
