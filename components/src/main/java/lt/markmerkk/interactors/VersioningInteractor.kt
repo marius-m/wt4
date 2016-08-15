@@ -13,5 +13,12 @@ interface VersioningInteractor {
     fun onAttach()
     fun onDetach()
 
+    fun registerLoadingListener(listener: LoadingListener)
+    fun unregisterLoadingListener(listener: LoadingListener)
+
     fun checkVersion()
+
+    interface LoadingListener {
+        fun onVersionLoadChange(loading: Boolean)
+    }
 }

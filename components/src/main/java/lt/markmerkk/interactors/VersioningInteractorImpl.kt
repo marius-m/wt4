@@ -17,8 +17,13 @@ class VersioningInteractorImpl(
 ) : VersioningInteractor {
 
     override var loading = false
+        set(value) {
+            field = value
+            loadingListener.forEach { it.onVersionLoadChange(value) }
+        }
     override var cacheUpdateSummary: VersionSummary? = null
     var subscription: Subscription? = null
+    val loadingListener = mutableListOf<VersioningInteractor.LoadingListener>()
 
     override fun onAttach() {
         checkVersion()
@@ -26,6 +31,14 @@ class VersioningInteractorImpl(
 
     override fun onDetach() {
         subscription?.unsubscribe()
+    }
+
+    override fun registerLoadingListener(listener: VersioningInteractor.LoadingListener) {
+        loadingListener += listener
+    }
+
+    override fun unregisterLoadingListener(listener: VersioningInteractor.LoadingListener) {
+        loadingListener -= listener
     }
 
     override fun checkVersion() {

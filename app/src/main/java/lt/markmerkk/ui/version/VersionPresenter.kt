@@ -138,7 +138,7 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     override fun showUpdateInProgress() {
         buttonUpdate.text = Translation.getInstance().getString("upgrade_in_progress")
     }
-    
+
     override fun showUpdateAvailable() {
         buttonUpdate.text = Translation.getInstance().getString("upgrade_available")
     }

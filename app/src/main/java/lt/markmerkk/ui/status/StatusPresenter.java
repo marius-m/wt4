@@ -11,11 +11,11 @@ import lt.markmerkk.*;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.interactors.KeepAliveInteractor;
 import lt.markmerkk.interactors.SyncInteractor;
+import lt.markmerkk.interactors.VersioningInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.ui.clock.utils.SimpleDatePickerConverter;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
-import lt.markmerkk.utils.VersionController;
 import lt.markmerkk.utils.tracker.ITracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -32,21 +32,21 @@ import java.util.ResourceBundle;
  * Represents the presenter to show app status
  */
 public class StatusPresenter implements Initializable, IRemoteLoadListener,
-    VersionController.UpgradeListener, KeepAliveInteractor.Listener {
+    KeepAliveInteractor.Listener, VersioningInteractor.LoadingListener {
   public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
 
   @Inject
   LogStorage storage;
   @Inject
   ITracker tracker;
-//  @Inject
-//  VersionController versionController;
   @Inject
   SyncInteractor syncInteractor;
   @Inject
   KeepAliveInteractor keepAliveInteractor;
   @Inject
   Config config;
+  @Inject
+  VersioningInteractor versioningInteractor;
 
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
@@ -68,6 +68,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     buttonToday.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_total")));
     buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
+    versionLoadIndicator.setOnMouseClicked(aboutClickListener);
     syncInteractor.addLoadingListener(this);
     total = LogUtils.INSTANCE.formatShortDuration(storage.total());
     targetDatePicker.getEditor().setText(
@@ -80,14 +81,17 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     });
 
     updateStatus();
-    onLoadChange(syncInteractor.isLoading());
+    onVersionLoadChange(syncInteractor.isLoading());
 //    versionController.addListener(this);
     storage.register(loggerListener);
     keepAliveInteractor.register(this);
+    onVersionLoadChange(versioningInteractor.getLoading());
+    versioningInteractor.registerLoadingListener(this);
   }
 
   @PreDestroy
   public void destroy() {
+    versioningInteractor.unregisterLoadingListener(this);
     keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
 //    versionController.removeListener(this);
@@ -127,22 +131,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   //region Listeners
 
-  @Override
-  public void onProgressChange(double progressChange) {
-    boolean visible = (progressChange > 0.0f && progressChange < 1.0f);
-    versionLoadIndicator.setManaged(visible);
-    versionLoadIndicator.setVisible(visible);
-  }
-
-  @Override
-  public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (updateSummary != null && updateSummary.highestVersion > config.getVersionCode()) {
-      //buttonAbout.setText("!"); // todo : fix this in time, when update is more stable
-      return;
-    }
-    //buttonAbout.setText("?");
-  }
-
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
@@ -176,6 +164,15 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
 
   public void setListener(Listener listener) {
     this.listener = listener;
+  }
+
+  @Override
+  public void onVersionLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      versionLoadIndicator.setManaged(loading);
+      versionLoadIndicator.setVisible(loading);
+      updateStatus();
+    });
   }
 
   @Override

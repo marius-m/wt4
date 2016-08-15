@@ -16,7 +16,7 @@ class VersioningMvpPresenterImpl(
         private val versioningInteractor: VersioningInteractor,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
-) : VersioningMvp.Presenter {
+) : VersioningMvp.Presenter, VersioningInteractor.LoadingListener {
 
     var subscription: Subscription? = null
 
@@ -24,9 +24,11 @@ class VersioningMvpPresenterImpl(
         subscription = versionUpdaterInteractor.progressSubject
                 .subscribe({ view.showProgress(it) })
         checkUpdateSummary()
+        versioningInteractor.registerLoadingListener(this)
     }
 
     override fun onDetach() {
+        versioningInteractor.unregisterLoadingListener(this)
         subscription?.unsubscribe()
     }
 
@@ -40,6 +42,10 @@ class VersioningMvpPresenterImpl(
                 view.showUpdateUnavailable()
             }
         }
+    }
+
+    override fun onVersionLoadChange(loading: Boolean) {
+        checkUpdateSummary()
     }
 
     companion object {
