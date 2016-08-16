@@ -1,15 +1,13 @@
 package lt.markmerkk
 
+import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.database.DBBaseExecutor
+import lt.markmerkk.entities.jobs.CreateJobIfNeeded
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.URISyntaxException
 import java.nio.file.Paths
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
-import javax.inject.Inject
-import lt.markmerkk.entities.database.DBBaseExecutor
-import lt.markmerkk.utils.UserSettingsImpl
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * Created by mariusmerkevicius on 11/22/15.
@@ -20,12 +18,14 @@ class DBProdExecutor(
 ) : DBBaseExecutor() {
 
     init {
-        logger.debug("Applying database migrations")
-        if (settings.version <= config.versionCode) {
-            logger.debug("Database older version, adding migrations.")
-            settings.version = config.versionCode
-            migrate()
-        }
+//        logger.debug("Applying database migrations")
+//        if (settings.version <= config.versionCode) {
+//            logger.debug("Database older version, adding migrations.")
+//            settings.version = config.versionCode
+//            migrate()
+//        }
+        executeOrThrow(CreateJobIfNeeded(SimpleLog::class.java))
+        executeOrThrow(CreateJobIfNeeded(LocalIssue::class.java))
     }
 
     override fun database(): String {

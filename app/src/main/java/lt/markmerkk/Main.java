@@ -114,12 +114,12 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
             Schedulers.computation()
     );
     keepAliveGASession.onAttach();
-    versioningInteractor.onAttach();
+//    versioningInteractor.onAttach();
   }
 
   @Override
   public void stop() throws Exception {
-    versioningInteractor.onDetach();
+//    versioningInteractor.onDetach();
     keepAliveGASession.onDetach();
     syncInteractor.onDetach();
     keepAliveInteractor.unregister(this);
@@ -172,28 +172,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     errorAppender.setMaxBackupIndex(1);
     errorAppender.setThreshold(Priority.toPriority(Priority.ALL_INT));
     org.apache.log4j.Logger.getRootLogger().addAppender(errorAppender);
-  }
-
-  /**
-   * Prepares an update directory
-   * @deprecated not sure if need this at all
-   */
-  @Deprecated
-  static boolean isFirstLaunch(boolean isDebug) throws IOException {
-    if (isDebug) {
-      logger.info("Running debug version! Skipping first launch check!");
-      return false;
-    }
-    Path updatePath = AppDirectory.initAppDir(UPDATE_DIR);
-    FirstSettings firstSettings = new FirstSettings();
-    firstSettings.load();
-    if (firstSettings.isFirst()) {
-      File updateDir = updatePath.toFile();
-      Utils.delete(updateDir);
-      firstSettings.save();
-      return true;
-    }
-    return false;
   }
 
   @Override
