@@ -1,7 +1,5 @@
 package lt.markmerkk.dagger.modules
 
-import com.vinumeris.updatefx.AppDirectory
-import com.vinumeris.updatefx.UpdateSummary
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
@@ -97,30 +95,6 @@ class AppModule {
         return KeepAliveInteractorImpl(
                 uiSCheduler = JavaFxScheduler.getInstance(),
                 ioScheduler = Schedulers.computation()
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideVersioningInteractor(
-            config: Config,
-            versionUpdater: VersionUpdater<UpdateSummary>
-    ): VersioningInteractor<UpdateSummary> {
-        return VersioningInteractorImpl(
-                versionUpdaterInteractor = versionUpdater,
-                ioScheduler = Schedulers.computation(),
-                uiScheduler = JavaFxScheduler.getInstance()
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideVersionUpdater(
-            config: Config
-    ): VersionUpdater<UpdateSummary> {
-        return VersionUpdaterImpl(
-                config,
-                AppDirectory.dir()
         )
     }
 

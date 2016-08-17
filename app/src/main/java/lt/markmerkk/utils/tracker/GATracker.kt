@@ -3,7 +3,6 @@ package lt.markmerkk.utils.tracker
 import com.brsanthu.googleanalytics.AppViewHit
 import com.brsanthu.googleanalytics.EventHit
 import com.brsanthu.googleanalytics.GoogleAnalytics
-import com.google.common.base.Strings
 import lt.markmerkk.Config
 import lt.markmerkk.Main
 
@@ -21,20 +20,20 @@ class GATracker(
     }
 
     override fun sendEvent(category: String, action: String, label: String, value: Int) {
-        if (Strings.isNullOrEmpty(category)) return
-        if (Strings.isNullOrEmpty(action)) return
-        if (Strings.isNullOrEmpty(label)) return
+        if (category.isNullOrEmpty()) return
+        if (action.isNullOrEmpty()) return
+        if (label.isNullOrEmpty()) return
         analytics.postAsync(EventHit(category, action, label, value))
     }
 
     override fun sendEvent(category: String, action: String) {
-        if (Strings.isNullOrEmpty(category)) return
-        if (Strings.isNullOrEmpty(action)) return
+        if (category.isNullOrEmpty()) return
+        if (action.isNullOrEmpty()) return
         analytics.postAsync(EventHit(category, action))
     }
 
     override fun sendView(contentDescription: String) {
-        if (Strings.isNullOrEmpty(contentDescription)) return
+        if (contentDescription.isNullOrEmpty()) return
         analytics.postAsync(AppViewHit(Main.APP_NAME, config.versionName, contentDescription))
     }
 

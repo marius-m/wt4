@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.clock;
 
-import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import lt.markmerkk.*;
+import lt.markmerkk.entities.EntityKt;
 import lt.markmerkk.entities.LocalIssue;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
@@ -110,7 +110,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
           break;
         default:
           String typedText = event.getText().replaceAll("\r", "");
-          if (!Strings.isNullOrEmpty(typedText)) {
+          if (!EntityKt.isEmpty(typedText)) {
             issueSearchPresenter.search(inputTaskCombo.getEditor().getText());
           }
       }
