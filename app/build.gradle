@@ -160,26 +160,35 @@ jfx {
 }
 
 
-task processJar(dependsOn:shadowJar) {
+task processJar(dependsOn:shadowJar, type: JavaExec) {
 
     def siteDir = new File(rootDir, "out4")
     def appDir = new File(rootDir, "out4/app")
     def libsDir = new File(projectDir, "build/libs")
     def toolsFile = new File(rootDir, "tools/getdown-1.5.jar")
-    def configDir = new File(projectDir, "build/libs/app")
+    def clientConfigDir = new File(projectDir, "build/libs/app")
     def clientConfig = new File(rootDir, "tools/client.txt")
+    def remoteConfig = new File(rootDir, "tools/remote.txt")
     def configName = "getdown.txt"
+
+    standardInput = System.in
+    classpath = files(toolsFile)
+    main = "com.threerings.getdown.tools.Digester"
+    workingDir = siteDir
+    args = ['app']
 
     doFirst {
         // Prepare
+        project.delete siteDir
+
         appDir.mkdirs()
         siteDir.mkdirs()
-        configDir.mkdirs()
+        clientConfigDir.mkdirs()
         assert siteDir.exists()
         assert appDir.exists()
         assert libsDir.exists()
         assert toolsFile.exists()
-        assert configDir.exists()
+        assert clientConfigDir.exists()
         assert clientConfig.exists()
 
         // Modify generated libs
@@ -199,14 +208,18 @@ task processJar(dependsOn:shadowJar) {
         }
         copy {
             from clientConfig.absolutePath
-            into configDir.absolutePath
+            into clientConfigDir.absolutePath
         }
-        def builtConfig = new File(configDir, "client.txt")
-        builtConfig.renameTo("$configDir/$configName")
+        def builtConfig = new File(clientConfigDir, "client.txt")
+        builtConfig.renameTo("$clientConfigDir/$configName")
+
+        copy {
+            from remoteConfig.absolutePath
+            into appDir.absolutePath
+        }
+        def siteConfig = new File(appDir, "remote.txt")
+        siteConfig.renameTo("$appDir/$configName")
     }
-
-
-
 }
 
 shadowJar.dependsOn assemble
