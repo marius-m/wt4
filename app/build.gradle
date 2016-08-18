@@ -24,7 +24,7 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.4-EAP'
+version = '0.9.9.4'
 def versionCode = '7'
 
 sourceSets {
@@ -118,7 +118,7 @@ jfx {
     nativeOutputDir = "build/jfx/native"
     bundler = "ALL" // set this to some specific, if your don't want all bundlers running, examples "windows.app", "jnlp", ...
     jvmProperties = null // Map<String, String>
-    jvmArgs = ["-Dversion_name=test", "-Dversion_code=1", "-Dga_key=test"]
+    jvmArgs = null
     userJvmArgs = null // Map<String, String>
     launcherArguments = ["app"]
     nativeReleaseVersion = "1.0"
