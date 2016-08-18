@@ -30,7 +30,7 @@ def versionCode = '7'
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'build/generated/source/kapt']
+            srcDirs = ['src/main/java', 'build/generated']
         }
         resources {
             srcDirs = ['src/main/resources']
@@ -66,7 +66,7 @@ idea {
 }
 
 dependencies {
-    ext.dagger_version = "2.2"
+    ext.dagger_version = "2.6"
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -83,8 +83,8 @@ dependencies {
     compile 'io.reactivex:rxjavafx:0.0.2'
 
     compile("com.google.dagger:dagger:${dagger_version}")
-
     kapt("com.google.dagger:dagger-compiler:${dagger_version}")
+//    provided 'javax.annotation:jsr250-api:1.0'
 
     compile 'joda-time:joda-time:2.9.1'
     compile 'com.airhacks:afterburner.fx:1.7.0'
@@ -99,9 +99,9 @@ tasks.withType(JavaExec) {
 
 jfx {
     verbose = true
-    mainClass = "lt.markmerkk.Main"
-    jfxAppOutputDir = "build/jfx/app"
-    jfxMainAppJarName = "project-jfx.jar"
+    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+    jfxAppOutputDir = "build/libs"
+    jfxMainAppJarName = "app.jar"
     deployDir = "src/main/deploy"
 
     // gradle jfxJar
@@ -120,11 +120,13 @@ jfx {
     jvmProperties = null // Map<String, String>
     jvmArgs = ["-Dversion_name=test", "-Dversion_code=1", "-Dga_key=test"]
     userJvmArgs = null // Map<String, String>
-    launcherArguments = null // List<String>
+    launcherArguments = ["app"]
     nativeReleaseVersion = "1.0"
     needShortcut = false
     needMenu = false
-    bundleArguments = null
+    bundleArguments = [
+            runtime: null
+    ]
     appName = "WT4" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/windows/project.ico"
     additionalAppResources = null // path to some additional resources when creating application-bundle
     secondaryLaunchers = null
@@ -157,3 +159,55 @@ jfx {
     certCountry = null // required
 }
 
+
+task processJar(dependsOn:shadowJar) {
+
+    def siteDir = new File(rootDir, "out4")
+    def appDir = new File(rootDir, "out4/app")
+    def libsDir = new File(projectDir, "build/libs")
+    def toolsFile = new File(rootDir, "tools/getdown-1.5.jar")
+    def configDir = new File(projectDir, "build/libs/app")
+    def clientConfig = new File(rootDir, "tools/client.txt")
+    def configName = "getdown.txt"
+
+    doFirst {
+        // Prepare
+        appDir.mkdirs()
+        siteDir.mkdirs()
+        configDir.mkdirs()
+        assert siteDir.exists()
+        assert appDir.exists()
+        assert libsDir.exists()
+        assert toolsFile.exists()
+        assert configDir.exists()
+        assert clientConfig.exists()
+
+        // Modify generated libs
+        project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
+        File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
+        assert outFile.exists()
+
+        // Create configuration for upload
+        outFile.renameTo("${appDir.absolutePath}/app.jar")
+        copy {
+            from toolsFile.absolutePath
+            into libsDir.absolutePath
+        }
+        copy {
+            from toolsFile.absolutePath
+            into siteDir.absolutePath
+        }
+        copy {
+            from clientConfig.absolutePath
+            into configDir.absolutePath
+        }
+        def builtConfig = new File(configDir, "client.txt")
+        builtConfig.renameTo("$configDir/$configName")
+    }
+
+
+
+}
+
+shadowJar.dependsOn assemble
+jfxNative.dependsOn processJar

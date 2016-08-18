@@ -1,0 +1,15 @@
+# The URL from which the client is downloaded
+appbase = http://212.24.101.213/test/
+
+# UI Configuration
+ui.name = WT4
+
+# Application jar files
+code = app.jar
+
+# The main entry point for the application
+class = lt.markmerkk.Main
+
+jvmarg = -Dversion_name=0.9.9.4-EAP
+jvmarg = -Dversion_code=7
+jvmarg = -Dga_key=test_key
