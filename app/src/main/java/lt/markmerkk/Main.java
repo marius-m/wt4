@@ -25,7 +25,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   public static final String LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n";
   public static final String LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n";
   public static HostServicesDelegate hostServices;
-  public static final String UPDATE_DIR = "WT4Update";
   public static final String APP_NAME = "WT4";
 
   public static boolean DEBUG = false;
@@ -79,7 +78,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     Scene scene = new Scene(mainView.getView());
     String cssResource1 = getClass().getResource("/text-field-red-border.css").toExternalForm();
     scene.getStylesheets().add(cssResource1);
-    logger.debug("Loading external resource: {}", cssResource1);
     stage.setWidth(SCENE_WIDTH);
     stage.setHeight(SCENE_HEIGHT);
     stage.setMinWidth(SCENE_WIDTH);
@@ -97,12 +95,10 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
             Schedulers.computation()
     );
     keepAliveGASession.onAttach();
-//    versioningInteractor.onAttach();
   }
 
   @Override
   public void stop() throws Exception {
-//    versioningInteractor.onDetach();
     keepAliveGASession.onDetach();
     syncInteractor.onDetach();
     keepAliveInteractor.unregister(this);

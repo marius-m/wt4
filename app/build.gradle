@@ -88,7 +88,6 @@ dependencies {
 
     compile 'joda-time:joda-time:2.9.1'
     compile 'com.airhacks:afterburner.fx:1.7.0'
-    compile 'commons-io:commons-io:2.4' // should be removed later on
     compile 'org.jfxtras:jfxtras-agenda:8.0-r5'
 
 }
@@ -109,7 +108,7 @@ jfx {
     preLoader = null
     updateExistingJar = false
     allPermissions = false
-    manifestAttributes = null // Map<String, String>
+    manifestAttributes = null
     addPackagerJar = true
 
     // gradle jfxNative
@@ -127,12 +126,12 @@ jfx {
     bundleArguments = [
             runtime: null
     ]
-    appName = "WT4" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/windows/project.ico"
-    additionalAppResources = null // path to some additional resources when creating application-bundle
+    appName = "WT4"
+    additionalAppResources = null
     secondaryLaunchers = null
     fileAssociations = null
     noBlobSigning = false
-    customBundlers // List<String>
+    customBundlers
     skipDaemonModeCheck = true
 
 
