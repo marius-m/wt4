@@ -39,5 +39,5 @@ usr.properties
 first.properties
 app/src/main/resources/version.properties
 deploy.properties
-out4/remote.txt
-out4/client.txt
+tools/remote.txt
+tools/client.txt

@@ -24,7 +24,7 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.4-EAP2'
+version = '0.9.9.4-EAP4'
 def versionCode = '8'
 
 sourceSets {
@@ -121,7 +121,7 @@ jfx {
 //    jvmArgs = null
     userJvmArgs = null
     launcherArguments = ["app"]
-    nativeReleaseVersion = "1.0"
+    nativeReleaseVersion = "4.0"
     needShortcut = false
     needMenu = false
     bundleArguments = [
@@ -195,6 +195,15 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         // Prepare
         project.delete siteDir
 
+        clientConfig.write("appbase = $configData_path\n")
+        remoteConfig.write("appbase = $configData_path\n")
+        remoteConfig << "ui.name = $configData_name\n"
+        remoteConfig << "code = $configData_code\n"
+        remoteConfig << "class = $configData_class\n"
+        remoteConfig << "jvmarg = $configData_arg1\n"
+        remoteConfig << "jvmarg = $configData_arg2\n"
+        remoteConfig << "jvmarg = $configData_arg3\n"
+
         appDir.mkdirs()
         siteDir.mkdirs()
         clientConfigDir.mkdirs()
@@ -208,16 +217,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         assert clientConfig.exists()
         assert infoTemplate.exists()
 
-        clientConfig.write("appbase = $configData_path\n")
-        remoteConfig.write("appbase = $configData_path\n")
-        remoteConfig << "ui.name = $configData_name\n"
-        remoteConfig << "code = $configData_code\n"
-        remoteConfig << "class = $configData_class\n"
-        remoteConfig << "jvmarg = $configData_arg1\n"
-        remoteConfig << "jvmarg = $configData_arg2\n"
-        remoteConfig << "jvmarg = $configData_arg3\n"
-
-        // Modify generated libs
+       // Modify generated libs
         project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
         File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
         assert outFile.exists()
@@ -270,10 +270,10 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
                     dictionary[i+1].value = "WT4_2" // Change to modified with classpath
                 }
                 if ("CFBundleShortVersionString" == node.text()) {
-                    dictionary[i+1].value = version
+                    dictionary[i+1].value = "4.0"
                 }
                 if ("CFBundleVersion" == node.text()) {
-                    dictionary[i+1].value = version
+                    dictionary[i+1].value = "4.0"
                 }
             }
         }
