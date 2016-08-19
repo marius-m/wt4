@@ -32,6 +32,7 @@ proguard/
 
 # Android Studio
 out/
+out4/
 build/
 .gradle/
 gradle/

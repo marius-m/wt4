@@ -10,6 +10,6 @@ code = app.jar
 # The main entry point for the application
 class = lt.markmerkk.Main
 
-jvmarg = -Dversion_name=0.9.9.4
+jvmarg = -Dversion_name=0.9.9.4-EAP
 jvmarg = -Dversion_code=7
 jvmarg = -Dga_key=test_key

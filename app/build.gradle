@@ -112,13 +112,14 @@ jfx {
     addPackagerJar = true
 
     // gradle jfxNative
-    identifier = null // setting this for windows-bundlers makes it possible to generate upgradeable installers (using same GUID)
-    vendor = "some serious business corp."
+    identifier = "lt.markmerkk.WT4" // setting this for windows-bundlers makes it possible to generate upgradeable installers (using same GUID)
+    vendor = "Marius Merkevicius"
     nativeOutputDir = "build/jfx/native"
-    bundler = "ALL" // set this to some specific, if your don't want all bundlers running, examples "windows.app", "jnlp", ...
-    jvmProperties = null // Map<String, String>
-    jvmArgs = null
-    userJvmArgs = null // Map<String, String>
+    bundler = "ALL"
+    jvmProperties = null
+    jvmArgs = ["-Ddirect=true"]
+//    jvmArgs = null
+    userJvmArgs = null
     launcherArguments = ["app"]
     nativeReleaseVersion = "1.0"
     needShortcut = false
@@ -128,7 +129,7 @@ jfx {
     ]
     appName = "WT4"
     additionalAppResources = null
-    secondaryLaunchers = null
+    secondaryLaunchers = [[appName:"WT4_2", classpath: "app/app.jar"]]
     fileAssociations = null
     noBlobSigning = false
     customBundlers
@@ -196,7 +197,17 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         assert outFile.exists()
 
         // Create configuration for upload
-        outFile.renameTo("${appDir.absolutePath}/app.jar")
+        outFile.renameTo("${libsDir.absolutePath}/app.jar")
+        outFile = new File("${libsDir.absolutePath}/app.jar")
+        copy {
+            from outFile.absolutePath
+            into clientConfigDir.absolutePath
+        }
+        copy {
+            from outFile.absolutePath
+            into appDir.absolutePath
+        }
+        outFile.delete()
         copy {
             from toolsFile.absolutePath
             into libsDir.absolutePath
