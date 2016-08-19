@@ -24,8 +24,8 @@ allprojects {
 }
 
 group = 'lt.markmerkk'
-version = '0.9.9.4'
-def versionCode = '7'
+version = '0.9.9.4-EAP2'
+def versionCode = '8'
 
 sourceSets {
     main {
@@ -162,6 +162,10 @@ jfx {
 
 
 task processJar(dependsOn:shadowJar, type: JavaExec) {
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
 
     def siteDir = new File(rootDir, "out4")
     def appDir = new File(rootDir, "out4/app")
@@ -172,6 +176,14 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def remoteConfig = new File(rootDir, "tools/remote.txt")
     def configName = "getdown.txt"
     def infoTemplate = new File(projectDir, "src/main/deploy/package/macosx/Info.plist")
+
+    def configData_path = "http://212.24.101.213/test/"
+    def configData_name = "WT4"
+    def configData_code = "app.jar"
+    def configData_class = "lt.markmerkk.Main"
+    def configData_arg1 = "-Dversion_name=$version"
+    def configData_arg2 = "-Dversion_code=$versionCode"
+    def configData_arg3 = "-Dga_key=${deployProps.getProperty("ga")}"
 
     standardInput = System.in
     classpath = files(toolsFile)
@@ -186,6 +198,8 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         appDir.mkdirs()
         siteDir.mkdirs()
         clientConfigDir.mkdirs()
+        assert remoteConfig.exists()
+        assert clientConfig.exists()
         assert siteDir.exists()
         assert appDir.exists()
         assert libsDir.exists()
@@ -193,6 +207,15 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         assert clientConfigDir.exists()
         assert clientConfig.exists()
         assert infoTemplate.exists()
+
+        clientConfig.write("appbase = $configData_path\n")
+        remoteConfig.write("appbase = $configData_path\n")
+        remoteConfig << "ui.name = $configData_name\n"
+        remoteConfig << "code = $configData_code\n"
+        remoteConfig << "class = $configData_class\n"
+        remoteConfig << "jvmarg = $configData_arg1\n"
+        remoteConfig << "jvmarg = $configData_arg2\n"
+        remoteConfig << "jvmarg = $configData_arg3\n"
 
         // Modify generated libs
         project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
