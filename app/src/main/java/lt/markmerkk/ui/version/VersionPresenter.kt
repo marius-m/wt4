@@ -1,5 +1,8 @@
 package lt.markmerkk.ui.version
 
+import com.sun.javafx.application.HostServicesDelegate
+import javafx.application.Application
+import javafx.application.HostServices
 import java.net.URL
 import java.util.ResourceBundle
 import javafx.fxml.FXML
@@ -27,6 +30,10 @@ class VersionPresenter : Initializable, VersioningMvp.View {
 
     @Inject
     lateinit var config: Config
+    @Inject
+    lateinit var application: Application
+
+    var hostServices: HostServicesDelegate? = null
 
     @FXML lateinit var buttonClose: Button
     @FXML lateinit var buttonTitle: Hyperlink
@@ -41,6 +48,7 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     override fun initialize(location: URL, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
         labelVersion.text = String.format("Version: %s", config.versionName)
+        hostServices = HostServicesDelegate.getInstance(application)
     }
 
     @PreDestroy
@@ -58,54 +66,36 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     }
 
     fun onClickTitle() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
+        hostServices?.showDocument("https://bitbucket.org/mmerkevicius/wt4")
     }
 
     fun onClickAuthor() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://github.com/marius-m")
+        hostServices?.showDocument("https://github.com/marius-m")
     }
 
     fun onClickPlace() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("http://ito.lt")
+        hostServices?.showDocument("http://ito.lt")
     }
-
-    fun onClickUpdate() {
-        //    if (versionController.getSummary() != null
-        //        && versionController.getSummary().highestVersion > Main.VERSION_CODE) {
-        //      versionController.upgrade();
-        //      return;
-        //    }
-        //    versionController.checkForUpdate();
-    }
-
-    // todo : fix hyperlinks
 
     fun onHyperlinkGoogle1() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://design.google.com/icons/")
+        hostServices?.showDocument("https://design.google.com/icons/")
+
     }
 
     fun onHyperlinkGoogle2() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://creativecommons.org/licenses/by/4.0/")
+        hostServices?.showDocument("https://creativecommons.org/licenses/by/4.0/")
     }
 
     fun onHyperlinkJFX1() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://github.com/JFXtras/jfxtras")
+        hostServices?.showDocument("https://github.com/JFXtras/jfxtras")
     }
 
     fun onHyperlinkJFX2() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29")
+        hostServices?.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29")
     }
 
     fun onHyperlinkOthers() {
-//        if (Main.hostServices == null) return
-//        Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
+        hostServices?.showDocument("https://bitbucket.org/mmerkevicius/wt4")
     }
 
     //endregion
@@ -139,7 +129,7 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     //endregion
 
     companion object {
-        val logger = LoggerFactory.getLogger(VersionPresenter::class.java)!!
+        private val logger = LoggerFactory.getLogger(VersionPresenter::class.java)!!
     }
 
 }

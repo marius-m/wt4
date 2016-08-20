@@ -1,11 +1,13 @@
 package lt.markmerkk
 
 import javafx.application.Application
+import javafx.application.HostServices
 import javafx.scene.Scene
 import javafx.stage.Stage
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.dagger.components.DaggerAppComponent
+import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui.MainView
 import lt.markmerkk.utils.tracker.ITracker
@@ -36,7 +38,10 @@ class Main : Application(), KeepAliveInteractor.Listener {
     var keepAliveGASession: KeepAliveGASession? = null
 
     override fun start(stage: Stage) {
-        component = DaggerAppComponent.create()
+        component = DaggerAppComponent
+                .builder()
+                .appModule(AppModule(this))
+                .build()
         component!!.inject(this)
         initLoggerSettings()
 

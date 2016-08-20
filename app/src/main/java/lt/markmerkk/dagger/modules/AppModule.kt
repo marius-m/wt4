@@ -2,6 +2,7 @@ package lt.markmerkk.dagger.modules
 
 import dagger.Module
 import dagger.Provides
+import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.*
@@ -19,7 +20,15 @@ import javax.inject.Singleton
  * @since 2016-07-17
  */
 @Module
-class AppModule {
+class AppModule(
+        val application: Application
+) {
+
+    @Provides
+    @Singleton
+    fun providesApplication(): Application {
+        return application
+    }
 
     @Provides
     @Singleton
