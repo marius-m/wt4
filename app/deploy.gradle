@@ -74,6 +74,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def appDir = new File(rootDir, "out4/app")
     def libsDir = new File(projectDir, "build/libs")
     def toolsFile = new File(rootDir, "tools/getdown-1.6.1-SNAPSHOT.jar")
+    def toolsResourceDir = new File(rootDir, "tools/resource")
     def clientConfigDir = new File(projectDir, "build/libs/app")
     def clientConfig = new File(rootDir, "tools/client.txt")
     def remoteConfig = new File(rootDir, "tools/remote.txt")
@@ -81,6 +82,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def infoTemplate = new File(projectDir, "src/main/deploy/package/macosx/Info.plist")
 
     def configData_path = "http://212.24.101.213/test/"
+    def configData_loader_backgroundPath = "resources/splash.png"
     def configData_name = "WT4"
     def configData_code = "app.jar"
     def configData_class = "lt.markmerkk.Main"
@@ -99,8 +101,14 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         project.delete siteDir
 
         clientConfig.write("appbase = $configData_path\n")
+        clientConfig << "resource = $configData_loader_backgroundPath\n"
+        clientConfig << "ui.name = $configData_name\n"
+        clientConfig << "ui.background_image = $configData_loader_backgroundPath\n"
+
         remoteConfig.write("appbase = $configData_path\n")
+        remoteConfig << "resource = $configData_loader_backgroundPath\n"
         remoteConfig << "ui.name = $configData_name\n"
+        remoteConfig << "ui.background_image = $configData_loader_backgroundPath\n"
         remoteConfig << "code = $configData_code\n"
         remoteConfig << "class = $configData_class\n"
         remoteConfig << "jvmarg = $configData_arg1\n"
@@ -116,6 +124,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         assert siteDir.exists()
         assert appDir.exists()
         assert libsDir.exists()
+        assert toolsResourceDir.exists()
         assert toolsFile.exists()
         assert clientConfigDir.exists()
         assert clientConfig.exists()
@@ -150,6 +159,12 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
             from clientConfig.absolutePath
             into clientConfigDir.absolutePath
         }
+        def resourceDir = new File(clientConfigDir, "resources")
+        resourceDir.mkdirs()
+        copy {
+            from toolsResourceDir.absolutePath
+            into resourceDir.absolutePath
+        }
         def builtConfig = new File(clientConfigDir, "client.txt")
         builtConfig.renameTo("$clientConfigDir/$configName")
 
@@ -159,6 +174,12 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         }
         def siteConfig = new File(appDir, "remote.txt")
         siteConfig.renameTo("$appDir/$configName")
+        def siteResources = new File(appDir, "resources")
+        siteResources.mkdirs()
+        copy {
+            from toolsResourceDir.absolutePath
+            into siteResources.absolutePath
+        }
     }
 
     doLast {
@@ -207,12 +228,19 @@ task deploy << {
             def localPath = files(
                     new File(rootDir, "out4/app/app.jar"),
                     new File(rootDir, "out4/app/getdown.txt"),
-                    new File(rootDir, "out4/app/digest.txt")
+                    new File(rootDir, "out4/app/digest.txt"),
+            )
+            def localResource = files (
+                    new File(rootDir, "out4/app/resources/splash.png")
             )
             def remotePath = "/var/www/html/test/"
-            execute "ls -la $remotePath"
+            def remoteResourcePath = "/var/www/html/test/resources/"
+            execute "rm -r /var/www/html/test/*"
             put from: localPath, into: remotePath
+            execute "mkdir /var/www/html/test/resources"
+            put from: localResource, into: remoteResourcePath
             execute "ls -la $remotePath"
+            execute "ls -la $remoteResourcePath"
         }
     }
 }
