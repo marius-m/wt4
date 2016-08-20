@@ -1,3 +1,69 @@
+apply plugin: 'javafx-gradle-plugin'
+
+jfx {
+    verbose = true
+    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+    jfxAppOutputDir = "build/libs"
+    jfxMainAppJarName = "app.jar"
+    deployDir = "src/main/deploy"
+
+    // gradle jfxJar
+    css2bin = false
+    preLoader = null
+    updateExistingJar = false
+    allPermissions = false
+    manifestAttributes = null
+    addPackagerJar = true
+
+    // gradle jfxNative
+    identifier = "lt.markmerkk.WT4" // setting this for windows-bundlers makes it possible to generate upgradeable installers (using same GUID)
+    vendor = "Marius Merkevicius"
+    nativeOutputDir = "build/jfx/native"
+    bundler = "ALL"
+    jvmProperties = null
+    jvmArgs = [
+            "-Ddirect=true"
+    ]
+    userJvmArgs = null
+    launcherArguments = ["app"]
+    nativeReleaseVersion = "4.0"
+    needShortcut = false
+    needMenu = false
+    bundleArguments = [
+            runtime: null
+    ]
+    appName = "WT4"
+    additionalAppResources = null
+    secondaryLaunchers = [[appName:"WT4_2", classpath: "app/app.jar"]]
+    fileAssociations = null
+    noBlobSigning = false
+    customBundlers
+    skipDaemonModeCheck = true
+
+
+    skipNativeLauncherWorkaround205 = false
+
+    skipNativeLauncherWorkaround124 = false
+    skipNativeLauncherWorkaround167 = false
+    skipJNLPRessourcePathWorkaround182 = false
+    skipSigningJarFilesJNLP185 = false
+    skipSizeRecalculationForJNLP185 = false
+
+    // gradle jfxGenerateKeyStore
+    keyStore = "src/main/deploy/keystore.jks"
+    keyStoreAlias = "myalias"
+    keyStorePassword = "password"
+    keyPassword = null // will default to keyStorePassword
+    keyStoreType = "jks"
+    overwriteKeyStore = false
+
+    certDomain = null // required
+    certOrgUnit = null // defaults to "none"
+    certOrg = null // required
+    certState = null // required
+    certCountry = null // required
+}
+
 task processJar(dependsOn:shadowJar, type: JavaExec) {
     def deployPropertyFile = new File("${rootDir}","deploy.properties")
     assert deployPropertyFile.exists()
@@ -7,7 +73,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def siteDir = new File(rootDir, "out4")
     def appDir = new File(rootDir, "out4/app")
     def libsDir = new File(projectDir, "build/libs")
-    def toolsFile = new File(rootDir, "tools/getdown-1.5.jar")
+    def toolsFile = new File(rootDir, "tools/getdown-1.6.1-SNAPSHOT.jar")
     def clientConfigDir = new File(projectDir, "build/libs/app")
     def clientConfig = new File(rootDir, "tools/client.txt")
     def remoteConfig = new File(rootDir, "tools/remote.txt")
@@ -18,7 +84,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def configData_name = "WT4"
     def configData_code = "app.jar"
     def configData_class = "lt.markmerkk.Main"
-    def configData_arg1 = "-Dversion_name=$version"
+    def configData_arg1 = "-Dversion_name=$versionName"
     def configData_arg2 = "-Dversion_code=$versionCode"
     def configData_arg3 = "-Dga_key=${deployProps.getProperty("ga")}"
 
@@ -57,7 +123,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 
         // Modify generated libs
         project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
-        File outFile = file("${libsDir.absolutePath}/app-${version}-all.jar")
+        File outFile = file("${libsDir.absolutePath}/app-${versionName}-all.jar")
         assert outFile.exists()
 
         // Create configuration for upload
