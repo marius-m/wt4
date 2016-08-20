@@ -411,8 +411,12 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   public void showIssues(@NotNull List<? extends LocalIssue> result) {
     if (inputTaskCombo.getSelectionModel() != null
             && inputTaskCombo.getSelectionModel().getSelectedItem() != null) {
-      LocalIssue selectIssue = inputTaskCombo.getSelectionModel().getSelectedItem();
-      searchIssues.removeIf(localIssue -> localIssue != selectIssue);
+      Object selectedItem = inputTaskCombo.getSelectionModel().getSelectedItem();
+      if (selectedItem instanceof LocalIssue) {
+        searchIssues.removeIf(localIssue -> localIssue != selectedItem);
+      } else {
+        searchIssues.clear();
+      }
     } else {
       searchIssues.clear();
     }
