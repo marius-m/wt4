@@ -58,7 +58,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    Main.getComponent().presenterComponent().inject(this);
+    Main.Companion.getComponent().presenterComponent().inject(this);
     buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_status")));
     buttonViewToggle.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_toggle_view")));
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);

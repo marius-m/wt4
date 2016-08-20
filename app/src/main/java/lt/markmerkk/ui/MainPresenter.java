@@ -62,7 +62,7 @@ public class MainPresenter implements Initializable {
   }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    Main.getComponent().presenterComponent().inject(this);
+    Main.Companion.getComponent().presenterComponent().inject(this);
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
     southPane.setBottom(statusView.getView());

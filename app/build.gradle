@@ -1,18 +1,11 @@
+
 apply plugin: 'application'
 apply plugin: 'kotlin'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply from: 'deploy.gradle'
 
 mainClassName = "lt.markmerkk.Main"
-
-allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    }
-}
 
 group = 'lt.markmerkk'
 version = versionName
@@ -37,18 +30,22 @@ sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
 }
 
-run {
-   jvmArgs = [
-            "-Dversion_code=" + versionCode,
-            "-Dversion_name=" + version,
-            "-Dga_key=test"
-    ]
+kapt {
+    generateStubs = true
 }
 
 idea {
     module {
         sourceDirs += file('generated/')
     }
+}
+
+run {
+    jvmArgs = [
+            "-Dversion_code=" + versionCode,
+            "-Dversion_name=" + version,
+            "-Dga_key=test"
+    ]
 }
 
 dependencies {
@@ -76,10 +73,6 @@ dependencies {
     compile 'com.airhacks:afterburner.fx:1.7.0'
     compile 'org.jfxtras:jfxtras-agenda:8.0-r5'
 
-}
-
-tasks.withType(JavaExec) {
-    systemProperties project.getProperties()
 }
 
 shadowJar.dependsOn assemble

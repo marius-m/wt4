@@ -39,7 +39,7 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     private var dialogListener: DialogListener? = null
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
-        Main.getComponent().presenterComponent().inject(this)
+        Main.component!!.presenterComponent().inject(this)
         labelVersion.text = String.format("Version: %s", config.versionName)
     }
 
@@ -58,18 +58,18 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     }
 
     fun onClickTitle() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
     }
 
     fun onClickAuthor() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://github.com/marius-m")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://github.com/marius-m")
     }
 
     fun onClickPlace() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("http://ito.lt")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("http://ito.lt")
     }
 
     fun onClickUpdate() {
@@ -84,28 +84,28 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     // todo : fix hyperlinks
 
     fun onHyperlinkGoogle1() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://design.google.com/icons/")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://design.google.com/icons/")
     }
 
     fun onHyperlinkGoogle2() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://creativecommons.org/licenses/by/4.0/")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://creativecommons.org/licenses/by/4.0/")
     }
 
     fun onHyperlinkJFX1() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://github.com/JFXtras/jfxtras")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://github.com/JFXtras/jfxtras")
     }
 
     fun onHyperlinkJFX2() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29")
     }
 
     fun onHyperlinkOthers() {
-        if (Main.hostServices == null) return
-        Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
+//        if (Main.hostServices == null) return
+//        Main.hostServices.showDocument("https://bitbucket.org/mmerkevicius/wt4")
     }
 
     //endregion

@@ -40,7 +40,7 @@ public class UpdateLogPresenter {
   SimpleLog entity;
 
   protected void initWithEntity(SimpleLog entity) {
-    Main.getComponent().presenterComponent().inject(this);
+    Main.Companion.getComponent().presenterComponent().inject(this);
     this.entity = entity;
 
     startInput.setText(entity.getLongStart());

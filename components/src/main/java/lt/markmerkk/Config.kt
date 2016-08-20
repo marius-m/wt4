@@ -14,6 +14,8 @@ data class Config(
         val gaKey: String
 ) {
 
+    val appName: String = "WT4"
+
     val cfgPath: String
         get() {
             val home = System.getProperty("user.home")

@@ -93,7 +93,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    Main.getComponent().presenterComponent().inject(this);
+    Main.Companion.getComponent().presenterComponent().inject(this);
     issueSearchPresenter = new IssueSearchPresenterImpl(
             this,
             new IssueSearchInteractorImpl(dbProdExecutor),

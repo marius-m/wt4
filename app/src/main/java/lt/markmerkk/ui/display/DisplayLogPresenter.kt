@@ -35,7 +35,7 @@ class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
     private var updateListener: UpdateListener? = null
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
-        Main.getComponent().presenterComponent().inject(this)
+        Main.component!!.presenterComponent().inject(this)
         tracker.sendView(GAStatics.VIEW_DAY)
         logs.addAll(storage.data)
 

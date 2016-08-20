@@ -16,7 +16,7 @@ class GATracker(
     private val analytics: GoogleAnalytics
 
     init {
-        analytics = GoogleAnalytics(config.gaKey, Main.APP_NAME, config.versionName)
+        analytics = GoogleAnalytics(config.gaKey, config.appName, config.versionName)
     }
 
     override fun sendEvent(category: String, action: String, label: String, value: Int) {
@@ -34,7 +34,7 @@ class GATracker(
 
     override fun sendView(contentDescription: String) {
         if (contentDescription.isNullOrEmpty()) return
-        analytics.postAsync(AppViewHit(Main.APP_NAME, config.versionName, contentDescription))
+        analytics.postAsync(AppViewHit(config.appName, config.versionName, contentDescription))
     }
 
     override fun stop() {

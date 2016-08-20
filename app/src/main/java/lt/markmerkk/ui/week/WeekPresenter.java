@@ -56,7 +56,7 @@ public class WeekPresenter implements Initializable, AgendaView {
   }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    Main.getComponent().presenterComponent().inject(this);
+    Main.Companion.getComponent().presenterComponent().inject(this);
     tracker.sendView(GAStatics.INSTANCE.getVIEW_WEEK());
     storage.register(storageListener);
     targetDate = new DateTime(storage.getTargetDate());
