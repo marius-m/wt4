@@ -4,7 +4,6 @@ import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.RemoteEntity
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.IDataStorage
 import net.rcarz.jiraclient.Issue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -58,14 +57,16 @@ class JiraInteractorImpl(
     }
 
     override fun jiraLocalIssuesOld(startSync: Long): Observable<List<LocalIssue>> {
-        return Observable.from(
-                issueStorage.customQuery(
-                        String.format(
-                                "%s < %d",
-                                RemoteEntity.KEY_DOWNLOAD_MILLIS,
-                                startSync
-                        )
-                ))
+        return Observable.defer {
+            Observable.from(
+                    issueStorage.customQuery(
+                            String.format(
+                                    "%s < %d",
+                                    RemoteEntity.KEY_DOWNLOAD_MILLIS,
+                                    startSync
+                            )
+                    ))
+        }.subscribeOn(ioScheduler)
                 .filter { startSync > it.download_millis } // assuring old items, not necessary
                 .subscribeOn(ioScheduler)
                 .toList()
