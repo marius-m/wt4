@@ -43,8 +43,9 @@ idea {
 run {
     jvmArgs = [
             "-Dversion_code=" + versionCode,
-            "-Dversion_name=" + version,
-            "-Dga_key=test"
+            "-Dversion_name=" + versionName,
+            "-Dga_key=test",
+            "-Drelease=false"
     ]
 }
 
