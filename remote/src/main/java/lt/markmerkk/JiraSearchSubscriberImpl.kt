@@ -81,7 +81,9 @@ class JiraSearchSubscriberImpl(
     ): String {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
-        return "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\") AND assignee = currentUser()"
+        return "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\")" +
+                " AND " +
+                "(assignee = currentUser() OR reporter = currentUser() OR watcher = currentUser())"
     }
 
     companion object {
