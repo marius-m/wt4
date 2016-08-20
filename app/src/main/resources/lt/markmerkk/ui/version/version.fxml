@@ -111,15 +111,6 @@
                         </Text>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER">
-                     <children>
-                        <Hyperlink fx:id="buttonUpdate" onAction="#onClickUpdate" text="No new updates.">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Hyperlink>
-                     </children>
-                  </HBox>
                   <Separator prefWidth="200.0" />
                   <HBox alignment="CENTER">
                      <children>

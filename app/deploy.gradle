@@ -1,0 +1,218 @@
+apply plugin: 'javafx-gradle-plugin'
+
+jfx {
+    verbose = true
+    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+    jfxAppOutputDir = "build/libs"
+    jfxMainAppJarName = "app.jar"
+    deployDir = "src/main/deploy"
+
+    // gradle jfxJar
+    css2bin = false
+    preLoader = null
+    updateExistingJar = false
+    allPermissions = false
+    manifestAttributes = null
+    addPackagerJar = true
+
+    // gradle jfxNative
+    identifier = "lt.markmerkk.WT4" // setting this for windows-bundlers makes it possible to generate upgradeable installers (using same GUID)
+    vendor = "Marius Merkevicius"
+    nativeOutputDir = "build/jfx/native"
+    bundler = "ALL"
+    jvmProperties = null
+    jvmArgs = [
+            "-Ddirect=true"
+    ]
+    userJvmArgs = null
+    launcherArguments = ["app"]
+    nativeReleaseVersion = "4.0"
+    needShortcut = false
+    needMenu = false
+    bundleArguments = [
+            runtime: null
+    ]
+    appName = "WT4"
+    additionalAppResources = null
+    secondaryLaunchers = [[appName:"WT4_2", classpath: "app/app.jar"]]
+    fileAssociations = null
+    noBlobSigning = false
+    customBundlers
+    skipDaemonModeCheck = true
+
+
+    skipNativeLauncherWorkaround205 = false
+
+    skipNativeLauncherWorkaround124 = false
+    skipNativeLauncherWorkaround167 = false
+    skipJNLPRessourcePathWorkaround182 = false
+    skipSigningJarFilesJNLP185 = false
+    skipSizeRecalculationForJNLP185 = false
+
+    // gradle jfxGenerateKeyStore
+    keyStore = "src/main/deploy/keystore.jks"
+    keyStoreAlias = "myalias"
+    keyStorePassword = "password"
+    keyPassword = null // will default to keyStorePassword
+    keyStoreType = "jks"
+    overwriteKeyStore = false
+
+    certDomain = null // required
+    certOrgUnit = null // defaults to "none"
+    certOrg = null // required
+    certState = null // required
+    certCountry = null // required
+}
+
+task processJar(dependsOn:shadowJar, type: JavaExec) {
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+
+    def siteDir = new File(rootDir, "out4")
+    def appDir = new File(rootDir, "out4/app")
+    def libsDir = new File(projectDir, "build/libs")
+    def toolsFile = new File(rootDir, "tools/getdown-1.6.1-SNAPSHOT.jar")
+    def clientConfigDir = new File(projectDir, "build/libs/app")
+    def clientConfig = new File(rootDir, "tools/client.txt")
+    def remoteConfig = new File(rootDir, "tools/remote.txt")
+    def configName = "getdown.txt"
+    def infoTemplate = new File(projectDir, "src/main/deploy/package/macosx/Info.plist")
+
+    def configData_path = "http://212.24.101.213/test/"
+    def configData_name = "WT4"
+    def configData_code = "app.jar"
+    def configData_class = "lt.markmerkk.Main"
+    def configData_arg1 = "-Dversion_name=$versionName"
+    def configData_arg2 = "-Dversion_code=$versionCode"
+    def configData_arg3 = "-Dga_key=${deployProps.getProperty("ga")}"
+
+    standardInput = System.in
+    classpath = files(toolsFile)
+    main = "com.threerings.getdown.tools.Digester"
+    workingDir = siteDir
+    args = ['app']
+
+    doFirst {
+        // Prepare
+        project.delete siteDir
+
+        clientConfig.write("appbase = $configData_path\n")
+        remoteConfig.write("appbase = $configData_path\n")
+        remoteConfig << "ui.name = $configData_name\n"
+        remoteConfig << "code = $configData_code\n"
+        remoteConfig << "class = $configData_class\n"
+        remoteConfig << "jvmarg = $configData_arg1\n"
+        remoteConfig << "jvmarg = $configData_arg2\n"
+        remoteConfig << "jvmarg = $configData_arg3\n"
+        remoteConfig << "allow_offline = true\n"
+
+        appDir.mkdirs()
+        siteDir.mkdirs()
+        clientConfigDir.mkdirs()
+        assert remoteConfig.exists()
+        assert clientConfig.exists()
+        assert siteDir.exists()
+        assert appDir.exists()
+        assert libsDir.exists()
+        assert toolsFile.exists()
+        assert clientConfigDir.exists()
+        assert clientConfig.exists()
+        assert infoTemplate.exists()
+
+        // Modify generated libs
+        project.delete fileTree(dir: libsDir, exclude: '*-all.jar')
+        File outFile = file("${libsDir.absolutePath}/app-${versionName}-all.jar")
+        assert outFile.exists()
+
+        // Create configuration for upload
+        outFile.renameTo("${libsDir.absolutePath}/app.jar")
+        outFile = new File("${libsDir.absolutePath}/app.jar")
+        copy {
+            from outFile.absolutePath
+            into clientConfigDir.absolutePath
+        }
+        copy {
+            from outFile.absolutePath
+            into appDir.absolutePath
+        }
+        outFile.delete()
+        copy {
+            from toolsFile.absolutePath
+            into libsDir.absolutePath
+        }
+        copy {
+            from toolsFile.absolutePath
+            into siteDir.absolutePath
+        }
+        copy {
+            from clientConfig.absolutePath
+            into clientConfigDir.absolutePath
+        }
+        def builtConfig = new File(clientConfigDir, "client.txt")
+        builtConfig.renameTo("$clientConfigDir/$configName")
+
+        copy {
+            from remoteConfig.absolutePath
+            into appDir.absolutePath
+        }
+        def siteConfig = new File(appDir, "remote.txt")
+        siteConfig.renameTo("$appDir/$configName")
+    }
+
+    doLast {
+        def parser = new XmlParser()
+        parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+        parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        def xml = parser.parse(infoTemplate)
+        def dictionary = xml.dict[0].children()
+        for (int i = 0; i < dictionary.size(); i++) {
+            def node = dictionary[i]
+            if ("key" == node.name()) {
+                if ("CFBundleExecutable" == node.text()) {
+                    dictionary[i+1].value = "WT4_2" // Change to modified with classpath
+                }
+                if ("CFBundleShortVersionString" == node.text()) {
+                    dictionary[i+1].value = "4.0"
+                }
+                if ("CFBundleVersion" == node.text()) {
+                    dictionary[i+1].value = "4.0"
+                }
+            }
+        }
+        def printer = new XmlNodePrinter(new PrintWriter(new FileWriter(infoTemplate)))
+        printer.preserveWhitespace = true
+        printer.print(xml)
+    }
+}
+
+remotes {
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+
+    webServer {
+        host = '212.24.101.213'
+        user = deployProps.getProperty("remote_user")
+        password = deployProps.getProperty("remote_pass")
+        authentications = ['password']
+    }
+}
+
+task deploy << {
+    ssh.run {
+        session(remotes.webServer) {
+            def localPath = files(
+                    new File(rootDir, "out4/app/app.jar"),
+                    new File(rootDir, "out4/app/getdown.txt"),
+                    new File(rootDir, "out4/app/digest.txt")
+            )
+            def remotePath = "/var/www/html/test/"
+            execute "ls -la $remotePath"
+            put from: localPath, into: remotePath
+            execute "ls -la $remotePath"
+        }
+    }
+}

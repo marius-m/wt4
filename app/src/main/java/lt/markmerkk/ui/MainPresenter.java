@@ -1,14 +1,12 @@
 package lt.markmerkk.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.brsanthu.googleanalytics.PageViewHit;
-import com.vinumeris.updatefx.UpdateSummary;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -16,11 +14,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.inject.Inject;
 import lt.markmerkk.Main;
-import lt.markmerkk.listeners.Destroyable;
-import lt.markmerkk.listeners.IPresenter;
-import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.SimpleLog;
-import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.afterburner.InjectorNoDI;
+import lt.markmerkk.LogStorage;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogBuilder;
+import lt.markmerkk.interactors.KeepAliveGASession;
+import lt.markmerkk.interactors.KeepAliveGASessionImpl;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
@@ -31,12 +30,10 @@ import lt.markmerkk.ui.status.StatusPresenter;
 import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.taskweb.TaskWebView;
 import lt.markmerkk.ui.update.UpdateLogView;
-import lt.markmerkk.ui.utils.DisplayType;
+import lt.markmerkk.DisplayType;
 import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
-import lt.markmerkk.utils.VersionController;
-import lt.markmerkk.utils.tracker.SimpleTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +44,14 @@ import org.slf4j.LoggerFactory;
 public class MainPresenter implements Initializable {
   public static final Logger logger = LoggerFactory.getLogger(MainPresenter.class);
 
-  @Inject BasicLogStorage storage;
+  @Inject
+  LogStorage logStorage;
 
   @FXML TabPane tabPane;
   @FXML BorderPane northPane;
   @FXML BorderPane southPane;
 
-  IPresenter displayPresenter;
+  FXMLView logsView;
 
   Stage stage;
   Stage dialog;
@@ -64,6 +62,7 @@ public class MainPresenter implements Initializable {
   }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    Main.Companion.getComponent().presenterComponent().inject(this);
     ClockView clockView = new ClockView(clockListener);
     northPane.setCenter(clockView.getView());
     southPane.setBottom(statusView.getView());
@@ -78,19 +77,20 @@ public class MainPresenter implements Initializable {
    * Displays all the logs
    */
   private void displayLogs() {
-    if (displayPresenter instanceof Destroyable)
-      ((Destroyable) displayPresenter).destroy();
-    displayPresenter = null;
-    switch (storage.getDisplayType()) {
+    if (logsView != null) {
+      InjectorNoDI.forget(logsView.getPresenter());
+    }
+    logsView = null;
+    switch (logStorage.getDisplayType()) {
       case DAY:
         DisplayLogView simpleLogView = new DisplayLogView(updateListener);
         southPane.setCenter(simpleLogView.getView());
-        displayPresenter = (IPresenter) simpleLogView.getPresenter();
+        logsView = simpleLogView;
         break;
       case WEEK:
         WeekView weekView = new WeekView(updateListener);
         southPane.setCenter(weekView.getView());
-        displayPresenter = (IPresenter) weekView.getPresenter();
+        logsView = weekView;
         break;
     }
   }
@@ -124,7 +124,7 @@ public class MainPresenter implements Initializable {
     @Override public void onSave() {
       if (dialog.isShowing())
         dialog.hide();
-      storage.notifyDataChange();
+      logStorage.notifyDataChange();
     }
 
     @Override
@@ -152,7 +152,7 @@ public class MainPresenter implements Initializable {
 
     @Override
     public void onDelete(SimpleLog object) {
-      storage.delete(object);
+      logStorage.delete(object);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class MainPresenter implements Initializable {
           .setTask(object.getTask())
           .setComment(object.getComment())
           .build();
-      storage.insert(newLog);
+      logStorage.insert(newLog);
     }
   };
 

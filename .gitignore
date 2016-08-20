@@ -31,26 +31,14 @@ proguard/
 .DS_Store
 
 # Android Studio
-out/
+out4/
 build/
 .gradle/
 gradle/
-checkLog.log
-checkLog1.log
-checkLog2.log
-checkLog3.log
-checkLog4.log
-checkLog5.log
-test.db
-app/test.db
-database/test_database.db
-app/test_database.db
-app/wt4.db
 usr.properties
-app/nullsimple.properties
-app/nullusr.properties
-first.properties
 app/src/main/resources/version.properties
-app/error.log
-database/error.log
 deploy.properties
+tools/remote.txt
+tools/client.txt
+app/src/main/deploy/package/macosx/Info.plist
+app/test_database.db

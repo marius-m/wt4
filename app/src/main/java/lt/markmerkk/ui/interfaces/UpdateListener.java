@@ -1,6 +1,6 @@
 package lt.markmerkk.ui.interfaces;
 
-import lt.markmerkk.storage2.SimpleLog;
+import lt.markmerkk.entities.SimpleLog;
 
 /**
  * Helper listener for the display

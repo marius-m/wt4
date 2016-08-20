@@ -1,16 +1,15 @@
 package lt.markmerkk;
 
 import java.util.List;
-import lt.markmerkk.storage2.SimpleLogBuilder;
-import lt.markmerkk.storage2.database.DBMockExecutor;
-import lt.markmerkk.storage2.SimpleLog;
-import lt.markmerkk.storage2.jobs.CreateJob;
-import lt.markmerkk.storage2.jobs.CreateJobIfNeeded;
-import lt.markmerkk.storage2.jobs.DeleteJob;
-import lt.markmerkk.storage2.jobs.InsertJob;
-import lt.markmerkk.storage2.jobs.QueryJob;
-import lt.markmerkk.storage2.jobs.QueryListJob;
-import lt.markmerkk.storage2.jobs.UpdateJob;
+import lt.markmerkk.entities.SimpleLogBuilder;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.jobs.CreateJobIfNeeded;
+import lt.markmerkk.entities.jobs.DeleteJob;
+import lt.markmerkk.entities.jobs.InsertJob;
+import lt.markmerkk.entities.jobs.QueryJob;
+import lt.markmerkk.entities.jobs.QueryListJob;
+import lt.markmerkk.entities.jobs.UpdateJob;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by mariusmerkevicius on 11/22/15.
  */
+@Ignore // integration tests
 public class DBTestExecutorProdLogTest {
   @Test public void shouldCreateTable() throws Exception {
     // Arrange

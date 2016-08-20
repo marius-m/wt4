@@ -7,4 +7,6 @@ import com.airhacks.afterburner.views.FXMLView;
  * Represents the view to edit user settings
  */
 public class SettingsView extends FXMLView {
+
+
 }

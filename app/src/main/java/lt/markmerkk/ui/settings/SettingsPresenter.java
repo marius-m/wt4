@@ -1,69 +1,57 @@
 package lt.markmerkk.ui.settings;
 
-import com.google.common.eventbus.Subscribe;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
-import javax.inject.Inject;
-import lt.markmerkk.AutoSync2;
-import lt.markmerkk.JiraSearchJQL;
-import lt.markmerkk.Main;
-import lt.markmerkk.Translation;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartIssueSyncEvent;
-import lt.markmerkk.events.StartLogSyncEvent;
+import javafx.scene.control.*;
+import lt.markmerkk.*;
+import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.listeners.Destroyable;
-import lt.markmerkk.utils.SyncController;
-import lt.markmerkk.utils.SyncEventBus;
-import lt.markmerkk.utils.UserSettings;
 import lt.markmerkk.utils.Utils;
-import lt.markmerkk.utils.tracker.SimpleTracker;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Priority;
+import lt.markmerkk.utils.tracker.ITracker;
+import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to edit settings
  */
-public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoadListener {
+public class SettingsPresenter implements Initializable, IRemoteLoadListener {
+  public static final org.slf4j.Logger logger = LoggerFactory.getLogger(SettingsPresenter.class);
 
-  @Inject UserSettings settings;
-  @Inject SyncController syncController;
-  @Inject AutoSync2 autoSync;
+  @Inject
+  UserSettings settings;
+  @Inject
+  SyncInteractor syncInteractor;
+  @Inject
+  Config config;
+  @Inject
+  ITracker tracker;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
   @FXML TextArea outputLogger;
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh, buttonResetJQL;
-  @FXML ComboBox<String> refreshCombo;
+  @FXML ComboBox<AutoUpdateValue> refreshCombo;
 
   Appender guiAppender;
 
   public SettingsPresenter() { }
 
   @Override public void initialize(URL location, ResourceBundle resources) {
-    SimpleTracker.getInstance().getTracker().sendView(SimpleTracker.VIEW_SETTINGS);
-    refreshCombo.setItems(autoSync.getSelectionKeys());
-    refreshCombo.getSelectionModel().select(autoSync.currentSelection());
+    Main.Companion.getComponent().presenterComponent().inject(this);
+    tracker.sendView(GAStatics.INSTANCE.getVIEW_SETTINGS());
+    refreshCombo.setItems(FXCollections.observableList(AvailableAutoUpdate.INSTANCE.getValues()));
+    refreshCombo.getSelectionModel().select(AvailableAutoUpdate.INSTANCE.findAutoUpdateValueByMinute(settings.getAutoUpdateMinutes()));
     refreshCombo.valueProperty().addListener(refreshChangeListener);
     refreshCombo.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_autorefresh")));
     inputHost.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_hostname")));
@@ -80,19 +68,20 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     inputJQL.setText(settings.getIssueJql());
 
     guiAppender = new SimpleAppender();
-    guiAppender.setLayout(new PatternLayout(Main.LOG_LAYOUT));
+    guiAppender.setLayout(new PatternLayout(Main.Companion.getLOG_LAYOUT_PROD()));
     outputLogger.clear();
-    outputLogger.setText(Utils.lastLog());
+    outputLogger.setText(Utils.lastLog(config.getCfgPath(), 150));
     outputLogger.positionCaret(outputLogger.getText().length()-1);
     Logger.getRootLogger().addAppender(guiAppender);
-    onLoadChange(syncController.isLoading());
-    syncController.addLoadingListener(this);
-    SyncEventBus.getInstance().getEventBus().register(this);
+
+    onLoadChange(syncInteractor.isLoading());
+    syncInteractor.addLoadingListener(this);
   }
 
-  @Override public void destroy() {
-    SyncEventBus.getInstance().getEventBus().unregister(this);
-    syncController.removeLoadingListener(this);
+  @PreDestroy
+  public void destroy() {
+    syncInteractor.removeLoadingListener(this);
+
     Logger.getRootLogger().removeAppender(guiAppender);
     settings.setHost(inputHost.getText());
     settings.setUsername(inputUsername.getText());
@@ -111,28 +100,28 @@ public class SettingsPresenter implements Initializable, Destroyable, IRemoteLoa
     settings.setUsername(inputUsername.getText());
     settings.setPassword(inputPassword.getText());
     settings.setIssueJql(inputJQL.getText());
-    SyncEventBus.getInstance().getEventBus().post(new StartAllSyncEvent());
+    syncInteractor.syncAll();
+    tracker.sendEvent(
+            GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+            GAStatics.INSTANCE.getACTION_SYNC_SETTINGS()
+    );
   }
 
   /**
    * A button event when user clicks on reset JQL
    */
   public void onClickResetJQL() {
-    inputJQL.setText(JiraSearchJQL.DEFAULT_JQL_USER_ISSUES);
+    inputJQL.setText(Const.INSTANCE.getDEFAULT_JQL_USER_ISSUES());
     settings.setIssueJql(inputJQL.getText());
-    SyncEventBus.getInstance().getEventBus().post(new StartIssueSyncEvent());
   }
 
   //endregion
 
   //region Listeners
 
-  ChangeListener<String> refreshChangeListener = new ChangeListener<String>() {
-    @Override
-    public void changed(ObservableValue ov, String t, String t1) {
-      String selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
-      autoSync.setCurrentSelection(selectedItem);
-    }
+  ChangeListener<AutoUpdateValue> refreshChangeListener = (observable, oldValue, newValue) -> {
+    AutoUpdateValue selectedItem = refreshCombo.getSelectionModel().getSelectedItem();
+    settings.setAutoUpdateMinutes(selectedItem.getTimeoutMinutes());
   };
 
   @Override

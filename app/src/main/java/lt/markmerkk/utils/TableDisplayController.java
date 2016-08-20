@@ -91,21 +91,21 @@ public abstract class TableDisplayController<Type> {
     public interface Listener<Type> {
         /**
          * Update action
-         * @param object
+         * @param updateableObject
          */
-        void onUpdate(Type object);
+        void onUpdate(Type updateableObject);
 
         /**
          * Delete action
-         * @param object
+         * @param deleteableObject
          */
-        void onDelete(Type object);
+        void onDelete(Type deleteableObject);
 
         /**
          * Clone action
-         * @param object
+         * @param cloneableObject
          */
-        void onClone(Type object);
+        void onClone(Type cloneableObject);
     }
 
 }

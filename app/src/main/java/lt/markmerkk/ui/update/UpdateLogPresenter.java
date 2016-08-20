@@ -6,14 +6,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BackgroundFill;
+
 import javax.inject.Inject;
+
+import lt.markmerkk.Main;
 import lt.markmerkk.Translation;
-import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.SimpleLog;
-import lt.markmerkk.storage2.SimpleLogBuilder;
+import lt.markmerkk.LogStorage;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.ui.interfaces.DialogListener;
-import lt.markmerkk.utils.hourglass.HourGlass;
+import lt.markmerkk.utils.LogFormatters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,8 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateLogPresenter {
   public static final Logger logger = LoggerFactory.getLogger(UpdateLogPresenter.class);
-  @Inject BasicLogStorage storage;
+  @Inject
+  LogStorage storage;
 
   @FXML TextField taskInput;
   @FXML TextField startInput;
@@ -37,6 +40,7 @@ public class UpdateLogPresenter {
   SimpleLog entity;
 
   protected void initWithEntity(SimpleLog entity) {
+    Main.Companion.getComponent().presenterComponent().inject(this);
     this.entity = entity;
 
     startInput.setText(entity.getLongStart());
@@ -127,12 +131,13 @@ public class UpdateLogPresenter {
   private void update() {
     try {
       entity = new SimpleLogBuilder(entity)
-          .setStart(HourGlass.longFormat.parseDateTime(startInput.getText()).getMillis())
-          .setEnd(HourGlass.longFormat.parseDateTime(endInput.getText()).getMillis())
+          .setStart(LogFormatters.INSTANCE.getLongFormat().parseDateTime(startInput.getText()).getMillis())
+          .setEnd(LogFormatters.INSTANCE.getLongFormat().parseDateTime(endInput.getText()).getMillis())
           .setTask(taskInput.getText())
           .setComment(commentInput.getText())
           .build();
       updateSaveTitle(entity.getPrettyDuration());
+      buttonOk.setDisable(false);
     } catch (IllegalArgumentException e) {
       updateSaveTitle("Error: " + e.getMessage());
       buttonOk.setDisable(true);

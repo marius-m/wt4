@@ -1,54 +1,49 @@
 package lt.markmerkk.ui.status;
 
-import com.google.common.eventbus.Subscribe;
-import com.vinumeris.updatefx.UpdateSummary;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javax.inject.Inject;
-import lt.markmerkk.AutoSync2;
-import lt.markmerkk.Main;
-import lt.markmerkk.Translation;
-import lt.markmerkk.events.StartAllSyncEvent;
-import lt.markmerkk.events.StartLogSyncEvent;
+import lt.markmerkk.*;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.interactors.KeepAliveInteractor;
+import lt.markmerkk.interactors.SyncInteractor;
+import lt.markmerkk.interactors.VersioningInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
-import lt.markmerkk.listeners.Destroyable;
-import lt.markmerkk.storage2.BasicLogStorage;
-import lt.markmerkk.storage2.IDataListener;
-import lt.markmerkk.ui.utils.DisplayType;
-import lt.markmerkk.utils.LastUpdateController;
-import lt.markmerkk.utils.SyncController;
-import lt.markmerkk.utils.SyncEventBus;
-import lt.markmerkk.utils.VersionController;
-import lt.markmerkk.utils.hourglass.HourGlass;
-import lt.markmerkk.utils.hourglass.KeepAliveController;
-import lt.markmerkk.utils.tracker.SimpleTracker;
+import lt.markmerkk.ui.clock.utils.SimpleDatePickerConverter;
+import lt.markmerkk.utils.LogFormatters;
+import lt.markmerkk.utils.LogUtils;
+import lt.markmerkk.utils.tracker.ITracker;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by mariusmerkevicius on 12/20/15.
  * Represents the presenter to show app status
  */
-public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadListener,
-    VersionController.UpgradeListener {
+public class StatusPresenter implements Initializable, IRemoteLoadListener,
+    KeepAliveInteractor.Listener, VersioningInteractor.LoadingListener {
   public static final Logger logger = LoggerFactory.getLogger(StatusPresenter.class);
 
-  @Inject BasicLogStorage storage;
-  @Inject LastUpdateController lastUpdateController;
-  @Inject SyncController syncController;
-  @Inject KeepAliveController keepAliveController;
-  @Inject AutoSync2 autoSync;
-  @Inject VersionController versionController;
+  @Inject
+  LogStorage storage;
+  @Inject
+  ITracker tracker;
+  @Inject
+  SyncInteractor syncInteractor;
+  @Inject
+  KeepAliveInteractor keepAliveInteractor;
+  @Inject
+  Config config;
 
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
@@ -56,54 +51,43 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   @FXML ToggleButton buttonViewToggle;
   @FXML Button buttonToday;
   @FXML Button buttonAbout;
+  @FXML DatePicker targetDatePicker;
 
   String total;
 
   Listener listener;
 
   @Override public void initialize(URL location, ResourceBundle resources) {
+    Main.Companion.getComponent().presenterComponent().inject(this);
     buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_status")));
     buttonViewToggle.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_toggle_view")));
     buttonViewToggle.setOnMouseClicked(buttonViewToggleListener);
     buttonToday.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_total")));
     buttonAbout.setTooltip(new Tooltip(Translation.getInstance().getString("status_tooltip_button_about")));
     buttonAbout.setOnMouseClicked(aboutClickListener);
-    syncController.addLoadingListener(this);
-    storage.register(loggerListener);
-    total = storage.getTotal();
+    versionLoadIndicator.setOnMouseClicked(aboutClickListener);
+    syncInteractor.addLoadingListener(this);
+    total = LogUtils.INSTANCE.formatShortDuration(storage.total());
+    targetDatePicker.getEditor().setText(
+            LogFormatters.INSTANCE.getShortFormatDate().print(storage.getTargetDate())
+    );
+    targetDatePicker.setConverter(new SimpleDatePickerConverter());
+    targetDatePicker.getEditor().textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+      storage.suggestTargetDate(targetDatePicker.getEditor().getText());
+    });
 
     updateStatus();
-    onLoadChange(syncController.isLoading());
-    keepAliveController.setListener(keepAliveListener);
-    versionController.addListener(this);
-
-    SyncEventBus.getInstance().getEventBus().register(this);
+    onVersionLoadChange(syncInteractor.isLoading());
+    storage.register(loggerListener);
+    keepAliveInteractor.register(this);
   }
 
-  @Override public void destroy() {
-    versionController.removeListener(this);
-    syncController.removeLoadingListener(this);
+  @PreDestroy
+  public void destroy() {
+    keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
-  }
-
-  //region Events
-
-  @Subscribe
-  public void onEvent(StartLogSyncEvent event) {
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_BUTTON,
-        SimpleTracker.ACTION_SYNC_MAIN
-    );
-    syncController.sync();
-  }
-
-  @Subscribe
-  public void onEvent(StartAllSyncEvent event) {
-    SimpleTracker.getInstance().getTracker().sendEvent(
-        SimpleTracker.CATEGORY_BUTTON,
-        SimpleTracker.ACTION_SYNC_MAIN
-    );
-    syncController.sync();
+    syncInteractor.removeLoadingListener(this);
   }
 
   //endregion
@@ -114,7 +98,11 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    * A button event when user clicks on refresh
    */
   public void onClickRefresh() {
-    SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
+    syncInteractor.syncLogs();
+    tracker.sendEvent(
+            GAStatics.INSTANCE.getCATEGORY_BUTTON(),
+            GAStatics.INSTANCE.getACTION_SYNC_MAIN()
+    );
   }
 
   //endregion
@@ -125,38 +113,15 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
    * Convenience method to update current status
    */
   void updateStatus() {
-    //buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
-    buttonToday.setText(String.format("%s", total));
-    //buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
+//    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
+    buttonToday.setText(LogUtils.INSTANCE.formatShortDuration(storage.total()));
+//    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
     buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
 
   //endregion
 
   //region Listeners
-
-//  EventHandler<MouseEvent> outputProgressClickListener = new EventHandler<MouseEvent>() {
-//    @Override
-//    public void handle(MouseEvent event) {
-//      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
-//    }
-//  };
-
-  @Override
-  public void onProgressChange(double progressChange) {
-    boolean visible = (progressChange > 0.0f && progressChange < 1.0f);
-    versionLoadIndicator.setManaged(visible);
-    versionLoadIndicator.setVisible(visible);
-  }
-
-  @Override
-  public void onSummaryUpdate(UpdateSummary updateSummary) {
-    if (updateSummary != null && updateSummary.highestVersion > Main.VERSION_CODE) {
-      //buttonAbout.setText("!"); // todo : fix this in time, when update is more stable
-      return;
-    }
-    //buttonAbout.setText("?");
-  }
 
   EventHandler<MouseEvent> buttonViewToggleListener = new EventHandler<MouseEvent>() {
     @Override
@@ -169,35 +134,19 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
     }
   };
 
-  IDataListener loggerListener = new IDataListener() {
+  IDataListener<SimpleLog> loggerListener = new IDataListener<SimpleLog>() {
     @Override
-    public void onDataChange(ObservableList data) {
-      total = storage.getTotal();
+    public void onDataChange(@NotNull List<? extends SimpleLog> data) {
+      total = LogUtils.INSTANCE.formatShortDuration(storage.total());
       updateStatus();
     }
   };
-
-//  EventHandler<MouseEvent> outputClickListener = new EventHandler<MouseEvent>() {
-//    @Override
-//    public void handle(MouseEvent event) {
-//      SyncEventBus.getInstance().getEventBus().post(new StartLogSyncEvent());
-//    }
-//  };
 
   EventHandler<MouseEvent> aboutClickListener = new EventHandler<MouseEvent>() {
     @Override
     public void handle(MouseEvent event) {
       if (listener == null) return;
       listener.onAbout();
-    }
-  };
-
-  KeepAliveController.Listener keepAliveListener = new KeepAliveController.Listener() {
-    @Override
-    public void onUpdate() {
-      if (!syncController.isLoading() && autoSync.isSyncNeeded())
-        syncController.sync();
-      updateStatus();
     }
   };
 
@@ -210,16 +159,30 @@ public class StatusPresenter implements Initializable, Destroyable, IRemoteLoadL
   }
 
   @Override
+  public void onVersionLoadChange(boolean loading) {
+    Platform.runLater(() -> {
+      versionLoadIndicator.setManaged(loading);
+      versionLoadIndicator.setVisible(loading);
+      updateStatus();
+    });
+  }
+
+  @Override
   public void onLoadChange(boolean loading) {
     Platform.runLater(() -> {
       outputProgress.setManaged(loading);
       outputProgress.setVisible(loading);
+      updateStatus();
     });
-    updateStatus();
   }
 
   @Override
   public void onError(String error) {
+    updateStatus();
+  }
+
+  @Override
+  public void update() {
     updateStatus();
   }
 

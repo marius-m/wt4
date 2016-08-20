@@ -9,9 +9,12 @@
  * in the user guide at https://docs.gradle.org/2.7/userguide/multi_project_builds.html
  */
 
-include ':app'
+rootProject.name = 'wt4'
 
+include ':app'
 include ':jira-client'
 include ':database'
 include ':remote'
-rootProject.name = 'wt4'
+include ':models'
+include ':components'
+
