@@ -1,35 +1,21 @@
 package lt.markmerkk.utils;
 
+import javafx.scene.control.TextArea;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import javafx.scene.control.TextArea;
-import lt.markmerkk.Const;
-import lt.markmerkk.Main;
-import org.apache.commons.io.input.ReversedLinesFileReader;
-import org.joda.time.DurationFieldType;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
 
 /**
  * Created by mariusm on 10/27/14.
  */
 public class Utils {
-
-    /**
-     * Checks if string is empty or null
-     * @param string provided string to check
-     * @return empty flag
-     */
-    public static boolean isEmpty(String string) {
-        return !(string != null && string.length() > 0);
-    }
 
     /**
      * Checks if array is empty or null
@@ -56,26 +42,43 @@ public class Utils {
         } catch (IOException ex) { }
     }
 
-    /**
-     * Returns last logged output
-     */
-    public static String lastLog(String logPath) {
-        StringBuilder output = new StringBuilder();
+    public static String lastLog(String logPath, int lines) {
+        RandomAccessFile fileHandler = null;
         try {
-            int maxLines = 150;
-            int lineCount = 0;
             File file = new File(logPath + "info_prod.log");
-            ReversedLinesFileReader object = new ReversedLinesFileReader(file);
-            while (lineCount < maxLines) {
-                String line = object.readLine();
-                //if (line == null) return "";
-                output.insert(0, line + "\n");
-                lineCount++;
+            fileHandler = new RandomAccessFile(file, "r");
+            long fileLength = fileHandler.length() - 1;
+            StringBuilder sb = new StringBuilder();
+            int line = 0;
+            for (long filePointer = fileLength; filePointer != -1; filePointer--) {
+                fileHandler.seek(filePointer);
+                int readByte = fileHandler.readByte();
+                if (readByte == 0xA) {
+                    if (filePointer < fileLength) {
+                        line = line + 1;
+                    }
+                } else if (readByte == 0xD) {
+                    if (filePointer < fileLength - 1) {
+                        line = line + 1;
+                    }
+                }
+                if (line >= lines) {
+                    break;
+                }
+                sb.append((char) readByte);
             }
+            String lastLine = sb.reverse().toString();
+            return lastLine;
+        } catch (FileNotFoundException e) {
+            return null;
         } catch (IOException e) {
-        } catch (NullPointerException e) {
+            return null;
+        } finally {
+            if (fileHandler != null)
+                try {
+                    fileHandler.close();
+                } catch (IOException e) { }
         }
-        return output.toString();
     }
 
   /**

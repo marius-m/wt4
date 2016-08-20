@@ -1,9 +1,6 @@
 package lt.markmerkk;
 
 import com.sun.javafx.application.HostServicesDelegate;
-import com.vinumeris.updatefx.AppDirectory;
-import com.vinumeris.updatefx.UpdateFX;
-import com.vinumeris.updatefx.UpdateSummary;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,9 +9,6 @@ import lt.markmerkk.dagger.components.AppComponent;
 import lt.markmerkk.dagger.components.DaggerAppComponent;
 import lt.markmerkk.interactors.*;
 import lt.markmerkk.ui.MainView;
-import lt.markmerkk.interactors.VersioningInteractor;
-import lt.markmerkk.utils.FirstSettings;
-import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.ITracker;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
@@ -25,15 +19,12 @@ import org.slf4j.LoggerFactory;
 import rx.schedulers.Schedulers;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class Main extends Application implements KeepAliveInteractor.Listener {
   public static final String LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n";
   public static final String LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n";
   public static HostServicesDelegate hostServices;
-  public static final String UPDATE_DIR = "WT4Update";
   public static final String APP_NAME = "WT4";
 
   public static boolean DEBUG = false;
@@ -60,8 +51,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   @Inject
   public AutoUpdateInteractor autoUpdateInteractor;
   @Inject
-  public VersioningInteractor<UpdateSummary> versioningInteractor;
-  @Inject
   public Config config;
   @Inject
   public ITracker tracker;
@@ -72,13 +61,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
 
   @Override
   public void start(Stage stage) throws Exception {
-    Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
-//    if (isFirstLaunch()) {
-      AppDirectory.initAppDir(UPDATE_DIR);
-//      UpdateFX.restartApp();
-//      return;
-//    }
-
     sComponent = DaggerAppComponent.create();
     sComponent.inject(this);
     initLoggerSettings();
@@ -96,7 +78,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
     Scene scene = new Scene(mainView.getView());
     String cssResource1 = getClass().getResource("/text-field-red-border.css").toExternalForm();
     scene.getStylesheets().add(cssResource1);
-    logger.debug("Loading external resource: {}", cssResource1);
     stage.setWidth(SCENE_WIDTH);
     stage.setHeight(SCENE_HEIGHT);
     stage.setMinWidth(SCENE_WIDTH);
@@ -114,12 +95,10 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
             Schedulers.computation()
     );
     keepAliveGASession.onAttach();
-//    versioningInteractor.onAttach();
   }
 
   @Override
   public void stop() throws Exception {
-//    versioningInteractor.onDetach();
     keepAliveGASession.onDetach();
     syncInteractor.onDetach();
     keepAliveInteractor.unregister(this);
@@ -135,11 +114,6 @@ public class Main extends Application implements KeepAliveInteractor.Listener {
   }
 
   public static void main(String[] args) throws IOException {
-    AppDirectory.initAppDir(UPDATE_DIR);
-    UpdateFX.bootstrap(Main.class, AppDirectory.dir(), args);
-  }
-
-  public static void realMain(String[] args) {
     launch(args);
   }
 

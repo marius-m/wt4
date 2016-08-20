@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.status;
 
-import com.vinumeris.updatefx.UpdateSummary;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -45,8 +44,6 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
   KeepAliveInteractor keepAliveInteractor;
   @Inject
   Config config;
-  @Inject
-  VersioningInteractor<UpdateSummary> versioningInteractor;
 
   @FXML ProgressIndicator outputProgress;
   @FXML ProgressIndicator versionLoadIndicator;
@@ -84,13 +81,10 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     onVersionLoadChange(syncInteractor.isLoading());
     storage.register(loggerListener);
     keepAliveInteractor.register(this);
-    onVersionLoadChange(versioningInteractor.getLoading());
-    versioningInteractor.registerLoadingListener(this);
   }
 
   @PreDestroy
   public void destroy() {
-    versioningInteractor.unregisterLoadingListener(this);
     keepAliveInteractor.unregister(this);
     storage.unregister(loggerListener);
     syncInteractor.removeLoadingListener(this);

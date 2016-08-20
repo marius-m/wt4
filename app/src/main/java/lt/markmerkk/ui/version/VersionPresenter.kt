@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.version
 
-import com.vinumeris.updatefx.UpdateSummary
 import java.net.URL
 import java.util.ResourceBundle
 import javafx.fxml.FXML
@@ -17,14 +16,9 @@ import lt.markmerkk.Config
 import lt.markmerkk.Main
 import lt.markmerkk.Translation
 import lt.markmerkk.afterburner.InjectorNoDI
-import lt.markmerkk.interactors.VersionUpdater
-import lt.markmerkk.interactors.VersioningInteractor
 import lt.markmerkk.mvp.VersioningMvp
-import lt.markmerkk.mvp.VersioningMvpPresenterImpl
 import lt.markmerkk.ui.interfaces.DialogListener
 import org.slf4j.LoggerFactory
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 
 /**
  * Created by mariusmerkevicius on 12/14/15. Represents the presenter to update the log
@@ -33,10 +27,6 @@ class VersionPresenter : Initializable, VersioningMvp.View {
 
     @Inject
     lateinit var config: Config
-    @Inject
-    lateinit var versionUpdaterInteractor: VersionUpdater<UpdateSummary>
-    @Inject
-    lateinit var versioningInteractor: VersioningInteractor<UpdateSummary>
 
     @FXML lateinit var buttonClose: Button
     @FXML lateinit var buttonTitle: Hyperlink
@@ -47,24 +37,14 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     @FXML lateinit var progressIndicator: ProgressIndicator
 
     private var dialogListener: DialogListener? = null
-    private lateinit var presenter: VersioningMvp.Presenter
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
         Main.getComponent().presenterComponent().inject(this)
-        presenter = VersioningMvpPresenterImpl(
-                view = this,
-                versionUpdaterInteractor = versionUpdaterInteractor,
-                versioningInteractor = versioningInteractor,
-                ioScheduler = Schedulers.computation(),
-                uiScheduler = JavaFxScheduler.getInstance()
-        )
-        presenter.onAttach()
         labelVersion.text = String.format("Version: %s", config.versionName)
     }
 
     @PreDestroy
     fun destroy() {
-        presenter.onDetach()
     }
 
     //region Action input
