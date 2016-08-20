@@ -37,7 +37,7 @@ class RemoteLogPushImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(RemoteLogPushImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(RemoteLogPushImpl::class.java)!!
     }
 
 }

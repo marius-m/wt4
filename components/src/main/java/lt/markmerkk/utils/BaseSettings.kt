@@ -74,7 +74,7 @@ abstract class BaseSettings {
     //endregion
 
     companion object {
-        val logger = LoggerFactory.getLogger(BaseSettings::class.java)!!
+        private val logger = LoggerFactory.getLogger(BaseSettings::class.java)!!
     }
 
 }

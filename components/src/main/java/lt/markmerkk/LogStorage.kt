@@ -109,7 +109,7 @@ class LogStorage(
     //endregion
 
     companion object {
-        val logger = LoggerFactory.getLogger(LogStorage::class.java)!!
+        private val logger = LoggerFactory.getLogger(LogStorage::class.java)!!
     }
 
 }

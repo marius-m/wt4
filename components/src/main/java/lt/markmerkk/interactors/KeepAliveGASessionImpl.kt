@@ -29,6 +29,6 @@ class KeepAliveGASessionImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(KeepAliveGASessionImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(KeepAliveGASessionImpl::class.java)!!
     }
 }

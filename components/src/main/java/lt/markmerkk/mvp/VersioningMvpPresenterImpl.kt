@@ -49,7 +49,7 @@ class VersioningMvpPresenterImpl<T>(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(VersioningMvpPresenterImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(VersioningMvpPresenterImpl::class.java)!!
     }
 
 }

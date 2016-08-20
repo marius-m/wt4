@@ -44,8 +44,8 @@ class DBTestExecutor : DBBaseExecutor() {
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(DBTestExecutor::class.java)!!
-        val FILE = "test_database.db"
+        private val logger = LoggerFactory.getLogger(DBTestExecutor::class.java)!!
+        private val FILE = "test_database.db"
     }
 
 }

@@ -35,7 +35,7 @@ class AutoUpdateInteractorImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(AutoUpdateInteractorImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(AutoUpdateInteractorImpl::class.java)!!
     }
 
 }

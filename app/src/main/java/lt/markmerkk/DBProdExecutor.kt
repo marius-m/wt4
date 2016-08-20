@@ -45,7 +45,7 @@ class DBProdExecutor(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(DBProdExecutor::class.java)!!
+        private val logger = LoggerFactory.getLogger(DBProdExecutor::class.java)!!
     }
 
 }

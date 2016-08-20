@@ -92,7 +92,7 @@ class UserSettingsImpl(
     //endregion
 
     companion object {
-        val logger = LoggerFactory.getLogger(UserSettingsImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(UserSettingsImpl::class.java)!!
 
         val HOST = "HOST"
         val USER = "USER"

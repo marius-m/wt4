@@ -76,7 +76,7 @@ class IssueSearchPresenterImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(IssueSearchPresenterImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(IssueSearchPresenterImpl::class.java)!!
     }
 
 }

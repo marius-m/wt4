@@ -39,7 +39,7 @@ class KeepAliveInteractorImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(KeepAliveInteractorImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(KeepAliveInteractorImpl::class.java)!!
     }
 
 }

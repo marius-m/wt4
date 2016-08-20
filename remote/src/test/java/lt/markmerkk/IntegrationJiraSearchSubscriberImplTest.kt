@@ -98,7 +98,7 @@ class IntegrationJiraSearchSubscriberImplTest {
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(IntegrationJiraSearchSubscriberImplTest::class.java)!!
+        private val logger = LoggerFactory.getLogger(IntegrationJiraSearchSubscriberImplTest::class.java)!!
     }
 
 }

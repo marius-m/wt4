@@ -42,7 +42,7 @@ class RemoteIssuePullImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(RemoteIssuePullImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(RemoteIssuePullImpl::class.java)!!
     }
 
 }

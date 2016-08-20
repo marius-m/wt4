@@ -37,7 +37,7 @@ class RemoteMergeClientImpl(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(RemoteMergeClientImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(RemoteMergeClientImpl::class.java)!!
     }
 
 }
