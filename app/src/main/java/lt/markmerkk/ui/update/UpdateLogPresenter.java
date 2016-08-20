@@ -137,6 +137,7 @@ public class UpdateLogPresenter {
           .setComment(commentInput.getText())
           .build();
       updateSaveTitle(entity.getPrettyDuration());
+      buttonOk.setDisable(false);
     } catch (IllegalArgumentException e) {
       updateSaveTitle("Error: " + e.getMessage());
       buttonOk.setDisable(true);
