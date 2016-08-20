@@ -203,6 +203,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         remoteConfig << "jvmarg = $configData_arg1\n"
         remoteConfig << "jvmarg = $configData_arg2\n"
         remoteConfig << "jvmarg = $configData_arg3\n"
+        remoteConfig << "allow_offline = true\n"
 
         appDir.mkdirs()
         siteDir.mkdirs()

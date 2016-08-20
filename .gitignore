@@ -41,3 +41,4 @@ app/src/main/resources/version.properties
 deploy.properties
 tools/remote.txt
 tools/client.txt
+app/src/main/deploy/package/macosx/Info.plist
