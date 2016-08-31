@@ -58,7 +58,7 @@ Overview of the main app features
 	* Green - log synchronized with remote
 	* Red - log had problems synchronizing (double click for details)
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_1.png)
+![Work window](img/screen_1.png)
 
 ### Settings
 
