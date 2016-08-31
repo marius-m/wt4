@@ -65,17 +65,17 @@ Overview of the main app features
 * Enter credentials and personal preferences
 * You can use custom "JQL" for the issue search
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_2.png)
+![Work window](img/screen_2.png)
 
 ### Update
 
 Logs can be updated by pressing the right mouse button on the target log
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_3.png)
+![Work window](img/screen_3.png)
 
 ### Week view / Day view
 
-![Work window](https://bitbucket.org/mmerkevicius/wt4/raw/master/img/screen_4.png)
+![Work window](img/screen_4.png)
 
 ## FAQ
 
