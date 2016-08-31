@@ -24,7 +24,7 @@ App will automatically update to newest version
 
 ## Issues
 
-Track issues / feature requests [here](https://bitbucket.org/mmerkevicius/wt4/issues?status=new&status=open)
+Track issues / feature requests [here](https://github.com/marius-m/wt4/issues)
 
 ## Attributions
 
