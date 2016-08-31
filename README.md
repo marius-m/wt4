@@ -16,9 +16,13 @@ App is bundled with and without java inside.
 If you dont know what i'm talking about, download the bigger package to avoid various issues. 
 If you're sure you have java, you could try downloading a smaller app package. 
 
-* MacOSX: pending
-* Windows: pending
-* Linux (Ubuntu): pending
+* MacOSX: 
+  - Small version (no java prebundle) [here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
+  - Fat version (with java8) [here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-fat-4.0.dmg)
+* Windows: no bundle yet
+* Linux: no bundle yet
+
+For win or linux, app needs to be bundled separately. If you need such a build, drop me a message!
 
 App will automatically update to newest version
 
