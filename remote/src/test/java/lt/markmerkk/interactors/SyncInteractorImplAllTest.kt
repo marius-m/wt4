@@ -39,6 +39,7 @@ class SyncInteractorImplAllTest {
             remoteMergeToolsProvider = remoteToolsProvider,
             dayProvider = dayProvider,
             uiScheduler = Schedulers.immediate(),
+            ioScheduler = Schedulers.immediate(),
             autoUpdateInteractor = autoUpdateInteractor
     )
 

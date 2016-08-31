@@ -135,6 +135,7 @@ class SyncModule {
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
                 dayProvider = dayProvider,
                 uiScheduler = JavaFxScheduler.getInstance(),
+                ioScheduler = Schedulers.immediate(),
                 autoUpdateInteractor = autoUpdateInteractor
         )
     }

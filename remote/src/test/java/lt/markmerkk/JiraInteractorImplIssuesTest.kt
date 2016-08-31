@@ -8,6 +8,7 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.IDataStorage
 import net.rcarz.jiraclient.Issue
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import rx.Observable
 import rx.observers.TestSubscriber
@@ -36,12 +37,17 @@ class JiraInteractorImplIssuesTest {
     )
 
     val testSubscriber = TestSubscriber<List<Issue>>()
+    val validSearchResult: Issue.SearchResult = mock()
+
+    @Before
+    fun setUp() {
+
+    }
 
     @Test
     fun valid_emitItems() {
         // Arrange
         val fakeIssue: Issue = mock()
-        val validSearchResult = Issue.SearchResult()
         validSearchResult.issues = listOf(
                 fakeIssue, fakeIssue, fakeIssue
         )
@@ -64,7 +70,6 @@ class JiraInteractorImplIssuesTest {
     fun multipleEmissions_emitItems() {
         // Arrange
         val fakeIssue: Issue = mock()
-        val validSearchResult = Issue.SearchResult()
         validSearchResult.issues = listOf(fakeIssue, fakeIssue, fakeIssue)
         whenever(searchSubscriber.userIssuesObservable())
             .thenReturn(
@@ -91,7 +96,6 @@ class JiraInteractorImplIssuesTest {
     fun noItems_emitItems() {
         // Arrange
         val fakeIssue: Issue = mock()
-        val validSearchResult = Issue.SearchResult()
         validSearchResult.issues = listOf(fakeIssue, fakeIssue, fakeIssue)
         whenever(searchSubscriber.userIssuesObservable())
             .thenReturn(
@@ -114,7 +118,6 @@ class JiraInteractorImplIssuesTest {
     fun clientError_throwError() {
         // Arrange
         val fakeIssue: Issue = mock()
-        val validSearchResult = Issue.SearchResult()
         validSearchResult.issues = listOf(fakeIssue, fakeIssue, fakeIssue)
         whenever(searchSubscriber.userIssuesObservable())
             .thenReturn(Observable.empty())

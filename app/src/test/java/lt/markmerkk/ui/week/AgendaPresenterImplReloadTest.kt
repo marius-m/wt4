@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.anyList
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import jfxtras.scene.control.agenda.Agenda
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.junit.Test
 import rx.observers.TestSubscriber
@@ -37,7 +38,7 @@ class AgendaPresenterImplReloadTest {
     @Test
     fun reloadObservable_emptyList_noValues() {
         val testSubscriber = TestSubscriber<List<Agenda.AppointmentImplLocal>>()
-        agendaPresenter.reloadObservable(emptyList())
+        agendaPresenter.reloadObservable(emptyList<SimpleLog>())
             .subscribe(testSubscriber)
 
         testSubscriber.assertNoErrors()

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
+import rx.schedulers.Schedulers
 import rx.util.async.Async
 
 /**
@@ -27,7 +28,8 @@ class SyncInteractorImpl(
         private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
         private val dayProvider: DayProvider,
         private val autoUpdateInteractor: AutoUpdateInteractor,
-        private val uiScheduler: Scheduler
+        private val uiScheduler: Scheduler,
+        private val ioScheduler: Scheduler
 ) : SyncInteractor {
 
     val remoteLoadListeners = mutableListOf<IRemoteLoadListener>()
@@ -148,7 +150,7 @@ class SyncInteractorImpl(
                             localLog = it,
                             filter = filter
                     )
-                    Async.fromCallable(pushMerger, uiScheduler)
+                    Async.fromCallable(pushMerger, ioScheduler)
                 }
                 .toList()
     }
@@ -161,7 +163,7 @@ class SyncInteractorImpl(
                             it,
                             filter
                     )
-                    Async.fromCallable(pullMerger, uiScheduler)
+                    Async.fromCallable(pullMerger, ioScheduler)
                 }
                 .toList()
     }
