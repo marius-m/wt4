@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class HourGlass {
   public static final Logger logger = LoggerFactory.getLogger(HourGlass.class);
 
-  public static final int DEFAULT_TICK = 1000;
+  public static final int DEFAULT_TICK = 1000 * 60; // 1 minute
 
   Timer timer = null;
   State state = State.STOPPED;
@@ -130,9 +130,7 @@ public class HourGlass {
       endMillis += calcTimeIncrease();
       long delay = endMillis - startMillis;
       if (listener != null) listener.onTick(startMillis, endMillis, delay);
-      //logger.debug("Tick tock: start {} / end {}", startMillis, endMillis);
     } catch (TimeCalcError e) {
-      //logger.debug("Timer update error: start {} / end {}", startMillis, endMillis);
       lastTick = current();
       if (listener != null) listener.onError(e.getError());
     }
