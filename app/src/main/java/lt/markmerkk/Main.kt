@@ -99,19 +99,19 @@ class Main : Application(), KeepAliveInteractor.Listener {
         PropertyConfigurator.configure(javaClass.getResource("/custom_log4j.properties"))
         val fileAppenderProd = RollingFileAppender(PatternLayout(LOG_LAYOUT_PROD), config.cfgPath + "info_prod.log", true)
         fileAppenderProd.setMaxFileSize("100KB")
-        fileAppenderProd.maxBackupIndex = 1
+        fileAppenderProd.maxBackupIndex = 0
         fileAppenderProd.threshold = Priority.INFO
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderProd)
 
         val fileAppenderDebug = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), config.cfgPath + "info.log", true)
-        fileAppenderDebug.setMaxFileSize("1000KB")
-        fileAppenderDebug.maxBackupIndex = 1
+        fileAppenderDebug.setMaxFileSize("1MB")
+        fileAppenderDebug.maxBackupIndex = 0
         fileAppenderDebug.threshold = Priority.INFO
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderDebug)
 
         val errorAppender = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), config.cfgPath + "debug.log", true)
-        errorAppender.setMaxFileSize("100000KB")
-        errorAppender.maxBackupIndex = 1
+        errorAppender.setMaxFileSize("1MB")
+        errorAppender.maxBackupIndex = 0
         errorAppender.threshold = Priority.toPriority(Priority.ALL_INT)
         org.apache.log4j.Logger.getRootLogger().addAppender(errorAppender)
     }
@@ -119,7 +119,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
     //endregion
 
     companion object {
-        val LOG_LAYOUT_DEBUG = "%d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n"
+        val LOG_LAYOUT_DEBUG = "%t / %d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n"
         val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
 
         var DEBUG = false
