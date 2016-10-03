@@ -19,9 +19,9 @@
                   <ProgressIndicator fx:id="taskLoadIndicator" minHeight="20.0" minWidth="20.0" onMouseClicked="#onClickSearch" prefHeight="20.0" prefWidth="20.0" visible="false" />
                </graphic>
             </Button>
-            <VBox HBox.hgrow="ALWAYS">
+            <VBox fx:id="testContainer" HBox.hgrow="ALWAYS">
                <children>
-                  <ComboBox fx:id="inputTaskCombo" editable="true" maxWidth="1.7976931348623157E308" minHeight="30.0" promptText="Issue search." stylesheets="@../../../../live_search.css" />
+                  <TextField fx:id="inputTask" minHeight="30.0" />
                   <Text fx:id="outputJQL" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="JQL: ">
                      <font>
                         <Font size="9.0" />

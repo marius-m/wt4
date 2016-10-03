@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
  * @author mariusmerkevicius
  * @since 2016-08-12
  */
+@Deprecated(message = "Does not do search function any more")
 class IssueSearchPresenterImpl(
         private val view: IssueSearchMvp.View,
         private val issueSearchInteractor: IssueSearchInteractor,

@@ -3,7 +3,6 @@ package lt.markmerkk.ui.clock;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import lt.markmerkk.*;
-import lt.markmerkk.entities.EntityKt;
 import lt.markmerkk.entities.LocalIssue;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
@@ -21,6 +19,7 @@ import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.mvp.IssueSearchMvp;
 import lt.markmerkk.mvp.IssueSearchPresenterImpl;
+import lt.markmerkk.utils.AutoCompletionBindingIssues;
 import lt.markmerkk.utils.IssueSplit;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
@@ -82,13 +81,13 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   Button buttonSettings;
   @FXML
   Text outputJQL;
+  @FXML
+  TextField inputTask;
 
   @FXML ProgressIndicator taskLoadIndicator;
-  @FXML ComboBox<LocalIssue> inputTaskCombo;
 
   IssueSearchMvp.Presenter issueSearchPresenter;
   IssueSplit issueSplit = new IssueSplit();
-  ObservableList<LocalIssue> searchIssues = FXCollections.observableArrayList();
   Listener listener;
 
   @Override
@@ -100,25 +99,13 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             Schedulers.computation(),
             JavaFxScheduler.getInstance()
     );
-    inputTaskCombo.setOnKeyReleased(event -> {
-      switch (event.getCode()) {
-        case ENTER:
-          break;
-        case DOWN:
-        case UP:
-          inputTaskCombo.show();
-          break;
-        default:
-          String typedText = event.getText().replaceAll("\r", "");
-          if (!EntityKt.isEmpty(typedText)) {
-            issueSearchPresenter.search(inputTaskCombo.getEditor().getText());
-          }
-      }
-    });
-    inputTaskCombo.setItems(searchIssues);
+    new AutoCompletionBindingIssues(
+            new IssueSearchInteractorImpl(dbProdExecutor),
+            inputTask
+    );
     inputFrom.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_from")));
     inputTo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_input_to")));
-    inputTaskCombo.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_search_combo")));
+    inputTask.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_search_combo")));
     buttonClock.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_startstop")));
     buttonEnter.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_enter")));
     buttonRefresh.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_refresh")));
@@ -154,7 +141,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
                 .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
                 .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
                 .setTask(
-                        issueSplit.split(inputTaskCombo.getEditor().getText()).get(IssueSplit.Companion.getKEY_KEY())
+                        issueSplit.split(inputTask.getText()).get(IssueSplit.Companion.getKEY_KEY())
                 )
                 .setComment(inputComment.getText() + "(abnormal app close)").build();
         logStorage.insert(log);
@@ -235,7 +222,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
           .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
           .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
           .setTask(
-                  issueSplit.split(inputTaskCombo.getEditor().getText()).get(IssueSplit.Companion.getKEY_KEY())
+                  issueSplit.split(inputTask.getText()).get(IssueSplit.Companion.getKEY_KEY())
           )
           .setComment(inputComment.getText()).build();
       logStorage.insert(log);
@@ -408,27 +395,10 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   }
 
   @Override
-  public void showIssues(@NotNull List<? extends LocalIssue> result) {
-    if (inputTaskCombo.getSelectionModel() != null
-            && inputTaskCombo.getSelectionModel().getSelectedItem() != null) {
-      Object selectedItem = inputTaskCombo.getSelectionModel().getSelectedItem();
-      if (selectedItem instanceof LocalIssue) {
-        searchIssues.removeIf(localIssue -> localIssue != selectedItem);
-      } else {
-        searchIssues.clear();
-      }
-    } else {
-      searchIssues.clear();
-    }
-    searchIssues.addAll(result);
-    inputTaskCombo.show();
-  }
+  public void showIssues(@NotNull List<? extends LocalIssue> result) { }
 
   @Override
-  public void hideIssues() {
-    searchIssues.clear();
-    inputTaskCombo.hide();
-  }
+  public void hideIssues() { }
 
   @Override
   public void showTotalIssueCount(int count) {
