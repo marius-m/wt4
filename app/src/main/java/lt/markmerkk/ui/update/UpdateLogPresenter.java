@@ -14,7 +14,10 @@ import lt.markmerkk.Translation;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
+import lt.markmerkk.entities.database.interfaces.IExecutor;
+import lt.markmerkk.interactors.IssueSearchInteractorImpl;
 import lt.markmerkk.ui.interfaces.DialogListener;
+import lt.markmerkk.utils.AutoCompletionBindingIssues;
 import lt.markmerkk.utils.LogFormatters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,8 @@ public class UpdateLogPresenter {
   public static final Logger logger = LoggerFactory.getLogger(UpdateLogPresenter.class);
   @Inject
   LogStorage storage;
+  @Inject
+  IExecutor dbProdExecutor;
 
   @FXML TextField taskInput;
   @FXML TextField startInput;
@@ -42,6 +47,11 @@ public class UpdateLogPresenter {
   protected void initWithEntity(SimpleLog entity) {
     Main.Companion.getComponent().presenterComponent().inject(this);
     this.entity = entity;
+
+    new AutoCompletionBindingIssues(
+            new IssueSearchInteractorImpl(dbProdExecutor),
+            taskInput
+    );
 
     startInput.setText(entity.getLongStart());
     startInput.textProperty().addListener(new ChangeListener<String>() {

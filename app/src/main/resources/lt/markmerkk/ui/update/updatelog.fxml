@@ -27,17 +27,24 @@
       </HBox>
       <HBox>
          <children>
+            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
             <TextField fx:id="startInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
             </TextField>
             <TextField fx:id="endInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets right="5.0" />
-               </HBox.margin>
-            </TextField>
-            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
