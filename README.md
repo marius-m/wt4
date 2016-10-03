@@ -46,7 +46,10 @@ Tricks that were being tackled in this project:
 * [JavaFX](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm) - Great components and quite easy to assemble with after burner.
 * [Afterburner](https://github.com/AdamBien/afterburner.fx) - When got into it, cant imagine JavaFx without it.
 * [Google material design](https://design.google.com/icons/) - Icons for easier use and clear purpose!
-* [JFXTras](https://github.com/JFXtras/jfxtras) - cool 'Week' overview. 
+* [JFXTras](https://github.com/JFXtras/jfxtras) - neat components for easier use
+  - Agenda view
+* [FXExperiende](http://fxexperience.com/) - Advanced components for the jfx
+  - Auto completion text view
 * [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
 
 ## How to use it
@@ -92,6 +95,12 @@ Logs can be updated by pressing the right mouse button on the target log
 
 Only recently started tracking versions.
 
+
+### 0.9.9.5
+
+- Improved issue search (should work properly now)
+- Added issue search in update
+
 ### 0.9.9.4
 
 * Refactored all synchronization with remote
@@ -104,6 +113,3 @@ Only recently started tracking versions.
   - Rewritten all bundle scripts
   - Changed app upgrade functionality
 	
- 
-
-
