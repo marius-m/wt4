@@ -81,7 +81,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def configName = "getdown.txt"
     def infoTemplate = new File(projectDir, "src/main/deploy/package/macosx/Info.plist")
 
-    def configData_path = "http://212.24.101.213/test/"
+    def configData_path = "http://212.24.100.154/wt4/"
     def configData_loader_backgroundPath = "resources/splash.png"
     def configData_name = "WT4"
     def configData_code = "app.jar"
@@ -215,7 +215,7 @@ remotes {
     deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
 
     webServer {
-        host = '212.24.101.213'
+        host = '212.24.100.154'
         user = deployProps.getProperty("remote_user")
         password = deployProps.getProperty("remote_pass")
         authentications = ['password']
@@ -223,6 +223,9 @@ remotes {
 }
 
 task deploy << {
+    ssh.settings {
+        knownHosts = allowAnyHosts
+    }
     ssh.run {
         session(remotes.webServer) {
             def localPath = files(
@@ -233,11 +236,12 @@ task deploy << {
             def localResource = files (
                     new File(rootDir, "out4/app/resources/splash.png")
             )
-            def remotePath = "/var/www/html/test/"
-            def remoteResourcePath = "/var/www/html/test/resources/"
-            execute "rm -r /var/www/html/test/*"
+            def remotePath = "/var/www/html/wt4"
+            def remoteResourcePath = "$remotePath/resources"
+            execute "mkdir -p $remotePath"
+            execute "rm -r $remotePath/*"
+            execute "mkdir $remoteResourcePath"
             put from: localPath, into: remotePath
-            execute "mkdir /var/www/html/test/resources"
             put from: localResource, into: remoteResourcePath
             execute "ls -la $remotePath"
             execute "ls -la $remoteResourcePath"

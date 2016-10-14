@@ -96,6 +96,10 @@ Logs can be updated by pressing the right mouse button on the target log
 Only recently started tracking versions.
 
 
+### 0.9.9.6
+
+- Change remote auto updates url
+
 ### 0.9.9.5
 
 - Improved issue search (should work properly now)
