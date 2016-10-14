@@ -12,16 +12,18 @@ App is designed for sole purpose - help you track/log worked issues
 
 ## Download
 
-App is built for various platform. There are a *small* and *fat* versions. 
+App is built for various platform. There are a **small** and **fat** versions. 
 
-If you have java8 you can try out *small version* (15-20mb). If you're not sure what i'm talking about, install *fat version* and don't concern yourself :)
+If you have java8 you can try out **small version** (15-20mb). If you're not sure what i'm talking about, install **fat version** and don't concern yourself :)
 
 * MacOSX: 
-  - [Small here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
-  - [Fat version](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-fat-4.0.dmg)
+  - [Small installer](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
+  - [Fat installer](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-fat-4.0.dmg)
 * Windows:
-  - [Small version](https://dl.dropboxusercontent.com/u/60630588/win/WT4.zip)
-  - [Fat version](https://dl.dropboxusercontent.com/u/60630588/win/WT4_fat.zip)
+  - [Small zip](https://dl.dropboxusercontent.com/u/60630588/win/WT4.zip)
+  - [Small installer](https://dl.dropboxusercontent.com/u/60630588/win/WT4-4.0.exe)
+  - [Fat zip](https://dl.dropboxusercontent.com/u/60630588/win/WT4_fat.zip)
+  - [Fat installer](https://dl.dropboxusercontent.com/u/60630588/win/WT4-4.0_fat.exe)
 * Linux: no bundle yet
 
 For win or linux, app needs to be bundled separately. If you need such a build, drop me a message!

@@ -30,7 +30,8 @@ jfx {
     needShortcut = false
     needMenu = false
     bundleArguments = [
-            runtime: null
+            runtime: null,
+            classpath: "app/app.jar getdown-1.6.1-SNAPSHOT.jar"
     ]
     appName = "WT4"
     additionalAppResources = null
@@ -71,6 +72,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def siteDir = new File(rootDir, "out4")
     def appDir = new File(rootDir, "out4/app")
     def libsDir = new File(projectDir, "build/libs")
+    def digestFile = new File(rootDir, "out4/app/digest.txt")
     def toolsFile = new File(rootDir, "tools/getdown-1.6.1-SNAPSHOT.jar")
     def toolsResourceDir = new File(rootDir, "tools/resource")
     def clientConfigDir = new File(projectDir, "build/libs/app")
@@ -102,6 +104,12 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         clientConfig << "resource = $configData_loader_backgroundPath\n"
         clientConfig << "ui.name = $configData_name\n"
         clientConfig << "ui.background_image = $configData_loader_backgroundPath\n"
+        clientConfig << "code = $configData_code\n"
+        clientConfig << "class = $configData_class\n"
+        clientConfig << "jvmarg = $configData_arg1\n"
+        clientConfig << "jvmarg = $configData_arg2\n"
+        clientConfig << "jvmarg = $configData_arg3\n"
+        clientConfig << "allow_offline = true\n"
 
         remoteConfig.write("appbase = $configData_path\n")
         remoteConfig << "resource = $configData_loader_backgroundPath\n"
@@ -181,6 +189,13 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     }
 
     doLast {
+        // Move digest to release
+        copy {
+            from digestFile.absolutePath
+            into clientConfigDir.absolutePath
+        }
+
+        // Update Info.plist
         def parser = new XmlParser()
         parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
         parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
