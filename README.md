@@ -12,14 +12,16 @@ App is designed for sole purpose - help you track/log worked issues
 
 ## Download
 
-App is bundled with and without java inside. 
-If you dont know what i'm talking about, download the bigger package to avoid various issues. 
-If you're sure you have java, you could try downloading a smaller app package. 
+App is built for various platform. There are a 'small' and 'fat' versions. 
+
+If you have java8 you can try out small version (15-20mb). If you're not sure what i'm talking about, install fat version and don't concern yourself :)
 
 * MacOSX: 
-  - Small version (no java prebundle) [here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
-  - Fat version (with java8) [here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-fat-4.0.dmg)
-* Windows: no bundle yet
+  - [Small here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
+  - [Fat version](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-fat-4.0.dmg)
+* Windows:
+  - [Small version](https://dl.dropboxusercontent.com/u/60630588/win/WT4.zip)
+  - [Fat version](https://dl.dropboxusercontent.com/u/60630588/win/WT4_fat.zip)
 * Linux: no bundle yet
 
 For win or linux, app needs to be bundled separately. If you need such a build, drop me a message!
