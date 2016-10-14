@@ -12,9 +12,9 @@ App is designed for sole purpose - help you track/log worked issues
 
 ## Download
 
-App is built for various platform. There are a 'small' and 'fat' versions. 
+App is built for various platform. There are a *small* and *fat* versions. 
 
-If you have java8 you can try out small version (15-20mb). If you're not sure what i'm talking about, install fat version and don't concern yourself :)
+If you have java8 you can try out *small version* (15-20mb). If you're not sure what i'm talking about, install *fat version* and don't concern yourself :)
 
 * MacOSX: 
   - [Small here](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
