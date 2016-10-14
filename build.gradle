@@ -10,7 +10,7 @@ buildscript {
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
-    classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.5.2'
+    classpath files('tools/javafx-gradle-plugin-8.7.1-SNAPSHOT.jar')
     classpath 'org.hidetake:gradle-ssh-plugin:2.5.1'
   }
 }

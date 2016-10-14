@@ -7,7 +7,7 @@
     <key>CFBundleAllowMixedLocalizations</key>
     <true/>
     <key>CFBundleExecutable</key>
-    <string>WT4_2</string>
+    <string>WT4</string>
     <key>CFBundleIconFile</key>
     <string>WT4.icns</string>
     <key>CFBundleIdentifier</key>

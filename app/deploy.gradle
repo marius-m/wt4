@@ -34,12 +34,10 @@ jfx {
     ]
     appName = "WT4"
     additionalAppResources = null
-    secondaryLaunchers = [[appName:"WT4_2", classpath: "app/app.jar"]]
     fileAssociations = null
     noBlobSigning = false
     customBundlers
-    skipDaemonModeCheck = true
-
+//    skipDaemonModeCheck = true
 
     skipNativeLauncherWorkaround205 = false
 
@@ -192,7 +190,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
             def node = dictionary[i]
             if ("key" == node.name()) {
                 if ("CFBundleExecutable" == node.text()) {
-                    dictionary[i+1].value = "WT4_2" // Change to modified with classpath
+                    dictionary[i+1].value = "WT4" // Change to modified with classpath
                 }
                 if ("CFBundleShortVersionString" == node.text()) {
                     dictionary[i+1].value = "4.0"
