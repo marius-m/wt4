@@ -21,9 +21,9 @@ jfx {
     nativeOutputDir = "build/jfx/native"
     bundler = "ALL"
     jvmProperties = null
-    jvmArgs = [
-            "-Ddirect=true"
-    ]
+//    jvmArgs = [
+//            "-Ddirect=true"
+//    ]
     userJvmArgs = null
     launcherArguments = ["app"]
     nativeReleaseVersion = "4.0"
@@ -31,7 +31,7 @@ jfx {
     needMenu = false
     bundleArguments = [
             runtime: null,
-            classpath: "app/app.jar getdown-1.6.1-SNAPSHOT.jar"
+            classpath: "getdown-1.6.1-SNAPSHOT.jar app/app.jar"
     ]
     appName = "WT4"
     additionalAppResources = null
@@ -77,18 +77,8 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def toolsResourceDir = new File(rootDir, "tools/resource")
     def clientConfigDir = new File(projectDir, "build/libs/app")
     def clientConfig = new File(rootDir, "tools/client.txt")
-    def remoteConfig = new File(rootDir, "tools/remote.txt")
     def configName = "getdown.txt"
     def infoTemplate = new File(projectDir, "src/main/deploy/package/macosx/Info.plist")
-
-    def configData_path = "http://212.24.100.154/wt4/"
-    def configData_loader_backgroundPath = "resources/splash.png"
-    def configData_name = "WT4"
-    def configData_code = "app.jar"
-    def configData_class = "lt.markmerkk.Main"
-    def configData_arg1 = "-Dversion_name=$versionName"
-    def configData_arg2 = "-Dversion_code=$versionCode"
-    def configData_arg3 = "-Dga_key=${deployProps.getProperty("ga")}"
 
     standardInput = System.in
     classpath = files(toolsFile)
@@ -100,32 +90,27 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         // Prepare
         project.delete siteDir
 
-        clientConfig.write("appbase = $configData_path\n")
-        clientConfig << "resource = $configData_loader_backgroundPath\n"
-        clientConfig << "ui.name = $configData_name\n"
-        clientConfig << "ui.background_image = $configData_loader_backgroundPath\n"
-        clientConfig << "code = $configData_code\n"
-        clientConfig << "class = $configData_class\n"
-        clientConfig << "jvmarg = $configData_arg1\n"
-        clientConfig << "jvmarg = $configData_arg2\n"
-        clientConfig << "jvmarg = $configData_arg3\n"
+        clientConfig.write("appbase = http://212.24.100.154/wt4/\n")
+        clientConfig << "resource = resources/splash.png\n"
+        clientConfig << "resource = resources/icon.png\n"
+        clientConfig << "ui.name = WT4\n"
+        clientConfig << "ui.background_image = resources/splash.png\n"
+        clientConfig << "ui.icon = resources/icon.png\n"
+        clientConfig << "ui.icon = resources/icon.png\n"
+        clientConfig << "ui.mac_dock_icon = resources/icon.png\n"
+        clientConfig << "ui.progress = 20, 260, 360, 20\n"
+        clientConfig << "ui.status = 20, 240, 360, 20\n"
+        clientConfig << "code = app.jar\n"
+        clientConfig << "class = lt.markmerkk.Main\n"
+        clientConfig << "jvmarg = -Dversion_name=$versionName\n"
+        clientConfig << "jvmarg = -Dversion_code=$versionCode\n"
+        def gaKey = deployProps.getProperty("ga")
+        clientConfig << "jvmarg = -Dga_key=$gaKey\n"
         clientConfig << "allow_offline = true\n"
-
-        remoteConfig.write("appbase = $configData_path\n")
-        remoteConfig << "resource = $configData_loader_backgroundPath\n"
-        remoteConfig << "ui.name = $configData_name\n"
-        remoteConfig << "ui.background_image = $configData_loader_backgroundPath\n"
-        remoteConfig << "code = $configData_code\n"
-        remoteConfig << "class = $configData_class\n"
-        remoteConfig << "jvmarg = $configData_arg1\n"
-        remoteConfig << "jvmarg = $configData_arg2\n"
-        remoteConfig << "jvmarg = $configData_arg3\n"
-        remoteConfig << "allow_offline = true\n"
 
         appDir.mkdirs()
         siteDir.mkdirs()
         clientConfigDir.mkdirs()
-        assert remoteConfig.exists()
         assert clientConfig.exists()
         assert siteDir.exists()
         assert appDir.exists()
@@ -175,10 +160,10 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         builtConfig.renameTo("$clientConfigDir/$configName")
 
         copy {
-            from remoteConfig.absolutePath
+            from clientConfig.absolutePath
             into appDir.absolutePath
         }
-        def siteConfig = new File(appDir, "remote.txt")
+        def siteConfig = new File(appDir, "client.txt")
         siteConfig.renameTo("$appDir/$configName")
         def siteResources = new File(appDir, "resources")
         siteResources.mkdirs()
@@ -247,7 +232,8 @@ task deploy << {
                     new File(rootDir, "out4/app/digest.txt"),
             )
             def localResource = files (
-                    new File(rootDir, "out4/app/resources/splash.png")
+                    new File(rootDir, "out4/app/resources/splash.png"),
+                    new File(rootDir, "out4/app/resources/icon.png")
             )
             def remotePath = "/var/www/html/wt4"
             def remoteResourcePath = "$remotePath/resources"
