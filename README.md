@@ -24,9 +24,9 @@ If you have java8 you can try out **small version** (15-20mb). If you're not sur
   - [Small installer](https://dl.dropboxusercontent.com/u/60630588/win/WT4-4.0.exe)
   - [Fat zip](https://dl.dropboxusercontent.com/u/60630588/win/WT4_fat.zip)
   - [Fat installer](https://dl.dropboxusercontent.com/u/60630588/win/WT4-4.0_fat.exe)
-* Linux: no bundle yet
-
-For win or linux, app needs to be bundled separately. If you need such a build, drop me a message!
+* Linux:
+  - [Small package installer](https://dl.dropboxusercontent.com/u/60630588/linux/wt4-4.0.deb)
+  - [Fat package installer](https://dl.dropboxusercontent.com/u/60630588/linux/wt4-4.0_fat.deb)
 
 App will automatically update to newest version
 
