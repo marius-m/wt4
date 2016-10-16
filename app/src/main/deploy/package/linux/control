@@ -1,0 +1,8 @@
+Package: wt4
+Version: 4.0
+Section: unknown
+Maintainer: Marius Merkevicius <merkevicius.marius@gmail.com>
+Priority: optional
+Architecture: amd64
+Provides: wt4
+Description: Work tracker for JIRA

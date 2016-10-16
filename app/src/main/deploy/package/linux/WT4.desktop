@@ -7,5 +7,5 @@ Exec=/opt/WT4/WT4
 Terminal=false
 Icon=/opt/WT4/WT4.png
 Type=Application
-Categories=Application;Network;Security;
+Categories=Utility;Application;
 Comment=Work tracker for JIRA
