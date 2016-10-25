@@ -12,11 +12,18 @@ import javafx.scene.control.DatePicker
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.layout.HBox
 import lt.markmerkk.Main
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.mvp.GraphMvp
 import lt.markmerkk.mvp.GraphPresenterImpl
+import lt.markmerkk.mvp.LogInteractorImpl
+import lt.markmerkk.mvp.QueryResultProviderImpl
+import rx.schedulers.JavaFxScheduler
+import rx.schedulers.Schedulers
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
+import javax.inject.Inject
 
 /**
  * @author mariusmerkevicius
@@ -24,6 +31,8 @@ import javax.annotation.PreDestroy
  */
 class GraphsFxPresenter : Initializable, GraphMvp.View {
 
+    @Inject
+    lateinit var executor: IExecutor
     @FXML
     lateinit var viewGraphType: ComboBox<String>
     @FXML
@@ -36,7 +45,15 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     val viewProgress = ProgressIndicator()
 
     val presenter by lazy {
-        GraphPresenterImpl(this)
+        GraphPresenterImpl(
+                view = this,
+                logInteractor = LogInteractorImpl(
+                        QueryResultProviderImpl<List<SimpleLog>>(executor),
+                        Schedulers.io()
+                ),
+                uiScheduler = Schedulers.io(),
+                ioScheduler = JavaFxScheduler.getInstance()
+        )
     }
 
     init {
@@ -45,18 +62,25 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
         viewProgress.isManaged = false
     }
 
+    //region Life-cycle
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
         viewGraphContainer.children.addAll(viewProgress)
 
         presenter.onAttach()
+        presenter.loadGraph()
     }
 
     @PreDestroy
     fun destroy() {
         presenter.onDetach()
     }
+
+    //endregion
+
+    //region MVP
 
     override fun showProgress() {
         viewProgress.isVisible = true
@@ -69,10 +93,13 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     }
 
     override fun showGraph() {
+        viewGraphContainer.children.add(createChart())
     }
 
     override fun showErrorGraph(message: String) {
     }
+
+    //endregion
 
     fun createChart(): BarChart<String, Number> {
         val years = listOf("2007", "2008", "2009")

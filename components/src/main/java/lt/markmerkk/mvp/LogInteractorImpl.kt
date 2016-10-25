@@ -13,7 +13,7 @@ import java.util.concurrent.Callable
  */
 class LogInteractorImpl(
         private val resultProvider: QueryResultProvider<List<SimpleLog>>,
-        private val scheduler: Scheduler
+        private val ioScheduler: Scheduler
 ) : GraphMvp.LogInteractor {
     override fun loadLogs(
             fromMillis: Long,
@@ -27,7 +27,7 @@ class LogInteractorImpl(
                             })
                     )
                     result ?: emptyList()
-                }, scheduler
+                }, ioScheduler
         )
 
     }
