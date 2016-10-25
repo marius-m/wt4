@@ -8,26 +8,70 @@ import javafx.scene.chart.CategoryAxis
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.ComboBox
+import javafx.scene.control.DatePicker
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.layout.HBox
 import lt.markmerkk.Main
+import lt.markmerkk.mvp.GraphMvp
+import lt.markmerkk.mvp.GraphPresenterImpl
 import java.net.URL
 import java.util.*
+import javax.annotation.PreDestroy
 
 /**
  * @author mariusmerkevicius
  * @since 2016-10-25
  */
-class GraphsFxPresenter : Initializable {
+class GraphsFxPresenter : Initializable, GraphMvp.View {
 
     @FXML
     lateinit var viewGraphType: ComboBox<String>
     @FXML
     lateinit var viewGraphContainer: HBox
+    @FXML
+    lateinit var viewDatePickerFrom: DatePicker
+    @FXML
+    lateinit var viewDatePickerTo: DatePicker
+
+    val viewProgress = ProgressIndicator()
+
+    val presenter by lazy {
+        GraphPresenterImpl(this)
+    }
+
+    init {
+        viewProgress.setMaxSize(150.0, 150.0)
+        viewProgress.isVisible = false
+        viewProgress.isManaged = false
+    }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
-        viewGraphContainer.children.add(createChart())
+        viewGraphContainer.children.addAll(viewProgress)
+
+        presenter.onAttach()
+    }
+
+    @PreDestroy
+    fun destroy() {
+        presenter.onDetach()
+    }
+
+    override fun showProgress() {
+        viewProgress.isVisible = true
+        viewProgress.isManaged = true
+    }
+
+    override fun hideProgress() {
+        viewProgress.isVisible = false
+        viewProgress.isManaged = false
+    }
+
+    override fun showGraph() {
+    }
+
+    override fun showErrorGraph(message: String) {
     }
 
     fun createChart(): BarChart<String, Number> {
