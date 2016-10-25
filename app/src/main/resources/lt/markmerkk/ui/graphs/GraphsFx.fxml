@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+
+<VBox prefHeight="334.0" prefWidth="412.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.graphs.GraphsFxPresenter">
+   <children>
+      <HBox>
+         <children>
+            <ComboBox fx:id="viewGraphType" maxWidth="1.7976931348623157E308" promptText="Graph" HBox.hgrow="ALWAYS" />
+         </children>
+         <VBox.margin>
+            <Insets left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
+            <DatePicker fx:id="viewDatePickerFrom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </DatePicker>
+            <DatePicker fx:id="viewDatePickerTo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS" />
+         </children>
+         <VBox.margin>
+            <Insets left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox fx:id="viewGraphContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

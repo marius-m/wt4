@@ -105,6 +105,13 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     );
   }
 
+  public void onClickGraph() {
+    tracker.sendView(
+            GAStatics.INSTANCE.getVIEW_GRAPH()
+    );
+    listener.onGraphs();
+  }
+
   //endregion
 
   //region Convenience
@@ -205,6 +212,12 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
      * Called when about is pressed
      */
     void onAbout();
+
+    /**
+     * Called when graphs is pressed
+     */
+    void onGraphs();
+
   }
 
   //endregion

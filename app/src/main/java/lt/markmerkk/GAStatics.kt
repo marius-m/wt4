@@ -16,4 +16,5 @@ object GAStatics {
     val VIEW_DAY = "VIEW_DAY"
     val VIEW_WEEK = "VIEW_WEEK"
     val VIEW_SETTINGS = "VIEW_SETTINGS"
+    val VIEW_GRAPH = "VIEW_GRAPH"
 }
