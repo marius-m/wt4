@@ -29,12 +29,10 @@ class GraphPresenterImpl(
         subscription?.unsubscribe()
     }
 
-    override fun loadGraph() {
+    override fun loadGraph(from: Long, to: Long) {
         subscription?.unsubscribe()
-        logInteractor.loadLogs(
-                DateTime().minusMonths(2).millis,
-                DateTime().plusMonths(2).millis
-        )
+        val tomorrow = DateTime(to).plusDays(1).millis
+        logInteractor.loadLogs(from, tomorrow)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }

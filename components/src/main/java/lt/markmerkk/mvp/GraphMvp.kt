@@ -29,6 +29,9 @@ interface GraphMvp {
         fun onAttach()
         fun onDetach()
 
-        fun loadGraph()
+        fun loadGraph(
+                from: Long,
+                to: Long
+        )
     }
 }

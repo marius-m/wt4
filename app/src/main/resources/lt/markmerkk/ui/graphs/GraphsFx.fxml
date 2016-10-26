@@ -22,12 +22,12 @@
             </HBox>
             <HBox>
                <children>
-                  <DatePicker fx:id="viewDatePickerFrom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
+                  <DatePicker fx:id="viewDatePickerFrom" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="From" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <DatePicker fx:id="viewDatePickerTo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS" />
+                  <DatePicker fx:id="viewDatePickerTo" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
