@@ -13,7 +13,7 @@ import rx.Subscription
 class GraphPresenterImpl(
         private val view: GraphMvp.View,
         private val logInteractor: GraphMvp.LogInteractor,
-        private val graphDrawers: List<GraphDrawer>,
+        private val graphDrawers: List<GraphDrawer<*>>,
         private val uiScheduler: Scheduler,
         private val ioScheduler: Scheduler
 ) : GraphMvp.Presenter {

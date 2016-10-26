@@ -14,6 +14,7 @@ import lt.markmerkk.mvp.GraphMvp
 import lt.markmerkk.mvp.GraphPresenterImpl
 import lt.markmerkk.mvp.LogInteractorImpl
 import lt.markmerkk.mvp.QueryResultProviderImpl
+import lt.markmerkk.utils.graphs.GraphDrawerXYBars
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import java.net.URL
@@ -47,7 +48,9 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
                         QueryResultProviderImpl<List<SimpleLog>>(executor),
                         Schedulers.io()
                 ),
-                graphDrawers = emptyList(),
+                graphDrawers = listOf(
+                        GraphDrawerXYBars("Worklog bars")
+                ),
                 uiScheduler = JavaFxScheduler.getInstance(),
                 ioScheduler = Schedulers.io()
         )
@@ -84,9 +87,9 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
         viewProgress.isManaged = false
     }
 
-    override fun showGraph(drawer: GraphDrawer) {
+    override fun showGraph(drawer: GraphDrawer<*>) {
         viewGraphContainer.children.clear()
-//        viewGraphContainer.children.add(createChart())
+        viewGraphContainer.children.add(drawer.createGraph())
         viewGraphContainer.isVisible = true
     }
 

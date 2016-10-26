@@ -24,7 +24,7 @@ class GraphPresenterImplHandleSuccessTest {
         val presenter = GraphPresenterImpl(
                 view = view,
                 logInteractor = logInteractor,
-                graphDrawers = emptyList<GraphDrawer>(),
+                graphDrawers = emptyList<GraphDrawer<Any>>(),
                 uiScheduler = Schedulers.immediate(),
                 ioScheduler = Schedulers.immediate()
         )
@@ -39,7 +39,7 @@ class GraphPresenterImplHandleSuccessTest {
     @Test
     fun validGraphs_renderGraph() {
         // Arrange
-        val drawer: GraphDrawer = mock()
+        val drawer: GraphDrawer<Any> = mock()
         val presenter = GraphPresenterImpl(
                 view = view,
                 logInteractor = logInteractor,
@@ -58,7 +58,7 @@ class GraphPresenterImplHandleSuccessTest {
     @Test
     fun invalidIndex_showError() {
         // Arrange
-        val drawer: GraphDrawer = mock()
+        val drawer: GraphDrawer<Any> = mock()
         val presenter = GraphPresenterImpl(
                 view = view,
                 logInteractor = logInteractor,
@@ -79,7 +79,7 @@ class GraphPresenterImplHandleSuccessTest {
     @Test
     fun invalidIndex2_showError() {
         // Arrange
-        val drawer: GraphDrawer = mock()
+        val drawer: GraphDrawer<Any> = mock()
         val presenter = GraphPresenterImpl(
                 view = view,
                 logInteractor = logInteractor,

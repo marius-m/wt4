@@ -21,7 +21,7 @@ interface GraphMvp {
         fun showProgress()
         fun hideProgress()
 
-        fun showGraph(drawer: GraphDrawer)
+        fun showGraph(drawer: GraphDrawer<*>)
         fun showErrorGraph(message: String)
     }
 

@@ -24,7 +24,9 @@ class GraphPresenterImplTest {
     val presenter = GraphPresenterImpl(
             view = view,
             logInteractor = logInteractor,
-            graphDrawers = emptyList<GraphDrawer>(),
+            graphDrawers = listOf<GraphDrawer<Any>>(
+                    mock()
+            ),
             uiScheduler = Schedulers.immediate(),
             ioScheduler = Schedulers.immediate()
     )
