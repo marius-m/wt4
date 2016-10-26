@@ -18,7 +18,8 @@ class GraphPresenterImpl(
         private val ioScheduler: Scheduler
 ) : GraphMvp.Presenter {
 
-    var subscription: Subscription? = null
+    private var subscription: Subscription? = null
+    var selectGraphIndex = 0
 
     override fun onAttach() {
     }
@@ -37,19 +38,20 @@ class GraphPresenterImpl(
                 .subscribe({
                     handleSuccess()
                 }, {
-                    view.showErrorGraph("Error loading graph data")
+                    view.showErrorGraph("Error loading data for graph")
                 })
     }
 
 
     fun handleSuccess() {
-        view.showGraph(object : GraphDrawer {
-            override val title: String
-                get() = throw UnsupportedOperationException()
-
-            override fun createGraph(): Region {
-                throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
+        if (graphDrawers.size == 0) {
+            view.showErrorGraph("Error rendering graph")
+            return
+        }
+        if (selectGraphIndex >= graphDrawers.size || selectGraphIndex < 0) {
+            view.showErrorGraph("Invalid graph selection")
+            return
+        }
+        view.showGraph(graphDrawers.get(selectGraphIndex))
     }
 }
