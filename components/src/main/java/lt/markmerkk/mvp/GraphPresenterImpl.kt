@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import javafx.scene.layout.Region
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.GraphDrawer
 import org.joda.time.DateTime
 import rx.Scheduler
@@ -30,20 +31,24 @@ class GraphPresenterImpl(
 
     override fun loadGraph() {
         subscription?.unsubscribe()
-        logInteractor.loadLogs(DateTime().minusMonths(1).millis, DateTime().plusMonths(1).millis)
+        logInteractor.loadLogs(
+                DateTime().minusMonths(2).millis,
+                DateTime().plusMonths(2).millis
+        )
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doOnUnsubscribe { view.hideProgress() }
                 .subscribe({
-                    handleSuccess()
+                    handleSuccess(it)
                 }, {
-                    view.showErrorGraph("Error loading data for graph")
+                    view.showErrorGraph("Error loading graph")
+                    it.printStackTrace()
                 })
     }
 
 
-    fun handleSuccess() {
+    fun handleSuccess(data: List<SimpleLog>) {
         if (graphDrawers.size == 0) {
             view.showErrorGraph("Error rendering graph")
             return
@@ -52,6 +57,8 @@ class GraphPresenterImpl(
             view.showErrorGraph("Invalid graph selection")
             return
         }
-        view.showGraph(graphDrawers.get(selectGraphIndex))
+        val graph = graphDrawers.get(selectGraphIndex)
+        graph.populateData(data as List<Nothing>)
+        view.showGraph(graph)
     }
 }

@@ -30,7 +30,7 @@ class GraphPresenterImplHandleSuccessTest {
         )
 
         // Act
-        presenter.handleSuccess()
+        presenter.handleSuccess(emptyList())
 
         // Assert
         verify(view).showErrorGraph(any())
@@ -49,7 +49,7 @@ class GraphPresenterImplHandleSuccessTest {
         )
 
         // Act
-        presenter.handleSuccess()
+        presenter.handleSuccess(emptyList())
 
         // Assert
         verify(view).showGraph(drawer)
@@ -69,7 +69,7 @@ class GraphPresenterImplHandleSuccessTest {
         presenter.selectGraphIndex = 100 // invalid index
 
         // Act
-        presenter.handleSuccess()
+        presenter.handleSuccess(emptyList())
 
         // Assert
         verify(view, never()).showGraph(any())
@@ -90,7 +90,7 @@ class GraphPresenterImplHandleSuccessTest {
         presenter.selectGraphIndex = -1 // invalid index
 
         // Act
-        presenter.handleSuccess()
+        presenter.handleSuccess(emptyList())
 
         // Assert
         verify(view, never()).showGraph(any())

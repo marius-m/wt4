@@ -24,30 +24,33 @@ class GraphDrawerXYBars(
     }
 
     override fun createGraph(): Region {
-        val years = listOf("WT", "CAR")
-        val xAxis = CategoryAxis()
-        val yAxis = NumberAxis()
-        yAxis.tickLabelFormatter = NumberAxis.DefaultFormatter(yAxis, null, "ms")
-        val bc = BarChart<String, Number>(xAxis, yAxis)
-        bc.maxWidth = Double.MAX_VALUE
-        bc.maxHeight = Double.MAX_VALUE
-
-        // setup chart
-        bc.title = title
-        xAxis.label = "Issues"
-        xAxis.categories = FXCollections.observableList(years)
-        yAxis.label = "Invested hours"
-
-        // add starting data
-        val series1 = XYChart.Series<String, Number>()
-        series1.name = "Data Series 1"
-
-        // create sample data
-        series1.data.add(XYChart.Data(years[0], 567))
-        series1.data.add(XYChart.Data(years[1], 1292))
-        series1.data.add(XYChart.Data(years[2], 2180))
-        bc.data.add(series1)
+        val bc = BarChart(CategoryAxis(), NumberAxis())
+        val displayData = mutableListOf<XYChart.Data<String, Number>>()
+        val dataMap = assembleIssues(data)
+        dataMap.forEach { displayData.add(XYChart.Data<String, Number>(it.key, it.value)) }
+        bc.data.add(
+                XYChart.Series(
+                        "Issues",
+                        FXCollections.observableArrayList(displayData)
+                )
+        )
         return bc
     }
+
+    //region Convenience
+
+    fun assembleIssues(logs: List<SimpleLog>): Map<String, Number> {
+        val mappedLogs = mutableMapOf<String, Number>()
+        logs.forEach {
+            if (mappedLogs.containsKey(it.task)) {
+                mappedLogs.put(it.task, it.duration + mappedLogs.get(it.task) as Long)
+            } else {
+                mappedLogs.put(it.task, it.duration)
+            }
+        }
+        return mappedLogs
+    }
+
+    //endregion
 
 }
