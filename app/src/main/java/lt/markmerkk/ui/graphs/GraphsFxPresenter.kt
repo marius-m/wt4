@@ -1,5 +1,6 @@
 package lt.markmerkk.ui.graphs
 
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.ComboBox
@@ -31,7 +32,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     @Inject
     lateinit var executor: IExecutor
     @FXML
-    lateinit var viewGraphType: ComboBox<String>
+    lateinit var viewGraphType: ComboBox<GraphDrawer<*>>
     @FXML
     lateinit var viewGraphContainer: HBox
     @FXML
@@ -41,6 +42,9 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     @FXML
     lateinit var viewProgress: ProgressIndicator
 
+    val graphs: List<GraphDrawer<*>> = listOf(
+            GraphDrawerXYBars("Simple")
+    )
     val presenter by lazy {
         GraphPresenterImpl(
                 view = this,
@@ -48,9 +52,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
                         QueryResultProviderImpl<List<SimpleLog>>(executor),
                         Schedulers.io()
                 ),
-                graphDrawers = listOf(
-                        GraphDrawerXYBars("Worklog bars")
-                ),
+                graphDrawers = graphs,
                 uiScheduler = JavaFxScheduler.getInstance(),
                 ioScheduler = Schedulers.io()
         )
@@ -63,8 +65,14 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
 
         viewProgress.isVisible = false
         viewProgress.isManaged = false
+        viewGraphType.items = FXCollections.observableList(graphs)
+        viewGraphType.setOnAction {
+            presenter.selectGraphIndex = viewGraphType.selectionModel.selectedIndex
+            presenter.loadGraph()
+        }
 
         presenter.onAttach()
+        viewGraphType.selectionModel.select(0)
         presenter.loadGraph()
     }
 

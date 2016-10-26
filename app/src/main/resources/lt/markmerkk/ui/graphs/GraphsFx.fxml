@@ -8,14 +8,13 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-
 <StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.graphs.GraphsFxPresenter">
    <children>
       <VBox prefHeight="334.0" prefWidth="412.0">
          <children>
             <HBox>
                <children>
-                  <ComboBox fx:id="viewGraphType" maxWidth="1.7976931348623157E308" promptText="Graph" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="viewGraphType" maxWidth="1.7976931348623157E308" promptText="Graph type" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />

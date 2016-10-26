@@ -58,7 +58,7 @@ class GraphPresenterImpl(
             return
         }
         val graph = graphDrawers.get(selectGraphIndex)
-        graph.populateData(data as List<Nothing>)
+        graph.populateData(data as List<Nothing>) // Maybe improve this part
         view.showGraph(graph)
     }
 }

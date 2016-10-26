@@ -25,6 +25,7 @@ class GraphDrawerXYBars(
 
     override fun createGraph(): Region {
         val bc = BarChart(CategoryAxis(), NumberAxis())
+        bc.title = title
         val displayData = mutableListOf<XYChart.Data<String, Number>>()
         val dataMap = assembleIssues(data)
         dataMap.forEach { displayData.add(XYChart.Data<String, Number>(it.key, it.value)) }
@@ -52,5 +53,7 @@ class GraphDrawerXYBars(
     }
 
     //endregion
+
+    override fun toString(): String = title
 
 }
