@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.interactors.GraphDrawer
 import rx.Observable
 
 /**
@@ -20,7 +21,7 @@ interface GraphMvp {
         fun showProgress()
         fun hideProgress()
 
-        fun showGraph()
+        fun showGraph(drawer: GraphDrawer)
         fun showErrorGraph(message: String)
     }
 

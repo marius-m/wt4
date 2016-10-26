@@ -1,5 +1,7 @@
 package lt.markmerkk.mvp
 
+import javafx.scene.layout.Region
+import lt.markmerkk.interactors.GraphDrawer
 import org.joda.time.DateTime
 import rx.Scheduler
 import rx.Subscription
@@ -11,6 +13,7 @@ import rx.Subscription
 class GraphPresenterImpl(
         private val view: GraphMvp.View,
         private val logInteractor: GraphMvp.LogInteractor,
+        private val graphDrawers: List<GraphDrawer>,
         private val uiScheduler: Scheduler,
         private val ioScheduler: Scheduler
 ) : GraphMvp.Presenter {
@@ -32,9 +35,21 @@ class GraphPresenterImpl(
                 .doOnSubscribe { view.showProgress() }
                 .doOnUnsubscribe { view.hideProgress() }
                 .subscribe({
-                    view.showGraph()
+                    handleSuccess()
                 }, {
-                    view.showErrorGraph(it.message!!)
+                    view.showErrorGraph("Error loading graph data")
                 })
+    }
+
+
+    fun handleSuccess() {
+        view.showGraph(object : GraphDrawer {
+            override val title: String
+                get() = throw UnsupportedOperationException()
+
+            override fun createGraph(): Region {
+                throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
     }
 }

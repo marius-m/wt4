@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.interactors.GraphDrawer
 import org.junit.Assert.*
 import org.junit.Test
 import rx.Observable
@@ -21,10 +22,11 @@ class GraphPresenterImplTest {
     val view: GraphMvp.View = mock()
     val logInteractor: GraphMvp.LogInteractor = mock()
     val presenter = GraphPresenterImpl(
-            view,
-            logInteractor,
-            Schedulers.immediate(),
-            Schedulers.immediate()
+            view = view,
+            logInteractor = logInteractor,
+            graphDrawers = emptyList<GraphDrawer>(),
+            uiScheduler = Schedulers.immediate(),
+            ioScheduler = Schedulers.immediate()
     )
 
     @Test
@@ -51,7 +53,7 @@ class GraphPresenterImplTest {
         presenter.loadGraph()
 
         // Assert
-        verify(view).showGraph()
+        verify(view).showGraph(any())
     }
 
     @Test
