@@ -3,7 +3,6 @@ package lt.markmerkk.mvp
 import org.joda.time.DateTime
 import rx.Scheduler
 import rx.Subscription
-import rx.schedulers.Schedulers
 
 /**
  * @author mariusmerkevicius
@@ -29,13 +28,13 @@ class GraphPresenterImpl(
         subscription?.unsubscribe()
         logInteractor.loadLogs(DateTime().minusMonths(1).millis, DateTime().plusMonths(1).millis)
                 .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doOnUnsubscribe { view.hideProgress() }
-                .observeOn(uiScheduler)
-            .subscribe({
-                view.showGraph()
-            }, {
-                view.showErrorGraph("errro")
-            })
+                .subscribe({
+                    view.showGraph()
+                }, {
+                    view.showErrorGraph(it.message!!)
+                })
     }
 }

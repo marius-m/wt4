@@ -41,8 +41,8 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     lateinit var viewDatePickerFrom: DatePicker
     @FXML
     lateinit var viewDatePickerTo: DatePicker
-
-    val viewProgress = ProgressIndicator()
+    @FXML
+    lateinit var viewProgress: ProgressIndicator
 
     val presenter by lazy {
         GraphPresenterImpl(
@@ -51,15 +51,9 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
                         QueryResultProviderImpl<List<SimpleLog>>(executor),
                         Schedulers.io()
                 ),
-                uiScheduler = Schedulers.io(),
-                ioScheduler = JavaFxScheduler.getInstance()
+                uiScheduler = JavaFxScheduler.getInstance(),
+                ioScheduler = Schedulers.io()
         )
-    }
-
-    init {
-        viewProgress.setMaxSize(150.0, 150.0)
-        viewProgress.isVisible = false
-        viewProgress.isManaged = false
     }
 
     //region Life-cycle
@@ -67,7 +61,8 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
-        viewGraphContainer.children.addAll(viewProgress)
+        viewProgress.isVisible = false
+        viewProgress.isManaged = false
 
         presenter.onAttach()
         presenter.loadGraph()
@@ -93,10 +88,13 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     }
 
     override fun showGraph() {
+        viewGraphContainer.children.clear()
         viewGraphContainer.children.add(createChart())
+        viewGraphContainer.isVisible = true
     }
 
     override fun showErrorGraph(message: String) {
+        println("Error: $message")
     }
 
     //endregion

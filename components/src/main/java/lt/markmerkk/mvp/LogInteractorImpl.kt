@@ -5,7 +5,6 @@ import lt.markmerkk.entities.jobs.QueryListJob
 import rx.Observable
 import rx.Scheduler
 import rx.util.async.Async
-import java.util.concurrent.Callable
 
 /**
  * @author mariusmerkevicius
