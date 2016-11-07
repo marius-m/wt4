@@ -12,11 +12,6 @@ interface ConfigPathProvider {
     fun configDefault(): String
 
     /**
-     * Home path + path extension. For ex.: '.wt4/expansion'
-     */
-    fun configExtension(): String
-
-    /**
      * Runs a run the path on the file system
      * and creates missing folders
      */

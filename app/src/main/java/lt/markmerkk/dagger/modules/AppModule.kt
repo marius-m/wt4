@@ -5,8 +5,12 @@ import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.interactors.*
-import lt.markmerkk.utils.*
+import lt.markmerkk.interactors.KeepAliveInteractor
+import lt.markmerkk.interactors.KeepAliveInteractorImpl
+import lt.markmerkk.utils.AdvHashSettings
+import lt.markmerkk.utils.ConfigSetSettingsImpl
+import lt.markmerkk.utils.DayProviderImpl
+import lt.markmerkk.utils.UserSettingsImpl
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
@@ -33,11 +37,16 @@ class AppModule(
     @Provides
     @Singleton
     fun providesConfig(): Config {
+        val debug = System.getProperty("release") == "false"
+        val configPathProvider = ConfigPathProviderImpl(debug)
+        val configSetSettings = ConfigSetSettingsImpl(configPathProvider)
         val config = Config(
-                debug = System.getProperty("release") == "false",
+                debug = debug,
                 versionName = System.getProperty("version_name"),
                 versionCode = System.getProperty("version_code").toInt(),
-                gaKey = System.getProperty("ga_key")
+                gaKey = System.getProperty("ga_key"),
+                configPathProvider = configPathProvider,
+                configSetSettings = configSetSettings
         )
         return config
     }
@@ -70,14 +79,14 @@ class AppModule(
             config: Config,
             userSettings: UserSettings
     ): IExecutor {
-        if (config.debug) {
-            return DBTestExecutor()
-        } else {
-            return DBProdExecutor(
-                    config = config,
-                    settings = userSettings
-            )
-        }
+//        if (config.debug) {
+//            return DBTestExecutor()
+//        }
+        // App path will be different for debug anyway
+        return DBProdExecutor(
+                config = config,
+                settings = userSettings
+        )
     }
 
     @Provides

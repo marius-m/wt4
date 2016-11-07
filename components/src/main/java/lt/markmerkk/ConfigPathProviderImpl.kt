@@ -9,8 +9,7 @@ import java.io.IOException
  * @since 2016-11-07
  */
 class ConfigPathProviderImpl(
-        private val debug: Boolean,
-        private val configSetSettings: ConfigSetSettings
+        private val debug: Boolean
 ) : ConfigPathProvider {
 
     override fun configDefault(): String {
@@ -19,10 +18,6 @@ class ConfigPathProviderImpl(
         } else {
             "wt4"
         }
-    }
-
-    override fun configExtension(): String {
-        return configSetSettings.configSetName
     }
 
     override fun userHome(): String = System.getProperty("user.home")

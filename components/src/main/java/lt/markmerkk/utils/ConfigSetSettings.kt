@@ -6,4 +6,7 @@ package lt.markmerkk.utils
  */
 interface ConfigSetSettings {
     var configSetName: String
+
+    fun load()
+    fun save()
 }

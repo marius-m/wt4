@@ -1,5 +1,7 @@
 package lt.markmerkk.utils
 
+import com.nhaarman.mockito_kotlin.mock
+import lt.markmerkk.ConfigPathProvider
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
@@ -11,10 +13,12 @@ import java.util.*
  */
 class ConfigSetSettingsImplTest {
 
+    val pathProvider: ConfigPathProvider = mock()
+
     @Test
     fun noValue_returnEmpty() {
         // Arrange
-        val settings = ConfigSetSettingsImpl()
+        val settings = ConfigSetSettingsImpl(pathProvider)
 
         // Act
         val properties = Properties()
@@ -27,7 +31,7 @@ class ConfigSetSettingsImplTest {
     @Test
     fun wrongValue_returnEmpty() {
         // Arrange
-        val settings = ConfigSetSettingsImpl()
+        val settings = ConfigSetSettingsImpl(pathProvider)
 
         // Act
         val properties = Properties()
@@ -41,7 +45,7 @@ class ConfigSetSettingsImplTest {
     @Test
     fun rightValue_returnValid() {
         // Arrange
-        val settings = ConfigSetSettingsImpl()
+        val settings = ConfigSetSettingsImpl(pathProvider)
 
         // Act
         val properties = Properties()
@@ -55,7 +59,7 @@ class ConfigSetSettingsImplTest {
     @Test
     fun validValue_triggerSave() {
         // Arrange
-        val settings = ConfigSetSettingsImpl()
+        val settings = ConfigSetSettingsImpl(pathProvider)
 
         // Act
         val initProperties = Properties()
