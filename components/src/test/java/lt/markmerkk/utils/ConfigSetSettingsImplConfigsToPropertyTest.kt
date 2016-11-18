@@ -11,6 +11,7 @@ import java.util.*
  * *
  * @since 2016-11-18
  */
+// todo : Add test when string needs trimming
 class ConfigSetSettingsImplConfigsToPropertyTest {
     val pathProvider: ConfigPathProvider = mock()
 
@@ -82,5 +83,21 @@ class ConfigSetSettingsImplConfigsToPropertyTest {
 
         // Assert
         assertEquals("property1,property3", result)
+    }
+
+    @Test
+    fun moreValues_containsEmptySpace_valid() {
+        // Arrange
+        val settings = ConfigSetSettingsImpl(pathProvider)
+
+        // Act
+        val result = settings.configsToProperty(listOf(
+                "property1",
+                "   property2    ",
+                "property3"
+        ))
+
+        // Assert
+        assertEquals("property1,property2,property3", result)
     }
 }

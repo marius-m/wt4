@@ -11,7 +11,7 @@ class ConfigSetSettingsImpl(
         private val configPathProvider: ConfigPathProvider
 ) : BaseSettings(), ConfigSetSettings {
     override var configSetName: String = ""
-    val someList = listOf<String>("test1", "test2")
+    override var configs: List<String> = emptyList()
 
     override fun propertyPath(): String {
         val rootPath = configPathProvider.absolutePathWithMissingFolderCreate(
@@ -21,15 +21,27 @@ class ConfigSetSettingsImpl(
     }
 
     override fun onLoad(properties: Properties) {
+        configs = configsFromProperty(properties.getOrDefault(KEY_CONFIGS, "").toString())
         configSetName = properties.getOrDefault(KEY_CONFIG_NAME, "").toString()
     }
 
     override fun onSave(properties: Properties) {
         properties.put(KEY_CONFIG_NAME, configSetName)
-        properties.put(KEY_CONFIGS, configsToProperty(someList))
+        properties.put(KEY_CONFIGS, configsToProperty(configs))
     }
 
     //region Convenience
+
+    /**
+     * Transforms a list of configs from property
+     */
+    fun configsFromProperty(property: String): List<String> {
+        if (property.isEmpty()) return emptyList()
+        return property.split(",")
+                .filter { !it.isEmpty() }
+                .map(String::trim)
+                .toList()
+    }
 
     /**
      * Transforms list of configs to property to be saved.
@@ -41,6 +53,7 @@ class ConfigSetSettingsImpl(
             if (config.isNullOrEmpty()) continue
             sb.append(
                     config.toString()
+                            .trim()
                             .replace(",", "")
             )
             sb.append(",")
