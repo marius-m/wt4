@@ -3,17 +3,21 @@ package lt.markmerkk.ui.settings;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import lt.markmerkk.*;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
+import lt.markmerkk.utils.ConfigSetSettings;
+import lt.markmerkk.utils.ConfigSetSettingsImpl;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.ITracker;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.LoggerFactory;
+import rx.observables.JavaFxObservable;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -35,6 +39,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   Config config;
   @Inject
   ITracker tracker;
+  @Inject
+  ConfigSetSettings configSetSettings;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
@@ -70,6 +76,11 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     inputUsername.setText(settings.getUsername());
     inputPassword.setText(settings.getPassword());
     inputJQL.setText(settings.getIssueJql());
+    ObservableList<String> configValues = FXCollections.observableArrayList();
+    configValues.add(ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME);
+    configValues.addAll(configSetSettings.getConfigs());
+    configCombo.setItems(configValues);
+    configCombo.getSelectionModel().select(ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME);
 
     guiAppender = new SimpleAppender();
     guiAppender.setLayout(new PatternLayout(Main.Companion.getLOG_LAYOUT_PROD()));

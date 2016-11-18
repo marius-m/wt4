@@ -7,10 +7,7 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
-import lt.markmerkk.utils.AdvHashSettings
-import lt.markmerkk.utils.ConfigSetSettingsImpl
-import lt.markmerkk.utils.DayProviderImpl
-import lt.markmerkk.utils.UserSettingsImpl
+import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
@@ -36,10 +33,24 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesConfig(): Config {
+    fun providesConfigPathProvider(): ConfigPathProvider {
         val debug = System.getProperty("release") == "false"
-        val configPathProvider = ConfigPathProviderImpl(debug)
-        val configSetSettings = ConfigSetSettingsImpl(configPathProvider)
+        return ConfigPathProviderImpl(debug)
+    }
+
+    @Provides
+    @Singleton
+    fun providesConfigSetSettings(configPathProvider: ConfigPathProvider): ConfigSetSettings {
+        return ConfigSetSettingsImpl(configPathProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun providesConfig(
+            configPathProvider: ConfigPathProvider,
+            configSetSettings: ConfigSetSettings
+    ): Config {
+        val debug = System.getProperty("release") == "false"
         val config = Config(
                 debug = debug,
                 versionName = System.getProperty("version_name"),

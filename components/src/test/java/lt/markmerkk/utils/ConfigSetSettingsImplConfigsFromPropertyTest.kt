@@ -83,4 +83,34 @@ class ConfigSetSettingsImplConfigsFromPropertyTest {
         assertEquals("property3", result[2])
     }
 
+    @Test
+    fun many_breakPoints1_valid() {
+        // Arrange
+        val settings = ConfigSetSettingsImpl(pathProvider)
+
+        // Act
+        val result = settings.configsFromProperty("property1,property2,property3    ,\n")
+
+        // Assert
+        assertEquals(3, result.size)
+        assertEquals("property1", result[0])
+        assertEquals("property2", result[1])
+        assertEquals("property3", result[2])
+    }
+
+    @Test
+    fun many_breakPoints2_valid() {
+        // Arrange
+        val settings = ConfigSetSettingsImpl(pathProvider)
+
+        // Act
+        val result = settings.configsFromProperty("property1,property2,property3    ,\r\n")
+
+        // Assert
+        assertEquals(3, result.size)
+        assertEquals("property1", result[0])
+        assertEquals("property2", result[1])
+        assertEquals("property3", result[2])
+    }
+
 }
