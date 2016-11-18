@@ -49,7 +49,7 @@ class ConfigSetSettingsImplTest {
 
         // Act
         val properties = Properties()
-        properties.put(ConfigSetSettingsImpl.KEY, "valid_value")
+        properties.put(ConfigSetSettingsImpl.KEY_CONFIG_NAME, "valid_value")
         settings.onLoad(properties)
 
         // Assert
@@ -63,13 +63,13 @@ class ConfigSetSettingsImplTest {
 
         // Act
         val initProperties = Properties()
-        initProperties.put(ConfigSetSettingsImpl.KEY, "valid_value")
+        initProperties.put(ConfigSetSettingsImpl.KEY_CONFIG_NAME, "valid_value")
         settings.onLoad(initProperties)
         val resultProperties = Properties()
         settings.onSave(resultProperties)
 
         // Assert
-        assertEquals("valid_value", resultProperties.get(ConfigSetSettingsImpl.KEY))
+        assertEquals("valid_value", resultProperties.get(ConfigSetSettingsImpl.KEY_CONFIG_NAME))
     }
 
 }
