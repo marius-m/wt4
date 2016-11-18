@@ -35,9 +35,30 @@ class Main : Application(), KeepAliveInteractor.Listener {
     @Inject
     lateinit var tracker: ITracker
 
+    lateinit var primaryStage: Stage
+
     var keepAliveGASession: KeepAliveGASession? = null
 
     override fun start(stage: Stage) {
+        this.primaryStage = stage
+        mainInstance = this
+        initApp(primaryStage)
+    }
+
+    override fun stop() {
+        destroyApp()
+        mainInstance = null
+        super.stop()
+    }
+
+    fun restart() {
+        destroyApp()
+        initApp(primaryStage)
+    }
+
+    //region DI
+
+    fun initApp(stage: Stage) {
         component = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this))
@@ -76,7 +97,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         keepAliveGASession?.onAttach()
     }
 
-    override fun stop() {
+    fun destroyApp() {
         keepAliveGASession?.onDetach()
         syncInteractor.onDetach()
         keepAliveInteractor.unregister(this)
@@ -84,8 +105,9 @@ class Main : Application(), KeepAliveInteractor.Listener {
         settings.onDetach()
         tracker.stop()
         InjectorNoDI.forgetAll()
-        super.stop()
     }
+
+    //endregion
 
     override fun update() {
         if (autoUpdateInteractor.isAutoUpdateTimeoutHit(System.currentTimeMillis())) {
@@ -128,6 +150,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         var SCENE_HEIGHT = 500
 
         var component: AppComponent? = null
+        var mainInstance: Main? = null
 
         @JvmStatic
         fun main(args: Array<String>) {

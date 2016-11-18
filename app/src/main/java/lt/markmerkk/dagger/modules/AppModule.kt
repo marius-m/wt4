@@ -5,7 +5,8 @@ import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.interactors.*
+import lt.markmerkk.interactors.KeepAliveInteractor
+import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
@@ -32,12 +33,31 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesConfig(): Config {
+    fun providesConfigPathProvider(): ConfigPathProvider {
+        val debug = System.getProperty("release") == "false"
+        return ConfigPathProviderImpl(debug)
+    }
+
+    @Provides
+    @Singleton
+    fun providesConfigSetSettings(configPathProvider: ConfigPathProvider): ConfigSetSettings {
+        return ConfigSetSettingsImpl(configPathProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun providesConfig(
+            configPathProvider: ConfigPathProvider,
+            configSetSettings: ConfigSetSettings
+    ): Config {
+        val debug = System.getProperty("release") == "false"
         val config = Config(
-                debug = System.getProperty("release") == "false",
+                debug = debug,
                 versionName = System.getProperty("version_name"),
                 versionCode = System.getProperty("version_code").toInt(),
-                gaKey = System.getProperty("ga_key")
+                gaKey = System.getProperty("ga_key"),
+                configPathProvider = configPathProvider,
+                configSetSettings = configSetSettings
         )
         return config
     }
@@ -70,14 +90,14 @@ class AppModule(
             config: Config,
             userSettings: UserSettings
     ): IExecutor {
-        if (config.debug) {
-            return DBTestExecutor()
-        } else {
-            return DBProdExecutor(
-                    config = config,
-                    settings = userSettings
-            )
-        }
+//        if (config.debug) {
+//            return DBTestExecutor()
+//        }
+        // App path will be different for debug anyway
+        return DBProdExecutor(
+                config = config,
+                settings = userSettings
+        )
     }
 
     @Provides

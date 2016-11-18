@@ -3,17 +3,21 @@ package lt.markmerkk.ui.settings;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import lt.markmerkk.*;
 import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
+import lt.markmerkk.utils.ConfigSetSettings;
+import lt.markmerkk.utils.ConfigSetSettingsImpl;
 import lt.markmerkk.utils.Utils;
 import lt.markmerkk.utils.tracker.ITracker;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.LoggerFactory;
+import rx.observables.JavaFxObservable;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -35,6 +39,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   Config config;
   @Inject
   ITracker tracker;
+  @Inject
+  ConfigSetSettings configSetSettings;
 
   @FXML TextField inputHost, inputUsername, inputJQL;
   @FXML PasswordField inputPassword;
@@ -42,6 +48,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh, buttonResetJQL;
   @FXML ComboBox<AutoUpdateValue> refreshCombo;
+  @FXML ComboBox<String> configCombo;
+  @FXML Button buttonLoadConfig;
 
   Appender guiAppender;
 
@@ -61,11 +69,18 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     outputLogger.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_output_console")));
     inputJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_jql")));
     buttonResetJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_reset_jql")));
+    configCombo.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_configset")));
+    buttonLoadConfig.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_configset")));
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getUsername());
     inputPassword.setText(settings.getPassword());
     inputJQL.setText(settings.getIssueJql());
+    ObservableList<String> configValues = FXCollections.observableArrayList();
+    configValues.add(ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME);
+    configValues.addAll(configSetSettings.getConfigs());
+    configCombo.setItems(configValues);
+    configCombo.getSelectionModel().select(configSetSettings.getConfigSetName());
 
     guiAppender = new SimpleAppender();
     guiAppender.setLayout(new PatternLayout(Main.Companion.getLOG_LAYOUT_PROD()));
@@ -105,6 +120,12 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
             GAStatics.INSTANCE.getCATEGORY_BUTTON(),
             GAStatics.INSTANCE.getACTION_SYNC_SETTINGS()
     );
+  }
+
+  public void onClickLoadConfig() {
+    configSetSettings.setConfigSetName(configCombo.getValue());
+    configSetSettings.save();
+    Main.Companion.getMainInstance().restart();
   }
 
   /**
