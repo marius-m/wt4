@@ -80,7 +80,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     configValues.add(ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME);
     configValues.addAll(configSetSettings.getConfigs());
     configCombo.setItems(configValues);
-    configCombo.getSelectionModel().select(ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME);
+    configCombo.getSelectionModel().select(configSetSettings.getConfigSetName());
 
     guiAppender = new SimpleAppender();
     guiAppender.setLayout(new PatternLayout(Main.Companion.getLOG_LAYOUT_PROD()));
@@ -123,7 +123,9 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   }
 
   public void onClickLoadConfig() {
-      logger.debug("test");
+    configSetSettings.setConfigSetName(configCombo.getValue());
+    configSetSettings.save();
+    Main.Companion.getMainInstance().restart();
   }
 
   /**
