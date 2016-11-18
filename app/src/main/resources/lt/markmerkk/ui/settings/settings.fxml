@@ -101,6 +101,40 @@
             <Insets bottom="5.0" />
          </padding>
       </Separator>
+      <VBox>
+         <children>
+            <HBox>
+               <children>
+                  <Button fx:id="buttonLoadConfig" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onClickLoadConfig" prefHeight="32.0" text="Load" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+                  <ComboBox fx:id="configCombo" editable="true" maxWidth="1.7976931348623157E308" minHeight="32.0" prefHeight="32.0" promptText="(Default)" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </HBox>
+            <Text disable="true" fill="#aeaeae" strokeType="OUTSIDE" strokeWidth="0.0" text="Configuration set (mutiple jira use). Hover for tooltip for more info.">
+               <font>
+                  <Font size="9.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" />
+               </VBox.margin>
+            </Text>
+         </children>
+      </VBox>
+      <Separator>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </Separator>
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <children>
             <TextArea fx:id="outputLogger" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Console log" VBox.vgrow="ALWAYS">

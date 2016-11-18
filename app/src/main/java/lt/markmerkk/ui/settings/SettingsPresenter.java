@@ -42,6 +42,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
   @FXML ProgressIndicator outputProgress;
   @FXML Button buttonRefresh, buttonResetJQL;
   @FXML ComboBox<AutoUpdateValue> refreshCombo;
+  @FXML ComboBox<String> configCombo;
+  @FXML Button buttonLoadConfig;
 
   Appender guiAppender;
 
@@ -61,6 +63,8 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
     outputLogger.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_output_console")));
     inputJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_input_jql")));
     buttonResetJQL.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_button_reset_jql")));
+    configCombo.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_configset")));
+    buttonLoadConfig.setTooltip(new Tooltip(Translation.getInstance().getString("settings_tooltip_configset")));
 
     inputHost.setText(settings.getHost());
     inputUsername.setText(settings.getUsername());
@@ -105,6 +109,10 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
             GAStatics.INSTANCE.getCATEGORY_BUTTON(),
             GAStatics.INSTANCE.getACTION_SYNC_SETTINGS()
     );
+  }
+
+  public void onClickLoadConfig() {
+      logger.debug("test");
   }
 
   /**
