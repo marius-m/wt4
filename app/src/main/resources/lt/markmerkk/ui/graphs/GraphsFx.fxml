@@ -33,11 +33,11 @@
                   <Insets left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </HBox>
-            <HBox fx:id="viewGraphContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <BorderPane fx:id="viewGraphContainer" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
-            </HBox>
+            </BorderPane>
          </children>
       </VBox>
       <ProgressIndicator fx:id="viewProgress" maxHeight="50.0" maxWidth="50.0" minHeight="-Infinity" minWidth="-Infinity" visible="false" StackPane.alignment="CENTER" />

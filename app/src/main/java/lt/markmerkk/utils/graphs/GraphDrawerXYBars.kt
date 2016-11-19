@@ -6,6 +6,7 @@ import javafx.scene.chart.CategoryAxis
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.layout.Region
+import lt.markmerkk.Translation
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.GraphDrawer
 
@@ -27,17 +28,17 @@ class GraphDrawerXYBars(
         val yAxis = NumberAxis()
         yAxis.tickLabelFormatter = TimeSpentAxisFormatter()
         val xAxis = CategoryAxis()
-        val bc = BarChart(xAxis, yAxis)
-        bc.title = title
+
         val displayData = mutableListOf<XYChart.Data<String, Number>>()
         val dataMap = assembleIssues(data)
         dataMap.forEach { displayData.add(XYChart.Data<String, Number>(it.key, it.value)) }
         val seriesList = FXCollections.observableArrayList<XYChart.Series<String, Number>>().apply {
             add(XYChart.Series(
-                    "Issues",
+                    Translation.getInstance().getString("graph_simple_axis_x_title"),
                     FXCollections.observableArrayList(displayData)
             ))
         }
+
         return BarChart(xAxis, yAxis, seriesList)
     }
 

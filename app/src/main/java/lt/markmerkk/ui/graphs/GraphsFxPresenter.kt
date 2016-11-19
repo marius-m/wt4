@@ -6,6 +6,7 @@ import javafx.fxml.Initializable
 import javafx.scene.control.ComboBox
 import javafx.scene.control.DatePicker
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.util.StringConverter
 import lt.markmerkk.Main
@@ -21,6 +22,7 @@ import lt.markmerkk.utils.graphs.GraphDrawerXYBars
 import org.joda.time.DateTime
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
+import java.awt.BorderLayout
 import java.net.URL
 import java.time.LocalDate
 import java.util.*
@@ -38,7 +40,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     @FXML
     lateinit var viewGraphType: ComboBox<GraphDrawer<*>>
     @FXML
-    lateinit var viewGraphContainer: HBox
+    lateinit var viewGraphContainer: BorderPane
     @FXML
     lateinit var viewDatePickerFrom: DatePicker
     @FXML
@@ -106,8 +108,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     }
 
     override fun showGraph(drawer: GraphDrawer<*>) {
-        viewGraphContainer.children.clear()
-        viewGraphContainer.children.add(drawer.createGraph())
+        viewGraphContainer.center = drawer.createGraph()
         viewGraphContainer.isVisible = true
     }
 
