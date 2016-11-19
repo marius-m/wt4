@@ -1,6 +1,5 @@
 package lt.markmerkk.utils.graphs
 
-import com.sun.javafx.binding.StringFormatter
 import javafx.collections.FXCollections
 import javafx.scene.chart.BarChart
 import javafx.scene.chart.CategoryAxis
@@ -27,18 +26,19 @@ class GraphDrawerXYBars(
     override fun createGraph(): Region {
         val yAxis = NumberAxis()
         yAxis.tickLabelFormatter = TimeSpentAxisFormatter()
-        val bc = BarChart(CategoryAxis(), yAxis)
+        val xAxis = CategoryAxis()
+        val bc = BarChart(xAxis, yAxis)
         bc.title = title
         val displayData = mutableListOf<XYChart.Data<String, Number>>()
         val dataMap = assembleIssues(data)
         dataMap.forEach { displayData.add(XYChart.Data<String, Number>(it.key, it.value)) }
-        bc.data.add(
-                XYChart.Series(
-                        "Issues",
-                        FXCollections.observableArrayList(displayData)
-                )
-        )
-        return bc
+        val seriesList = FXCollections.observableArrayList<XYChart.Series<String, Number>>().apply {
+            add(XYChart.Series(
+                    "Issues",
+                    FXCollections.observableArrayList(displayData)
+            ))
+        }
+        return BarChart(xAxis, yAxis, seriesList)
     }
 
     //region Convenience
