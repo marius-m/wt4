@@ -43,7 +43,7 @@ class GraphDrawerXYBarsAssembleIssuesTest {
         assertEquals(1, result.size)
         val assertValue = result.get("TEST-1")
         assertNotNull(assertValue)
-        assertEquals(assertValue, 1000L)
+        assertEquals(1000L, assertValue)
     }
 
     @Test
@@ -71,10 +71,10 @@ class GraphDrawerXYBarsAssembleIssuesTest {
         assertEquals(2, result.size)
         val assertValue = result.get("TEST-1")
         assertNotNull(assertValue)
-        assertEquals(assertValue, 1000L)
+        assertEquals(1000L, assertValue)
         val assertValue2 = result.get("TEST-2")
         assertNotNull(assertValue2)
-        assertEquals(assertValue2, 1000L)
+        assertEquals(1000L, assertValue2)
     }
 
     @Test
@@ -102,7 +102,7 @@ class GraphDrawerXYBarsAssembleIssuesTest {
         assertEquals(1, result.size)
         val assertValue = result.get("TEST-1")
         assertNotNull(assertValue)
-        assertEquals(assertValue, 2000L)
+        assertEquals(2000L, assertValue)
     }
 
 }

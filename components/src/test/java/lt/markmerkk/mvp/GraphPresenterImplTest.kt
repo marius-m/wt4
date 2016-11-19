@@ -31,6 +31,9 @@ class GraphPresenterImplTest {
             ioScheduler = Schedulers.immediate()
     )
 
+    val fakeFrom = 1000L
+    val fakeTo = 1000L
+
     @Test
     fun validResponse_triggerProgress() {
         // Arrange
@@ -38,7 +41,7 @@ class GraphPresenterImplTest {
             .thenReturn(Observable.just(listOf(SimpleLog())))
 
         // Act
-        presenter.loadGraph()
+        presenter.loadGraph(fakeFrom, fakeTo)
 
         // Assert
         verify(view).showProgress()
@@ -52,7 +55,7 @@ class GraphPresenterImplTest {
             .thenReturn(Observable.just(listOf(SimpleLog())))
 
         // Act
-        presenter.loadGraph()
+        presenter.loadGraph(fakeFrom, fakeTo)
 
         // Assert
         verify(view).showGraph(any())
@@ -65,7 +68,7 @@ class GraphPresenterImplTest {
             .thenReturn(Observable.error(RuntimeException()))
 
         // Act
-        presenter.loadGraph()
+        presenter.loadGraph(fakeFrom, fakeTo)
 
         // Assert
         verify(view).showErrorGraph(any())

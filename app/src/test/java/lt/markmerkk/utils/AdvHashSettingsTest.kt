@@ -1,5 +1,6 @@
 package lt.markmerkk.utils
 
+import com.nhaarman.mockito_kotlin.mock
 import lt.markmerkk.Config
 import java.util.Properties
 import org.junit.Test
@@ -12,7 +13,11 @@ import org.junit.Assert.*
  */
 class AdvHashSettingsTest {
 
-    val config = Config(gaKey = "test_key")
+    val config = Config(
+            gaKey = "test_key",
+            configPathProvider = mock(),
+            configSetSettings = mock()
+    )
 
     @Test
     fun testValidInput() {
