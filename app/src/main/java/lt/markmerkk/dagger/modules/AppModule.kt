@@ -7,6 +7,7 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
@@ -60,6 +61,15 @@ class AppModule(
                 configSetSettings = configSetSettings
         )
         return config
+    }
+
+    @Provides
+    @Singleton
+    fun providerHostServiceInteractor(
+            application: Application,
+            userSettings: UserSettings
+    ): HostServicesInteractor {
+        return HostServicesInteractorImpl(application, userSettings)
     }
 
     @Provides

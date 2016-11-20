@@ -99,7 +99,7 @@
                               <Font size="10.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="buttonPlace" onAction="#onClickPlace" text="iTo">
+                        <Hyperlink fx:id="buttonPlace" onAction="#onClickPlace" text="Treatwell">
                            <font>
                               <Font size="10.0" />
                            </font>
