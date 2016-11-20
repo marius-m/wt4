@@ -1,0 +1,64 @@
+package lt.markmerkk.interactors
+
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SimpleLogBuilder
+import org.junit.Assert.*
+import org.junit.Test
+
+/**
+ * @author mariusmerkevicius
+ * *
+ * @since 2016-11-20
+ */
+class GraphDataProviderPieChartImplParentDataTest {
+    val provider = GraphDataProviderPieChartImpl()
+
+    @Test
+    fun empty_returnEmpty() {
+        // Arrange
+        // Act
+        val result = provider.assembleParentData(emptyList())
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun one_returnValid() {
+        // Arrange
+        val log = SimpleLogBuilder()
+                .setStart(1000)
+                .setEnd(2000)
+                .setTask("WT-4")
+                .setComment("test_comment")
+                .build()
+        val logs = listOf(log)
+
+        // Act
+        val result = provider.assembleParentData(logs)
+
+        // Assert
+        assertEquals(1, result.size)
+        assertTrue(result.containsKey("WT"))
+        assertEquals(1000.0, result.get("WT"))
+    }
+
+    @Test
+    fun invalidTaskName_skipValue() {
+        // Arrange
+        val log = SimpleLogBuilder()
+                .setStart(1000)
+                .setEnd(2000)
+                .setTask("111") // Invalid task name
+                .setComment("test_comment")
+                .build()
+        val logs = listOf(log)
+
+        // Act
+        val result = provider.assembleParentData(logs)
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
+}
