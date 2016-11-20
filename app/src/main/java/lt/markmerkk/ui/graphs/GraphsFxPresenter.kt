@@ -16,10 +16,7 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.GraphDataProviderPieChartImpl
 import lt.markmerkk.interactors.GraphDrawer
-import lt.markmerkk.mvp.GraphMvp
-import lt.markmerkk.mvp.GraphPresenterImpl
-import lt.markmerkk.mvp.LogInteractorImpl
-import lt.markmerkk.mvp.QueryResultProviderImpl
+import lt.markmerkk.mvp.*
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.graphs.GraphDrawerPieDrilldown
 import lt.markmerkk.utils.graphs.GraphDrawerXYBars
@@ -41,6 +38,8 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
 
     @Inject
     lateinit var executor: IExecutor
+    @Inject
+    lateinit var hostServicesInteractor: HostServicesInteractor
     @FXML
     lateinit var viewGraphType: ComboBox<GraphDrawer<*>>
     @FXML
@@ -54,13 +53,20 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     @FXML
     lateinit var buttonRefresh: Button
 
-    val graphs: List<GraphDrawer<*>> = listOf(
-            GraphDrawerXYBars("Simple graph of worked issues"), //todo : Add translation
-            GraphDrawerPieDrilldown(
-                    "Drilldown on worked issues", //todo: Translation
-                    GraphDataProviderPieChartImpl()
-            )
-    )
+    val graphs: List<GraphDrawer<*>> by lazy {
+        listOf(
+                GraphDrawerXYBars(
+                        "Simple graph of worked issues",
+                        hostServicesInteractor
+                ), //todo : Add translation
+                GraphDrawerPieDrilldown(
+                        "Drilldown on worked issues", //todo: Translation
+                        GraphDataProviderPieChartImpl(),
+                        hostServicesInteractor
+                )
+        )
+    }
+
     val presenter by lazy {
         GraphPresenterImpl(
                 view = this,

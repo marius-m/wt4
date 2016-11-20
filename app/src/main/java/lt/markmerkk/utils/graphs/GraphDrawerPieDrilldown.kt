@@ -11,6 +11,7 @@ import javafx.scene.layout.Region
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.GraphDataProviderPieChart
 import lt.markmerkk.interactors.GraphDrawer
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.utils.LogUtils
 
 /**
@@ -19,7 +20,8 @@ import lt.markmerkk.utils.LogUtils
  */
 class GraphDrawerPieDrilldown(
         override val title: String,
-        val graphPieProviderPieChart: GraphDataProviderPieChart
+        private val graphPieProviderPieChart: GraphDataProviderPieChart,
+        private val hostServicesInteractor: HostServicesInteractor
 ) : GraphDrawer<SimpleLog> {
 
     private var data: List<SimpleLog> = emptyList()
@@ -45,6 +47,11 @@ class GraphDrawerPieDrilldown(
                     pieChart.data = childData(data, it.name)
                     pieChart.data.forEach {
                         addTooltip(data, it)
+                        it.node.onMouseClicked = object : EventHandler<MouseEvent> {
+                            override fun handle(event: MouseEvent?) {
+                                hostServicesInteractor.openExternalIssue(it.name)
+                            }
+                        }
                     }
                 }
             }
