@@ -35,11 +35,11 @@ class GraphDrawerPieDrilldown(
                 override fun handle(event: MouseEvent?) {
                     pieChart.data = childData(data, it.name)
                     pieChart.data.forEach {
-                        addTooltipWithDetails(it)
+                        addTooltip(data, it)
                     }
                 }
             }
-            addTooltipWithDetails(it)
+            addTooltip(data, it)
         }
         return pieChart
     }
@@ -60,17 +60,16 @@ class GraphDrawerPieDrilldown(
         return FXCollections.observableList(displayData)
     }
 
-    //endregion
-
-    // todo : Incomplete impl (real data missing)
-    fun addTooltipWithDetails(chartData: PieChart.Data) {
-        val percentUsed = "50%"
-        val timeSpent = "1h 32m 52s"
+    fun addTooltip(data: List<SimpleLog>, chartData: PieChart.Data) {
+        val percentUsed = graphPieProviderPieChart.percentInData(chartData.name, data)
         Tooltip.install(
                 chartData.node,
-                Tooltip("${chartData.name} / $percentUsed / $timeSpent")
+                Tooltip("${chartData.name} / ${String.format("%.1f", percentUsed)}%")
         )
     }
+
+    //endregion
+
 
     override fun toString(): String {
         return title
