@@ -20,4 +20,14 @@ interface GraphDataProviderPieChart {
      */
     fun assembleChildData(logs: List<SimpleLog>, filter: String): Map<String, Double>
 
+    /**
+     * Traverses through data to check how much % of the total is used on issue/issues through task name
+     */
+    fun percentInData(taskName: String, logs: List<SimpleLog>): Double
+
+    /**
+     * Traverses through data to check how much time spent on issue/issues through task name
+     */
+    fun timeSpendInData(taskName: String, logs: List<SimpleLog>): Double
+
 }

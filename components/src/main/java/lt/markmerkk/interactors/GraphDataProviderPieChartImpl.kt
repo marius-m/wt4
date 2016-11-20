@@ -8,6 +8,7 @@ import lt.markmerkk.utils.LogUtils
  * @since 2016-11-20
  */
 class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
+
     override fun assembleParentData(logs: List<SimpleLog>): Map<String, Double> {
         val parentNodes = mutableMapOf<String, Double>()
         for(log in logs) {
@@ -43,4 +44,21 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
         }
         return childData
     }
+
+    override fun percentInData(taskName: String, logs: List<SimpleLog>): Double {
+        if (logs.isEmpty()) return 0.0
+        val total = logs
+                .filter { !it.task.isEmpty() }
+                .sumByDouble { it.duration.toDouble() }
+        val used = logs
+                .filter { !it.task.isEmpty() }
+                .filter { it.task.contains(taskName) }
+                .sumByDouble { it.duration.toDouble() }
+        return used * 100 / total
+    }
+
+    override fun timeSpendInData(taskName: String, logs: List<SimpleLog>): Double {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 }
