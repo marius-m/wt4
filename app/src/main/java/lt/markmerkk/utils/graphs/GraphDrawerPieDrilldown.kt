@@ -2,9 +2,9 @@ package lt.markmerkk.utils.graphs
 
 import javafx.collections.FXCollections
 import javafx.scene.chart.PieChart
-import javafx.scene.chart.XYChart
 import javafx.scene.layout.Region
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.interactors.GraphDataProviderPieChart
 import lt.markmerkk.interactors.GraphDrawer
 
 /**
@@ -12,7 +12,8 @@ import lt.markmerkk.interactors.GraphDrawer
  * @since 2016-11-20
  */
 class GraphDrawerPieDrilldown(
-        override val title: String
+        override val title: String,
+        val graphPieProviderPieChart: GraphDataProviderPieChart
 ) : GraphDrawer<SimpleLog> {
 
     private var data: List<SimpleLog> = emptyList()
@@ -23,8 +24,8 @@ class GraphDrawerPieDrilldown(
 
     override fun createGraph(): Region {
         val displayData = mutableListOf<PieChart.Data>()
-//        val dataMap = assembleIssues(data)
-//        dataMap.forEach { displayData.add(PieChart.Data(it.key, it.value.toDouble())) }
+        val dataMap = graphPieProviderPieChart.assembleParentData(data)
+        dataMap.forEach { displayData.add(PieChart.Data(it.key, it.value)) }
         return PieChart(FXCollections.observableList(displayData))
     }
 

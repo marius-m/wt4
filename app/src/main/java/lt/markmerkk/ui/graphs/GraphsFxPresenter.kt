@@ -12,12 +12,14 @@ import javafx.util.StringConverter
 import lt.markmerkk.Main
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.interactors.GraphDataProviderPieChartImpl
 import lt.markmerkk.interactors.GraphDrawer
 import lt.markmerkk.mvp.GraphMvp
 import lt.markmerkk.mvp.GraphPresenterImpl
 import lt.markmerkk.mvp.LogInteractorImpl
 import lt.markmerkk.mvp.QueryResultProviderImpl
 import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.utils.graphs.GraphDrawerPieDrilldown
 import lt.markmerkk.utils.graphs.GraphDrawerXYBars
 import org.joda.time.DateTime
 import rx.schedulers.JavaFxScheduler
@@ -49,7 +51,11 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     lateinit var viewProgress: ProgressIndicator
 
     val graphs: List<GraphDrawer<*>> = listOf(
-            GraphDrawerXYBars("Simple graph of worked issues")
+            GraphDrawerXYBars("Simple graph of worked issues"), //todo : Add translation
+            GraphDrawerPieDrilldown(
+                    "Drilldown on worked issues", //todo: Translation
+                    GraphDataProviderPieChartImpl()
+            )
     )
     val presenter by lazy {
         GraphPresenterImpl(
