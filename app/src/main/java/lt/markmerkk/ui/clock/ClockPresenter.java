@@ -46,7 +46,6 @@ import java.util.ResourceBundle;
  */
 public class ClockPresenter implements Initializable, IRemoteLoadListener, IDataListener<LocalIssue>, IssueSearchMvp.View {
   public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
-  public static final String BUTTON_LABEL_ENTER = "Enter";
 
   @Inject
   HourGlass hourGlass;
@@ -307,7 +306,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     public void onStart(long start, long end, long duration) {
       inputFrom.getEditor().setText(LogFormatters.INSTANCE.getLongFormat().print(start));
       inputTo.getEditor().setText(LogFormatters.INSTANCE.getLongFormat().print(end));
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, LogUtils.INSTANCE.formatShortDuration(
+      buttonEnter.setText(String.format("%s", LogUtils.INSTANCE.formatShortDuration(
           duration)));
     }
 
@@ -315,7 +314,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     public void onStop(long start, long end, long duration) {
       inputFrom.getEditor().setText("");
       inputTo.getEditor().setText("");
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, LogUtils.INSTANCE.formatShortDuration(duration)));
+      buttonEnter.setText(String.format("%s", LogUtils.INSTANCE.formatShortDuration(duration)));
     }
 
     @Override
@@ -330,8 +329,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
       if (!newTo.equals(inputTo.getEditor().getText()) && !inputTo.isFocused()) {
         inputTo.getEditor().setText(newTo);
       }
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER,
-          LogUtils.INSTANCE.formatShortDuration(duration)));
+      buttonEnter.setText(String.format("%s", LogUtils.INSTANCE.formatShortDuration(duration)));
     }
 
     @Override
@@ -347,7 +345,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
           reportError(inputTo.getEditor());
           break;
       }
-      buttonEnter.setText(String.format("%s (%s)", BUTTON_LABEL_ENTER, error.getMessage()));
+      buttonEnter.setText(String.format("%s", error.getMessage()));
     }
 
   };
