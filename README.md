@@ -99,8 +99,9 @@ Logs can be updated by pressing the right mouse button on the target log
 
 Only recently started tracking versions.
 
+### 0.9.9.8 (Unreleased)
 
-### 0.9.9.7 (not released, upcomming features)
+### 0.9.9.7
 
 - Configuration sets
  - Add configurations to change instance to more than one JIRA
