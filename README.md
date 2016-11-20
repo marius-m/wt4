@@ -97,15 +97,11 @@ Logs can be updated by pressing the right mouse button on the target log
 
 ## Changelog
 
-Only recently started tracking versions.
-
-### 0.9.9.8 (Unreleased)
-
 ### 0.9.9.7
 
-- Configuration sets
+- Configuration sets (can be found in setting, will update documentation how to use)
  - Add configurations to change instance to more than one JIRA
-- Graphs (Graph representation on worked issues)
+- Graphs (Graph representation on worked issues. Can be opened by pressing on 'Total worked time button')
 - Move enter button to top bar for cleaner interface
 
 ### 0.9.9.6
