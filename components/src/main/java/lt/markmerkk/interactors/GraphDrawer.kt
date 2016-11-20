@@ -8,6 +8,9 @@ import javafx.scene.layout.Region
  */
 interface GraphDrawer<T> {
     val title: String
+    val isRefreshable: Boolean
+
     fun populateData(data: List<T>)
     fun createGraph(): Region
+    fun refresh()
 }

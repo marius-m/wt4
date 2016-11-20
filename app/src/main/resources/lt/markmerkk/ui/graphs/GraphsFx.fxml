@@ -27,7 +27,15 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <DatePicker fx:id="viewDatePickerTo" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS" />
+                  <DatePicker fx:id="viewDatePickerTo" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="To" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></DatePicker>
+                  <Button fx:id="buttonRefresh" minWidth="-Infinity" mnemonicParsing="false" onAction="#onClickRefresh" text="Refresh">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
                </children>
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />

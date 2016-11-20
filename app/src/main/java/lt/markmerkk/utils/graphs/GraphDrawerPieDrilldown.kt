@@ -24,12 +24,20 @@ class GraphDrawerPieDrilldown(
 
     private var data: List<SimpleLog> = emptyList()
 
+    override val isRefreshable: Boolean = true
+    private val pieChart = PieChart()
+
     override fun populateData(data: List<SimpleLog>) {
         this.data = data
     }
 
     override fun createGraph(): Region {
-        val pieChart = PieChart(parentData(data))
+        refresh()
+        return pieChart
+    }
+
+    override fun refresh() {
+        pieChart.data = parentData(data)
         pieChart.legendSide = Side.LEFT
         pieChart.data.forEach {
             it.node.onMouseClicked = object : EventHandler<MouseEvent> {
@@ -42,7 +50,6 @@ class GraphDrawerPieDrilldown(
             }
             addTooltip(data, it)
         }
-        return pieChart
     }
 
     //region Convenience

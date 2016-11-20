@@ -3,6 +3,7 @@ package lt.markmerkk.ui.graphs
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
 import javafx.scene.control.DatePicker
 import javafx.scene.control.ProgressIndicator
@@ -50,6 +51,8 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     lateinit var viewDatePickerTo: DatePicker
     @FXML
     lateinit var viewProgress: ProgressIndicator
+    @FXML
+    lateinit var buttonRefresh: Button
 
     val graphs: List<GraphDrawer<*>> = listOf(
             GraphDrawerXYBars("Simple graph of worked issues"), //todo : Add translation
@@ -100,6 +103,13 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
         presenter.onDetach()
     }
 
+    /**
+     * Event from SCENE BUILDER
+     */
+    fun onClickRefresh() {
+        presenter.refresh()
+    }
+
     //endregion
 
     //region MVP
@@ -123,9 +133,20 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
         println("Error: $message")
     }
 
+    override fun showRefreshButton() {
+        buttonRefresh.isVisible = true
+        buttonRefresh.isManaged = true
+    }
+
+    override fun hideRefreshButton() {
+        buttonRefresh.isVisible = false
+        buttonRefresh.isManaged = false
+    }
+
     //endregion
 
-    //region
+    //region Graph loading
+
     fun loadGraph() {
         val fromDateTime = LogFormatters.shortFormatDate.parseDateTime(viewDatePickerFrom.editor.text.toString())
                 .withTime(0, 0, 0, 0)
@@ -157,7 +178,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
 
         }
     }
-    //endregion
 
+    //endregion
 
 }

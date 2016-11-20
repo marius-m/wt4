@@ -23,6 +23,7 @@ class GraphPresenterImpl(
     var selectGraphIndex = 0
 
     override fun onAttach() {
+        view.hideRefreshButton()
     }
 
     override fun onDetach() {
@@ -45,6 +46,11 @@ class GraphPresenterImpl(
                 })
     }
 
+    override fun refresh() {
+        if (graphDrawers.isEmpty()) return
+        if (selectGraphIndex >= graphDrawers.size || selectGraphIndex < 0) return
+        graphDrawers.get(selectGraphIndex).refresh()
+    }
 
     fun handleSuccess(data: List<SimpleLog>) {
         if (graphDrawers.size == 0) {
@@ -56,6 +62,11 @@ class GraphPresenterImpl(
             return
         }
         val graph = graphDrawers.get(selectGraphIndex)
+        if (graph.isRefreshable) {
+            view.showRefreshButton()
+        } else {
+            view.hideRefreshButton()
+        }
         graph.populateData(data as List<Nothing>) // Maybe improve this part
         view.showGraph(graph)
     }

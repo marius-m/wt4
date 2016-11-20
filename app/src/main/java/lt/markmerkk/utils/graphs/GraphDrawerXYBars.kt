@@ -20,6 +20,8 @@ class GraphDrawerXYBars(
 
     private var data: List<SimpleLog> = emptyList()
 
+    override val isRefreshable: Boolean = false
+
     override fun populateData(data: List<SimpleLog>) {
         this.data = data
     }
@@ -40,6 +42,10 @@ class GraphDrawerXYBars(
         }
 
         return BarChart(xAxis, yAxis, seriesList)
+    }
+
+    override fun refresh() {
+        throw UnsupportedOperationException("graph is not refreshable")
     }
 
     //region Convenience

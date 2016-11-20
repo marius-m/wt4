@@ -23,6 +23,8 @@ interface GraphMvp {
 
         fun showGraph(drawer: GraphDrawer<*>)
         fun showErrorGraph(message: String)
+        fun showRefreshButton()
+        fun hideRefreshButton()
     }
 
     interface Presenter {
@@ -33,5 +35,6 @@ interface GraphMvp {
                 from: Long,
                 to: Long
         )
+        fun refresh()
     }
 }
