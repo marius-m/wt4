@@ -28,6 +28,6 @@ interface GraphDataProviderPieChart {
     /**
      * Traverses through data to check how much time spent on issue/issues through task name
      */
-    fun timeSpendInData(taskName: String, logs: List<SimpleLog>): Double
+    fun timeSpentInData(taskName: String, logs: List<SimpleLog>): Int
 
 }

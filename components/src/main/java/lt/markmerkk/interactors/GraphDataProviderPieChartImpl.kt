@@ -57,8 +57,11 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
         return used * 100 / total
     }
 
-    override fun timeSpendInData(taskName: String, logs: List<SimpleLog>): Double {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun timeSpentInData(taskName: String, logs: List<SimpleLog>): Int {
+        if (taskName.isEmpty()) return 0
+        return logs
+                .filter { it.task.contains(taskName) }
+                .sumBy { it.duration.toInt() }
     }
 
 }

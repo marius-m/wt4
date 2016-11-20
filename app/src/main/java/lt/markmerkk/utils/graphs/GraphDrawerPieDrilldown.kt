@@ -11,6 +11,7 @@ import javafx.scene.layout.Region
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.GraphDataProviderPieChart
 import lt.markmerkk.interactors.GraphDrawer
+import lt.markmerkk.utils.LogUtils
 
 /**
  * @author mariusmerkevicius
@@ -62,9 +63,10 @@ class GraphDrawerPieDrilldown(
 
     fun addTooltip(data: List<SimpleLog>, chartData: PieChart.Data) {
         val percentUsed = graphPieProviderPieChart.percentInData(chartData.name, data)
+        val timeUsed = LogUtils.formatDuration(graphPieProviderPieChart.timeSpentInData(chartData.name, data).toLong())
         Tooltip.install(
                 chartData.node,
-                Tooltip("${chartData.name} / ${String.format("%.1f", percentUsed)}%")
+                Tooltip("${chartData.name} / ${String.format("%.1f", percentUsed)}% / $timeUsed")
         )
     }
 
