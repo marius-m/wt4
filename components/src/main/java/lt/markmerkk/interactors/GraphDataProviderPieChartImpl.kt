@@ -11,9 +11,20 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     override fun assembleParentData(logs: List<SimpleLog>): Map<String, Double> {
         val parentNodes = mutableMapOf<String, Double>()
         for(log in logs) {
-            val taskNameWithoutNumber = LogUtils.splitTaskTitle(log.task)
-            if (taskNameWithoutNumber == null) continue
-            parentNodes.put(taskNameWithoutNumber, log.duration.toDouble())
+            val taskNameWithoutNumber = LogUtils.splitTaskTitle(log.task) ?: continue
+            if (parentNodes.containsKey(taskNameWithoutNumber)) {
+                val oldValue = parentNodes.get(taskNameWithoutNumber)
+                val logValue = log.duration.toDouble() + oldValue!!
+                parentNodes.put(
+                        taskNameWithoutNumber,
+                        logValue
+                )
+            } else {
+                parentNodes.put(
+                        taskNameWithoutNumber,
+                        log.duration.toDouble()
+                )
+            }
         }
         return parentNodes
     }
