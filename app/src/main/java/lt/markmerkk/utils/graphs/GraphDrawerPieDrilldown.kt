@@ -1,6 +1,7 @@
 package lt.markmerkk.utils.graphs
 
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.event.EventHandler
 import javafx.geometry.Side
 import javafx.scene.chart.PieChart
@@ -27,24 +28,39 @@ class GraphDrawerPieDrilldown(
     }
 
     override fun createGraph(): Region {
-        val displayData = mutableListOf<PieChart.Data>()
-        val dataMap = graphPieProviderPieChart.assembleParentData(data)
-        dataMap.forEach { displayData.add(PieChart.Data(it.key, it.value)) }
-        val pieChart = PieChart(FXCollections.observableArrayList(displayData))
+        val pieChart = PieChart(parentData(data))
         pieChart.legendSide = Side.LEFT
         pieChart.data.forEach {
-            addTooltipWithDetails(it)
             it.node.onMouseClicked = object : EventHandler<MouseEvent> {
                 override fun handle(event: MouseEvent?) {
-                    pieChart.data = FXCollections.observableArrayList(
-                            PieChart.Data("WT-4", 50000000.0),
-                            PieChart.Data("WT-5", 50000000.0)
-                    )
+                    pieChart.data = childData(data, it.name)
+                    pieChart.data.forEach {
+                        addTooltipWithDetails(it)
+                    }
                 }
             }
+            addTooltipWithDetails(it)
         }
         return pieChart
     }
+
+    //region Convenience
+
+    fun parentData(data: List<SimpleLog>): ObservableList<PieChart.Data> {
+        val dataMap = graphPieProviderPieChart.assembleParentData(data)
+        val displayData = mutableListOf<PieChart.Data>()
+        dataMap.forEach { displayData.add(PieChart.Data(it.key, it.value)) }
+        return FXCollections.observableList(displayData)
+    }
+
+    fun childData(data: List<SimpleLog>, filter: String): ObservableList<PieChart.Data>  {
+        val dataMap = graphPieProviderPieChart.assembleChildData(data, filter)
+        val displayData = mutableListOf<PieChart.Data>()
+        dataMap.forEach { displayData.add(PieChart.Data(it.key, it.value)) }
+        return FXCollections.observableList(displayData)
+    }
+
+    //endregion
 
     // todo : Incomplete impl (real data missing)
     fun addTooltipWithDetails(chartData: PieChart.Data) {

@@ -127,10 +127,12 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
 
     //region
     fun loadGraph() {
-        presenter.loadGraph(
-                LogFormatters.shortFormatDate.parseDateTime(viewDatePickerFrom.editor.text.toString()).millis,
-                LogFormatters.shortFormatDate.parseDateTime(viewDatePickerTo.editor.text.toString()).millis
-        )
+        val fromDateTime = LogFormatters.shortFormatDate.parseDateTime(viewDatePickerFrom.editor.text.toString())
+                .withTime(0, 0, 0, 0)
+        val toDateTime = LogFormatters.shortFormatDate.parseDateTime(viewDatePickerTo.editor.text.toString())
+                .withTime(0, 0, 0, 0)
+                .plusDays(1)
+        presenter.loadGraph(fromDateTime.millis, toDateTime.millis)
     }
 
     val dateConverter: StringConverter<LocalDate> = object : StringConverter<LocalDate>() {
@@ -139,7 +141,8 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
             val updateTime = DateTime().withDate(
                     date.year,
                     date.monthValue,
-                    date.dayOfMonth)
+                    date.dayOfMonth
+            )
             return LogFormatters.shortFormatDate.print(updateTime)
         }
 
