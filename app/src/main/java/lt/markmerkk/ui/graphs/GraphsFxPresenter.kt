@@ -10,8 +10,10 @@ import javafx.scene.control.ProgressIndicator
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
+import javafx.scene.transform.Translate
 import javafx.util.StringConverter
 import lt.markmerkk.Main
+import lt.markmerkk.Translation
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.GraphDataProviderPieChartImpl
@@ -56,11 +58,11 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     val graphs: List<GraphDrawer<*>> by lazy {
         listOf(
                 GraphDrawerXYBars(
-                        "Simple graph of worked issues",
+                        Translation.getInstance().getString("graph_simple_header"),
                         hostServicesInteractor
-                ), //todo : Add translation
+                ),
                 GraphDrawerPieDrilldown(
-                        "Drilldown on worked issues", //todo: Translation
+                        Translation.getInstance().getString("graph_pie_header"),
                         GraphDataProviderPieChartImpl(),
                         hostServicesInteractor
                 )

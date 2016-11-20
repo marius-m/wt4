@@ -120,9 +120,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
    * Convenience method to update current status
    */
   void updateStatus() {
-//    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
     buttonToday.setText(LogUtils.INSTANCE.formatShortDuration(storage.total()));
-//    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
     buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
 
