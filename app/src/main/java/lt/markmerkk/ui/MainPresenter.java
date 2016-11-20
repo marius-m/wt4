@@ -23,6 +23,7 @@ import lt.markmerkk.interactors.KeepAliveGASessionImpl;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
+import lt.markmerkk.ui.graphs.GraphsFxView;
 import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.ui.interfaces.UpdateListener;
 import lt.markmerkk.ui.settings.SettingsView;
@@ -177,6 +178,11 @@ public class MainPresenter implements Initializable {
     public void onAbout() {
       VersionView versionView = new VersionView(versionWindowDialogListener);
       openDialog(versionView, 450, 400); //fixme hardcoded size
+    }
+
+    @Override
+    public void onGraphs() {
+      tabsController.addCloseableTab(new GraphsFxView(), "Graphs");
     }
   });
 

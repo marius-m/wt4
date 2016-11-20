@@ -19,6 +19,7 @@ import lt.markmerkk.Config
 import lt.markmerkk.Main
 import lt.markmerkk.Translation
 import lt.markmerkk.afterburner.InjectorNoDI
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.VersioningMvp
 import lt.markmerkk.ui.interfaces.DialogListener
 import org.slf4j.LoggerFactory
@@ -32,8 +33,8 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     lateinit var config: Config
     @Inject
     lateinit var application: Application
-
-    var hostServices: HostServicesDelegate? = null
+    @Inject
+    lateinit var hostServicesInteractor: HostServicesInteractor
 
     @FXML lateinit var buttonClose: Button
     @FXML lateinit var buttonTitle: Hyperlink
@@ -48,7 +49,6 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     override fun initialize(location: URL, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
         labelVersion.text = String.format("Version: %s", config.versionName)
-        hostServices = HostServicesDelegate.getInstance(application)
     }
 
     @PreDestroy
@@ -66,36 +66,36 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     }
 
     fun onClickTitle() {
-        hostServices?.showDocument("https://bitbucket.org/mmerkevicius/wt4")
+        hostServicesInteractor.openExternalLink("https://bitbucket.org/mmerkevicius/wt4")
     }
 
     fun onClickAuthor() {
-        hostServices?.showDocument("https://github.com/marius-m")
+        hostServicesInteractor.openExternalLink("https://github.com/marius-m")
     }
 
     fun onClickPlace() {
-        hostServices?.showDocument("http://ito.lt")
+        hostServicesInteractor.openExternalLink("https://www.treatwell.co.uk/")
     }
 
     fun onHyperlinkGoogle1() {
-        hostServices?.showDocument("https://design.google.com/icons/")
+        hostServicesInteractor.openExternalLink("https://design.google.com/icons/")
 
     }
 
     fun onHyperlinkGoogle2() {
-        hostServices?.showDocument("https://creativecommons.org/licenses/by/4.0/")
+        hostServicesInteractor.openExternalLink("https://creativecommons.org/licenses/by/4.0/")
     }
 
     fun onHyperlinkJFX1() {
-        hostServices?.showDocument("https://github.com/JFXtras/jfxtras")
+        hostServicesInteractor.openExternalLink("https://github.com/JFXtras/jfxtras")
     }
 
     fun onHyperlinkJFX2() {
-        hostServices?.showDocument("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29")
+        hostServicesInteractor.openExternalLink("https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_.28.22Revised_BSD_License.22.2C_.22New_BSD_License.22.2C_or_.22Modified_BSD_License.22.29")
     }
 
     fun onHyperlinkOthers() {
-        hostServices?.showDocument("https://bitbucket.org/mmerkevicius/wt4")
+        hostServicesInteractor.openExternalLink("https://github.com/marius-m/wt4")
     }
 
     //endregion

@@ -16,12 +16,6 @@ class ConfigSetSettingsImpl(
             field = sanitizeConfigName(value)
         }
     override var configs: List<String> = emptyList()
-        get() {
-            return field
-        }
-        set(value) {
-            field = value
-        }
 
     override fun propertyPath(): String {
         val rootPath = configPathProvider.absolutePathWithMissingFolderCreate(

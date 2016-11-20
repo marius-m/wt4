@@ -104,6 +104,7 @@ Only recently started tracking versions.
 
 - Configuration sets
  - Add configurations to change instance to more than one JIRA
+- Graphs (Graph representation on worked issues)
 
 ### 0.9.9.6
 

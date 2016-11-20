@@ -43,19 +43,27 @@ case "$1" in
 
         fi
 
-	#PERM_USER=$(ps -o user= -p $$ | awk '{print $1}')
-	#echo "Changing user permissions as: $PERM_USER"
-	#sudo chown -R ${PERM_USER}:${PERM_USER} /opt/WT4
-
 	echo "Adding permissions for update folder"
 	sudo chmod -R 0777 /opt/WT4/app
 
 	JRE_DIR="/opt/WT4/runtime"
 	if [ -d "$JRE_DIR" ]; then
 		echo "Using bundled JRE"
+		sudo sed -i "s|app.runtime=.*|app.runtime=$JRE_DIR|g" /opt/WT4/app/WT4.cfg
 	else
 		echo "Adding local classpath to JRE"
-		HACKY_JAVA_HOME=$(dirname $(dirname $(readlink -e /usr/bin/javac)))
+		if [ -f "/usr/bin/javac" ]
+		then
+			echo "Reading symbolic link for javac"
+			JAVA_LINK=$(readlink -e /usr/bin/javac)
+			echo "Checking javac link: $JAVA_LINK"
+			if [ ! -z $JAVA_LINK ]
+			then
+				HACKY_JAVA_HOME=$(dirname $(dirname $JAVA_LINK))
+				echo "Our linker path: $HACKY_JAVA_HOME"
+			fi
+		fi
+
 		if [ ! -z $JAVA_HOME ] 
 		then
 			echo "Using JRE from: $JAVA_HOME"

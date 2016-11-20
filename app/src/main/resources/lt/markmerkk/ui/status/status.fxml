@@ -37,7 +37,7 @@
                   <Insets left="5.0" />
                </HBox.margin>
             </ToggleButton>
-            <Button fx:id="buttonToday" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" stylesheets="@../../../../sum.css" text="20h">
+            <Button fx:id="buttonToday" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onClickGraph" stylesheets="@../../../../sum.css" text="20h">
                <font>
                   <Font size="11.0" />
                </font>

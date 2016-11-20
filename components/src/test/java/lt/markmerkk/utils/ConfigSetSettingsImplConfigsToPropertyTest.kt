@@ -11,7 +11,6 @@ import java.util.*
  * *
  * @since 2016-11-18
  */
-// todo : Add test when string needs trimming
 class ConfigSetSettingsImplConfigsToPropertyTest {
     val pathProvider: ConfigPathProvider = mock()
 

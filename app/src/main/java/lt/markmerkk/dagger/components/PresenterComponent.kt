@@ -5,6 +5,7 @@ import lt.markmerkk.dagger.scopes.PerPresenterScope
 import lt.markmerkk.ui.MainPresenter
 import lt.markmerkk.ui.clock.ClockPresenter
 import lt.markmerkk.ui.display.DisplayLogPresenter
+import lt.markmerkk.ui.graphs.GraphsFxPresenter
 import lt.markmerkk.ui.settings.SettingsPresenter
 import lt.markmerkk.ui.status.StatusPresenter
 import lt.markmerkk.ui.update.UpdateLogPresenter
@@ -34,5 +35,7 @@ interface PresenterComponent {
     fun inject(settingsPresenter: SettingsPresenter)
 
     fun inject(presenter: VersionPresenter)
+
+    fun inject(presenter: GraphsFxPresenter)
 
 }

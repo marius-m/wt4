@@ -105,6 +105,13 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     );
   }
 
+  public void onClickGraph() {
+    tracker.sendView(
+            GAStatics.INSTANCE.getVIEW_GRAPH()
+    );
+    listener.onGraphs();
+  }
+
   //endregion
 
   //region Convenience
@@ -113,9 +120,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
    * Convenience method to update current status
    */
   void updateStatus() {
-//    buttonRefresh.setText(String.format("Last update: %s", lastUpdateController.getOutput())); // todo : No more update timer output for now.
     buttonToday.setText(LogUtils.INSTANCE.formatShortDuration(storage.total()));
-//    buttonViewToggle.setText(String.format("View: %s", storage.getDisplayType().name()));
     buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
   }
 
@@ -205,6 +210,12 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
      * Called when about is pressed
      */
     void onAbout();
+
+    /**
+     * Called when graphs is pressed
+     */
+    void onGraphs();
+
   }
 
   //endregion
