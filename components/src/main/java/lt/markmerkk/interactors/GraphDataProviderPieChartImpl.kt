@@ -30,6 +30,17 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     }
 
     override fun assembleChildData(logs: List<SimpleLog>, filter: String): Map<String, Double> {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (filter.isEmpty()) return emptyMap()
+        val childData = mutableMapOf<String, Double>()
+        for (log in logs) {
+            if (!log.task.contains(filter)) continue
+            if (childData.containsKey(log.task)) {
+                val accumulatedDuration = log.duration.toDouble() + childData.get(log.task)!!
+                childData.put(log.task, accumulatedDuration)
+            } else {
+                childData.put(log.task, log.duration.toDouble())
+            }
+        }
+        return childData
     }
 }
