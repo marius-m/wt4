@@ -31,5 +31,6 @@ class AutoCompletionBindingIssues(
     init {
         setDelay(500L)
         visibleRowCount = 10
+        textField.widthProperty().addListener { observableValue, oldValue, newValue -> prefWidth = newValue.toDouble() }
     }
 }

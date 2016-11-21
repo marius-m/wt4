@@ -48,7 +48,7 @@ public class UpdateLogPresenter {
     Main.Companion.getComponent().presenterComponent().inject(this);
     this.entity = entity;
 
-    new AutoCompletionBindingIssues(
+    AutoCompletionBindingIssues autoCompletionBindingIssues = new AutoCompletionBindingIssues(
             new IssueSearchInteractorImpl(dbProdExecutor),
             taskInput
     );
