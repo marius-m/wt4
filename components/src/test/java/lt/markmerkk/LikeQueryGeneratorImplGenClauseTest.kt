@@ -38,7 +38,7 @@ class LikeQueryGeneratorImplGenClauseTest {
         val result = generator.genClause("token1")
 
         // Assert
-        assertEquals("fake_key like '%%%token1%%'", result)
+        assertEquals("fake_key like '%%token1%%'", result)
     }
 
 }

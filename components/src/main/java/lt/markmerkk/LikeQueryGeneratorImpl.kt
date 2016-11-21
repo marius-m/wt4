@@ -40,7 +40,7 @@ class LikeQueryGeneratorImpl(
      */
     fun genClause(input: String): String {
         if (input.isEmpty()) return ""
-        return "$key like '%%%$input%%'"
+        return "$key like '%%$input%%'"
     }
 
     fun tokenizePossibleInputs(input: String): List<String> {

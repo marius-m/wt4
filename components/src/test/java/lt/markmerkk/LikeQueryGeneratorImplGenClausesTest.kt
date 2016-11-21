@@ -29,7 +29,7 @@ class LikeQueryGeneratorImplGenClausesTest {
 
         // Assert
         assertEquals(1, result.size)
-        assertEquals("fake_key like '%%%token1%%'", result.get(0))
+        assertEquals("fake_key like '%%token1%%'", result.get(0))
     }
 
     @Test
@@ -40,8 +40,8 @@ class LikeQueryGeneratorImplGenClausesTest {
 
         // Assert
         assertEquals(2, result.size)
-        assertEquals("fake_key like '%%%token1%%'", result.get(0))
-        assertEquals("fake_key like '%%%token2%%'", result.get(1))
+        assertEquals("fake_key like '%%token1%%'", result.get(0))
+        assertEquals("fake_key like '%%token2%%'", result.get(1))
     }
 
 }
