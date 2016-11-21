@@ -7,5 +7,13 @@ package lt.markmerkk
  * Generates query for more accurate results from database
  */
 interface LikeQueryGenerator {
-    fun genQueryFromInput(input: String): String
+    /**
+     * Generates 'like %somehing%' clauses from input
+     */
+    fun genClauses(input: String): List<String>
+
+    /**
+     * Generates full query from clauses with OR seperator
+     */
+    fun genQuery(clauses: List<String>): String
 }

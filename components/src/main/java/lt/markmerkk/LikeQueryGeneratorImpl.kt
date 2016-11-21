@@ -14,8 +14,23 @@ class LikeQueryGeneratorImpl(
         if (key.isEmpty()) throw IllegalArgumentException("invalid key")
     }
 
-    override fun genQueryFromInput(input: String): String {
-        throw UnsupportedOperationException()
+    override fun genClauses(input: String): List<String> {
+        return tokenizePossibleInputs(input)
+                .map { genClause(it) }
+    }
+
+    override fun genQuery(clauses: List<String>): String {
+        if (clauses.isEmpty()) return ""
+        val separator = " OR "
+        val sb = StringBuilder()
+        sb.append("(")
+        clauses.forEach {
+            sb.append(it)
+            sb.append(separator)
+        }
+        sb.delete(sb.length - separator.length, sb.length)
+        sb.append(")")
+        return sb.toString()
     }
 
     //region Convenience
@@ -24,7 +39,6 @@ class LikeQueryGeneratorImpl(
      * Generates valid 'like' clause
      */
     fun genClause(input: String): String {
-        if (key.isEmpty()) return ""
         if (input.isEmpty()) return ""
         return "$key like '%%%$input%%'"
     }
