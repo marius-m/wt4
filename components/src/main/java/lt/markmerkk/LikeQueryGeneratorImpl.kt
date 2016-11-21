@@ -1,7 +1,5 @@
 package lt.markmerkk
 
-import java.util.*
-
 /**
  * @author mariusmerkevicius
  * @since 2016-11-21
@@ -24,10 +22,11 @@ class LikeQueryGeneratorImpl(
         val separator = " OR "
         val sb = StringBuilder()
         sb.append("(")
-        clauses.forEach {
-            sb.append(it)
-            sb.append(separator)
-        }
+        clauses.filter { !it.isEmpty() }
+                .forEach {
+                    sb.append(it)
+                    sb.append(separator)
+                }
         sb.delete(sb.length - separator.length, sb.length)
         sb.append(")")
         return sb.toString()
