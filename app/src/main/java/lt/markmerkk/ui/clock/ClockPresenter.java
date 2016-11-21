@@ -98,7 +98,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
             Schedulers.computation(),
             JavaFxScheduler.getInstance()
     );
-    new AutoCompletionBindingIssues(
+    AutoCompletionBindingIssues autoCompletionBindingIssues = new AutoCompletionBindingIssues(
             new IssueSearchInteractorImpl(dbProdExecutor),
             inputTask
     );

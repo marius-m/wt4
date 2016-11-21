@@ -50,17 +50,17 @@
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
          <children>
             <ToggleButton fx:id="buttonClock" minHeight="28.0" mnemonicParsing="false" onAction="#onClickClock" stylesheets="@../../../../play_pause.css" />
-            <DatePicker fx:id="inputFrom" minHeight="28.0" minWidth="160.0" promptText="From" HBox.hgrow="ALWAYS">
+            <DatePicker fx:id="inputFrom" maxWidth="1.7976931348623157E308" minHeight="28.0" minWidth="160.0" promptText="From" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
             </DatePicker>
-            <DatePicker fx:id="inputTo" minHeight="28.0" minWidth="160.0" promptText="To" HBox.hgrow="ALWAYS">
+            <DatePicker fx:id="inputTo" maxWidth="1.7976931348623157E308" minHeight="28.0" minWidth="160.0" promptText="To" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
             </DatePicker>
-            <Button fx:id="buttonEnter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="28.0" mnemonicParsing="false" onAction="#onClickEnter" stylesheets="@../../../../enter.css" HBox.hgrow="ALWAYS">
+            <Button fx:id="buttonEnter" minHeight="28.0" mnemonicParsing="false" onAction="#onClickEnter" stylesheets="@../../../../enter.css" HBox.hgrow="NEVER">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
