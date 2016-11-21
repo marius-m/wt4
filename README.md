@@ -97,10 +97,11 @@ Logs can be updated by pressing the right mouse button on the target log
 
 ## Changelog
 
-### 0.9.9.8
+### 0.9.9.8-EAP
 
 - Update how enter button scales when resizing the window
 - Proper size for search result when looking for an issue
+- Smarter query for searching issues
 
 ### 0.9.9.7
 
