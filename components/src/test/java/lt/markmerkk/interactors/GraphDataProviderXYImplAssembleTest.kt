@@ -1,24 +1,24 @@
-package lt.markmerkk.utils.graphs
+package lt.markmerkk.interactors
 
-import lt.markmerkk.entities.SimpleLog
+import com.nhaarman.mockito_kotlin.mock
 import lt.markmerkk.entities.SimpleLogBuilder
-import org.junit.Assert.assertEquals
+import lt.markmerkk.mvp.HostServicesInteractor
+import org.junit.Assert.*
 import org.junit.Test
-import kotlin.test.assertNotNull
 
 /**
  * @author mariusmerkevicius
  * *
- * @since 2016-10-26
+ * @since 2016-11-22
  */
-class GraphDrawerXYBarsAssembleIssuesTest {
-    val graphDrawer = GraphDrawerXYBars("test_title")
+class GraphDataProviderXYImplAssembleTest {
+    val dataProvider = GraphDataProviderXYImpl()
 
     @Test
     fun emptyInput_emptyMap() {
         // Arrange
         // Act
-        val result = graphDrawer.assembleIssues(emptyList())
+        val result = dataProvider.assembleIssues(emptyList())
 
         // Assert
         assertEquals(0, result.size)
@@ -37,12 +37,12 @@ class GraphDrawerXYBarsAssembleIssuesTest {
         )
 
         // Act
-        val result = graphDrawer.assembleIssues(logs)
+        val result = dataProvider.assembleIssues(logs)
 
         // Assert
         assertEquals(1, result.size)
         val assertValue = result.get("TEST-1")
-        assertNotNull(assertValue)
+        kotlin.test.assertNotNull(assertValue)
         assertEquals(1000L, assertValue)
     }
 
@@ -65,15 +65,15 @@ class GraphDrawerXYBarsAssembleIssuesTest {
         )
 
         // Act
-        val result = graphDrawer.assembleIssues(logs)
+        val result = dataProvider.assembleIssues(logs)
 
         // Assert
         assertEquals(2, result.size)
         val assertValue = result.get("TEST-1")
-        assertNotNull(assertValue)
+        kotlin.test.assertNotNull(assertValue)
         assertEquals(1000L, assertValue)
         val assertValue2 = result.get("TEST-2")
-        assertNotNull(assertValue2)
+        kotlin.test.assertNotNull(assertValue2)
         assertEquals(1000L, assertValue2)
     }
 
@@ -96,13 +96,12 @@ class GraphDrawerXYBarsAssembleIssuesTest {
         )
 
         // Act
-        val result = graphDrawer.assembleIssues(logs)
+        val result = dataProvider.assembleIssues(logs)
 
         // Assert
         assertEquals(1, result.size)
         val assertValue = result.get("TEST-1")
-        assertNotNull(assertValue)
+        kotlin.test.assertNotNull(assertValue)
         assertEquals(2000L, assertValue)
     }
-
 }

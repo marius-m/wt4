@@ -1,15 +1,14 @@
 package lt.markmerkk.utils.graphs
 
 import javafx.collections.FXCollections
-import javafx.event.EventHandler
 import javafx.scene.chart.BarChart
 import javafx.scene.chart.CategoryAxis
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Region
 import lt.markmerkk.Translation
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.interactors.GraphDataProviderXY
 import lt.markmerkk.interactors.GraphDrawer
 import lt.markmerkk.mvp.HostServicesInteractor
 import org.slf4j.LoggerFactory
@@ -20,6 +19,7 @@ import org.slf4j.LoggerFactory
  */
 class GraphDrawerXYBars(
         override val title: String,
+        private val dataProviderXY: GraphDataProviderXY,
         private val hostServicesInteractor: HostServicesInteractor
 ) : GraphDrawer<SimpleLog> {
 
@@ -37,7 +37,8 @@ class GraphDrawerXYBars(
     }
 
     override fun createGraph(): Region {
-        val displayData = assembleIssues(data).map { XYChart.Data<String, Number>(it.key, it.value) }
+        val displayData = dataProviderXY.assembleIssues(data)
+                .map { XYChart.Data<String, Number>(it.key, it.value) }
         val seriesList = FXCollections.observableArrayList<XYChart.Series<String, Number>>().apply {
             val seriesElement = XYChart.Series(
                     Translation.getInstance().getString("graph_simple_axis_x_title"),
@@ -52,22 +53,6 @@ class GraphDrawerXYBars(
     override fun refresh() {
         throw UnsupportedOperationException("graph is not refreshable")
     }
-
-    //region Convenience
-
-    fun assembleIssues(logs: List<SimpleLog>): Map<String, Number> {
-        val mappedLogs = mutableMapOf<String, Number>()
-        logs.forEach {
-            if (mappedLogs.containsKey(it.task)) {
-                mappedLogs.put(it.task, it.duration + mappedLogs.get(it.task) as Long)
-            } else {
-                mappedLogs.put(it.task, it.duration)
-            }
-        }
-        return mappedLogs
-    }
-
-    //endregion
 
     override fun toString(): String = title
 

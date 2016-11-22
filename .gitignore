@@ -42,3 +42,5 @@ tools/remote.txt
 tools/client.txt
 app/src/main/deploy/package/macosx/Info.plist
 app/test_database.db
+app/nullusr.properties
+database/test_database.db

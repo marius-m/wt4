@@ -17,6 +17,7 @@ import lt.markmerkk.Translation
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.GraphDataProviderPieChartImpl
+import lt.markmerkk.interactors.GraphDataProviderXYImpl
 import lt.markmerkk.interactors.GraphDrawer
 import lt.markmerkk.mvp.*
 import lt.markmerkk.utils.LogFormatters
@@ -59,6 +60,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
         listOf(
                 GraphDrawerXYBars(
                         Translation.getInstance().getString("graph_simple_header"),
+                        GraphDataProviderXYImpl(),
                         hostServicesInteractor
                 ),
                 GraphDrawerPieDrilldown(
