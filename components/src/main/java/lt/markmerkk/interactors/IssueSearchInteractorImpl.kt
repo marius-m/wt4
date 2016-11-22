@@ -19,14 +19,17 @@ class IssueSearchInteractorImpl(
         private val executor: IExecutor
 ) : IssueSearchInteractor {
 
-    private val issueSplitter = IssueSplitImpl()
-    private val descriptionQueryGenerator: LikeQueryGenerator = LikeQueryGeneratorImpl(LocalIssue.KEY_DESCRIPTION)
-    private val keyQueryGenerator: LikeQueryGenerator = LikeQueryGeneratorImpl(LocalIssue.KEY_KEY)
+    private val searchQueryGenerator: SearchQueryGenerator = SearchQueryGeneratorImpl(
+            issueSplit = IssueSplitImpl(),
+            descriptionQueryGenerator = LikeQueryGeneratorImpl("description"),
+            keyQueryGenerator = LikeQueryGeneratorImpl("key")
+    )
 
     override fun searchIssues(byPhrase: String): Observable<List<LocalIssue>> {
         val queryListJob = QueryListJob(LocalIssue::class.java) {
             val query = String.format(
-                    "ORDER BY %s DESC",
+                    "%s ORDER BY %s DESC",
+                    searchQueryGenerator.searchQuery(byPhrase),
                     LocalIssue.KEY_CREATE_DATE
             )
             logger.debug("Running query $query")
