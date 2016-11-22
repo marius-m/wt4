@@ -19,7 +19,7 @@ class SearchQueryGeneratorImpl(
         val phraseMap = issueSplit.split(input)
         val descriptionClauses = descriptionQueryGenerator.genClauses(phraseMap[IssueSplitImpl.DESCRIPTION_KEY]!!)
         val descriptionQuery = descriptionQueryGenerator.genQuery(descriptionClauses)
-        val possibleIssueTitle = LogUtils.validateTaskTitle(phraseMap[IssueSplitImpl.DESCRIPTION_KEY] ?: "") ?: ""
+        val possibleIssueTitle = LogUtils.validateTaskTitle(phraseMap[IssueSplitImpl.DESCRIPTION_KEY] ?: "")
         val keyClauses = keyQueryGenerator.genClauses(possibleIssueTitle)
         val keyQuery = keyQueryGenerator.genQuery(keyClauses)
         return descriptionQueryGenerator.genQuery(listOf(descriptionQuery, keyQuery))

@@ -17,7 +17,7 @@ object LogUtils {
      * Inspects id for a valid type
      * @param message
      */
-    fun validateTaskTitle(message: String): String? {
+    fun validateTaskTitle(message: String): String {
         if (message.isEmpty()) return ""
         message.replace("\\n".toRegex(), "")
         val pattern = Pattern.compile("[a-zA-Z]+(-)?[0-9]+")
@@ -28,8 +28,8 @@ object LogUtils {
             found = found.trim { it <= ' ' }
             if (!found.contains(SEPERATOR))
                 found = insertTaskSeperator(found)
-            if (found.length == 0)
-                return null
+            if (found.isEmpty())
+                return ""
             return found
         }
         return ""
