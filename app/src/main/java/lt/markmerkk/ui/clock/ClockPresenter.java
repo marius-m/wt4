@@ -1,8 +1,10 @@
 package lt.markmerkk.ui.clock;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,6 +21,8 @@ import lt.markmerkk.interactors.SyncInteractor;
 import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.mvp.IssueSearchMvp;
 import lt.markmerkk.mvp.IssueSearchPresenterImpl;
+import lt.markmerkk.mvp.SearchOpenMvp;
+import lt.markmerkk.mvp.SearchOpenPresenterImpl;
 import lt.markmerkk.utils.AutoCompletionBindingIssues;
 import lt.markmerkk.utils.IssueSplitImpl;
 import lt.markmerkk.utils.LogFormatters;
@@ -44,7 +48,8 @@ import java.util.ResourceBundle;
  * Created by mariusmerkevicius on 12/5/15. Represents the presenter for the clock for logging
  * info.
  */
-public class ClockPresenter implements Initializable, IRemoteLoadListener, IDataListener<LocalIssue>, IssueSearchMvp.View {
+public class ClockPresenter implements Initializable, IRemoteLoadListener,
+        IDataListener<LocalIssue>, IssueSearchMvp.View, SearchOpenMvp.View {
   public static final Logger logger = LoggerFactory.getLogger(ClockPresenter.class);
 
   @Inject
@@ -59,6 +64,10 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   IExecutor dbProdExecutor;
   @Inject
   ITracker tracker;
+  @Inject
+  Application application;
+  @Inject
+  UserSettings userSettings;
 
   @FXML
   DatePicker inputTo;
@@ -86,12 +95,17 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @FXML ProgressIndicator taskLoadIndicator;
 
   IssueSearchMvp.Presenter issueSearchPresenter;
+  SearchOpenMvp.Presenter searchOpenPresenter;
   IssueSplitImpl issueSplit = new IssueSplitImpl();
   Listener listener;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     Main.Companion.getComponent().presenterComponent().inject(this);
+    searchOpenPresenter = new SearchOpenPresenterImpl(
+            this,
+            new HostServicesInteractorImpl(application, userSettings)
+    );
     issueSearchPresenter = new IssueSearchPresenterImpl(
             this,
             new IssueSearchInteractorImpl(dbProdExecutor),
@@ -128,10 +142,12 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
     syncInteractor.addLoadingListener(this);
     issueSearchPresenter.onAttach();
     issueStorage.register(this);
+    inputTask.textProperty().addListener(searchChangeListener);
   }
 
   @PreDestroy
   public void destroy() {
+    inputTask.textProperty().removeListener(searchChangeListener);
     issueStorage.unregister(this);
     issueSearchPresenter.onDetach();
     if (hourGlass.getState() == HourGlass.State.RUNNING) {
@@ -165,15 +181,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   }
 
   public void onClickOpen() {
-//    if (inputTaskCombo.getSelectionModel().getSelectedItem() == null) return;
-//    if (Strings.isNullOrEmpty(settings.getHost())) return;
-//    URI issuePath = null;
-//    try {
-//      issuePath = new URI(settings.getHost()+"/browse/"+inputTaskCombo.getSelectionModel().getSelectedItem().getKey());
-//      Main.hostServices.showDocument(issuePath.toString());
-//    } catch (URISyntaxException e) {
-//      logger.error("Cant open issue! ", e);
-//    }
+      searchOpenPresenter.open(inputTask.getText());
   }
 
   public void onClickSearch() {
@@ -244,6 +252,13 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   //endregion
 
   //region Listeners
+
+  ChangeListener<String> searchChangeListener = new ChangeListener<String>() {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+      searchOpenPresenter.handleInputChange(newValue);
+    }
+  };
 
   StringConverter startDateConverter = new StringConverter<LocalDate>() {
     @Override
@@ -401,6 +416,18 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @Override
   public void showTotalIssueCount(int count) {
     outputJQL.setText(String.format(Translation.getInstance().getString("clock_jql_info"), count));
+  }
+
+  @Override
+  public void showOpenButton() {
+      buttonOpen.setVisible(true);
+      buttonOpen.setManaged(true);
+  }
+
+  @Override
+  public void hideOpenButton() {
+      buttonOpen.setVisible(false);
+      buttonOpen.setManaged(false);
   }
 
   //endregion
