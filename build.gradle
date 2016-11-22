@@ -18,8 +18,8 @@ buildscript {
 apply plugin: 'org.hidetake.ssh'
 
 allprojects {
-  ext.versionName = "0.9.9.7"
-  ext.versionCode = "14"
+  ext.versionName = "0.9.9.8-EAP2"
+  ext.versionCode = "16"
 
   apply plugin: 'maven'
   apply plugin: 'kotlin'
