@@ -78,7 +78,6 @@ public class UpdateLogPresenter implements SearchOpenMvp.View {
     updateStatus(entity);
     update();
     updateLock();
-    searchOpenPresenter.handleInputChange("");
   }
 
   @PreDestroy
@@ -157,6 +156,7 @@ public class UpdateLogPresenter implements SearchOpenMvp.View {
           .build();
       updateSaveTitle(entity.getPrettyDuration());
       buttonOk.setDisable(false);
+      searchOpenPresenter.handleInputChange(entity.getTask());
     } catch (IllegalArgumentException e) {
       updateSaveTitle("Error: " + e.getMessage());
       buttonOk.setDisable(true);
