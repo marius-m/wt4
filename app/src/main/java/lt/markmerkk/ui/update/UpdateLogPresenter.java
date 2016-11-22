@@ -78,6 +78,7 @@ public class UpdateLogPresenter implements SearchOpenMvp.View {
     updateStatus(entity);
     update();
     updateLock();
+    searchOpenPresenter.handleInputChange("");
   }
 
   @PreDestroy
