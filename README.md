@@ -102,6 +102,7 @@ Logs can be updated by pressing the right mouse button on the target log
 - Update how enter button scales when resizing the window
 - Proper size for search result when looking for an issue
 - Smarter query for searching issues
+- Open issues from search bar to external browser
 
 ### 0.9.9.7
 
