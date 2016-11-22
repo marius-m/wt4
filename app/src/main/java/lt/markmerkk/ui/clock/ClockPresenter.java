@@ -20,7 +20,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener;
 import lt.markmerkk.mvp.IssueSearchMvp;
 import lt.markmerkk.mvp.IssueSearchPresenterImpl;
 import lt.markmerkk.utils.AutoCompletionBindingIssues;
-import lt.markmerkk.utils.IssueSplit;
+import lt.markmerkk.utils.IssueSplitImpl;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
 import lt.markmerkk.utils.hourglass.HourGlass;
@@ -86,7 +86,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
   @FXML ProgressIndicator taskLoadIndicator;
 
   IssueSearchMvp.Presenter issueSearchPresenter;
-  IssueSplit issueSplit = new IssueSplit();
+  IssueSplitImpl issueSplit = new IssueSplitImpl();
   Listener listener;
 
   @Override
@@ -140,7 +140,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
                 .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
                 .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
                 .setTask(
-                        issueSplit.split(inputTask.getText()).get(IssueSplit.Companion.getKEY_KEY())
+                        issueSplit.split(inputTask.getText()).get(IssueSplitImpl.Companion.getKEY_KEY())
                 )
                 .setComment(inputComment.getText() + "(abnormal app close)").build();
         logStorage.insert(log);
@@ -221,7 +221,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener, IData
           .setStart(HourGlass.parseMillisFromText(inputFrom.getEditor().getText()))
           .setEnd(HourGlass.parseMillisFromText(inputTo.getEditor().getText()))
           .setTask(
-                  issueSplit.split(inputTask.getText()).get(IssueSplit.Companion.getKEY_KEY())
+                  issueSplit.split(inputTask.getText()).get(IssueSplitImpl.Companion.getKEY_KEY())
           )
           .setComment(inputComment.getText()).build();
       logStorage.insert(log);

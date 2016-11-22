@@ -1,6 +1,6 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.utils.IssueSplit
+import lt.markmerkk.utils.IssueSplitImpl
 import org.junit.Test
 
 import org.assertj.core.api.Assertions.assertThat
@@ -8,14 +8,14 @@ import org.assertj.core.api.Assertions.assertThat
 /**
  * Created by mariusmerkevicius on 2/16/16.
  */
-class IssueSplitPickKeyTest {
+class IssueSplitImplPickKeyTest {
     @Test
     fun unsplittablePhrase_shouldNotSplit() {
         // Arrange
-        val splitter = IssueSplit()
+        val splitter = IssueSplitImpl()
 
         // Act
-        val result = splitter.pickPart("tt-123", IssueSplit.KEY_REGEX)
+        val result = splitter.pickPart("tt-123", IssueSplitImpl.KEY_REGEX)
 
         // Assert
         assertThat(result).isNotNull()
@@ -25,10 +25,10 @@ class IssueSplitPickKeyTest {
     @Test
     fun splittablePhrase_shouldSplit() {
         // Arrange
-        val splitter = IssueSplit()
+        val splitter = IssueSplitImpl()
 
         // Act
-        val result = splitter.pickPart("tt-12:asdf", IssueSplit.KEY_REGEX)
+        val result = splitter.pickPart("tt-12:asdf", IssueSplitImpl.KEY_REGEX)
 
         // Assert
         assertThat(result).isNotNull()
@@ -38,10 +38,10 @@ class IssueSplitPickKeyTest {
     @Test
     fun splittablePhrase2_shouldSplit() {
         // Arrange
-        val splitter = IssueSplit()
+        val splitter = IssueSplitImpl()
 
         // Act
-        val result = splitter.pickPart(":asdf", IssueSplit.KEY_REGEX)
+        val result = splitter.pickPart(":asdf", IssueSplitImpl.KEY_REGEX)
 
         // Assert
         assertThat(result).isNotNull()
@@ -51,10 +51,10 @@ class IssueSplitPickKeyTest {
     @Test
     fun unsplittablePhrase2_shouldNotSplit() {
         // Arrange
-        val splitter = IssueSplit()
+        val splitter = IssueSplitImpl()
 
         // Act
-        val result = splitter.pickPart("tt-12asdf", IssueSplit.KEY_REGEX)
+        val result = splitter.pickPart("tt-12asdf", IssueSplitImpl.KEY_REGEX)
 
         // Assert
         assertThat(result).isNotNull()

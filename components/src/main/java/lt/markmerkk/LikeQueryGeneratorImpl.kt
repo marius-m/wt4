@@ -18,15 +18,15 @@ class LikeQueryGeneratorImpl(
     }
 
     override fun genQuery(clauses: List<String>): String {
-        if (clauses.isEmpty()) return ""
+        val filterClauses = clauses.filter { !it.isEmpty() }
+        if (filterClauses.isEmpty()) return ""
         val separator = " OR "
         val sb = StringBuilder()
         sb.append("(")
-        clauses.filter { !it.isEmpty() }
-                .forEach {
-                    sb.append(it)
-                    sb.append(separator)
-                }
+        filterClauses.forEach {
+            sb.append(it)
+            sb.append(separator)
+        }
         sb.delete(sb.length - separator.length, sb.length)
         sb.append(")")
         return sb.toString()

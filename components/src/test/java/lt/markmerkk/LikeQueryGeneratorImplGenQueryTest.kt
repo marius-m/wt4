@@ -74,4 +74,16 @@ class LikeQueryGeneratorImplGenQueryTest {
         assertEquals("(valid_query1 OR valid_query3)", result)
     }
 
+    @Test
+    fun oneEmpty_skip() {
+        // Arrange
+        // Act
+        val result = generator.genQuery(listOf(
+                ""
+        ))
+
+        // Assert
+        assertEquals("", result)
+    }
+
 }
