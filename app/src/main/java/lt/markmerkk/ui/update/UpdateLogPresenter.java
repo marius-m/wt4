@@ -1,37 +1,42 @@
 package lt.markmerkk.ui.update;
 
+import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-
-import javax.inject.Inject;
-
-import lt.markmerkk.Main;
-import lt.markmerkk.Translation;
-import lt.markmerkk.LogStorage;
+import lt.markmerkk.*;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.interactors.IssueSearchInteractorImpl;
+import lt.markmerkk.mvp.SearchOpenMvp;
+import lt.markmerkk.mvp.SearchOpenPresenterImpl;
 import lt.markmerkk.ui.interfaces.DialogListener;
 import lt.markmerkk.utils.AutoCompletionBindingIssues;
 import lt.markmerkk.utils.LogFormatters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+
 /**
  * Created by mariusmerkevicius on 12/14/15.
  * Represents the presenter to update the log
  */
-public class UpdateLogPresenter {
+public class UpdateLogPresenter implements SearchOpenMvp.View {
   public static final Logger logger = LoggerFactory.getLogger(UpdateLogPresenter.class);
   @Inject
   LogStorage storage;
   @Inject
   IExecutor dbProdExecutor;
+  @Inject
+  Application application;
+  @Inject
+  UserSettings userSettings;
 
   @FXML TextField taskInput;
   @FXML TextField startInput;
@@ -40,9 +45,12 @@ public class UpdateLogPresenter {
   @FXML TextField outputInfo;
   @FXML Button buttonOk;
   @FXML Button buttonClose;
+  @FXML Button buttonOpen;
 
   DialogListener dialogListener;
   SimpleLog entity;
+
+  SearchOpenMvp.Presenter searchOpenPresenter;
 
   protected void initWithEntity(SimpleLog entity) {
     Main.Companion.getComponent().presenterComponent().inject(this);
@@ -52,32 +60,32 @@ public class UpdateLogPresenter {
             new IssueSearchInteractorImpl(dbProdExecutor),
             taskInput
     );
+    searchOpenPresenter = new SearchOpenPresenterImpl(
+            this,
+            new HostServicesInteractorImpl(application, userSettings)
+    );
 
-    startInput.setText(entity.getLongStart());
-    startInput.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue,
-                          String newValue) {
-        update();
-      }
-    });
     endInput.setText(entity.getLongEnd());
-    endInput.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue,
-                          String newValue) {
-        update();
-      }
-    });
     commentInput.setText(entity.getComment());
     taskInput.setText(entity.getTask());
-    outputInfo.focusedProperty().addListener((observable, oldValue, newValue) -> {
-      buttonClose.requestFocus(); // Trick to disable selection on the header
-    });
+    startInput.setText(entity.getLongStart());
+
+    taskInput.textProperty().addListener(taskInputListener);
+    outputInfo.focusedProperty().addListener(outputFocusListener);
+    startInput.textProperty().addListener(dateChangeListener);
+    endInput.textProperty().addListener(dateChangeListener);
 
     updateStatus(entity);
     update();
     updateLock();
+  }
+
+  @PreDestroy
+  public void destroy() {
+    endInput.textProperty().removeListener(dateChangeListener);
+    startInput.textProperty().removeListener(dateChangeListener);
+    outputInfo.focusedProperty().removeListener(outputFocusListener);
+    taskInput.textProperty().removeListener(taskInputListener);
   }
 
   //region Convenience
@@ -175,6 +183,10 @@ public class UpdateLogPresenter {
     dialogListener.onCancel();
   }
 
+  public void onClickOpen() {
+      searchOpenPresenter.open(taskInput.getText());
+  }
+
   public void onClickSave() {
     if (dialogListener == null) return;
     try {
@@ -184,9 +196,43 @@ public class UpdateLogPresenter {
     } catch (IllegalArgumentException e) { }
   }
 
+  @Override
+  public void showOpenButton() {
+    buttonOpen.setVisible(true);
+    buttonOpen.setManaged(true);
+  }
+
+  @Override
+  public void hideOpenButton() {
+    buttonOpen.setVisible(false);
+    buttonOpen.setManaged(false);
+  }
+
   //endregion
 
   //region Listeners
+
+  ChangeListener<String> dateChangeListener = new ChangeListener<String>() {
+    @Override
+    public void changed(
+            ObservableValue<? extends String> observable,
+            String oldValue,
+            String newValue
+    ) {
+      update();
+    }
+  };
+
+  ChangeListener<Boolean> outputFocusListener = (observable, oldValue, newValue) -> {
+    buttonClose.requestFocus(); // Trick to disable selection on the header
+  };
+
+  ChangeListener<String> taskInputListener = new ChangeListener<String>() {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        searchOpenPresenter.handleInputChange(newValue);
+    }
+  };
 
   public void setDialogListener(DialogListener dialogListener) {
     this.dialogListener = dialogListener;

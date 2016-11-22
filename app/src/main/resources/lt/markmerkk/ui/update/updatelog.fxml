@@ -27,11 +27,16 @@
       </HBox>
       <HBox>
          <children>
-            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="1.7976931348623157E308" promptText="Task" HBox.hgrow="ALWAYS">
+            <TextField fx:id="taskInput" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="32.0" promptText="Task" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </TextField>
+            <Button fx:id="buttonOpen" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onClickOpen" prefHeight="32.0" prefWidth="32.0" stylesheets="@../../../../open.css">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
          </children>
          <VBox.margin>
             <Insets top="5.0" />

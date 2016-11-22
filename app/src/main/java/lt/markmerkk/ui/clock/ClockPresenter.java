@@ -132,10 +132,6 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener,
     inputFrom.setConverter(startDateConverter);
     inputTo.setConverter(endDateConverter);
 
-    Platform.runLater(() -> {
-      buttonOpen.setVisible(false);
-      buttonOpen.setManaged(false);
-    });
     updateUI();
 
     onLoadChange(syncInteractor.isLoading());
@@ -143,6 +139,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener,
     issueSearchPresenter.onAttach();
     issueStorage.register(this);
     inputTask.textProperty().addListener(searchChangeListener);
+    searchOpenPresenter.handleInputChange("");
   }
 
   @PreDestroy
