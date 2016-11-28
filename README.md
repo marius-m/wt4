@@ -103,6 +103,7 @@ Logs can be updated by pressing the right mouse button on the target log
 - Proper size for search result when looking for an issue
 - Smarter query for searching issues
 - Open issues from search bar to external browser
+- Provide parent info if issue is a subtask
 
 ### 0.9.9.7
 
