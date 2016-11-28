@@ -34,7 +34,7 @@ public class LocalIssueBuilderExtractDescriptionTest {
         // Arrange
         when(fakeIssueType.isSubtask()).thenReturn(false);
         when(fakeIssue.getIssueType()).thenReturn(fakeIssueType);
-        when(fakeIssue.getDescription()).thenReturn("fake_description");
+        when(fakeIssue.getSummary()).thenReturn("fake_description");
 
         // Act
         String result = builder.extractDescription(fakeIssue);
@@ -46,7 +46,7 @@ public class LocalIssueBuilderExtractDescriptionTest {
     @Test
     public void valid_isSubtaskNotAvailable_validDescription() throws Exception {
         // Arrange
-        when(fakeIssue.getDescription()).thenReturn("fake_description");
+        when(fakeIssue.getSummary()).thenReturn("fake_description");
 
         // Act
         String result = builder.extractDescription(fakeIssue);
@@ -60,7 +60,7 @@ public class LocalIssueBuilderExtractDescriptionTest {
         // Arrange
         when(fakeIssueType.isSubtask()).thenReturn(true);
         when(fakeIssue.getIssueType()).thenReturn(fakeIssueType);
-        when(fakeIssue.getDescription()).thenReturn("fake_description");
+        when(fakeIssue.getSummary()).thenReturn("fake_description");
         when(fakeIssue.getParent()).thenReturn(fakeParent);
         when(fakeParent.getKey()).thenReturn("PARENT-1");
         when(fakeParent.getSummary()).thenReturn("fake_parent_summary");

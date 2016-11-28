@@ -29,7 +29,7 @@ class RemoteIssuePullImpl(
                     )
                 } else {
                     remoteMergeExecutor.update(
-                            LocalIssueBuilder(oldIssue)
+                            LocalIssueBuilder(oldIssue, issue)
                                     .setDownloadMillis(downloadMillis)
                                     .build()
                     )

@@ -2,6 +2,8 @@ package lt.markmerkk.entities;
 
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.IssueType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -10,6 +12,8 @@ import java.util.Date;
  * A helper class to validate and build {@link LocalIssue} object
  */
 public class LocalIssueBuilder {
+    public static final Logger logger = LoggerFactory.getLogger(LocalIssueBuilder.class);
+
     private String project;
     private String key;
     private String description;
@@ -152,8 +156,8 @@ public class LocalIssueBuilder {
     String extractDescription(Issue remoteIssue) {
         if (remoteIssue == null) return "";
         StringBuilder descriptionBuilder = new StringBuilder();
-        if (remoteIssue.getDescription() != null) {
-            descriptionBuilder.append(remoteIssue.getDescription());
+        if (remoteIssue.getSummary() != null) {
+            descriptionBuilder.append(remoteIssue.getSummary());
         }
         IssueType issueType = remoteIssue.getIssueType();
         if (issueType == null) return descriptionBuilder.toString();
