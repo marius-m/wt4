@@ -45,16 +45,7 @@ public class LocalIssueBuilder {
     public LocalIssueBuilder(Issue remoteIssue) {
         this.project = remoteIssue.getProject().getKey();
         this.key = remoteIssue.getKey();
-        if (remoteIssue.getIssueType().isSubtask()) {
-            this.description = String.format(
-                    "%s: %s > %s",
-                    remoteIssue.getParent().getKey(),
-                    remoteIssue.getParent().getSummary(),
-                    remoteIssue.getSummary()
-            );
-        } else {
-            this.description = remoteIssue.getSummary();
-        }
+        this.description = extractDescription(remoteIssue);
         this.createDate = extractDate(remoteIssue.getCreatedDate());
         this.updateDate = extractDate(remoteIssue.getUpdatedDate());
 
@@ -70,7 +61,7 @@ public class LocalIssueBuilder {
         this._id = oldIssue._id;
         this.project = remoteIssue.getProject().getKey();
         this.key = remoteIssue.getKey();
-        this.description = remoteIssue.getSummary();
+        this.description = extractDescription(remoteIssue);
         this.createDate = extractDate(remoteIssue.getCreatedDate());
         this.updateDate = extractDate(remoteIssue.getUpdatedDate());
 
