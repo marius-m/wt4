@@ -1,6 +1,7 @@
 package lt.markmerkk.entities;
 
 import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.IssueType;
 
 import java.util.Date;
 
@@ -148,6 +149,57 @@ public class LocalIssueBuilder {
         return date.getTime();
     }
 
+    /**
+     * Extracts possible description.
+     * If task is a subtask and its parent is valid, parent infor should be appended
+     *
+     * For ex.: ([parent_key]:[parent_summary]):issue_summary
+     *
+     * @param remoteIssue remote issue provided.
+     * @return always a valid result, in worst case, empty string
+     */
+    String extractDescription(Issue remoteIssue) {
+        if (remoteIssue == null) return "";
+        StringBuilder descriptionBuilder = new StringBuilder();
+        if (remoteIssue.getDescription() != null) {
+            descriptionBuilder.append(remoteIssue.getDescription());
+        }
+        IssueType issueType = remoteIssue.getIssueType();
+        if (issueType == null) return descriptionBuilder.toString();
+        if (!issueType.isSubtask()) return descriptionBuilder.toString();
+        return descriptionBuilder
+                .insert(0, extractParentPrefix(remoteIssue.getParent()))
+                .toString();
+    }
+
+    /**
+     * Convenience function for {@link #extractDescription(Issue)}
+     * Will return prefix or an empty string
+     * @return
+     */
+    String extractParentPrefix(Issue parent) {
+        if (parent == null) return "";
+        String parentSummary = parent.getSummary();
+        String parentKey = parent.getKey();
+        if ((parentKey == null || parentKey.isEmpty())
+                && (parentSummary == null || parentSummary.isEmpty())) {
+            return "(...):";
+        }
+        StringBuilder prefixBuilder = new StringBuilder();
+        prefixBuilder.insert(0, ":");
+        prefixBuilder.insert(0, ")");
+        if (parentSummary != null && !parentSummary.isEmpty()) {
+            prefixBuilder.insert(0, parentSummary);
+        }
+        if (parentKey != null) {
+            if (parentSummary != null) {
+                prefixBuilder.insert(0, ":");
+            }
+            prefixBuilder.insert(0, parentKey);
+        }
+        prefixBuilder.insert(0, "(");
+        return prefixBuilder.toString();
+    }
 
     //endregion
 
