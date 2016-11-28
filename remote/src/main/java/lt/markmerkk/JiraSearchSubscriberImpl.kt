@@ -70,7 +70,7 @@ class JiraSearchSubscriberImpl(
                         jiraClientProvider = jiraClientProvider,
                         userSettings = userSettings,
                         jql = userSettings.issueJql,
-                        searchFields = "summary,project,created,updated"
+                        searchFields = "summary,project,created,updated,parent,issuetype"
                 )
         )
     }
