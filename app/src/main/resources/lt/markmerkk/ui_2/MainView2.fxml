@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import com.jfoenix.controls.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
@@ -8,6 +10,20 @@
       <VBox minHeight="70.0" minWidth="70.0" style="-fx-background-color: #78909C;" BorderPane.alignment="CENTER" />
    </left>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #CFD8DC;" BorderPane.alignment="CENTER" />
+      <StackPane>
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #CFD8DC;" BorderPane.alignment="CENTER">
+               <children>
+                  <JFXTreeTableView style="-fx-background-color: transparent;">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </JFXTreeTableView>
+                  <JFXTextField />
+               </children>
+            </VBox>
+            <JFXRippler prefHeight="50.0" prefWidth="50.0" />
+         </children>
+      </StackPane>
    </center>
 </BorderPane>
