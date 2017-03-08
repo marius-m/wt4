@@ -68,6 +68,7 @@ class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
     override fun onDataChange(data: List<SimpleLog>) {
         logs.clear()
         logs.addAll(data)
+        tableView.sort();
     }
 
 }
