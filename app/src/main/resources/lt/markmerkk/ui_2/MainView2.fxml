@@ -5,24 +5,40 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
    <left>
-      <VBox minHeight="70.0" minWidth="70.0" style="-fx-background-color: #78909C;" BorderPane.alignment="CENTER" />
+      <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
+         <children>
+            <JFXToggleNode styleClass="toggle-icon1">
+               <graphic>
+                  <JFXButton buttonType="FLAT" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;">
+            </JFXButton>
+               </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </JFXToggleNode>
+         </children>
+      </VBox>
    </left>
    <center>
       <StackPane>
          <children>
-            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #CFD8DC;" BorderPane.alignment="CENTER">
+            <VBox>
                <children>
-                  <JFXTreeTableView style="-fx-background-color: transparent;">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </VBox.margin>
-                  </JFXTreeTableView>
-                  <JFXTextField />
+                  <JFXTreeTableView currentItemsCount="10" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
+                  <HBox alignment="BOTTOM_CENTER" VBox.vgrow="NEVER">
+                     <children>
+                        <JFXTextField alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
-            <JFXRippler prefHeight="50.0" prefWidth="50.0" />
+            <JFXButton fx:id="button" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" StackPane.alignment="BOTTOM_RIGHT">
+               <StackPane.margin>
+                  <Insets bottom="40.0" right="30.0" />
+               </StackPane.margin>
+            </JFXButton>
          </children>
       </StackPane>
    </center>
