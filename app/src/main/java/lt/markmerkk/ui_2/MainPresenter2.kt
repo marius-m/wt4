@@ -3,8 +3,7 @@ package lt.markmerkk.ui_2
 import com.jfoenix.controls.*
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
 import com.jfoenix.svg.SVGGlyph
-import javafx.animation.Interpolator
-import javafx.animation.TranslateTransition
+import javafx.animation.*
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
@@ -78,6 +77,9 @@ class MainPresenter2 : Initializable {
                     SimpleIntegerProperty(i)
             ))
         }
+        button.setOnAction {
+            sendAnimation()
+        }
 
     }
 
@@ -109,6 +111,34 @@ class MainPresenter2 : Initializable {
 
         clockButton.graphic = null
         clockButton.text = "1h 30m"
+    }
+
+    fun sendAnimation() {
+        val scaleDownTimeline = Timeline()
+        val scaleDownY = KeyValue(button.scaleYProperty(), 0.0, Interpolator.EASE_OUT)
+        val scaleDownX = KeyValue(button.scaleXProperty(), 0.0, Interpolator.EASE_OUT)
+        val scaleDownFrame = KeyFrame(Duration.millis(100.0), scaleDownY, scaleDownX)
+        scaleDownTimeline.keyFrames.add(scaleDownFrame)
+
+        val scaleUpTimelineBig = Timeline()
+        val scaleUpYBig = KeyValue(button.scaleYProperty(), 1.2)
+        val scaleUpXBig = KeyValue(button.scaleXProperty(), 1.2)
+        val scaleUpFrameBig = KeyFrame(Duration.millis(100.0), scaleUpYBig, scaleUpXBig)
+        scaleUpTimelineBig.keyFrames.add(scaleUpFrameBig)
+
+        val scaleUpTimelineNormal = Timeline()
+        val scaleUpYNormal = KeyValue(button.scaleYProperty(), 1.0, Interpolator.EASE_IN)
+        val scaleUpXNormal = KeyValue(button.scaleXProperty(), 1.0, Interpolator.EASE_IN)
+        val scaleUpFrameNormal = KeyFrame(Duration.millis(30.0), scaleUpYNormal, scaleUpXNormal)
+        scaleUpTimelineNormal.keyFrames.add(scaleUpFrameNormal)
+
+        val sequentialTransition = SequentialTransition(
+                button,
+                scaleDownTimeline,
+                scaleUpTimelineBig,
+                scaleUpTimelineNormal
+        )
+        sequentialTransition.play()
     }
 
     fun sendGlyph(): SVGGlyph {
