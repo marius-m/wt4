@@ -1,18 +1,26 @@
 package lt.markmerkk.ui_2
 
-import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXToggleNode
+import com.jfoenix.controls.*
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
 import com.jfoenix.svg.SVGGlyph
-import javafx.animation.*
+import javafx.animation.Interpolator
+import javafx.animation.TranslateTransition
+import javafx.beans.property.IntegerProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.TreeTableColumn
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
+import javafx.util.Callback
 import javafx.util.Duration
 import java.net.URL
 import java.util.*
-import java.beans.EventHandler
 
 
 class MainPresenter2 : Initializable {
@@ -21,8 +29,13 @@ class MainPresenter2 : Initializable {
     @FXML lateinit var clockButton: JFXButton
     @FXML lateinit var clockToggle: JFXToggleNode
     @FXML lateinit var inputContainer: Region
-    @FXML lateinit var outputContainer: Region
     @FXML lateinit var mainContainer: BorderPane
+    @FXML lateinit var outputListView: JFXTreeTableView<TreeLog>
+    @FXML lateinit var firstNameColumn: JFXTreeTableColumn<TreeLog, String>
+    @FXML lateinit var lastNameColumn: JFXTreeTableColumn<TreeLog, String>
+    @FXML lateinit var ageColumn: JFXTreeTableColumn<TreeLog, Int>
+
+    val logs: ObservableList<TreeLog> = FXCollections.observableArrayList()
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         val sendGlyph = sendGlyph()
@@ -39,6 +52,33 @@ class MainPresenter2 : Initializable {
         clockGlyph.setSize(20.0, 20.0)
         clockButton.graphic = clockGlyph
         clockButton.text = ""
+
+        firstNameColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
+            if (firstNameColumn.validateValue(param)) {
+                param.value.value.firstName
+            } else {
+                firstNameColumn.getComputedValue(param)
+            }
+        })
+//        lastNameColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
+//            param.value.value.lastName
+//        })
+//        ageColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, Int> ->
+//            param.value.value.age.asObject()
+//        })
+        outputListView.root = RecursiveTreeItem<TreeLog>(
+                logs,
+                RecursiveTreeObject<TreeLog>::getChildren
+        )
+        outputListView.isShowRoot = false
+        for (i in 0..200) {
+            logs.add(TreeLog(
+                    SimpleStringProperty("name" + i),
+                    SimpleStringProperty("surname" + i),
+                    SimpleIntegerProperty(i)
+            ))
+        }
+
     }
 
     fun hideInput2() {
@@ -46,15 +86,21 @@ class MainPresenter2 : Initializable {
         translateTransition.fromY = inputContainer.translateY
         translateTransition.toY = inputContainer.height + 20
         translateTransition.interpolator = Interpolator.EASE_IN
+        translateTransition.setOnFinished {
+            inputContainer.isManaged = false
+            inputContainer.isVisible = false
+        }
         translateTransition.play()
 
         val clockGlyph = clockGlyph()
-        clockGlyph.setSize(20.0, 20.0)
+        clockGlyph.setSize(25.0, 25.0)
         clockButton.graphic = clockGlyph
         clockButton.text = ""
     }
 
     fun showInput2() {
+        inputContainer.isManaged = true
+        inputContainer.isVisible = true
         val translateTransition = TranslateTransition(Duration.millis(100.0), inputContainer)
         translateTransition.fromY = inputContainer.translateY
         translateTransition.toY = 0.0
@@ -84,3 +130,9 @@ class MainPresenter2 : Initializable {
     }
 
 }
+
+class TreeLog(
+        val firstName: StringProperty = SimpleStringProperty(),
+        val lastName: StringProperty = SimpleStringProperty(),
+        val age: IntegerProperty = SimpleIntegerProperty()
+) : RecursiveTreeObject<TreeLog>()

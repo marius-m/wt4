@@ -10,9 +10,9 @@
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
          <children>
-            <JFXToggleNode fx:id="clockToggle" minHeight="50.0" minWidth="50.0" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
+            <JFXToggleNode fx:id="clockToggle" minHeight="55.0" minWidth="55.0" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
                <graphic>
-                  <JFXButton fx:id="clockButton" ellipsisString="" prefHeight="40.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: transparent;" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
+                  <JFXButton fx:id="clockButton" ellipsisString="" maxHeight="45.0" maxWidth="45.0" minHeight="45.0" minWidth="45.0" prefHeight="45.0" prefWidth="45.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
@@ -27,9 +27,6 @@
    </left>
    <center>
       <BorderPane fx:id="mainContainer">
-         <center>
-            <JFXTreeTableView fx:id="outputContainer" currentItemsCount="10" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER" />
-         </center>
          <bottom>
             <HBox fx:id="inputContainer" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
                <children>
@@ -39,8 +36,18 @@
                         <Insets bottom="5.0" right="5.0" />
                      </HBox.margin></JFXButton>
                </children>
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
             </HBox>
          </bottom>
+         <center>
+            <JFXTreeTableView fx:id="outputListView" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
+               <columns>
+                  <JFXTreeTableColumn fx:id="firstNameColumn" minWidth="133" prefWidth="133" resizable="false" text="First Name" />
+               </columns>
+            </JFXTreeTableView>
+         </center>
       </BorderPane>
    </center>
 </BorderPane>
