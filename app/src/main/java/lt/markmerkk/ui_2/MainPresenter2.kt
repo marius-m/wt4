@@ -16,6 +16,7 @@ import javafx.scene.layout.Region
 import lt.markmerkk.ui_2.bridges.UIEButtonClock
 import lt.markmerkk.ui_2.bridges.UIEButtonCommit
 import lt.markmerkk.ui_2.bridges.UIECommitContainer
+import lt.markmerkk.ui_2.bridges.UIEListView
 import lt.markmerkk.ui_2.interactors.ClockRunInteractor
 import lt.markmerkk.ui_2.interactors.ClockRunInteractorImpl
 import java.net.URL
@@ -28,22 +29,20 @@ class MainPresenter2 : Initializable {
     @FXML lateinit var jfxClockToggle: JFXToggleNode
     @FXML lateinit var jfxCommitContainer: Region
     @FXML lateinit var jfxMainContainer: BorderPane
-    @FXML lateinit var jfxOutputListView: JFXTreeTableView<TreeLog>
-    @FXML lateinit var firstNameColumn: JFXTreeTableColumn<TreeLog, String>
-    @FXML lateinit var lastNameColumn: JFXTreeTableColumn<TreeLog, String>
-    @FXML lateinit var ageColumn: JFXTreeTableColumn<TreeLog, Int>
-
-    val logs: ObservableList<TreeLog> = FXCollections.observableArrayList()
+    @FXML lateinit var jfxOutputListView: JFXTreeTableView<UIEListView.TreeLog>
+    @FXML lateinit var jfxFirstColumn: JFXTreeTableColumn<UIEListView.TreeLog, String>
 
     lateinit var uieButtonCommit: UIEButtonCommit
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieCommitContainer: UIECommitContainer
+    lateinit var uieListView: UIEListView
     lateinit var clockRunInteractor: ClockRunInteractor
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         uieButtonClock = UIEButtonClock(jfxClockButton)
         uieButtonCommit = UIEButtonCommit(jfxCommitButton)
         uieCommitContainer = UIECommitContainer(jfxCommitContainer)
+        uieListView = UIEListView(jfxOutputListView, jfxFirstColumn)
         clockRunInteractor = ClockRunInteractorImpl(uieCommitContainer, uieButtonClock)
 
         jfxClockToggle.setOnAction {
@@ -53,38 +52,6 @@ class MainPresenter2 : Initializable {
                 clockRunInteractor.setRunning(false)
             }
         }
-
-        firstNameColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
-            if (firstNameColumn.validateValue(param)) {
-                param.value.value.firstName
-            } else {
-                firstNameColumn.getComputedValue(param)
-            }
-        })
-//        lastNameColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
-//            param.value.value.lastName
-//        })
-//        ageColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, Int> ->
-//            param.value.value.age.asObject()
-//        })
-        jfxOutputListView.root = RecursiveTreeItem<TreeLog>(
-                logs,
-                RecursiveTreeObject<TreeLog>::getChildren
-        )
-        jfxOutputListView.isShowRoot = false
-        for (i in 0..200) {
-            logs.add(TreeLog(
-                    SimpleStringProperty("name" + i),
-                    SimpleStringProperty("surname" + i),
-                    SimpleIntegerProperty(i)
-            ))
-        }
     }
 
 }
-
-class TreeLog(
-        val firstName: StringProperty = SimpleStringProperty(),
-        val lastName: StringProperty = SimpleStringProperty(),
-        val age: IntegerProperty = SimpleIntegerProperty()
-) : RecursiveTreeObject<TreeLog>()
