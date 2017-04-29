@@ -2,8 +2,6 @@ package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.*
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
-import com.jfoenix.svg.SVGGlyph
-import javafx.animation.*
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
@@ -15,42 +13,46 @@ import javafx.fxml.Initializable
 import javafx.scene.control.TreeTableColumn
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
-import javafx.scene.paint.Color
-import javafx.util.Callback
-import javafx.util.Duration
+import lt.markmerkk.ui_2.bridges.UIEButtonClock
+import lt.markmerkk.ui_2.bridges.UIEButtonCommit
+import lt.markmerkk.ui_2.bridges.UIECommitContainer
+import lt.markmerkk.ui_2.interactors.ClockRunInteractor
+import lt.markmerkk.ui_2.interactors.ClockRunInteractorImpl
 import java.net.URL
 import java.util.*
 
-
 class MainPresenter2 : Initializable {
 
-    @FXML lateinit var button: JFXButton
-    @FXML lateinit var clockButton: JFXButton
-    @FXML lateinit var clockToggle: JFXToggleNode
-    @FXML lateinit var inputContainer: Region
-    @FXML lateinit var mainContainer: BorderPane
-    @FXML lateinit var outputListView: JFXTreeTableView<TreeLog>
+    @FXML lateinit var jfxCommitButton: JFXButton
+    @FXML lateinit var jfxClockButton: JFXButton
+    @FXML lateinit var jfxClockToggle: JFXToggleNode
+    @FXML lateinit var jfxCommitContainer: Region
+    @FXML lateinit var jfxMainContainer: BorderPane
+    @FXML lateinit var jfxOutputListView: JFXTreeTableView<TreeLog>
     @FXML lateinit var firstNameColumn: JFXTreeTableColumn<TreeLog, String>
     @FXML lateinit var lastNameColumn: JFXTreeTableColumn<TreeLog, String>
     @FXML lateinit var ageColumn: JFXTreeTableColumn<TreeLog, Int>
 
     val logs: ObservableList<TreeLog> = FXCollections.observableArrayList()
 
+    lateinit var uieButtonCommit: UIEButtonCommit
+    lateinit var uieButtonClock: UIEButtonClock
+    lateinit var uieCommitContainer: UIECommitContainer
+    lateinit var clockRunInteractor: ClockRunInteractor
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        val sendGlyph = sendGlyph()
-        sendGlyph.setSize(20.0, 20.0)
-        button.graphic = sendGlyph
-        clockToggle.setOnAction {
-            if (clockToggle.isSelected) {
-                showInput2()
+        uieButtonClock = UIEButtonClock(jfxClockButton)
+        uieButtonCommit = UIEButtonCommit(jfxCommitButton)
+        uieCommitContainer = UIECommitContainer(jfxCommitContainer)
+        clockRunInteractor = ClockRunInteractorImpl(uieCommitContainer, uieButtonClock)
+
+        jfxClockToggle.setOnAction {
+            if (jfxClockToggle.isSelected) {
+                clockRunInteractor.setRunning(true)
             } else {
-                hideInput2()
+                clockRunInteractor.setRunning(false)
             }
         }
-        val clockGlyph = clockGlyph()
-        clockGlyph.setSize(20.0, 20.0)
-        clockButton.graphic = clockGlyph
-        clockButton.text = ""
 
         firstNameColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
             if (firstNameColumn.validateValue(param)) {
@@ -65,11 +67,11 @@ class MainPresenter2 : Initializable {
 //        ageColumn.setCellValueFactory({ param: TreeTableColumn.CellDataFeatures<TreeLog, Int> ->
 //            param.value.value.age.asObject()
 //        })
-        outputListView.root = RecursiveTreeItem<TreeLog>(
+        jfxOutputListView.root = RecursiveTreeItem<TreeLog>(
                 logs,
                 RecursiveTreeObject<TreeLog>::getChildren
         )
-        outputListView.isShowRoot = false
+        jfxOutputListView.isShowRoot = false
         for (i in 0..200) {
             logs.add(TreeLog(
                     SimpleStringProperty("name" + i),
@@ -77,86 +79,6 @@ class MainPresenter2 : Initializable {
                     SimpleIntegerProperty(i)
             ))
         }
-        button.setOnAction {
-            sendAnimation()
-        }
-
-    }
-
-    fun hideInput2() {
-        val translateTransition = TranslateTransition(Duration.millis(100.0), inputContainer)
-        translateTransition.fromY = inputContainer.translateY
-        translateTransition.toY = inputContainer.height + 20
-        translateTransition.interpolator = Interpolator.EASE_IN
-        translateTransition.setOnFinished {
-            inputContainer.isManaged = false
-            inputContainer.isVisible = false
-        }
-        translateTransition.play()
-
-        val clockGlyph = clockGlyph()
-        clockGlyph.setSize(25.0, 25.0)
-        clockButton.graphic = clockGlyph
-        clockButton.text = ""
-    }
-
-    fun showInput2() {
-        inputContainer.isManaged = true
-        inputContainer.isVisible = true
-        val translateTransition = TranslateTransition(Duration.millis(100.0), inputContainer)
-        translateTransition.fromY = inputContainer.translateY
-        translateTransition.toY = 0.0
-        translateTransition.interpolator = Interpolator.EASE_IN
-        translateTransition.play()
-
-        clockButton.graphic = null
-        clockButton.text = "1h 30m"
-    }
-
-    fun sendAnimation() {
-        val scaleDownTimeline = Timeline()
-        val scaleDownY = KeyValue(button.scaleYProperty(), 0.0, Interpolator.EASE_OUT)
-        val scaleDownX = KeyValue(button.scaleXProperty(), 0.0, Interpolator.EASE_OUT)
-        val scaleDownFrame = KeyFrame(Duration.millis(100.0), scaleDownY, scaleDownX)
-        scaleDownTimeline.keyFrames.add(scaleDownFrame)
-
-        val scaleUpTimelineBig = Timeline()
-        val scaleUpYBig = KeyValue(button.scaleYProperty(), 1.2)
-        val scaleUpXBig = KeyValue(button.scaleXProperty(), 1.2)
-        val scaleUpFrameBig = KeyFrame(Duration.millis(100.0), scaleUpYBig, scaleUpXBig)
-        scaleUpTimelineBig.keyFrames.add(scaleUpFrameBig)
-
-        val scaleUpTimelineNormal = Timeline()
-        val scaleUpYNormal = KeyValue(button.scaleYProperty(), 1.0, Interpolator.EASE_IN)
-        val scaleUpXNormal = KeyValue(button.scaleXProperty(), 1.0, Interpolator.EASE_IN)
-        val scaleUpFrameNormal = KeyFrame(Duration.millis(30.0), scaleUpYNormal, scaleUpXNormal)
-        scaleUpTimelineNormal.keyFrames.add(scaleUpFrameNormal)
-
-        val sequentialTransition = SequentialTransition(
-                button,
-                scaleDownTimeline,
-                scaleUpTimelineBig,
-                scaleUpTimelineNormal
-        )
-        sequentialTransition.play()
-    }
-
-    fun sendGlyph(): SVGGlyph {
-        return SVGGlyph(
-                -1,
-                "test",
-                "M1008 6.286q18.857 13.714 15.429 36.571l-146.286 877.714q-2.857 16.571-18.286 25.714-8 4.571-17.714 4.571-6.286 0-13.714-2.857l-258.857-105.714-138.286 168.571q-10.286 13.143-28 13.143-7.429 0-12.571-2.286-10.857-4-17.429-13.429t-6.571-20.857v-199.429l493.714-605.143-610.857 528.571-225.714-92.571q-21.143-8-22.857-31.429-1.143-22.857 18.286-33.714l950.857-548.571q8.571-5.143 18.286-5.143 11.429 0 20.571 6.286z",
-                Color.WHITE
-        )
-    }
-
-    fun clockGlyph(): SVGGlyph {
-        return SVGGlyph(
-                -1,
-                "clock-o",
-                "M512 640v-256q0-8-5.143-13.143t-13.143-5.143h-182.857q-8 0-13.143 5.143t-5.143 13.143v36.571q0 8 5.143 13.143t13.143 5.143h128v201.143q0 8 5.143 13.143t13.143 5.143h36.571q8 0 13.143-5.143t5.143-13.143zM749.714 438.857q0 84.571-41.714 156t-113.143 113.143-156 41.714-156-41.714-113.143-113.143-41.714-156 41.714-156 113.143-113.143 156-41.714 156 41.714 113.143 113.143 41.714 156zM877.714 438.857q0-119.429-58.857-220.286t-159.714-159.714-220.286-58.857-220.286 58.857-159.714 159.714-58.857 220.286 58.857 220.286 159.714 159.714 220.286 58.857 220.286-58.857 159.714-159.714 58.857-220.286z",
-                Color.WHITE
-        );
     }
 
 }

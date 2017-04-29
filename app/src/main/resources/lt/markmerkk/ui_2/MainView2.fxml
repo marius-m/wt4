@@ -10,9 +10,9 @@
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
          <children>
-            <JFXToggleNode fx:id="clockToggle" minHeight="55.0" minWidth="55.0" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
+            <JFXToggleNode fx:id="jfxClockToggle" minHeight="55.0" minWidth="55.0" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
                <graphic>
-                  <JFXButton fx:id="clockButton" ellipsisString="" maxHeight="45.0" maxWidth="45.0" minHeight="45.0" minWidth="45.0" prefHeight="45.0" prefWidth="45.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
+                  <JFXButton fx:id="jfxClockButton" ellipsisString="" maxHeight="45.0" maxWidth="45.0" minHeight="45.0" minWidth="45.0" prefHeight="45.0" prefWidth="45.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
@@ -26,12 +26,12 @@
       </VBox>
    </left>
    <center>
-      <BorderPane fx:id="mainContainer">
+      <BorderPane fx:id="jfxMainContainer">
          <bottom>
-            <HBox fx:id="inputContainer" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
+            <HBox fx:id="jfxCommitContainer" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
                <children>
                   <JFXTextField alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
-                  <JFXButton fx:id="button" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textOverrun="CLIP">
+                  <JFXButton fx:id="jfxCommitButton" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textOverrun="CLIP">
                      <HBox.margin>
                         <Insets bottom="5.0" right="5.0" />
                      </HBox.margin></JFXButton>
@@ -42,9 +42,11 @@
             </HBox>
          </bottom>
          <center>
-            <JFXTreeTableView fx:id="outputListView" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
+            <JFXTreeTableView fx:id="jfxOutputListView" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
                <columns>
-                  <JFXTreeTableColumn fx:id="firstNameColumn" minWidth="133" prefWidth="133" resizable="false" text="First Name" />
+                  <JFXTreeTableColumn fx:id="firstNameColumn" editable="false" minWidth="133" prefWidth="133" resizable="false" text="Ticket" />
+                  <JFXTreeTableColumn fx:id="firstNameColumn1" editable="false" minWidth="133" prefWidth="133" resizable="false" text="Duration" />
+                  <JFXTreeTableColumn fx:id="firstNameColumn11" editable="false" minWidth="133" prefWidth="133" resizable="false" text="Message" />
                </columns>
             </JFXTreeTableView>
          </center>
