@@ -17,12 +17,13 @@ import java.util.*
 
 class MainPresenter2 : Initializable {
 
+    @FXML lateinit var jfxRoot: BorderPane
+    @FXML lateinit var jfxContainerMain: StackPane
     @FXML lateinit var jfxButtonCommit: JFXButton
     @FXML lateinit var jfxButtonClock: JFXButton
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
     @FXML lateinit var jfxContainerCommit: Region
-    @FXML lateinit var jfxContainerMain: StackPane
     @FXML lateinit var jfxListViewOutput: JFXTreeTableView<UIEListView.TreeLog>
     @FXML lateinit var jfxColumnFirst: JFXTreeTableColumn<UIEListView.TreeLog, String>
 
@@ -49,7 +50,7 @@ class MainPresenter2 : Initializable {
         jfxButtonClockSettings.setOnAction {
             val clockEditDialog = ClockEditDialog()
             val jfxDialog = clockEditDialog.view as JFXDialog
-            jfxDialog.show(jfxContainerMain)
+            jfxDialog.show(jfxRoot.parent as StackPane)
         }
     }
 

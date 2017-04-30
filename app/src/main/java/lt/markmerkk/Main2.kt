@@ -1,7 +1,11 @@
 package lt.markmerkk
 
 import javafx.application.Application
+import javafx.geometry.Pos
+import javafx.scene.Group
 import javafx.scene.Scene
+import javafx.scene.control.Label
+import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.dagger.components.AppComponent
@@ -74,8 +78,11 @@ class Main2 : Application(), KeepAliveInteractor.Listener {
         keepAliveInteractor.register(this)
         syncInteractor.onAttach()
 
-        val mainView = MainView2()
-        val scene = Scene(mainView.view)
+        val stackContainer = StackPane(MainView2().view)
+        val scene = Scene(stackContainer)
+        stackContainer.prefWidthProperty().bind(scene.widthProperty())
+        stackContainer.prefHeightProperty().bind(scene.heightProperty())
+
         stage.width = SCENE_WIDTH.toDouble()
         stage.height = SCENE_HEIGHT.toDouble()
         stage.minWidth = SCENE_WIDTH.toDouble()

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
@@ -7,8 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
+<BorderPane fx:id="jfxRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
          <children>
@@ -76,7 +76,7 @@
                </center>
             </BorderPane>
 
-               </children>
+                                             </children>
       </StackPane>
    </center>
 </BorderPane>
