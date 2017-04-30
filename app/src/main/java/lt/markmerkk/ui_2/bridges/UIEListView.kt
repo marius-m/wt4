@@ -35,7 +35,7 @@ class UIEListView(
         listView.isShowRoot = false
 
         // todo : remove test data
-        for (i in 0..200) {
+        for (i in 0..10) {
             logs.add(TreeLog(
                     SimpleStringProperty("name" + i),
                     SimpleStringProperty("surname" + i),
