@@ -11,10 +11,10 @@ class ClockRunInteractorImpl(
     override fun setRunning(isRunning: Boolean) {
         if (isRunning) {
             commitContainer.show()
-            clockButton.hide()
+            clockButton.show()
         } else {
             commitContainer.hide()
-            clockButton.show()
+            clockButton.hide()
         }
     }
 

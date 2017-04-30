@@ -1,8 +1,22 @@
 .toggle-icon1 {
-	-fx-pref-width: 50px;
+	-fx-pref-width: 52px;
 	-fx-background-radius: 50px;
-	-fx-pref-height: 50px;
+	-fx-pref-height: 52px;
 	-fx-background-color:transparent ;
+}
+
+.button-settings-mini {
+	-fx-pref-width: 16px;
+	-fx-background-radius: 50px;
+	-fx-pref-height: 16px;
+	-fx-background-color:orange ;
+}
+
+.button-default {
+	-fx-pref-width: 46px;
+	-fx-pref-height: 46px;
+	-fx-background-radius: 100px;
+	-fx-background-color: #E91E63;
 }
 
 /*******************************************************************************

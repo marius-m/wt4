@@ -11,28 +11,43 @@
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
          <children>
-            <JFXToggleNode fx:id="jfxClockToggle" minHeight="55.0" minWidth="55.0" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
-               <graphic>
-                  <JFXButton fx:id="jfxClockButton" ellipsisString="" maxHeight="45.0" maxWidth="45.0" minHeight="45.0" minWidth="45.0" prefHeight="45.0" prefWidth="45.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
+            <StackPane>
+               <children>
+                  <JFXToggleNode fx:id="jfxToggleClock" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
+                     <graphic>
+                        <JFXButton fx:id="jfxButtonClock" alignment="CENTER" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default" stylesheets="@../../../css/material.css" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </JFXButton>
+                     </graphic>
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
-                  </JFXButton>
-               </graphic>
+                  </JFXToggleNode>
+                  <VBox alignment="TOP_RIGHT" fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="50.0" prefWidth="50.0">
+                     <children>
+                        <JFXButton fx:id="jfxButtonClockSettings" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="15.0" ripplerFill="WHITE" styleClass="button-settings-mini" stylesheets="@../../../css/material.css" textOverrun="CLIP">
+                           <VBox.margin>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </VBox.margin></JFXButton>
+                     </children>
+                  </VBox>
+               </children>
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="5.0" />
                </VBox.margin>
-            </JFXToggleNode>
+            </StackPane>
          </children>
       </VBox>
    </left>
    <center>
-      <BorderPane fx:id="jfxMainContainer">
+      <BorderPane fx:id="jfxContainerMain">
          <bottom>
-            <HBox fx:id="jfxCommitContainer" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
+            <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
                <children>
                   <JFXTextField alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
-                  <JFXButton fx:id="jfxCommitButton" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" style="-fx-background-radius: 100; -fx-background-color: #E91E63;" textOverrun="CLIP">
+                  <JFXButton fx:id="jfxButtonCommit" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" styleClass="button-default" stylesheets="@../../../css/material.css" textOverrun="CLIP">
                      <HBox.margin>
                         <Insets bottom="5.0" right="5.0" />
                      </HBox.margin></JFXButton>
@@ -43,9 +58,9 @@
             </HBox>
          </bottom>
          <center>
-            <JFXTreeTableView fx:id="jfxOutputListView" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
+            <JFXTreeTableView fx:id="jfxListViewOutput" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
                <columns>
-                  <JFXTreeTableColumn fx:id="jfxFirstColumn" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />
+                  <JFXTreeTableColumn fx:id="jfxColumnFirst" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />
                   <JFXTreeTableColumn fx:id="firstNameColumn1" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duration" />
                   <JFXTreeTableColumn fx:id="firstNameColumn11" editable="false" minWidth="133" prefWidth="133" text="Message" />
                </columns>
