@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.control.Label?>
+<JFXDialog
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.ClockEditController">
+   <content>
+       <JFXDialogLayout
+        maxWidth="200.0"
+        maxHeight="100.0"
+       >
+           <heading>
+               <Label>JFoenix Dialog</Label>
+           </heading>
+           <body>
+               <Label>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat.</Label>
+           </body>
+           <actions>
+               <JFXButton fx:id="acceptButton" styleClass="dialog-accept">ACCEPT
+            </JFXButton>
+           </actions>
+       </JFXDialogLayout>
+   </content>
+</JFXDialog>

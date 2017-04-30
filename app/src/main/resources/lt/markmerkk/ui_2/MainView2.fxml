@@ -7,6 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
@@ -30,7 +31,8 @@
                         <JFXButton fx:id="jfxButtonClockSettings" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="15.0" ripplerFill="WHITE" styleClass="button-settings-mini" stylesheets="@../../../css/material.css" textOverrun="CLIP">
                            <VBox.margin>
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </VBox.margin></JFXButton>
+                           </VBox.margin>
+                        </JFXButton>
                      </children>
                   </VBox>
                </children>
@@ -42,33 +44,39 @@
       </VBox>
    </left>
    <center>
-      <BorderPane fx:id="jfxContainerMain">
-         <bottom>
-            <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
-               <children>
-                  <JFXTextField alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
-                  <JFXButton fx:id="jfxButtonCommit" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" styleClass="button-default" stylesheets="@../../../css/material.css" textOverrun="CLIP">
-                     <HBox.margin>
-                        <Insets bottom="5.0" right="5.0" />
-                     </HBox.margin></JFXButton>
+      <StackPane fx:id="jfxContainerMain">
+         <children>
+            <BorderPane>
+               <bottom>
+                  <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <JFXTextField alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
+                        <JFXButton fx:id="jfxButtonCommit" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" styleClass="button-default" stylesheets="@../../../css/material.css" textOverrun="CLIP">
+                           <HBox.margin>
+                              <Insets bottom="5.0" right="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="10.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </bottom>
+               <center>
+                  <JFXTreeTableView fx:id="jfxListViewOutput" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
+                     <columns>
+                        <JFXTreeTableColumn fx:id="jfxColumnFirst" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />
+                        <JFXTreeTableColumn fx:id="firstNameColumn1" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duration" />
+                        <JFXTreeTableColumn fx:id="firstNameColumn11" editable="false" minWidth="133" prefWidth="133" text="Message" />
+                     </columns>
+                     <columnResizePolicy>
+                        <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </JFXTreeTableView>
+               </center>
+            </BorderPane>
+
                </children>
-               <BorderPane.margin>
-                  <Insets top="10.0" />
-               </BorderPane.margin>
-            </HBox>
-         </bottom>
-         <center>
-            <JFXTreeTableView fx:id="jfxListViewOutput" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
-               <columns>
-                  <JFXTreeTableColumn fx:id="jfxColumnFirst" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />
-                  <JFXTreeTableColumn fx:id="firstNameColumn1" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duration" />
-                  <JFXTreeTableColumn fx:id="firstNameColumn11" editable="false" minWidth="133" prefWidth="133" text="Message" />
-               </columns>
-               <columnResizePolicy>
-                  <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </JFXTreeTableView>
-         </center>
-      </BorderPane>
+      </StackPane>
    </center>
 </BorderPane>

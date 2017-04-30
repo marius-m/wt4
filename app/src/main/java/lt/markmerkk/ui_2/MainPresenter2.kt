@@ -1,13 +1,11 @@
 package lt.markmerkk.ui_2
 
-import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXToggleNode
-import com.jfoenix.controls.JFXTreeTableColumn
-import com.jfoenix.controls.JFXTreeTableView
+import com.jfoenix.controls.*
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
+import javafx.scene.layout.StackPane
 import lt.markmerkk.ui_2.bridges.UIEButtonClock
 import lt.markmerkk.ui_2.bridges.UIEButtonCommit
 import lt.markmerkk.ui_2.bridges.UIECommitContainer
@@ -24,7 +22,7 @@ class MainPresenter2 : Initializable {
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
     @FXML lateinit var jfxContainerCommit: Region
-    @FXML lateinit var jfxContainerMain: BorderPane
+    @FXML lateinit var jfxContainerMain: StackPane
     @FXML lateinit var jfxListViewOutput: JFXTreeTableView<UIEListView.TreeLog>
     @FXML lateinit var jfxColumnFirst: JFXTreeTableColumn<UIEListView.TreeLog, String>
 
@@ -47,6 +45,11 @@ class MainPresenter2 : Initializable {
             } else {
                 clockRunInteractor.setRunning(false)
             }
+        }
+        jfxButtonClockSettings.setOnAction {
+            val clockEditDialog = ClockEditDialog()
+            val jfxDialog = clockEditDialog.view as JFXDialog
+            jfxDialog.show(jfxContainerMain)
         }
     }
 
