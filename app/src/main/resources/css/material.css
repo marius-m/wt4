@@ -19,6 +19,28 @@
 	-fx-background-color: #E91E63;
 }
 
+.button-default-clock {
+    -fx-font-size: 6pt;
+	-fx-width: 46px;
+	-fx-height: 46px;
+	-fx-pref-width: 46px;
+	-fx-pref-height: 46px;
+	-fx-background-radius: 100px;
+	-fx-background-color: #E91E63;
+}
+
+.date-time-select {
+	default-color: #E91E63;
+}
+
+.dialog-header {
+    -fx-font-size: 24pt;
+}
+
+.dialog-clock-edit-caption {
+    -fx-font-size: 8pt;
+}
+
 /*******************************************************************************
 *                                                                              *
 * Tree Table View                                                              *

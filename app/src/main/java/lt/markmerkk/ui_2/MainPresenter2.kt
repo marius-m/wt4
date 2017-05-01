@@ -18,7 +18,6 @@ import java.util.*
 class MainPresenter2 : Initializable {
 
     @FXML lateinit var jfxRoot: BorderPane
-    @FXML lateinit var jfxContainerMain: StackPane
     @FXML lateinit var jfxButtonCommit: JFXButton
     @FXML lateinit var jfxButtonClock: JFXButton
     @FXML lateinit var jfxButtonClockSettings: JFXButton

@@ -4,27 +4,45 @@
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import javafx.scene.text.Text?>
 <JFXDialog
+        fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="lt.markmerkk.ui_2.ClockEditController">
    <content>
-       <JFXDialogLayout
-        maxWidth="200.0"
-        maxHeight="100.0"
-       >
+       <JFXDialogLayout fx:id="jfxDialogLayout">
            <heading>
-               <Label>JFoenix Dialog</Label>
+               <Label fx:id="jfxHeaderLabel" styleClass="dialog-header" stylesheets="@../../../css/material.css">Clock settings</Label>
            </heading>
            <body>
-               <Label>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.</Label>
+               <VBox>
+                   <children>
+                       <HBox alignment="CENTER_LEFT">
+                           <children>
+                               <Label prefWidth="60">From</Label>
+                               <JFXDatePicker fx:id="jfxDateOverlayFrom" overLay="true" defaultColor="#E91E63" styleClass="date-time-select" stylesheets="@../../../css/material.css"></JFXDatePicker>
+                               <JFXDatePicker fx:id="jfxTimeOverlayFrom" overLay="true" defaultColor="#E91E63" styleClass="date-time-select" stylesheets="@../../../css/material.css" showTime="true"></JFXDatePicker>
+                           </children>
+                       </HBox>
+                       <HBox alignment="CENTER_LEFT">
+                           <children>
+                               <Label prefWidth="60">To</Label>
+                               <JFXDatePicker fx:id="jfxDateOverlayTo" overLay="true" defaultColor="#E91E63" styleClass="date-time-select" stylesheets="@../../../css/material.css"></JFXDatePicker>
+                               <JFXDatePicker fx:id="jfxTimeOverlayTo" overLay="true" defaultColor="#E91E63" styleClass="date-time-select" stylesheets="@../../../css/material.css" showTime="true"></JFXDatePicker>
+                           </children>
+                       </HBox>
+                   </children>
+                   <Label textAlignment="CENTER" styleClass="dialog-clock-edit-caption" stylesheets="@../../../css/material.css">Duration: 1m 30m</Label>
+               </VBox>
            </body>
            <actions>
-               <JFXButton fx:id="acceptButton" styleClass="dialog-accept">ACCEPT
-            </JFXButton>
+               <JFXButton fx:id="jfxButtonCancel" styleClass="dialog-cancel">CANCEL</JFXButton>
+               <JFXButton fx:id="jfxButtonAccept" styleClass="dialog-accept">ACCEPT</JFXButton>
            </actions>
        </JFXDialogLayout>
    </content>
