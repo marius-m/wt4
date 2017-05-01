@@ -100,6 +100,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
             val scene = Scene(stackContainer)
             stackContainer.prefWidthProperty().bind(scene.widthProperty())
             stackContainer.prefHeightProperty().bind(scene.heightProperty())
+            scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
             return scene
         }
         val mainView = MainView(stage)

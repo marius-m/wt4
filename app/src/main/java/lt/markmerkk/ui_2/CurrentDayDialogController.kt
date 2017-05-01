@@ -6,38 +6,22 @@ import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXDialogLayout
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.Label
-import javafx.scene.layout.BorderPane
 import java.net.URL
 import java.util.*
-import javax.annotation.PreDestroy
 
-class ClockEditController : Initializable {
+class CurrentDayDialogController : Initializable {
 
     @FXML lateinit var jfxDialog: JFXDialog
     @FXML lateinit var jfxDialogLayout: JFXDialogLayout
     @FXML lateinit var jfxButtonAccept: JFXButton
     @FXML lateinit var jfxButtonCancel: JFXButton
-    @FXML lateinit var jfxContentView: BorderPane
-    @FXML lateinit var jfxHeaderLabel: Label
 
-    @FXML lateinit var jfxDateOverlayFrom: JFXDatePicker
-    @FXML lateinit var jfxTimeOverlayFrom: JFXDatePicker
-    @FXML lateinit var jfxDateOverlayTo: JFXDatePicker
-    @FXML lateinit var jfxTimeOverlayTo: JFXDatePicker
+    @FXML lateinit var jfxDate: JFXDatePicker
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         jfxButtonCancel.setOnAction {
             jfxDialog.close()
         }
-
-        println("Showing time: " + jfxDateOverlayFrom.isShowTime)
-
-    }
-
-    @PreDestroy
-    fun destroy() {
-
     }
 
 }

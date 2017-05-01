@@ -11,9 +11,7 @@ import lt.markmerkk.Main
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui_2.bridges.UIEButtonClock
-import lt.markmerkk.ui_2.bridges.UIECommitContainer
-import lt.markmerkk.ui_2.bridges.UIEListView
+import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import java.net.URL
 import java.util.*
@@ -32,11 +30,15 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxListViewOutput: JFXTreeTableView<UIEListView.TreeLog>
     @FXML lateinit var jfxColumnDuration: JFXTreeTableColumn<UIEListView.TreeLog, String>
     @FXML lateinit var jfxColumnMessage: JFXTreeTableColumn<UIEListView.TreeLog, String>
+    @FXML lateinit var jfxButtonSettings: JFXButton
+    @FXML lateinit var jfxButtonDate: JFXButton
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
 
     lateinit var uieButtonClock: UIEButtonClock
+    lateinit var uieButtonDate: UIEButtonDate
+    lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCommitContainer: UIECommitContainer
     lateinit var uieListView: UIEListView
     lateinit var clockRunBridge: ClockRunBridge
@@ -45,6 +47,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
+        uieButtonDate = UIEButtonDate(this, jfxButtonDate)
+        uieButtonSettings = UIEButtonSettings(jfxButtonSettings)
         uieButtonClock = UIEButtonClock(
                 this,
                 buttonClockListener,
