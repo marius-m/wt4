@@ -63,9 +63,9 @@
          <center>
             <JFXTreeTableView fx:id="jfxListViewOutput" stylesheets="@../../../css/material.css" BorderPane.alignment="CENTER">
                <columns>
-                  <JFXTreeTableColumn fx:id="jfxColumnFirst" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />
-                  <JFXTreeTableColumn fx:id="firstNameColumn1" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duration" />
-                  <JFXTreeTableColumn fx:id="firstNameColumn11" editable="false" minWidth="133" prefWidth="133" text="Message" />
+                  <JFXTreeTableColumn fx:id="jfxColumnTicket" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />
+                  <JFXTreeTableColumn fx:id="jfxColumnDuration" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duration" />
+                  <JFXTreeTableColumn fx:id="jfxColumnMessage" editable="false" minWidth="133" prefWidth="133" text="Message" />
                </columns>
                <columnResizePolicy>
                   <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

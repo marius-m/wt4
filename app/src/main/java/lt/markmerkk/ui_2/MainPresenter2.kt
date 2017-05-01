@@ -6,8 +6,11 @@ import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
+import lt.markmerkk.IDataStorage
+import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.Main2
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.bridges.*
@@ -30,9 +33,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxToggleClock: JFXToggleNode
     @FXML lateinit var jfxContainerCommit: Region
     @FXML lateinit var jfxListViewOutput: JFXTreeTableView<UIEListView.TreeLog>
-    @FXML lateinit var jfxColumnFirst: JFXTreeTableColumn<UIEListView.TreeLog, String>
+    @FXML lateinit var jfxColumnTicket: JFXTreeTableColumn<UIEListView.TreeLog, String>
+    @FXML lateinit var jfxColumnDuration: JFXTreeTableColumn<UIEListView.TreeLog, String>
+    @FXML lateinit var jfxColumnMessage: JFXTreeTableColumn<UIEListView.TreeLog, String>
 
     @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var logStorage: LogStorage
 
     lateinit var uieButtonCommit: UIEButtonCommit
     lateinit var uieButtonClock: UIEButtonClock
@@ -53,7 +59,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         )
         uieButtonCommit = UIEButtonCommit(jfxButtonCommit)
         uieCommitContainer = UIECommitContainer(jfxContainerCommit)
-        uieListView = UIEListView(jfxListViewOutput, jfxColumnFirst)
+        uieListView = UIEListView(
+                jfxListViewOutput,
+                jfxColumnTicket,
+                jfxColumnDuration,
+                jfxColumnMessage
+        )
 
         // Init interactors
         clockRunInteractor = ClockRunBridgeImpl(
@@ -61,10 +72,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 uieButtonClock,
                 hourGlass
         )
+        logStorage.register(uieListView)
     }
 
     @PreDestroy
     fun destroy() {
+        logStorage.unregister(uieListView)
         if (hourGlass.state == HourGlass.State.RUNNING) {
             hourGlass.stop()
         }
