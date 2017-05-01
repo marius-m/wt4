@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2.bridges
 
+import com.jfoenix.controls.JFXPopup
 import com.jfoenix.controls.JFXTreeTableColumn
 import com.jfoenix.controls.JFXTreeTableView
 import com.jfoenix.controls.RecursiveTreeItem
@@ -12,34 +13,25 @@ import javafx.scene.control.TreeTableColumn
 import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.UIElement
+import lt.markmerkk.ui_2.TreeContextMenu
 import lt.markmerkk.utils.LogUtils
-import org.joda.time.DateTime
 
 class UIEListView(
         private val logStorage: LogStorage,
         private val listView: JFXTreeTableView<TreeLog>,
-        private val columnTicket: JFXTreeTableColumn<TreeLog, String>,
         private val columnDuration: JFXTreeTableColumn<TreeLog, String>,
         private val columnMessage: JFXTreeTableColumn<TreeLog, String>
 ) : UIElement<JFXTreeTableView<UIEListView.TreeLog>>, IDataListener<SimpleLog> {
 
     private val logs: ObservableList<TreeLog> = FXCollections.observableArrayList()
+//    private val glyphEdit: SVGGlyph = glyphUpdate()
 
     init {
         listView.root = RecursiveTreeItem<TreeLog>(
                 logs,
                 RecursiveTreeObject<TreeLog>::getChildren
         )
-        columnTicket.setCellValueFactory({
-            param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
-            if (columnTicket.validateValue(param)) {
-                param.value.value.ticket
-            } else {
-                columnTicket.getComputedValue(param)
-            }
-        })
         columnDuration.setCellValueFactory({
             param: TreeTableColumn.CellDataFeatures<TreeLog, String> ->
             if (columnDuration.validateValue(param)) {
@@ -56,6 +48,16 @@ class UIEListView(
                 columnMessage.getComputedValue(param)
             }
         })
+        listView.setOnContextMenuRequested {
+            val contextListViewActions = TreeContextMenu().view as JFXPopup
+            contextListViewActions.source = listView
+            contextListViewActions.show(
+                    JFXPopup.PopupVPosition.TOP,
+                    JFXPopup.PopupHPosition.LEFT,
+                    it.x,
+                    it.y
+            )
+        }
         listView.isShowRoot = false
 //        val testlog = SimpleLogBuilder()
 //                .setStart(DateTime.now().minusHours(3).millis)
