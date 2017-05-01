@@ -39,6 +39,11 @@
             </Button>
             <Button fx:id="buttonSettings" minHeight="38.0" minWidth="38.0" mnemonicParsing="false" onAction="#onClickSettings" stylesheets="@../../../../settings.css">
                <HBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonMagic" minHeight="38.0" minWidth="38.0" mnemonicParsing="false" onAction="#onClickMagic" stylesheets="@../../../../update_material.css">
+               <HBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Button>

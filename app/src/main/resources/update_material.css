@@ -1,0 +1,6 @@
+.button {
+    -fx-background-image: url("magic.png");
+    -fx-background-size: 24 24;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:center;
+}

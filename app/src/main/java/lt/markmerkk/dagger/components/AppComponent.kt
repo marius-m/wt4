@@ -1,13 +1,9 @@
 package lt.markmerkk.dagger.components
 
 import dagger.Component
-import javafx.application.Application
 import lt.markmerkk.Main
-import lt.markmerkk.Main2
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.SyncModule
-import lt.markmerkk.interactors.SyncInteractorImpl
-import javax.inject.Provider
 import javax.inject.Singleton
 
 /**
@@ -24,8 +20,6 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(application: Main)
-
-    fun inject(application: Main2)
 
     fun presenterComponent(): PresenterComponent
 

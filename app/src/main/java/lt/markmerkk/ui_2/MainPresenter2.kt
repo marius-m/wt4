@@ -47,7 +47,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var clockRunBridge: ClockRunBridge
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main2.Companion.component!!.presenterComponent().inject(this)
+        Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
         uieButtonClock = UIEButtonClock(

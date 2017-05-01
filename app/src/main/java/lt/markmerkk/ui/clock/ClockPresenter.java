@@ -91,6 +91,8 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener,
   Text outputJQL;
   @FXML
   TextField inputTask;
+  @FXML
+  Button buttonMagic;
 
   @FXML ProgressIndicator taskLoadIndicator;
 
@@ -125,6 +127,7 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener,
     buttonOpen.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_open")));
     buttonSettings.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_settings")));
     inputComment.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_comment")));
+    buttonMagic.setTooltip(new Tooltip(Translation.getInstance().getString("clock_tooltip_button_magic")));
     hourGlass.setCurrentDay(DateTime.now());
     hourGlass.setListener(hourglassListener);
     inputFrom.getEditor().textProperty().addListener(timeChangeListener);
@@ -191,6 +194,11 @@ public class ClockPresenter implements Initializable, IRemoteLoadListener,
 
   public void onClickSettings() {
     listener.onSettings();
+  }
+
+  public void onClickMagic() {
+    Main.Companion.setMATERIAL(true);
+    Main.Companion.getMainInstance().restart();
   }
 
   //endregion
