@@ -16,7 +16,7 @@
                <children>
                   <JFXToggleNode fx:id="jfxToggleClock" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-radius: 100;" styleClass="toggle-icon1" stylesheets="@../../../css/material.css">
                      <graphic>
-                        <JFXButton fx:id="jfxButtonClock" alignment="CENTER" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default-clock" stylesheets="@../../../css/material.css" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
+                        <JFXButton fx:id="jfxButtonClock" alignment="CENTER" ellipsisString="..." maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default-clock" stylesheets="@../../../css/material.css" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>

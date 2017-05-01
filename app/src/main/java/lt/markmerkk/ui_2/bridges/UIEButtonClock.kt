@@ -5,7 +5,9 @@ import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXToggleNode
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
 import lt.markmerkk.ui_2.ClockEditDialog
+import lt.markmerkk.utils.UIEUtils
 
 /**
  * Represents clock jfxCommitButton, its graphics, animations
@@ -38,6 +40,7 @@ class UIEButtonClock(
     }
 
     override fun updateText(text: String) {
+        button.font = Font.font(UIEUtils.fontSizeBasedOnLength(text))
         button.text = text
     }
 
@@ -45,13 +48,12 @@ class UIEButtonClock(
 
     override fun show() {
         button.graphic = null
-        button.text = ""
         buttonSettings.isVisible = true
     }
 
     override fun hide() {
+        updateText("")
         button.graphic = glyphClock
-        button.text = ""
         buttonSettings.isVisible = false
     }
 
