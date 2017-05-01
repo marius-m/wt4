@@ -1,34 +1,56 @@
 package lt.markmerkk.ui_2.bridges
 
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.JFXToggleNode
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
+import lt.markmerkk.ui_2.ClockEditDialog
 
 /**
  * Represents clock jfxCommitButton, its graphics, animations
  */
 class UIEButtonClock(
+        private val node: ExternalSourceNode,
+        private val listener: Listener,
         private val button: JFXButton,
-        private val buttonSettings: JFXButton
-) : UIElement {
+        private val buttonSettings: JFXButton,
+        private val buttonToggle: JFXToggleNode
+) : UIElementText<JFXButton> {
+
+    private val glyphSettings: SVGGlyph = settingsGlyph().apply { setSize(10.0, 10.0) }
+    private val glyphClock: SVGGlyph = glyph().apply { setSize(20.0, 20.0) }
 
     init {
-        val settingsGlyph = settingsGlyph()
-        settingsGlyph.setSize(10.0, 10.0)
-        buttonSettings.graphic = settingsGlyph
+        buttonSettings.setOnAction {
+            val clockEditDialog = ClockEditDialog()
+            val jfxDialog = clockEditDialog.view as JFXDialog
+            jfxDialog.show(node.rootNode())
+            listener.onClickClockSettings()
+        }
+
+        buttonToggle.setOnAction {
+            listener.onClickClock(buttonToggle.isSelected)
+        }
+
+        buttonSettings.graphic = glyphSettings
         hide()
     }
 
+    override fun updateText(text: String) {
+        button.text = text
+    }
+
+    override fun raw(): JFXButton = button
+
     override fun show() {
         button.graphic = null
-        button.text = "1h 30m"
+        button.text = ""
         buttonSettings.isVisible = true
     }
 
     override fun hide() {
-        val clockGlyph = glyph()
-        clockGlyph.setSize(20.0, 20.0)
-        button.graphic = clockGlyph
+        button.graphic = glyphClock
         button.text = ""
         buttonSettings.isVisible = false
     }
@@ -52,4 +74,20 @@ class UIEButtonClock(
                 Color.WHITE
         )
     }
+
+    /**
+     * Hooks functions to external source
+     */
+    interface Listener {
+        /**
+         * Triggers when clock is triggered
+         */
+        fun onClickClock(isSelected: Boolean)
+
+        /**
+         * Triggered when clicked on clock settings
+         */
+        fun onClickClockSettings()
+    }
+
 }

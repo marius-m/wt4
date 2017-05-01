@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2.bridges
 
+import com.jfoenix.controls.JFXButton
 import javafx.animation.Interpolator
 import javafx.animation.TranslateTransition
 import javafx.scene.layout.Region
@@ -10,12 +11,14 @@ import javafx.util.Duration
  */
 class UIECommitContainer(
         private val commitContainer: Region
-) : UIElement {
+) : UIElement<Region> {
 
     init {
         commitContainer.isManaged = false
         commitContainer.isVisible = false
     }
+
+    override fun raw(): Region = commitContainer
 
     override fun show() {
         commitContainer.isManaged = true

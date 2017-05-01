@@ -6,16 +6,21 @@ import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
-import lt.markmerkk.ui_2.bridges.UIEButtonClock
-import lt.markmerkk.ui_2.bridges.UIEButtonCommit
-import lt.markmerkk.ui_2.bridges.UIECommitContainer
-import lt.markmerkk.ui_2.bridges.UIEListView
-import lt.markmerkk.ui_2.interactors.ClockRunInteractor
-import lt.markmerkk.ui_2.interactors.ClockRunInteractorImpl
+import lt.markmerkk.Main
+import lt.markmerkk.Main2
+import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.ui_2.bridges.*
+import lt.markmerkk.ui_2.interactors.ClockRunBridge
+import lt.markmerkk.ui_2.interactors.ClockRunBridgeImpl
+import lt.markmerkk.utils.IssueSplitImpl
+import lt.markmerkk.utils.hourglass.HourGlass
+import org.joda.time.DateTime
 import java.net.URL
 import java.util.*
+import javax.annotation.PreDestroy
+import javax.inject.Inject
 
-class MainPresenter2 : Initializable {
+class MainPresenter2 : Initializable, ExternalSourceNode {
 
     @FXML lateinit var jfxRoot: BorderPane
     @FXML lateinit var jfxButtonCommit: JFXButton
@@ -26,31 +31,58 @@ class MainPresenter2 : Initializable {
     @FXML lateinit var jfxListViewOutput: JFXTreeTableView<UIEListView.TreeLog>
     @FXML lateinit var jfxColumnFirst: JFXTreeTableColumn<UIEListView.TreeLog, String>
 
+    @Inject lateinit var hourGlass: HourGlass
+
     lateinit var uieButtonCommit: UIEButtonCommit
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieCommitContainer: UIECommitContainer
     lateinit var uieListView: UIEListView
-    lateinit var clockRunInteractor: ClockRunInteractor
+    lateinit var clockRunInteractor: ClockRunBridge
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        uieButtonClock = UIEButtonClock(jfxButtonClock, jfxButtonClockSettings)
+        Main2.Companion.component!!.presenterComponent().inject(this)
+
+        // Init ui elements
+        uieButtonClock = UIEButtonClock(
+                this,
+                buttonClockListener,
+                jfxButtonClock,
+                jfxButtonClockSettings,
+                jfxToggleClock
+        )
         uieButtonCommit = UIEButtonCommit(jfxButtonCommit)
         uieCommitContainer = UIECommitContainer(jfxContainerCommit)
         uieListView = UIEListView(jfxListViewOutput, jfxColumnFirst)
-        clockRunInteractor = ClockRunInteractorImpl(uieCommitContainer, uieButtonClock)
 
-        jfxToggleClock.setOnAction {
-            if (jfxToggleClock.isSelected) {
-                clockRunInteractor.setRunning(true)
-            } else {
-                clockRunInteractor.setRunning(false)
-            }
-        }
-        jfxButtonClockSettings.setOnAction {
-            val clockEditDialog = ClockEditDialog()
-            val jfxDialog = clockEditDialog.view as JFXDialog
-            jfxDialog.show(jfxRoot.parent as StackPane)
+        // Init interactors
+        clockRunInteractor = ClockRunBridgeImpl(
+                uieCommitContainer,
+                uieButtonClock,
+                hourGlass
+        )
+    }
+
+    @PreDestroy
+    fun destroy() {
+        if (hourGlass.state == HourGlass.State.RUNNING) {
+            hourGlass.stop()
         }
     }
+
+    override fun rootNode(): StackPane = jfxRoot.parent as StackPane
+
+    //region Listeners
+
+    private val buttonClockListener: UIEButtonClock.Listener = object : UIEButtonClock.Listener {
+
+        override fun onClickClock(isSelected: Boolean) {
+            clockRunInteractor.setRunning(isSelected)
+        }
+
+        override fun onClickClockSettings() {}
+
+    }
+
+    //endregion
 
 }

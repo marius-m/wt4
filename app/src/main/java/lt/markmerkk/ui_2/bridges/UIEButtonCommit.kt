@@ -11,7 +11,7 @@ import javafx.util.Duration
  */
 class UIEButtonCommit(
         private val button: JFXButton
-) : UIElement {
+) : UIElement<JFXButton> {
 
     init {
         button.setOnAction {
@@ -21,6 +21,8 @@ class UIEButtonCommit(
         glyph.setSize(20.0, 20.0)
         button.graphic = glyph
     }
+
+    override fun raw(): JFXButton = button
 
     override fun show() {
         throw UnsupportedOperationException()

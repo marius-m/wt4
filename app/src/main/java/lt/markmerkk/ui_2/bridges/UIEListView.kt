@@ -15,7 +15,7 @@ import javafx.scene.control.TreeTableColumn
 class UIEListView(
         private val listView: JFXTreeTableView<TreeLog>,
         private val firstColumn: JFXTreeTableColumn<TreeLog, String>
-) : UIElement {
+) : UIElement<JFXTreeTableView<UIEListView.TreeLog>> {
 
     private val logs: ObservableList<TreeLog> = FXCollections.observableArrayList()
 
@@ -43,6 +43,8 @@ class UIEListView(
             ))
         }
     }
+
+    override fun raw(): JFXTreeTableView<TreeLog> = listView
 
     override fun show() {
         throw UnsupportedOperationException()

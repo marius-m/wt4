@@ -11,6 +11,7 @@ import lt.markmerkk.ui.status.StatusPresenter
 import lt.markmerkk.ui.update.UpdateLogPresenter
 import lt.markmerkk.ui.version.VersionPresenter
 import lt.markmerkk.ui.week.WeekPresenter
+import lt.markmerkk.ui_2.MainPresenter2
 
 /**
  * @author mariusmerkevicius
@@ -37,5 +38,7 @@ interface PresenterComponent {
     fun inject(presenter: VersionPresenter)
 
     fun inject(presenter: GraphsFxPresenter)
+
+    fun inject(presenter: MainPresenter2)
 
 }
