@@ -6,11 +6,15 @@ import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
+import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.ui.ExternalSourceNode
+import lt.markmerkk.ui.interfaces.UpdateListener
+import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import java.net.URL

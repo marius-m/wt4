@@ -59,21 +59,6 @@
    </left>
    <center>
       <BorderPane>
-         <bottom>
-            <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
-               <children>
-                  <JFXTextField fx:id="jfxTextFieldCommit" alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
-                  <JFXButton fx:id="jfxButtonCommit" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" styleClass="button-default" textOverrun="CLIP">
-                     <HBox.margin>
-                        <Insets bottom="5.0" right="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-               </children>
-               <BorderPane.margin>
-                  <Insets top="10.0" />
-               </BorderPane.margin>
-            </HBox>
-         </bottom>
          <center>
             <JFXTreeTableView fx:id="jfxListViewOutput" BorderPane.alignment="CENTER">
                <columns>
@@ -88,4 +73,19 @@
          </center>
       </BorderPane>
    </center>
+   <bottom>
+      <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
+         <children>
+            <JFXTextField fx:id="jfxTextFieldCommit" alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
+            <JFXButton fx:id="jfxButtonCommit" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" styleClass="button-default" textOverrun="CLIP">
+               <HBox.margin>
+                  <Insets bottom="5.0" right="5.0" />
+               </HBox.margin>
+            </JFXButton>
+         </children>
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
 </BorderPane>
