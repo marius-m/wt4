@@ -28,6 +28,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane
     @FXML lateinit var jfxButtonCommit: JFXButton
+    @FXML lateinit var jfxTextFieldCommit: JFXTextField
     @FXML lateinit var jfxButtonClock: JFXButton
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
@@ -40,11 +41,10 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
 
-    lateinit var uieButtonCommit: UIEButtonCommit
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieCommitContainer: UIECommitContainer
     lateinit var uieListView: UIEListView
-    lateinit var clockRunInteractor: ClockRunBridge
+    lateinit var clockRunBridge: ClockRunBridge
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main2.Companion.component!!.presenterComponent().inject(this)
@@ -57,9 +57,14 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxButtonClockSettings,
                 jfxToggleClock
         )
-        uieButtonCommit = UIEButtonCommit(jfxButtonCommit)
-        uieCommitContainer = UIECommitContainer(jfxContainerCommit)
+        uieCommitContainer = UIECommitContainer(
+                containerCommitListener,
+                jfxButtonCommit,
+                jfxTextFieldCommit,
+                jfxContainerCommit
+        )
         uieListView = UIEListView(
+                logStorage,
                 jfxListViewOutput,
                 jfxColumnTicket,
                 jfxColumnDuration,
@@ -67,10 +72,11 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         )
 
         // Init interactors
-        clockRunInteractor = ClockRunBridgeImpl(
+        clockRunBridge = ClockRunBridgeImpl(
                 uieCommitContainer,
                 uieButtonClock,
-                hourGlass
+                hourGlass,
+                logStorage
         )
         logStorage.register(uieListView)
     }
@@ -87,10 +93,16 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     //region Listeners
 
+    private val containerCommitListener: UIECommitContainer.Listener = object : UIECommitContainer.Listener {
+        override fun onClickSend(message: String) {
+            clockRunBridge.log(message)
+        }
+    }
+
     private val buttonClockListener: UIEButtonClock.Listener = object : UIEButtonClock.Listener {
 
         override fun onClickClock(isSelected: Boolean) {
-            clockRunInteractor.setRunning(isSelected)
+            clockRunBridge.setRunning(isSelected)
         }
 
         override fun onClickClockSettings() {}

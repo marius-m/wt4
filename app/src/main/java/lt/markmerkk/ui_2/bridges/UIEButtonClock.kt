@@ -60,6 +60,8 @@ class UIEButtonClock(
         buttonSettings.isVisible = false
     }
 
+    override fun reset() {}
+
     // todo : export hardcoded glyph
     private fun glyph(): SVGGlyph {
         return SVGGlyph(

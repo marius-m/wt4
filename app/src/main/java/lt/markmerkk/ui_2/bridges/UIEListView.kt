@@ -10,6 +10,7 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TreeTableColumn
 import lt.markmerkk.IDataListener
+import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.UIElement
@@ -17,6 +18,7 @@ import lt.markmerkk.utils.LogUtils
 import org.joda.time.DateTime
 
 class UIEListView(
+        private val logStorage: LogStorage,
         private val listView: JFXTreeTableView<TreeLog>,
         private val columnTicket: JFXTreeTableColumn<TreeLog, String>,
         private val columnDuration: JFXTreeTableColumn<TreeLog, String>,
@@ -66,6 +68,7 @@ class UIEListView(
 //                testlog,
 //                testlog
 //        ))
+        onDataChange(logStorage.data)
     }
 
     override fun raw(): JFXTreeTableView<TreeLog> = listView
@@ -77,6 +80,8 @@ class UIEListView(
     override fun hide() {
         throw UnsupportedOperationException()
     }
+
+    override fun reset() {}
 
     override fun onDataChange(data: List<SimpleLog>) {
         logs.clear()

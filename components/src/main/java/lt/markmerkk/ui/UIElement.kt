@@ -10,12 +10,17 @@ interface UIElement<out Node> {
     fun raw(): Node
 
     /**
-     * Should handle "show" action
+     * Sets component to "shown" state
      */
     fun show()
 
     /**
-     * Should handle "hide" action
+     * Sets component to "hidden" state
      */
     fun hide()
+
+    /**
+     * Resets component to initial state
+     */
+    fun reset()
 }
