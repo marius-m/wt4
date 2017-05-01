@@ -5,6 +5,7 @@ import javafx.animation.Interpolator
 import javafx.animation.TranslateTransition
 import javafx.scene.layout.Region
 import javafx.util.Duration
+import lt.markmerkk.ui.UIElement
 
 /**
  * Represents whole commit container, its graphics and animations

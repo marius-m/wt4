@@ -11,6 +11,7 @@ import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TreeTableColumn
+import lt.markmerkk.ui.UIElement
 
 class UIEListView(
         private val listView: JFXTreeTableView<TreeLog>,

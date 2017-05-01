@@ -9,9 +9,10 @@ import javafx.scene.layout.StackPane
 import lt.markmerkk.Main
 import lt.markmerkk.Main2
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.bridges.*
-import lt.markmerkk.ui_2.interactors.ClockRunBridge
-import lt.markmerkk.ui_2.interactors.ClockRunBridgeImpl
+import lt.markmerkk.interactors.ClockRunBridge
+import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.utils.IssueSplitImpl
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
@@ -20,7 +21,7 @@ import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
-class MainPresenter2 : Initializable, ExternalSourceNode {
+class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane
     @FXML lateinit var jfxButtonCommit: JFXButton

@@ -1,10 +1,10 @@
-package lt.markmerkk.ui_2.bridges
+package lt.markmerkk.ui
 
 import javafx.scene.layout.StackPane
 
 /**
  * Helps opening dialog by using external source
  */
-interface ExternalSourceNode {
-    fun rootNode(): StackPane
+interface ExternalSourceNode<out Node> {
+    fun rootNode(): Node
 }

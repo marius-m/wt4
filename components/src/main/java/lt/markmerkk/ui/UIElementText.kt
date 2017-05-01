@@ -1,4 +1,4 @@
-package lt.markmerkk.ui_2.bridges
+package lt.markmerkk.ui
 
 /**
  * UIElement that can update text

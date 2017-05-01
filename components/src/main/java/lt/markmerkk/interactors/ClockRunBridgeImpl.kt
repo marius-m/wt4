@@ -1,13 +1,10 @@
-package lt.markmerkk.ui_2.interactors
+package lt.markmerkk.interactors
 
-import lt.markmerkk.ui_2.bridges.UIEButtonClock
-import lt.markmerkk.ui_2.bridges.UIECommitContainer
-import lt.markmerkk.ui_2.bridges.UIElement
-import lt.markmerkk.ui_2.bridges.UIElementText
-import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.interactors.ClockRunBridge
+import lt.markmerkk.ui.UIElement
+import lt.markmerkk.ui.UIElementText
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import org.joda.time.DateTime
 
 class ClockRunBridgeImpl(
         private val commitContainer: UIElement<Any>,
@@ -23,7 +20,6 @@ class ClockRunBridgeImpl(
         if (isRunning) {
             commitContainer.show()
             clockButton.show()
-            hourGlass.setCurrentDay(DateTime.now())
             hourGlass.start()
         } else {
             commitContainer.hide()

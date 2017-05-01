@@ -4,8 +4,11 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXToggleNode
 import com.jfoenix.svg.SVGGlyph
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import lt.markmerkk.ui.ExternalSourceNode
+import lt.markmerkk.ui.UIElementText
 import lt.markmerkk.ui_2.ClockEditDialog
 import lt.markmerkk.utils.UIEUtils
 
@@ -13,7 +16,7 @@ import lt.markmerkk.utils.UIEUtils
  * Represents clock jfxCommitButton, its graphics, animations
  */
 class UIEButtonClock(
-        private val node: ExternalSourceNode,
+        private val node: ExternalSourceNode<StackPane>,
         private val listener: Listener,
         private val button: JFXButton,
         private val buttonSettings: JFXButton,

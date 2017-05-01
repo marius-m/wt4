@@ -1,6 +1,4 @@
-package lt.markmerkk.ui_2.bridges
-
-import javafx.scene.Node
+package lt.markmerkk.ui
 
 /**
  * Encapsulates simple show/hide logic for a separate view container

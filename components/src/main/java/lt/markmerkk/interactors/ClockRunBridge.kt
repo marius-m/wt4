@@ -1,4 +1,4 @@
-package lt.markmerkk.ui_2.interactors
+package lt.markmerkk.interactors
 
 /**
  * Responsible for controlling setRunning clock events

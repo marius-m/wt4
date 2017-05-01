@@ -5,6 +5,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.animation.*
 import javafx.scene.paint.Color
 import javafx.util.Duration
+import lt.markmerkk.ui.UIElement
 
 /**
  * Represents commit jfxCommitButton, its graphics, animations
