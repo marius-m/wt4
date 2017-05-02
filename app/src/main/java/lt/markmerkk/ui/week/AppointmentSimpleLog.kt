@@ -9,4 +9,4 @@ import lt.markmerkk.entities.SimpleLog
  * Represents an appointment for the [Agenda] that would represent a simple
  * log
  */
-class AppointmentSimpleLog(val simpleLog: SimpleLog) : AppointmentImplLocal() {}
+class AppointmentSimpleLog(val simpleLog: SimpleLog) : AppointmentImplLocal()
