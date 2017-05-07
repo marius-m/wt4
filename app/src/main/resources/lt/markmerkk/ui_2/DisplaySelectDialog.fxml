@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ToggleGroup?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.CurrentDayDialogController">
+   <content>
+       <JFXDialogLayout fx:id="jfxDialogLayout">
+           <heading>
+               <Label styleClass="dialog-header">Display type</Label>
+           </heading>
+           <body>
+               <VBox spacing="10">
+                   <children>
+                       <JFXRadioButton fx:id="radio_1" selected="true" text="Simple tree view">
+                           <toggleGroup>
+                               <ToggleGroup fx:id="toggleGroup" />
+                           </toggleGroup>
+                       </JFXRadioButton>
+                       <JFXRadioButton fx:id="radio_2" selected="false"
+                                       text="Detail tree view" toggleGroup="$toggleGroup" />
+                       <JFXRadioButton fx:id="radio_3" selected="false"
+                                       text="Calendar day view" toggleGroup="$toggleGroup" />
+                       <JFXRadioButton fx:id="radio_4" selected="false"
+                                       text="Calendar week view" toggleGroup="$toggleGroup" />
+                   </children>
+               </VBox>
+           </body>
+           <actions>
+               <JFXButton fx:id="jfxButtonCancel" styleClass="dialog-cancel">CANCEL</JFXButton>
+               <JFXButton fx:id="jfxButtonAccept" styleClass="dialog-accept">ACCEPT</JFXButton>
+           </actions>
+       </JFXDialogLayout>
+   </content>
+</JFXDialog>

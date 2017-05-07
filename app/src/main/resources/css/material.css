@@ -50,8 +50,33 @@
 
 .basic-input {
     -fx-background-color: #5C6BC0;
-    -focus-color: #E91E63;
-    -unfocus-color: #E91E63;
+    -fx-text-fill: #c5c5c5;
+}
+
+/* Radio buttons */
+
+.jfx-radio-button .radio {
+	-fx-stroke-width: 2.0px;
+	-fx-fill: transparent;
+}
+
+.jfx-radio-button .dot {
+	-fx-fill: #0F9D58;
+}
+
+.custom-jfx-radio-button{
+	-fx-font-size: 16.0px;
+}
+
+.custom-jfx-radio-button .radio {
+	-fx-stroke-width: 2.0px;
+	-fx-fill: transparent;
+}
+
+.custom-jfx-radio-button-blue {
+	-fx-text-fill:  #5264AE;
+	-fx-selected-color: #5264AE;
+	-fx-unselected-color: #212121;
 }
 
 /*******************************************************************************
