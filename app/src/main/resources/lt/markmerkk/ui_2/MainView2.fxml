@@ -11,7 +11,7 @@
 
 <BorderPane fx:id="jfxRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
    <left>
-      <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" style="-fx-background-color: #5C6BC0;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" styleClass="bg-container" BorderPane.alignment="CENTER">
          <children>
             <StackPane>
                <children>
@@ -74,9 +74,9 @@
       </BorderPane>
    </center>
    <bottom>
-      <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" translateY="70.0" BorderPane.alignment="CENTER">
+      <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" styleClass="bg-container" translateY="70.0" BorderPane.alignment="CENTER">
          <children>
-            <JFXTextField fx:id="jfxTextFieldCommit" alignment="BOTTOM_LEFT" focusColor="#5c6bc0" labelFloat="true" promptText="Comment" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
+            <JFXTextField fx:id="jfxTextFieldCommit" alignment="BOTTOM_LEFT" focusColor="#e91e63" labelFloat="true" promptText="Comment" styleClass="basic-input" unFocusColor="#e91e63" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
             <JFXButton fx:id="jfxButtonCommit" buttonType="RAISED" prefHeight="40.0" prefWidth="40.0" ripplerFill="WHITE" styleClass="button-default" textOverrun="CLIP">
                <HBox.margin>
                   <Insets bottom="5.0" right="5.0" />
@@ -84,8 +84,11 @@
             </JFXButton>
          </children>
          <BorderPane.margin>
-            <Insets top="10.0" />
+            <Insets />
          </BorderPane.margin>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
       </HBox>
    </bottom>
 </BorderPane>

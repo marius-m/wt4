@@ -9,7 +9,7 @@
 	-fx-pref-width: 16px;
 	-fx-background-radius: 50px;
 	-fx-pref-height: 16px;
-	-fx-background-color:orange ;
+	-fx-background-color:orange;
 }
 
 .button-default {
@@ -40,7 +40,19 @@
     -fx-font-size: 8pt;
 }
 
+.bg-container {
+    -fx-background-color: #5C6BC0;
+}
 
+.action-container {
+    -fx-background-color: #E91E63;
+}
+
+.basic-input {
+    -fx-background-color: #5C6BC0;
+    -focus-color: #E91E63;
+    -unfocus-color: #E91E63;
+}
 
 /*******************************************************************************
 *                                                                              *
