@@ -16,7 +16,7 @@ sourceSets {
             srcDirs = ['src/main/java', 'build/generated']
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ['src/main/resources', 'src/resources']
         }
     }
     test {
@@ -29,6 +29,7 @@ sourceSets {
     }
     main.java.srcDirs += 'src/main/kotlin'
 }
+//sourceSets.main.resources.srcDirs = [rootProject.file('src')]
 
 kapt {
     generateStubs = true
@@ -65,6 +66,8 @@ dependencies {
     compile 'com.brsanthu:google-analytics-java:1.1.2'
 
     compile 'io.reactivex:rxjavafx:0.0.2'
+    compile 'io.datafx:flow:8.0.7'
+    compile 'io.datafx:core:8.0.7'
 
     compile("com.google.dagger:dagger:${dagger_version}")
     kapt("com.google.dagger:dagger-compiler:${dagger_version}")
