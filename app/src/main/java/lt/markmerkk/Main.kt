@@ -1,5 +1,10 @@
 package lt.markmerkk
 
+import com.jfoenix.controls.JFXDecorator
+import io.datafx.controller.flow.Flow
+import io.datafx.controller.flow.container.DefaultFlowContainer
+import io.datafx.controller.flow.context.FXMLViewFlowContext
+import io.datafx.controller.flow.context.ViewFlowContext
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.layout.StackPane
@@ -10,6 +15,7 @@ import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui.MainView
+import lt.markmerkk.ui_2.MainPresenter2
 import lt.markmerkk.ui_2.MainView2
 import lt.markmerkk.utils.tracker.ITracker
 import org.apache.log4j.PatternLayout
@@ -36,7 +42,9 @@ class Main : Application(), KeepAliveInteractor.Listener {
     @Inject
     lateinit var tracker: ITracker
 
+    @FXMLViewFlowContext lateinit var flowContext: ViewFlowContext
     lateinit var primaryStage: Stage
+
 
     var keepAliveGASession: KeepAliveGASession? = null
 
@@ -80,9 +88,11 @@ class Main : Application(), KeepAliveInteractor.Listener {
         stage.height = SCENE_HEIGHT.toDouble()
         stage.minWidth = SCENE_WIDTH.toDouble()
         stage.minHeight = SCENE_HEIGHT.toDouble()
+
         stage.scene = initScene(stage)
         stage.show()
         stage.title = "WT4"
+
         tracker.sendEvent(
                 GAStatics.CATEGORY_BUTTON,
                 GAStatics.ACTION_START
@@ -96,10 +106,13 @@ class Main : Application(), KeepAliveInteractor.Listener {
 
     fun initScene(stage: Stage): Scene {
         if (MATERIAL) {
-            val stackContainer = StackPane(MainView2().view)
-            val scene = Scene(stackContainer)
-            stackContainer.prefWidthProperty().bind(scene.widthProperty())
-            stackContainer.prefHeightProperty().bind(scene.heightProperty())
+            val flow = Flow(MainPresenter2::class.java)
+            val container = DefaultFlowContainer()
+            flowContext = ViewFlowContext()
+            flowContext.register("Stage", stage)
+            flow.createHandler(flowContext).start(container)
+//            val decorator = JFXDecorator(stage, container.view, false, false, false)
+            val scene = Scene(container.view, SCENE_WIDTH.toDouble(), SCENE_HEIGHT.toDouble())
             scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
             return scene
         }
@@ -118,6 +131,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         settings.onDetach()
         tracker.stop()
         InjectorNoDI.forgetAll()
+        flowContext.currentViewContext.destroy()
     }
 
     //endregion

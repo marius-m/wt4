@@ -1,29 +1,25 @@
 package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.*
+import io.datafx.controller.FXMLController
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
-import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui.day.DayView
-import lt.markmerkk.ui.interfaces.UpdateListener
-import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
-import java.net.URL
-import java.util.*
+import org.slf4j.LoggerFactory
+import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
-class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
+@FXMLController("/lt/markmerkk/ui_2/MainView2.fxml")
+class MainPresenter2 : ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane
     @FXML lateinit var jfxButtonCommit: JFXButton
@@ -50,7 +46,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieListView: UIEListView
     lateinit var clockRunBridge: ClockRunBridge
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    @PostConstruct
+    fun init() {
         Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
@@ -116,5 +113,9 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     }
 
     //endregion
+
+    companion object {
+        val logger = LoggerFactory.getLogger(MainPresenter2::class.java)!!
+    }
 
 }
