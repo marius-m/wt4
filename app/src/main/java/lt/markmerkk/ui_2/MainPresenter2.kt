@@ -128,7 +128,10 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
     // todo : move this later on
     val emptyUpdateListener: UpdateListener = object : UpdateListener {
 
-        override fun onUpdate(`object`: SimpleLog?) {}
+        override fun onUpdate(`object`: SimpleLog?) {
+            val jfxDialog = LogEditDialog().view as JFXDialog
+            jfxDialog.show(rootNode())
+        }
 
         override fun onDelete(`object`: SimpleLog?) {}
 

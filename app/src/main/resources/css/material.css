@@ -53,6 +53,11 @@
     -fx-text-fill: #c5c5c5;
 }
 
+.mini-label {
+    -fx-text-fill: gray;
+    -fx-font-size: 6pt;
+}
+
 /* Radio buttons */
 
 .jfx-radio-button .radio {
