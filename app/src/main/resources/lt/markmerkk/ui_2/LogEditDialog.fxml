@@ -12,6 +12,7 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.control.TextArea?>
 <JFXDialog
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
@@ -69,25 +70,48 @@
                                        prefWidth="120"
                                        focusColor="#e91e63"
                                        labelFloat="true"
-                                       promptText="Ticket"
-                                       unFocusColor="#e91e63"
+                                       promptText="Ticket ID"
+                                       unFocusColor="black"
                                        HBox.hgrow="NEVER"
-                                       VBox.vgrow="NEVER" >
-                               </JFXTextField>
-                               <JFXTextField
-                                       fx:id="jfxTextFieldMessage"
-                                       prefColumnCount="10"
-                                       focusColor="#e91e63"
-                                       labelFloat="true"
-                                       promptText="Comment"
-                                       unFocusColor="#e91e63"
-                                       HBox.hgrow="ALWAYS"
                                        VBox.vgrow="NEVER" >
                                </JFXTextField>
                            </children>
                        </HBox>
+                       <HBox alignment="CENTER_LEFT">
+                           <padding>
+                               <Insets
+                                       top="20.0"
+                                       left="6.0"
+                                       right="6.0"
+                               />
+                           </padding>
+                           <children>
+                               <JFXTextArea
+                                       focusColor="#e91e63"
+                                       labelFloat="true"
+                                       promptText="Comment"
+                                       unFocusColor="black"
+                                       prefRowCount="1"
+                                       fx:id="jfxTextFieldMessage"
+                                       prefHeight="80"
+                                       HBox.hgrow="NEVER"
+                                       VBox.vgrow="NEVER" >
+                               </JFXTextArea>
+                           </children>
+                       </HBox>
                    </children>
-                   <Label textAlignment="CENTER" visible="false" managed="false">Duration: 1m 30m</Label>
+                   <HBox alignment="CENTER">
+                       <padding>
+                           <Insets
+                                   top="6.0"
+                           />
+                       </padding>
+                       <children>
+                           <Label textAlignment="CENTER" styleClass="mini-label">
+                               Duration: 1m 30m
+                           </Label>
+                       </children>
+                   </HBox>
                </VBox>
            </body>
            <actions>
