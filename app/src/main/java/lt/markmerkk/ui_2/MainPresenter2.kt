@@ -1,16 +1,26 @@
 package lt.markmerkk.ui_2
 
+import com.google.common.eventbus.EventBus
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import io.datafx.controller.FXMLController
 import javafx.fxml.FXML
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.ui.ExternalSourceNode
+import lt.markmerkk.ui.day.DayView
+import lt.markmerkk.ui.display.DisplayLogView
+import lt.markmerkk.ui.interfaces.UpdateListener
+import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
@@ -28,23 +38,22 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
     @FXML lateinit var jfxContainerCommit: Region
-    @FXML lateinit var jfxListViewOutput: JFXTreeTableView<UIEListView.TreeLog>
-    @FXML lateinit var jfxColumnDuration: JFXTreeTableColumn<UIEListView.TreeLog, String>
-    @FXML lateinit var jfxColumnMessage: JFXTreeTableColumn<UIEListView.TreeLog, String>
     @FXML lateinit var jfxButtonSettings: JFXButton
     @FXML lateinit var jfxButtonDate: JFXButton
     @FXML lateinit var jfxButtonDisplayView: JFXButton
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var eventBus: EventBus
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
     lateinit var uieButtonDate: UIEButtonDate
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCommitContainer: UIECommitContainer
-    lateinit var uieListView: UIEListView
     lateinit var clockRunBridge: ClockRunBridge
+
+    var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
 
     @PostConstruct
     fun init() {
@@ -53,7 +62,7 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
         // Init ui elements
         uieButtonDate = UIEButtonDate(this, jfxButtonDate)
         uieButtonSettings = UIEButtonSettings(jfxButtonSettings)
-        uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView)
+        uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
                 this,
                 buttonClockListener,
@@ -67,12 +76,7 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
                 jfxTextFieldCommit,
                 jfxContainerCommit
         )
-        uieListView = UIEListView(
-                logStorage,
-                jfxListViewOutput,
-                jfxColumnDuration,
-                jfxColumnMessage
-        )
+        changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
         clockRunBridge = ClockRunBridgeImpl(
@@ -81,20 +85,62 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
                 hourGlass,
                 logStorage
         )
-        logStorage.register(uieListView)
+        eventBus.register(this)
     }
 
     @PreDestroy
     fun destroy() {
-        logStorage.unregister(uieListView)
+        eventBus.unregister(this)
         if (hourGlass.state == HourGlass.State.RUNNING) {
             hourGlass.stop()
         }
     }
 
+    //region Events
+
+    // todo : function will probably will have to be extracted to somewhere else
+    @Subscribe
+    fun onDisplayTypeChange(eventChangeDisplayType: EventChangeDisplayType) {
+        changeDisplayByDisplayType(eventChangeDisplayType.displayType)
+    }
+
+    //endregion
+
+    //region Convenience
+
+    fun changeDisplayByDisplayType(displayType: DisplayType) {
+        when (displayType) {
+            DisplayType.TABLE_VIEW_SIMPLE -> jfxRoot.center = DisplayLogView(emptyUpdateListener).view
+            DisplayType.TABLE_VIEW_DETAIL -> jfxRoot.center = DisplayLogView(emptyUpdateListener).view
+            DisplayType.CALENDAR_VIEW_DAY -> jfxRoot.center = DayView().view
+            DisplayType.CALENDAR_VIEW_WEEK -> jfxRoot.center = WeekView(emptyUpdateListener).view
+            else -> throw IllegalStateException("Display cannot be handled")
+        }
+        currentDisplayType = displayType
+    }
+
+    //endregion
+
     override fun rootNode(): StackPane = jfxRoot.parent as StackPane
 
     //region Listeners
+
+    // todo : move this later on
+    val emptyUpdateListener: UpdateListener = object : UpdateListener {
+
+        override fun onUpdate(`object`: SimpleLog?) {}
+
+        override fun onDelete(`object`: SimpleLog?) {}
+
+        override fun onClone(`object`: SimpleLog?) {}
+
+    }
+
+    val buttonChangeDisplayViewExternalListener: UIEButtonDisplayView.ExternalListener = object : UIEButtonDisplayView.ExternalListener {
+        override fun currentDisplayType(): DisplayType {
+            return currentDisplayType
+        }
+    }
 
     private val containerCommitListener: UIECommitContainer.Listener = object : UIECommitContainer.Listener {
         override fun onClickSend(message: String) {

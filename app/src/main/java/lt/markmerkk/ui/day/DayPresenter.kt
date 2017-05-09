@@ -7,6 +7,7 @@ import jfxtras.scene.control.agenda.Agenda
 import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week.AgendaPresenter

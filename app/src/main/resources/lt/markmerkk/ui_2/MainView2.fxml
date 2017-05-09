@@ -66,16 +66,11 @@
    <center>
       <BorderPane>
          <center>
-            <JFXTreeTableView fx:id="jfxListViewOutput" BorderPane.alignment="CENTER">
-               <columns>
-                  <!--<JFXTreeTableColumn fx:id="jfxColumnTicket" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Ticket" />-->
-                  <JFXTreeTableColumn fx:id="jfxColumnDuration" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duration" />
-                  <JFXTreeTableColumn fx:id="jfxColumnMessage" editable="false" minWidth="133" prefWidth="133" text="Message" />
-               </columns>
-               <columnResizePolicy>
-                  <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </JFXTreeTableView>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </VBox>
          </center>
       </BorderPane>
    </center>

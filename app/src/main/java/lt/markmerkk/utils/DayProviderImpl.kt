@@ -2,7 +2,7 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.DayProvider
 import lt.markmerkk.LogStorage
-import lt.markmerkk.DisplayType
+import lt.markmerkk.DisplayTypeLength
 import org.joda.time.DateTimeConstants
 
 /**
@@ -14,7 +14,7 @@ class DayProviderImpl(
 ) : DayProvider {
     override fun startDay(): Long {
         when (logStorage.displayType) {
-            DisplayType.WEEK -> {
+            DisplayTypeLength.WEEK -> {
                 return logStorage.targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay().millis
             }
             else -> return logStorage.targetDate.millis
@@ -23,7 +23,7 @@ class DayProviderImpl(
 
     override fun endDay(): Long {
         when (logStorage.displayType) {
-            DisplayType.WEEK -> {
+            DisplayTypeLength.WEEK -> {
                 return logStorage.targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay().millis
             }
             else -> return logStorage.targetDate.plusDays(1).millis

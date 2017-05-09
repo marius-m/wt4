@@ -1,9 +1,11 @@
 package lt.markmerkk
 
 /**
- * Defines the type of display view
+ * Represents possible display type for the logs
  */
 enum class DisplayType {
-    DAY,
-    WEEK,
+    TABLE_VIEW_SIMPLE,
+    TABLE_VIEW_DETAIL,
+    CALENDAR_VIEW_DAY,
+    CALENDAR_VIEW_WEEK,
 }

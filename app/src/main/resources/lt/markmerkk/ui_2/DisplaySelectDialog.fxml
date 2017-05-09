@@ -9,7 +9,7 @@
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="lt.markmerkk.ui_2.CurrentDayDialogController">
+        fx:controller="lt.markmerkk.ui_2.DisplaySelectDialogController">
    <content>
        <JFXDialogLayout fx:id="jfxDialogLayout">
            <heading>
@@ -18,17 +18,17 @@
            <body>
                <VBox spacing="10">
                    <children>
-                       <JFXRadioButton fx:id="radio_1" selected="true" text="Simple tree view">
+                       <JFXRadioButton fx:id="jfxRadioTreeSimple" selected="true" text="Simple tree view">
                            <toggleGroup>
-                               <ToggleGroup fx:id="toggleGroup" />
+                               <ToggleGroup fx:id="jfxToggleGroup" />
                            </toggleGroup>
                        </JFXRadioButton>
-                       <JFXRadioButton fx:id="radio_2" selected="false"
-                                       text="Detail tree view" toggleGroup="$toggleGroup" />
-                       <JFXRadioButton fx:id="radio_3" selected="false"
-                                       text="Calendar day view" toggleGroup="$toggleGroup" />
-                       <JFXRadioButton fx:id="radio_4" selected="false"
-                                       text="Calendar week view" toggleGroup="$toggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioTreeDetail" selected="false"
+                                       text="Detail tree view" toggleGroup="$jfxToggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioCalendarDay" selected="false"
+                                       text="Calendar day view" toggleGroup="$jfxToggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioCalendarWeek" selected="false"
+                                       text="Calendar week view" toggleGroup="$jfxToggleGroup" />
                    </children>
                </VBox>
            </body>

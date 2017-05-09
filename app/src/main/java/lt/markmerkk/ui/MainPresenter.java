@@ -18,8 +18,6 @@ import lt.markmerkk.afterburner.InjectorNoDI;
 import lt.markmerkk.LogStorage;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SimpleLogBuilder;
-import lt.markmerkk.interactors.KeepAliveGASession;
-import lt.markmerkk.interactors.KeepAliveGASessionImpl;
 import lt.markmerkk.ui.clock.ClockPresenter;
 import lt.markmerkk.ui.clock.ClockView;
 import lt.markmerkk.ui.display.DisplayLogView;
@@ -31,7 +29,7 @@ import lt.markmerkk.ui.status.StatusPresenter;
 import lt.markmerkk.ui.status.StatusView;
 import lt.markmerkk.ui.taskweb.TaskWebView;
 import lt.markmerkk.ui.update.UpdateLogView;
-import lt.markmerkk.DisplayType;
+import lt.markmerkk.DisplayTypeLength;
 import lt.markmerkk.ui.version.VersionView;
 import lt.markmerkk.ui.week.WeekView;
 import lt.markmerkk.utils.HiddenTabsController;
@@ -170,7 +168,7 @@ public class MainPresenter implements Initializable {
 
   StatusView statusView = new StatusView(new StatusPresenter.Listener() {
     @Override
-    public void onDisplayType(DisplayType type) {
+    public void onDisplayType(DisplayTypeLength type) {
       displayLogs();
     }
 
