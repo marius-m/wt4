@@ -1,5 +1,6 @@
 package lt.markmerkk.mvp
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -18,8 +19,10 @@ interface LogEditService {
     fun onDetach()
 
     fun updateDateTime(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            startDate: LocalDate,
+            startTime: LocalTime,
+            endDate: LocalDate,
+            endTime: LocalTime
     )
 
     /**

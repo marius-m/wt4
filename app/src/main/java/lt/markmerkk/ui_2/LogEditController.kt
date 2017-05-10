@@ -2,6 +2,8 @@ package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.*
 import com.jfoenix.skins.JFXTimePickerContent
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Label
@@ -65,10 +67,18 @@ class LogEditController : Initializable, LogEditService.Listener {
         this.entity = entity
         logEditService = LogEditServiceImpl(this, entity)
         logEditService.onAttach()
+        jfxDateFrom.valueProperty().addListener(startDateChangeListener)
+        jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)
+        jfxDateTo.valueProperty().addListener(endDateChangeListener)
+        jfxTimeTo.valueProperty().addListener(endTimeChangeListener)
     }
 
     @PreDestroy
     fun destroy() {
+        jfxTimeTo.valueProperty().removeListener(endTimeChangeListener)
+        jfxDateTo.valueProperty().removeListener(endDateChangeListener)
+        jfxTimeFrom.valueProperty().removeListener(startTimeChangeListener)
+        jfxDateFrom.valueProperty().removeListener(startDateChangeListener)
         logEditService.onDetach()
     }
 
@@ -124,8 +134,48 @@ class LogEditController : Initializable, LogEditService.Listener {
         override fun fromString(string: String): LocalTime {
             return LocalTime.parse(string)
         }
-
     }
+
+    private val startDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
+        println("Changing start date")
+        logEditService.updateDateTime(
+                startDate = newValue,
+                startTime = jfxTimeFrom.value,
+                endDate = jfxDateTo.value,
+                endTime = jfxTimeTo.value
+        )
+    }
+
+    private val startTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
+        println("Changing start time")
+        logEditService.updateDateTime(
+                startDate = jfxDateFrom.value,
+                startTime = newValue,
+                endDate = jfxDateTo.value,
+                endTime = jfxTimeTo.value
+        )
+    }
+
+    private val endDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
+        println("Changing end date")
+        logEditService.updateDateTime(
+                startDate = jfxDateFrom.value,
+                startTime = jfxTimeFrom.value,
+                endDate = newValue,
+                endTime = jfxTimeTo.value
+        )
+    }
+
+    private val endTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
+        println("Changing end time")
+        logEditService.updateDateTime(
+                startDate = jfxDateFrom.value,
+                startTime = jfxTimeFrom.value,
+                endDate = jfxDateTo.value,
+                endTime = newValue
+        )
+    }
+
 
     //endregion
 

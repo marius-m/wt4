@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -9,8 +10,10 @@ class LogEditServiceImpl(
         private val simpleLog: SimpleLog
 ) : LogEditService {
     override fun updateDateTime(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            startDate: LocalDate,
+            startTime: LocalTime,
+            endDate: LocalDate,
+            endTime: LocalTime
     ) {
     }
 
