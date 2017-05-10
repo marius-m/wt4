@@ -2,13 +2,15 @@ package lt.markmerkk.ui_2
 
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
-import com.jfoenix.controls.*
-import io.datafx.controller.FXMLController
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.JFXTextField
+import com.jfoenix.controls.JFXToggleNode
 import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
-import javafx.scene.layout.VBox
 import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
@@ -24,13 +26,12 @@ import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
-import org.slf4j.LoggerFactory
-import javax.annotation.PostConstruct
+import java.net.URL
+import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
-@FXMLController("/lt/markmerkk/ui_2/MainView2.fxml")
-class MainPresenter2 : ExternalSourceNode<StackPane> {
+class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane
     @FXML lateinit var jfxButtonCommit: JFXButton
@@ -56,8 +57,7 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
 
     var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
 
-    @PostConstruct
-    fun init() {
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
@@ -167,9 +167,5 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
     }
 
     //endregion
-
-    companion object {
-        val logger = LoggerFactory.getLogger(MainPresenter2::class.java)!!
-    }
 
 }
