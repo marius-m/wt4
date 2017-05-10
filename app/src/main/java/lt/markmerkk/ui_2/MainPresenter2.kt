@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox
 import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.interactors.ClockRunBridge
@@ -109,6 +110,7 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
     //region Convenience
 
     fun changeDisplayByDisplayType(displayType: DisplayType) {
+        val oldView = jfxRoot.center
         when (displayType) {
             DisplayType.TABLE_VIEW_SIMPLE -> jfxRoot.center = DisplayLogView(emptyUpdateListener).view
             DisplayType.TABLE_VIEW_DETAIL -> jfxRoot.center = DisplayLogView(emptyUpdateListener).view
@@ -116,6 +118,7 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
             DisplayType.CALENDAR_VIEW_WEEK -> jfxRoot.center = WeekView(emptyUpdateListener).view
             else -> throw IllegalStateException("Display cannot be handled")
         }
+        InjectorNoDI.forget(oldView)
         currentDisplayType = displayType
     }
 
@@ -128,14 +131,16 @@ class MainPresenter2 : ExternalSourceNode<StackPane> {
     // todo : move this later on
     val emptyUpdateListener: UpdateListener = object : UpdateListener {
 
-        override fun onUpdate(`object`: SimpleLog?) {
-            val jfxDialog = LogEditDialog().view as JFXDialog
+        override fun onUpdate(entity: SimpleLog) {
+            val logEditDialog = LogEditDialog(entity)
+            val jfxDialog = logEditDialog.view as JFXDialog
             jfxDialog.show(rootNode())
+            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(logEditDialog) }
         }
 
-        override fun onDelete(`object`: SimpleLog?) {}
+        override fun onDelete(entity: SimpleLog?) {}
 
-        override fun onClone(`object`: SimpleLog?) {}
+        override fun onClone(entity: SimpleLog?) {}
 
     }
 

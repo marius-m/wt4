@@ -69,6 +69,7 @@ dependencies {
     compile 'io.datafx:flow:8.0.7'
     compile 'io.datafx:core:8.0.7'
     compile 'com.google.guava:guava:21.0'
+    compile 'com.jfoenix:jfoenix:1.4.0'
 
     compile("com.google.dagger:dagger:${dagger_version}")
     kapt("com.google.dagger:dagger-compiler:${dagger_version}")

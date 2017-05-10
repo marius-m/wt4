@@ -13,6 +13,7 @@
 <?import javafx.geometry.Insets?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.scene.control.TextArea?>
+<?import com.jfoenix.controls.JFXTimePicker?>
 <JFXDialog
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
@@ -27,37 +28,41 @@
                <VBox>
                    <children>
                        <Label styleClass="mini-label">
-                           <padding>
-                               <Insets left="8.0" />
-                           </padding>
                            From
                        </Label>
                        <HBox alignment="CENTER_LEFT">
                            <children>
                                <JFXDatePicker
-                                       fx:id="jfxDateOverlayFrom"
+                                       fx:id="jfxDateFrom"
                                        overLay="true"
                                        defaultColor="#E91E63">
                                </JFXDatePicker>
-                               <JFXDatePicker
+                               <JFXTimePicker
                                        HBox.hgrow="ALWAYS"
-                                       showTime="true"
-                                       fx:id="jfxTimeOverlayFrom"
+                                       fx:id="jfxTimeFrom"
                                        overLay="true"
                                        defaultColor="#E91E63">
-                               </JFXDatePicker>
+                               </JFXTimePicker>
                            </children>
                        </HBox>
                        <Label styleClass="mini-label">
                            <padding>
-                               <Insets left="8.0" />
+                               <Insets top="12.0" />
                            </padding>
                            To
                        </Label>
                        <HBox alignment="CENTER_LEFT">
                            <children>
-                               <JFXDatePicker fx:id="jfxDateOverlayTo" overLay="true" defaultColor="#E91E63"></JFXDatePicker>
-                               <JFXDatePicker fx:id="jfxTimeOverlayTo" overLay="true" defaultColor="#E91E63"></JFXDatePicker>
+                               <JFXDatePicker
+                                       fx:id="jfxDateTo"
+                                       overLay="true"
+                                       defaultColor="#E91E63">
+                               </JFXDatePicker>
+                               <JFXTimePicker
+                                       fx:id="jfxTimeTo"
+                                       overLay="true"
+                                       defaultColor="#E91E63">
+                               </JFXTimePicker>
                            </children>
                        </HBox>
                        <HBox alignment="CENTER_LEFT">
@@ -80,7 +85,7 @@
                        <HBox alignment="CENTER_LEFT">
                            <padding>
                                <Insets
-                                       top="20.0"
+                                       top="26.0"
                                        left="6.0"
                                        right="6.0"
                                />
@@ -91,10 +96,9 @@
                                        labelFloat="true"
                                        promptText="Comment"
                                        unFocusColor="black"
-                                       prefRowCount="1"
-                                       fx:id="jfxTextFieldMessage"
-                                       prefHeight="80"
-                                       HBox.hgrow="NEVER"
+                                       prefRowCount="3"
+                                       fx:id="jfxTextFieldComment"
+                                       HBox.hgrow="ALWAYS"
                                        VBox.vgrow="NEVER" >
                                </JFXTextArea>
                            </children>

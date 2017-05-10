@@ -48,16 +48,16 @@ class UIEListView(
                 columnMessage.getComputedValue(param)
             }
         })
-        listView.setOnContextMenuRequested {
-            val contextListViewActions = TreeContextMenu().view as JFXPopup
-            contextListViewActions.source = listView
-            contextListViewActions.show(
-                    JFXPopup.PopupVPosition.TOP,
-                    JFXPopup.PopupHPosition.LEFT,
-                    it.x,
-                    it.y
-            )
-        }
+//        listView.setOnContextMenuRequested {
+//            val contextListViewActions = TreeContextMenu().view as JFXPopup
+//            contextListViewActions.source = listView
+//            contextListViewActions.show(
+//                    JFXPopup.PopupVPosition.TOP,
+//                    JFXPopup.PopupHPosition.LEFT,
+//                    it.x,
+//                    it.y
+//            )
+//        }
         listView.isShowRoot = false
 //        val testlog = SimpleLogBuilder()
 //                .setStart(DateTime.now().minusHours(3).millis)

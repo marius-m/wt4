@@ -31,7 +31,7 @@ class ClockEditController : Initializable {
             jfxDialog.close()
         }
 
-        println("Showing time: " + jfxDateOverlayFrom.isShowTime)
+        println("Showing time: " + jfxDateOverlayFrom)
 
     }
 

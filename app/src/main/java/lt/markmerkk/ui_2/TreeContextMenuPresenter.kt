@@ -31,7 +31,6 @@ class TreeContextMenuPresenter : Initializable {
         jfxLabelClone.graphic = glyphClone
         jfxListView.selectionModel.selectedIndexProperty().addListener { observable, oldValue, newValue ->
             println("Selected " + newValue)
-            jfxRoot.close()
         }
     }
 
