@@ -60,6 +60,16 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxDateTo.converter = dateConverter
         jfxTimeTo.converter = timeConverter
         jfxTimeTo.setIs24HourView(true)
+        jfxButtonAccept.setOnAction {
+            logEditService.saveEntity(
+                    startDate = jfxDateFrom.value,
+                    startTime = jfxTimeFrom.value,
+                    endDate = jfxDateTo.value,
+                    endTime = jfxTimeTo.value,
+                    task = jfxTextFieldTicket.text,
+                    comment = jfxTextFieldComment.text
+            )
+        }
     }
 
     /**
@@ -67,7 +77,11 @@ class LogEditController : Initializable, LogEditService.Listener {
      */
     fun initFromView(entity: SimpleLog) {
         this.entity = entity
-        logEditService = LogEditServiceImpl(LogEditInteractorImpl(), this, entity)
+        logEditService = LogEditServiceImpl(
+                LogEditInteractorImpl(logStorage),
+                this,
+                entity
+        )
         logEditService.onAttach()
         jfxDateFrom.valueProperty().addListener(startDateChangeListener)
         jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)
@@ -106,13 +120,26 @@ class LogEditController : Initializable, LogEditService.Listener {
     }
 
     override fun onEntitySaveComplete() {
+        jfxDialog.close()
+    }
+
+    override fun onEntitySaveFail(error: Throwable) {
+        jfxTextFieldHint.text = error.message ?: "Error saving entity!"
     }
 
     override fun onEnableInput() {
-        jfxButtonAccept.isDisable = false
+        throw UnsupportedOperationException()
     }
 
     override fun onDisableInput() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onEnableSaving() {
+        jfxButtonAccept.isDisable = false
+    }
+
+    override fun onDisableSaving() {
         jfxButtonAccept.isDisable = true
     }
 

@@ -12,10 +12,22 @@ interface LogEditInteractor {
      * Convenience method for overloaded one
      */
     @Throws(IllegalArgumentException::class)
-    fun update(
+    fun updateDateTime(
             currentEntity: SimpleLog,
             startInDateTime: LocalDateTime,
             endInDateTime: LocalDateTime
+    ): SimpleLog
+
+    /**
+     * Convenience method for overloaded one
+     */
+    @Throws(IllegalArgumentException::class)
+    fun updateTimeConvenience(
+            currentEntity: SimpleLog,
+            startInDateTime: LocalDateTime,
+            endInDateTime: LocalDateTime,
+            task: String,
+            comment: String
     ): SimpleLog
 
     /**
@@ -29,5 +41,12 @@ interface LogEditInteractor {
             task: String,
             comment: String
     ): SimpleLog
+
+    /**
+     * Saves entity to databse
+     */
+    fun save(
+            entityToSave: SimpleLog
+    )
 
 }

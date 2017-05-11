@@ -1,7 +1,6 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
 import java.time.*
 
 class LogEditServiceImpl(
@@ -18,7 +17,7 @@ class LogEditServiceImpl(
         val startInDateTime = LocalDateTime.of(startDate, startTime)
         val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
-            currentEntity = logEditInteractor.update(currentEntity, startInDateTime, endInDateTime)
+            currentEntity = logEditInteractor.updateDateTime(currentEntity, startInDateTime, endInDateTime)
             listener.onDurationChange(currentEntity.prettyDuration)
             listener.onEnableSaving()
         } catch(e: IllegalArgumentException) {
@@ -28,12 +27,28 @@ class LogEditServiceImpl(
     }
 
     override fun saveEntity(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime,
-            ticket: String,
+            startDate: LocalDate,
+            startTime: LocalTime,
+            endDate: LocalDate,
+            endTime: LocalTime,
+            task: String,
             comment: String
     ) {
-
+        val startInDateTime = LocalDateTime.of(startDate, startTime)
+        val endInDateTime = LocalDateTime.of(endDate, endTime)
+        try {
+            currentEntity = logEditInteractor.updateTimeConvenience(
+                    currentEntity,
+                    startInDateTime,
+                    endInDateTime,
+                    task,
+                    comment
+            )
+            logEditInteractor.save(currentEntity)
+            listener.onEntitySaveComplete()
+        } catch(e: IllegalArgumentException) {
+            listener.onEntitySaveFail(e)
+        }
     }
 
     override fun onAttach() {

@@ -1,10 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.mvp.MocksLogEditService.buildValidLog
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -12,7 +9,6 @@ import org.mockito.MockitoAnnotations
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 
 /**
  * @author mariusmerkevicius
@@ -35,7 +31,7 @@ class LogEditServiceImplTest {
         // Assemble
         val validLog = buildValidLog()
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).update(any(), any(), any())
+        doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
         service.onAttach()
@@ -53,7 +49,7 @@ class LogEditServiceImplTest {
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
         val validLog = buildValidLog(fakeStart, fakeEnd)
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).update(any(), any(), any())
+        doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
         service.updateDateTime(
@@ -75,7 +71,8 @@ class LogEditServiceImplTest {
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
         val validLog = buildValidLog()
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doThrow(IllegalArgumentException()).whenever(logEditInteractor).update(any(), any(), any())
+        doThrow(IllegalArgumentException()).whenever(logEditInteractor)
+                .updateDateTime(any(), any(), any())
 
         // Act
         service.updateDateTime(
@@ -88,6 +85,65 @@ class LogEditServiceImplTest {
         // Assert
         verify(listener).onDurationChange(eq("Invalid duration"))
         verify(listener).onDisableSaving()
+    }
+
+    @Test
+    fun saveValidEntity_triggerCorrect() {
+        // Assemble
+        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
+        val validLog = buildValidLog()
+        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
+        doReturn(validLog).whenever(logEditInteractor).updateTimeConvenience(
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+        )
+
+        // Act
+        service.saveEntity(
+                LocalDate.from(fakeStart),
+                LocalTime.from(fakeStart),
+                LocalDate.from(fakeEnd),
+                LocalTime.from(fakeEnd),
+                "valid_ticket",
+                "valid_comment"
+        )
+
+        // Assert
+        verify(listener).onEntitySaveComplete()
+    }
+
+    @Test
+    fun saveEntity_invalidEntity_triggerCorrect() {
+        // Assemble
+        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
+        val validLog = buildValidLog()
+        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
+        doThrow(IllegalArgumentException()).whenever(logEditInteractor).updateTimeConvenience(
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+        )
+
+        // Act
+        service.saveEntity(
+                LocalDate.from(fakeStart),
+                LocalTime.from(fakeStart),
+                LocalDate.from(fakeEnd),
+                LocalTime.from(fakeEnd),
+                "valid_ticket",
+                "valid_comment"
+        )
+
+        // Assert
+        verify(listener, never()).onEntitySaveComplete()
+        verify(listener).onEntitySaveFail(any())
     }
 
 }

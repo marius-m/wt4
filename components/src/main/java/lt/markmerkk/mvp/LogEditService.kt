@@ -29,9 +29,11 @@ interface LogEditService {
      * Update log with new input data
      */
     fun saveEntity(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime,
-            ticket: String,
+            startDate: LocalDate,
+            startTime: LocalTime,
+            endDate: LocalDate,
+            endTime: LocalTime,
+            task: String,
             comment: String
     )
 
@@ -55,6 +57,11 @@ interface LogEditService {
          * Notifies when entity saved successfully
          */
         fun onEntitySaveComplete()
+
+        /**
+         * Notifies when entity saved successfully
+         */
+        fun onEntitySaveFail(error: Throwable)
 
         /**
          * Notifies the view to enable all input fields
