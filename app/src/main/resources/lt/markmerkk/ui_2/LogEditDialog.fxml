@@ -111,8 +111,11 @@
                            />
                        </padding>
                        <children>
-                           <Label textAlignment="CENTER" styleClass="mini-label">
-                               Duration: 1m 30m
+                           <Label
+                                   fx:id="jfxTextFieldHint"
+                                   textAlignment="CENTER"
+                                   styleClass="mini-label"
+                           >
                            </Label>
                        </children>
                    </HBox>

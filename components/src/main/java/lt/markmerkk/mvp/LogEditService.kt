@@ -66,6 +66,16 @@ interface LogEditService {
          */
         fun onDisableInput()
 
+        /**
+         * Notifies the view to enable save button
+         */
+        fun onEnableSaving()
+
+        /**
+         * Notifies the view to disable save button
+         */
+        fun onDisableSaving()
+
     }
 
 }
