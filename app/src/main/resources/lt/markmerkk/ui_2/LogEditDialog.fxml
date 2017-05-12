@@ -117,6 +117,12 @@
                                    styleClass="mini-label"
                            >
                            </Label>
+                           <Label
+                                   fx:id="jfxTextFieldHint2"
+                                   textAlignment="CENTER"
+                                   styleClass="mini-label"
+                           >
+                           </Label>
                        </children>
                    </HBox>
                </VBox>

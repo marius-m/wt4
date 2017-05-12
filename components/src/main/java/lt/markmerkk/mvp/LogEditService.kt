@@ -54,6 +54,11 @@ interface LogEditService {
         fun onDurationChange(durationAsString: String)
 
         /**
+         * Prints a notification just below the duration
+         */
+        fun onGenericNotification(notification: String)
+
+        /**
          * Notifies when entity saved successfully
          */
         fun onEntitySaveComplete()

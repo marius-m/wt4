@@ -41,6 +41,7 @@ class LogEditController : Initializable, LogEditService.Listener {
     @FXML lateinit var jfxTextFieldTicket: JFXTextField
     @FXML lateinit var jfxTextFieldComment: JFXTextArea
     @FXML lateinit var jfxTextFieldHint: Label
+    @FXML lateinit var jfxTextFieldHint2: Label
 
     @Inject lateinit var logStorage: LogStorage
 
@@ -119,6 +120,10 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxTextFieldHint.text = durationAsString
     }
 
+    override fun onGenericNotification(notification: String) {
+        jfxTextFieldHint2.text = notification
+    }
+
     override fun onEntitySaveComplete() {
         jfxDialog.close()
     }
@@ -128,11 +133,21 @@ class LogEditController : Initializable, LogEditService.Listener {
     }
 
     override fun onEnableInput() {
-        throw UnsupportedOperationException()
+        jfxTextFieldTicket.isDisable = false
+        jfxTextFieldComment.isDisable = false
+        jfxDateFrom.isDisable = false
+        jfxTimeFrom.isDisable = false
+        jfxDateTo.isDisable = false
+        jfxTimeTo.isDisable = false
     }
 
     override fun onDisableInput() {
-        throw UnsupportedOperationException()
+        jfxTextFieldTicket.isDisable = true
+        jfxTextFieldComment.isDisable = true
+        jfxDateFrom.isDisable = true
+        jfxTimeFrom.isDisable = true
+        jfxDateTo.isDisable = true
+        jfxTimeTo.isDisable = true
     }
 
     override fun onEnableSaving() {

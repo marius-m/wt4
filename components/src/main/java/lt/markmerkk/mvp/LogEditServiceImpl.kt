@@ -8,6 +8,7 @@ class LogEditServiceImpl(
         private val listener: LogEditService.Listener,
         private var currentEntity: SimpleLog
 ) : LogEditService {
+
     override fun updateDateTime(
             startDate: LocalDate,
             startTime: LocalTime,
@@ -76,6 +77,28 @@ class LogEditServiceImpl(
                 end.toLocalDate(),
                 end.toLocalTime()
         )
+        printNotificationIfNeeded(currentEntity)
+    }
+
+    /**
+     * Generates a generic type of notification for the user
+     */
+    private fun printNotificationIfNeeded(entity: SimpleLog) {
+        if (entity.id > 0) {
+            listener.onGenericNotification("Worklog is already in sync with JIRA")
+            listener.onDisableInput()
+            listener.onDisableSaving()
+            return
+        }
+        if (entity.isError) {
+            listener.onGenericNotification(entity.errorMessage ?: "")
+            listener.onEnableInput()
+            listener.onEnableSaving()
+            return
+        }
+        listener.onGenericNotification("")
+        listener.onEnableInput()
+        listener.onEnableSaving()
     }
 
 }
