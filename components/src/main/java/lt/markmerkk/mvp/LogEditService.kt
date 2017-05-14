@@ -7,6 +7,7 @@ import java.time.LocalTime
 /**
  * Responsible for updating log and controlling the input view changes
  */
+// todo : rename this to MVP pattern generics
 interface LogEditService {
     /**
      * Start of a life-cycle

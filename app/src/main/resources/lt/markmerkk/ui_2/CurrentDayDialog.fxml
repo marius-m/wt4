@@ -10,20 +10,6 @@
         fx:controller="lt.markmerkk.ui_2.CurrentDayDialogController">
    <content>
        <JFXDialogLayout fx:id="jfxDialogLayout">
-           <heading>
-               <Label styleClass="dialog-header">Current day</Label>
-           </heading>
-           <body>
-               <HBox alignment="CENTER">
-                   <children>
-                       <JFXDatePicker fx:id="jfxDate" overLay="true" defaultColor="#E91E63" styleClass="date-time-select"></JFXDatePicker>
-                   </children>
-               </HBox>
-           </body>
-           <actions>
-               <JFXButton fx:id="jfxButtonCancel" styleClass="dialog-cancel">CANCEL</JFXButton>
-               <JFXButton fx:id="jfxButtonAccept" styleClass="dialog-accept">ACCEPT</JFXButton>
-           </actions>
        </JFXDialogLayout>
    </content>
 </JFXDialog>

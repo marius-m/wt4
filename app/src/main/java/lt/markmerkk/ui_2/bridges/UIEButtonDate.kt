@@ -1,10 +1,14 @@
 package lt.markmerkk.ui_2.bridges
 
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXDialog
+import com.jfoenix.skins.JFXDatePickerSkin
 import com.jfoenix.svg.SVGGlyph
+import javafx.scene.Node
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ClockEditDialog
@@ -25,6 +29,7 @@ class UIEButtonDate(
         button.setOnAction {
             val jfxDialog = CurrentDayDialog().view as JFXDialog
             jfxDialog.show(node.rootNode())
+            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
         }
     }
 

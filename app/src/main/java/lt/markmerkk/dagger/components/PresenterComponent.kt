@@ -12,10 +12,7 @@ import lt.markmerkk.ui.status.StatusPresenter
 import lt.markmerkk.ui.update.UpdateLogPresenter
 import lt.markmerkk.ui.version.VersionPresenter
 import lt.markmerkk.ui.week.WeekPresenter
-import lt.markmerkk.ui_2.DisplaySelectDialogController
-import lt.markmerkk.ui_2.LogEditController
-import lt.markmerkk.ui_2.LogEditDialog
-import lt.markmerkk.ui_2.MainPresenter2
+import lt.markmerkk.ui_2.*
 
 /**
  * @author mariusmerkevicius
@@ -50,5 +47,7 @@ interface PresenterComponent {
     fun inject(dialog: DisplaySelectDialogController)
 
     fun inject(dialog: LogEditController)
+
+    fun inject(dialog: CurrentDayDialogController)
 
 }
