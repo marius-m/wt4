@@ -49,9 +49,12 @@ class IssueSearchPresenterImplTest {
         testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
 
         // Assert
-        verify(view).showIssues(capture {
-            assertEquals(100, it.size)
-        })
+        val captor = argumentCaptor<List<LocalIssue>>()
+//        verify(view).showIssues(capture {
+//            assertEquals(100, it.size)
+//        })
+        verify(view).showIssues(captor.capture())
+        assertEquals(100, captor.firstValue.size)
     }
 
     @Test

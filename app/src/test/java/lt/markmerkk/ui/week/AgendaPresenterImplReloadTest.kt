@@ -1,12 +1,12 @@
 package lt.markmerkk.ui.week
 
-import com.nhaarman.mockito_kotlin.anyList
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import jfxtras.scene.control.agenda.Agenda
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyList
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 import kotlin.test.assertEquals
