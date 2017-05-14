@@ -50,4 +50,6 @@ interface PresenterComponent {
 
     fun inject(dialog: CurrentDayDialogController)
 
+    fun inject(dialog: ClockEditController)
+
 }

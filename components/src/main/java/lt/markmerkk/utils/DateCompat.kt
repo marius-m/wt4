@@ -1,7 +1,10 @@
 package lt.markmerkk.utils
 
 import org.joda.time.DateTime
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 object DateCompat {
     /**
@@ -30,4 +33,16 @@ object DateCompat {
         )
         return target
     }
+
+    /**
+     * Converts millis to local java [LocalDateTime]
+     */
+    fun toJodaDateTime(timeInMillis: Long): LocalDateTime {
+        val localDateTime = Instant
+                .ofEpochMilli(timeInMillis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime()
+        return localDateTime
+    }
+
 }

@@ -45,10 +45,10 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     @Inject lateinit var logStorage: LogStorage
 
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
-    val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
-    lateinit var logEditService: LogEditService
-    lateinit var entity: SimpleLog
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
+    private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
+    private lateinit var logEditService: LogEditService
+    private lateinit var entity: SimpleLog
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
