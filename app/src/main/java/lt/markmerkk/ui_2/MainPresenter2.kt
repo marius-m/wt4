@@ -63,7 +63,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
         // Init ui elements
         uieButtonDate = UIEButtonDate(this, jfxButtonDate)
-        uieButtonSettings = UIEButtonSettings(jfxButtonSettings)
+        uieButtonSettings = UIEButtonSettings(this, jfxButtonSettings)
         uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
                 this,

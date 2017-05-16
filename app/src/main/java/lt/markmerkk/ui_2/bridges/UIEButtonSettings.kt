@@ -1,14 +1,20 @@
 package lt.markmerkk.ui_2.bridges
 
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXListView
+import com.jfoenix.controls.JFXPopup
 import com.jfoenix.svg.SVGGlyph
+import javafx.scene.control.Label
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 
 /**
  * Represents settings button, its graphics, animations
  */
 class UIEButtonSettings(
+        private val externalSourceNode: ExternalSourceNode<StackPane>,
         private val button: JFXButton
 ) : UIElement<JFXButton> {
 
@@ -16,6 +22,20 @@ class UIEButtonSettings(
 
     init {
         button.graphic = glyphSettings
+//        button.setOnAction {
+//            val content = JFXListView<Label>()
+//            content.items.add(Label("Statistics").apply { minWidth = 100.0 })
+//
+//            val popup = JFXPopup(content)
+//            popup.minWidth = 100.0
+//            popup.show(
+//                    externalSourceNode.rootNode(),
+//                    JFXPopup.PopupVPosition.BOTTOM,
+//                    JFXPopup.PopupHPosition.LEFT,
+//                    100.0,
+//                    -100.0
+//            )
+//        }
     }
 
     override fun raw(): JFXButton = button
