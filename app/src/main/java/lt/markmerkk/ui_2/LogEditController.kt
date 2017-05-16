@@ -133,21 +133,21 @@ class LogEditController : Initializable, LogEditService.Listener {
     }
 
     override fun onEnableInput() {
-        jfxTextFieldTicket.isDisable = false
-        jfxTextFieldComment.isDisable = false
-        jfxDateFrom.isDisable = false
-        jfxTimeFrom.isDisable = false
-        jfxDateTo.isDisable = false
-        jfxTimeTo.isDisable = false
+        jfxTextFieldTicket.isEditable = false
+        jfxTextFieldComment.isEditable = false
+        jfxDateFrom.isEditable = false
+        jfxTimeFrom.isEditable = false
+        jfxDateTo.isEditable = false
+        jfxTimeTo.isEditable = false
     }
 
     override fun onDisableInput() {
-        jfxTextFieldTicket.isDisable = true
-        jfxTextFieldComment.isDisable = true
-        jfxDateFrom.isDisable = true
-        jfxTimeFrom.isDisable = true
-        jfxDateTo.isDisable = true
-        jfxTimeTo.isDisable = true
+        jfxTextFieldTicket.isEditable = true
+        jfxTextFieldComment.isEditable = true
+        jfxDateFrom.isEditable = true
+        jfxTimeFrom.isEditable = true
+        jfxDateTo.isEditable = true
+        jfxTimeTo.isEditable = true
     }
 
     override fun onEnableSaving() {
