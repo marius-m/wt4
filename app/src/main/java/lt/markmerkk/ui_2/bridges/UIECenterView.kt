@@ -2,6 +2,7 @@ package lt.markmerkk.ui_2.bridges
 
 import com.airhacks.afterburner.views.FXMLView
 import javafx.geometry.Insets
+import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
@@ -16,9 +17,9 @@ class UIECenterView(
 ) : UIElement<VBox> {
 
     private var container: VBox = VBox()
+//    private var statusBar: Label = Label("Test")
 
-    init {
-    }
+    init { }
 
     override fun raw(): VBox = container
 
@@ -29,10 +30,12 @@ class UIECenterView(
     override fun reset() { }
 
     fun populate(fxmlView: FXMLView) {
-        container = VBox(fxmlView.view)
+        container.children.clear()
+        container.children.add(fxmlView.view)
         (fxmlView.view as Region).padding = Insets(0.0, 0.0, 0.0, 0.0)
         VBox.setVgrow(fxmlView.view, Priority.ALWAYS)
-        VBox.setMargin(fxmlView.view, Insets(6.0, 6.0, 6.0, 6.0))
+//        VBox.setMargin(fxmlView.view, Insets(0.0, 0.0, 0.0, 0.0))
+        VBox.setMargin(fxmlView.view, Insets(2.0, 2.0, 2.0, 2.0))
         jfxMain.center = container
     }
 
