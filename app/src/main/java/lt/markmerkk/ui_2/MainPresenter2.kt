@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2
 
+import com.airhacks.afterburner.views.FXMLView
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
@@ -8,9 +9,9 @@ import com.jfoenix.controls.JFXTextField
 import com.jfoenix.controls.JFXToggleNode
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.Region
-import javafx.scene.layout.StackPane
+import javafx.geometry.Insets
+import javafx.scene.Node
+import javafx.scene.layout.*
 import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
@@ -53,6 +54,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieButtonDate: UIEButtonDate
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCommitContainer: UIECommitContainer
+    lateinit var uieCenterView: UIECenterView
     lateinit var clockRunBridge: ClockRunBridge
 
     var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
@@ -77,6 +79,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxTextFieldCommit,
                 jfxContainerCommit
         )
+        uieCenterView = UIECenterView(jfxRoot)
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
@@ -110,12 +113,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     //region Convenience
 
     fun changeDisplayByDisplayType(displayType: DisplayType) {
-        val oldView = jfxRoot.center
+        val oldView = uieCenterView.raw()
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> jfxRoot.center = DisplayLogView(emptyUpdateListener).view
-            DisplayType.TABLE_VIEW_DETAIL -> jfxRoot.center = DisplayLogView(emptyUpdateListener).view
-            DisplayType.CALENDAR_VIEW_DAY -> jfxRoot.center = DayView().view
-            DisplayType.CALENDAR_VIEW_WEEK -> jfxRoot.center = WeekView(emptyUpdateListener).view
+            DisplayType.TABLE_VIEW_SIMPLE -> uieCenterView.populate(DisplayLogView(emptyUpdateListener))
+            DisplayType.TABLE_VIEW_DETAIL -> uieCenterView.populate(DisplayLogView(emptyUpdateListener))
+            DisplayType.CALENDAR_VIEW_DAY -> uieCenterView.populate(DayView())
+            DisplayType.CALENDAR_VIEW_WEEK -> uieCenterView.populate(WeekView(emptyUpdateListener))
             else -> throw IllegalStateException("Display cannot be handled")
         }
         InjectorNoDI.forget(oldView)
