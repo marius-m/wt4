@@ -14,6 +14,7 @@ import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
@@ -140,9 +141,19 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
             jfxDialog.setOnDialogClosed { InjectorNoDI.forget(logEditDialog) }
         }
 
-        override fun onDelete(entity: SimpleLog?) {}
+        override fun onDelete(entity: SimpleLog) {
+            logStorage.delete(entity)
+        }
 
-        override fun onClone(entity: SimpleLog?) {}
+        override fun onClone(entity: SimpleLog) {
+            val newLog = SimpleLogBuilder()
+                    .setStart(entity.start)
+                    .setEnd(entity.end)
+                    .setTask(entity.task)
+                    .setComment(entity.comment)
+                    .build()
+            logStorage.insert(newLog)
+        }
 
     }
 
