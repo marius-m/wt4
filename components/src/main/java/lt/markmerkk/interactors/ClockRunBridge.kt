@@ -12,5 +12,5 @@ interface ClockRunBridge {
     /**
      * Logs message
      */
-    fun log(message: String)
+    fun log(ticket: String, message: String)
 }

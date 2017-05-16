@@ -2,10 +2,8 @@ package lt.markmerkk.interactors
 
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui.UIElementText
-import lt.markmerkk.utils.IssueSplitImpl
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
@@ -33,7 +31,7 @@ class ClockRunBridgeImpl(
         }
     }
 
-    override fun log(message: String) {
+    override fun log(ticket: String, message: String) {
         try {
             if (hourGlass.state == HourGlass.State.STOPPED)
                 throw IllegalArgumentException("Timer is not running!")
@@ -42,7 +40,7 @@ class ClockRunBridgeImpl(
             val log = SimpleLogBuilder(DateTime.now().millis)
                     .setStart(hourGlass.startMillis)
                     .setEnd(hourGlass.endMillis)
-                    .setTask("") // For now we do not log details
+                    .setTask(ticket)
                     .setComment(message)
                     .build()
             logStorage.insert(log)

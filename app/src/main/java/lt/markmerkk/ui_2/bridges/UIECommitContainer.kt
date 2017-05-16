@@ -15,7 +15,8 @@ import lt.markmerkk.ui.UIElement
 class UIECommitContainer(
         private val listener: Listener,
         private val button: JFXButton,
-        private val textField: JFXTextField,
+        private val textFieldTicket: JFXTextField,
+        private val textFieldComment: JFXTextField,
         private val commitContainer: Region
 ) : UIElement<Region> {
 
@@ -27,7 +28,7 @@ class UIECommitContainer(
 
         button.setOnAction {
             sendAnimation()
-            listener.onClickSend(textField.text)
+            listener.onClickSend(textFieldTicket.text, textFieldComment.text)
         }
         button.graphic = glyphSend
     }
@@ -57,7 +58,8 @@ class UIECommitContainer(
     }
 
     override fun reset() {
-        textField.text = ""
+        textFieldTicket.text = ""
+        textFieldComment.text = ""
     }
 
     //region Animations
@@ -104,7 +106,7 @@ class UIECommitContainer(
         /**
          * Triggers when send is triggered
          */
-        fun onClickSend(message: String)
+        fun onClickSend(ticket: String, message: String)
 
     }
 

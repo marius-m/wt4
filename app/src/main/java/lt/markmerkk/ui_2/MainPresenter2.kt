@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2
 
-import com.airhacks.afterburner.views.FXMLView
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
@@ -9,8 +8,6 @@ import com.jfoenix.controls.JFXTextField
 import com.jfoenix.controls.JFXToggleNode
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.geometry.Insets
-import javafx.scene.Node
 import javafx.scene.layout.*
 import lt.markmerkk.DisplayType
 import lt.markmerkk.LogStorage
@@ -37,6 +34,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxRoot: BorderPane
     @FXML lateinit var jfxButtonCommit: JFXButton
     @FXML lateinit var jfxTextFieldCommit: JFXTextField
+    @FXML lateinit var jfxTextFieldTicket: JFXTextField
     @FXML lateinit var jfxButtonClock: JFXButton
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
@@ -76,6 +74,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         uieCommitContainer = UIECommitContainer(
                 containerCommitListener,
                 jfxButtonCommit,
+                jfxTextFieldTicket,
                 jfxTextFieldCommit,
                 jfxContainerCommit
         )
@@ -154,8 +153,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     }
 
     private val containerCommitListener: UIECommitContainer.Listener = object : UIECommitContainer.Listener {
-        override fun onClickSend(message: String) {
-            clockRunBridge.log(message)
+        override fun onClickSend(ticket: String, message: String) {
+            clockRunBridge.log(ticket, message)
         }
     }
 
