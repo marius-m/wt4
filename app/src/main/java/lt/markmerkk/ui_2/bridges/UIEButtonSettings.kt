@@ -4,9 +4,14 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXListView
 import com.jfoenix.controls.JFXPopup
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
+import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import lt.markmerkk.Main
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 
@@ -18,44 +23,84 @@ class UIEButtonSettings(
         private val button: JFXButton
 ) : UIElement<JFXButton> {
 
-    private val glyphSettings: SVGGlyph = settingsGlyph().apply { setSize(20.0, 20.0) }
+    private val glyphSettings: SVGGlyph = settingsGlyph(Color.WHITE, 20.0)
+    private var jfxPopup: JFXPopup = JFXPopup()
+
+    private val labelStatistics = Label("Statistics", settingsGlyph(Color.BLACK, 12.0))
+    private val labelRefresh = Label("Force refresh", settingsGlyph(Color.BLACK, 12.0))
+    private val labelBackToDefault = Label("Default view", settingsGlyph(Color.BLACK, 12.0))
 
     init {
         button.graphic = glyphSettings
-//        button.setOnAction {
-//            val content = JFXListView<Label>()
-//            content.items.add(Label("Statistics").apply { minWidth = 100.0 })
-//
-//            val popup = JFXPopup(content)
-//            popup.minWidth = 100.0
-//            popup.show(
-//                    externalSourceNode.rootNode(),
-//                    JFXPopup.PopupVPosition.BOTTOM,
-//                    JFXPopup.PopupHPosition.LEFT,
-//                    100.0,
-//                    -100.0
-//            )
-//        }
+        button.setOnMouseClicked {
+            jfxPopup = JFXPopup(createSelectionList())
+            jfxPopup.show(
+                    externalSourceNode.rootNode(),
+                    JFXPopup.PopupVPosition.TOP,
+                    JFXPopup.PopupHPosition.LEFT,
+                    it.sceneX,
+                    it.sceneY
+            )
+        }
     }
 
     override fun raw(): JFXButton = button
 
-    override fun show() {
-    }
+    override fun show() {}
 
-    override fun hide() {
-    }
+    override fun hide() {}
 
     override fun reset() {}
 
+    //region Convenience
+
+    /**
+     * Convenience method to create selection list
+     */
+    private fun createSelectionList(): Region {
+        val labelsList = JFXListView<Label>()
+        labelsList.items.add(labelStatistics)
+        labelsList.items.add(labelRefresh)
+        labelsList.items.add(labelBackToDefault)
+        labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
+            override fun changed(observable: ObservableValue<out Label>?, oldValue: Label?, newValue: Label) {
+                jfxPopup.hide()
+                handleSelection(newValue)
+            }
+        })
+        val itemsContainer = StackPane(labelsList)
+        itemsContainer.minWidth = 200.0
+        return itemsContainer
+    }
+
+    private fun handleSelection(selectLabel: Label) {
+        when (selectLabel) {
+            labelStatistics -> println("Show statistics")
+            labelRefresh -> println("Show statistics")
+            labelBackToDefault -> {
+                Main.Companion.MATERIAL = false
+                Main.Companion.mainInstance!!.restart()
+            }
+            else -> throw IllegalStateException("Cannot define selected label")
+        }
+    }
+
+    //endregion
+
+    //region Glyphs
+
     // todo : export hardcoded glyph
-    private fun settingsGlyph(): SVGGlyph {
-        return SVGGlyph(
+    private fun settingsGlyph(color: Color, size: Double): SVGGlyph {
+        val svgGlyph = SVGGlyph(
                 -1,
                 "settings",
                 "M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z",
-                Color.WHITE
+                color
         )
+        svgGlyph.setSize(size, size)
+        return svgGlyph
     }
+
+    //endregion
 
 }
