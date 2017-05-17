@@ -2,10 +2,7 @@ package lt.markmerkk.ui_2
 
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
-import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXDialog
-import com.jfoenix.controls.JFXTextField
-import com.jfoenix.controls.JFXToggleNode
+import com.jfoenix.controls.*
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.*
@@ -18,6 +15,7 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
+import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
@@ -43,10 +41,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxButtonSettings: JFXButton
     @FXML lateinit var jfxButtonDate: JFXButton
     @FXML lateinit var jfxButtonDisplayView: JFXButton
+    @FXML lateinit var jfxProgressBar: JFXProgressBar
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var syncInteractor: SyncInteractor
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
@@ -54,6 +54,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCommitContainer: UIECommitContainer
     lateinit var uieCenterView: UIECenterView
+    lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
 
     var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
@@ -63,7 +64,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
         // Init ui elements
         uieButtonDate = UIEButtonDate(this, jfxButtonDate)
-        uieButtonSettings = UIEButtonSettings(this, jfxButtonSettings)
+        uieButtonSettings = UIEButtonSettings(this, jfxButtonSettings, syncInteractor)
         uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
                 this,
@@ -80,6 +81,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxContainerCommit
         )
         uieCenterView = UIECenterView(jfxRoot)
+        uieProgressView = UIEProgressView(jfxRoot, jfxProgressBar)
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
@@ -90,10 +92,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 logStorage
         )
         eventBus.register(this)
+        syncInteractor.addLoadingListener(uieProgressView)
     }
 
     @PreDestroy
     fun destroy() {
+        syncInteractor.removeLoadingListener(uieProgressView)
         eventBus.unregister(this)
         if (hourGlass.state == HourGlass.State.RUNNING) {
             hourGlass.stop()

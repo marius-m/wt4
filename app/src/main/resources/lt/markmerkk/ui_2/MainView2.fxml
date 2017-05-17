@@ -11,6 +11,20 @@
 <?scenebuilder-stylesheet /css/material.css?>
 
 <BorderPane fx:id="jfxRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
+   <top>
+       <HBox>
+          <children>
+             <JFXProgressBar
+                     fx:id="jfxProgressBar"
+                     styleClass="jfx-progress-bar"
+                     HBox.hgrow="ALWAYS"
+                     managed="false"
+                     visible="false"
+             >
+             </JFXProgressBar>
+          </children>
+       </HBox>
+   </top>
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" styleClass="bg-container" BorderPane.alignment="CENTER">
          <children>

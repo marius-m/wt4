@@ -34,8 +34,8 @@ class UIECenterView(
         container.children.add(fxmlView.view)
         (fxmlView.view as Region).padding = Insets(0.0, 0.0, 0.0, 0.0)
         VBox.setVgrow(fxmlView.view, Priority.ALWAYS)
-//        VBox.setMargin(fxmlView.view, Insets(0.0, 0.0, 0.0, 0.0))
-        VBox.setMargin(fxmlView.view, Insets(2.0, 2.0, 2.0, 2.0))
+        VBox.setMargin(fxmlView.view, Insets(0.0, 0.0, 0.0, 0.0))
+//        VBox.setMargin(fxmlView.view, Insets(2.0, 2.0, 2.0, 2.0))
         jfxMain.center = container
     }
 

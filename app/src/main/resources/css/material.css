@@ -84,6 +84,12 @@
 	-fx-unselected-color: #212121;
 }
 
+.jfx-progress-bar {
+    -fx-background: #5264AE;
+	-fx-stroke: #E91E63;
+	-fx-stroke-width: 20.0;
+}
+
 /*******************************************************************************
 *                                                                              *
 * Tree Table View                                                              *

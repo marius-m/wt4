@@ -12,6 +12,7 @@ import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.Main
+import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 
@@ -20,7 +21,8 @@ import lt.markmerkk.ui.UIElement
  */
 class UIEButtonSettings(
         private val externalSourceNode: ExternalSourceNode<StackPane>,
-        private val button: JFXButton
+        private val button: JFXButton,
+        private val syncInteractor: SyncInteractor
 ) : UIElement<JFXButton> {
 
     private val glyphSettings: SVGGlyph = settingsGlyph(Color.WHITE, 20.0)
@@ -79,7 +81,9 @@ class UIEButtonSettings(
     private fun handleSelection(selectLabel: Label) {
         when (selectLabel) {
             labelStatistics -> println("Show statistics")
-            labelRefresh -> println("Forcing a refresh")
+            labelRefresh -> {
+                syncInteractor.syncAll()
+            }
             labelBackToDefault -> {
                 Main.Companion.MATERIAL = false
                 Main.Companion.mainInstance!!.restart()
