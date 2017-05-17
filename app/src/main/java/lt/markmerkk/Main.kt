@@ -158,7 +158,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
 
         var DEBUG = false
-        var MATERIAL = true
+        var MATERIAL = false
 
         var SCENE_WIDTH = 600
         var SCENE_HEIGHT = 500
