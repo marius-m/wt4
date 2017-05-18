@@ -11,16 +11,14 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.util.Callback
 import jfxtras.scene.control.agenda.Agenda
-import lt.markmerkk.IDataListener
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
-import lt.markmerkk.Translation
+import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week.AgendaPresenter
 import lt.markmerkk.ui.week.AgendaPresenterImpl2
 import lt.markmerkk.ui.week.AgendaView
 import lt.markmerkk.ui.week.AppointmentSimpleLog
+import lt.markmerkk.utils.DateCompat
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
 import rx.schedulers.JavaFxScheduler
@@ -44,9 +42,9 @@ class DayPresenter : Initializable, AgendaView {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
-//        tracker.sendView(GAStatics.VIEW_WEEK) // todo : incorrect event
-        val targetDate = storage.targetDate
-        skin = CustomAgendaDayView(agenda, targetDate)
+        tracker.sendView(GAStatics.VIEW_WEEK)
+        skin = CustomAgendaDayView(agenda)
+        skin.refreshWithDate(storage.targetDate)
         agenda.locale = java.util.Locale("en")
         agenda.allowDragging = false
         agenda.allowResize = false
@@ -81,6 +79,7 @@ class DayPresenter : Initializable, AgendaView {
     private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
         override fun onDataChange(data: List<SimpleLog>) {
             agendaPresenter.reloadView(storage.data)
+            skin.refreshWithDate(storage.targetDate)
         }
     }
 
