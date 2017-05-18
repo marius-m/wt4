@@ -43,13 +43,8 @@ class UIEButtonSettings(
         button.graphic = glyphSettings
         button.setOnMouseClicked {
             jfxPopup = JFXPopup(createSelectionList())
-            jfxPopup.show(
-                    externalSourceNode.rootNode(),
-                    JFXPopup.PopupVPosition.TOP,
-                    JFXPopup.PopupHPosition.LEFT,
-                    it.sceneX,
-                    it.sceneY
-            )
+            jfxPopup.isAutoFix = true
+            jfxPopup.show(button, JFXPopup.PopupVPosition.BOTTOM, JFXPopup.PopupHPosition.LEFT)
         }
     }
 
