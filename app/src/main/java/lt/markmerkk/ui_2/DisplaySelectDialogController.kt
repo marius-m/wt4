@@ -2,21 +2,24 @@ package lt.markmerkk.ui_2
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.Toggle
 import javafx.scene.control.ToggleGroup
 import lt.markmerkk.DisplayType
 import lt.markmerkk.Main
 import lt.markmerkk.events.EventChangeDisplayType
 import java.net.URL
 import java.util.*
+import javax.annotation.PreDestroy
 import javax.inject.Inject
 
 class DisplaySelectDialogController : Initializable {
 
     @FXML lateinit var jfxDialog: JFXDialog
     @FXML lateinit var jfxDialogLayout: JFXDialogLayout
-    @FXML lateinit var jfxButtonAccept: JFXButton
     @FXML lateinit var jfxButtonCancel: JFXButton
 
     @FXML lateinit var jfxRadioTreeSimple: JFXRadioButton
@@ -39,10 +42,11 @@ class DisplaySelectDialogController : Initializable {
         jfxButtonCancel.setOnAction {
             jfxDialog.close()
         }
-        jfxButtonAccept.setOnAction {
-            jfxDialog.close()
-            eventBus.post(EventChangeDisplayType(extractStateFromToggleGroup()))
-        }
+    }
+
+    @PreDestroy
+    fun destroy() {
+        jfxToggleGroup.selectedToggleProperty().removeListener(selectToggleChangeListener)
     }
 
     fun changeStateFromDisplayType(displayType: DisplayType) {
@@ -53,6 +57,7 @@ class DisplaySelectDialogController : Initializable {
             DisplayType.CALENDAR_VIEW_WEEK -> jfxRadioCalendarWeek.isSelected = true
             else -> throw IllegalStateException("Display cannot be handled")
         }
+        jfxToggleGroup.selectedToggleProperty().addListener(selectToggleChangeListener)
     }
 
     fun extractStateFromToggleGroup(): DisplayType {
@@ -64,5 +69,13 @@ class DisplaySelectDialogController : Initializable {
         }
         throw IllegalStateException("Nothing is selected")
     }
+
+    private val selectToggleChangeListener: ChangeListener<Toggle> = object : ChangeListener<Toggle> {
+        override fun changed(observable: ObservableValue<out Toggle>?, oldValue: Toggle?, newValue: Toggle?) {
+            jfxDialog.close()
+            eventBus.post(EventChangeDisplayType(extractStateFromToggleGroup()))
+        }
+    }
+
 
 }

@@ -6,6 +6,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.DisplayType
+import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ClockEditDialog
@@ -25,8 +26,10 @@ class UIEButtonDisplayView(
     init {
         button.graphic = glyphView
         button.setOnAction {
-            val jfxDialog = DisplaySelectDialog(externalListener.currentDisplayType()).view as JFXDialog
+            val fxmlView = DisplaySelectDialog(externalListener.currentDisplayType())
+            val jfxDialog = fxmlView.view as JFXDialog
             jfxDialog.show(node.rootNode())
+            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(fxmlView) }
         }
     }
 
