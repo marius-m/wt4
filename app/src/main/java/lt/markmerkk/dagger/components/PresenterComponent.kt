@@ -52,4 +52,6 @@ interface PresenterComponent {
 
     fun inject(dialog: ClockEditController)
 
+    fun inject(dialog: StatisticsController)
+
 }

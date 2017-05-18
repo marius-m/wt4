@@ -1,6 +1,7 @@
 package lt.markmerkk.ui_2.bridges
 
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXListView
 import com.jfoenix.controls.JFXPopup
 import com.jfoenix.svg.SVGGlyph
@@ -12,9 +13,12 @@ import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.Main
+import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
+import lt.markmerkk.ui_2.CurrentDayDialog
+import lt.markmerkk.ui_2.StatisticsDialog
 
 /**
  * Represents settings button, its graphics, animations
@@ -31,7 +35,7 @@ class UIEButtonSettings(
     private val glyphRefresh: SVGGlyph = refreshGlyph(Color.BLACK, 20.0, 16.0)
     private var jfxPopup: JFXPopup = JFXPopup()
 
-    private val labelStatistics = Label("Statistics", glyphStatistics)
+    private val labelStatistics = Label("Total", glyphStatistics)
     private val labelRefresh = Label("Force refresh", glyphRefresh)
     private val labelBackToDefault = Label("Default view", glyphPaint)
 
@@ -80,7 +84,11 @@ class UIEButtonSettings(
 
     private fun handleSelection(selectLabel: Label) {
         when (selectLabel) {
-            labelStatistics -> println("Show statistics")
+            labelStatistics -> {
+                val jfxDialog = StatisticsDialog().view as JFXDialog
+                jfxDialog.show(externalSourceNode.rootNode())
+                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
+            }
             labelRefresh -> {
                 syncInteractor.syncAll()
             }
