@@ -30,6 +30,15 @@ If you have java8 you can try out **small version** (15-20mb). If you're not sur
 
 App will automatically update to newest version
 
+## News
+
+Fun fun fun! As playing around a bit, ive converted the designs for the app to material ones. So as we are in transition to new and neat design, also entering the new 1.0.0 version!. Have fun! 
+
+![New1](img/new_1.png)
+![New2](img/new_2.png)
+![New3](img/new_3.png)
+![New4](img/new_4.png)
+
 ## Issues
 
 Track issues / feature requests [here](https://github.com/marius-m/wt4/issues)
@@ -42,6 +51,7 @@ Feel free copying / contributing / using code for your own pleasure.
 
 Tricks that were being tackled in this project: 
 
+* [JFoenix](http://www.jfoenix.com/) - Material designs for JavaFX! Amazing!
 * [Kotlin](https://kotlinlang.org/) - Most of the app is converted to kotlin, once got used to it, never want to look back. 
 * [RXJava](https://github.com/ReactiveX/RxJava) Very cool programming [paradigm](http://reactivex.io/)
 * [Dagger2](https://github.com/google/dagger) - Essential for making object graph. Loved it every bit.
@@ -96,6 +106,11 @@ Logs can be updated by pressing the right mouse button on the target log
 * A: Try checking settings window, as most of the stuff that is done in the background are printed out. That might give you an idea when might not be working.
 
 ## Changelog
+
+### 1.0.0
+
+- Redesigned window to a more simple version in material design!
+- Most of the functionality is already moved, though still missing some parts
 
 ### 0.9.9.8-EAP
 
