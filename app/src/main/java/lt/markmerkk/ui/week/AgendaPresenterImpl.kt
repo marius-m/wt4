@@ -14,6 +14,7 @@ import java.time.LocalDateTime
  * @since 2016-07-09
  * Responsible for loading agenda asynchronously
  */
+@Deprecated(message = "Use AgendaPresenterImpl2 instead")
 class AgendaPresenterImpl(
         var agendaView: AgendaView?,
         val appointmentGroupRed: Agenda.AppointmentGroup,

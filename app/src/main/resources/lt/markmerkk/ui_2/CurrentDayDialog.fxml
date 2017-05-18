@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.CurrentDayDialogController">
+   <content>
+       <JFXDialogLayout fx:id="jfxDialogLayout">
+       </JFXDialogLayout>
+   </content>
+</JFXDialog>

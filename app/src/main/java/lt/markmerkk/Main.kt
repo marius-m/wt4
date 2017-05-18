@@ -1,8 +1,8 @@
 package lt.markmerkk
 
 import javafx.application.Application
-import javafx.application.HostServices
 import javafx.scene.Scene
+import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.dagger.components.AppComponent
@@ -10,6 +10,7 @@ import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui.MainView
+import lt.markmerkk.ui_2.MainView2
 import lt.markmerkk.utils.tracker.ITracker
 import org.apache.log4j.PatternLayout
 import org.apache.log4j.Priority
@@ -75,15 +76,11 @@ class Main : Application(), KeepAliveInteractor.Listener {
         keepAliveInteractor.register(this)
         syncInteractor.onAttach()
 
-        val mainView = MainView(stage)
-        val scene = Scene(mainView.view)
-        val cssResource1 = javaClass.getResource("/text-field-red-border.css").toExternalForm()
-        scene.stylesheets.add(cssResource1)
         stage.width = SCENE_WIDTH.toDouble()
         stage.height = SCENE_HEIGHT.toDouble()
         stage.minWidth = SCENE_WIDTH.toDouble()
         stage.minHeight = SCENE_HEIGHT.toDouble()
-        stage.scene = scene
+        stage.scene = initScene(stage)
         stage.show()
         stage.title = "WT4"
         tracker.sendEvent(
@@ -95,6 +92,22 @@ class Main : Application(), KeepAliveInteractor.Listener {
                 tracker,
                 Schedulers.computation())
         keepAliveGASession?.onAttach()
+    }
+
+    fun initScene(stage: Stage): Scene {
+        if (MATERIAL) {
+            val stackContainer = StackPane(MainView2().view)
+            val scene = Scene(stackContainer)
+            stackContainer.prefWidthProperty().bind(scene.widthProperty())
+            stackContainer.prefHeightProperty().bind(scene.heightProperty())
+            scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
+            return scene
+        }
+        val mainView = MainView(stage)
+        val scene = Scene(mainView.view)
+        val cssResource1 = javaClass.getResource("/text-field-red-border.css").toExternalForm()
+        scene.stylesheets.add(cssResource1)
+        return scene
     }
 
     fun destroyApp() {
@@ -145,6 +158,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
 
         var DEBUG = false
+        var MATERIAL = false
 
         var SCENE_WIDTH = 600
         var SCENE_HEIGHT = 500

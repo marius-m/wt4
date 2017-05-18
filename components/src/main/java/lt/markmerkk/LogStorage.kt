@@ -22,7 +22,7 @@ class LogStorage(
     override var data = mutableListOf<SimpleLog>()
 
     private var listeners = mutableListOf<IDataListener<SimpleLog>>()
-    var displayType = DisplayType.DAY
+    var displayType = DisplayTypeLength.DAY
         set(value) {
             field = value
             notifyDataChange()
@@ -77,7 +77,7 @@ class LogStorage(
     override fun notifyDataChange() {
         val queryJob: QueryListJob<SimpleLog>
         when (displayType) {
-            DisplayType.WEEK -> {
+            DisplayTypeLength.WEEK -> {
                 val weekStart = targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
                 val weekEnd = targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay()
                 queryJob = QueryListJob(SimpleLog::class.java, {

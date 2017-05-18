@@ -2,6 +2,7 @@ package lt.markmerkk.afterburner;
 
 import com.airhacks.afterburner.configuration.Configurator;
 import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.views.FXMLView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,6 +192,14 @@ public class InjectorNoDI {
         if (superclass != null) {
             invokeMethodWithAnnotation(superclass, instance, annotationClass);
         }
+    }
+
+    /**
+     * Convenience function to extract presenter when dropping refs
+     * @param fxmlView
+     */
+    public static void forget(FXMLView fxmlView) {
+        forget(fxmlView.getPresenter());
     }
 
     public static void forget(Object presenter) {

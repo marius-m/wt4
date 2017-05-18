@@ -121,7 +121,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
    */
   void updateStatus() {
     buttonToday.setText(LogUtils.INSTANCE.formatShortDuration(storage.total()));
-    buttonViewToggle.setSelected(storage.getDisplayType() == DisplayType.WEEK);
+    buttonViewToggle.setSelected(storage.getDisplayType() == DisplayTypeLength.WEEK);
   }
 
   //endregion
@@ -132,9 +132,9 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
     @Override
     public void handle(MouseEvent event) {
       if (listener == null) return;
-      DisplayType displayType = (storage.getDisplayType() == DisplayType.DAY) ? DisplayType.WEEK : DisplayType.DAY;
-      storage.setDisplayType(displayType);
-      listener.onDisplayType(displayType);
+      DisplayTypeLength displayTypeLength = (storage.getDisplayType() == DisplayTypeLength.DAY) ? DisplayTypeLength.WEEK : DisplayTypeLength.DAY;
+      storage.setDisplayType(displayTypeLength);
+      listener.onDisplayType(displayTypeLength);
       updateStatus();
     }
   };
@@ -204,7 +204,7 @@ public class StatusPresenter implements Initializable, IRemoteLoadListener,
      * Callback whenever display type is selected
      * @param type
      */
-    void onDisplayType(DisplayType type);
+    void onDisplayType(DisplayTypeLength type);
 
     /**
      * Called when about is pressed

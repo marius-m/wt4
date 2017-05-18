@@ -65,6 +65,8 @@ dependencies {
     compile 'com.brsanthu:google-analytics-java:1.1.2'
 
     compile 'io.reactivex:rxjavafx:0.0.2'
+    compile 'com.google.guava:guava:21.0'
+    compile 'com.jfoenix:jfoenix:1.4.0'
 
     compile("com.google.dagger:dagger:${dagger_version}")
     kapt("com.google.dagger:dagger-compiler:${dagger_version}")

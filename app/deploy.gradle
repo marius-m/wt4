@@ -90,7 +90,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         // Prepare
         project.delete siteDir
 
-        clientConfig.write("appbase = http://212.24.100.154/wt4/\n")
+        clientConfig.write("appbase = http://212.24.100.154/wt4/eap\n")
         clientConfig << "resource = resources/splash.png\n"
         clientConfig << "resource = resources/icon.png\n"
         clientConfig << "ui.name = WT4\n"
@@ -247,3 +247,32 @@ task deploy << {
         }
     }
 }
+
+task deployEap << {
+    ssh.settings {
+        knownHosts = allowAnyHosts
+    }
+    ssh.run {
+        session(remotes.webServer) {
+            def localPath = files(
+                    new File(rootDir, "out4/app/app.jar"),
+                    new File(rootDir, "out4/app/getdown.txt"),
+                    new File(rootDir, "out4/app/digest.txt"),
+            )
+            def localResource = files (
+                    new File(rootDir, "out4/app/resources/splash.png"),
+                    new File(rootDir, "out4/app/resources/icon.png")
+            )
+            def remotePath = "/var/www/html/wt4/eap"
+            def remoteResourcePath = "$remotePath/resources"
+            execute "mkdir -p $remotePath"
+            execute "rm -r $remotePath/*"
+            execute "mkdir $remoteResourcePath"
+            put from: localPath, into: remotePath
+            put from: localResource, into: remoteResourcePath
+            execute "ls -la $remotePath"
+            execute "ls -la $remoteResourcePath"
+        }
+    }
+}
+

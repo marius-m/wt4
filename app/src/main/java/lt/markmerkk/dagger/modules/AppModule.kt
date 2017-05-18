@@ -1,5 +1,6 @@
 package lt.markmerkk.dagger.modules
 
+import com.google.common.eventbus.EventBus
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
@@ -31,6 +32,13 @@ class AppModule(
     fun providesApplication(): Application {
         return application
     }
+
+    @Provides
+    @Singleton
+    fun providesEventBus(): EventBus {
+        return EventBus()
+    }
+
 
     @Provides
     @Singleton

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ToggleGroup?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.DisplaySelectDialogController">
+   <content>
+       <JFXDialogLayout fx:id="jfxDialogLayout">
+           <heading>
+               <Label styleClass="dialog-header">Display type</Label>
+           </heading>
+           <body>
+               <VBox spacing="10">
+                   <children>
+                       <JFXRadioButton fx:id="jfxRadioTreeSimple" selected="true" text="Simple tree view">
+                           <toggleGroup>
+                               <ToggleGroup fx:id="jfxToggleGroup" />
+                           </toggleGroup>
+                       </JFXRadioButton>
+                       <JFXRadioButton fx:id="jfxRadioTreeDetail" selected="false"
+                                       text="Detail tree view" toggleGroup="$jfxToggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioCalendarDay" selected="false"
+                                       text="Calendar day view" toggleGroup="$jfxToggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioCalendarWeek" selected="false"
+                                       text="Calendar week view" toggleGroup="$jfxToggleGroup" />
+                   </children>
+               </VBox>
+           </body>
+           <actions>
+               <JFXButton fx:id="jfxButtonCancel" styleClass="dialog-cancel">DISMISS</JFXButton>
+           </actions>
+       </JFXDialogLayout>
+   </content>
+</JFXDialog>
