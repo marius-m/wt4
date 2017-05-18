@@ -66,13 +66,13 @@ Tricks that were being tackled in this project:
   - Auto completion text view
 * [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
 
-## How to use it
+## How to use it (in old window styles)
 
 Overview of the main app features
 
 ### Main
 
-* Press "Clokc" to start working. Whenever finished press enter to log time. 
+* Press "Clock" to start working. Whenever finished press enter to log time. 
 * Search on active issues at the top ([will need to setup first!](#.settings))
 * Bubbles will indicate the sync with remote state
 	* Yellow - log stored locally
