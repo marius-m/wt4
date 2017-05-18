@@ -119,10 +119,10 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     fun changeDisplayByDisplayType(displayType: DisplayType) {
         val oldView = uieCenterView.raw()
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> uieCenterView.populate(DisplayLogView(emptyUpdateListener))
-            DisplayType.TABLE_VIEW_DETAIL -> uieCenterView.populate(DisplayLogView(emptyUpdateListener))
-            DisplayType.CALENDAR_VIEW_DAY -> uieCenterView.populate(DayView())
-            DisplayType.CALENDAR_VIEW_WEEK -> uieCenterView.populate(WeekView(emptyUpdateListener))
+            DisplayType.TABLE_VIEW_SIMPLE -> uieCenterView.populate(DisplayLogView(simpleUpdateListener))
+            DisplayType.TABLE_VIEW_DETAIL -> uieCenterView.populate(DisplayLogView(simpleUpdateListener))
+            DisplayType.CALENDAR_VIEW_DAY -> uieCenterView.populate(DayView(simpleUpdateListener))
+            DisplayType.CALENDAR_VIEW_WEEK -> uieCenterView.populate(WeekView(simpleUpdateListener))
             else -> throw IllegalStateException("Display cannot be handled")
         }
         InjectorNoDI.forget(oldView)
@@ -136,7 +136,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     //region Listeners
 
     // todo : move this later on
-    val emptyUpdateListener: UpdateListener = object : UpdateListener {
+    val simpleUpdateListener: UpdateListener = object : UpdateListener {
 
         override fun onUpdate(entity: SimpleLog) {
             val logEditDialog = LogEditDialog(entity)
