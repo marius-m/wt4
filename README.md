@@ -17,16 +17,16 @@ App is built for various platform. There are a **small** and **fat** versions.
 If you have java8 you can try out **small version** (15-20mb). If you're not sure what i'm talking about, install **fat version** and don't concern yourself :)
 
 * MacOSX: 
-  - [Small installer](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-4.0.dmg)
-  - [Fat installer](https://dl.dropboxusercontent.com/u/60630588/macosx/WT4-fat-4.0.dmg)
+  - [Small installer](https://www.dropbox.com/s/tgcomkvrl28fi0w/WT4-4.0.dmg?dl=0)
+  - [Fat installer](https://www.dropbox.com/s/0982iaqga9lithe/WT4-fat-4.0.dmg?dl=0)
 * Windows:
-  - [Small zip](https://dl.dropboxusercontent.com/u/60630588/win/WT4.zip)
-  - [Small installer](https://dl.dropboxusercontent.com/u/60630588/win/WT4-4.0.exe)
-  - [Fat zip](https://dl.dropboxusercontent.com/u/60630588/win/WT4_fat.zip)
-  - [Fat installer](https://dl.dropboxusercontent.com/u/60630588/win/WT4-4.0_fat.exe)
+  - [Small zip](https://www.dropbox.com/s/e2rlz1lt9hopbi8/WT4.zip?dl=0)
+  - [Small installer](https://www.dropbox.com/s/ytph3cephh59be3/WT4-4.0.exe?dl=0)
+  - [Fat zip](https://www.dropbox.com/s/555x7yhy0ae18mr/WT4_fat.zip?dl=0)
+  - [Fat installer](https://www.dropbox.com/s/slcnc24cnt9sg3w/WT4-4.0_fat.exe?dl=0)
 * Linux:
-  - [Small package installer](https://dl.dropboxusercontent.com/u/60630588/linux/wt4-4.0.deb)
-  - [Fat package installer](https://dl.dropboxusercontent.com/u/60630588/linux/wt4-4.0_fat.deb)
+  - [Small package installer](https://www.dropbox.com/s/xdh9cmv8s9e210w/wt4-4.0.deb?dl=0)
+  - [Fat package installer](https://www.dropbox.com/s/9t84ukocehx8pmf/wt4-4.0_fat.deb?dl=0)
 
 App will automatically update to newest version
 
