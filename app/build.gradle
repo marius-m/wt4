@@ -5,7 +5,7 @@ apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply from: 'deploy.gradle'
 
-mainClassName = "lt.markmerkk.Main"
+mainClassName = "lt.markmerkk.Main2"
 
 group = 'lt.markmerkk'
 version = versionName

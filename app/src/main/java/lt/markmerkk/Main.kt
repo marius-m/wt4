@@ -166,11 +166,6 @@ class Main : Application(), KeepAliveInteractor.Listener {
         var component: AppComponent? = null
         var mainInstance: Main? = null
 
-        @JvmStatic
-        fun main(args: Array<String>) {
-            launch(Main::class.java)
-        }
-
         private val logger = LoggerFactory.getLogger(Main::class.java)!!
     }
 
