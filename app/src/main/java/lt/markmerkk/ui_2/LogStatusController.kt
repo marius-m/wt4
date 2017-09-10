@@ -9,8 +9,11 @@ import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.LogStatusService
 import lt.markmerkk.mvp.LogStatusServiceImpl
+import org.joda.time.DateTime
+import org.joda.time.DateTimeConstants
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import java.net.URL
@@ -52,6 +55,20 @@ class LogStatusController : Initializable, LogStatusCallback {
 
     override fun showLogWithId(logId: Long?) {
         logStatusService.showWithId(logId)
+    }
+
+    override fun suggestGravityByLogWeekDay(simpleLog: SimpleLog): Pos {
+        val currentDay = DateTime(simpleLog.start)
+        when (currentDay.dayOfWeek().get()) {
+            DateTimeConstants.MONDAY -> return Pos.TOP_RIGHT
+            DateTimeConstants.TUESDAY -> return Pos.TOP_RIGHT
+            DateTimeConstants.WEDNESDAY -> return Pos.TOP_RIGHT
+            DateTimeConstants.THURSDAY -> return Pos.TOP_RIGHT
+            DateTimeConstants.FRIDAY -> return Pos.TOP_LEFT
+            DateTimeConstants.SATURDAY -> return Pos.TOP_LEFT
+            DateTimeConstants.SUNDAY -> return Pos.TOP_LEFT
+        }
+        throw IllegalStateException("[ERROR] Cannot define day of the week!")
     }
 
     //region Listeners

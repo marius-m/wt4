@@ -7,6 +7,7 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.*
 import lt.markmerkk.DisplayType
+import lt.markmerkk.DisplayTypeLength
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.afterburner.InjectorNoDI
@@ -119,10 +120,22 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     fun changeDisplayByDisplayType(displayType: DisplayType) {
         val oldView = uieCenterView.raw()
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> uieCenterView.populate(DisplayLogView(simpleUpdateListener))
-            DisplayType.TABLE_VIEW_DETAIL -> uieCenterView.populate(DisplayLogView(simpleUpdateListener))
-            DisplayType.CALENDAR_VIEW_DAY -> uieCenterView.populate(DayView(simpleUpdateListener))
-            DisplayType.CALENDAR_VIEW_WEEK -> uieCenterView.populate(WeekView(simpleUpdateListener))
+            DisplayType.TABLE_VIEW_SIMPLE -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(DisplayLogView(simpleUpdateListener))
+            }
+            DisplayType.TABLE_VIEW_DETAIL -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(DisplayLogView(simpleUpdateListener))
+            }
+            DisplayType.CALENDAR_VIEW_DAY -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(DayView(simpleUpdateListener))
+            }
+            DisplayType.CALENDAR_VIEW_WEEK -> {
+                logStorage.displayType = DisplayTypeLength.WEEK
+                uieCenterView.populate(WeekView(simpleUpdateListener))
+            }
             else -> throw IllegalStateException("Display cannot be handled")
         }
         InjectorNoDI.forget(oldView)
