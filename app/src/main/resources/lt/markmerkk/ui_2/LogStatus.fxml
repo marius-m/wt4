@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.control.Label?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        style="-fx-background-color: rgba(0.0,0.0,0.0,0.0)"
+        maxHeight="100"
+        maxWidth="200"
+        fx:controller="lt.markmerkk.ui_2.LogStatusController">
+
+    <JFXDialogLayout fx:id="jfxDialogLayout" >
+        <body>
+            <Label>Hello world</Label>
+        </body>
+    </JFXDialogLayout>
+
+</JFXDialog>
+

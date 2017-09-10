@@ -54,4 +54,6 @@ interface PresenterComponent {
 
     fun inject(dialog: StatisticsController)
 
+    fun inject(statusController: LogStatusController)
+
 }
