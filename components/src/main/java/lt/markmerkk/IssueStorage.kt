@@ -1,6 +1,7 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.LocalIssue
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.entities.jobs.DeleteJob
 import lt.markmerkk.entities.jobs.InsertJob
@@ -45,6 +46,15 @@ class IssueStorage(
     override fun update(dataEntity: LocalIssue) {
         executor.execute(UpdateJob(LocalIssue::class.java, dataEntity))
         notifyDataChange()
+    }
+
+    override fun findByIdOrNull(id: Long): LocalIssue? {
+        val queryJob = QueryListJob<LocalIssue>(
+                LocalIssue::class.java,
+                { "_id = " + id }
+        )
+        executor.execute(queryJob)
+        return queryJob.result().firstOrNull()
     }
 
     override fun notifyDataChange() { // Should not provide data

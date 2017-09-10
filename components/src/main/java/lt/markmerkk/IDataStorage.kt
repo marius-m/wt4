@@ -45,6 +45,11 @@ interface IDataStorage<T> {
     fun notifyDataChange()
 
     /**
+     * Finds item by id or null
+     */
+    fun findByIdOrNull(id: Long): T?
+
+    /**
      * Get currently loaded logs
      */
     val data: List<T>

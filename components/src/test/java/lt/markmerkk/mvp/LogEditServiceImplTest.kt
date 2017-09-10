@@ -1,8 +1,8 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.mvp.MocksLogEditService.buildValidLog
-import lt.markmerkk.mvp.MocksLogEditService.mockValidLog
+import lt.markmerkk.mvp.MocksLogEditService.createValidLogWithDate
+import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -30,7 +30,7 @@ class LogEditServiceImplTest {
     @Test
     fun onAttach_populateData() {
         // Assemble
-        val validLog = buildValidLog()
+        val validLog = createValidLogWithDate()
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
         doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
@@ -50,7 +50,7 @@ class LogEditServiceImplTest {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = mockValidLog(
+        val validLog = mockValidLogWith(
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
@@ -77,7 +77,7 @@ class LogEditServiceImplTest {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = mockValidLog(
+        val validLog = mockValidLogWith(
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
@@ -103,7 +103,7 @@ class LogEditServiceImplTest {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = buildValidLog(fakeStart, fakeEnd)
+        val validLog = createValidLogWithDate(fakeStart, fakeEnd)
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
         doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
@@ -125,7 +125,7 @@ class LogEditServiceImplTest {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = buildValidLog()
+        val validLog = createValidLogWithDate()
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
         doThrow(IllegalArgumentException()).whenever(logEditInteractor)
                 .updateDateTime(any(), any(), any())
@@ -148,7 +148,7 @@ class LogEditServiceImplTest {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = buildValidLog()
+        val validLog = createValidLogWithDate()
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
         doReturn(validLog).whenever(logEditInteractor).updateTimeConvenience(
                 any(),
@@ -177,7 +177,7 @@ class LogEditServiceImplTest {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = buildValidLog()
+        val validLog = createValidLogWithDate()
         service = LogEditServiceImpl(logEditInteractor, listener, validLog)
         doThrow(IllegalArgumentException()).whenever(logEditInteractor).updateTimeConvenience(
                 any(),

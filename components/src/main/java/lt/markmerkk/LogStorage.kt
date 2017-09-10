@@ -74,6 +74,15 @@ class LogStorage(
         notifyDataChange()
     }
 
+    override fun findByIdOrNull(id: Long): SimpleLog? {
+        val queryJob = QueryListJob<SimpleLog>(
+                SimpleLog::class.java,
+                { "_id = " + id }
+        )
+        executor.execute(queryJob)
+        return queryJob.result().firstOrNull()
+    }
+
     override fun notifyDataChange() {
         val queryJob: QueryListJob<SimpleLog>
         when (displayType) {
