@@ -11,7 +11,8 @@ import java.util.regex.Pattern
  */
 object LogUtils {
 
-    val SEPERATOR = "-"
+    const val NO_NUMBER = -1
+    const val SEPERATOR = "-"
 
     /**
      * Inspects id for a valid type
@@ -54,10 +55,10 @@ object LogUtils {
     }
 
     /**
-     * Splits task title into
+     * Splits task title and returns it
      */
-    fun splitTaskTitle(message: String): String? {
-        if (message.isEmpty()) return null
+    fun splitTaskTitle(message: String): String {
+        if (message.isEmpty()) return ""
         message.replace("\\n".toRegex(), "")
         val pattern = Pattern.compile("[a-zA-Z]+")
         val matcher = pattern.matcher(message.trim { it <= ' ' })
@@ -65,10 +66,27 @@ object LogUtils {
             var found = matcher.group()
             found = found.toUpperCase()
             found = found.trim { it <= ' ' }
-            if (found.length == 0) return null
+            if (found.length == 0) return ""
             return found
         }
-        return null
+        return ""
+    }
+
+    /**
+     * Splits task title into
+     */
+    fun splitTaskNumber(message: String): Int {
+        val validTaskTitle = validateTaskTitle(message)
+        if (message.isEmpty()) return NO_NUMBER
+        val pattern = Pattern.compile("[0-9]+")
+        val matcher = pattern.matcher(validTaskTitle)
+        if (matcher.find()) {
+            val found = matcher.group()
+            if (!found.isEmpty()) {
+                return Integer.parseInt(found)
+            }
+        }
+        return NO_NUMBER
     }
 
     /**

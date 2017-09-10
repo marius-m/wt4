@@ -12,17 +12,20 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     override fun assembleParentData(logs: List<SimpleLog>): Map<String, Double> {
         val parentNodes = mutableMapOf<String, Double>()
         for(log in logs) {
-            val taskNameWithoutNumber = LogUtils.splitTaskTitle(log.task) ?: EMPTY_TASK_NAME
-            if (parentNodes.containsKey(taskNameWithoutNumber)) {
-                val oldValue = parentNodes.get(taskNameWithoutNumber)
+            var taskName = LogUtils.splitTaskTitle(log.task)
+            if (taskName.isEmpty()) {
+                taskName = EMPTY_TASK_NAME
+            }
+            if (parentNodes.containsKey(taskName)) {
+                val oldValue = parentNodes.get(taskName)
                 val logValue = log.duration.toDouble() + oldValue!!
                 parentNodes.put(
-                        taskNameWithoutNumber,
+                        taskName,
                         logValue
                 )
             } else {
                 parentNodes.put(
-                        taskNameWithoutNumber,
+                        taskName,
                         log.duration.toDouble()
                 )
             }
@@ -57,12 +60,24 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     }
 
     override fun timeSpentInData(taskName: String, logs: List<SimpleLog>): Int {
+        // Empty task filter
         if (taskName.isEmpty() || EMPTY_TASK_NAME == taskName) {
             return logs.filter { it.task.isEmpty() || it.task == EMPTY_TASK_NAME }
                     .sumBy { it.duration.toInt() }
         }
+
+        // Concrete filter with task number
+        val taskNumber = LogUtils.splitTaskNumber(taskName)
+        if (taskNumber != LogUtils.NO_NUMBER) {
+            return logs
+                    .filter { it.task == taskName }
+                    .sumBy { it.duration.toInt() }
+        }
+
+        // Generic task filter
+        val genericTaskName = LogUtils.splitTaskTitle(taskName)
         return logs
-                .filter { it.task.contains(taskName) }
+                .filter { LogUtils.splitTaskTitle(it.task) == genericTaskName }
                 .sumBy { it.duration.toInt() }
     }
 
