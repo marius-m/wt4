@@ -82,7 +82,7 @@ public class MainPresenter implements Initializable {
     logsView = null;
     switch (logStorage.getDisplayType()) {
       case DAY:
-        DisplayLogView simpleLogView = new DisplayLogView(updateListener);
+        DisplayLogView simpleLogView = new DisplayLogView(updateListener, false);
         southPane.setCenter(simpleLogView.getView());
         logsView = simpleLogView;
         break;
