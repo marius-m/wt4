@@ -1,5 +1,8 @@
 apply plugin: 'javafx-gradle-plugin'
 
+//ext.appPath = "wt4"
+ext.appPath = "wt4_eap"
+
 jfx {
     verbose = true
     mainClass = "com.threerings.getdown.launcher.GetdownApp"
@@ -90,7 +93,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         // Prepare
         project.delete siteDir
 
-        clientConfig.write("appbase = http://212.24.100.154/wt4\n")
+        clientConfig.write("appbase = http://212.24.100.154/$appPath\n")
         clientConfig << "resource = resources/splash.png\n"
         clientConfig << "resource = resources/icon.png\n"
         clientConfig << "ui.name = WT4\n"
@@ -235,7 +238,7 @@ task deploy << {
                     new File(rootDir, "out4/app/resources/splash.png"),
                     new File(rootDir, "out4/app/resources/icon.png")
             )
-            def remotePath = "/var/www/html/wt4"
+            def remotePath = "/var/www/html/$appPath"
             def remoteResourcePath = "$remotePath/resources"
             execute "mkdir -p $remotePath"
             execute "rm -r $remotePath/*"
