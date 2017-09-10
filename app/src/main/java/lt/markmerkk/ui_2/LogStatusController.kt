@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2
 
+import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXDialogLayout
 import javafx.fxml.FXML
@@ -29,6 +30,8 @@ class LogStatusController : Initializable, LogStatusCallback {
     @FXML lateinit var jfxDialogLayout: JFXDialogLayout
     @FXML lateinit var jfxDialogTextBody: Label
     @FXML lateinit var jfxDialogTextHeading: Label
+    @FXML lateinit var jfxButtonCancel: JFXButton
+
     lateinit var jfxRoot: StackPane
 
     lateinit var logStatusService: LogStatusService
@@ -36,8 +39,8 @@ class LogStatusController : Initializable, LogStatusCallback {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
         jfxDialog.transitionType = JFXDialog.DialogTransition.TOP
-        jfxDialog.isMouseTransparent = true
         jfxDialogTextBody.isWrapText = true
+        jfxButtonCancel.setOnAction { logStatusService.showWithId(null) }
 
         logStatusService = LogStatusServiceImpl(
                 logStatusServiceListener,

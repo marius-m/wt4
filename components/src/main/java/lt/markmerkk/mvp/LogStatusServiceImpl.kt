@@ -48,6 +48,7 @@ class LogStatusServiceImpl(
 
     fun handleResult(simpleLog: SimpleLog?) {
         if (simpleLog == null) {
+            lastShownLogId = -1
             listener.hide()
             return
         }
