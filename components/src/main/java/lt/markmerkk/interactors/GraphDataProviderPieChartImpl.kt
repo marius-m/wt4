@@ -12,7 +12,7 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     override fun assembleParentData(logs: List<SimpleLog>): Map<String, Double> {
         val parentNodes = mutableMapOf<String, Double>()
         for(log in logs) {
-            val taskNameWithoutNumber = LogUtils.splitTaskTitle(log.task) ?: continue
+            val taskNameWithoutNumber = LogUtils.splitTaskTitle(log.task) ?: EMPTY_TASK_NAME
             if (parentNodes.containsKey(taskNameWithoutNumber)) {
                 val oldValue = parentNodes.get(taskNameWithoutNumber)
                 val logValue = log.duration.toDouble() + oldValue!!
@@ -31,15 +31,18 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     }
 
     override fun assembleChildData(logs: List<SimpleLog>, filter: String): Map<String, Double> {
-        if (filter.isEmpty()) return emptyMap()
         val childData = mutableMapOf<String, Double>()
         for (log in logs) {
-            if (!log.task.contains(filter)) continue
-            if (childData.containsKey(log.task)) {
+            var taskName: String = log.task
+            if (taskName.isEmpty()) {
+                taskName = EMPTY_TASK_NAME
+            }
+            if (!taskName.contains(filter)) continue
+            if (childData.containsKey(taskName)) {
                 val accumulatedDuration = log.duration.toDouble() + childData.get(log.task)!!
-                childData.put(log.task, accumulatedDuration)
+                childData.put(taskName, accumulatedDuration)
             } else {
-                childData.put(log.task, log.duration.toDouble())
+                childData.put(taskName, log.duration.toDouble())
             }
         }
         return childData
@@ -48,20 +51,23 @@ class GraphDataProviderPieChartImpl : GraphDataProviderPieChart {
     override fun percentInData(taskName: String, logs: List<SimpleLog>): Double {
         if (logs.isEmpty()) return 0.0
         val total = logs
-                .filter { !it.task.isEmpty() }
                 .sumByDouble { it.duration.toDouble() }
-        val used = logs
-                .filter { !it.task.isEmpty() }
-                .filter { it.task.contains(taskName) }
-                .sumByDouble { it.duration.toDouble() }
+        val used = timeSpentInData(taskName, logs)
         return used * 100 / total
     }
 
     override fun timeSpentInData(taskName: String, logs: List<SimpleLog>): Int {
-        if (taskName.isEmpty()) return 0
+        if (taskName.isEmpty() || EMPTY_TASK_NAME == taskName) {
+            return logs.filter { it.task.isEmpty() || it.task == EMPTY_TASK_NAME }
+                    .sumBy { it.duration.toInt() }
+        }
         return logs
                 .filter { it.task.contains(taskName) }
                 .sumBy { it.duration.toInt() }
+    }
+
+    companion object {
+        const val EMPTY_TASK_NAME = "EMPTY_ISSUE"
     }
 
 }
