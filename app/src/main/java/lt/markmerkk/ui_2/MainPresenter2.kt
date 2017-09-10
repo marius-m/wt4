@@ -123,11 +123,21 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         when (displayType) {
             DisplayType.TABLE_VIEW_SIMPLE -> {
                 logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(DisplayLogView(simpleUpdateListener))
+                uieCenterView.populate(
+                        DisplayLogView(
+                                listener = simpleUpdateListener,
+                                isViewSimplified = true
+                        )
+                )
             }
             DisplayType.TABLE_VIEW_DETAIL -> {
                 logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(DisplayLogView(simpleUpdateListener))
+                uieCenterView.populate(
+                        DisplayLogView(
+                                listener = simpleUpdateListener,
+                                isViewSimplified = false
+                        )
+                )
             }
             DisplayType.CALENDAR_VIEW_DAY -> {
                 logStorage.displayType = DisplayTypeLength.DAY

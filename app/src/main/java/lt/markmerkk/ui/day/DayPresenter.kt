@@ -47,7 +47,7 @@ class DayPresenter : Initializable, AgendaView {
         Main.component!!.presenterComponent().inject(this)
 
         jfxInfoDialog = LogStatusView(jfxDayContainer)
-        tracker.sendView(GAStatics.VIEW_WEEK)
+        tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         skin = CustomAgendaDayView(jfxAgenda)
         skin.refreshWithDate(storage.targetDate)
         jfxAgenda.locale = java.util.Locale("en")
