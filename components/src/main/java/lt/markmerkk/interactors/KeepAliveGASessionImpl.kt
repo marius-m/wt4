@@ -17,10 +17,11 @@ class KeepAliveGASessionImpl(
         private val tracker: ITracker,
         private val ioScheduler: Scheduler
 ) : KeepAliveGASession {
+
     private var subscription: Subscription? = null
 
     override fun onAttach() {
-        subscription = Observable.interval(25, 25, TimeUnit.MINUTES, ioScheduler)
+        subscription = Observable.interval(MINUTE_DELAY, MINUTE_DELAY, TimeUnit.MINUTES, ioScheduler)
                 .subscribe({ tracker.sendView(logStorage.displayType.name) })
     }
 
@@ -29,6 +30,7 @@ class KeepAliveGASessionImpl(
     }
 
     companion object {
+        const val MINUTE_DELAY = 10L
         private val logger = LoggerFactory.getLogger(KeepAliveGASessionImpl::class.java)!!
     }
 }
