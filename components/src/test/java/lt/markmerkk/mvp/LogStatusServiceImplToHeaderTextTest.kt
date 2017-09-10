@@ -1,8 +1,10 @@
 package lt.markmerkk.mvp
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.mvp.MocksLogEditService.createValidLogWithDate
 import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Assert.*
 import org.junit.Before
@@ -10,17 +12,18 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.schedulers.Schedulers
+import java.time.LocalDateTime
 
 /**
  * @author mariusmerkevicius
  * *
- * @since 2017-09-09
+ * @since 2017-09-10
  */
-class LogStatusServiceImplTest {
-
+class LogStatusServiceImplToHeaderTextTest {
     @Mock lateinit var listener: LogStatusService.Listener
     @Mock lateinit var logStorage: IDataStorage<SimpleLog>
 
+    val durationInMinutes = 1000000L // ~16 minutes
     lateinit var presenter: LogStatusServiceImpl
 
     @Before
@@ -37,58 +40,33 @@ class LogStatusServiceImplTest {
     @Test
     fun validLog() {
         // Assemble
-        val validId = 1L
         val validLog = mockValidLogWith(
-                "valid_task",
+                "valid_title",
                 "valid_message"
         )
-        doReturn(validLog).whenever(logStorage).findByIdOrNull(validId)
+        doReturn(durationInMinutes).whenever(validLog).duration
 
         // Act
-        presenter.showWithId(validId)
+        val result = presenter.toHeaderText(validLog)
 
         // Assert
-        verify(listener).show(any(), any())
+        assertEquals("valid_title (16m)", result)
     }
 
     @Test
-    fun nullId() {
+    fun noTask() {
         // Assemble
-        // Act
-        presenter.showWithId(null)
-
-        // Assert
-        verify(listener).hide()
-    }
-
-    @Test
-    fun validLog_displayCalledTwice_showOnce() {
-        // Assemble
-        val validId = 1L
         val validLog = mockValidLogWith(
-                "valid_task",
+                "",
                 "valid_message"
         )
-        doReturn(validLog).whenever(logStorage).findByIdOrNull(validId)
+        doReturn(durationInMinutes).whenever(validLog).duration
 
         // Act
-        presenter.showWithId(validId)
-        presenter.showWithId(validId)
+        val result = presenter.toHeaderText(validLog)
 
         // Assert
-        verify(listener, times(1)).show(any(), any())
+        assertEquals("(16m)", result)
     }
 
-    @Test
-    fun logMissing() {
-        // Assemble
-        val logId = 1L
-        doReturn(null).whenever(logStorage).findByIdOrNull(logId)
-
-        // Act
-        presenter.showWithId(logId)
-
-        // Assert
-        verify(listener).hide()
-    }
 }

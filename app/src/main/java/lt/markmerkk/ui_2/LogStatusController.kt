@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXDialogLayout
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.geometry.Pos
+import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
@@ -23,6 +24,8 @@ class LogStatusController : Initializable, LogStatusCallback {
 
     @FXML lateinit var jfxDialog: JFXDialog
     @FXML lateinit var jfxDialogLayout: JFXDialogLayout
+    @FXML lateinit var jfxDialogTextBody: Label
+    @FXML lateinit var jfxDialogTextHeading: Label
     lateinit var jfxRoot: StackPane
 
     lateinit var logStatusService: LogStatusService
@@ -31,6 +34,7 @@ class LogStatusController : Initializable, LogStatusCallback {
         Main.Companion.component!!.presenterComponent().inject(this)
         jfxDialog.transitionType = JFXDialog.DialogTransition.TOP
         jfxDialog.isMouseTransparent = true
+        jfxDialogTextBody.isWrapText = true
 
         logStatusService = LogStatusServiceImpl(
                 logStatusServiceListener,
@@ -53,9 +57,10 @@ class LogStatusController : Initializable, LogStatusCallback {
     //region Listeners
 
     val logStatusServiceListener: LogStatusService.Listener = object : LogStatusService.Listener {
-        override fun show(task: String, message: String) {
-            // todo : missing data pass
+        override fun show(header: String, body: String) {
             StackPane.setAlignment(jfxRoot, Pos.TOP_RIGHT)
+            jfxDialogTextHeading.text = header
+            jfxDialogTextBody.text = body
             jfxDialog.show(jfxRoot)
         }
 

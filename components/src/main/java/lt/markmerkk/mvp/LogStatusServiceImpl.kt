@@ -2,6 +2,8 @@ package lt.markmerkk.mvp
 
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.utils.LogUtils
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -25,7 +27,7 @@ class LogStatusServiceImpl(
         subscriptions.forEach { it.unsubscribe() }
     }
 
-    private var lastShownLog: SimpleLog? = null
+    private var lastShownLogId: Long = -1L
     private val subscriptions = mutableListOf<Subscription>()
 
     override fun showWithId(logId: Long?) {
@@ -44,20 +46,36 @@ class LogStatusServiceImpl(
                 }).let { subscriptions.add(it) }
     }
 
-    private fun handleResult(simpleLog: SimpleLog?) {
+    fun handleResult(simpleLog: SimpleLog?) {
         if (simpleLog == null) {
             listener.hide()
             return
         }
-        if (lastShownLog != null && lastShownLog == simpleLog) {
+        if (lastShownLogId == simpleLog._id) {
             // Same log is trying to be shown
             return
         }
         listener.show(
-                simpleLog.task,
-                simpleLog.comment
+                toHeaderText(simpleLog),
+                toBodyText(simpleLog)
         )
-        lastShownLog = simpleLog
+        lastShownLogId = simpleLog._id
+    }
+
+    fun toHeaderText(simpleLog: SimpleLog): String {
+        val stringBuilder = StringBuilder()
+        if (!simpleLog.task.isEmpty()) {
+            stringBuilder.append(simpleLog.task)
+            stringBuilder.append(" ")
+        }
+        stringBuilder.append("(")
+        stringBuilder.append(LogUtils.formatShortDuration(simpleLog.duration))
+        stringBuilder.append(")")
+        return stringBuilder.toString()
+    }
+
+    fun toBodyText(simpleLog: SimpleLog): String {
+        return simpleLog.comment
     }
 
     companion object {

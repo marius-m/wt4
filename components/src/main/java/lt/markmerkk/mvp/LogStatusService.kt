@@ -10,10 +10,7 @@ interface LogStatusService {
     fun showWithId(logId: Long?)
 
     interface Listener {
-        fun show(
-                task: String,
-                message: String
-        )
+        fun show(header: String, body: String)
         fun hide()
     }
 
