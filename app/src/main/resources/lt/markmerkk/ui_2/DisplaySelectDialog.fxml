@@ -29,6 +29,8 @@
                                        text="Calendar day view" toggleGroup="$jfxToggleGroup" />
                        <JFXRadioButton fx:id="jfxRadioCalendarWeek" selected="false"
                                        text="Calendar week view" toggleGroup="$jfxToggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioGraphs" selected="false"
+                                       text="Graphs" toggleGroup="$jfxToggleGroup" />
                    </children>
                </VBox>
            </body>

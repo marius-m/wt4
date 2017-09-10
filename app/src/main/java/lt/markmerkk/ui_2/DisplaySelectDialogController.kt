@@ -26,6 +26,7 @@ class DisplaySelectDialogController : Initializable {
     @FXML lateinit var jfxRadioTreeDetail: JFXRadioButton
     @FXML lateinit var jfxRadioCalendarDay: JFXRadioButton
     @FXML lateinit var jfxRadioCalendarWeek: JFXRadioButton
+    @FXML lateinit var jfxRadioGraphs: JFXRadioButton
     @FXML lateinit var jfxToggleGroup: ToggleGroup
 
     @Inject lateinit var eventBus: EventBus
@@ -55,6 +56,7 @@ class DisplaySelectDialogController : Initializable {
             DisplayType.TABLE_VIEW_DETAIL -> jfxRadioTreeDetail.isSelected = true
             DisplayType.CALENDAR_VIEW_DAY -> jfxRadioCalendarDay.isSelected = true
             DisplayType.CALENDAR_VIEW_WEEK -> jfxRadioCalendarWeek.isSelected = true
+            DisplayType.GRAPHS -> jfxRadioGraphs.isSelected = true
             else -> throw IllegalStateException("Display cannot be handled")
         }
         jfxToggleGroup.selectedToggleProperty().addListener(selectToggleChangeListener)
@@ -66,6 +68,7 @@ class DisplaySelectDialogController : Initializable {
             jfxRadioTreeDetail -> return DisplayType.TABLE_VIEW_DETAIL
             jfxRadioCalendarDay -> return DisplayType.CALENDAR_VIEW_DAY
             jfxRadioCalendarWeek -> return DisplayType.CALENDAR_VIEW_WEEK
+            jfxRadioGraphs -> return DisplayType.GRAPHS
         }
         throw IllegalStateException("Nothing is selected")
     }

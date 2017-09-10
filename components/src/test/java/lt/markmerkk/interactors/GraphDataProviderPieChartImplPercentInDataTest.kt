@@ -15,7 +15,7 @@ class GraphDataProviderPieChartImplPercentInDataTest {
     val provider = GraphDataProviderPieChartImpl()
 
     @Test
-    fun empty_returnZero() {
+    fun empty() {
         // Arrange
         val logs = emptyList<SimpleLog>()
 
@@ -27,7 +27,7 @@ class GraphDataProviderPieChartImplPercentInDataTest {
     }
 
     @Test
-    fun validOne_returnOne() {
+    fun validOne() {
         // Arrange
         val log = SimpleLogBuilder()
                 .setStart(1000)
@@ -45,31 +45,7 @@ class GraphDataProviderPieChartImplPercentInDataTest {
     }
 
     @Test
-    fun twoEqual_returnSplit() {
-        // Arrange
-        val log1 = SimpleLogBuilder()
-                .setStart(1000)
-                .setEnd(2000)
-                .setTask("WT-4")
-                .setComment("test_comment")
-                .build()
-        val log2 = SimpleLogBuilder()
-                .setStart(1000)
-                .setEnd(2000)
-                .setTask("WT-5")
-                .setComment("test_comment")
-                .build()
-        val logs = listOf(log1, log2)
-
-        // Act
-        val result = provider.percentInData("WT-4", logs)
-
-        // Assert
-        assertEquals(50.0, result, 0.001)
-    }
-
-    @Test
-    fun threeEqual_returnSplit() {
+    fun threeEqual() {
         // Arrange
         val log1 = SimpleLogBuilder()
                 .setStart(1000)
@@ -99,7 +75,7 @@ class GraphDataProviderPieChartImplPercentInDataTest {
     }
 
     @Test
-    fun threeEqual_twoSameLogs_returnSplit() {
+    fun threeEqual_twoSameLogs() {
         // Arrange
         val log1 = SimpleLogBuilder()
                 .setStart(1000)
@@ -129,12 +105,12 @@ class GraphDataProviderPieChartImplPercentInDataTest {
     }
 
     @Test
-    fun threeEqual_twoSameLogs_oneInvalid_ignoreInvalid() {
+    fun threeEqual_oneInvalid() {
         // Arrange
         val log1 = SimpleLogBuilder()
                 .setStart(1000)
                 .setEnd(2000)
-                .setTask("111") // Invalid task
+                .setTask("1111") // Invalid should count as empty one
                 .setComment("test_comment")
                 .build()
         val log2 = SimpleLogBuilder()
@@ -155,7 +131,7 @@ class GraphDataProviderPieChartImplPercentInDataTest {
         val result = provider.percentInData("WT-4", logs)
 
         // Assert
-        assertEquals(50.0, result, 0.1)
+        assertEquals(33.3, result, 0.1)
     }
 
     @Test

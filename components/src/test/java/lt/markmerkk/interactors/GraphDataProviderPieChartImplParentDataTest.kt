@@ -1,6 +1,5 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.junit.Assert.*
 import org.junit.Test
@@ -98,7 +97,7 @@ class GraphDataProviderPieChartImplParentDataTest {
     }
 
     @Test
-    fun invalidTaskName_skipValue() {
+    fun invalidTaskName() {
         // Arrange
         val log = SimpleLogBuilder()
                 .setStart(1000)
@@ -112,7 +111,27 @@ class GraphDataProviderPieChartImplParentDataTest {
         val result = provider.assembleParentData(logs)
 
         // Assert
-        assertEquals(0, result.size)
+        assertEquals(1, result.size)
+        assertTrue(result.containsKey(GraphDataProviderPieChartImpl.EMPTY_TASK_NAME))
+    }
+
+    @Test
+    fun emptyTaskName() {
+        // Arrange
+        val log = SimpleLogBuilder()
+                .setStart(1000)
+                .setEnd(2000)
+                .setTask("")
+                .setComment("test_comment")
+                .build()
+        val logs = listOf(log)
+
+        // Act
+        val result = provider.assembleParentData(logs)
+
+        // Assert
+        assertEquals(1, result.size)
+        assertTrue(result.containsKey(GraphDataProviderPieChartImpl.EMPTY_TASK_NAME))
     }
 
 }

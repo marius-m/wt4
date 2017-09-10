@@ -23,7 +23,7 @@ class GraphDataProviderPieChartImplChildDataTest {
     }
 
     @Test
-    fun validOne_returnOne() {
+    fun validOne() {
         // Arrange
         val log = SimpleLogBuilder()
                 .setStart(1000)
@@ -35,6 +35,23 @@ class GraphDataProviderPieChartImplChildDataTest {
 
         // Act
         val result = provider.assembleChildData(logs, "WT")
+
+        // Assert
+        assertEquals(1, result.size)
+    }
+
+    @Test // no task name by default is assigned to an empty task name
+    fun validOne_noTaskName() {
+        // Arrange
+        val log = SimpleLogBuilder()
+                .setStart(1000)
+                .setEnd(2000)
+                .setComment("test_comment")
+                .build()
+        val logs = listOf(log)
+
+        // Act
+        val result = provider.assembleChildData(logs, GraphDataProviderPieChartImpl.EMPTY_TASK_NAME)
 
         // Assert
         assertEquals(1, result.size)
@@ -95,7 +112,7 @@ class GraphDataProviderPieChartImplChildDataTest {
     }
 
     @Test
-    fun validTwoSame_oneDoesNotBelong_returnSeparate() {
+    fun validTwoSame_oneDoesNotBelong() {
         // Arrange
         val log1 = SimpleLogBuilder()
                 .setStart(1000)
@@ -109,7 +126,7 @@ class GraphDataProviderPieChartImplChildDataTest {
                 .setTask("WT-4")
                 .setComment("test_comment")
                 .build()
-        val log3 = SimpleLogBuilder()
+        val log3 = SimpleLogBuilder() // invalid to filter
                 .setStart(1000)
                 .setEnd(2000)
                 .setTask("RND-1")
@@ -127,7 +144,7 @@ class GraphDataProviderPieChartImplChildDataTest {
     }
 
     @Test
-    fun invalidFilter_returnEmpty() {
+    fun invalidFilter() {
         // Arrange
         val log = SimpleLogBuilder()
                 .setStart(1000)
@@ -145,7 +162,7 @@ class GraphDataProviderPieChartImplChildDataTest {
     }
 
     @Test
-    fun invalidTaskTitle_skipTask() {
+    fun invalidTaskTitle_searchForEmpty() {
         // Arrange
         val log = SimpleLogBuilder()
                 .setStart(1000)
@@ -156,28 +173,10 @@ class GraphDataProviderPieChartImplChildDataTest {
         val logs = listOf(log)
 
         // Act
-        val result = provider.assembleChildData(logs, "WT")
+        val result = provider.assembleChildData(logs, GraphDataProviderPieChartImpl.EMPTY_TASK_NAME)
 
         // Assert
-        assertEquals(0, result.size)
-    }
-
-    @Test
-    fun emptyFilter_empty() {
-        // Arrange
-        val log = SimpleLogBuilder()
-                .setStart(1000)
-                .setEnd(2000)
-                .setTask("WT-4") // invalid title
-                .setComment("test_comment")
-                .build()
-        val logs = listOf(log)
-
-        // Act
-        val result = provider.assembleChildData(logs, "") // empty filter
-
-        // Assert
-        assertEquals(0, result.size)
+        assertEquals(1, result.size)
     }
 
 }

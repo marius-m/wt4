@@ -20,6 +20,7 @@ import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
+import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui_2.bridges.*
@@ -135,6 +136,10 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
             DisplayType.CALENDAR_VIEW_WEEK -> {
                 logStorage.displayType = DisplayTypeLength.WEEK
                 uieCenterView.populate(WeekView(simpleUpdateListener))
+            }
+            DisplayType.GRAPHS -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(GraphsFxView())
             }
             else -> throw IllegalStateException("Display cannot be handled")
         }

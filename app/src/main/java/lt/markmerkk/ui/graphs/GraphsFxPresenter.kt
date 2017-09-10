@@ -135,8 +135,8 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     }
 
     override fun showGraph(drawer: GraphDrawer<*>) {
-        viewGraphContainer.center = drawer.createGraph()
         viewGraphContainer.isVisible = true
+        viewGraphContainer.center = drawer.createGraph()
     }
 
     override fun showErrorGraph(message: String) {
@@ -162,7 +162,6 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
                 .withTime(0, 0, 0, 0)
         val toDateTime = LogFormatters.shortFormatDate.parseDateTime(viewDatePickerTo.editor.text.toString())
                 .withTime(0, 0, 0, 0)
-                .plusDays(1)
         presenter.loadGraph(fromDateTime.millis, toDateTime.millis)
     }
 
