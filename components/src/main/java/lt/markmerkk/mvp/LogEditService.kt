@@ -1,5 +1,6 @@
 package lt.markmerkk.mvp
 
+import lt.markmerkk.entities.SimpleLog
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -9,16 +10,18 @@ import java.time.LocalTime
  */
 // todo : rename this to MVP pattern generics
 interface LogEditService {
-    /**
-     * Start of a life-cycle
-     */
-    fun onAttach()
+
+    var serviceType: ServiceType
+    var entityInEdit: SimpleLog
 
     /**
-     * End of life-cycle
+     * Forces a redraw
      */
-    fun onDetach()
+    fun redraw()
 
+    /**
+     * Updates current date time for the [entityInEdit]
+     */
     fun updateDateTime(
             startDate: LocalDate,
             startTime: LocalTime,
@@ -28,6 +31,7 @@ interface LogEditService {
 
     /**
      * Update log with new input data
+     * Depends on the [serviceType]. If CREATE, will create a new entity.
      */
     fun saveEntity(
             startDate: LocalDate,
@@ -65,7 +69,7 @@ interface LogEditService {
         fun onEntitySaveComplete()
 
         /**
-         * Notifies when entity saved successfully
+         * Notifies when entity save failed
          */
         fun onEntitySaveFail(error: Throwable)
 
@@ -89,6 +93,11 @@ interface LogEditService {
          */
         fun onDisableSaving()
 
+    }
+
+    enum class ServiceType {
+        CREATE,
+        UPDATE
     }
 
 }

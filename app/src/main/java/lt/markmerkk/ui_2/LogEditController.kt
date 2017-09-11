@@ -1,9 +1,7 @@
 package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.*
-import com.jfoenix.skins.JFXTimePickerContent
 import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Label
@@ -15,7 +13,6 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
-import org.joda.time.format.DateTimeFormat
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -48,7 +45,6 @@ class LogEditController : Initializable, LogEditService.Listener {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
     private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
     private lateinit var logEditService: LogEditService
-    private lateinit var entity: SimpleLog
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
@@ -74,16 +70,25 @@ class LogEditController : Initializable, LogEditService.Listener {
     }
 
     /**
-     * Called directly from the view, whenever entity is ready for control
+     * Called directly from the view, whenever entity is ready for control.
+     * If entity is provided, will provide update for the entity, otherwise it will create new one.
      */
-    fun initFromView(entity: SimpleLog) {
-        this.entity = entity
+    fun initFromView(entity: SimpleLog?) {
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(logStorage),
-                this,
-                entity
+                this
         )
-        logEditService.onAttach()
+        if (entity != null) {
+            logEditService.serviceType = LogEditService.ServiceType.UPDATE
+            logEditService.entityInEdit = entity
+            jfxHeaderLabel.text = "Update log"
+            jfxButtonAccept.text = "UPDATE"
+        } else {
+            logEditService.serviceType = LogEditService.ServiceType.CREATE
+            jfxHeaderLabel.text = "Create new log"
+            jfxButtonAccept.text = "CREATE"
+        }
+        logEditService.redraw()
         jfxDateFrom.valueProperty().addListener(startDateChangeListener)
         jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)
         jfxDateTo.valueProperty().addListener(endDateChangeListener)
@@ -96,7 +101,6 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxDateTo.valueProperty().removeListener(endDateChangeListener)
         jfxTimeFrom.valueProperty().removeListener(startTimeChangeListener)
         jfxDateFrom.valueProperty().removeListener(startDateChangeListener)
-        logEditService.onDetach()
     }
 
     //region Edit service callbacks
