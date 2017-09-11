@@ -34,7 +34,7 @@ interface LogEditInteractor {
      * Updates and returns new entity or throws otherwise
      */
     @Throws(IllegalArgumentException::class)
-    fun update(
+    fun updateCurrentEntity(
             currentEntity: SimpleLog,
             startInMillis: Long,
             endInMillis: Long,
@@ -43,9 +43,16 @@ interface LogEditInteractor {
     ): SimpleLog
 
     /**
-     * Saves entity to databse
+     * Update entity in database
      */
-    fun save(
+    fun update(
+            entityToSave: SimpleLog
+    )
+
+    /**
+     * Create a new entity to database
+     */
+    fun create(
             entityToSave: SimpleLog
     )
 

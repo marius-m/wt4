@@ -25,17 +25,21 @@ class LogEditServiceImplTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
+        service = LogEditServiceImpl(
+                logEditInteractor,
+                listener
+        )
     }
 
     @Test
-    fun onAttach_populateData() {
+    fun populateData() {
         // Assemble
-        val validLog = createValidLogWithDate()
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
+        val simpleLog = createValidLogWithDate()
+        doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
-        service.onAttach()
+        service.entityInEdit = simpleLog
+        service.redraw()
 
         // Assert
         verify(listener).onDataChange(any(), any(), any(), any())
@@ -46,24 +50,24 @@ class LogEditServiceImplTest {
     }
 
     @Test
-    fun onAttach_whenInError_appendToDuration() {
+    fun whenInError_appendToDuration() {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = mockValidLogWith(
+        val simpleLog = mockValidLogWith(
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
                 "valid_comment"
         )
-        doReturn("30m.").whenever(validLog).prettyDuration
-        doReturn(true).whenever(validLog).isError // worklog marked as having an error
-        doReturn("valid_error_message").whenever(validLog).errorMessage
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
+        doReturn("30m.").whenever(simpleLog).prettyDuration
+        doReturn(true).whenever(simpleLog).isError // worklog marked as having an error
+        doReturn("valid_error_message").whenever(simpleLog).errorMessage
+        doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
-        service.onAttach()
+        service.entityInEdit = simpleLog
+        service.redraw()
 
         // Assert
         verify(listener).onDurationChange(eq("30m."))
@@ -73,23 +77,23 @@ class LogEditServiceImplTest {
     }
 
     @Test
-    fun onAttach_whenAlreadyInSync_appendToDuration() {
+    fun whenAlreadyInSync_appendToDuration() {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = mockValidLogWith(
+        val simpleLog = mockValidLogWith(
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
                 "valid_comment"
         )
-        doReturn("30m.").whenever(validLog).prettyDuration
-        doReturn(1234L).whenever(validLog).id // with having remote id this worklog is in sync
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
+        doReturn("30m.").whenever(simpleLog).prettyDuration
+        doReturn(1234L).whenever(simpleLog).id // with having remote id this worklog is in sync
+        doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
-        service.onAttach()
+        service.entityInEdit = simpleLog
+        service.redraw()
 
         // Assert
         verify(listener).onDurationChange(eq("30m."))
@@ -99,13 +103,12 @@ class LogEditServiceImplTest {
     }
 
     @Test
-    fun updateTime_triggerCorrect() {
+    fun updateTime() {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = createValidLogWithDate(fakeStart, fakeEnd)
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
+        val simpleLog = createValidLogWithDate(fakeStart, fakeEnd)
+        doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
         service.updateDateTime(
@@ -121,16 +124,16 @@ class LogEditServiceImplTest {
     }
 
     @Test
-    fun updateTime_failBuildingNewEntity_triggerCorrect() {
+    fun updateTime_failBuildingNewEntity() {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = createValidLogWithDate()
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
+        val simpleLog = createValidLogWithDate()
         doThrow(IllegalArgumentException()).whenever(logEditInteractor)
                 .updateDateTime(any(), any(), any())
 
         // Act
+        service.entityInEdit = simpleLog
         service.updateDateTime(
                 LocalDate.from(fakeStart),
                 LocalTime.from(fakeStart),
@@ -144,21 +147,22 @@ class LogEditServiceImplTest {
     }
 
     @Test
-    fun saveValidEntity_triggerCorrect() {
+    fun validUpdate() {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = createValidLogWithDate()
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
-        doReturn(validLog).whenever(logEditInteractor).updateTimeConvenience(
+        val simpleLog = createValidLogWithDate()
+        doReturn(simpleLog).whenever(logEditInteractor).updateTimeConvenience(
                 any(),
                 any(),
                 any(),
                 any(),
                 any()
         )
+        service.serviceType = LogEditService.ServiceType.UPDATE
 
         // Act
+        service.entityInEdit = simpleLog
         service.saveEntity(
                 LocalDate.from(fakeStart),
                 LocalTime.from(fakeStart),
@@ -169,16 +173,47 @@ class LogEditServiceImplTest {
         )
 
         // Assert
+        verify(logEditInteractor).update(any())
         verify(listener).onEntitySaveComplete()
     }
 
     @Test
-    fun saveEntity_invalidEntity_triggerCorrect() {
+    fun validInsert() {
         // Assemble
         val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
         val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val validLog = createValidLogWithDate()
-        service = LogEditServiceImpl(logEditInteractor, listener, validLog)
+        val simpleLog = createValidLogWithDate()
+        doReturn(simpleLog).whenever(logEditInteractor).updateTimeConvenience(
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+        )
+        service.serviceType = LogEditService.ServiceType.CREATE
+
+        // Act
+        service.entityInEdit = simpleLog
+        service.saveEntity(
+                LocalDate.from(fakeStart),
+                LocalTime.from(fakeStart),
+                LocalDate.from(fakeEnd),
+                LocalTime.from(fakeEnd),
+                "valid_ticket",
+                "valid_comment"
+        )
+
+        // Assert
+        verify(logEditInteractor).create(any())
+        verify(listener).onEntitySaveComplete()
+    }
+
+    @Test
+    fun invalidEntity_onSave() {
+        // Assemble
+        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
+        val simpleLog = createValidLogWithDate()
         doThrow(IllegalArgumentException()).whenever(logEditInteractor).updateTimeConvenience(
                 any(),
                 any(),
@@ -188,6 +223,7 @@ class LogEditServiceImplTest {
         )
 
         // Act
+        service.entityInEdit = simpleLog
         service.saveEntity(
                 LocalDate.from(fakeStart),
                 LocalTime.from(fakeStart),
@@ -198,7 +234,6 @@ class LogEditServiceImplTest {
         )
 
         // Assert
-        verify(listener, never()).onEntitySaveComplete()
         verify(listener).onEntitySaveFail(any())
     }
 
