@@ -31,14 +31,9 @@ public class LogDisplayControllerSimple extends TableDisplayController<SimpleLog
                 7
         ));
         table.getColumns().add(insertTableColumn(
-                Translation.getInstance().getString("general_duration"),
-                "prettyDuration",
-                6
-        ));
-        table.getColumns().add(insertTableColumn(
             Translation.getInstance().getString("general_comment"),
                 "comment",
-                1.6f
+                1.3f
         ));
     }
 
