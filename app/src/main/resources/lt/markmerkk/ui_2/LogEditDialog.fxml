@@ -14,6 +14,7 @@
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.scene.control.TextArea?>
 <?import com.jfoenix.controls.JFXTimePicker?>
+<?import javafx.scene.control.Hyperlink?>
 <JFXDialog
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
@@ -80,6 +81,7 @@
                                        HBox.hgrow="NEVER"
                                        VBox.vgrow="NEVER" >
                                </JFXTextField>
+                               <Hyperlink fx:id="jfxTextFieldTicketLink"></Hyperlink>
                            </children>
                        </HBox>
                        <HBox alignment="CENTER_LEFT">
