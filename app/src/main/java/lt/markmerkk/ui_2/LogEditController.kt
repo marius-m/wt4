@@ -1,15 +1,19 @@
 package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.*
+import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
+import javafx.scene.paint.Color
 import javafx.util.StringConverter
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
@@ -36,11 +40,13 @@ class LogEditController : Initializable, LogEditService.Listener {
     @FXML lateinit var jfxDateTo: JFXDatePicker
     @FXML lateinit var jfxTimeTo: JFXTimePicker
     @FXML lateinit var jfxTextFieldTicket: JFXTextField
+    @FXML lateinit var jfxTextFieldTicketLink: Hyperlink
     @FXML lateinit var jfxTextFieldComment: JFXTextArea
     @FXML lateinit var jfxTextFieldHint: Label
     @FXML lateinit var jfxTextFieldHint2: Label
 
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var hostServices: HostServicesInteractor
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
     private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
@@ -67,6 +73,10 @@ class LogEditController : Initializable, LogEditService.Listener {
                     comment = jfxTextFieldComment.text
             )
         }
+        jfxTextFieldTicketLink.setOnAction {
+            hostServices.openExternalIssue(jfxTextFieldTicket.text)
+        }
+        jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 20.0, 16.0)
     }
 
     /**
@@ -164,6 +174,21 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     //endregion
 
+    //region Graphs
+
+    private fun linkGraphic(color: Color, width: Double, height: Double): SVGGlyph {
+        val svgGlyph = SVGGlyph(
+                -1,
+                "link",
+                "M14,13V17H10V13H7L12,8L17,13M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z",
+                color
+        )
+        svgGlyph.setSize(width, height)
+        return svgGlyph
+    }
+
+    //endregion
+
     //region Listeners
 
     private val dateConverter: StringConverter<LocalDate> = object : StringConverter<LocalDate>() {
@@ -222,7 +247,6 @@ class LogEditController : Initializable, LogEditService.Listener {
                 endTime = newValue
         )
     }
-
 
     //endregion
 
