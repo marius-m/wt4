@@ -7,6 +7,7 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
+import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import javafx.util.StringConverter
@@ -74,9 +75,11 @@ class LogEditController : Initializable, LogEditService.Listener {
             )
         }
         jfxTextFieldTicketLink.setOnAction {
-            hostServices.openExternalIssue(jfxTextFieldTicket.text)
+//            hostServices.openExternalIssue(jfxTextFieldTicket.text)
+            hostServices.copyLinkToClipboard(jfxTextFieldTicket.text)
         }
-        jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 20.0, 16.0)
+        jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
+        jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 16.0, 20.0)
     }
 
     /**
@@ -180,7 +183,7 @@ class LogEditController : Initializable, LogEditService.Listener {
         val svgGlyph = SVGGlyph(
                 -1,
                 "link",
-                "M14,13V17H10V13H7L12,8L17,13M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z",
+                "M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z",
                 color
         )
         svgGlyph.setSize(width, height)
