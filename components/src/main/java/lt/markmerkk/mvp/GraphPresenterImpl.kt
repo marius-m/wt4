@@ -4,6 +4,7 @@ import javafx.scene.layout.Region
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interactors.GraphDrawer
 import org.joda.time.DateTime
+import org.joda.time.LocalTime
 import rx.Scheduler
 import rx.Subscription
 
@@ -32,12 +33,13 @@ class GraphPresenterImpl(
 
     override fun loadGraph(from: Long, to: Long) {
         subscription?.unsubscribe()
-        val tomorrow = DateTime(to).plusDays(1).millis
-        logInteractor.loadLogs(from, tomorrow)
+        val fromDayStart = DateTime(from).withTimeAtStartOfDay()
+        val toDayEnd = DateTime(to).withTime(LocalTime.MIDNIGHT.minusSeconds(1))
+        subscription = logInteractor.loadLogs(fromDayStart.millis, toDayEnd.millis)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
-                .doOnUnsubscribe { view.hideProgress() }
+                .doOnTerminate { view.hideProgress() }
                 .subscribe({
                     handleSuccess(it)
                 }, {
@@ -67,7 +69,7 @@ class GraphPresenterImpl(
         } else {
             view.hideRefreshButton()
         }
-        graph.populateData(data as List<Nothing>) // Maybe improve this part
+        graph.populateData(data as List<Nothing>)
         view.showGraph(graph)
     }
 }

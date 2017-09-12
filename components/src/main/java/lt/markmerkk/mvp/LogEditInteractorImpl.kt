@@ -17,7 +17,7 @@ class LogEditInteractorImpl(
     ): SimpleLog {
         val startInMillis = startInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         val endInMillis = endInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        return update(
+        return updateCurrentEntity(
                 currentEntity,
                 startInMillis,
                 endInMillis,
@@ -35,7 +35,7 @@ class LogEditInteractorImpl(
     ): SimpleLog {
         val startInMillis = startInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         val endInMillis = endInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        return update(
+        return updateCurrentEntity(
                 currentEntity,
                 startInMillis,
                 endInMillis,
@@ -44,7 +44,7 @@ class LogEditInteractorImpl(
         )
     }
 
-    override fun update(
+    override fun updateCurrentEntity(
             currentEntity: SimpleLog,
             startInMillis: Long,
             endInMillis: Long,
@@ -59,7 +59,11 @@ class LogEditInteractorImpl(
                 .build()
     }
 
-    override fun save(entityToSave: SimpleLog) {
+    override fun update(entityToSave: SimpleLog) {
         dataStorage.update(entityToSave)
+    }
+
+    override fun create(entityToSave: SimpleLog) {
+        dataStorage.insert(entityToSave)
     }
 }

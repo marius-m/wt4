@@ -10,9 +10,8 @@ import org.junit.Test
  */
 class LogUtilsSplitTaskTitleTest {
     @Test
-    @Throws(Exception::class)
     fun testEmpty() {
-        assertEquals(null, LogUtils.splitTaskTitle(""))
+        assertEquals("", LogUtils.splitTaskTitle(""))
     }
 
     @Test
@@ -32,6 +31,6 @@ class LogUtilsSplitTaskTitleTest {
 
     @Test
     fun testInvalid() {
-        assertNull(LogUtils.splitTaskTitle("212"))
+        assertEquals("", LogUtils.splitTaskTitle("212"))
     }
 }

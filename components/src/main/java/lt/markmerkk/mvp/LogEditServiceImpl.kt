@@ -1,13 +1,22 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SimpleLogBuilder
+import org.joda.time.DateTime
 import java.time.*
 
 class LogEditServiceImpl(
         private val logEditInteractor: LogEditInteractor,
-        private val listener: LogEditService.Listener,
-        private var currentEntity: SimpleLog
+        private val listener: LogEditService.Listener
 ) : LogEditService {
+
+    override var serviceType: LogEditService.ServiceType = LogEditService.ServiceType.UPDATE
+    override var entityInEdit: SimpleLog = SimpleLogBuilder(DateTime.now().millis)
+            .setStart(DateTime.now().millis)
+            .setEnd(DateTime.now().millis)
+            .setTask("")
+            .setComment("")
+            .build()
 
     override fun updateDateTime(
             startDate: LocalDate,
@@ -18,8 +27,8 @@ class LogEditServiceImpl(
         val startInDateTime = LocalDateTime.of(startDate, startTime)
         val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
-            currentEntity = logEditInteractor.updateDateTime(currentEntity, startInDateTime, endInDateTime)
-            listener.onDurationChange(currentEntity.prettyDuration)
+            entityInEdit = logEditInteractor.updateDateTime(entityInEdit, startInDateTime, endInDateTime)
+            listener.onDurationChange(entityInEdit.prettyDuration)
             listener.onEnableSaving()
         } catch(e: IllegalArgumentException) {
             listener.onDurationChange("Invalid duration")
@@ -38,38 +47,35 @@ class LogEditServiceImpl(
         val startInDateTime = LocalDateTime.of(startDate, startTime)
         val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
-            currentEntity = logEditInteractor.updateTimeConvenience(
-                    currentEntity,
+            entityInEdit = logEditInteractor.updateTimeConvenience(
+                    entityInEdit,
                     startInDateTime,
                     endInDateTime,
                     task,
                     comment
             )
-            logEditInteractor.save(currentEntity)
+            if (serviceType == LogEditService.ServiceType.UPDATE) {
+                logEditInteractor.update(entityInEdit)
+            } else {
+                logEditInteractor.create(entityInEdit)
+            }
             listener.onEntitySaveComplete()
         } catch(e: IllegalArgumentException) {
             listener.onEntitySaveFail(e)
         }
     }
 
-    override fun onAttach() {
-        render(currentEntity)
-    }
-
-    override fun onDetach() {
-    }
-
     /**
      * Triggers according functions to show on screen
      */
-    private fun render(entity: SimpleLog) {
-        val start = Instant.ofEpochMilli(entity.start).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        val end = Instant.ofEpochMilli(entity.end).atZone(ZoneId.systemDefault()).toLocalDateTime()
+    override fun redraw() {
+        val start = Instant.ofEpochMilli(entityInEdit.start).atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val end = Instant.ofEpochMilli(entityInEdit.end).atZone(ZoneId.systemDefault()).toLocalDateTime()
         listener.onDataChange(
                 start,
                 end,
-                currentEntity.task ?: "",
-                currentEntity.comment ?: ""
+                entityInEdit.task ?: "",
+                entityInEdit.comment ?: ""
         )
         updateDateTime(
                 start.toLocalDate(),
@@ -77,7 +83,7 @@ class LogEditServiceImpl(
                 end.toLocalDate(),
                 end.toLocalTime()
         )
-        printNotificationIfNeeded(currentEntity)
+        printNotificationIfNeeded(entityInEdit)
     }
 
     /**

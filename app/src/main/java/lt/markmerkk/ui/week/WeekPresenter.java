@@ -4,16 +4,19 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
 import jfxtras.scene.control.agenda.Agenda;
 import lt.markmerkk.*;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.ui.interfaces.UpdateListener;
+import lt.markmerkk.ui_2.LogStatusView;
 import lt.markmerkk.utils.tracker.ITracker;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -34,12 +37,10 @@ import java.util.ResourceBundle;
  */
 public class WeekPresenter implements Initializable, AgendaView {
   public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
-  @Inject
-  LogStorage storage;
-  @Inject
-  ITracker tracker;
+  @Inject LogStorage storage;
+  @Inject ITracker tracker;
 
-  @FXML VBox mainContainer;
+  @FXML StackPane jfxWeekContainer;
   Agenda agenda;
 
   Agenda.AppointmentImplLocal[] appointments;
@@ -48,6 +49,7 @@ public class WeekPresenter implements Initializable, AgendaView {
   // fixme : VERY VERY WEIRD AND DIRTY IMPLEMENTATION OF SKIN WORKAROUND :/
   public static DateTime targetDate = null;
   private CustomAgendaWeekView weekSkin;
+  private LogStatusView logStatusView;
 
   private AgendaPresenter agendaPresenter;
 
@@ -59,6 +61,9 @@ public class WeekPresenter implements Initializable, AgendaView {
     Main.Companion.getComponent().presenterComponent().inject(this);
     tracker.sendView(GAStatics.INSTANCE.getVIEW_WEEK());
     storage.register(storageListener);
+
+    logStatusView = new LogStatusView(jfxWeekContainer);
+
     targetDate = new DateTime(storage.getTargetDate());
     agenda = new Agenda();
     agenda.setLocale(new java.util.Locale("en"));
@@ -67,7 +72,7 @@ public class WeekPresenter implements Initializable, AgendaView {
 		agenda.setAllowDragging(false);
 		agenda.setAllowResize(false);
     agenda.editAppointmentCallbackProperty().set(agendaCallbackListener);
-    mainContainer.getChildren().add(agenda);
+    jfxWeekContainer.getChildren().add(agenda);
     agendaPresenter = new AgendaPresenterImpl(
             this,
             agenda.appointmentGroups().get(0),
@@ -78,6 +83,18 @@ public class WeekPresenter implements Initializable, AgendaView {
     );
     agendaPresenter.onAttach();
     agendaPresenter.reloadView(storage.getData());
+    agenda.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        if (agenda.selectedAppointments().size() > 0) {
+          SimpleLog selectedLog = ((AppointmentSimpleLog) agenda.selectedAppointments().get(0)).getSimpleLog();
+          StackPane.setAlignment(logStatusView.getView(), logStatusView.suggestGravityByLogWeekDay(selectedLog));
+          logStatusView.showLogWithId(selectedLog.get_id());
+        } else {
+          logStatusView.showLogWithId(null);
+        }
+      }
+    });
   }
 
   public void setUpdateListener(UpdateListener updateListener) {

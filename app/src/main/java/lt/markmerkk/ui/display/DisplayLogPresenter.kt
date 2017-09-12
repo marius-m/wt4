@@ -10,13 +10,13 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.utils.LogDisplayController
+import lt.markmerkk.utils.LogDisplayControllerSimple
 import lt.markmerkk.utils.TableDisplayController
 import lt.markmerkk.utils.tracker.ITracker
-
+import java.net.URL
+import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
-import java.net.URL
-import java.util.ResourceBundle
 
 /**
  * Created by mariusmerkevicius on 12/5/15.
@@ -36,23 +36,8 @@ class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
-        tracker.sendView(GAStatics.VIEW_DAY)
         logs.addAll(storage.data)
-
         tableView.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))
-        LogDisplayController(tableView, logs, object : TableDisplayController.Listener<SimpleLog> {
-            override fun onUpdate(updateableObject: SimpleLog) {
-                updateListener?.onUpdate(updateableObject)
-            }
-
-            override fun onDelete(deleteableObject: SimpleLog) {
-                updateListener?.onDelete(deleteableObject)
-            }
-
-            override fun onClone(cloneableObject: SimpleLog) {
-                updateListener?.onClone(cloneableObject)
-            }
-        })
         storage.register(this)
     }
 
@@ -65,10 +50,43 @@ class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
         this.updateListener = updateListener
     }
 
+    /**
+     * Initializes table view with option to be simplified (drops unnecessary table columns)
+     */
+    fun initTableView(viewSimplified: Boolean) {
+        if (viewSimplified) {
+            tracker.sendView(GAStatics.VIEW_DAY_SIMPLE)
+        } else {
+            tracker.sendView(GAStatics.VIEW_DAY)
+        }
+        if (viewSimplified) {
+            LogDisplayControllerSimple(tableView, logs, tableDisplayControllerListener)
+            return
+        }
+        LogDisplayController(tableView, logs, tableDisplayControllerListener)
+    }
+
     override fun onDataChange(data: List<SimpleLog>) {
         logs.clear()
         logs.addAll(data)
-        tableView.sort();
+        tableView.sort()
     }
 
+    //region Listeners
+
+    private val tableDisplayControllerListener: TableDisplayController.Listener<SimpleLog> = object : TableDisplayController.Listener<SimpleLog> {
+        override fun onUpdate(updateableObject: SimpleLog) {
+            updateListener?.onUpdate(updateableObject)
+        }
+
+        override fun onDelete(deleteableObject: SimpleLog) {
+            updateListener?.onDelete(deleteableObject)
+        }
+
+        override fun onClone(cloneableObject: SimpleLog) {
+            updateListener?.onClone(cloneableObject)
+        }
+    }
+
+    //endregion
 }

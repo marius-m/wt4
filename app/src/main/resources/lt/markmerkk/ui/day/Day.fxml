@@ -6,11 +6,9 @@
 <?import javafx.scene.control.*?>
 
 <?import jfxtras.scene.control.agenda.Agenda?>
-<VBox fx:id="mainContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui.day.DayPresenter">
-   <padding>
-      <Insets left="5.0" right="5.0" top="5.0" />
-   </padding>
-   <children>
-      <Agenda fx:id="agenda"></Agenda>
-   </children>
-</VBox>
+<StackPane fx:id="jfxDayContainer"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="lt.markmerkk.ui.day.DayPresenter">
+   <Agenda fx:id="jfxAgenda" />
+</StackPane>

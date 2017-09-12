@@ -208,7 +208,7 @@ public class SimpleLogBuilder {
    * @return
    */
   String normalize(String input) {
-    if (input == null) return null;
+    if (input == null) return "";
     return input.replaceAll("\"", "\'");
   }
 

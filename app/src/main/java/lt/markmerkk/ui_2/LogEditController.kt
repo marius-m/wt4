@@ -1,21 +1,25 @@
 package lt.markmerkk.ui_2
 
+import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
-import com.jfoenix.skins.JFXTimePickerContent
+import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
+import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
+import javafx.scene.paint.Color
 import javafx.util.StringConverter
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.events.EventSnackBarMessage
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
-import org.joda.time.format.DateTimeFormat
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,16 +43,18 @@ class LogEditController : Initializable, LogEditService.Listener {
     @FXML lateinit var jfxDateTo: JFXDatePicker
     @FXML lateinit var jfxTimeTo: JFXTimePicker
     @FXML lateinit var jfxTextFieldTicket: JFXTextField
+    @FXML lateinit var jfxTextFieldTicketLink: Hyperlink
     @FXML lateinit var jfxTextFieldComment: JFXTextArea
     @FXML lateinit var jfxTextFieldHint: Label
     @FXML lateinit var jfxTextFieldHint2: Label
 
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var hostServices: HostServicesInteractor
+    @Inject lateinit var eventBus: EventBus
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
     private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
     private lateinit var logEditService: LogEditService
-    private lateinit var entity: SimpleLog
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
@@ -71,19 +77,40 @@ class LogEditController : Initializable, LogEditService.Listener {
                     comment = jfxTextFieldComment.text
             )
         }
+        jfxTextFieldTicketLink.setOnAction {
+//            hostServices.openExternalIssue(jfxTextFieldTicket.text)
+            val issue = jfxTextFieldTicket.text.toString()
+            eventBus.post(
+                    EventSnackBarMessage(
+                            String.format("Copied %s to clipboard", hostServices.generateLink(issue))
+                    )
+            )
+            hostServices.copyLinkToClipboard(issue)
+        }
+        jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
+        jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 16.0, 20.0)
     }
 
     /**
-     * Called directly from the view, whenever entity is ready for control
+     * Called directly from the view, whenever entity is ready for control.
+     * If entity is provided, will provide update for the entity, otherwise it will create new one.
      */
-    fun initFromView(entity: SimpleLog) {
-        this.entity = entity
+    fun initFromView(entity: SimpleLog?) {
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(logStorage),
-                this,
-                entity
+                this
         )
-        logEditService.onAttach()
+        if (entity != null) {
+            logEditService.serviceType = LogEditService.ServiceType.UPDATE
+            logEditService.entityInEdit = entity
+            jfxHeaderLabel.text = "Update log"
+            jfxButtonAccept.text = "UPDATE"
+        } else {
+            logEditService.serviceType = LogEditService.ServiceType.CREATE
+            jfxHeaderLabel.text = "Create new log"
+            jfxButtonAccept.text = "CREATE"
+        }
+        logEditService.redraw()
         jfxDateFrom.valueProperty().addListener(startDateChangeListener)
         jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)
         jfxDateTo.valueProperty().addListener(endDateChangeListener)
@@ -96,7 +123,6 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxDateTo.valueProperty().removeListener(endDateChangeListener)
         jfxTimeFrom.valueProperty().removeListener(startTimeChangeListener)
         jfxDateFrom.valueProperty().removeListener(startDateChangeListener)
-        logEditService.onDetach()
     }
 
     //region Edit service callbacks
@@ -160,6 +186,21 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     //endregion
 
+    //region Graphs
+
+    private fun linkGraphic(color: Color, width: Double, height: Double): SVGGlyph {
+        val svgGlyph = SVGGlyph(
+                -1,
+                "link",
+                "M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z",
+                color
+        )
+        svgGlyph.setSize(width, height)
+        return svgGlyph
+    }
+
+    //endregion
+
     //region Listeners
 
     private val dateConverter: StringConverter<LocalDate> = object : StringConverter<LocalDate>() {
@@ -218,7 +259,6 @@ class LogEditController : Initializable, LogEditService.Listener {
                 endTime = newValue
         )
     }
-
 
     //endregion
 

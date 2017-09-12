@@ -4,7 +4,7 @@ import com.airhacks.afterburner.views.FXMLView
 import lt.markmerkk.entities.SimpleLog
 
 class LogEditDialog(
-        entity: SimpleLog
+        entity: SimpleLog?
 ) : FXMLView() {
     init {
         (presenter as LogEditController).initFromView(entity)

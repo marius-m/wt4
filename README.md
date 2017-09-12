@@ -112,13 +112,21 @@ Logs can be updated by pressing the right mouse button on the target log
 
 ## Changelog
 
-### 1.0.0
+### 1.0.3
+- Added graphs
+ - Fixed bugs with graphs (tho' still not as useful or working 100%)
+- Added simplified simple table for viewing logs
+ - Smaller info on simple view
+- Added status for various logs on week/day view of the calendar
+- Add insert custom log option
+- Add copy issue to clipboard
+ - Snackbar indicates of copied issue
 
+### 1.0.0
 - Redesigned window to a more simple version in material design!
 - Most of the functionality is already moved, though still missing some parts
 
 ### 0.9.9.8-EAP
-
 - Update how enter button scales when resizing the window
 - Proper size for search result when looking for an issue
 - Smarter query for searching issues
@@ -126,23 +134,19 @@ Logs can be updated by pressing the right mouse button on the target log
 - Provide parent info if issue is a subtask
 
 ### 0.9.9.7
-
 - Configuration sets (can be found in setting, will update documentation how to use)
  - Add configurations to change instance to more than one JIRA
 - Graphs (Graph representation on worked issues. Can be opened by pressing on 'Total worked time button')
 - Move enter button to top bar for cleaner interface
 
 ### 0.9.9.6
-
 - Change remote auto updates url
 
 ### 0.9.9.5
-
 - Improved issue search (should work properly now)
 - Added issue search in update
 
 ### 0.9.9.4
-
 * Refactored all synchronization with remote
 * Rewritten most of the core functionality 
   - GA tracking

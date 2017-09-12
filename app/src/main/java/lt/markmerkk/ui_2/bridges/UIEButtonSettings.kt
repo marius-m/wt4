@@ -18,6 +18,7 @@ import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.CurrentDayDialog
+import lt.markmerkk.ui_2.LogEditDialog
 import lt.markmerkk.ui_2.StatisticsDialog
 
 /**
@@ -33,11 +34,13 @@ class UIEButtonSettings(
     private val glyphStatistics: SVGGlyph = statisticsGlyph(Color.BLACK, 20.0)
     private val glyphPaint: SVGGlyph = paintGlyph(Color.BLACK, 20.0)
     private val glyphRefresh: SVGGlyph = refreshGlyph(Color.BLACK, 20.0, 16.0)
+    private val glyphInsert: SVGGlyph = insertGlyph(Color.BLACK, 20.0)
     private var jfxPopup: JFXPopup = JFXPopup()
 
     private val labelStatistics = Label("Total", glyphStatistics)
     private val labelRefresh = Label("Force refresh", glyphRefresh)
     private val labelBackToDefault = Label("Default view", glyphPaint)
+    private val labelInsert = Label("Insert log", glyphInsert)
 
     init {
         button.graphic = glyphSettings
@@ -63,6 +66,7 @@ class UIEButtonSettings(
      */
     private fun createSelectionList(): Region {
         val labelsList = JFXListView<Label>()
+        labelsList.items.add(labelInsert)
         labelsList.items.add(labelStatistics)
         labelsList.items.add(labelRefresh)
         labelsList.items.add(labelBackToDefault)
@@ -91,6 +95,12 @@ class UIEButtonSettings(
                 Main.Companion.MATERIAL = false
                 Main.Companion.mainInstance!!.restart()
             }
+            labelInsert -> {
+                val logEditDialog = LogEditDialog(null)
+                val jfxDialog = logEditDialog.view as JFXDialog
+                jfxDialog.show(externalSourceNode.rootNode())
+                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(logEditDialog) }
+            }
             else -> throw IllegalStateException("Cannot define selected label")
         }
     }
@@ -105,6 +115,17 @@ class UIEButtonSettings(
                 -1,
                 "settings",
                 "M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z",
+                color
+        )
+        svgGlyph.setSize(size, size)
+        return svgGlyph
+    }
+
+    private fun insertGlyph(color: Color, size: Double): SVGGlyph {
+        val svgGlyph = SVGGlyph(
+                -1,
+                "insert",
+                "M1008 6.286q18.857 13.714 15.429 36.571l-146.286 877.714q-2.857 16.571-18.286 25.714-8 4.571-17.714 4.571-6.286 0-13.714-2.857l-258.857-105.714-138.286 168.571q-10.286 13.143-28 13.143-7.429 0-12.571-2.286-10.857-4-17.429-13.429t-6.571-20.857v-199.429l493.714-605.143-610.857 528.571-225.714-92.571q-21.143-8-22.857-31.429-1.143-22.857 18.286-33.714l950.857-548.571q8.571-5.143 18.286-5.143 11.429 0 20.571 6.286z",
                 color
         )
         svgGlyph.setSize(size, size)

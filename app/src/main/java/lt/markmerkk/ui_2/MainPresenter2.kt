@@ -6,19 +6,19 @@ import com.jfoenix.controls.*
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.*
-import lt.markmerkk.DisplayType
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
+import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.EventChangeDisplayType
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
+import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui_2.bridges.*
@@ -56,6 +56,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieCenterView: UIECenterView
     lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
+    lateinit var snackBar: JFXSnackbar
 
     var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
 
@@ -63,6 +64,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
+        snackBar = JFXSnackbar(jfxRoot)
         uieButtonDate = UIEButtonDate(this, jfxButtonDate)
         uieButtonSettings = UIEButtonSettings(this, jfxButtonSettings, syncInteractor)
         uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
@@ -112,6 +114,11 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         changeDisplayByDisplayType(eventChangeDisplayType.displayType)
     }
 
+    @Subscribe
+    fun onSnackBarMessage(event: EventSnackBarMessage) {
+        snackBar.show(event.message, Const.TIMEOUT_2s)
+    }
+
     //endregion
 
     //region Convenience
@@ -119,10 +126,36 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     fun changeDisplayByDisplayType(displayType: DisplayType) {
         val oldView = uieCenterView.raw()
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> uieCenterView.populate(DisplayLogView(simpleUpdateListener))
-            DisplayType.TABLE_VIEW_DETAIL -> uieCenterView.populate(DisplayLogView(simpleUpdateListener))
-            DisplayType.CALENDAR_VIEW_DAY -> uieCenterView.populate(DayView(simpleUpdateListener))
-            DisplayType.CALENDAR_VIEW_WEEK -> uieCenterView.populate(WeekView(simpleUpdateListener))
+            DisplayType.TABLE_VIEW_SIMPLE -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(
+                        DisplayLogView(
+                                listener = simpleUpdateListener,
+                                isViewSimplified = true
+                        )
+                )
+            }
+            DisplayType.TABLE_VIEW_DETAIL -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(
+                        DisplayLogView(
+                                listener = simpleUpdateListener,
+                                isViewSimplified = false
+                        )
+                )
+            }
+            DisplayType.CALENDAR_VIEW_DAY -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(DayView(simpleUpdateListener))
+            }
+            DisplayType.CALENDAR_VIEW_WEEK -> {
+                logStorage.displayType = DisplayTypeLength.WEEK
+                uieCenterView.populate(WeekView(simpleUpdateListener))
+            }
+            DisplayType.GRAPHS -> {
+                logStorage.displayType = DisplayTypeLength.DAY
+                uieCenterView.populate(GraphsFxView())
+            }
             else -> throw IllegalStateException("Display cannot be handled")
         }
         InjectorNoDI.forget(oldView)
