@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2
 
+import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
@@ -14,6 +15,7 @@ import javafx.util.StringConverter
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
@@ -48,6 +50,7 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServices: HostServicesInteractor
+    @Inject lateinit var eventBus: EventBus
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
     private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
@@ -76,7 +79,13 @@ class LogEditController : Initializable, LogEditService.Listener {
         }
         jfxTextFieldTicketLink.setOnAction {
 //            hostServices.openExternalIssue(jfxTextFieldTicket.text)
-            hostServices.copyLinkToClipboard(jfxTextFieldTicket.text)
+            val issue = jfxTextFieldTicket.text.toString()
+            eventBus.post(
+                    EventSnackBarMessage(
+                            String.format("Copied %s to clipboard", hostServices.generateLink(issue))
+                    )
+            )
+            hostServices.copyLinkToClipboard(issue)
         }
         jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
         jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 16.0, 20.0)

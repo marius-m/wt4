@@ -6,14 +6,12 @@ import com.jfoenix.controls.*
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.*
-import lt.markmerkk.DisplayType
-import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
+import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.EventChangeDisplayType
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.interactors.SyncInteractor
@@ -58,6 +56,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieCenterView: UIECenterView
     lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
+    lateinit var snackBar: JFXSnackbar
 
     var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
 
@@ -65,6 +64,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
+        snackBar = JFXSnackbar(jfxRoot)
         uieButtonDate = UIEButtonDate(this, jfxButtonDate)
         uieButtonSettings = UIEButtonSettings(this, jfxButtonSettings, syncInteractor)
         uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
@@ -112,6 +112,11 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Subscribe
     fun onDisplayTypeChange(eventChangeDisplayType: EventChangeDisplayType) {
         changeDisplayByDisplayType(eventChangeDisplayType.displayType)
+    }
+
+    @Subscribe
+    fun onSnackBarMessage(event: EventSnackBarMessage) {
+        snackBar.show(event.message, Const.TIMEOUT_2s)
     }
 
     //endregion

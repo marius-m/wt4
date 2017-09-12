@@ -132,7 +132,7 @@ public class SettingsPresenter implements Initializable, IRemoteLoadListener {
    * A button event when user clicks on reset JQL
    */
   public void onClickResetJQL() {
-    inputJQL.setText(Const.INSTANCE.getDEFAULT_JQL_USER_ISSUES());
+    inputJQL.setText(Const.DEFAULT_JQL_USER_ISSUES);
     settings.setIssueJql(inputJQL.getText());
   }
 
