@@ -7,7 +7,6 @@ import com.jfoenix.controls.JFXPopup
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
@@ -17,8 +16,8 @@ import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.CurrentDayDialog
 import lt.markmerkk.ui_2.LogEditDialog
+import lt.markmerkk.ui_2.SettingsDialog
 import lt.markmerkk.ui_2.StatisticsDialog
 
 /**
@@ -30,20 +29,16 @@ class UIEButtonSettings(
         private val syncInteractor: SyncInteractor
 ) : UIElement<JFXButton> {
 
-    private val glyphSettings: SVGGlyph = settingsGlyph(Color.WHITE, 20.0)
-    private val glyphStatistics: SVGGlyph = statisticsGlyph(Color.BLACK, 20.0)
-    private val glyphPaint: SVGGlyph = paintGlyph(Color.BLACK, 20.0)
-    private val glyphRefresh: SVGGlyph = refreshGlyph(Color.BLACK, 20.0, 16.0)
-    private val glyphInsert: SVGGlyph = insertGlyph(Color.BLACK, 20.0)
     private var jfxPopup: JFXPopup = JFXPopup()
 
-    private val labelStatistics = Label("Total", glyphStatistics)
-    private val labelRefresh = Label("Force refresh", glyphRefresh)
-    private val labelBackToDefault = Label("Default view", glyphPaint)
-    private val labelInsert = Label("Insert log", glyphInsert)
+    private val labelStatistics = Label("Total", glyphStatistics(Color.BLACK, 20.0))
+    private val labelRefresh = Label("Force refresh", glyphRefresh(Color.BLACK, 20.0, 16.0))
+    private val labelBackToDefault = Label("Default view", glyphPaint(Color.BLACK, 20.0))
+    private val labelInsert = Label("Insert log", glyphInsert(Color.BLACK, 20.0))
+    private val labelSettings = Label("Settings", glyphSettings(Color.BLACK, 20.0))
 
     init {
-        button.graphic = glyphSettings
+        button.graphic = glyphSettings(Color.WHITE, 20.0)
         button.setOnMouseClicked {
             jfxPopup = JFXPopup(createSelectionList())
             jfxPopup.isAutoFix = true
@@ -69,6 +64,7 @@ class UIEButtonSettings(
         labelsList.items.add(labelInsert)
         labelsList.items.add(labelStatistics)
         labelsList.items.add(labelRefresh)
+        labelsList.items.add(labelSettings)
         labelsList.items.add(labelBackToDefault)
         labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
             override fun changed(observable: ObservableValue<out Label>?, oldValue: Label?, newValue: Label) {
@@ -96,10 +92,16 @@ class UIEButtonSettings(
                 Main.Companion.mainInstance!!.restart()
             }
             labelInsert -> {
-                val logEditDialog = LogEditDialog(null)
-                val jfxDialog = logEditDialog.view as JFXDialog
+                val dialog = LogEditDialog(null)
+                val jfxDialog = dialog.view as JFXDialog
                 jfxDialog.show(externalSourceNode.rootNode())
-                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(logEditDialog) }
+                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+            }
+            labelSettings -> {
+                val dialog = SettingsDialog()
+                val jfxDialog = dialog.view as JFXDialog
+                jfxDialog.show(externalSourceNode.rootNode())
+                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
             }
             else -> throw IllegalStateException("Cannot define selected label")
         }
@@ -110,7 +112,7 @@ class UIEButtonSettings(
     //region Glyphs
 
     // todo : export hardcoded glyph
-    private fun settingsGlyph(color: Color, size: Double): SVGGlyph {
+    private fun glyphSettings(color: Color, size: Double): SVGGlyph {
         val svgGlyph = SVGGlyph(
                 -1,
                 "settings",
@@ -121,7 +123,7 @@ class UIEButtonSettings(
         return svgGlyph
     }
 
-    private fun insertGlyph(color: Color, size: Double): SVGGlyph {
+    private fun glyphInsert(color: Color, size: Double): SVGGlyph {
         val svgGlyph = SVGGlyph(
                 -1,
                 "insert",
@@ -132,7 +134,7 @@ class UIEButtonSettings(
         return svgGlyph
     }
 
-    private fun statisticsGlyph(color: Color, size: Double): SVGGlyph {
+    private fun glyphStatistics(color: Color, size: Double): SVGGlyph {
         val svgGlyph = SVGGlyph(
                 -1,
                 "statistics",
@@ -143,7 +145,7 @@ class UIEButtonSettings(
         return svgGlyph
     }
 
-    private fun refreshGlyph(color: Color, width: Double, height: Double): SVGGlyph {
+    private fun glyphRefresh(color: Color, width: Double, height: Double): SVGGlyph {
         val svgGlyph = SVGGlyph(
                 -1,
                 "refresh",
@@ -154,7 +156,7 @@ class UIEButtonSettings(
         return svgGlyph
     }
 
-    private fun paintGlyph(color: Color, size: Double): SVGGlyph {
+    private fun glyphPaint(color: Color, size: Double): SVGGlyph {
         val svgGlyph = SVGGlyph(
                 -1,
                 "paint",

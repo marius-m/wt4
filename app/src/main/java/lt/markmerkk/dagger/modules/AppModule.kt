@@ -151,4 +151,10 @@ class AppModule(
         return DayProviderImpl(logStorage)
     }
 
+    @Provides
+    @Singleton
+    fun provideStrings(): Strings {
+        return StringsImpl()
+    }
+
 }

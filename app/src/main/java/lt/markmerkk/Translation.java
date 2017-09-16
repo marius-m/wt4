@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
  * Responsible for providing translations.
  *
  * Translations works as key/value from simple properties file.
+ * @deprecated please use {@link Strings}
  */
+@Deprecated
 public class Translation {
   public static final Logger logger = LoggerFactory.getLogger(Translation.class);
   public static final String UNTRANSLATED = "untranslated";
