@@ -38,22 +38,7 @@ interface AuthService {
         /**
          * Shows auth is valid
          */
-        fun showAuthSuccess()
-
-        /**
-         * Shows that auth has failed when trying to validate login
-         */
-        fun showAuthFailUnauthorised(error: Throwable)
-
-        /**
-         * Shows that auth has failed when trying to validate login
-         */
-        fun showAuthFailInvalidHostname(error: Throwable)
-
-        /**
-         * Shows that auth has failed when trying to validate login
-         */
-        fun showAuthFailInvalidUndefined(error: Throwable)
+        fun showAuthResult(result: AuthResult)
 
         /**
          * Shows logs for auth troubleshooting
@@ -73,6 +58,18 @@ interface AuthService {
                 username: String,
                 password: String
         ): Observable<Boolean>
+    }
+
+    /**
+     * Authorisation check result
+     */
+    enum class AuthResult {
+        UNKNOWN,
+        SUCCESS,
+        ERROR_EMPTY_FIELDS,
+        ERROR_UNAUTHORISED,
+        ERROR_INVALID_HOSTNAME,
+        ERROR_UNDEFINED,
     }
 
 }

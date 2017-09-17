@@ -4,6 +4,9 @@ import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.Node
+import javafx.scene.control.Label
+import javafx.scene.layout.AnchorPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import lt.markmerkk.Graphics
@@ -17,6 +20,7 @@ import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
+import javax.swing.text.html.ImageView
 
 /**
  * @author mariusmerkevicius
@@ -26,10 +30,12 @@ class SettingsController : Initializable {
 
     @FXML lateinit var jfxDialog: JFXDialog
     @FXML lateinit var jfxInfo: Text
-    @FXML lateinit var jfxSpinner: JFXSpinner
+    @FXML lateinit var jfxStatusProgress: JFXProgressBar
+    @FXML lateinit var jfxStatusButton: JFXButton
+    @FXML lateinit var jfxStatusLabel: Label
     @FXML lateinit var jfxTextFieldHost: JFXTextField
     @FXML lateinit var jfxTextFieldUsername: JFXTextField
-    @FXML lateinit var jfxTextFieldPassword: JFXTextField
+    @FXML lateinit var jfxTextFieldPassword: JFXPasswordField
     @FXML lateinit var jfxButtonTroubleshoot: JFXButton
     @FXML lateinit var jfxButtonTest: JFXButton
     @FXML lateinit var jfxButtonApply: JFXButton
@@ -52,6 +58,10 @@ class SettingsController : Initializable {
         authServiceView.hideProgress()
 
         jfxInfo.text = strings.getString("settings_info")
+        jfxStatusButton.graphic = graphics.glyph("emoticon_neutral", Color.BLACK, 60.0)
+        jfxStatusLabel.text = strings.getString("settings_state_neutral")
+        jfxStatusLabel.isWrapText = true
+
         authService.onAttach()
         jfxButtonCancel.setOnAction { jfxDialog.close() }
         jfxButtonTest.setOnAction {
@@ -61,6 +71,7 @@ class SettingsController : Initializable {
                     password = jfxTextFieldPassword.text
             )
         }
+        jfxStatusButton.setOnAction { jfxButtonTest.fire() }
     }
 
     @PreDestroy
@@ -73,29 +84,46 @@ class SettingsController : Initializable {
     private val authServiceView: AuthService.View = object : AuthService.View {
 
         override fun showProgress() {
-            jfxSpinner.isVisible = true
-            jfxSpinner.isManaged = true
+            jfxStatusProgress.isVisible = true
+            jfxStatusProgress.isManaged = true
+            jfxStatusButton.graphic = graphics.glyph("emoticon_tongue", Color.BLACK, 60.0)
+            jfxStatusLabel.text = strings.getString("settings_state_loading")
         }
 
         override fun hideProgress() {
-            jfxSpinner.isVisible = false
-            jfxSpinner.isManaged = false
+            jfxStatusProgress.isVisible = false
+            jfxStatusProgress.isManaged = false
         }
 
-        override fun showAuthSuccess() {
-            println("yay!")
-        }
-
-        override fun showAuthFailUnauthorised(error: Throwable) {
-            println("boo!: Unauthorised!")
-        }
-
-        override fun showAuthFailInvalidHostname(error: Throwable) {
-            println("boo!: Invalid hostname!: ${error}")
-        }
-
-        override fun showAuthFailInvalidUndefined(error: Throwable) {
-            println("boo!: Not sure!: ${error}")
+        override fun showAuthResult(result: AuthService.AuthResult) {
+            when (result) {
+                AuthService.AuthResult.SUCCESS -> {
+                    jfxStatusButton.graphic = graphics.glyph("emoticon_cool", Color.BLACK, 60.0)
+                    jfxStatusLabel.text = strings.getString("settings_state_success")
+                    return
+                }
+                AuthService.AuthResult.ERROR_EMPTY_FIELDS -> {
+                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusLabel.text = strings.getString("settings_state_error_empty_fields")
+                    return
+                }
+                AuthService.AuthResult.ERROR_UNAUTHORISED -> {
+                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusLabel.text = strings.getString("settings_state_error_unauthorised")
+                    return
+                }
+                AuthService.AuthResult.ERROR_INVALID_HOSTNAME -> {
+                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusLabel.text = strings.getString("settings_state_error_invalid_hostname")
+                    return
+                }
+                AuthService.AuthResult.ERROR_UNDEFINED -> {
+                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusLabel.text = strings.getString("settings_state_error_undefined")
+                    return
+                }
+                else -> jfxStatusLabel.text = strings.getString("settings_state_error_undefined")
+            }
         }
 
         override fun showDebugLogs() {
@@ -106,6 +134,17 @@ class SettingsController : Initializable {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
+    }
+
+    //endregion
+
+    //region Convenience
+
+    private fun centerInAnchorPane(node: Node) {
+        AnchorPane.setTopAnchor(node, 10.0)
+        AnchorPane.setBottomAnchor(node, 10.0)
+        AnchorPane.setLeftAnchor(node, 10.0)
+        AnchorPane.setRightAnchor(node, 10.0)
     }
 
     //endregion

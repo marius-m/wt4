@@ -33,9 +33,9 @@ class JiraClientProviderImpl(
             username: String,
             password: String
     ): JiraClient {
-        if (hostname.isNullOrEmpty()) throw IllegalStateException("empty hostname")
-        if (username.isNullOrEmpty()) throw IllegalStateException("empty username")
-        if (password.isNullOrEmpty()) throw IllegalStateException("empty password")
+        if (hostname.isNullOrEmpty()) throw IllegalArgumentException("empty hostname")
+        if (username.isNullOrEmpty()) throw IllegalArgumentException("empty username")
+        if (password.isNullOrEmpty()) throw IllegalArgumentException("empty password")
 
         if (jiraClient == null || !creditsMatchCache(oldCreds = cacheCreds)) {
             logger.info("[INFO] Creating a new JIRA client")

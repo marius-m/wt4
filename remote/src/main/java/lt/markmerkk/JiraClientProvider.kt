@@ -11,6 +11,7 @@ interface JiraClientProvider {
 
     val username: String
 
+    @Throws(IllegalArgumentException::class)
     fun client(
             hostname: String,
             username: String,
@@ -20,7 +21,7 @@ interface JiraClientProvider {
     /**
      * Creates a new client or takes it from cache with default user saved settings
      */
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalArgumentException::class)
     fun client(): JiraClient
 
 }

@@ -1,9 +1,6 @@
 package lt.markmerkk.mvp
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.JiraInteractor
 import org.junit.Assert.*
 import org.junit.Before
@@ -65,7 +62,28 @@ class AuthServiceImplTestLoginTest {
         )
 
         // Assert
-        verify(view).showAuthSuccess()
+        val resultCaptor = argumentCaptor<AuthService.AuthResult>()
+        verify(view).showAuthResult(resultCaptor.capture())
+        assertEquals(AuthService.AuthResult.SUCCESS, resultCaptor.firstValue)
+    }
+
+    @Test
+    fun noInputValues() {
+        // Assemble
+        doReturn(Observable.error<Any>(IllegalArgumentException("empty hostname")))
+                .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
+
+        // Act
+        service.testLogin(
+                "",
+                "",
+                ""
+        )
+
+        // Assert
+        val resultCaptor = argumentCaptor<AuthService.AuthResult>()
+        verify(view).showAuthResult(resultCaptor.capture())
+        assertEquals(AuthService.AuthResult.ERROR_EMPTY_FIELDS, resultCaptor.firstValue)
     }
 
     @Test
@@ -82,7 +100,9 @@ class AuthServiceImplTestLoginTest {
         )
 
         // Assert
-        verify(view).showAuthFailUnauthorised(any())
+        val resultCaptor = argumentCaptor<AuthService.AuthResult>()
+        verify(view).showAuthResult(resultCaptor.capture())
+        assertEquals(AuthService.AuthResult.ERROR_UNAUTHORISED, resultCaptor.firstValue)
     }
 
     @Test
@@ -99,7 +119,9 @@ class AuthServiceImplTestLoginTest {
         )
 
         // Assert
-        verify(view).showAuthFailInvalidHostname(any())
+        val resultCaptor = argumentCaptor<AuthService.AuthResult>()
+        verify(view).showAuthResult(resultCaptor.capture())
+        assertEquals(AuthService.AuthResult.ERROR_INVALID_HOSTNAME, resultCaptor.firstValue)
     }
 
     @Test
@@ -116,6 +138,8 @@ class AuthServiceImplTestLoginTest {
         )
 
         // Assert
-        verify(view).showAuthFailInvalidUndefined(any())
+        val resultCaptor = argumentCaptor<AuthService.AuthResult>()
+        verify(view).showAuthResult(resultCaptor.capture())
+        assertEquals(AuthService.AuthResult.ERROR_UNDEFINED, resultCaptor.firstValue)
     }
 }

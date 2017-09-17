@@ -1,7 +1,10 @@
 package lt.markmerkk.mvp
 
+import org.slf4j.LoggerFactory
+import rx.Observable
 import rx.Scheduler
 import rx.Subscription
+import java.util.concurrent.TimeUnit
 
 /**
  * @author mariusmerkevicius
@@ -27,18 +30,14 @@ class AuthServiceImpl(
             username: String,
             password: String
     ) {
-        authInteractor.jiraTestValidConnection(
-                hostname,
-                username,
-                password
-        )
+        authInteractor.jiraTestValidConnection(hostname, username, password)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doOnTerminate { view.hideProgress() }
                 .subscribe({
                     if (it) {
-                        view.showAuthSuccess()
+                        view.showAuthResult(AuthService.AuthResult.SUCCESS)
                     }
                 }, {
                     handleError(it)
@@ -50,15 +49,24 @@ class AuthServiceImpl(
     }
 
     fun handleError(error: Throwable) {
+        logger.warn("[WARNING] ", error)
+        if (error is IllegalArgumentException) {
+            view.showAuthResult(AuthService.AuthResult.ERROR_EMPTY_FIELDS)
+            return
+        }
         if (error.message != null && error.message!!.contains("401 Unauthorized")) {
-            view.showAuthFailUnauthorised(error)
+            view.showAuthResult(AuthService.AuthResult.ERROR_UNAUTHORISED)
             return
         }
         if (error.message != null && error.message!!.contains("404 Not Found")) {
-            view.showAuthFailInvalidHostname(error)
+            view.showAuthResult(AuthService.AuthResult.ERROR_INVALID_HOSTNAME)
             return
         }
-        view.showAuthFailInvalidUndefined(error)
+        view.showAuthResult(AuthService.AuthResult.ERROR_UNDEFINED)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(AuthService::class.java)!!
     }
 
 }

@@ -46,7 +46,7 @@
                                     <Insets top="20.0" />
                                 </VBox.margin>
                             </JFXTextField>
-                            <JFXTextField
+                            <JFXPasswordField
                                     VBox.vgrow="NEVER"
                                     focusColor="#e91e63"
                                     labelFloat="true"
@@ -56,7 +56,7 @@
                                 <VBox.margin>
                                     <Insets top="20.0" />
                                 </VBox.margin>
-                            </JFXTextField>
+                            </JFXPasswordField>
                             <Text
                                     styleClass="info-text"
                                     wrappingWidth="160"
@@ -77,11 +77,29 @@
                             HBox.hgrow="NEVER"
                     >
                         <center>
-                            <JFXSpinner
+                            <StackPane
                                     prefWidth="200"
-                                    prefHeight="200"
-                                    fx:id="jfxSpinner">
-                            </JFXSpinner>
+                                    prefHeight="200">
+                                <JFXButton
+                                        fx:id="jfxStatusButton">
+                                </JFXButton>
+                                <JFXProgressBar
+                                        styleClass="settings-progress-bar"
+                                        fx:id="jfxStatusProgress">
+                                    <StackPane.margin>
+                                        <Insets
+                                                top="90.0" />
+                                    </StackPane.margin>
+                                </JFXProgressBar>
+                                <Label
+                                        styleClass="info-text"
+                                        fx:id="jfxStatusLabel">
+                                    <StackPane.margin>
+                                        <Insets
+                                                top="120.0" />
+                                    </StackPane.margin>
+                                </Label>
+                            </StackPane>
                         </center>
                     </BorderPane>
                 </children>
