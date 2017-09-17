@@ -88,6 +88,7 @@
             </HBox>
         </body>
         <actions>
+            <JFXButton fx:id="jfxButtonTroubleshoot">TROUBLESHOOT</JFXButton>
             <JFXButton fx:id="jfxButtonTest">TEST</JFXButton>
             <JFXButton fx:id="jfxButtonApply">APPLY</JFXButton>
             <JFXButton fx:id="jfxButtonCancel">CANCEL</JFXButton>

@@ -25,6 +25,7 @@ class JiraInteractorImpl(
 
     //region Observables
 
+    // fixme: Should not provide schedulers with observables
     override fun jiraRemoteWorks(start: Long, end: Long): Observable<List<JiraWork>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
                 .subscribeOn(ioScheduler)
@@ -41,6 +42,7 @@ class JiraInteractorImpl(
                 .map { it.toList() }
     }
 
+    // fixme: Should not provide schedulers with observables
     override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
                 .subscribeOn(ioScheduler)
@@ -48,6 +50,7 @@ class JiraInteractorImpl(
                 .toList()
     }
 
+    // fixme: Should not provide schedulers with observables
     override fun jiraIssues(): Observable<List<Issue>> {
         return Observable.defer { Observable.just(jiraClientProvider.client()) }
                 .subscribeOn(ioScheduler)
@@ -56,6 +59,7 @@ class JiraInteractorImpl(
                 .toList()
     }
 
+    // fixme: Should not provide schedulers with observables
     override fun jiraLocalIssuesOld(startSync: Long): Observable<List<LocalIssue>> {
         return Observable.defer {
             Observable.from(
