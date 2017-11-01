@@ -42,7 +42,7 @@ public class SimpleLogBuilderNormalizeTest {
     String out = builder.normalize(null);
 
     // Assert
-    assertThat(out).isEqualTo(null);
+    assertThat(out).isEqualTo("");
   }
 
   @Test

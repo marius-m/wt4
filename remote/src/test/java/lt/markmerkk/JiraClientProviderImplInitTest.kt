@@ -71,7 +71,7 @@ class JiraClientProviderImplInitTest {
         Observable.defer { Observable.just(clientProvider.client()) }
                 .subscribe(testSubscriber)
 
-        testSubscriber.assertError(IllegalStateException::class.java)
+        testSubscriber.assertError(IllegalArgumentException::class.java)
     }
 
 }

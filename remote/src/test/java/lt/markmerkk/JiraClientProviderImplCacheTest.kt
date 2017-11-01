@@ -63,7 +63,7 @@ class JiraClientProviderImplCacheTest {
         assertNotEquals(result1, result2)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun noHost_throwError() {
         // Arrange
 //        whenever(userSettings.host).thenReturn("valid_host")
@@ -77,7 +77,7 @@ class JiraClientProviderImplCacheTest {
         assertNull(result)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun noUsername_throwError() {
         // Arrange
         whenever(userSettings.host).thenReturn("valid_host")
@@ -91,7 +91,7 @@ class JiraClientProviderImplCacheTest {
         assertNull(result)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun noPass_throwError() {
         // Arrange
         whenever(userSettings.host).thenReturn("valid_host")

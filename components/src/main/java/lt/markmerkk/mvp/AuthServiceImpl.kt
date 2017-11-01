@@ -1,10 +1,8 @@
 package lt.markmerkk.mvp
 
 import org.slf4j.LoggerFactory
-import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import java.util.concurrent.TimeUnit
 
 /**
  * @author mariusmerkevicius
@@ -19,7 +17,7 @@ class AuthServiceImpl(
 
     private val subscriptions = mutableListOf<Subscription>()
 
-    override fun onAttach() { }
+    override fun onAttach() {}
 
     override fun onDetach() {
         subscriptions.forEach { it.unsubscribe() }
