@@ -1,20 +1,16 @@
 package lt.markmerkk.ui_2
 
+import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
-import lt.markmerkk.Config
-import lt.markmerkk.Graphics
-import lt.markmerkk.Main
-import lt.markmerkk.Strings
+import lt.markmerkk.*
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.AuthService
 import lt.markmerkk.mvp.AuthServiceImpl
 import lt.markmerkk.mvp.LogLoaderImpl
@@ -46,9 +42,11 @@ class SettingsController : Initializable {
     @FXML lateinit var jfxButtonCancel: JFXButton
 
     @Inject lateinit var config: Config
+    @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var strings: Strings
     @Inject lateinit var jiraAuthInteractor: AuthService.AuthInteractor
     @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var eventBus: EventBus
 
     lateinit var authService: AuthService
 
@@ -67,6 +65,9 @@ class SettingsController : Initializable {
         jfxStatusButton.graphic = graphics.glyph("emoticon_neutral", Color.BLACK, 60.0)
         jfxStatusLabel.text = strings.getString("settings_state_neutral")
         jfxStatusLabel.isWrapText = true
+        jfxTextFieldHost.text = userSettings.host
+        jfxTextFieldUsername.text = userSettings.username
+        jfxTextFieldPassword.text = userSettings.password
 
         authService.onAttach()
         jfxButtonCancel.setOnAction { jfxDialog.close() }
@@ -79,6 +80,7 @@ class SettingsController : Initializable {
         }
         jfxStatusButton.setOnAction { jfxButtonTest.fire() }
         jfxButtonTroubleshoot.setOnAction { authService.toggleDisplayType() }
+        jfxButtonApply.setOnAction { saveUserSettings() }
         showStatusContainer()
     }
 
@@ -112,6 +114,7 @@ class SettingsController : Initializable {
                 AuthService.AuthResult.SUCCESS -> {
                     jfxStatusButton.graphic = graphics.glyph("emoticon_cool", Color.BLACK, 60.0)
                     jfxStatusLabel.text = strings.getString("settings_state_success")
+                    saveUserSettings()
                     return
                 }
                 AuthService.AuthResult.ERROR_EMPTY_FIELDS -> {
@@ -165,11 +168,11 @@ class SettingsController : Initializable {
 
     //region Convenience
 
-    private fun centerInAnchorPane(node: Node) {
-        AnchorPane.setTopAnchor(node, 10.0)
-        AnchorPane.setBottomAnchor(node, 10.0)
-        AnchorPane.setLeftAnchor(node, 10.0)
-        AnchorPane.setRightAnchor(node, 10.0)
+    private fun saveUserSettings() {
+        userSettings.host = jfxTextFieldHost.text
+        userSettings.username = jfxTextFieldUsername.text
+        userSettings.password = jfxTextFieldPassword.text
+        eventBus.post(EventSnackBarMessage("Settings saved!"))
     }
 
     private fun showStatusContainer() {
