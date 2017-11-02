@@ -1,26 +1,29 @@
 package lt.markmerkk.mvp
 
 import org.slf4j.LoggerFactory
+import rx.Observable
 import rx.Scheduler
 import rx.Subscription
+import java.util.concurrent.TimeUnit
 
-/**
- * @author mariusmerkevicius
- * @since 2017-09-16
- */
 class AuthServiceImpl(
         private val view: AuthService.View,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler,
-        private val authInteractor: AuthService.AuthInteractor
+        private val authInteractor: AuthService.AuthInteractor,
+        private val logLoader: LogLoader
 ) : AuthService {
 
-    private val subscriptions = mutableListOf<Subscription>()
+    private val debugLogFilename = "info_prod.log"
+    private var testConnectionSubscription: Subscription? = null
+    private var fileLoadSubscription: Subscription? = null
+    private var logDisplayType = AuthService.LogDisplayType.VISUAL
 
     override fun onAttach() {}
 
     override fun onDetach() {
-        subscriptions.forEach { it.unsubscribe() }
+        fileLoadSubscription?.unsubscribe()
+        testConnectionSubscription?.unsubscribe()
     }
 
     override fun testLogin(
@@ -28,39 +31,70 @@ class AuthServiceImpl(
             username: String,
             password: String
     ) {
-        authInteractor.jiraTestValidConnection(hostname, username, password)
+        testConnectionSubscription?.unsubscribe()
+        testConnectionSubscription = Observable.defer({ authInteractor.jiraTestValidConnection(hostname, username, password) })
+                .flatMap {
+                    logger.info("[INFO] Success logging in!")
+                    Observable.just(AuthService.AuthResult.SUCCESS)
+                }
+                .onErrorResumeNext({ Observable.just(handleError(it)) })
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doOnTerminate { view.hideProgress() }
                 .subscribe({
-                    if (it) {
-                        view.showAuthResult(AuthService.AuthResult.SUCCESS)
-                    }
+                    view.showAuthResult(it)
+                    loadOutputLogs()
                 }, {
-                    handleError(it)
-                }).let { subscriptions.add(it) }
+                    logger.error("[ERROR] Error checking status of jira validation")
+                    loadOutputLogs()
+                })
     }
 
-    override fun debug() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun logDisplayType(): AuthService.LogDisplayType = logDisplayType
+
+    override fun toggleDisplayType() {
+        when (logDisplayType) {
+            AuthService.LogDisplayType.VISUAL -> {
+                logDisplayType = AuthService.LogDisplayType.TEXT
+                view.showDebugLogs()
+                loadOutputLogs()
+            }
+            AuthService.LogDisplayType.TEXT -> {
+                logDisplayType = AuthService.LogDisplayType.VISUAL
+                view.hideDebugLogs()
+            }
+            else -> throw IllegalStateException("Unidentified display type")
+        }
     }
 
-    fun handleError(error: Throwable) {
-        logger.warn("[WARNING] ", error)
+    fun loadOutputLogs() {
+        fileLoadSubscription?.unsubscribe()
+        fileLoadSubscription = Observable.defer({ Observable.just(logLoader.loadLastLogs(debugLogFilename, 300)) })
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .doOnError({ view.errorFillingDebugLogs(it) })
+                .doOnNext({ view.fillDebugLogs(it) })
+                .delay(50, TimeUnit.MILLISECONDS)
+                .doOnNext({ view.scrollToBottomOfDebugLogs(it.length) })
+                .subscribe()
+    }
+
+    fun handleError(error: Throwable): AuthService.AuthResult {
         if (error is IllegalArgumentException) {
-            view.showAuthResult(AuthService.AuthResult.ERROR_EMPTY_FIELDS)
-            return
+            logger.warn("[WARNING] ${error.message}")
+            return AuthService.AuthResult.ERROR_EMPTY_FIELDS
         }
         if (error.message != null && error.message!!.contains("401 Unauthorized")) {
-            view.showAuthResult(AuthService.AuthResult.ERROR_UNAUTHORISED)
-            return
+            logger.warn("[WARNING] Unauthorized!")
+            return AuthService.AuthResult.ERROR_UNAUTHORISED
         }
         if (error.message != null && error.message!!.contains("404 Not Found")) {
-            view.showAuthResult(AuthService.AuthResult.ERROR_INVALID_HOSTNAME)
-            return
+            logger.warn("[WARNING] Hostname not found!")
+            return AuthService.AuthResult.ERROR_INVALID_HOSTNAME
         }
-        view.showAuthResult(AuthService.AuthResult.ERROR_UNDEFINED)
+        logger.warn("[WARNING] Undefined error!", error)
+        return AuthService.AuthResult.ERROR_UNDEFINED
     }
 
     companion object {

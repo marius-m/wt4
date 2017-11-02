@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 <JFXDialog
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
@@ -71,37 +72,75 @@
                             </Text>
                         </children>
                     </VBox>
-                    <BorderPane
+                    <StackPane
                             prefWidth="300"
                             prefHeight="300"
                             HBox.hgrow="NEVER"
                     >
-                        <center>
-                            <StackPane
-                                    prefWidth="200"
-                                    prefHeight="200">
-                                <JFXButton
-                                        fx:id="jfxStatusButton">
-                                </JFXButton>
+                        <BorderPane
+                                fx:id="jfxOutputContainer"
+                                prefWidth="300"
+                                prefHeight="300"
+                        >
+                            <center>
+                                <JFXTextArea
+                                        fx:id="jfxOutputTextArea"
+                                        editable="false"
+                                >
+                                    <StackPane.margin>
+                                        <Insets
+                                                left="2.0"
+                                                right="2.0"
+                                        />
+                                    </StackPane.margin>
+                                    <font>
+                                        <Font size="6.0" />
+                                    </font>
+                                </JFXTextArea>
+                            </center>
+                            <bottom>
                                 <JFXProgressBar
                                         styleClass="settings-progress-bar"
-                                        fx:id="jfxStatusProgress">
+                                        fx:id="jfxOutputProgress">
                                     <StackPane.margin>
                                         <Insets
                                                 top="90.0" />
                                     </StackPane.margin>
                                 </JFXProgressBar>
-                                <Label
-                                        styleClass="info-text"
-                                        fx:id="jfxStatusLabel">
-                                    <StackPane.margin>
-                                        <Insets
-                                                top="120.0" />
-                                    </StackPane.margin>
-                                </Label>
-                            </StackPane>
-                        </center>
-                    </BorderPane>
+                            </bottom>
+                        </BorderPane>
+                        <BorderPane
+                                fx:id="jfxStatusContainer"
+                                prefWidth="300"
+                                prefHeight="300"
+                        >
+                            <center>
+                                <StackPane
+                                        prefWidth="200"
+                                        prefHeight="200">
+                                    <JFXButton
+                                            fx:id="jfxStatusButton">
+                                    </JFXButton>
+                                    <JFXProgressBar
+                                            styleClass="settings-progress-bar-long"
+                                            fx:id="jfxStatusProgress">
+                                        <StackPane.margin>
+                                            <Insets
+                                                    top="90.0" />
+                                        </StackPane.margin>
+                                    </JFXProgressBar>
+                                    <Label
+                                            styleClass="info-text"
+                                            fx:id="jfxStatusLabel">
+                                        <StackPane.margin>
+                                            <Insets
+                                                    top="120.0" />
+                                        </StackPane.margin>
+                                    </Label>
+                                </StackPane>
+                            </center>
+                        </BorderPane>
+                    </StackPane>
                 </children>
             </HBox>
         </body>

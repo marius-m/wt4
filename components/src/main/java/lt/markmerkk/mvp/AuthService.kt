@@ -20,9 +20,11 @@ interface AuthService {
     )
 
     /**
-     * Triggers to show debug data
+     * Triggers to show debug console / visual mode
      */
-    fun debug()
+    fun toggleDisplayType()
+
+    fun logDisplayType(): LogDisplayType
 
     interface View {
         /**
@@ -50,6 +52,21 @@ interface AuthService {
          * Should show the undefined state of login data.
          */
         fun hideDebugLogs()
+
+        /**
+         * Fills debug logs
+         */
+        fun fillDebugLogs(logs: String)
+
+        /**
+         * Point an error when filling debug logs
+         */
+        fun errorFillingDebugLogs(throwable: Throwable)
+
+        /**
+         * Scroll to bottom of debug logs
+         */
+        fun scrollToBottomOfDebugLogs(length: Int)
     }
 
     interface AuthInteractor {
@@ -70,6 +87,11 @@ interface AuthService {
         ERROR_UNAUTHORISED,
         ERROR_INVALID_HOSTNAME,
         ERROR_UNDEFINED,
+    }
+
+    enum class LogDisplayType {
+        VISUAL,  // Displays cool graphic icon, indicating log status
+        TEXT,    // Displays informative debug log
     }
 
 }

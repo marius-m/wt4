@@ -67,6 +67,9 @@
 	-fx-pref-width: 120.0;
 	-fx-background: #5264AE;
 }
+.settings-progress-bar-long {
+	-fx-background: #5264AE;
+}
 
 /* Radio buttons */
 

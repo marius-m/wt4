@@ -1,36 +1,17 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.JiraInteractor
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import rx.Observable
-import rx.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 /**
  * @author mariusmerkevicius
  * *
  * @since 2017-09-16
  */
-class AuthServiceImplTestLoginTest {
-
-    @Mock lateinit var view: AuthService.View
-    @Mock lateinit var authInteractor: AuthService.AuthInteractor
-    lateinit var service: AuthService
-
-    @Before
-    fun setUp() {
-        MockitoAnnotations.initMocks(this)
-        service = AuthServiceImpl(
-                view,
-                Schedulers.immediate(),
-                Schedulers.immediate(),
-                authInteractor
-        )
-    }
+class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
 
     @Test
     fun showProgressWhenLoading() {
@@ -65,6 +46,33 @@ class AuthServiceImplTestLoginTest {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.SUCCESS, resultCaptor.firstValue)
+    }
+
+    @Test
+    fun valid_multipleCalls() {
+        // Assemble
+        doReturn(Observable.just(true)).whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
+
+        // Act
+        serviceWithTestSchedulers.testLogin(
+                "valid_host",
+                "valid_username",
+                "valid_password"
+        )
+        serviceWithTestSchedulers.testLogin(
+                "valid_host",
+                "valid_username",
+                "valid_password"
+        )
+        serviceWithTestSchedulers.testLogin(
+                "valid_host",
+                "valid_username",
+                "valid_password"
+        )
+        testScheduler.advanceTimeBy(100L, TimeUnit.MILLISECONDS) // trigger only once
+
+        // Assert
+        verify(authInteractor).jiraTestValidConnection(any(), any(), any())
     }
 
     @Test
