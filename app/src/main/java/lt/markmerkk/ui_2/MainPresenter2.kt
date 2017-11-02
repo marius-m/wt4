@@ -3,6 +3,7 @@ package lt.markmerkk.ui_2
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
+import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.*
@@ -47,6 +48,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var syncInteractor: SyncInteractor
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
@@ -65,10 +67,11 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
         // Init ui elements
         snackBar = JFXSnackbar(jfxRoot)
-        uieButtonDate = UIEButtonDate(this, jfxButtonDate)
-        uieButtonSettings = UIEButtonSettings(this, jfxButtonSettings, syncInteractor)
-        uieButtonDisplayView = UIEButtonDisplayView(this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
+        uieButtonDate = UIEButtonDate(graphics, this, jfxButtonDate)
+        uieButtonSettings = UIEButtonSettings(graphics, this, jfxButtonSettings, syncInteractor)
+        uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
+                graphics,
                 this,
                 buttonClockListener,
                 jfxButtonClock,
@@ -76,6 +79,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxToggleClock
         )
         uieCommitContainer = UIECommitContainer(
+                graphics,
                 containerCommitListener,
                 jfxButtonCommit,
                 jfxTextFieldTicket,

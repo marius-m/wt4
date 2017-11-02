@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.SettingsController">
+
+    <JFXDialogLayout
+            fx:id="jfxDialogLayout">
+        <heading>
+            <Label fx:id="jfxHeaderLabel" styleClass="dialog-header">JIRA Auth</Label>
+        </heading>
+        <body>
+            <HBox>
+                <children>
+                    <VBox
+                            prefWidth="160"
+                            maxWidth="160"
+                            HBox.hgrow="NEVER">
+                        <children>
+                            <JFXTextField
+                                    VBox.vgrow="NEVER"
+                                    focusColor="#e91e63"
+                                    labelFloat="true"
+                                    promptText="hostname"
+                                    unFocusColor="black"
+                                    fx:id="jfxTextFieldHost">
+                                <VBox.margin>
+                                    <Insets top="20.0" />
+                                </VBox.margin>
+                            </JFXTextField>
+                            <JFXTextField
+                                    VBox.vgrow="NEVER"
+                                    focusColor="#e91e63"
+                                    labelFloat="true"
+                                    promptText="username"
+                                    unFocusColor="black"
+                                    fx:id="jfxTextFieldUsername">
+                                <VBox.margin>
+                                    <Insets top="20.0" />
+                                </VBox.margin>
+                            </JFXTextField>
+                            <JFXPasswordField
+                                    VBox.vgrow="NEVER"
+                                    focusColor="#e91e63"
+                                    labelFloat="true"
+                                    promptText="password"
+                                    unFocusColor="black"
+                                    fx:id="jfxTextFieldPassword" >
+                                <VBox.margin>
+                                    <Insets top="20.0" />
+                                </VBox.margin>
+                            </JFXPasswordField>
+                            <Text
+                                    styleClass="info-text"
+                                    wrappingWidth="160"
+                                    fx:id="jfxInfo">
+                                <VBox.margin>
+                                    <Insets
+                                            right="6.0"
+                                            left="6.0"
+                                            bottom="6.0"
+                                            top="6.0" />
+                                </VBox.margin>
+                            </Text>
+                        </children>
+                    </VBox>
+                    <StackPane
+                            prefWidth="300"
+                            prefHeight="300"
+                            HBox.hgrow="NEVER"
+                    >
+                        <BorderPane
+                                fx:id="jfxOutputContainer"
+                                prefWidth="300"
+                                prefHeight="300"
+                        >
+                            <center>
+                                <JFXTextArea
+                                        fx:id="jfxOutputTextArea"
+                                        editable="false"
+                                >
+                                    <StackPane.margin>
+                                        <Insets
+                                                left="2.0"
+                                                right="2.0"
+                                        />
+                                    </StackPane.margin>
+                                    <font>
+                                        <Font size="6.0" />
+                                    </font>
+                                </JFXTextArea>
+                            </center>
+                            <bottom>
+                                <JFXProgressBar
+                                        styleClass="settings-progress-bar"
+                                        fx:id="jfxOutputProgress">
+                                    <StackPane.margin>
+                                        <Insets
+                                                top="90.0" />
+                                    </StackPane.margin>
+                                </JFXProgressBar>
+                            </bottom>
+                        </BorderPane>
+                        <BorderPane
+                                fx:id="jfxStatusContainer"
+                                prefWidth="300"
+                                prefHeight="300"
+                        >
+                            <center>
+                                <StackPane
+                                        prefWidth="200"
+                                        prefHeight="200">
+                                    <JFXButton
+                                            fx:id="jfxStatusButton">
+                                    </JFXButton>
+                                    <JFXProgressBar
+                                            styleClass="settings-progress-bar-long"
+                                            fx:id="jfxStatusProgress">
+                                        <StackPane.margin>
+                                            <Insets
+                                                    top="90.0" />
+                                        </StackPane.margin>
+                                    </JFXProgressBar>
+                                    <Label
+                                            styleClass="info-text"
+                                            fx:id="jfxStatusLabel">
+                                        <StackPane.margin>
+                                            <Insets
+                                                    top="120.0" />
+                                        </StackPane.margin>
+                                    </Label>
+                                </StackPane>
+                            </center>
+                        </BorderPane>
+                    </StackPane>
+                </children>
+            </HBox>
+        </body>
+        <actions>
+            <JFXButton fx:id="jfxButtonTroubleshoot">TROUBLESHOOT</JFXButton>
+            <JFXButton fx:id="jfxButtonTest">TEST</JFXButton>
+            <JFXButton fx:id="jfxButtonApply">APPLY</JFXButton>
+            <JFXButton fx:id="jfxButtonCancel">CANCEL</JFXButton>
+        </actions>
+    </JFXDialogLayout>
+
+</JFXDialog>
+

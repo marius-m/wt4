@@ -7,11 +7,10 @@ import lt.markmerkk.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.interactors.AutoUpdateInteractorImpl
-import lt.markmerkk.interactors.AutoUpdateInteractor
-import lt.markmerkk.interactors.SyncInteractor
-import lt.markmerkk.interactors.SyncInteractorImpl
+import lt.markmerkk.interactors.*
 import lt.markmerkk.merger.*
+import lt.markmerkk.mvp.AuthService
+import lt.markmerkk.mvp.AuthServiceImpl
 import lt.markmerkk.utils.*
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
@@ -137,6 +136,16 @@ class SyncModule {
                 uiScheduler = JavaFxScheduler.getInstance(),
                 ioScheduler = Schedulers.immediate(),
                 autoUpdateInteractor = autoUpdateInteractor
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesJiraAuthInteractor(
+            jiraClientProvider: JiraClientProvider
+    ): AuthService.AuthInteractor {
+        return AuthInteractorImpl(
+                jiraClientProvider
         )
     }
 

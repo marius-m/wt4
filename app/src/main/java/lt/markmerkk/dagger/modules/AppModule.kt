@@ -1,6 +1,7 @@
 package lt.markmerkk.dagger.modules
 
 import com.google.common.eventbus.EventBus
+import com.jfoenix.svg.SVGGlyph
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
@@ -149,6 +150,18 @@ class AppModule(
     @Singleton
     fun provideDayProvider(logStorage: LogStorage): DayProvider {
         return DayProviderImpl(logStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStrings(): Strings {
+        return StringsImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGraphics(): Graphics<SVGGlyph> {
+        return GraphicsImpl()
     }
 
 }

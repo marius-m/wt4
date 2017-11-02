@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 class JiraClientProviderImpl(
         private val userSettings: UserSettings
 ) : JiraClientProvider {
+
     override val username: String
         get() = userSettings.username
 
@@ -20,19 +21,39 @@ class JiraClientProviderImpl(
     var jiraClient: JiraClient? = null
 
     override fun client(): JiraClient {
-        if (userSettings.host.isNullOrEmpty()) throw IllegalStateException("empty hostname")
-        if (userSettings.username.isNullOrEmpty()) throw IllegalStateException("empty username")
-        if (userSettings.password.isNullOrEmpty()) throw IllegalStateException("empty password")
-
-        if (jiraClient == null || !creditsMatchCache(oldCreds = cacheCreds)) {
-            logger.debug("Creating a new JIRA client")
-            jiraClient = JiraClient(userSettings.host, BasicCredentials(userSettings.username, userSettings.password))
-        }
-
-        cacheCreds = JiraCreds(
+        return client(
                 userSettings.host,
                 userSettings.username,
                 userSettings.password
+        )
+    }
+
+    override fun client(
+            hostname: String,
+            username: String,
+            password: String
+    ): JiraClient {
+        if (hostname.isEmpty()) throw IllegalArgumentException("empty hostname")
+        if (username.isEmpty()) throw IllegalArgumentException("empty username")
+        if (password.isEmpty()) throw IllegalArgumentException("empty password")
+
+        if (jiraClient == null || !creditsMatchCache(oldCreds = cacheCreds)) {
+            logger.info("[INFO] Creating a new JIRA client")
+            jiraClient = JiraClient(
+                    hostname,
+                    BasicCredentials(
+                            username,
+                            password
+                    )
+            )
+        } else {
+            logger.info("[INFO] Reusing old JIRA client")
+        }
+
+        cacheCreds = JiraCreds(
+                hostname,
+                username,
+                password
         )
 
         return jiraClient!!

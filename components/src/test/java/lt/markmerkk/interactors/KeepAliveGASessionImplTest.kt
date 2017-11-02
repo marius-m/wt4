@@ -52,7 +52,7 @@ class KeepAliveGASessionImplTest {
         // Arrange
         // Act
         keepAliveSession.onAttach()
-        testScheduler.advanceTimeBy(30, TimeUnit.MINUTES)
+        testScheduler.advanceTimeBy(10L, TimeUnit.MINUTES)
 
         // Assert
         verify(tracker).sendView(any())
@@ -63,7 +63,7 @@ class KeepAliveGASessionImplTest {
         // Arrange
         // Act
         keepAliveSession.onAttach()
-        testScheduler.advanceTimeBy(60, TimeUnit.MINUTES)
+        testScheduler.advanceTimeBy(20L, TimeUnit.MINUTES)
 
         // Assert
         verify(tracker, times(2)).sendView(any())
