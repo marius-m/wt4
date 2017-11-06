@@ -40,6 +40,8 @@
                                    overLay="true"
                                    defaultColor="#E91E63">
                            </JFXTimePicker>
+                           <JFXButton fx:id="jfxSubtractFrom">-</JFXButton>
+                           <JFXButton fx:id="jfxAppendFrom">+</JFXButton>
                        </children>
                    </HBox>
                    <Label styleClass="mini-label">
@@ -60,6 +62,8 @@
                                    overLay="true"
                                    defaultColor="#E91E63">
                            </JFXTimePicker>
+                           <JFXButton fx:id="jfxSubtractTo">-</JFXButton>
+                           <JFXButton fx:id="jfxAppendTo">+</JFXButton>
                        </children>
                    </HBox>
                    <Label

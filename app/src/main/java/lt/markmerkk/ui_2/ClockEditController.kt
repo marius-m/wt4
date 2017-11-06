@@ -10,6 +10,8 @@ import javafx.util.StringConverter
 import lt.markmerkk.Main
 import lt.markmerkk.mvp.ClockEditMVP
 import lt.markmerkk.mvp.ClockEditPresenterImpl
+import lt.markmerkk.mvp.TimeQuickModifier
+import lt.markmerkk.mvp.TimeQuickModifierImpl
 import lt.markmerkk.utils.hourglass.HourGlass
 import java.net.URL
 import java.time.LocalDate
@@ -30,6 +32,10 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @FXML lateinit var jfxDateTo: JFXDatePicker
     @FXML lateinit var jfxTimeTo: JFXTimePicker
     @FXML lateinit var jfxHint: Label
+    @FXML lateinit var jfxSubtractFrom: JFXButton
+    @FXML lateinit var jfxSubtractTo: JFXButton
+    @FXML lateinit var jfxAppendFrom: JFXButton
+    @FXML lateinit var jfxAppendTo: JFXButton
 
     @Inject lateinit var hourglass: HourGlass
 
@@ -37,6 +43,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
 
     private lateinit var clockEditPresenter: ClockEditMVP.Presenter
+    private lateinit var timeQuickModifier: TimeQuickModifier
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
@@ -44,6 +51,19 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         jfxButtonDismiss.setOnAction {
             jfxDialog.close()
         }
+        val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
+            override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
+                clockEditPresenter.updateDateTime(
+                        startDateTime.toLocalDate(),
+                        startDateTime.toLocalTime(),
+                        endDateTime.toLocalDate(),
+                        endDateTime.toLocalTime()
+                )
+            }
+        }
+        timeQuickModifier = TimeQuickModifierImpl(
+                timeQuickModifierListener
+        )
         clockEditPresenter = ClockEditPresenterImpl(this, hourglass)
         clockEditPresenter.onAttach()
 
@@ -58,6 +78,54 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)
         jfxDateTo.valueProperty().addListener(endDateChangeListener)
         jfxTimeTo.valueProperty().addListener(endTimeChangeListener)
+        jfxSubtractFrom.setOnAction {
+            timeQuickModifier.subtractStartTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
+        jfxAppendFrom.setOnAction {
+            timeQuickModifier.appendStartTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
+        jfxSubtractTo.setOnAction {
+            timeQuickModifier.subtractEndTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
+        jfxAppendTo.setOnAction {
+            timeQuickModifier.appendEndTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
     }
 
     @PreDestroy
