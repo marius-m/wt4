@@ -16,10 +16,7 @@ import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.events.EventSnackBarMessage
-import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.mvp.LogEditInteractorImpl
-import lt.markmerkk.mvp.LogEditService
-import lt.markmerkk.mvp.LogEditServiceImpl
+import lt.markmerkk.mvp.*
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -47,6 +44,10 @@ class LogEditController : Initializable, LogEditService.Listener {
     @FXML lateinit var jfxTextFieldComment: JFXTextArea
     @FXML lateinit var jfxTextFieldHint: Label
     @FXML lateinit var jfxTextFieldHint2: Label
+    @FXML lateinit var jfxSubtractFrom: JFXButton
+    @FXML lateinit var jfxAppendFrom: JFXButton
+    @FXML lateinit var jfxSubtractTo: JFXButton
+    @FXML lateinit var jfxAppendTo: JFXButton
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServices: HostServicesInteractor
@@ -55,6 +56,7 @@ class LogEditController : Initializable, LogEditService.Listener {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
     private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
     private lateinit var logEditService: LogEditService
+    private lateinit var timeQuickModifier: TimeQuickModifier
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
@@ -89,6 +91,68 @@ class LogEditController : Initializable, LogEditService.Listener {
         }
         jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
         jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 16.0, 20.0)
+        val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
+            override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
+                logEditService.updateDateTime(
+                        startDateTime.toLocalDate(),
+                        startDateTime.toLocalTime(),
+                        endDateTime.toLocalDate(),
+                        endDateTime.toLocalTime()
+                )
+                logEditService.redraw()
+            }
+        }
+        timeQuickModifier = TimeQuickModifierImpl(
+                timeQuickModifierListener
+        )
+        jfxSubtractFrom.setOnAction {
+            timeQuickModifier.subtractStartTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
+        jfxAppendFrom.setOnAction {
+            timeQuickModifier.appendStartTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
+        jfxSubtractTo.setOnAction {
+            timeQuickModifier.subtractEndTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
+        jfxAppendTo.setOnAction {
+            timeQuickModifier.appendEndTime(
+                    LocalDateTime.of(
+                            jfxDateFrom.value,
+                            jfxTimeFrom.value
+                    ),
+                    LocalDateTime.of(
+                            jfxDateTo.value,
+                            jfxTimeTo.value
+                    )
+            )
+        }
     }
 
     /**
@@ -158,6 +222,7 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxTextFieldHint.text = error.message ?: "Error saving entity!"
     }
 
+    // todo: Add disable clock/date selection when input is disabled
     override fun onEnableInput() {
         jfxTextFieldTicket.isEditable = true
         jfxTextFieldComment.isEditable = true
@@ -165,8 +230,13 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxTimeFrom.isEditable = true
         jfxDateTo.isEditable = true
         jfxTimeTo.isEditable = true
+        jfxSubtractFrom.isDisable = false
+        jfxAppendFrom.isDisable = false
+        jfxSubtractTo.isDisable = false
+        jfxAppendTo.isDisable = false
     }
 
+    // todo: Add disable clock/date selection when input is disabled
     override fun onDisableInput() {
         jfxTextFieldTicket.isEditable = false
         jfxTextFieldComment.isEditable = false
@@ -174,6 +244,10 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxTimeFrom.isEditable = false
         jfxDateTo.isEditable = false
         jfxTimeTo.isEditable = false
+        jfxSubtractFrom.isDisable = true
+        jfxAppendFrom.isDisable = true
+        jfxSubtractTo.isDisable = true
+        jfxAppendTo.isDisable = true
     }
 
     override fun onEnableSaving() {

@@ -2,28 +2,10 @@ package lt.markmerkk.mvp
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.utils.hourglass.HourGlass
-import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import java.time.LocalDateTime
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2017-05-15
- */
-class ClockEditPresenterImplHandleReportDateTest {
-    @Mock lateinit var hourglass: HourGlass
-    @Mock lateinit var view: ClockEditMVP.View
-    lateinit var presenter: ClockEditPresenterImpl
-
-    @Before
-    fun setUp() {
-        MockitoAnnotations.initMocks(this)
-        presenter = ClockEditPresenterImpl(view, hourglass)
-    }
+class ClockEditPresenterImplHandleReportDateTest : AbsClockEditPresenterImplTest() {
 
     @Test
     fun handleValid_reportDate() {
