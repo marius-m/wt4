@@ -112,6 +112,12 @@ Logs can be updated by pressing the right mouse button on the target log
 
 ## Changelog
 
+### 1.0.4
+- Authentication settings 
+ - Simple checkup test
+ - Debug window with full logs
+- Quick +/- buttons on time change
+
 ### 1.0.3
 - Added graphs
  - Fixed bugs with graphs (tho' still not as useful or working 100%)
