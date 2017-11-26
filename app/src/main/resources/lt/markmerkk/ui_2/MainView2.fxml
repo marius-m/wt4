@@ -16,7 +16,7 @@
           <children>
              <JFXProgressBar
                      fx:id="jfxProgressBar"
-                     styleClass="jfx-progress-bar"
+                     styleClass="global-progress"
                      HBox.hgrow="ALWAYS"
                      managed="false"
                      visible="false"

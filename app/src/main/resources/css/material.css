@@ -1,3 +1,9 @@
+/* Global colors
+    - Foreground=E91E63
+    - ForegroundMini=Orange
+    - Background=5C6BC0
+*/
+
 .toggle-icon1 {
 	-fx-pref-width: 52px;
 	-fx-background-radius: 50px;
@@ -105,6 +111,15 @@
 }
 .jfx-snackbar-action {
     -fx-text-fill: #ff4081;
+}
+.global-progress > .bar {
+    -fx-background-color: #E91E63;
+    -fx-padding: 1.5;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+.global-progress > .track{
+    -fx-background-color: #5C6BC0;
 }
 
 
