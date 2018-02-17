@@ -18,6 +18,7 @@ import javafx.scene.layout.StackPane
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.tracker.ITracker
@@ -49,11 +50,11 @@ class DayPresenter : Initializable {
 
         val calendar = com.calendarfx.model.Calendar()
         calendar.setStyle(com.calendarfx.model.Calendar.Style.STYLE1)
-        calendar.isReadOnly = true
         val calendarSource = CalendarSource()
         calendarSource.calendars.addAll(calendar)
         jfxDayView.calendarSources.add(calendarSource)
         jfxDayView.isShowAllDayView = false
+        jfxDayView.isShowAgendaView = false
         jfxDayView.entryDetailsCallback = object : Callback<DateControl.EntryDetailsParameter, Boolean> {
             override fun call(param: DateControl.EntryDetailsParameter): Boolean {
                 if (param.inputEvent.eventType != MouseEvent.MOUSE_CLICKED) {
@@ -71,24 +72,40 @@ class DayPresenter : Initializable {
                 val contextMenu = ContextMenu()
                 val updateItem = MenuItem(strings.getString("general_update"),
                         ImageView(Image(javaClass.getResource("/update_2.png").toString())))
-                updateItem.onAction = EventHandler<ActionEvent> {
-                    updateListener.onUpdate(param.entry.userObject as SimpleLog)
-                }
                 val deleteItem = MenuItem(strings.getString("general_delete"),
                         ImageView(Image(javaClass.getResource("/delete_2.png").toString())))
-                deleteItem.onAction = EventHandler<ActionEvent> {
-                    updateListener.onDelete(param.entry.userObject as SimpleLog)
-                }
                 val cloneItem = MenuItem(strings.getString("general_clone"),
                         ImageView(Image(javaClass.getResource("/clone_2.png").toString())))
-                cloneItem.onAction = EventHandler<ActionEvent> {
-                    updateListener.onClone(param.entry.userObject as SimpleLog)
-                }
                 contextMenu.items.addAll(updateItem, deleteItem, cloneItem)
+                contextMenu.onAction = object : EventHandler<ActionEvent> {
+                    override fun handle(event: ActionEvent) {
+                        when (event.target) {
+                            updateItem -> updateListener.onUpdate(param.entry.userObject as SimpleLog)
+                            deleteItem -> updateListener.onDelete(param.entry.userObject as SimpleLog)
+                            cloneItem -> updateListener.onClone(param.entry.userObject as SimpleLog)
+                        }
+                    }
+                }
                 return contextMenu
             }
         }
-
+        jfxDayView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
+            override fun call(param: DateControl.EntryEditParameter): Boolean {
+                return false
+            }
+        }
+        jfxDayView.entryFactory = object : Callback<DateControl.CreateEntryParameter, Entry<*>> {
+            override fun call(param: DateControl.CreateEntryParameter): Entry<SimpleLog>? {
+                val startMillis = param.zonedDateTime.toInstant().toEpochMilli()
+                val endMillis = param.zonedDateTime.plusHours(1).toInstant().toEpochMilli()
+                val simpleLog = SimpleLogBuilder()
+                        .setStart(startMillis)
+                        .setEnd(endMillis)
+                        .build()
+                storage.insert(simpleLog)
+                return null
+            }
+        }
         logLoader = CalendarFxLogLoader(
                 object : CalendarFxLogLoader.View {
                     override fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>) {

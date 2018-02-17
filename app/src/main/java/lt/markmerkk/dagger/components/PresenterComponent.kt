@@ -12,6 +12,7 @@ import lt.markmerkk.ui.status.StatusPresenter
 import lt.markmerkk.ui.update.UpdateLogPresenter
 import lt.markmerkk.ui.version.VersionPresenter
 import lt.markmerkk.ui.week.WeekPresenter
+import lt.markmerkk.ui.week2.WeekPresenter2
 import lt.markmerkk.ui_2.*
 
 /**
@@ -57,5 +58,7 @@ interface PresenterComponent {
     fun inject(statusController: LogStatusController)
 
     fun inject(settingsController: SettingsController)
+
+    fun inject(weekPresenter2: WeekPresenter2)
 
 }

@@ -22,6 +22,7 @@ import lt.markmerkk.ui.display.DisplayLogView
 import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week.WeekView
+import lt.markmerkk.ui.week2.WeekView2
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import java.net.URL
@@ -154,7 +155,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
             }
             DisplayType.CALENDAR_VIEW_WEEK -> {
                 logStorage.displayType = DisplayTypeLength.WEEK
-                uieCenterView.populate(WeekView(simpleUpdateListener))
+                uieCenterView.populate(WeekView2(simpleUpdateListener))
             }
             DisplayType.GRAPHS -> {
                 logStorage.displayType = DisplayTypeLength.DAY
