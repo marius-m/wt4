@@ -19,7 +19,7 @@ import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.interfaces.UpdateListener
-import lt.markmerkk.ui_2.LogStatusView
+import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
 import rx.schedulers.JavaFxScheduler
@@ -37,15 +37,13 @@ class DayPresenter : Initializable {
 
     @FXML private lateinit var jfxDayContainer: StackPane
     @FXML private lateinit var jfxDayView: DetailedDayView
-    private lateinit var jfxInfoDialog: LogStatusView
 
     lateinit var updateListener: UpdateListener
-    private lateinit var dayLoader: DayViewLoader
+    private lateinit var logLoader: CalendarFxLogLoader
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
-        jfxInfoDialog = LogStatusView(jfxDayContainer)
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
 
@@ -91,8 +89,8 @@ class DayPresenter : Initializable {
             }
         }
 
-        dayLoader = DayViewLoader(
-                object : DayViewLoader.View {
+        logLoader = CalendarFxLogLoader(
+                object : CalendarFxLogLoader.View {
                     override fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>) {
                         calendar.startBatchUpdates()
                         calendar.clear()
@@ -103,13 +101,13 @@ class DayPresenter : Initializable {
                 Schedulers.io(),
                 JavaFxScheduler.getInstance()
         )
-        dayLoader.onAttach()
-        dayLoader.load(storage.data)
+        logLoader.onAttach()
+        logLoader.load(storage.data)
     }
 
     @PreDestroy
     fun destroy() {
-        dayLoader.onDetach()
+        logLoader.onDetach()
         storage.unregister(storageListener)
     }
 
@@ -117,7 +115,7 @@ class DayPresenter : Initializable {
 
     private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
         override fun onDataChange(data: List<SimpleLog>) {
-            dayLoader.load(data)
+            logLoader.load(data)
         }
     }
 

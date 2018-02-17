@@ -2,10 +2,10 @@ package lt.markmerkk.ui.day
 
 import com.calendarfx.model.Entry
 import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.utils.CalendarFxLogLoader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -13,15 +13,15 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.schedulers.Schedulers
 
-class DayViewLoaderTest {
+class CalendarFxLogLoaderTest {
 
-    @Mock lateinit var view: DayViewLoader.View
-    lateinit var loader: DayViewLoader
+    @Mock lateinit var view: CalendarFxLogLoader.View
+    lateinit var loader: CalendarFxLogLoader
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        loader = DayViewLoader(
+        loader = CalendarFxLogLoader(
                 view,
                 Schedulers.immediate(),
                 Schedulers.immediate()

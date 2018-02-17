@@ -1,4 +1,4 @@
-package lt.markmerkk.ui.day
+package lt.markmerkk.utils
 
 import com.calendarfx.model.Entry
 import com.calendarfx.model.Interval
@@ -15,8 +15,8 @@ import java.time.ZoneId
  * Loads data for the day view
  * Lifecycle [onAttach], [onDetach]
  */
-class DayViewLoader(
-        private val view: DayViewLoader.View,
+class CalendarFxLogLoader(
+        private val view: View,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
