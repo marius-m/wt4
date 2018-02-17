@@ -1,18 +1,19 @@
 package lt.markmerkk.ui.day
 
+import com.calendarfx.model.CalendarEvent
 import com.calendarfx.model.CalendarSource
 import com.calendarfx.model.Entry
 import com.calendarfx.view.DateControl
 import com.calendarfx.view.DetailedDayView
 import com.jfoenix.svg.SVGGlyph
 import javafx.event.ActionEvent
+import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
+import javafx.scene.input.DragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
@@ -51,6 +52,23 @@ class DayPresenter : Initializable {
 
         val calendar = com.calendarfx.model.Calendar()
         calendar.setStyle(com.calendarfx.model.Calendar.Style.STYLE1)
+        calendar.isReadOnly = true
+        calendar.addEventHandler(object : EventHandler<CalendarEvent> {
+            override fun handle(event: CalendarEvent) {
+                if (event.eventType == CalendarEvent.ENTRY_INTERVAL_CHANGED) {
+                    val calendarEntryStart = event.entry.startMillis
+                    val calendarEntryEnd = event.entry.endMillis
+                    val oldLog = event.entry.userObject as SimpleLog
+                    storage.delete(oldLog)
+                    storage.insert(
+                            SimpleLogBuilder(oldLog)
+                                    .setStart(calendarEntryStart)
+                                    .setEnd(calendarEntryEnd)
+                                    .build()
+                    )
+                }
+            }
+        })
         val calendarSource = CalendarSource()
         calendarSource.calendars.addAll(calendar)
         jfxDayView.calendarSources.add(calendarSource)
@@ -96,11 +114,6 @@ class DayPresenter : Initializable {
                 return contextMenu
             }
         }
-        jfxDayView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
-            override fun call(param: DateControl.EntryEditParameter): Boolean {
-                return false
-            }
-        }
         jfxDayView.entryFactory = object : Callback<DateControl.CreateEntryParameter, Entry<*>> {
             override fun call(param: DateControl.CreateEntryParameter): Entry<SimpleLog>? {
                 val startMillis = param.zonedDateTime.toInstant().toEpochMilli()
@@ -113,8 +126,18 @@ class DayPresenter : Initializable {
                 return null
             }
         }
+//        jfxDayView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
+//            override fun call(param: DateControl.EntryEditParameter): Boolean {
+//                val editableLog = param.entry.userObject as SimpleLog
+//                if (editableLog._id)
+//            }
+//        }
         logLoader = CalendarFxLogLoader(
                 object : CalendarFxLogLoader.View {
+                    override fun onCalendarNoEntries() {
+                        calendar.clear()
+                    }
+
                     override fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>) {
                         calendar.startBatchUpdates()
                         calendar.clear()

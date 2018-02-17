@@ -32,16 +32,24 @@ class CalendarFxLogLoaderTest {
     fun valid() {
         // Assemble
         // Act
-        loader.load(
-                listOf(createSimpleLog())
-        )
+        loader.load(listOf(createSimpleLog()))
 
         // Assert
-        val calendarEntryCaptor = argumentCaptor<List<Entry<String>>>()
+        val calendarEntryCaptor = argumentCaptor<List<Entry<SimpleLog>>>()
         verify(view).onCalendarEntries(
                 calendarEntryCaptor.capture()
         )
         assertThat(calendarEntryCaptor.firstValue).hasSize(1)
+    }
+
+    @Test
+    fun noEntries() {
+        // Assemble
+        // Act
+        loader.load(emptyList())
+
+        // Assert
+        verify(view).onCalendarNoEntries()
     }
 
     //region Mocks

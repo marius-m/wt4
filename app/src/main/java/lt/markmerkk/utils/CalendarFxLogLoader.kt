@@ -31,29 +31,34 @@ class CalendarFxLogLoader(
 
     fun load(logs: List<SimpleLog>) {
         subscription?.unsubscribe()
-        subscription = Observable.from(logs)
+        subscription = Observable.just(logs)
                 .subscribeOn(ioScheduler)
                 .map {
-                    val zoneId = ZoneId.systemDefault()
-                    val startDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.start), zoneId)
-                    val endDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.end), zoneId)
-                    val entry = Entry<SimpleLog>(
-                            it.comment,
-                            Interval(
-                                    startDateTime.toLocalDate(),
-                                    startDateTime.toLocalTime(),
-                                    endDateTime.toLocalDate(),
-                                    endDateTime.toLocalTime(),
-                                    zoneId
-                            )
-                    )
-                    entry.userObject = it
-                    entry
+                    it.map {
+                        val zoneId = ZoneId.systemDefault()
+                        val startDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.start), zoneId)
+                        val endDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.end), zoneId)
+                        val entry = Entry<SimpleLog>(
+                                it.comment,
+                                Interval(
+                                        startDateTime.toLocalDate(),
+                                        startDateTime.toLocalTime(),
+                                        endDateTime.toLocalDate(),
+                                        endDateTime.toLocalTime(),
+                                        zoneId
+                                )
+                        )
+                        entry.userObject = it
+                        entry
+                    }
                 }
-                .toList()
                 .observeOn(uiScheduler)
                 .subscribe({
-                    view.onCalendarEntries(it)
+                    if (it.isEmpty()) {
+                        view.onCalendarNoEntries()
+                    } else {
+                        view.onCalendarEntries(it)
+                    }
                 })
     }
 
@@ -61,6 +66,7 @@ class CalendarFxLogLoader(
 
     interface View {
         fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>)
+        fun onCalendarNoEntries()
     }
 
     //endregion
