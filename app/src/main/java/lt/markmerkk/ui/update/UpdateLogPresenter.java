@@ -99,7 +99,7 @@ public class UpdateLogPresenter implements SearchOpenMvp.View {
       setStatusError(entity.getErrorMessage());
       return;
     }
-    if (entity.getId() > 0) {
+    if (!entity.canEdit()) {
       setStatusInSync();
       return;
     }
@@ -135,7 +135,7 @@ public class UpdateLogPresenter implements SearchOpenMvp.View {
    * Updates locking mechanism. Temoprarily, tasks that have been uploaded cant be edited.
    */
   void updateLock() {
-    if (entity.getId() == 0) return; // Its local
+    if (entity.canEdit()) return; // Its local
     taskInput.setEditable(false);
     startInput.setEditable(false);
     endInput.setEditable(false);
