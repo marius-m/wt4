@@ -65,7 +65,7 @@ class SyncInteractorImpl(
                 .flatMap { issueCacheObservable(issueValidator, syncStart) }
                 .flatMap { clearOldIssueCacheObservable(syncStart) }
                 .doOnSubscribe { loading = true }
-                .doOnUnsubscribe { loading = false }
+                .doOnTerminate { loading = false }
                 .observeOn(uiScheduler)
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
