@@ -15,6 +15,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
@@ -70,12 +71,18 @@ class DayPresenter : Initializable {
         jfxDayView.entryContextMenuCallback = object : Callback<DateControl.EntryContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.EntryContextMenuParameter): ContextMenu {
                 val contextMenu = ContextMenu()
-                val updateItem = MenuItem(strings.getString("general_update"),
-                        ImageView(Image(javaClass.getResource("/update_2.png").toString())))
-                val deleteItem = MenuItem(strings.getString("general_delete"),
-                        ImageView(Image(javaClass.getResource("/delete_2.png").toString())))
-                val cloneItem = MenuItem(strings.getString("general_clone"),
-                        ImageView(Image(javaClass.getResource("/clone_2.png").toString())))
+                val updateItem = MenuItem(
+                        strings.getString("general_update"),
+                        graphics.glyph("update", Color.BLACK, 16.0, 16.0)
+                )
+                val deleteItem = MenuItem(
+                        strings.getString("general_delete"),
+                        graphics.glyph("delete", Color.BLACK, 12.0, 16.0)
+                )
+                val cloneItem = MenuItem(
+                        strings.getString("general_clone"),
+                        graphics.glyph("clone", Color.BLACK, 16.0, 12.0)
+                )
                 contextMenu.items.addAll(updateItem, deleteItem, cloneItem)
                 contextMenu.onAction = object : EventHandler<ActionEvent> {
                     override fun handle(event: ActionEvent) {
