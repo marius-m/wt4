@@ -37,7 +37,7 @@ class DayViewLoader(
                     val zoneId = ZoneId.systemDefault()
                     val startDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.start), zoneId)
                     val endDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.end), zoneId)
-                    Entry<String>(
+                    val entry = Entry<SimpleLog>(
                             it.comment,
                             Interval(
                                     startDateTime.toLocalDate(),
@@ -47,6 +47,8 @@ class DayViewLoader(
                                     zoneId
                             )
                     )
+                    entry.userObject = it
+                    entry
                 }
                 .toList()
                 .observeOn(uiScheduler)
@@ -58,7 +60,7 @@ class DayViewLoader(
     //region Classes
 
     interface View {
-        fun onCalendarEntries(calendarEntries: List<Entry<String>>)
+        fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>)
     }
 
     //endregion

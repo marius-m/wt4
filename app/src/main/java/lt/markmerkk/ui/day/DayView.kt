@@ -5,6 +5,6 @@ import lt.markmerkk.ui.interfaces.UpdateListener
 
 class DayView(private val updateListener: UpdateListener) : FXMLView() {
     init {
-//        (presenter as DayPresenter).setUpdateListener(updateListener)
+        (presenter as DayPresenter).updateListener = updateListener
     }
 }

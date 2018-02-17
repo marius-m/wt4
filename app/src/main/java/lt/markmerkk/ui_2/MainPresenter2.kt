@@ -60,7 +60,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var clockRunBridge: ClockRunBridge
     lateinit var snackBar: JFXSnackbar
 
-    var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
+    var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
