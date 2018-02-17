@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-
-<?import jfxtras.scene.control.agenda.Agenda?>
+<?import com.calendarfx.view.DetailedDayView?>
+<?import javafx.scene.layout.StackPane?>
 <StackPane fx:id="jfxDayContainer"
-      xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="lt.markmerkk.ui.day.DayPresenter">
-   <Agenda fx:id="jfxAgenda" />
+           xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="lt.markmerkk.ui.day.DayPresenter">
+    <DetailedDayView
+            fx:id="jfxDayView"
+    />
 </StackPane>
