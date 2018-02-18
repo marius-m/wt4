@@ -61,6 +61,7 @@ class LogEditServiceImplTest {
                 "valid_comment"
         )
         doReturn("30m.").whenever(simpleLog).prettyDuration
+        doReturn(true).whenever(simpleLog).canEdit()
         doReturn(true).whenever(simpleLog).isError // worklog marked as having an error
         doReturn("valid_error_message").whenever(simpleLog).errorMessage
         doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
@@ -88,7 +89,7 @@ class LogEditServiceImplTest {
                 "valid_comment"
         )
         doReturn("30m.").whenever(simpleLog).prettyDuration
-        doReturn(1234L).whenever(simpleLog).id // with having remote id this worklog is in sync
+        doReturn(false).whenever(simpleLog).canEdit()
         doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act

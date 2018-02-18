@@ -79,6 +79,14 @@ public class SimpleLog extends RemoteEntity {
   }
 
   /**
+   * Defines if entity can be edited
+   * @return
+   */
+  public boolean canEdit() {
+    return id <= 0;
+  }
+
+  /**
    * Returns an image view of the state the
    * @return
    */

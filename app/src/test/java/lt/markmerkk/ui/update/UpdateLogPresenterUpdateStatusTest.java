@@ -18,8 +18,6 @@ import static org.mockito.Mockito.verify;
  */
 public class UpdateLogPresenterUpdateStatusTest {
 
-  public static final long VALID_SERVER_ID = 100L;
-  public static final long NO_SERVER_ID = 0L;
   @Mock
   UpdateLogPresenter presenter;
 
@@ -49,7 +47,7 @@ public class UpdateLogPresenterUpdateStatusTest {
   public void updateStatus_inputUnsynced_shouldSetUnsynced() throws Exception {
     // Arrange
     doReturn(false).when(entity).isError();
-    doReturn(NO_SERVER_ID).when(entity).getId();
+    doReturn(true).when(entity).canEdit();
 
     // Act
     presenter.updateStatus(entity);
@@ -64,7 +62,7 @@ public class UpdateLogPresenterUpdateStatusTest {
   public void updateStatus_inputSynced_shouldSetUnsynced() throws Exception {
     // Arrange
     doReturn(false).when(entity).isError();
-    doReturn(VALID_SERVER_ID).when(entity).getId();
+    doReturn(false).when(entity).canEdit();
 
     // Act
     presenter.updateStatus(entity);
@@ -80,7 +78,7 @@ public class UpdateLogPresenterUpdateStatusTest {
     // Arrange
     doReturn(true).when(entity).isError();
     doReturn("valid_error_msg").when(entity).getErrorMessage();
-    doReturn(NO_SERVER_ID).when(entity).getId();
+    doReturn(true).when(entity).canEdit();
 
     // Act
     presenter.updateStatus(entity);
@@ -96,7 +94,7 @@ public class UpdateLogPresenterUpdateStatusTest {
     // Arrange
     doReturn(true).when(entity).isError();
     doReturn("valid_error_msg").when(entity).getErrorMessage();
-    doReturn(VALID_SERVER_ID).when(entity).getId();
+    doReturn(false).when(entity).canEdit();
 
     // Act
     presenter.updateStatus(entity);
