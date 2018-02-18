@@ -52,7 +52,7 @@ class DayPresenter : Initializable {
 
         val calendar = com.calendarfx.model.Calendar()
         calendar.setStyle(com.calendarfx.model.Calendar.Style.STYLE1)
-        calendar.isReadOnly = true
+        calendar.isReadOnly = false
         calendar.addEventHandler(object : EventHandler<CalendarEvent> {
             override fun handle(event: CalendarEvent) {
                 if (event.eventType == CalendarEvent.ENTRY_INTERVAL_CHANGED) {
@@ -126,12 +126,17 @@ class DayPresenter : Initializable {
                 return null
             }
         }
-//        jfxDayView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
-//            override fun call(param: DateControl.EntryEditParameter): Boolean {
-//                val editableLog = param.entry.userObject as SimpleLog
-//                if (editableLog._id)
-//            }
-//        }
+        jfxDayView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
+            override fun call(param: DateControl.EntryEditParameter): Boolean {
+                val editableLog = param.entry.userObject as SimpleLog
+                if (editableLog.canEdit()
+                        && (param.editOperation == DateControl.EditOperation.CHANGE_START
+                        || param.editOperation == DateControl.EditOperation.CHANGE_END)) {
+                    return true
+                }
+                return false
+            }
+        }
         logLoader = CalendarFxLogLoader(
                 object : CalendarFxLogLoader.View {
                     override fun onCalendarNoEntries() {
