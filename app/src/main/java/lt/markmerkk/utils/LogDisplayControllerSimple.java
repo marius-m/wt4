@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import lt.markmerkk.Translation;
 import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SyncStatus;
 
 /**
  * Created by mariusm on 1/19/15.
@@ -45,7 +46,9 @@ public class LogDisplayControllerSimple extends TableDisplayController<SimpleLog
         new Callback<TableColumn.CellDataFeatures<SimpleLog, ImageView>, ObservableValue<ImageView>>() {
           @Override public ObservableValue<ImageView> call(
               TableColumn.CellDataFeatures<SimpleLog, ImageView> param) {
-            return new SimpleObjectProperty<ImageView>(new ImageView(param.getValue().getStateImageUrl()));
+              SimpleLog simpleLog = param.getValue();
+              SyncStatus syncStatus = SyncStatus.exposeStatus(simpleLog);
+            return new SimpleObjectProperty<ImageView>(new ImageView(SyncStatus.toStatusImageUrl(syncStatus)));
           }
         });
     return columnImage;
