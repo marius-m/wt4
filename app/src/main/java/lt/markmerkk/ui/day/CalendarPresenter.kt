@@ -42,9 +42,39 @@ class CalendarPresenter : Initializable {
 
     lateinit var updateListener: UpdateListener
 
-    private val calendar = Calendar()
+    private val calendarChangeEventHandler: EventHandler<CalendarEvent> = object : EventHandler<CalendarEvent> {
+        override fun handle(event: CalendarEvent) {
+            if (event.eventType == CalendarEvent.ENTRY_INTERVAL_CHANGED) {
+                val calendarEntryStart = event.entry.startMillis
+                val calendarEntryEnd = event.entry.endMillis
+                val oldLog = event.entry.userObject as SimpleLog
+                storage.delete(oldLog)
+                storage.insert(
+                        SimpleLogBuilder(oldLog)
+                                .setStart(calendarEntryStart)
+                                .setEnd(calendarEntryEnd)
+                                .build()
+                )
+            }
+        }
+    }
+    private val calendarInSync = Calendar().apply {
+        setStyle(Calendar.Style.STYLE1)
+        isReadOnly = true
+        addEventHandler(calendarChangeEventHandler)
+    }
+    private val calendarWaitingForSync = Calendar().apply {
+        setStyle(Calendar.Style.STYLE3)
+        isReadOnly = false
+        addEventHandler(calendarChangeEventHandler)
+    }
+    private val calendarError = Calendar().apply {
+        setStyle(Calendar.Style.STYLE5)
+        isReadOnly = false
+        addEventHandler(calendarChangeEventHandler)
+    }
     private val calendarSource = CalendarSource().apply {
-        calendars.addAll(calendar)
+        calendars.addAll(calendarInSync, calendarWaitingForSync, calendarError)
     }
     private lateinit var logLoader: CalendarFxLogLoader
 
@@ -53,25 +83,6 @@ class CalendarPresenter : Initializable {
 
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
-
-        calendar.setStyle(com.calendarfx.model.Calendar.Style.STYLE1)
-        calendar.isReadOnly = false
-        calendar.addEventHandler(object : EventHandler<CalendarEvent> {
-            override fun handle(event: CalendarEvent) {
-                if (event.eventType == CalendarEvent.ENTRY_INTERVAL_CHANGED) {
-                    val calendarEntryStart = event.entry.startMillis
-                    val calendarEntryEnd = event.entry.endMillis
-                    val oldLog = event.entry.userObject as SimpleLog
-                    storage.delete(oldLog)
-                    storage.insert(
-                            SimpleLogBuilder(oldLog)
-                                    .setStart(calendarEntryStart)
-                                    .setEnd(calendarEntryEnd)
-                                    .build()
-                    )
-                }
-            }
-        })
 
         jfxCalendarView.calendarSources.add(calendarSource)
 //        jfxDayView.isShowAllDayView = false
@@ -141,22 +152,38 @@ class CalendarPresenter : Initializable {
         }
         logLoader = CalendarFxLogLoader(
                 object : CalendarFxLogLoader.View {
-                    override fun onCalendarNoEntries() {
-                        calendar.clear()
-                    }
-
-                    override fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>) {
+                    override fun onCalendarEntries(
+                            allEntries: List<Entry<SimpleLog>>,
+                            entriesInSync: List<Entry<SimpleLog>>,
+                            entriesWaitingForSync: List<Entry<SimpleLog>>,
+                            entriesInError: List<Entry<SimpleLog>>
+                    ) {
                         val targetDate = storage.targetDate.toLocalDate() // todo: Provide shown date
                         jfxCalendarView.date = LocalDate.of(
                                 targetDate.year,
                                 targetDate.monthOfYear,
                                 targetDate.dayOfMonth
                         )
-                        calendar.startBatchUpdates()
-                        calendar.clear()
-                        calendar.addEntries(calendarEntries)
-                        calendar.stopBatchUpdates()
+                        calendarInSync.startBatchUpdates()
+                        calendarInSync.clear()
+                        calendarInSync.addEntries(entriesInSync)
+                        calendarInSync.stopBatchUpdates()
+                        calendarWaitingForSync.startBatchUpdates()
+                        calendarWaitingForSync.clear()
+                        calendarWaitingForSync.addEntries(entriesWaitingForSync)
+                        calendarWaitingForSync.stopBatchUpdates()
+                        calendarError.startBatchUpdates()
+                        calendarError.clear()
+                        calendarError.addEntries(entriesInError)
+                        calendarError.stopBatchUpdates()
                     }
+
+                    override fun onCalendarNoEntries() {
+                        calendarInSync.clear()
+                        calendarWaitingForSync.clear()
+                        calendarError.clear()
+                    }
+
                 },
                 Schedulers.io(),
                 JavaFxScheduler.getInstance()

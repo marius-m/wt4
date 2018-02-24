@@ -3,6 +3,7 @@ package lt.markmerkk.utils
 import com.calendarfx.model.Entry
 import com.calendarfx.model.Interval
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SyncStatus
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
@@ -57,7 +58,12 @@ class CalendarFxLogLoader(
                     if (it.isEmpty()) {
                         view.onCalendarNoEntries()
                     } else {
-                        view.onCalendarEntries(it)
+                        view.onCalendarEntries(
+                                allEntries = it,
+                                entriesInSync = it.filter { SyncStatus.exposeStatus(it.userObject) == SyncStatus.IN_SYNC },
+                                entriesWaitingForSync = it.filter { SyncStatus.exposeStatus(it.userObject) == SyncStatus.WAITING_FOR_SYNC },
+                                entriesInError = it.filter { SyncStatus.exposeStatus(it.userObject) == SyncStatus.ERROR }
+                        )
                     }
                 })
     }
@@ -65,7 +71,12 @@ class CalendarFxLogLoader(
     //region Classes
 
     interface View {
-        fun onCalendarEntries(calendarEntries: List<Entry<SimpleLog>>)
+        fun onCalendarEntries(
+                allEntries: List<Entry<SimpleLog>>,
+                entriesInSync: List<Entry<SimpleLog>>,
+                entriesWaitingForSync: List<Entry<SimpleLog>>,
+                entriesInError: List<Entry<SimpleLog>>
+        )
         fun onCalendarNoEntries()
     }
 
