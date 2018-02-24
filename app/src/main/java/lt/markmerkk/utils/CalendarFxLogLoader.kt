@@ -44,7 +44,7 @@ class CalendarFxLogLoader(
                                 .withSecond(0)
                                 .withNano(0)
                         val entry = Entry<SimpleLog>(
-                                it.comment,
+                                LogUtils.formatLogToText(it),
                                 Interval(
                                         startDateTime.toLocalDate(),
                                         startDateTime.toLocalTime(),

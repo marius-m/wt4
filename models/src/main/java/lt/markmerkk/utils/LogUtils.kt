@@ -1,5 +1,6 @@
 package lt.markmerkk.utils
 
+import lt.markmerkk.entities.SimpleLog
 import org.joda.time.DurationFieldType
 import org.joda.time.Period
 import org.joda.time.PeriodType
@@ -138,6 +139,14 @@ object LogUtils {
         if (builder.length > 0 && builder[builder.length - 1] == " "[0])
             builder.deleteCharAt(builder.length - 1)
         return builder.toString()
+    }
+
+    /**
+     * Formats log as a pretty text
+     */
+    @JvmStatic fun formatLogToText(simpleLog: SimpleLog): String {
+        return "${simpleLog.task} (${formatShortDuration(simpleLog.duration)}) ${simpleLog.comment}"
+                .trim()
     }
 
 }
