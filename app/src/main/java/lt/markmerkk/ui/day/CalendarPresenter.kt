@@ -147,12 +147,13 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
             override fun call(param: DateControl.EntryEditParameter): Boolean {
-                val editableLog = param.entry.userObject as SimpleLog
-                if (editableLog.canEdit()
-                        && (param.editOperation == DateControl.EditOperation.CHANGE_START
-                        || param.editOperation == DateControl.EditOperation.CHANGE_END)) {
-                    return true
-                }
+                // todo: Disable edit for now
+//                val editableLog = param.entry.userObject as SimpleLog
+//                if (editableLog.canEdit()
+//                        && (param.editOperation == DateControl.EditOperation.CHANGE_START
+//                        || param.editOperation == DateControl.EditOperation.CHANGE_END)) {
+//                    return true
+//                }
                 return false
             }
         }

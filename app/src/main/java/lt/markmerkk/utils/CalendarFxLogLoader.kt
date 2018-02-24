@@ -38,7 +38,11 @@ class CalendarFxLogLoader(
                     it.map {
                         val zoneId = ZoneId.systemDefault()
                         val startDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.start), zoneId)
+                                .withSecond(0)
+                                .withNano(0)
                         val endDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.end), zoneId)
+                                .withSecond(0)
+                                .withNano(0)
                         val entry = Entry<SimpleLog>(
                                 it.comment,
                                 Interval(
