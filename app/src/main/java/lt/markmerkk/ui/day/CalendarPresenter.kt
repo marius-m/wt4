@@ -5,7 +5,6 @@ import com.calendarfx.model.CalendarEvent
 import com.calendarfx.model.CalendarSource
 import com.calendarfx.model.Entry
 import com.calendarfx.view.DateControl
-import com.calendarfx.view.DayView
 import com.jfoenix.svg.SVGGlyph
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -22,12 +21,14 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.utils.CalendarFxLogLoader
+import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -78,6 +79,7 @@ class CalendarPresenter : Initializable {
         calendars.addAll(calendarInSync, calendarWaitingForSync, calendarError)
     }
     private lateinit var logLoader: CalendarFxLogLoader
+    private lateinit var calendarUpdater: CalendarFxUpdater
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
@@ -155,55 +157,23 @@ class CalendarPresenter : Initializable {
             }
         }
         logLoader = CalendarFxLogLoader(
-                object : CalendarFxLogLoader.View {
-                    override fun onCalendarEntries(
-                            allEntries: List<Entry<SimpleLog>>,
-                            entriesInSync: List<Entry<SimpleLog>>,
-                            entriesWaitingForSync: List<Entry<SimpleLog>>,
-                            entriesInError: List<Entry<SimpleLog>>
-                    ) {
-                        val targetDate = storage.targetDate.toLocalDate() // todo: Provide shown date
-                        jfxCalendarView.date = LocalDate.of(
-                                targetDate.year,
-                                targetDate.monthOfYear,
-                                targetDate.dayOfMonth
-                        )
-                        calendarInSync.startBatchUpdates()
-                        calendarInSync.clear()
-                        calendarInSync.addEntries(entriesInSync)
-                        calendarInSync.stopBatchUpdates()
-                        calendarWaitingForSync.startBatchUpdates()
-                        calendarWaitingForSync.clear()
-                        calendarWaitingForSync.addEntries(entriesWaitingForSync)
-                        calendarWaitingForSync.stopBatchUpdates()
-                        calendarError.startBatchUpdates()
-                        calendarError.clear()
-                        calendarError.addEntries(entriesInError)
-                        calendarError.stopBatchUpdates()
-                    }
-
-                    override fun onCalendarNoEntries() {
-                        val targetDate = storage.targetDate.toLocalDate() // todo: Provide shown date
-                        jfxCalendarView.date = LocalDate.of(
-                                targetDate.year,
-                                targetDate.monthOfYear,
-                                targetDate.dayOfMonth
-                        )
-                        calendarInSync.clear()
-                        calendarWaitingForSync.clear()
-                        calendarError.clear()
-                    }
-
-                },
+                calendarLoaderListener,
+                Schedulers.io(),
+                JavaFxScheduler.getInstance()
+        )
+        calendarUpdater = CalendarFxUpdater(
+                calendarUpdateListener,
                 Schedulers.io(),
                 JavaFxScheduler.getInstance()
         )
         logLoader.onAttach()
+        calendarUpdater.onAttach()
         logLoader.load(storage.data)
     }
 
     @PreDestroy
     fun destroy() {
+        calendarUpdater.onDetach()
         logLoader.onDetach()
         storage.unregister(storageListener)
     }
@@ -213,7 +183,57 @@ class CalendarPresenter : Initializable {
     private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
         override fun onDataChange(data: List<SimpleLog>) {
             logLoader.load(data)
+            jfxCalendarView.today = LocalDate.now()
+            jfxCalendarView.time = LocalTime.now()
         }
+    }
+
+    private val calendarUpdateListener: CalendarFxUpdater.Listener = object : CalendarFxUpdater.Listener {
+        override fun onCurrentTimeUpdate(currentTime: LocalTime) {
+            jfxCalendarView.today = LocalDate.now()
+            jfxCalendarView.time = LocalTime.now()
+        }
+    }
+
+    private val calendarLoaderListener: CalendarFxLogLoader.View = object : CalendarFxLogLoader.View {
+        override fun onCalendarEntries(
+                allEntries: List<Entry<SimpleLog>>,
+                entriesInSync: List<Entry<SimpleLog>>,
+                entriesWaitingForSync: List<Entry<SimpleLog>>,
+                entriesInError: List<Entry<SimpleLog>>
+        ) {
+            val targetDate = storage.targetDate.toLocalDate() // todo: Provide shown date
+            jfxCalendarView.date = LocalDate.of(
+                    targetDate.year,
+                    targetDate.monthOfYear,
+                    targetDate.dayOfMonth
+            )
+            calendarInSync.startBatchUpdates()
+            calendarInSync.clear()
+            calendarInSync.addEntries(entriesInSync)
+            calendarInSync.stopBatchUpdates()
+            calendarWaitingForSync.startBatchUpdates()
+            calendarWaitingForSync.clear()
+            calendarWaitingForSync.addEntries(entriesWaitingForSync)
+            calendarWaitingForSync.stopBatchUpdates()
+            calendarError.startBatchUpdates()
+            calendarError.clear()
+            calendarError.addEntries(entriesInError)
+            calendarError.stopBatchUpdates()
+        }
+
+        override fun onCalendarNoEntries() {
+            val targetDate = storage.targetDate.toLocalDate() // todo: Provide shown date
+            jfxCalendarView.date = LocalDate.of(
+                    targetDate.year,
+                    targetDate.monthOfYear,
+                    targetDate.dayOfMonth
+            )
+            calendarInSync.clear()
+            calendarWaitingForSync.clear()
+            calendarError.clear()
+        }
+
     }
 
     //endregion
