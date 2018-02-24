@@ -5,13 +5,15 @@ import com.calendarfx.model.CalendarEvent
 import com.calendarfx.model.CalendarSource
 import com.calendarfx.model.Entry
 import com.calendarfx.view.DateControl
+import com.calendarfx.view.DayViewBase
+import com.calendarfx.view.DetailedDayView
+import com.calendarfx.view.DetailedWeekView
 import com.jfoenix.svg.SVGGlyph
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
+import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
@@ -19,9 +21,13 @@ import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.interfaces.UpdateListener
+import lt.markmerkk.ui_2.bridges.UIEButtonDragAndDrop
+import lt.markmerkk.utils.CalendarFxEditRules
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarFxUpdater
+import lt.markmerkk.utils.CalendarMenuItemProvider
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
 import rx.schedulers.JavaFxScheduler
@@ -29,6 +35,7 @@ import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -41,6 +48,7 @@ class CalendarPresenter : Initializable {
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
+    private lateinit var uiDndButton: UIEButtonDragAndDrop
 
     lateinit var updateListener: UpdateListener
 
@@ -78,11 +86,23 @@ class CalendarPresenter : Initializable {
     private val calendarSource = CalendarSource().apply {
         calendars.addAll(calendarInSync, calendarWaitingForSync, calendarError)
     }
+
     private lateinit var logLoader: CalendarFxLogLoader
     private lateinit var calendarUpdater: CalendarFxUpdater
+    private lateinit var calendarEditRules: CalendarFxEditRules
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
+        uiDndButton = UIEButtonDragAndDrop(
+                node = object : ExternalSourceNode<StackPane> {
+                    override fun rootNode(): StackPane = jfxContainer
+                },
+                strings = strings,
+                onClick = {
+                    calendarEditRules.disable()
+                }
+        )
+        uiDndButton.hide()
 
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
@@ -99,6 +119,7 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryDetailsCallback = object : Callback<DateControl.EntryDetailsParameter, Boolean> {
             override fun call(param: DateControl.EntryDetailsParameter): Boolean {
+                if (calendarEditRules.isInEditMode()) return true
                 if (param.inputEvent.eventType != MouseEvent.MOUSE_CLICKED) {
                     return true
                 }
@@ -111,6 +132,7 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryContextMenuCallback = object : Callback<DateControl.EntryContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.EntryContextMenuParameter): ContextMenu {
+                if (calendarEditRules.isInEditMode()) return ContextMenu()
                 val contextMenu = ContextMenu()
                 val updateItem = MenuItem(
                         strings.getString("general_update"),
@@ -132,6 +154,27 @@ class CalendarPresenter : Initializable {
                             deleteItem -> updateListener.onDelete(param.entry.userObject as SimpleLog)
                             cloneItem -> updateListener.onClone(param.entry.userObject as SimpleLog)
                         }
+                        contextMenu.hide()
+                    }
+                }
+                return contextMenu
+            }
+        }
+        jfxCalendarView.contextMenuCallback = object : Callback<DateControl.ContextMenuParameter, ContextMenu> {
+            override fun call(param: DateControl.ContextMenuParameter): ContextMenu {
+                if (calendarEditRules.isInEditMode()) return ContextMenu()
+                val contextMenu = ContextMenu()
+                contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemNewItem(param.zonedDateTime, strings, storage))
+                if (jfxCalendarView is DetailedDayView) {
+                    contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemScale(jfxCalendarView as DetailedDayView, strings))
+                }
+                if (jfxCalendarView is DetailedWeekView) {
+                    contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemScale(jfxCalendarView as DetailedWeekView, strings))
+                }
+                contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemEditMode(strings, calendarEditRules))
+                contextMenu.onAction = object : EventHandler<ActionEvent> {
+                    override fun handle(event: ActionEvent) {
+                        contextMenu.hide()
                     }
                 }
                 return contextMenu
@@ -139,6 +182,7 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryFactory = object : Callback<DateControl.CreateEntryParameter, Entry<*>> {
             override fun call(param: DateControl.CreateEntryParameter): Entry<SimpleLog>? {
+                if (calendarEditRules.isInEditMode()) return null
                 val startMillis = param.zonedDateTime.toInstant().toEpochMilli()
                 val endMillis = param.zonedDateTime.plusHours(1).toInstant().toEpochMilli()
                 val simpleLog = SimpleLogBuilder()
@@ -151,14 +195,7 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
             override fun call(param: DateControl.EntryEditParameter): Boolean {
-                // todo: Disable edit for now
-//                val editableLog = param.entry.userObject as SimpleLog
-//                if (editableLog.canEdit()
-//                        && (param.editOperation == DateControl.EditOperation.CHANGE_START
-//                        || param.editOperation == DateControl.EditOperation.CHANGE_END)) {
-//                    return true
-//                }
-                return false
+                return calendarEditRules.isInEditMode()
             }
         }
         logLoader = CalendarFxLogLoader(
@@ -171,6 +208,15 @@ class CalendarPresenter : Initializable {
                 Schedulers.io(),
                 JavaFxScheduler.getInstance()
         )
+        calendarEditRules = CalendarFxEditRules(object : CalendarFxEditRules.Listener {
+            override fun showIsEditMode() {
+                uiDndButton.show()
+            }
+
+            override fun hideIsEditMode() {
+                uiDndButton.hide()
+            }
+        })
         logLoader.onAttach()
         calendarUpdater.onAttach()
         logLoader.load(storage.data)
