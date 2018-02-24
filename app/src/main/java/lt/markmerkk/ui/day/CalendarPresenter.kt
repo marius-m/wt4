@@ -5,6 +5,7 @@ import com.calendarfx.model.CalendarEvent
 import com.calendarfx.model.CalendarSource
 import com.calendarfx.model.Entry
 import com.calendarfx.view.DateControl
+import com.calendarfx.view.DayView
 import com.jfoenix.svg.SVGGlyph
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -85,8 +86,11 @@ class CalendarPresenter : Initializable {
         storage.register(storageListener)
 
         jfxCalendarView.calendarSources.add(calendarSource)
-//        jfxDayView.isShowAllDayView = false
-//        jfxDayView.isShowAgendaView = false
+        if (jfxCalendarView is com.calendarfx.view.DetailedDayView) {
+            val jfxDayView = jfxCalendarView as com.calendarfx.view.DetailedDayView
+            jfxDayView.isShowAllDayView = false
+            jfxDayView.isShowAgendaView = false
+        }
         jfxCalendarView.entryDetailsCallback = object : Callback<DateControl.EntryDetailsParameter, Boolean> {
             override fun call(param: DateControl.EntryDetailsParameter): Boolean {
                 if (param.inputEvent.eventType != MouseEvent.MOUSE_CLICKED) {
@@ -179,6 +183,12 @@ class CalendarPresenter : Initializable {
                     }
 
                     override fun onCalendarNoEntries() {
+                        val targetDate = storage.targetDate.toLocalDate() // todo: Provide shown date
+                        jfxCalendarView.date = LocalDate.of(
+                                targetDate.year,
+                                targetDate.monthOfYear,
+                                targetDate.dayOfMonth
+                        )
                         calendarInSync.clear()
                         calendarWaitingForSync.clear()
                         calendarError.clear()
