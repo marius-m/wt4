@@ -93,6 +93,10 @@ class CalendarPresenter : Initializable {
             jfxDayView.isShowAllDayView = false
             jfxDayView.isShowAgendaView = false
         }
+        if (jfxCalendarView is com.calendarfx.view.DetailedWeekView) {
+            val jfxDayView = jfxCalendarView as com.calendarfx.view.DetailedWeekView
+            jfxDayView.isShowAllDayView = false
+        }
         jfxCalendarView.entryDetailsCallback = object : Callback<DateControl.EntryDetailsParameter, Boolean> {
             override fun call(param: DateControl.EntryDetailsParameter): Boolean {
                 if (param.inputEvent.eventType != MouseEvent.MOUSE_CLICKED) {
