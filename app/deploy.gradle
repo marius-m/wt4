@@ -1,7 +1,7 @@
 apply plugin: 'javafx-gradle-plugin'
 
-ext.appPath = "wt4"
-//ext.appPath = "wt4_eap"
+//ext.appPath = "wt4"
+ext.appPath = "wt4_eap"
 
 jfx {
     verbose = true
