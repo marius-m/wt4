@@ -39,12 +39,14 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxToggleClock: JFXToggleNode
     @FXML lateinit var jfxButtonSettings: JFXButton
     @FXML lateinit var jfxButtonDisplayView: JFXButton
-    @FXML lateinit var jfxProgressBar: JFXProgressBar
     @FXML lateinit var jfxContainerContent: BorderPane
     @FXML lateinit var jfxContainerContentDateSwitcher: HBox
     @FXML lateinit var jfxDateSwitcherPrev: JFXButton
     @FXML lateinit var jfxDateSwitcherDate: JFXButton
     @FXML lateinit var jfxDateSwitcherNext: JFXButton
+    @FXML lateinit var jfxButtonRefresh: JFXButton
+    @FXML lateinit var jfxSpinner: JFXSpinner
+    @FXML lateinit var jfxContainerContentRefresh: StackPane
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
@@ -56,8 +58,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCenterView: UIECenterView
-    lateinit var uieProgressView: UIEProgressView
     lateinit var uieDateSwitcher: UIEDateSwitcher
+    lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
     lateinit var snackBar: JFXSnackbar
 
@@ -79,7 +81,13 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxToggleClock
         )
         uieCenterView = UIECenterView(jfxContainerContent)
-        uieProgressView = UIEProgressView(jfxRoot, jfxProgressBar)
+        uieProgressView = UIEProgressView(
+                jfxContainerContentRefresh,
+                jfxButtonRefresh,
+                jfxSpinner,
+                graphics,
+                syncInteractor
+        )
         uieDateSwitcher = UIEDateSwitcher(
                 this,
                 jfxContainerContentDateSwitcher,

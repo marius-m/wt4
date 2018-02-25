@@ -1,48 +1,53 @@
 package lt.markmerkk.ui_2.bridges
 
-import com.jfoenix.controls.JFXProgressBar
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
-import javafx.scene.layout.Pane
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXSpinner
+import com.jfoenix.svg.SVGGlyph
+import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
+import lt.markmerkk.Graphics
+import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.UIElement
 
 /**
- * Represents settings button, its graphics, animations
+ * Represents progress when logs are being synchronized
  */
 class UIEProgressView(
-        private val rootPane: Pane,
-        private val progressBar: JFXProgressBar
-) : UIElement<JFXProgressBar>, IRemoteLoadListener {
+        private val jfxContainerContentRefresh: StackPane,
+        private val jfxButtonRefresh: JFXButton,
+        private val jfxSpinner: JFXSpinner,
+        private val graphics: Graphics<SVGGlyph>,
+        private val syncInteractor: SyncInteractor
+) : UIElement<StackPane>, IRemoteLoadListener {
+
+    private val glyphCancel = graphics.glyph("cancel", Color.BLACK, 12.0)
+    private val glyphRefresh = graphics.glyph("refresh2", Color.BLACK, 12.0)
 
     init {
-        rootPane.widthProperty().addListener(object : ChangeListener<Number> {
-            override fun changed(
-                    observable: ObservableValue<out Number>?,
-                    oldValue: Number?,
-                    newValue: Number
-            ) {
-                progressBar.prefWidth = newValue.toDouble()
+        jfxButtonRefresh.setOnAction {
+            if (!syncInteractor.isLoading()) {
+                syncInteractor.syncLogs()
+            } else {
+                syncInteractor.stop()
             }
-        })
+        }
         hide()
     }
 
-    override fun raw(): JFXProgressBar = progressBar
+    override fun raw() = jfxContainerContentRefresh
 
     override fun show() {
-        progressBar.isManaged = true
-        progressBar.isVisible = true
+        jfxSpinner.isVisible = true
+        jfxButtonRefresh.graphic = glyphCancel
     }
 
     override fun hide() {
-        progressBar.isManaged = false
-        progressBar.isVisible = false
+        jfxSpinner.isVisible = false
+        jfxButtonRefresh.graphic = glyphRefresh
     }
 
-    override fun reset() {
-        hide()
-    }
+    override fun reset() {}
 
     override fun onLoadChange(loading: Boolean) {
         if (loading) {

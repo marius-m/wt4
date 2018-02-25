@@ -1,30 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.geometry.*?>
-<?import com.jfoenix.controls.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?scenebuilder-stylesheet /css/material.css?>
 
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
 <BorderPane fx:id="jfxRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
-   <top>
-       <HBox>
-          <children>
-             <JFXProgressBar
-                     fx:id="jfxProgressBar"
-                     styleClass="global-progress"
-                     HBox.hgrow="ALWAYS"
-                     managed="false"
-                     visible="false"
-             >
-             </JFXProgressBar>
-          </children>
-       </HBox>
-   </top>
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" styleClass="bg-container" BorderPane.alignment="CENTER">
          <children>
@@ -75,13 +56,25 @@
    <center>
       <BorderPane fx:id="jfxContainerContent">
          <top>
-            <HBox alignment="CENTER_LEFT" fx:id="jfxContainerContentDateSwitcher">
-               <children>
-                  <JFXButton fx:id="jfxDateSwitcherPrev"></JFXButton>
-                  <JFXButton fx:id="jfxDateSwitcherDate">CurrentDate</JFXButton>
-                  <JFXButton fx:id="jfxDateSwitcherNext"></JFXButton>
-               </children>
-            </HBox>
+            <BorderPane>
+                <left>
+                   <HBox alignment="CENTER_LEFT" fx:id="jfxContainerContentDateSwitcher">
+                      <children>
+                         <JFXButton fx:id="jfxDateSwitcherPrev"></JFXButton>
+                         <JFXButton fx:id="jfxDateSwitcherDate">CurrentDate</JFXButton>
+                         <JFXButton fx:id="jfxDateSwitcherNext"></JFXButton>
+                      </children>
+                   </HBox>
+                </left>
+                <right>
+                   <StackPane fx:id="jfxContainerContentRefresh">
+                      <children>
+                         <JFXSpinner fx:id="jfxSpinner"></JFXSpinner>
+                         <JFXButton fx:id="jfxButtonRefresh"></JFXButton>
+                      </children>
+                   </StackPane>
+                </right>
+            </BorderPane>
          </top>
          <center>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
