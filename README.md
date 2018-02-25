@@ -6,7 +6,6 @@ App is designed for sole purpose - help you track/log worked issues
 
 * Work offline
 * Synchronize whenever comfortable
-* Easy issue search
 * Day/week overview
 * Works on evey major platform
 
@@ -56,6 +55,7 @@ Feel free copying / contributing / using code for your own pleasure.
 
 Tricks that were being tackled in this project: 
 
+* [CalendarFX](https://github.com/dlemmermann/CalendarFX) - Most amazing calendar that lets display logs and modify them. Very very cool.  
 * [JFoenix](http://www.jfoenix.com/) - Material designs for JavaFX! Amazing!
 * [Kotlin](https://kotlinlang.org/) - Most of the app is converted to kotlin, once got used to it, never want to look back. 
 * [RXJava](https://github.com/ReactiveX/RxJava) Very cool programming [paradigm](http://reactivex.io/)
