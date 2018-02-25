@@ -63,11 +63,6 @@
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </JFXButton>
-                  <JFXButton fx:id="jfxButtonDate" alignment="CENTER" ellipsisString="..." maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default-clock" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
-                     <VBox.margin>
-                        <Insets bottom="6.0" />
-                     </VBox.margin>
-                  </JFXButton>
                   <JFXButton fx:id="jfxButtonSettings" alignment="CENTER" ellipsisString="..." maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default-clock" textFill="WHITE" textOverrun="WORD_ELLIPSIS" />
                </children>
                <VBox.margin>
@@ -78,7 +73,16 @@
       </VBox>
    </left>
    <center>
-      <BorderPane>
+      <BorderPane fx:id="jfxContainerContent">
+         <top>
+            <HBox alignment="CENTER_LEFT" fx:id="jfxContainerContentDateSwitcher">
+               <children>
+                  <JFXButton fx:id="jfxDateSwitcherPrev"></JFXButton>
+                  <JFXButton fx:id="jfxDateSwitcherDate">CurrentDate</JFXButton>
+                  <JFXButton fx:id="jfxDateSwitcherNext"></JFXButton>
+               </children>
+            </HBox>
+         </top>
          <center>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <padding>
