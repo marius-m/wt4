@@ -6,10 +6,11 @@ import java.time.format.DateTimeFormatter
 
 object DateSwittcherFormatter {
 
+    private val dayOfWeekFormatter = DateTimeFormatter.ofPattern("EE")
     private val shortFormatter = DateTimeFormatter.ofPattern("dd MMMM")
 
     @JvmStatic fun formatDateForDay(localDate: LocalDate): String {
-        return shortFormatter.format(localDate)
+        return "${shortFormatter.format(localDate)} (${dayOfWeekFormatter.format(localDate)})"
     }
 
     @JvmStatic fun formatDateForWeek(localDate: LocalDate): String {
