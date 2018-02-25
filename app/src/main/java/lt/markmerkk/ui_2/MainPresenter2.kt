@@ -7,7 +7,6 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
@@ -34,13 +33,9 @@ import javax.inject.Inject
 class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane
-    @FXML lateinit var jfxButtonCommit: JFXButton
-    @FXML lateinit var jfxTextFieldCommit: JFXTextField
-    @FXML lateinit var jfxTextFieldTicket: JFXTextField
     @FXML lateinit var jfxButtonClock: JFXButton
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
-    @FXML lateinit var jfxContainerCommit: Region
     @FXML lateinit var jfxButtonSettings: JFXButton
     @FXML lateinit var jfxButtonDate: JFXButton
     @FXML lateinit var jfxButtonDisplayView: JFXButton
@@ -56,7 +51,6 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
     lateinit var uieButtonDate: UIEButtonDate
     lateinit var uieButtonSettings: UIEButtonSettings
-    lateinit var uieCommitContainer: UIECommitContainer
     lateinit var uieCenterView: UIECenterView
     lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
@@ -80,21 +74,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxButtonClockSettings,
                 jfxToggleClock
         )
-        uieCommitContainer = UIECommitContainer(
-                graphics,
-                containerCommitListener,
-                jfxButtonCommit,
-                jfxTextFieldTicket,
-                jfxTextFieldCommit,
-                jfxContainerCommit
-        )
         uieCenterView = UIECenterView(jfxRoot)
         uieProgressView = UIEProgressView(jfxRoot, jfxProgressBar)
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
         clockRunBridge = ClockRunBridgeImpl(
-                uieCommitContainer,
                 uieButtonClock,
                 hourGlass,
                 logStorage
@@ -203,12 +188,6 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     val buttonChangeDisplayViewExternalListener: UIEButtonDisplayView.ExternalListener = object : UIEButtonDisplayView.ExternalListener {
         override fun currentDisplayType(): DisplayType {
             return currentDisplayType
-        }
-    }
-
-    private val containerCommitListener: UIECommitContainer.Listener = object : UIECommitContainer.Listener {
-        override fun onClickSend(ticket: String, message: String) {
-            clockRunBridge.log(ticket, message)
         }
     }
 
