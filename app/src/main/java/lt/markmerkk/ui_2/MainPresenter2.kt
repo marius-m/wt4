@@ -6,7 +6,9 @@ import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.Region
+import javafx.scene.layout.StackPane
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
@@ -21,7 +23,6 @@ import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
 import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.interfaces.UpdateListener
-import lt.markmerkk.ui.week.WeekView
 import lt.markmerkk.ui.week2.WeekView2
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -217,7 +218,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
             clockRunBridge.setRunning(isSelected)
         }
 
-        override fun onClickClockSettings() {}
+        override fun onClickClockSettings() {
+            val dialog = ClockEditDialog()
+            val jfxDialog = dialog.view as JFXDialog
+            jfxDialog.show(rootNode())
+            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+        }
 
     }
 

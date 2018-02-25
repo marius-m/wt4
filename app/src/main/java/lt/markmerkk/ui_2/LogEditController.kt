@@ -3,7 +3,6 @@ package lt.markmerkk.ui_2
 import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import javafx.beans.value.ChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Hyperlink
@@ -11,7 +10,6 @@ import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
-import javafx.util.StringConverter
 import lt.markmerkk.Graphics
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
@@ -20,12 +18,8 @@ import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.*
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
-import org.joda.time.DateTime
 import java.net.URL
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -79,7 +73,7 @@ class LogEditController : Initializable, LogEditService.Listener {
             )
         }
         jfxTextFieldTicketLink.setOnAction {
-//            hostServices.openExternalIssue(jfxTextFieldTicket.text)
+            //            hostServices.openExternalIssue(jfxTextFieldTicket.text)
             val issue = jfxTextFieldTicket.text.toString()
             eventBus.post(
                     EventSnackBarMessage(
