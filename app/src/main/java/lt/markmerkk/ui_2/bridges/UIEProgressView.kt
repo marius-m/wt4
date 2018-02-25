@@ -32,7 +32,7 @@ class UIEProgressView(
                 syncInteractor.stop()
             }
         }
-        hide()
+        onLoadChange(syncInteractor.isLoading())
     }
 
     override fun raw() = jfxContainerContentRefresh
