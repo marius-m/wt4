@@ -117,15 +117,6 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     fun changeDisplayByDisplayType(displayType: DisplayType) {
         val oldView = uieCenterView.raw()
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> {
-                logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(
-                        DisplayLogView(
-                                listener = simpleUpdateListener,
-                                isViewSimplified = true
-                        )
-                )
-            }
             DisplayType.TABLE_VIEW_DETAIL -> {
                 logStorage.displayType = DisplayTypeLength.DAY
                 uieCenterView.populate(
