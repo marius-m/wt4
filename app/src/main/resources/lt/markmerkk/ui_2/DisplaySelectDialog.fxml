@@ -18,17 +18,16 @@
            <body>
                <VBox spacing="10">
                    <children>
-                       <JFXRadioButton fx:id="jfxRadioTreeSimple" selected="true" text="Simple tree view">
+                       <JFXRadioButton fx:id="jfxRadioCalendarDay" selected="true"
+                                       text="Calendar for a day" toggleGroup="$jfxToggleGroup">
                            <toggleGroup>
                                <ToggleGroup fx:id="jfxToggleGroup" />
                            </toggleGroup>
                        </JFXRadioButton>
-                       <JFXRadioButton fx:id="jfxRadioTreeDetail" selected="false"
-                                       text="Detail tree view" toggleGroup="$jfxToggleGroup" />
-                       <JFXRadioButton fx:id="jfxRadioCalendarDay" selected="false"
-                                       text="Calendar day view" toggleGroup="$jfxToggleGroup" />
                        <JFXRadioButton fx:id="jfxRadioCalendarWeek" selected="false"
-                                       text="Calendar week view" toggleGroup="$jfxToggleGroup" />
+                                       text="Calendar for a week" toggleGroup="$jfxToggleGroup" />
+                       <JFXRadioButton fx:id="jfxRadioTreeDetail" selected="false"
+                                       text="List" toggleGroup="$jfxToggleGroup" />
                        <JFXRadioButton fx:id="jfxRadioGraphs" selected="false"
                                        text="Graphs" toggleGroup="$jfxToggleGroup" />
                    </children>

@@ -1,30 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.geometry.*?>
-<?import com.jfoenix.controls.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?scenebuilder-stylesheet /css/material.css?>
 
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
 <BorderPane fx:id="jfxRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lt.markmerkk.ui_2.MainPresenter2">
-   <top>
-       <HBox>
-          <children>
-             <JFXProgressBar
-                     fx:id="jfxProgressBar"
-                     styleClass="global-progress"
-                     HBox.hgrow="ALWAYS"
-                     managed="false"
-                     visible="false"
-             >
-             </JFXProgressBar>
-          </children>
-       </HBox>
-   </top>
    <left>
       <VBox alignment="TOP_CENTER" minHeight="70.0" minWidth="70.0" styleClass="bg-container" BorderPane.alignment="CENTER">
          <children>
@@ -63,11 +44,6 @@
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </JFXButton>
-                  <JFXButton fx:id="jfxButtonDate" alignment="CENTER" ellipsisString="..." maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default-clock" textFill="WHITE" textOverrun="WORD_ELLIPSIS">
-                     <VBox.margin>
-                        <Insets bottom="6.0" />
-                     </VBox.margin>
-                  </JFXButton>
                   <JFXButton fx:id="jfxButtonSettings" alignment="CENTER" ellipsisString="..." maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" ripplerFill="WHITE" styleClass="button-default-clock" textFill="WHITE" textOverrun="WORD_ELLIPSIS" />
                </children>
                <VBox.margin>
@@ -78,7 +54,28 @@
       </VBox>
    </left>
    <center>
-      <BorderPane>
+      <BorderPane fx:id="jfxContainerContent">
+         <top>
+            <BorderPane>
+                <left>
+                   <HBox alignment="CENTER_LEFT" fx:id="jfxContainerContentDateSwitcher">
+                      <children>
+                         <JFXButton fx:id="jfxDateSwitcherPrev"></JFXButton>
+                         <JFXButton fx:id="jfxDateSwitcherDate">CurrentDate</JFXButton>
+                         <JFXButton fx:id="jfxDateSwitcherNext"></JFXButton>
+                      </children>
+                   </HBox>
+                </left>
+                <right>
+                   <StackPane fx:id="jfxContainerContentRefresh">
+                      <children>
+                         <JFXSpinner fx:id="jfxSpinner"></JFXSpinner>
+                         <JFXButton fx:id="jfxButtonRefresh"></JFXButton>
+                      </children>
+                   </StackPane>
+                </right>
+            </BorderPane>
+         </top>
          <center>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <padding>
@@ -88,70 +85,4 @@
          </center>
       </BorderPane>
    </center>
-   <bottom>
-      <HBox fx:id="jfxContainerCommit" alignment="BOTTOM_CENTER" styleClass="bg-container" translateY="70.0" BorderPane.alignment="CENTER">
-         <children>
-            <JFXTextField
-                    fx:id="jfxTextFieldTicket"
-                    prefWidth="100"
-                    focusColor="#e91e63"
-                    labelFloat="true"
-                    promptText="Ticket"
-                    styleClass="basic-input"
-                    unFocusColor="#e91e63"
-                    HBox.hgrow="NEVER"
-                    VBox.vgrow="NEVER">
-               <font>
-                  <Font name="System Font" size="13.0" />
-               </font>
-               <HBox.margin>
-                  <Insets
-                          left="8.0"
-                          bottom="8.0"
-                          right="8.0"
-                  />
-               </HBox.margin>
-            </JFXTextField>
-
-            <JFXTextField
-                    fx:id="jfxTextFieldCommit"
-                    focusColor="#e91e63"
-                    labelFloat="true"
-                    promptText="Comment"
-                    styleClass="basic-input"
-                    unFocusColor="#e91e63"
-                    HBox.hgrow="ALWAYS"
-                    VBox.vgrow="NEVER">
-               <font>
-                  <Font name="System Font" size="13.0" />
-               </font>
-               <HBox.margin>
-                  <Insets
-                          left="4.0"
-                          bottom="8.0"
-                          right="8.0"
-                  />
-               </HBox.margin>
-            </JFXTextField>
-            <JFXButton
-                    fx:id="jfxButtonCommit"
-                    buttonType="RAISED"
-                    prefHeight="40.0"
-                    prefWidth="40.0"
-                    ripplerFill="WHITE"
-                    styleClass="button-default"
-                    textOverrun="CLIP">
-               <HBox.margin>
-                  <Insets bottom="5.0" right="5.0" />
-               </HBox.margin>
-            </JFXButton>
-         </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets top="10.0" />
-         </padding>
-      </HBox>
-   </bottom>
 </BorderPane>

@@ -6,7 +6,9 @@ import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.StackPane
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
@@ -21,7 +23,7 @@ import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
 import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.interfaces.UpdateListener
-import lt.markmerkk.ui.week.WeekView
+import lt.markmerkk.ui.week2.WeekView2
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import java.net.URL
@@ -32,17 +34,19 @@ import javax.inject.Inject
 class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane
-    @FXML lateinit var jfxButtonCommit: JFXButton
-    @FXML lateinit var jfxTextFieldCommit: JFXTextField
-    @FXML lateinit var jfxTextFieldTicket: JFXTextField
     @FXML lateinit var jfxButtonClock: JFXButton
     @FXML lateinit var jfxButtonClockSettings: JFXButton
     @FXML lateinit var jfxToggleClock: JFXToggleNode
-    @FXML lateinit var jfxContainerCommit: Region
     @FXML lateinit var jfxButtonSettings: JFXButton
-    @FXML lateinit var jfxButtonDate: JFXButton
     @FXML lateinit var jfxButtonDisplayView: JFXButton
-    @FXML lateinit var jfxProgressBar: JFXProgressBar
+    @FXML lateinit var jfxContainerContent: BorderPane
+    @FXML lateinit var jfxContainerContentDateSwitcher: HBox
+    @FXML lateinit var jfxDateSwitcherPrev: JFXButton
+    @FXML lateinit var jfxDateSwitcherDate: JFXButton
+    @FXML lateinit var jfxDateSwitcherNext: JFXButton
+    @FXML lateinit var jfxButtonRefresh: JFXButton
+    @FXML lateinit var jfxSpinner: JFXSpinner
+    @FXML lateinit var jfxContainerContentRefresh: StackPane
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
@@ -52,22 +56,20 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
-    lateinit var uieButtonDate: UIEButtonDate
     lateinit var uieButtonSettings: UIEButtonSettings
-    lateinit var uieCommitContainer: UIECommitContainer
     lateinit var uieCenterView: UIECenterView
+    lateinit var uieDateSwitcher: UIEDateSwitcher
     lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
     lateinit var snackBar: JFXSnackbar
 
-    var currentDisplayType = DisplayType.TABLE_VIEW_SIMPLE
+    var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.Companion.component!!.presenterComponent().inject(this)
 
         // Init ui elements
         snackBar = JFXSnackbar(jfxRoot)
-        uieButtonDate = UIEButtonDate(graphics, this, jfxButtonDate)
         uieButtonSettings = UIEButtonSettings(graphics, this, jfxButtonSettings, syncInteractor)
         uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
@@ -78,31 +80,39 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxButtonClockSettings,
                 jfxToggleClock
         )
-        uieCommitContainer = UIECommitContainer(
+        uieCenterView = UIECenterView(jfxContainerContent)
+        uieProgressView = UIEProgressView(
+                jfxContainerContentRefresh,
+                jfxButtonRefresh,
+                jfxSpinner,
                 graphics,
-                containerCommitListener,
-                jfxButtonCommit,
-                jfxTextFieldTicket,
-                jfxTextFieldCommit,
-                jfxContainerCommit
+                syncInteractor
         )
-        uieCenterView = UIECenterView(jfxRoot)
-        uieProgressView = UIEProgressView(jfxRoot, jfxProgressBar)
+        uieDateSwitcher = UIEDateSwitcher(
+                this,
+                jfxContainerContentDateSwitcher,
+                jfxDateSwitcherNext,
+                jfxDateSwitcherPrev,
+                jfxDateSwitcherDate,
+                graphics,
+                logStorage
+        )
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
         clockRunBridge = ClockRunBridgeImpl(
-                uieCommitContainer,
                 uieButtonClock,
                 hourGlass,
                 logStorage
         )
         eventBus.register(this)
         syncInteractor.addLoadingListener(uieProgressView)
+        uieDateSwitcher.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        uieDateSwitcher.onDetach()
         syncInteractor.removeLoadingListener(uieProgressView)
         eventBus.unregister(this)
         if (hourGlass.state == HourGlass.State.RUNNING) {
@@ -130,15 +140,6 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     fun changeDisplayByDisplayType(displayType: DisplayType) {
         val oldView = uieCenterView.raw()
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> {
-                logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(
-                        DisplayLogView(
-                                listener = simpleUpdateListener,
-                                isViewSimplified = true
-                        )
-                )
-            }
             DisplayType.TABLE_VIEW_DETAIL -> {
                 logStorage.displayType = DisplayTypeLength.DAY
                 uieCenterView.populate(
@@ -154,7 +155,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
             }
             DisplayType.CALENDAR_VIEW_WEEK -> {
                 logStorage.displayType = DisplayTypeLength.WEEK
-                uieCenterView.populate(WeekView(simpleUpdateListener))
+                uieCenterView.populate(WeekView2(simpleUpdateListener))
             }
             DisplayType.GRAPHS -> {
                 logStorage.displayType = DisplayTypeLength.DAY
@@ -204,19 +205,18 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         }
     }
 
-    private val containerCommitListener: UIECommitContainer.Listener = object : UIECommitContainer.Listener {
-        override fun onClickSend(ticket: String, message: String) {
-            clockRunBridge.log(ticket, message)
-        }
-    }
-
     private val buttonClockListener: UIEButtonClock.Listener = object : UIEButtonClock.Listener {
 
         override fun onClickClock(isSelected: Boolean) {
             clockRunBridge.setRunning(isSelected)
         }
 
-        override fun onClickClockSettings() {}
+        override fun onClickClockSettings() {
+            val dialog = ClockEditDialog()
+            val jfxDialog = dialog.view as JFXDialog
+            jfxDialog.show(rootNode())
+            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+        }
 
     }
 

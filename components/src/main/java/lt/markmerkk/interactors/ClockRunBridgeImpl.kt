@@ -9,7 +9,6 @@ import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
 
 class ClockRunBridgeImpl(
-        private val containerCommit: UIElement<Any>,
         private val buttonClock: UIElementText<Any>,
         private val hourGlass: HourGlass,
         private val logStorage: LogStorage
@@ -21,11 +20,9 @@ class ClockRunBridgeImpl(
     override fun setRunning(isRunning: Boolean) {
         hourGlass.setListener(hourglassListener)
         if (isRunning) {
-            containerCommit.show()
             buttonClock.show()
             hourGlass.start()
         } else {
-            containerCommit.hide()
             buttonClock.hide()
             hourGlass.stop()
         }
@@ -53,7 +50,6 @@ class ClockRunBridgeImpl(
             println(e.message)
         }
         hourGlass.restart()
-        containerCommit.reset()
     }
 
     private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {

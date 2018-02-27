@@ -18,8 +18,8 @@ buildscript {
 apply plugin: 'org.hidetake.ssh'
 
 allprojects {
-  ext.versionName = "1.0.4"
-  ext.versionCode = "23"
+  ext.versionName = "1.0.6"
+  ext.versionCode = "25"
 
   apply plugin: 'maven'
   apply plugin: 'kotlin'
@@ -50,7 +50,7 @@ allprojects {
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "com.nhaarman:mockito-kotlin:$kotlin_test_version"
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.mockito:mockito-core:2.8.9'
     testCompile 'org.assertj:assertj-core:2.2.0'
   }
 

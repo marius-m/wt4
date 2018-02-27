@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXDialog?>
-<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import com.jfoenix.controls.JFXDatePicker?>
-<?import javafx.scene.text.Text?>
-<?import com.jfoenix.controls.JFXTimePicker?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
 <JFXDialog
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
@@ -66,21 +59,67 @@
                            <JFXButton fx:id="jfxAppendTo">+</JFXButton>
                        </children>
                    </HBox>
-                   <Label
-                           fx:id="jfxHint"
-                           styleClass="mini-label"
-                           textAlignment="CENTER"
-                   >
-                       <padding>
-                           <Insets top="6.0" />
-                       </padding>
-                       Duration: 1m 30m
-                   </Label>
+                       <HBox alignment="CENTER_LEFT">
+                           <padding>
+                               <Insets top="30.0"/>
+                           </padding>
+                           <children>
+                               <JFXTextField
+                                       fx:id="jfxTextFieldTicket"
+                                       prefWidth="120"
+                                       focusColor="#e91e63"
+                                       labelFloat="true"
+                                       promptText="Ticket ID"
+                                       unFocusColor="black"
+                                       HBox.hgrow="NEVER"
+                                       VBox.vgrow="NEVER">
+                               </JFXTextField>
+                           </children>
+                       </HBox>
+                       <HBox alignment="CENTER_LEFT">
+                           <padding>
+                               <Insets
+                                       top="26.0"
+                                       right="6.0"
+                               />
+                           </padding>
+                           <children>
+                               <JFXTextArea
+                                       focusColor="#e91e63"
+                                       labelFloat="true"
+                                       promptText="Comment"
+                                       unFocusColor="black"
+                                       prefRowCount="3"
+                                       fx:id="jfxTextFieldComment"
+                                       HBox.hgrow="ALWAYS"
+                                       VBox.vgrow="NEVER">
+                               </JFXTextArea>
+                           </children>
+                       </HBox>
+                       <HBox alignment="CENTER">
+                           <padding>
+                               <Insets
+                                       top="6.0"
+                               />
+                           </padding>
+                           <children>
+                               <Label
+                                       fx:id="jfxHint"
+                                       styleClass="mini-label"
+                                       textAlignment="CENTER">
+                                   <padding>
+                                       <Insets top="6.0"/>
+                                   </padding>
+                                   Duration: 1m 30m
+                               </Label>
+                           </children>
+                       </HBox>
                    </children>
                </VBox>
            </body>
            <actions>
                <JFXButton fx:id="jfxButtonDismiss" styleClass="dialog-accept">DISMISS</JFXButton>
+               <JFXButton fx:id="jfxButtonSave" styleClass="dialog-accept">SAVE</JFXButton>
            </actions>
        </JFXDialogLayout>
    </content>

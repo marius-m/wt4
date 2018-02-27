@@ -2,6 +2,7 @@ package lt.markmerkk.ui.week
 
 import jfxtras.scene.control.agenda.Agenda
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SyncStatus
 import org.joda.time.DateTime
 import rx.Observable
 import rx.Scheduler
@@ -50,14 +51,15 @@ class AgendaPresenterImpl(
 
     fun reloadObservable(logs: List<SimpleLog>): Single<List<Agenda.AppointmentImplLocal>> {
         return Observable.from(logs)
-               .flatMap {
+                .flatMap {
                     val startTime = DateTime(it.start)
                     val endTime = DateTime(it.end)
-                    var appointmentGroup: Agenda.AppointmentGroup? = null
-                    when (it.stateImageUrl) {
-                        "/red.png" -> appointmentGroup = appointmentGroupRed
-                        "/yellow.png" -> appointmentGroup = appointmentGroupYellow
-                        "/green.png" -> appointmentGroup = appointmentGroupGreen
+                    val syncStatus = SyncStatus.exposeStatus(it)
+                    val appointmentGroup = when (syncStatus) {
+                        SyncStatus.ERROR -> appointmentGroupRed
+                        SyncStatus.WAITING_FOR_SYNC -> appointmentGroupYellow
+                        SyncStatus.IN_SYNC -> appointmentGroupGreen
+                        SyncStatus.INVALID -> appointmentGroupRed
                     }
                     Observable.just(
                             AppointmentSimpleLog(it)

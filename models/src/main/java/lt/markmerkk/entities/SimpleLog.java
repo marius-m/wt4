@@ -79,16 +79,11 @@ public class SimpleLog extends RemoteEntity {
   }
 
   /**
-   * Returns an image view of the state the
+   * Defines if entity can be edited
    * @return
    */
-  public String getStateImageUrl() {
-    if (error && dirty) return "/yellow.png";
-    if (error) return "/red.png";
-    if (deleted) return "/gray.png";
-    if (dirty) return "/yellow.png";
-    if (id > 0) return "/green.png";
-    return "/red.png";
+  public boolean canEdit() {
+    return id <= 0;
   }
 
   //endregion

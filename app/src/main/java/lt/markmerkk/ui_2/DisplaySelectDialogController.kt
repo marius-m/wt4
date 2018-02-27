@@ -22,7 +22,6 @@ class DisplaySelectDialogController : Initializable {
     @FXML lateinit var jfxDialogLayout: JFXDialogLayout
     @FXML lateinit var jfxButtonCancel: JFXButton
 
-    @FXML lateinit var jfxRadioTreeSimple: JFXRadioButton
     @FXML lateinit var jfxRadioTreeDetail: JFXRadioButton
     @FXML lateinit var jfxRadioCalendarDay: JFXRadioButton
     @FXML lateinit var jfxRadioCalendarWeek: JFXRadioButton
@@ -31,7 +30,7 @@ class DisplaySelectDialogController : Initializable {
 
     @Inject lateinit var eventBus: EventBus
 
-    var currentDisplayType: DisplayType = DisplayType.TABLE_VIEW_SIMPLE
+    var currentDisplayType: DisplayType = DisplayType.CALENDAR_VIEW_DAY
         set(value) {
             field = value
             changeStateFromDisplayType(value)
@@ -52,7 +51,6 @@ class DisplaySelectDialogController : Initializable {
 
     fun changeStateFromDisplayType(displayType: DisplayType) {
         when (displayType) {
-            DisplayType.TABLE_VIEW_SIMPLE -> jfxRadioTreeSimple.isSelected = true
             DisplayType.TABLE_VIEW_DETAIL -> jfxRadioTreeDetail.isSelected = true
             DisplayType.CALENDAR_VIEW_DAY -> jfxRadioCalendarDay.isSelected = true
             DisplayType.CALENDAR_VIEW_WEEK -> jfxRadioCalendarWeek.isSelected = true
@@ -64,7 +62,6 @@ class DisplaySelectDialogController : Initializable {
 
     fun extractStateFromToggleGroup(): DisplayType {
         when (jfxToggleGroup.selectedToggle) {
-            jfxRadioTreeSimple -> return DisplayType.TABLE_VIEW_SIMPLE
             jfxRadioTreeDetail -> return DisplayType.TABLE_VIEW_DETAIL
             jfxRadioCalendarDay -> return DisplayType.CALENDAR_VIEW_DAY
             jfxRadioCalendarWeek -> return DisplayType.CALENDAR_VIEW_WEEK

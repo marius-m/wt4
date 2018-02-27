@@ -47,6 +47,11 @@ class SyncInteractorImpl(
         subscription?.unsubscribe()
     }
 
+    override fun stop() {
+        logger.info("Stopping sync")
+        subscription?.unsubscribe()
+    }
+
     override fun syncAll() {
         if (loading) {
             logger.info("Sync in progress")

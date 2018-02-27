@@ -2,16 +2,14 @@ package lt.markmerkk.ui_2.bridges
 
 import com.airhacks.afterburner.views.FXMLView
 import javafx.geometry.Insets
-import javafx.scene.control.Label
 import javafx.scene.layout.*
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.LogStatusView
 
 /**
  * Represents clock jfxCommitButton, its graphics, animations
  */
 class UIECenterView(
-        private val jfxMain: BorderPane
+        private val jfxContainerContent: BorderPane
 ) : UIElement<StackPane> {
 
     private var container: StackPane = StackPane()
@@ -35,7 +33,7 @@ class UIECenterView(
         (fxmlView.view as Region).padding = Insets(0.0, 0.0, 0.0, 0.0)
         VBox.setVgrow(fxmlView.view, Priority.ALWAYS)
         VBox.setMargin(fxmlView.view, Insets(0.0, 0.0, 0.0, 0.0))
-        jfxMain.center = container
+        jfxContainerContent.center = container
     }
 
 }

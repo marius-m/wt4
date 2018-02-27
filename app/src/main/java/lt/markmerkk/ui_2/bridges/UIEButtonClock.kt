@@ -1,7 +1,6 @@
 package lt.markmerkk.ui_2.bridges
 
 import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXToggleNode
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.layout.StackPane
@@ -10,7 +9,6 @@ import javafx.scene.text.Font
 import lt.markmerkk.Graphics
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElementText
-import lt.markmerkk.ui_2.ClockEditDialog
 import lt.markmerkk.utils.UIEUtils
 
 /**
@@ -25,22 +23,16 @@ class UIEButtonClock(
         private val buttonToggle: JFXToggleNode
 ) : UIElementText<JFXButton> {
 
-    private val glyphSettings = graphics.glyph("settings", Color.WHITE, 12.0)
     private val glyphClock = graphics.glyph("clock", Color.WHITE, 20.0)
 
     init {
         buttonSettings.setOnAction {
-            val clockEditDialog = ClockEditDialog()
-            val jfxDialog = clockEditDialog.view as JFXDialog
-            jfxDialog.show(node.rootNode())
             listener.onClickClockSettings()
         }
-
         buttonToggle.setOnAction {
             listener.onClickClock(buttonToggle.isSelected)
         }
-
-        buttonSettings.graphic = glyphSettings
+        buttonSettings.graphic = graphics.glyph("insert", Color.WHITE, 10.0)
         hide()
     }
 
@@ -78,6 +70,7 @@ class UIEButtonClock(
          * Triggered when clicked on clock settings
          */
         fun onClickClockSettings()
+
     }
 
 }

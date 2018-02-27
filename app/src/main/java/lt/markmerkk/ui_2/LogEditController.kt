@@ -3,7 +3,6 @@ package lt.markmerkk.ui_2
 import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import javafx.beans.value.ChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Hyperlink
@@ -11,17 +10,16 @@ import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
-import javafx.util.StringConverter
+import lt.markmerkk.Graphics
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.*
+import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
+import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import java.net.URL
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -52,9 +50,10 @@ class LogEditController : Initializable, LogEditService.Listener {
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServices: HostServicesInteractor
     @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
 
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
-    private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
+    private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
+    private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
     private lateinit var logEditService: LogEditService
     private lateinit var timeQuickModifier: TimeQuickModifier
 
@@ -63,12 +62,6 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxButtonCancel.setOnAction {
             jfxDialog.close()
         }
-        jfxDateFrom.converter = dateConverter
-        jfxTimeFrom.converter = timeConverter
-        jfxTimeFrom.setIs24HourView(true)
-        jfxDateTo.converter = dateConverter
-        jfxTimeTo.converter = timeConverter
-        jfxTimeTo.setIs24HourView(true)
         jfxButtonAccept.setOnAction {
             logEditService.saveEntity(
                     startDate = jfxDateFrom.value,
@@ -80,7 +73,7 @@ class LogEditController : Initializable, LogEditService.Listener {
             )
         }
         jfxTextFieldTicketLink.setOnAction {
-//            hostServices.openExternalIssue(jfxTextFieldTicket.text)
+            //            hostServices.openExternalIssue(jfxTextFieldTicket.text)
             val issue = jfxTextFieldTicket.text.toString()
             eventBus.post(
                     EventSnackBarMessage(
@@ -90,7 +83,7 @@ class LogEditController : Initializable, LogEditService.Listener {
             hostServices.copyLinkToClipboard(issue)
         }
         jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
-        jfxTextFieldTicketLink.graphic = linkGraphic(Color.BLACK, 16.0, 20.0)
+        jfxTextFieldTicketLink.graphic = graphics.glyph("link", Color.BLACK, 16.0, 20.0)
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
             override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
                 logEditService.updateDateTime(
@@ -105,54 +98,6 @@ class LogEditController : Initializable, LogEditService.Listener {
         timeQuickModifier = TimeQuickModifierImpl(
                 timeQuickModifierListener
         )
-        jfxSubtractFrom.setOnAction {
-            timeQuickModifier.subtractStartTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
-            )
-        }
-        jfxAppendFrom.setOnAction {
-            timeQuickModifier.appendStartTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
-            )
-        }
-        jfxSubtractTo.setOnAction {
-            timeQuickModifier.subtractEndTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
-            )
-        }
-        jfxAppendTo.setOnAction {
-            timeQuickModifier.appendEndTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
-            )
-        }
     }
 
     /**
@@ -163,6 +108,26 @@ class LogEditController : Initializable, LogEditService.Listener {
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(logStorage),
                 this
+        )
+        uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
+                jfxSubtractFrom,
+                jfxSubtractTo,
+                jfxAppendFrom,
+                jfxAppendTo,
+                jfxDateFrom,
+                jfxTimeFrom,
+                jfxDateTo,
+                jfxTimeTo,
+                timeQuickModifier
+        )
+        uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
+                jfxDateFrom = jfxDateFrom,
+                jfxTimeFrom = jfxTimeFrom,
+                jfxDateTo = jfxDateTo,
+                jfxTimeTo = jfxTimeTo,
+                timeQuickModifier = null,
+                clockEditPresenter = null,
+                logEditService = logEditService
         )
         if (entity != null) {
             logEditService.serviceType = LogEditService.ServiceType.UPDATE
@@ -175,18 +140,12 @@ class LogEditController : Initializable, LogEditService.Listener {
             jfxButtonAccept.text = "CREATE"
         }
         logEditService.redraw()
-        jfxDateFrom.valueProperty().addListener(startDateChangeListener)
-        jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)
-        jfxDateTo.valueProperty().addListener(endDateChangeListener)
-        jfxTimeTo.valueProperty().addListener(endTimeChangeListener)
+        uiBridgeDateTimeHandler.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
-        jfxTimeTo.valueProperty().removeListener(endTimeChangeListener)
-        jfxDateTo.valueProperty().removeListener(endDateChangeListener)
-        jfxTimeFrom.valueProperty().removeListener(startTimeChangeListener)
-        jfxDateFrom.valueProperty().removeListener(startDateChangeListener)
+        uiBridgeDateTimeHandler.onDetach()
     }
 
     //region Edit service callbacks
@@ -197,11 +156,7 @@ class LogEditController : Initializable, LogEditService.Listener {
             ticket: String,
             comment: String
     ) {
-        jfxDateFrom.value = startDateTime.toLocalDate()
-        jfxTimeFrom.value = startDateTime.toLocalTime()
-
-        jfxDateTo.value = endDateTime.toLocalDate()
-        jfxTimeTo.value = endDateTime.toLocalTime()
+        uiBridgeDateTimeHandler.changeDate(startDateTime, endDateTime)
         jfxTextFieldTicket.text = ticket
         jfxTextFieldComment.text = comment
     }
@@ -226,28 +181,16 @@ class LogEditController : Initializable, LogEditService.Listener {
     override fun onEnableInput() {
         jfxTextFieldTicket.isEditable = true
         jfxTextFieldComment.isEditable = true
-        jfxDateFrom.isEditable = true
-        jfxTimeFrom.isEditable = true
-        jfxDateTo.isEditable = true
-        jfxTimeTo.isEditable = true
-        jfxSubtractFrom.isDisable = false
-        jfxAppendFrom.isDisable = false
-        jfxSubtractTo.isDisable = false
-        jfxAppendTo.isDisable = false
+        uiBridgeDateTimeHandler.enable()
+        uiBridgeTimeQuickEdit.enable()
     }
 
     // todo: Add disable clock/date selection when input is disabled
     override fun onDisableInput() {
         jfxTextFieldTicket.isEditable = false
         jfxTextFieldComment.isEditable = false
-        jfxDateFrom.isEditable = false
-        jfxTimeFrom.isEditable = false
-        jfxDateTo.isEditable = false
-        jfxTimeTo.isEditable = false
-        jfxSubtractFrom.isDisable = true
-        jfxAppendFrom.isDisable = true
-        jfxSubtractTo.isDisable = true
-        jfxAppendTo.isDisable = true
+        uiBridgeDateTimeHandler.disable()
+        uiBridgeTimeQuickEdit.disable()
     }
 
     override fun onEnableSaving() {
@@ -256,82 +199,6 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     override fun onDisableSaving() {
         jfxButtonAccept.isDisable = true
-    }
-
-    //endregion
-
-    //region Graphs
-
-    private fun linkGraphic(color: Color, width: Double, height: Double): SVGGlyph {
-        val svgGlyph = SVGGlyph(
-                -1,
-                "link",
-                "M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z",
-                color
-        )
-        svgGlyph.setSize(width, height)
-        return svgGlyph
-    }
-
-    //endregion
-
-    //region Listeners
-
-    private val dateConverter: StringConverter<LocalDate> = object : StringConverter<LocalDate>() {
-        override fun toString(date: LocalDate): String {
-            return date.format(dateFormatter)
-        }
-
-        override fun fromString(string: String): LocalDate {
-            return LocalDate.parse(string)
-        }
-
-    }
-
-    private val timeConverter: StringConverter<LocalTime> = object : StringConverter<LocalTime>() {
-        override fun toString(date: LocalTime): String {
-            return date.format(timeFormatter)
-        }
-
-        override fun fromString(string: String): LocalTime {
-            return LocalTime.parse(string)
-        }
-    }
-
-    private val startDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
-        logEditService.updateDateTime(
-                startDate = newValue,
-                startTime = jfxTimeFrom.value,
-                endDate = jfxDateTo.value,
-                endTime = jfxTimeTo.value
-        )
-    }
-
-    private val startTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
-        logEditService.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = newValue,
-                endDate = jfxDateTo.value,
-                endTime = jfxTimeTo.value
-        )
-    }
-
-    private val endDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
-        logEditService.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = jfxTimeFrom.value,
-                endDate = newValue,
-                endTime = jfxTimeTo.value
-        )
-    }
-
-    private val endTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
-        logEditService.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = jfxTimeFrom.value,
-                endDate = jfxDateTo.value,
-                endTime = newValue
-        )
     }
 
     //endregion
