@@ -2,4 +2,4 @@ package lt.markmerkk.ui_2
 
 import com.airhacks.afterburner.views.FXMLView
 
-class SettingsDialog : FXMLView()
+class ProfilesDialog : FXMLView()

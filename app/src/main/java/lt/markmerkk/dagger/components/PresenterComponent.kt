@@ -58,4 +58,6 @@ interface PresenterComponent {
 
     fun inject(settingsController: SettingsController)
 
+    fun inject(profilesController: ProfilesController)
+
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.ProfilesController">
+   <content>
+       <JFXDialogLayout fx:id="jfxDialogLayout">
+           <heading>
+               <Label styleClass="dialog-header">Profiles</Label>
+           </heading>
+           <body>
+               <VBox>
+                   <children>
+                       <HBox>
+                           <JFXComboBox
+                                   styleClass="jfx-combo-box"
+                                   maxWidth="Infinity"
+                                   fx:id="jfxProfileSelection"
+                                   HBox.hgrow="ALWAYS"/>
+                       </HBox>
+                       <Label fx:id="jfxInfo"
+                               styleClass="mini-label">
+                           <padding>
+                               <Insets top="6.0" bottom="6.0" />
+                           </padding>
+                       </Label>
+                   </children>
+               </VBox>
+           </body>
+           <actions>
+               <JFXButton fx:id="jfxButtonDismiss" styleClass="dialog-accept">DISMISS</JFXButton>
+               <JFXButton fx:id="jfxButtonApply" styleClass="dialog-accept">APPLY</JFXButton>
+           </actions>
+       </JFXDialogLayout>
+   </content>
+</JFXDialog>
