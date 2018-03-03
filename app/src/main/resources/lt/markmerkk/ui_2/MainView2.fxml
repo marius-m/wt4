@@ -69,8 +69,9 @@
                 <right>
                    <StackPane fx:id="jfxContainerContentRefresh">
                       <children>
-                         <JFXSpinner fx:id="jfxSpinner"></JFXSpinner>
-                         <JFXButton fx:id="jfxButtonRefresh"></JFXButton>
+                         <JFXSpinner fx:id="jfxSpinnerProgress" StackPane.alignment="CENTER"></JFXSpinner>
+                         <JFXButton fx:id="jfxButtonProgressRefresh"></JFXButton>
+                         <JFXButton fx:id="jfxButtonProgressStop"></JFXButton>
                       </children>
                    </StackPane>
                 </right>

@@ -15,33 +15,43 @@ import lt.markmerkk.ui.UIElement
  */
 class UIEProgressView(
         private val jfxContainerContentRefresh: StackPane,
-        private val jfxButtonRefresh: JFXButton,
-        private val jfxSpinner: JFXSpinner,
+        private val jfxButtonProgressRefresh: JFXButton,
+        private val jfxButtonProgressStop: JFXButton,
+        private val jfxSpinnerProgress: JFXSpinner,
         private val graphics: Graphics<SVGGlyph>,
         private val syncInteractor: SyncInteractor
 ) : UIElement<StackPane>, IRemoteLoadListener {
 
     init {
-        jfxButtonRefresh.setOnAction {
-            if (!syncInteractor.isLoading()) {
-                syncInteractor.syncLogs()
-            } else {
-                syncInteractor.stop()
-            }
+        jfxSpinnerProgress.prefWidth = 12.0
+        jfxSpinnerProgress.prefHeight = 12.0
+        jfxButtonProgressRefresh.setOnAction {
+            syncInteractor.syncLogs()
         }
+        jfxButtonProgressStop.setOnAction {
+            syncInteractor.stop()
+        }
+        jfxButtonProgressRefresh.graphic = graphics.glyph("refresh2", Color.BLACK, 12.0)
+        jfxButtonProgressStop.graphic = graphics.glyph("cancel", Color.BLACK, 12.0)
         onLoadChange(syncInteractor.isLoading())
     }
 
     override fun raw() = jfxContainerContentRefresh
 
     override fun show() {
-        jfxSpinner.isVisible = true
-        jfxButtonRefresh.graphic = graphics.glyph("cancel", Color.BLACK, 12.0)
+        jfxSpinnerProgress.isVisible = true
+        jfxButtonProgressRefresh.isVisible = false
+        jfxButtonProgressRefresh.isManaged = false
+        jfxButtonProgressStop.isVisible = true
+        jfxButtonProgressStop.isManaged = true
     }
 
     override fun hide() {
-        jfxSpinner.isVisible = false
-        jfxButtonRefresh.graphic = graphics.glyph("refresh2", Color.BLACK, 12.0)
+        jfxSpinnerProgress.isVisible = false
+        jfxButtonProgressRefresh.isVisible = true
+        jfxButtonProgressRefresh.isManaged = true
+        jfxButtonProgressStop.isVisible = false
+        jfxButtonProgressStop.isManaged = false
     }
 
     override fun reset() {}

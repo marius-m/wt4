@@ -44,8 +44,9 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxDateSwitcherPrev: JFXButton
     @FXML lateinit var jfxDateSwitcherDate: JFXButton
     @FXML lateinit var jfxDateSwitcherNext: JFXButton
-    @FXML lateinit var jfxButtonRefresh: JFXButton
-    @FXML lateinit var jfxSpinner: JFXSpinner
+    @FXML lateinit var jfxSpinnerProgress: JFXSpinner
+    @FXML lateinit var jfxButtonProgressRefresh: JFXButton
+    @FXML lateinit var jfxButtonProgressStop: JFXButton
     @FXML lateinit var jfxContainerContentRefresh: StackPane
 
     @Inject lateinit var hourGlass: HourGlass
@@ -84,8 +85,9 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         uieCenterView = UIECenterView(jfxContainerContent)
         uieProgressView = UIEProgressView(
                 jfxContainerContentRefresh,
-                jfxButtonRefresh,
-                jfxSpinner,
+                jfxButtonProgressRefresh,
+                jfxButtonProgressStop,
+                jfxSpinnerProgress,
                 graphics,
                 syncInteractor
         )
