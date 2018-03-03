@@ -21,9 +21,6 @@ class UIEProgressView(
         private val syncInteractor: SyncInteractor
 ) : UIElement<StackPane>, IRemoteLoadListener {
 
-    private val glyphCancel = graphics.glyph("cancel", Color.BLACK, 12.0)
-    private val glyphRefresh = graphics.glyph("refresh2", Color.BLACK, 12.0)
-
     init {
         jfxButtonRefresh.setOnAction {
             if (!syncInteractor.isLoading()) {
@@ -39,12 +36,12 @@ class UIEProgressView(
 
     override fun show() {
         jfxSpinner.isVisible = true
-        jfxButtonRefresh.graphic = glyphCancel
+        jfxButtonRefresh.graphic = graphics.glyph("cancel", Color.BLACK, 12.0)
     }
 
     override fun hide() {
         jfxSpinner.isVisible = false
-        jfxButtonRefresh.graphic = glyphRefresh
+        jfxButtonRefresh.graphic = graphics.glyph("refresh2", Color.BLACK, 12.0)
     }
 
     override fun reset() {}

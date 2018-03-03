@@ -34,9 +34,7 @@ class UIEButtonSettings(
     private var jfxPopup: JFXPopup = JFXPopup()
 
     private val labelStatistics = Label("Total", graphics.glyph("statistics", Color.BLACK, 20.0))
-    private val labelRefresh = Label("Force refresh", graphics.glyph("refresh", Color.BLACK, 20.0, 16.0))
     private val labelBackToDefault = Label("Default view", graphics.glyph("paint", Color.BLACK, 20.0))
-    private val labelInsert = Label("Insert log", graphics.glyph("insert", Color.BLACK, 20.0))
     private val labelSettings = Label("Settings", graphics.glyph("settings", Color.BLACK, 20.0))
 
     init {
@@ -63,9 +61,7 @@ class UIEButtonSettings(
      */
     private fun createSelectionList(): Region {
         val labelsList = JFXListView<Label>()
-        labelsList.items.add(labelInsert)
         labelsList.items.add(labelStatistics)
-        labelsList.items.add(labelRefresh)
         labelsList.items.add(labelSettings)
         labelsList.items.add(labelBackToDefault)
         labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
@@ -86,18 +82,9 @@ class UIEButtonSettings(
                 jfxDialog.show(externalSourceNode.rootNode())
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
             }
-            labelRefresh -> {
-                syncInteractor.syncAll()
-            }
             labelBackToDefault -> {
                 Main.Companion.MATERIAL = false
                 Main.Companion.mainInstance!!.restart()
-            }
-            labelInsert -> {
-                val dialog = LogEditDialog(null)
-                val jfxDialog = dialog.view as JFXDialog
-                jfxDialog.show(externalSourceNode.rootNode())
-                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
             }
             labelSettings -> {
                 val dialog = SettingsDialog()
