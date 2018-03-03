@@ -53,6 +53,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var strings: Strings
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
@@ -70,7 +71,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
         // Init ui elements
         snackBar = JFXSnackbar(jfxRoot)
-        uieButtonSettings = UIEButtonSettings(graphics, this, jfxButtonSettings, syncInteractor)
+        uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings)
         uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
                 graphics,

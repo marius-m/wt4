@@ -13,11 +13,11 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.Graphics
 import lt.markmerkk.Main
+import lt.markmerkk.Strings
 import lt.markmerkk.afterburner.InjectorNoDI
-import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.LogEditDialog
+import lt.markmerkk.ui_2.ProfilesDialog
 import lt.markmerkk.ui_2.SettingsDialog
 import lt.markmerkk.ui_2.StatisticsDialog
 
@@ -26,18 +26,29 @@ import lt.markmerkk.ui_2.StatisticsDialog
  */
 class UIEButtonSettings(
         private val graphics: Graphics<SVGGlyph>,
+        private val strings: Strings,
         private val externalSourceNode: ExternalSourceNode<StackPane>,
-        private val button: JFXButton,
-        private val syncInteractor: SyncInteractor
+        private val button: JFXButton
 ) : UIElement<JFXButton> {
 
     private var jfxPopup: JFXPopup = JFXPopup()
 
-    private val labelStatistics = Label("Total", graphics.glyph("statistics", Color.BLACK, 20.0))
-    private val labelRefresh = Label("Force refresh", graphics.glyph("refresh", Color.BLACK, 20.0, 16.0))
-    private val labelBackToDefault = Label("Default view", graphics.glyph("paint", Color.BLACK, 20.0))
-    private val labelInsert = Label("Insert log", graphics.glyph("insert", Color.BLACK, 20.0))
-    private val labelSettings = Label("Settings", graphics.glyph("settings", Color.BLACK, 20.0))
+    private val labelStatistics = Label(
+            strings.getString("ui_button_settings_total"),
+            graphics.glyph("statistics", Color.BLACK, 20.0)
+    )
+    private val labelBackToDefault = Label(
+            strings.getString("ui_button_settings_default_view"),
+            graphics.glyph("paint", Color.BLACK, 20.0)
+    )
+    private val labelSettings = Label(
+            strings.getString("ui_button_settings_settings"),
+            graphics.glyph("settings", Color.BLACK, 20.0)
+    )
+    private val labelProfiles = Label(
+            strings.getString("ui_button_settings_profiles"),
+            graphics.glyph("account", Color.BLACK, 20.0)
+    )
 
     init {
         button.graphic = graphics.glyph("settings", Color.WHITE, 20.0)
@@ -63,9 +74,8 @@ class UIEButtonSettings(
      */
     private fun createSelectionList(): Region {
         val labelsList = JFXListView<Label>()
-        labelsList.items.add(labelInsert)
+        labelsList.items.add(labelProfiles)
         labelsList.items.add(labelStatistics)
-        labelsList.items.add(labelRefresh)
         labelsList.items.add(labelSettings)
         labelsList.items.add(labelBackToDefault)
         labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
@@ -86,21 +96,18 @@ class UIEButtonSettings(
                 jfxDialog.show(externalSourceNode.rootNode())
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
             }
-            labelRefresh -> {
-                syncInteractor.syncAll()
-            }
             labelBackToDefault -> {
                 Main.Companion.MATERIAL = false
                 Main.Companion.mainInstance!!.restart()
             }
-            labelInsert -> {
-                val dialog = LogEditDialog(null)
+            labelSettings -> {
+                val dialog = SettingsDialog()
                 val jfxDialog = dialog.view as JFXDialog
                 jfxDialog.show(externalSourceNode.rootNode())
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
             }
-            labelSettings -> {
-                val dialog = SettingsDialog()
+            labelProfiles -> {
+                val dialog = ProfilesDialog()
                 val jfxDialog = dialog.view as JFXDialog
                 jfxDialog.show(externalSourceNode.rootNode())
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }

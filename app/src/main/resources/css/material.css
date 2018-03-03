@@ -122,6 +122,81 @@
     -fx-background-color: #5C6BC0;
 }
 
+/*******************************************************************************
+*                                                                              *
+* JFX Combo Box                                                                *
+*                                                                              *
+*******************************************************************************/
+
+.jfx-combo-box{
+    -jfx-focus-color: #4059A9;
+    -jfx-unfocus-color: #4d4d4d;
+    -fx-prompt-text-fill: #4d4d4d;
+}
+
+.jfx-list-cell-container {
+    -fx-alignment: center-left;
+}
+
+.jfx-list-cell-container > .label {
+    -fx-text-fill: BLACK;
+}
+
+.jfx-list-cell:odd:selected > .jfx-rippler > StackPane, .jfx-list-cell:even:selected > .jfx-rippler > StackPane {
+    -fx-background-color: rgba(0, 0, 255, 0.2);
+}
+
+.jfx-list-cell {
+    -fx-background-insets: 0.0;
+    -fx-text-fill: BLACK;
+}
+
+.jfx-list-cell:odd, .jfx-list-cell:even {
+    -fx-background-color: WHITE;
+}
+
+.jfx-list-cell:filled:hover {
+    -fx-text-fill: black;
+}
+
+.jfx-list-cell .jfx-rippler {
+    -jfx-rippler-fill: BLUE;
+}
+
+.jfx-combo-box > .arrow-button,
+.jfx-combo-box:editable > .arrow-button,
+.jfx-combo-box:editable:focused > .arrow-button{
+    -fx-background-color: TRANSPARENT;
+}
+
+.combo-box-popup .list-view .jfx-list-cell .label,
+.combo-box-popup .list-view .jfx-list-cell:filled:hover .label {
+    -fx-text-fill: BLACK;
+}
+
+.combo-box-popup .list-view .jfx-list-cell .custom-jfx-list-view-icon,
+.combo-box-popup .list-view .jfx-list-cell:filled:hover .custom-jfx-list-view-icon,
+.combo-box-popup .list-view .jfx-list-cell:selected .custom-jfx-list-view-icon {
+    -fx-fill: #5264AE;
+}
+
+.combo-box-popup .list-view .jfx-list-cell:odd:selected > .jfx-rippler > StackPane,
+.combo-box-popup .list-view .jfx-list-cell:even:selected > .jfx-rippler > StackPane {
+    -fx-background-color: rgba(0.0, 0.0, 255.0, 0.2);
+}
+
+.combo-box-popup .list-view .jfx-list-cell {
+    -fx-background-insets: 0.0;
+}
+
+.combo-box-popup .list-view .jfx-list-cell:odd,
+.combo-box-popup .list-view .jfx-list-cell:even {
+    -fx-background-color: WHITE;
+}
+
+.combo-box-popup .list-view .jfx-list-cell .jfx-rippler {
+    -jfx-rippler-fill: #5264AE;
+}
 
 /*******************************************************************************
  *                                                                             *

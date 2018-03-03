@@ -11,11 +11,19 @@ import java.util.*
 class ConfigSetSettingsImpl(
         private val configPathProvider: ConfigPathProvider
 ) : BaseSettings(), ConfigSetSettings {
+
     override var configSetName: String = ""
         set(value) {
             field = sanitizeConfigName(value)
         }
     override var configs: List<String> = emptyList()
+
+    override fun currentConfigOrDefault(): String {
+        if (configSetName.isEmpty()) {
+            return DEFAULT_ROOT_CONFIG_NAME
+        }
+        return configSetName
+    }
 
     override fun propertyPath(): String {
         val rootPath = configPathProvider.absolutePathWithMissingFolderCreate(
