@@ -2,16 +2,18 @@
 
 Work tracker for JIRA
 
-App is designed for sole purpose - help you track/log worked issues
+Sandbox app for tracking work on JIRA
 
-* Work offline
-* Synchronize whenever comfortable
-* Day/week overview
-* Works on evey major platform
+* Single purpose to track time for work
+* Works offline
+* Synchronizes logs back to JIRA tickets
+* Cool calendar type view
+* Day / week view
+* Edit mode for quickly edit logs
+* Profiles for multiple JIRA accounts
+* Every major platform
 
 ## Download
-
-App is built for various platform. There are a **small** and **fat** versions. 
 
 * MacOSX: 
   - [Fat installer (Recommended)](http://545149.s.dedikuoti.lt/wt4_download/WT4-4.0.dmg)
@@ -29,7 +31,7 @@ App is built for various platform. There are a **small** and **fat** versions.
  
 App will automatically update to newest version
 
-## News
+## Overview
 
 Fun fun fun! As playing around a bit, ive converted the designs for the app to material ones. So as we are in transition to new and neat design, also entering the new 1.0.0 version!. Have fun! 
 
@@ -66,38 +68,6 @@ Tricks that were being tackled in this project:
   - Auto completion text view
 * [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
 
-## How to use it (in old window styles)
-
-Overview of the main app features
-
-### Main
-
-* Press "Clock" to start working. Whenever finished press enter to log time. 
-* Search on active issues at the top ([will need to setup first!](#.settings))
-* Bubbles will indicate the sync with remote state
-	* Yellow - log stored locally
-	* Green - log synchronized with remote
-	* Red - log had problems synchronizing (double click for details)
-
-![Work window](img/screen_1.png)
-
-### Settings
-
-* Enter credentials and personal preferences
-* You can use custom "JQL" for the issue search
-
-![Work window](img/screen_2.png)
-
-### Update
-
-Logs can be updated by pressing the right mouse button on the target log
-
-![Work window](img/screen_3.png)
-
-### Week view / Day view
-
-![Work window](img/screen_4.png)
-
 ## FAQ
 
 * Q: Why does it weight so much ?
@@ -106,6 +76,11 @@ Logs can be updated by pressing the right mouse button on the target log
 * A: Try checking settings window, as most of the stuff that is done in the background are printed out. That might give you an idea when might not be working.
 
 ## Changelog
+
+### 1.0.5 - 1.0.7
+- Cool calendar view
+- Quick day / week change view
+- Profiles (multiple JIRA account support)
 
 ### 1.0.4
 - Authentication settings 
