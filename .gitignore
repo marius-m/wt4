@@ -49,3 +49,4 @@ components/out
 database/out
 models/out
 remote/out
+app/src/main/deploy/keystore.jks

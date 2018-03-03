@@ -3,6 +3,11 @@ apply plugin: 'javafx-gradle-plugin'
 //ext.appPath = "wt4"
 ext.appPath = "wt4"
 
+def deployPropertyFile = new File("${rootDir}","deploy.properties")
+assert deployPropertyFile.exists()
+Properties deployProps = new Properties()
+deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+
 jfx {
     verbose = true
     mainClass = "com.threerings.getdown.launcher.GetdownApp"
@@ -33,8 +38,8 @@ jfx {
     needShortcut = false
     needMenu = false
     bundleArguments = [
-            runtime: null,
-            classpath: "getdown-1.6.1-SNAPSHOT.jar app/app.jar"
+//            runtime: null,
+            classpath: "getdown-1.7.0.jar app/app.jar"
     ]
     appName = "WT4"
     additionalAppResources = null
@@ -53,30 +58,25 @@ jfx {
 
     // gradle jfxGenerateKeyStore
     keyStore = "src/main/deploy/keystore.jks"
-    keyStoreAlias = "myalias"
-    keyStorePassword = "password"
-    keyPassword = null // will default to keyStorePassword
+    keyStoreAlias = "wt4"
+    keyStorePassword = deployProps.getProperty("cert_pass")
+    keyPassword = null
     keyStoreType = "jks"
     overwriteKeyStore = false
 
-    certDomain = null // required
-    certOrgUnit = null // defaults to "none"
-    certOrg = null // required
-    certState = null // required
-    certCountry = null // required
+    certDomain = "http://545149.s.dedikuoti.lt:8080/"
+    certOrgUnit = "none"
+    certOrg = "WT4"
+    certState = "LT"
+    certCountry = "LT"
 }
 
 task processJar(dependsOn:shadowJar, type: JavaExec) {
-    def deployPropertyFile = new File("${rootDir}","deploy.properties")
-    assert deployPropertyFile.exists()
-    Properties deployProps = new Properties()
-    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
-
     def siteDir = new File(rootDir, "out4")
     def appDir = new File(rootDir, "out4/app")
     def libsDir = new File(projectDir, "build/libs")
     def digestFile = new File(rootDir, "out4/app/digest.txt")
-    def toolsFile = new File(rootDir, "tools/getdown-1.6.1-SNAPSHOT.jar")
+    def toolsFile = new File(rootDir, "tools/getdown-1.7.0.jar")
     def toolsResourceDir = new File(rootDir, "tools/resource")
     def clientConfigDir = new File(projectDir, "build/libs/app")
     def clientConfig = new File(rootDir, "tools/client.txt")
@@ -210,11 +210,6 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 }
 
 remotes {
-    def deployPropertyFile = new File("${rootDir}","deploy.properties")
-    assert deployPropertyFile.exists()
-    Properties deployProps = new Properties()
-    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
-
     webServer {
         host = '212.24.100.154'
         user = deployProps.getProperty("remote_user")
@@ -233,6 +228,7 @@ task deploy << {
                     new File(rootDir, "out4/app/app.jar"),
                     new File(rootDir, "out4/app/getdown.txt"),
                     new File(rootDir, "out4/app/digest.txt"),
+                    new File(rootDir, "out4/app/digest2.txt"),
             )
             def localResource = files (
                     new File(rootDir, "out4/app/resources/splash.png"),
