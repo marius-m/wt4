@@ -1,21 +1,15 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.whenever
-import java.util.Date
 import net.rcarz.jiraclient.User
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
-import rx.Observable
-import rx.observers.TestSubscriber
-
-import org.assertj.core.api.Assertions.assertThat
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
+import java.util.*
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -32,7 +26,7 @@ class JiraFilterWorklogTest {
         validWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(validWorklog).started
         doReturn(user).whenever(validWorklog).author
-        doReturn("valid_username").whenever(user).name
+        doReturn("valid_username").whenever(user).email
     }
 
     @Test
@@ -155,7 +149,7 @@ class JiraFilterWorklogTest {
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started
         doReturn(user).whenever(invalidWorklog).author
-        doReturn(null).whenever(user).name
+        doReturn(null).whenever(user).email
         val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
         // Act

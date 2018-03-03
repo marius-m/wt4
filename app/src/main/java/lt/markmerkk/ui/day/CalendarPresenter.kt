@@ -260,16 +260,18 @@ class CalendarPresenter : Initializable {
                     targetDate.dayOfMonth
             )
             calendarInSync.startBatchUpdates()
+            calendarWaitingForSync.startBatchUpdates()
+            calendarError.startBatchUpdates()
+
             calendarInSync.clear()
             calendarInSync.addEntries(entriesInSync)
-            calendarInSync.stopBatchUpdates()
-            calendarWaitingForSync.startBatchUpdates()
             calendarWaitingForSync.clear()
             calendarWaitingForSync.addEntries(entriesWaitingForSync)
-            calendarWaitingForSync.stopBatchUpdates()
-            calendarError.startBatchUpdates()
             calendarError.clear()
             calendarError.addEntries(entriesInError)
+
+            calendarInSync.stopBatchUpdates()
+            calendarWaitingForSync.stopBatchUpdates()
             calendarError.stopBatchUpdates()
         }
 

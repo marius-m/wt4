@@ -22,7 +22,7 @@ class JiraFilterWorklog(
         if (input == null) throw JiraFilter.FilterErrorException("Worklog is invalid")
         if (input.started == null) throw JiraFilter.FilterErrorException("Worklog is invalid")
         if (input.author == null) throw JiraFilter.FilterErrorException("Worklog is invalid")
-        if (input.author.name != user) throw JiraFilter.FilterErrorException("Worklog does not belong to the user")
+        if (input.author.email != user) throw JiraFilter.FilterErrorException("Worklog does not belong to the user")
         if (startDateTime.isAfter(input.started.time)) throw JiraFilter.FilterErrorException("Start time is after worklog date")
         if (endDateTime.isBefore(input.started.time)) throw JiraFilter.FilterErrorException("End time is before worklog date")
         return true
