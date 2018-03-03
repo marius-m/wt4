@@ -10,6 +10,7 @@ import javafx.fxml.Initializable
 import javafx.scene.control.Label
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.Strings
 import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.ConfigSetSettingsImpl
 import org.slf4j.LoggerFactory
@@ -29,6 +30,7 @@ class ProfilesController : Initializable {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var configSetSettings: ConfigSetSettings
+    @Inject lateinit var strings: Strings
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
@@ -48,6 +50,7 @@ class ProfilesController : Initializable {
             configSetSettings.save()
             Main.mainInstance!!.restart()
         }
+        jfxInfo.text = strings.getString("profiles_info")
     }
 
     @PreDestroy

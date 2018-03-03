@@ -28,7 +28,10 @@
                                    fx:id="jfxProfileSelection"
                                    HBox.hgrow="ALWAYS"/>
                        </HBox>
-                       <Label fx:id="jfxInfo"
+                       <Label
+                               maxWidth="400.0"
+                               wrapText="true"
+                               fx:id="jfxInfo"
                                styleClass="mini-label">
                            <padding>
                                <Insets top="6.0" bottom="6.0" />
