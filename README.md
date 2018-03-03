@@ -31,14 +31,37 @@ Sandbox app for tracking work on JIRA
  
 App will automatically update to newest version
 
-## Overview
+## Features
 
-Fun fun fun! As playing around a bit, ive converted the designs for the app to material ones. So as we are in transition to new and neat design, also entering the new 1.0.0 version!. Have fun! 
+- Time tracking is as simple as pushin a button
+- Whenever logged something, edit any way you want, as far as ticket is not in sync with JIRA (still pending feature)
 
-![New1](img/new_1.png)
-![New2](img/new_2.png)
-![New3](img/new_3.png)
-![New4](img/new_4.png)
+![Tracking](img/wt4_tracking.gif)
+
+- Even more editing options for easier management
+- Drag and drop ticket (in edit mode)
+- Expand / subtract ticket
+
+![Fast edit](img/wt4_fast_edit.gif)
+
+- To sync tickets with JIRA, check if the user authenticated first!
+
+![Auth](img/wt4_auth.gif)
+
+- Multiple ways to track your work
+  - Week view
+  - Day view
+  - List
+
+![View types](img/wt4_view_types.gif)
+
+- Use profiles to switch users when you're using more than one JIRA (like working at home, and at work)
+
+![Profiles](img/wt4_profiles.gif)
+
+- If you were using old style and feel a bit retro it is still supported (tho' will be dropped soon)
+
+![Old app](img/wt4_old.gif)
 
 ## Issues
 
