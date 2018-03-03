@@ -11,6 +11,8 @@ interface JiraClientProvider {
 
     val username: String
 
+    fun invalidateClient()
+
     @Throws(IllegalArgumentException::class)
     fun client(
             hostname: String,

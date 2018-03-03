@@ -20,6 +20,10 @@ class JiraClientProviderImpl(
 
     var jiraClient: JiraClient? = null
 
+    override fun invalidateClient() {
+        jiraClient = null
+    }
+
     override fun client(): JiraClient {
         return client(
                 userSettings.host,
