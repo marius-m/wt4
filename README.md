@@ -22,6 +22,7 @@ Sandbox app for tracking work on JIRA
   - [Fat zip](http://545149.s.dedikuoti.lt/wt4_download/win/WT4_fat.zip)
 * Linux:
   - [Fat deb package installer](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0_fat.deb)
+  - [Deb package installer](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0.deb)
   
 * Linux troubleshooting:
   - Paste in terminal `sudo apt-get install openjdk-8-jre openjfx`
