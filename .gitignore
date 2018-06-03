@@ -33,8 +33,6 @@ proguard/
 # Android Studio
 out4/
 build/
-.gradle/
-gradle/
 usr.properties
 app/src/main/resources/version.properties
 deploy.properties
