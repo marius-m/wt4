@@ -18,8 +18,8 @@ buildscript {
 apply plugin: 'org.hidetake.ssh'
 
 allprojects {
-  ext.versionName = "1.0.7"
-  ext.versionCode = "26"
+  ext.versionName = "1.0.8"
+  ext.versionCode = "27"
 
   apply plugin: 'maven'
   apply plugin: 'kotlin'
@@ -53,29 +53,5 @@ allprojects {
     testCompile 'org.mockito:mockito-core:2.8.9'
     testCompile 'org.assertj:assertj-core:2.2.0'
   }
-
-//  tasks.withType(Test) {
-//    testLogging {
-//      events "passed", "skipped", "failed", "standardOut"
-//      showExceptions true
-//      exceptionFormat "full"
-//      showCauses true
-//      showStackTraces true
-//      debug {
-//        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
-//        exceptionFormat "full"
-//      }
-//      info.events = debug.events
-//      info.exceptionFormat = debug.exceptionFormat
-//      afterSuite { desc, result ->
-//        if (!desc.parent) {
-//          def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
-//          def startItem = '|  ', endItem = '  |'
-//          def repeatLength = startItem.length() + output.length() + endItem.length()
-//          println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
-//        }
-//      }
-//    }
-//  }
 
 }

@@ -10,7 +10,8 @@ deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
 
 jfx {
     verbose = true
-    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+//    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+    mainClass = "lt.markmerkk.Main2"
     jfxAppOutputDir = "build/libs"
     jfxMainAppJarName = "app.jar"
     deployDir = "src/main/deploy"
@@ -28,19 +29,21 @@ jfx {
     vendor = "Marius Merkevicius"
     nativeOutputDir = "build/jfx/native"
     bundler = "ALL"
-    jvmProperties = null
-//    jvmArgs = [
-//            "-Ddirect=true"
-//    ]
+    jvmProperties = [
+            version_code: versionCode,
+            version_name: versionName,
+            ga_key: deployProps.getProperty("ga"),
+            release: "true",
+    ]
     userJvmArgs = null
     launcherArguments = ["app"]
     nativeReleaseVersion = "4.0"
     needShortcut = false
     needMenu = false
-    bundleArguments = [
+//    bundleArguments = [
 //            runtime: null,
-            classpath: "getdown-1.7.0.jar app/app.jar"
-    ]
+//            classpath: "getdown-1.7.0.jar app/app.jar"
+//    ]
     appName = "WT4"
     additionalAppResources = null
     fileAssociations = null
