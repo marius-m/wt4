@@ -4,6 +4,7 @@ apply plugin: 'javafx-gradle-plugin'
 ext.appPath = "wt4"
 
 def deployPropertyFile = new File("${rootDir}","deploy.properties")
+def deployPassProperties = new File("${rootDir}","deploy_pass.properties")
 assert deployPropertyFile.exists()
 Properties deployProps = new Properties()
 deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
@@ -60,18 +61,18 @@ jfx {
     skipSizeRecalculationForJNLP185 = false
 
     // gradle jfxGenerateKeyStore
-    keyStore = "src/main/deploy/keystore.jks"
-    keyStoreAlias = "wt4"
-    keyStorePassword = deployProps.getProperty("cert_pass")
-    keyPassword = null
-    keyStoreType = "jks"
-    overwriteKeyStore = false
+//    keyStore = "src/main/deploy/keystore.jks"
+//    keyStoreAlias = "wt4"
+//    keyStorePassword = deployProps.getProperty("cert_pass")
+//    keyPassword = null
+//    keyStoreType = "jks"
+//    overwriteKeyStore = false
 
-    certDomain = "http://545149.s.dedikuoti.lt:8080/"
-    certOrgUnit = "none"
-    certOrg = "WT4"
-    certState = "LT"
-    certCountry = "LT"
+//    certDomain = "http://545149.s.dedikuoti.lt:8080/"
+//    certOrgUnit = "none"
+//    certOrg = "WT4"
+//    certState = "LT"
+//    certCountry = "LT"
 }
 
 task processJar(dependsOn:shadowJar, type: JavaExec) {
@@ -214,10 +215,10 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 
 remotes {
     webServer {
-        host = '212.24.100.154'
-        user = deployProps.getProperty("remote_user")
-        password = deployProps.getProperty("remote_pass")
-        authentications = ['password']
+//        host = '212.24.100.154'
+//        user = deployProps.getProperty("remote_user")
+//        password = deployProps.getProperty("remote_pass")
+//        authentications = ['password']
     }
 }
 
