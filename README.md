@@ -23,8 +23,7 @@ Sandbox app for tracking work on JIRA
   - [Deb package](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0.deb)
   
 * Linux troubleshooting:
-  - Paste in terminal `sudo apt-get install openjdk-8-jre openjfx`
-  - Cannot install dpkg. Paste in terminal: `sudo dpkg -i wt4-4.0_fat.deb`. Will install the app to `/opt/WT4`. After it should work properly.
+  - Cannot install dpkg. Paste in terminal: `sudo dpkg -i wt4-4.0.deb`. Will install the app to `/opt/WT4`. After it should work properly.
   - To uninstall: Paste in terminal: `sudo dpkg -r wt4`.
  
 App will automatically update to newest version
