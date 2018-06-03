@@ -16,13 +16,11 @@ Sandbox app for tracking work on JIRA
 ## Download
 
 * MacOSX: 
-  - [Fat installer (Recommended)](http://545149.s.dedikuoti.lt/wt4_download/macosx/WT4-fat-4.0.dmg)
+  - [DMG](http://545149.s.dedikuoti.lt/wt4_download/macosx/WT4-4.0.dmg)
 * Windows:
-  - [Fat installer (Recommended)](http://545149.s.dedikuoti.lt/wt4_download/win/WT4-4.0_fat.exe)
-  - [Fat zip](http://545149.s.dedikuoti.lt/wt4_download/win/WT4_fat.zip)
+  - No more windows package :(
 * Linux:
-  - [Fat deb package installer](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0_fat.deb)
-  - [Deb package installer](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0.deb)
+  - [Deb package](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0.deb)
   
 * Linux troubleshooting:
   - Paste in terminal `sudo apt-get install openjdk-8-jre openjfx`
