@@ -16,9 +16,9 @@ Sandbox app for tracking work on JIRA
 ## Download
 
 * MacOSX: 
-  - [DMG](http://545149.s.dedikuoti.lt/wt4_download/macosx/WT4-4.0.dmg)
+  - [DMG](http://738649.s.dedikuoti.lt/wt4/WT4_mac.dmg)
 * Windows:
-  - No more windows package :(
+	  - No more windows package :(
 * Linux:
   - [Deb package](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0.deb)
   
