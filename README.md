@@ -20,7 +20,7 @@ Sandbox app for tracking work on JIRA
 * Windows:
 	  - No more windows package :(
 * Linux:
-  - [Deb package](http://545149.s.dedikuoti.lt/wt4_download/linux/wt4-4.0.deb)
+  - [Deb package](http://738649.s.dedikuoti.lt/wt4/wt4-4.0.deb)
   
 * Linux troubleshooting:
   - Cannot install dpkg. Paste in terminal: `sudo dpkg -i wt4-4.0.deb`. Will install the app to `/opt/WT4`. After it should work properly.
