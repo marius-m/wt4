@@ -97,6 +97,9 @@ Tricks that were being tackled in this project:
 
 ## Changelog
 
+### 1.0.9
+- Bugfix when JIRA ticket code has numbers (for ex.: T2EE-123)
+
 ### 1.0.5 - 1.0.7
 - Cool calendar view
 - Quick day / week change view
