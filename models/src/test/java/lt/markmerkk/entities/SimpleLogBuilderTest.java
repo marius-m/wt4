@@ -72,7 +72,7 @@ public class SimpleLogBuilderTest {
   @Test
   public void testTask() throws Exception {
     SimpleLog log = new SimpleLogBuilder(3000)
-        .setTask("tt12")
+        .setTask("tt-12")
         .build();
     assertThat(log.getTask()).isEqualTo("TT-12");
   }
@@ -80,7 +80,7 @@ public class SimpleLogBuilderTest {
   @Test
   public void testFullValid() throws Exception {
     SimpleLogBuilder builder = new SimpleLogBuilder();
-    SimpleLog log = builder.setStart(1000).setEnd(2000).setTask("TTT123").setComment(
+    SimpleLog log = builder.setStart(1000).setEnd(2000).setTask("TTT-123").setComment(
         "temp_comment").build();
     log.updateIndex(200);
 
@@ -109,7 +109,7 @@ public class SimpleLogBuilderTest {
     assertThat(oldLog.isDeleted()).isFalse();
 
     SimpleLog log = new SimpleLogBuilder(oldLog)
-        .setTask("ttt123")
+        .setTask("ttt-123")
         .build();
 
     assertThat(log.getStart()).isEqualTo(1000); // old
@@ -208,7 +208,7 @@ public class SimpleLogBuilderTest {
     SimpleLog localLog = new SimpleLogBuilder()
         .setStart(1000L)
         .setEnd(2000L)
-        .setTask("tt11")
+        .setTask("tt-11")
         .setComment("Some local comment")
         .build();
     localLog.updateIndex(100);
@@ -225,7 +225,7 @@ public class SimpleLogBuilderTest {
     assertThat(localLog.isDeleted()).isFalse();
 
     // Act
-    SimpleLog logUpdate = new SimpleLogBuilder(localLog, "TT20", remoteLog)
+    SimpleLog logUpdate = new SimpleLogBuilder(localLog, "TT-20", remoteLog)
         .build();
 
     // Assert

@@ -6,69 +6,31 @@ import org.joda.time.Period
 import org.joda.time.PeriodType
 import java.util.regex.Pattern
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-08
- */
 object LogUtils {
 
     const val NO_NUMBER = -1
-    const val SEPERATOR = "-"
+    private val ticketRegex = "([a-zA-Z0-9]+)-([0-9]+)".toRegex()
 
     /**
      * Inspects id for a valid type
      * @param message
      */
     fun validateTaskTitle(message: String): String {
-        if (message.isEmpty()) return ""
-        message.replace("\\n".toRegex(), "")
-        val pattern = Pattern.compile("[a-zA-Z]+(-)?[0-9]+")
-        val matcher = pattern.matcher(message.trim { it <= ' ' })
-        if (matcher.find()) {
-            var found = matcher.group()
-            found = found.toUpperCase()
-            found = found.trim { it <= ' ' }
-            if (!found.contains(SEPERATOR))
-                found = insertTaskSeperator(found)
-            if (found.isEmpty())
-                return ""
-            return found
-        }
-        return ""
-    }
-
-    /**
-     * Insers a missing seperator if it is missing.
-     * @param message message that should be altered
-     * *
-     * @return altered message with seperator attached to its proper spot.
-     */
-    fun insertTaskSeperator(message: String?): String? {
-        var message: String = message ?: return null
-        val pattern = Pattern.compile("[a-zA-Z]+[^0-9]")
-        val matcher = pattern.matcher(message.trim { it <= ' ' })
-        if (matcher.find()) {
-            val prefix = message.substring(0, matcher.end())
-            val postfix = message.substring(matcher.end(), message.length)
-            message = prefix + SEPERATOR + postfix
-        }
-        return message
+        val result = ticketRegex.find(message) ?: return ""
+        return result
+                .groupValues
+                .firstOrNull()
+                ?.toUpperCase() ?: ""
     }
 
     /**
      * Splits task title and returns it
      */
     fun splitTaskTitle(message: String): String {
-        if (message.isEmpty()) return ""
-        message.replace("\\n".toRegex(), "")
-        val pattern = Pattern.compile("[a-zA-Z]+")
-        val matcher = pattern.matcher(message.trim { it <= ' ' })
-        if (matcher.find()) {
-            var found = matcher.group()
-            found = found.toUpperCase()
-            found = found.trim { it <= ' ' }
-            if (found.length == 0) return ""
-            return found
+        val result = ticketRegex.find(message) ?: return ""
+        if (result.groupValues.size > 1) {
+            return result.groupValues[1]
+                    .toUpperCase()
         }
         return ""
     }
@@ -77,16 +39,9 @@ object LogUtils {
      * Splits task title into
      */
     fun splitTaskNumber(message: String): Int {
-        val validTaskTitle = validateTaskTitle(message)
-        if (message.isEmpty()) return NO_NUMBER
-        val pattern = Pattern.compile("[0-9]+")
-        val matcher = pattern.matcher(validTaskTitle)
-        if (matcher.find()) {
-            val found = matcher.group()
-            if (!found.isEmpty()) {
-                return Integer.parseInt(found)
-            }
-        }
+        val ticketMatch: MatchResult = ticketRegex.find(message) ?: return NO_NUMBER
+        if (ticketMatch.groupValues.size > 1)
+            return ticketMatch.groupValues[2].toInt()
         return NO_NUMBER
     }
 

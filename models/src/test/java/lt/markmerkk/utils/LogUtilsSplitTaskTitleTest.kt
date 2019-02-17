@@ -3,11 +3,6 @@ package lt.markmerkk.utils
 import org.junit.Assert.*
 import org.junit.Test
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-08-08
- */
 class LogUtilsSplitTaskTitleTest {
     @Test
     fun testEmpty() {
@@ -15,18 +10,33 @@ class LogUtilsSplitTaskTitleTest {
     }
 
     @Test
-    fun testValid() {
-        assertEquals("TT", LogUtils.splitTaskTitle("TT12"))
+    fun noDash() {
+        assertEquals("", LogUtils.splitTaskTitle("TT12"))
     }
 
     @Test
-    fun testValid2() {
+    fun valid() {
         assertEquals("TT", LogUtils.splitTaskTitle("TT-12"))
     }
 
     @Test
-    fun testValid3() {
-        assertEquals("TT", LogUtils.splitTaskTitle("tt212"))
+    fun numInCode() {
+        assertEquals("T2EE", LogUtils.splitTaskTitle("T2EE-12"))
+    }
+
+    @Test
+    fun lowerCase_noDash() {
+        assertEquals("", LogUtils.splitTaskTitle("tt212"))
+    }
+
+    @Test
+    fun lowerCase_valid() {
+        assertEquals("TT", LogUtils.splitTaskTitle("tt-212"))
+    }
+
+    @Test
+    fun lowerCase_numInCode() {
+        assertEquals("T2EE", LogUtils.splitTaskTitle("t2ee-212"))
     }
 
     @Test
