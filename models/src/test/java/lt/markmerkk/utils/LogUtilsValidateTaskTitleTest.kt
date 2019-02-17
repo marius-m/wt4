@@ -3,11 +3,6 @@ package lt.markmerkk.utils
 import org.junit.Assert.*
 import org.junit.Test
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-08-08
- */
 class LogUtilsValidateTaskTitleTest {
     @Test
     fun testEmpty() {
@@ -15,52 +10,77 @@ class LogUtilsValidateTaskTitleTest {
     }
 
     @Test
-    fun testValid1() {
+    fun valid() {
         assertEquals("TT-11", LogUtils.validateTaskTitle("TT-11"))
     }
 
     @Test
-    fun testValid2() {
-        assertEquals("TT-11", LogUtils.validateTaskTitle("TT11"))
+    fun numInCode_alid() {
+        assertEquals("T2EE-11", LogUtils.validateTaskTitle("T2EE-11"))
     }
 
     @Test
-    fun testValidLowerCase1() {
-        assertEquals("TT-11", LogUtils.validateTaskTitle("tt11"))
+    fun noDash() {
+        assertEquals("", LogUtils.validateTaskTitle("TT11"))
     }
 
     @Test
-    fun testValidLowerCase2() {
+    fun lowerCaseNoDash() {
+        assertEquals("", LogUtils.validateTaskTitle("tt11"))
+    }
+
+    @Test
+    fun lowerCase() {
         assertEquals("TT-11", LogUtils.validateTaskTitle("tt-11"))
     }
 
     @Test
-    fun testInvalidSpaces() {
+    fun numInCode_lowerCase() {
+        assertEquals("T2EE-11", LogUtils.validateTaskTitle("t2ee-11"))
+    }
+
+    @Test
+    fun spacesInMiddle() {
         assertEquals("", LogUtils.validateTaskTitle("TT - 11"))
     }
 
     @Test
-    fun testValidMalformed1() {
+    fun valid_malformed() {
         assertEquals("TT-11", LogUtils.validateTaskTitle("at TT-11 asdc"))
     }
 
     @Test
-    fun testValidMalformed2() {
-        assertEquals("TT-11", LogUtils.validateTaskTitle("at TT11 asdc"))
+    fun numInCode_malformed() {
+        assertEquals("T2EE-11", LogUtils.validateTaskTitle("at T2EE-11 asdc"))
     }
 
     @Test
-    fun testValidMalformed3() {
-        assertEquals("TT-11", LogUtils.validateTaskTitle("at tt11 asdc"))
+    fun malformedNoDash() {
+        assertEquals("", LogUtils.validateTaskTitle("at TT11 asdc"))
     }
 
     @Test
-    fun testValidLinebreak1() {
-        assertEquals("TT-11", LogUtils.validateTaskTitle("\ntt11\n"))
+    fun malformedNoDash_lowerCase() {
+        assertEquals("", LogUtils.validateTaskTitle("at tt11 asdc"))
     }
 
     @Test
-    fun testValidLinebreak2() {
-        assertEquals("TT-11", LogUtils.validateTaskTitle("\n tt11"))
+    fun malformed_lowerCase() {
+        assertEquals("TT-11", LogUtils.validateTaskTitle("at tt-11 asdc"))
+    }
+
+    @Test
+    fun numInCode_malformed_lowerCase() {
+        assertEquals("T2EE-11", LogUtils.validateTaskTitle("at t2ee-11 asdc"))
+    }
+
+    @Test
+    fun noDashWithBreaks() {
+        assertEquals("", LogUtils.validateTaskTitle("\ntt11\n"))
+    }
+
+    @Test
+    fun noDashWithBreaks2() {
+        assertEquals("", LogUtils.validateTaskTitle("\n tt11"))
     }
 }
