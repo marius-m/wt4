@@ -1,9 +1,6 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.LocalIssue
-import lt.markmerkk.entities.RemoteEntity
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.*
 import net.rcarz.jiraclient.Issue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

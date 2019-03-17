@@ -2,10 +2,6 @@ package lt.markmerkk.utils
 
 import org.joda.time.format.DateTimeFormat
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-08
- */
 object LogFormatters {
     private val TIME_SHORT_FORMAT = "HH:mm"
     private val DATE_SHORT_FORMAT = "yyyy-MM-dd"

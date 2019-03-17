@@ -6,9 +6,12 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
+import lt.markmerkk.db2.TicketRepository
+import lt.markmerkk.db2.TicketRepositoryImpl
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
+import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -116,6 +119,26 @@ class AppModule(
         return DBProdExecutor(
                 config = config,
                 settings = userSettings
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesDatabaseRepository(): DatabaseRepository {
+        val migrations = listOf(
+                Migration0To1(oldDatabase = DBConnProvider("wt4_1.db"))
+        )
+        val database = DBConnProvider("wt4_2.db")
+        return DatabaseRepositoryImpl(database, migrations)
+    }
+
+    @Provides
+    @Singleton
+    fun providesTicketsRepository(
+            databaseRepository: DatabaseRepository
+    ): TicketRepository {
+        return TicketRepositoryImpl(
+                databaseRepository
         )
     }
 
