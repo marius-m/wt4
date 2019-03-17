@@ -13,7 +13,7 @@ version = versionName
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'build/generated']
+            srcDirs = ['src/main/java', 'build/generated', 'generate/build']
         }
         resources {
             srcDirs = ['src/main/resources']
@@ -60,6 +60,7 @@ dependencies {
     compile project(':remote')
     compile project(':models')
     compile project(':components')
+    compile project(':database2')
 
     // Google analytics
     compile 'com.brsanthu:google-analytics-java:1.1.2'

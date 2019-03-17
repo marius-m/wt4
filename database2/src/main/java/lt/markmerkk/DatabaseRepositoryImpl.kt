@@ -25,7 +25,7 @@ class DatabaseRepositoryImpl(
                     logger.debug("Migrating from ${it.migrateVersionFrom} .. ${it.migrateVersionTo}")
                     it.migrate(conn)
                     logger.debug("Moving DB version to ${it.migrateVersionTo}")
-//                    DBUtils.renewUserVersion(conn, it.migrateVersionTo) // todo: temporary measure
+                    DBUtils.renewUserVersion(conn, it.migrateVersionTo)
                 }
             }
             logger.debug("Migrations finished")

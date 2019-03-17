@@ -3,19 +3,19 @@ package lt.markmerkk.migrations
 import lt.markmerkk.DBConnProvider
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.schema1.Tables.LOG
+import lt.markmerkk.entities.Worklog
 import lt.markmerkk.schema1.Tables.TICKET
+import lt.markmerkk.schema1.tables.Worklog.WORKLOG
 import lt.markmerkk.toBoolean
 import lt.markmerkk.toByte
-import lt.markmerkk.toInt
 import org.joda.time.DateTime
 import org.jooq.DSLContext
-import org.jooq.InsertValuesStep13
 import org.jooq.SQLDialect
 import org.jooq.exception.DataAccessException
 import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 import java.sql.Connection
+import java.sql.SQLException
 
 class Migration0To1(
         private val oldDatabase: DBConnProvider
@@ -43,22 +43,22 @@ class Migration0To1(
                 .column(TICKET.UPDATETIME)
                 .column(TICKET.URL)
                 .execute()
-        currentDsl.createTableIfNotExists(LOG)
-                .column(LOG.ID)
-                .column(LOG.START)
-                .column(LOG.END)
-                .column(LOG.DURATION)
-                .column(LOG.CODE)
-                .column(LOG.COMMENT)
-                .column(LOG.REMOTE_ID)
-                .column(LOG.IS_DELETED)
-                .column(LOG.IS_DIRTY)
-                .column(LOG.IS_ERROR)
-                .column(LOG.ERROR_MESSAGE)
-                .column(LOG.FETCHTIME)
-                .column(LOG.CREATETIME)
-                .column(LOG.UPDATETIME)
-                .column(LOG.URL)
+        currentDsl.createTableIfNotExists(WORKLOG)
+                .column(WORKLOG.ID)
+                .column(WORKLOG.START)
+                .column(WORKLOG.END)
+                .column(WORKLOG.DURATION)
+                .column(WORKLOG.CODE)
+                .column(WORKLOG.COMMENT)
+                .column(WORKLOG.REMOTE_ID)
+                .column(WORKLOG.IS_DELETED)
+                .column(WORKLOG.IS_DIRTY)
+                .column(WORKLOG.IS_ERROR)
+                .column(WORKLOG.ERROR_MESSAGE)
+                .column(WORKLOG.FETCHTIME)
+                .column(WORKLOG.CREATETIME)
+                .column(WORKLOG.UPDATETIME)
+                .column(WORKLOG.URL)
                 .execute()
         moveFromOldDatabase(currentDsl)
     }
@@ -73,7 +73,8 @@ class Migration0To1(
         val oldConn = oldDatabase.connect()
         try {
             val oldDsl = DSL.using(oldConn, SQLDialect.SQLITE)
-            moveLocalIssues(oldDsl, currentDsl, now)
+            moveLocalIssues(oldConn, currentDsl, now)
+            moveSingleLog(oldConn, currentDsl, now)
         } catch (e: DataAccessException) {
             logger.warn("Error moving old database", e)
         } finally {
@@ -82,41 +83,45 @@ class Migration0To1(
     }
 
     private fun moveLocalIssues(
-            oldDsl: DSLContext,
+            oldConn: Connection,
             currentDsl: DSLContext,
             now: Long
     ) {
-        val localIssues = oldDsl.fetch("SELECT * FROM LocalIssue")
-        val oldIssueInsertList = localIssues.map {
-            val project = it.getValue("project") as String
-            val key = it.getValue("key") as String
-            val description = it.getValue("description") as String
-            val createDate = it.getValue("createDate") as Int
-            val updateDate = it.getValue("updateDate") as Int
-            val id = it.getValue("id") as Int
-            val _id = it.getValue("_id") as Int
-            val uri = it.getValue("uri") as String
-            val deleted = it.getValue("deleted") as Int
-            val dirty = it.getValue("dirty") as Int
-            val error = it.getValue("error") as Int
-            val errorMessage = it.getValue("errorMessage") as String
-            val downloadMillis = it.getValue("download_millis") as Int
-            Ticket.new(
-                    code = key,
-                    description = description,
-                    remoteData = RemoteData.new(
-                            remoteId = _id.toLong(),
-                            isDeleted = deleted.toBoolean(),
-                            isDirty = dirty.toBoolean(),
-                            isError = error.toBoolean(),
-                            errorMessage = errorMessage,
-                            createTime = now,
-                            updateTime = now,
-                            uri = uri,
-                            fetchTime = now
-                    )
-            )
-        }.map { ticket ->
+        val sql = "SELECT * FROM LocalIssue"
+        val oldTickets = mutableListOf<Ticket>()
+        try {
+            val statement = oldConn.createStatement()
+            val rs = statement.executeQuery(sql)
+            while (rs.next()) {
+                val key = rs.getString("key")
+                val description = rs.getString("description")
+                val _id = rs.getLong("_id")
+                val uri = rs.getString("uri")
+                val deleted = rs.getInt("deleted")
+                val dirty = rs.getInt("dirty")
+                val error = rs.getInt("error")
+                val errorMessage: String = rs.getString("errorMessage") ?: ""
+                val oldTicket = Ticket.new(
+                        code = key,
+                        description = description,
+                        remoteData = RemoteData.new(
+                                remoteId = _id,
+                                isDeleted = deleted.toBoolean(),
+                                isDirty = dirty.toBoolean(),
+                                isError = error.toBoolean(),
+                                errorMessage = errorMessage,
+                                createTime = now,
+                                updateTime = now,
+                                uri = uri,
+                                fetchTime = now
+                        )
+                )
+                oldTickets.add(oldTicket)
+            }
+        } catch (e: SQLException) {
+            logger.warn("Could not read old database", e)
+        }
+        val issueMigration = oldTickets.map { ticket ->
             val remoteData: RemoteData = ticket.remoteData ?: RemoteData.asEmpty()
             currentDsl
                     .insertInto(TICKET)
@@ -151,7 +156,93 @@ class Migration0To1(
                             remoteData.url
                     )
         }
-        currentDsl.batch(oldIssueInsertList)
+        currentDsl.batch(issueMigration)
+                .execute()
+    }
+
+    private fun moveSingleLog(
+            oldConnection: Connection,
+            currentDsl: DSLContext,
+            now: Long
+    ) {
+        val sql = "SELECT * FROM Log"
+        val oldWorklogs = mutableListOf<Worklog>()
+        try {
+            val statement = oldConnection.createStatement()
+            val rs = statement.executeQuery(sql)
+            while (rs.next()) {
+                val start = rs.getLong("start")
+                val end = rs.getLong("end")
+                val duration = rs.getLong("duration")
+                val task = rs.getString("task")
+                val comment = rs.getString("comment")
+                val _id = rs.getLong("_id")
+                val uri = rs.getString("uri")
+                val deleted = rs.getInt("deleted")
+                val dirty = rs.getInt("dirty")
+                val error = rs.getInt("error")
+                val errorMessage: String = rs.getString("errorMessage") ?: ""
+                val worklog = Worklog.new(
+                        start = start,
+                        end = end,
+                        duration = duration,
+                        code = task,
+                        comment = comment,
+                        remoteData = RemoteData.new(
+                                remoteId = _id,
+                                isDeleted = deleted.toBoolean(),
+                                isDirty = dirty.toBoolean(),
+                                isError = error.toBoolean(),
+                                errorMessage = errorMessage,
+                                createTime = now,
+                                updateTime = now,
+                                uri = uri,
+                                fetchTime = now
+                        )
+                )
+                oldWorklogs.add(worklog)
+            }
+        } catch (e: SQLException) {
+            logger.warn("Could not read old database", e)
+        }
+        val logMigrationToNewDb = oldWorklogs.map { worklog ->
+            val remoteData: RemoteData = worklog.remoteData ?: RemoteData.asEmpty()
+            currentDsl
+                    .insertInto(WORKLOG)
+                    .columns(
+                            WORKLOG.START,
+                            WORKLOG.END,
+                            WORKLOG.DURATION,
+                            WORKLOG.CODE,
+                            WORKLOG.COMMENT,
+                            WORKLOG.REMOTE_ID,
+                            WORKLOG.IS_DELETED,
+                            WORKLOG.IS_DIRTY,
+                            WORKLOG.IS_ERROR,
+                            WORKLOG.ERROR_MESSAGE,
+                            WORKLOG.FETCHTIME,
+                            WORKLOG.CREATETIME,
+                            WORKLOG.UPDATETIME,
+                            WORKLOG.URL
+                    )
+                    .values(
+                            worklog.start,
+                            worklog.end,
+                            worklog.duration,
+                            worklog.code,
+                            worklog.comment,
+                            remoteData.remoteId,
+                            remoteData.isDeleted.toByte(),
+                            remoteData.isDirty.toByte(),
+                            remoteData.isError.toByte(),
+                            remoteData.errorMessage,
+                            remoteData.fetchTime,
+                            remoteData.createTime,
+                            remoteData.updateTime,
+                            remoteData.url
+                    )
+        }
+        currentDsl.batch(logMigrationToNewDb)
                 .execute()
     }
 
