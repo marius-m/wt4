@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import javafx.beans.binding.BooleanBinding
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.migrations.DBMigration
 import lt.markmerkk.schema1.tables.Ticket.TICKET
@@ -45,6 +46,14 @@ class DatabaseRepositoryImpl(
         return null
     }
 
+    override fun updateTicket(oldticket: Ticket, newTicket: Ticket) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun markTicketAsError(ticket: Ticket) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun loadTickets(): List<Ticket> {
         val create = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
         val dbResult: Result<TicketRecord> = create
@@ -70,6 +79,10 @@ class DatabaseRepositoryImpl(
 //                .columns(TICKET.CODE, TICKET.DESCRIPTION)
 //                .values(ticket.code, ticket.description)
 //                .execute()
+    }
+
+    override fun insertOrUpdate(ticket: Ticket): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     companion object {

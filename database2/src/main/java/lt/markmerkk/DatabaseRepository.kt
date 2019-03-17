@@ -7,5 +7,6 @@ interface DatabaseRepository {
     fun ticketByRemoteId(remoteId: Long): Ticket?
     fun insertTicket(ticket: Ticket)
     fun updateTicket(oldticket: Ticket, newTicket: Ticket)
+    fun insertOrUpdate(ticket: Ticket): Boolean
     fun markTicketAsError(ticket: Ticket)
 }
