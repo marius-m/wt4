@@ -59,7 +59,7 @@ class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<
     }
 
     override fun worklogResultObservable(searchResult: Issue.SearchResult): Observable<JiraWork> {
-        return Observable.just(jiraClientProvider.client())
+        return jiraClientProvider.clientStream().toObservable()
                 .flatMap { Observable.create(JiraWorklogSubscriberImpl(jiraClientProvider, searchResult, it)) }
     }
 

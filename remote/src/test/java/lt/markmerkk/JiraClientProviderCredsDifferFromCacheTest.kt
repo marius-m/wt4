@@ -4,7 +4,6 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.JiraCreds
-import lt.markmerkk.UserSettings
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -13,10 +12,10 @@ import org.junit.Test
  * *
  * @since 2016-08-09
  */
-class JiraClientProviderImplCredsDifferFromCacheTest {
+class JiraClientProviderCredsDifferFromCacheTest {
 
     val userSettings: UserSettings = mock()
-    val clientProvider = JiraClientProviderImpl(userSettings)
+    val clientProvider = JiraClientProvider(userSettings)
 
     @Test
     fun valid_creditsMatch() {

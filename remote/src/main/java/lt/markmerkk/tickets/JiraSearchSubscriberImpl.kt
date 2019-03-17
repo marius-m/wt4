@@ -1,5 +1,6 @@
-package lt.markmerkk
+package lt.markmerkk.tickets
 
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.UserSettings
 import lt.markmerkk.utils.LogFormatters
 import net.rcarz.jiraclient.Issue
@@ -9,9 +10,6 @@ import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Subscriber
 
-/**
- * Created by mariusmerkevicius on 1/23/16.
- */
 class JiraSearchSubscriberImpl(
         private val jiraClientProvider: JiraClientProvider,
         private val userSettings: UserSettings,
@@ -21,7 +19,7 @@ class JiraSearchSubscriberImpl(
 
     override fun call(subscriber: Subscriber<in Issue.SearchResult>) {
         try {
-            if (jql.isNullOrEmpty()) throw IllegalArgumentException("JQL is empty!")
+            if (jql.isEmpty()) throw IllegalArgumentException("JQL is empty!")
             logger.info("Doing search: " + jql)
             var startAt = 0
             val max = 50
@@ -30,7 +28,10 @@ class JiraSearchSubscriberImpl(
                 if (subscriber.isUnsubscribed)
                     break
 
-                val sr = jiraClientProvider.client().searchIssues(jql, searchFields, max, startAt)
+                val sr = jiraClientProvider.clientStream()
+                        .toBlocking() // todo should not be done like this
+                        .value()
+                        .searchIssues(jql, searchFields, max, startAt)
                 if (sr == null) throw IllegalStateException("result is empty")
                 if (sr.issues == null) throw IllegalStateException("result is empty")
                 if (sr.issues.size == 0) throw IllegalStateException("result is empty")

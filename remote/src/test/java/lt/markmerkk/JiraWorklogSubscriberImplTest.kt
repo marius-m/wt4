@@ -10,6 +10,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
+import rx.Single
 import rx.observers.TestSubscriber
 
 /**
@@ -25,7 +26,7 @@ class JiraWorklogSubscriberImplTest {
 
     @Before
     fun setUp() {
-        doReturn(jiraClient).whenever(jiraClientProvider).client()
+        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
     }
 
     @Test

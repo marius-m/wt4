@@ -1,6 +1,7 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.*
+import lt.markmerkk.tickets.JiraSearchSubscriber
 import net.rcarz.jiraclient.Issue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,7 +25,7 @@ class JiraInteractorImpl(
 
     // fixme: Should not provide schedulers with observables
     override fun jiraRemoteWorks(start: Long, end: Long): Observable<List<JiraWork>> {
-        return Observable.defer { Observable.just(jiraClientProvider.client()) }
+        return Observable.defer { jiraClientProvider.clientStream().toObservable() }
                 .subscribeOn(ioScheduler)
                 .flatMap { jiraSearchSubscriber.workedIssuesObservable(start, end) }
                 .flatMap { jiraWorklogSubscriber.worklogResultObservable(it) }
@@ -41,7 +42,7 @@ class JiraInteractorImpl(
 
     // fixme: Should not provide schedulers with observables
     override fun jiraLocalWorks(): Observable<List<SimpleLog>> {
-        return Observable.defer { Observable.just(jiraClientProvider.client()) }
+        return Observable.defer { jiraClientProvider.clientStream().toObservable() }
                 .subscribeOn(ioScheduler)
                 .flatMap { Observable.from(logStorage.data) }
                 .toList()
@@ -49,7 +50,7 @@ class JiraInteractorImpl(
 
     // fixme: Should not provide schedulers with observables
     override fun jiraIssues(): Observable<List<Issue>> {
-        return Observable.defer { Observable.just(jiraClientProvider.client()) }
+        return Observable.defer { jiraClientProvider.clientStream().toObservable() }
                 .subscribeOn(ioScheduler)
                 .flatMap { jiraSearchSubscriber.userIssuesObservable() }
                 .flatMap { Observable.from(it.issues) }

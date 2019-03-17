@@ -19,8 +19,9 @@ class RemoteMergeClientImpl(
 
     @Throws(JiraException::class)
     override fun uploadLog(simpleLog: SimpleLog): WorkLog {
-        val issue = jiraClientProvider
-                .client()
+        val issue = jiraClientProvider.clientStream()
+                .toBlocking() // todo should not be done like this
+                .value()
                 .getIssue(simpleLog.task)
         val comment = TimeSplit.addStamp(
                 simpleLog.start,

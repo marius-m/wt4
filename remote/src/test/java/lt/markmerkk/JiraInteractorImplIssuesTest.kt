@@ -5,15 +5,18 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.IDataStorage
+import lt.markmerkk.tickets.JiraSearchSubscriber
 import net.rcarz.jiraclient.Issue
-import org.junit.Assert.*
+import net.rcarz.jiraclient.JiraClient
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import rx.Observable
+import rx.Single
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
-import java.util.*
 
 /**
  * @author mariusmerkevicius
@@ -22,26 +25,30 @@ import java.util.*
  */
 class JiraInteractorImplIssuesTest {
 
-    val clientProvider: JiraClientProvider = mock()
-    val localStorage: IDataStorage<SimpleLog> = mock()
-    val issueStorage: IDataStorage<LocalIssue> = mock()
-    val searchSubscriber: JiraSearchSubscriber = mock()
-    val worklogSubscriber: JiraWorklogSubscriber = mock()
-    val interactor = JiraInteractorImpl(
-            clientProvider,
-            localStorage,
-            issueStorage,
-            searchSubscriber,
-            worklogSubscriber,
-            Schedulers.immediate()
-    )
+    @Mock lateinit var clientProvider: JiraClientProvider
+    @Mock lateinit var localStorage: IDataStorage<SimpleLog>
+    @Mock lateinit var issueStorage: IDataStorage<LocalIssue>
+    @Mock lateinit var searchSubscriber: JiraSearchSubscriber
+    @Mock lateinit var worklogSubscriber: JiraWorklogSubscriber
+    @Mock lateinit var validSearchResult: Issue.SearchResult
+    @Mock lateinit var jiraClient: JiraClient
+
+    lateinit var interactor: JiraInteractorImpl
 
     val testSubscriber = TestSubscriber<List<Issue>>()
-    val validSearchResult: Issue.SearchResult = mock()
 
     @Before
     fun setUp() {
-
+        MockitoAnnotations.initMocks(this)
+        interactor = JiraInteractorImpl(
+                clientProvider,
+                localStorage,
+                issueStorage,
+                searchSubscriber,
+                worklogSubscriber,
+                Schedulers.immediate()
+        )
+        doReturn(Single.just(jiraClient)).whenever(clientProvider).clientStream()
     }
 
     @Test
@@ -121,7 +128,7 @@ class JiraInteractorImplIssuesTest {
         validSearchResult.issues = listOf(fakeIssue, fakeIssue, fakeIssue)
         whenever(searchSubscriber.userIssuesObservable())
             .thenReturn(Observable.empty())
-        whenever(clientProvider.client()).thenThrow(IllegalStateException("client_error"))
+        doReturn(Single.error<Any>(IllegalStateException())).whenever(clientProvider).clientStream()
 
         // Act
         interactor.jiraIssues()

@@ -1,13 +1,12 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.LocalIssueBuilder
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.IDataStorage
+import lt.markmerkk.tickets.JiraSearchSubscriber
 import org.junit.Test
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers

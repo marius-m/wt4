@@ -14,13 +14,14 @@ class AuthInteractorImpl(
             password: String
     ): Observable<Boolean> {
         return Completable.fromAction { jiraClientProvider.invalidateClient() }
-                .andThen(Observable.just(
-                        jiraClientProvider.client(
+                .andThen(
+                        jiraClientProvider.clientStream(
                                 hostname,
                                 username,
                                 password
                         )
-                )).flatMap { Observable.just(it.projects) }
+                )
+                .flatMapObservable { Observable.just(it.projects) }
                 .flatMap {
                     if (it != null) {
                         Observable.just(true)

@@ -10,8 +10,8 @@ import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.*
 import lt.markmerkk.merger.*
 import lt.markmerkk.mvp.AuthService
-import lt.markmerkk.mvp.AuthServiceImpl
-import lt.markmerkk.utils.*
+import lt.markmerkk.tickets.JiraSearchSubscriber
+import lt.markmerkk.tickets.JiraSearchSubscriberImpl
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import javax.inject.Singleton
@@ -28,7 +28,7 @@ class SyncModule {
     fun providesClientProvider(
             userSettings: UserSettings
     ): JiraClientProvider {
-        return JiraClientProviderImpl(userSettings)
+        return JiraClientProvider(userSettings)
     }
 
     @Provides

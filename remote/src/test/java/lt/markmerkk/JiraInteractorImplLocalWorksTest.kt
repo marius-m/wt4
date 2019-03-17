@@ -5,11 +5,14 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.IDataStorage
+import lt.markmerkk.tickets.JiraSearchSubscriber
+import net.rcarz.jiraclient.JiraClient
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import rx.observers.TestSubscriber
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import rx.Single
 import rx.schedulers.Schedulers
 
 /**
@@ -18,71 +21,66 @@ import rx.schedulers.Schedulers
  * @since 2016-08-08
  */
 class JiraInteractorImplLocalWorksTest {
-    val testSubscriber = TestSubscriber<List<SimpleLog>>()
-    val clientProvider: JiraClientProvider = mock()
-    val searchSubscriber: JiraSearchSubscriber = mock()
-    val worklogSubscriber: JiraWorklogSubscriber = mock()
-    val dataStorage: IDataStorage<SimpleLog> = mock()
-    val issueStorage: IDataStorage<LocalIssue> = mock()
-    val interactor = JiraInteractorImpl(
-            clientProvider,
-            dataStorage,
-            issueStorage,
-            searchSubscriber,
-            worklogSubscriber,
-            Schedulers.immediate()
-    )
+    @Mock lateinit var clientProvider: JiraClientProvider
+    @Mock lateinit var searchSubscriber: JiraSearchSubscriber
+    @Mock lateinit var worklogSubscriber: JiraWorklogSubscriber
+    @Mock lateinit var dataStorage: IDataStorage<SimpleLog>
+    @Mock lateinit var issueStorage: IDataStorage<LocalIssue>
+    @Mock lateinit var jiraClient: JiraClient
+
+    lateinit var interactor: JiraInteractorImpl
 
     @Before
     fun setUp() {
-        doReturn(
-                listOf(
-                        SimpleLog(),
-                        SimpleLog(),
-                        SimpleLog()
-                )
-        ).whenever(dataStorage).data
+        MockitoAnnotations.initMocks(this)
+        interactor = JiraInteractorImpl(
+                clientProvider,
+                dataStorage,
+                issueStorage,
+                searchSubscriber,
+                worklogSubscriber,
+                Schedulers.immediate()
+        )
+        val logs = listOf(
+                SimpleLog(),
+                SimpleLog(),
+                SimpleLog()
+        )
+        doReturn(logs).whenever(dataStorage).data
+        doReturn(Single.just(jiraClient)).whenever(clientProvider).clientStream()
     }
 
     @Test
     fun valid_emitListWithItems() {
         // Act
-        interactor.jiraLocalWorks()
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
-
+        val result = interactor.jiraLocalWorks()
+                .test()
 
         // Assert
-        testSubscriber.assertNoErrors()
-        testSubscriber.assertValueCount(1) // list with items
+        result.assertNoErrors()
+        result.assertValueCount(1) // list with items
     }
 
     @Test
     fun valid_listContainItems() {
         // Act
-        interactor.jiraLocalWorks()
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
-
+        val result = interactor.jiraLocalWorks()
+                .test()
 
         // Assert
-        assertEquals(3, testSubscriber.onNextEvents[0].size)
+        assertEquals(3, result.onNextEvents[0].size)
     }
 
     @Test
     fun clientError_throwError() {
         // Assemble
-        whenever(clientProvider.client()).thenThrow(IllegalStateException("error_getting_client"))
+        doReturn(Single.error<Any>(IllegalStateException())).whenever(clientProvider).clientStream()
 
         // Act
-        interactor.jiraLocalWorks()
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
+        val result = interactor.jiraLocalWorks()
+                .test()
 
         // Assert
-        testSubscriber.assertError(IllegalStateException::class.java)
+        result.assertError(IllegalStateException::class.java)
     }
 }
