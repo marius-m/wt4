@@ -11,8 +11,6 @@ CREATE TABLE `ticket` (
   `is_error` TINYINT NOT NULL DEFAULT 0,
   `error_message` TEXT NOT NULL DEFAULT '',
   `fetchTime` BIGINT NOT NULL DEFAULT 0,
-  `createTime` BIGINT NOT NULL DEFAULT 0,
-  `updateTime` BIGINT NOT NULL DEFAULT 0,
   `URL` VARCHAR(1000) NOT NULL DEFAULT ''
 );
 CREATE TABLE `worklog` (
@@ -28,7 +26,5 @@ CREATE TABLE `worklog` (
   `is_error` TINYINT NOT NULL DEFAULT 0,
   `error_message` TEXT NOT NULL DEFAULT '',
   `fetchTime` BIGINT NOT NULL DEFAULT 0,
-  `createTime` BIGINT NOT NULL DEFAULT 0,
-  `updateTime` BIGINT NOT NULL DEFAULT 0,
   `URL` VARCHAR(1000) NOT NULL DEFAULT ''
 );

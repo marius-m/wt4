@@ -39,8 +39,6 @@ class Migration0To1(
                 .column(TICKET.IS_ERROR)
                 .column(TICKET.ERROR_MESSAGE)
                 .column(TICKET.FETCHTIME)
-                .column(TICKET.CREATETIME)
-                .column(TICKET.UPDATETIME)
                 .column(TICKET.URL)
                 .execute()
         currentDsl.createTableIfNotExists(WORKLOG)
@@ -56,8 +54,6 @@ class Migration0To1(
                 .column(WORKLOG.IS_ERROR)
                 .column(WORKLOG.ERROR_MESSAGE)
                 .column(WORKLOG.FETCHTIME)
-                .column(WORKLOG.CREATETIME)
-                .column(WORKLOG.UPDATETIME)
                 .column(WORKLOG.URL)
                 .execute()
         moveFromOldDatabase(currentDsl)
@@ -110,8 +106,6 @@ class Migration0To1(
                                 isDirty = dirty.toBoolean(),
                                 isError = error.toBoolean(),
                                 errorMessage = errorMessage,
-                                createTime = now,
-                                updateTime = now,
                                 uri = uri,
                                 fetchTime = now
                         )
@@ -136,8 +130,6 @@ class Migration0To1(
                             TICKET.IS_ERROR,
                             TICKET.ERROR_MESSAGE,
                             TICKET.FETCHTIME,
-                            TICKET.CREATETIME,
-                            TICKET.UPDATETIME,
                             TICKET.URL
                     )
                     .values(
@@ -151,8 +143,6 @@ class Migration0To1(
                             remoteData.isError.toByte(),
                             remoteData.errorMessage,
                             remoteData.fetchTime,
-                            remoteData.createTime,
-                            remoteData.updateTime,
                             remoteData.url
                     )
         }
@@ -194,8 +184,6 @@ class Migration0To1(
                                 isDirty = dirty.toBoolean(),
                                 isError = error.toBoolean(),
                                 errorMessage = errorMessage,
-                                createTime = now,
-                                updateTime = now,
                                 uri = uri,
                                 fetchTime = now
                         )
@@ -221,8 +209,6 @@ class Migration0To1(
                             WORKLOG.IS_ERROR,
                             WORKLOG.ERROR_MESSAGE,
                             WORKLOG.FETCHTIME,
-                            WORKLOG.CREATETIME,
-                            WORKLOG.UPDATETIME,
                             WORKLOG.URL
                     )
                     .values(
@@ -237,8 +223,6 @@ class Migration0To1(
                             remoteData.isError.toByte(),
                             remoteData.errorMessage,
                             remoteData.fetchTime,
-                            remoteData.createTime,
-                            remoteData.updateTime,
                             remoteData.url
                     )
         }

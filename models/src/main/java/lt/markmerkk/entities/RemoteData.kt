@@ -9,8 +9,6 @@ data class RemoteData(
         val isError: Boolean,
         val errorMessage: String,
         val fetchTime: Long,
-        val createTime: Long,
-        val updateTime: Long,
         val url: String
 ) {
     companion object {
@@ -23,8 +21,6 @@ data class RemoteData(
                     isError = false,
                     errorMessage = "",
                     fetchTime = 0,
-                    createTime = 0,
-                    updateTime = 0,
                     url = ""
             )
         }
@@ -36,8 +32,6 @@ data class RemoteData(
                 isError: Boolean = false,
                 errorMessage: String = "",
                 fetchTime: Long,
-                createTime: Long,
-                updateTime: Long,
                 uri: String
         ): RemoteData? {
             if (remoteId == Const.NO_ID) {
@@ -50,8 +44,6 @@ data class RemoteData(
                     isError = isError,
                     errorMessage = errorMessage,
                     fetchTime = fetchTime,
-                    createTime = createTime,
-                    updateTime = updateTime,
                     url = uri
             )
         }
