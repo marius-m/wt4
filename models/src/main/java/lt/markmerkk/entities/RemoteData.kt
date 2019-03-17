@@ -1,6 +1,7 @@
 package lt.markmerkk.entities
 
 import lt.markmerkk.Const
+import lt.markmerkk.utils.UriUtils
 
 data class RemoteData(
         val remoteId: Long,
@@ -47,5 +48,38 @@ data class RemoteData(
                     url = uri
             )
         }
+
+        fun fromRemote(
+                remoteIdUrl: String,
+                fetchTime: Long,
+                uri: String
+        ): RemoteData? {
+            val remoteId = UriUtils.parseUri(remoteIdUrl)
+            if (remoteId == Const.NO_ID) {
+                return null
+            }
+            return RemoteData(
+                    remoteId = remoteId,
+                    isDeleted = false,
+                    isDirty = false,
+                    isError = false,
+                    errorMessage = "",
+                    fetchTime = fetchTime,
+                    url = uri
+            )
+        }
     }
+}
+
+fun RemoteData?.markAsError(errorMessage: String): RemoteData? {
+    if (this == null) return null
+    return RemoteData(
+            remoteId = remoteId,
+            isDeleted = isDeleted,
+            isDirty = isDirty,
+            isError = true,
+            errorMessage = errorMessage,
+            fetchTime = fetchTime,
+            url = url
+    )
 }

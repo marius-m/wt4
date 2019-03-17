@@ -4,6 +4,8 @@ import lt.markmerkk.entities.Ticket
 import lt.markmerkk.migrations.DBMigration
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.records.TicketRecord
+import org.jooq.Record
+import org.jooq.Record1
 import org.jooq.Result
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
@@ -32,6 +34,15 @@ class DatabaseRepositoryImpl(
         } finally {
             conn.close()
         }
+    }
+
+    override fun ticketByRemoteId(remoteId: Long): Ticket? {
+        val create = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
+        val ticketRecord = create.select()
+                .from(TICKET)
+                .where(TICKET.REMOTE_ID.eq(remoteId))
+                .fetchInto(TICKET)
+        return null
     }
 
     override fun loadTickets(): List<Ticket> {
