@@ -5,8 +5,6 @@ import javafx.application.Application
 import javafx.scene.input.Clipboard
 import lt.markmerkk.mvp.HostServicesInteractor
 import javafx.scene.input.ClipboardContent
-import javafx.scene.input.Clipboard.getSystemClipboard
-
 
 
 /**

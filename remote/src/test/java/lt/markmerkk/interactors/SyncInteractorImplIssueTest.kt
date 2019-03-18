@@ -6,7 +6,6 @@ import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteIssuePull
 import lt.markmerkk.merger.RemoteMergeToolsProvider
-import lt.markmerkk.interactors.SyncInteractorImpl
 import net.rcarz.jiraclient.Issue
 import org.junit.Before
 import org.junit.Test

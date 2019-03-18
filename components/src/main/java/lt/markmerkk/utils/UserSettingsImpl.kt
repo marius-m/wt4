@@ -4,9 +4,6 @@ import lt.markmerkk.Const
 import lt.markmerkk.UserSettings
 import org.slf4j.LoggerFactory
 
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
-
 /**
  * Created by mariusmerkevicius on 12/21/15.
  * Controller for holding persistent data

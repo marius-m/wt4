@@ -2,7 +2,6 @@ package lt.markmerkk.tickets
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.*
-import lt.markmerkk.entities.Ticket
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import org.assertj.core.api.Assertions.assertThat

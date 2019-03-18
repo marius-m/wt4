@@ -1,7 +1,5 @@
 package lt.markmerkk
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.JiraCreds
 import net.rcarz.jiraclient.JiraClient
@@ -10,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import rx.Single
 
 class JiraClientProviderCacheTest {
     @Mock lateinit var userSettings: UserSettings

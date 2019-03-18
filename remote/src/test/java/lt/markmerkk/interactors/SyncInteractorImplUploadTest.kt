@@ -3,7 +3,6 @@ package lt.markmerkk.interactors
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.*
 import lt.markmerkk.entities.*
-import lt.markmerkk.interactors.SyncInteractorImpl
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPush
 import lt.markmerkk.merger.RemoteMergeToolsProvider

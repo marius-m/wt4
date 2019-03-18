@@ -17,7 +17,6 @@ import lt.markmerkk.utils.tracker.ITracker;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.LoggerFactory;
-import rx.observables.JavaFxObservable;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
