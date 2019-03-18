@@ -13,7 +13,7 @@ version = versionName
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'build/generated', 'generate/build']
+            srcDirs = ['src/main/java', 'build/generated/source/kapt/main']
         }
         resources {
             srcDirs = ['src/main/resources']
@@ -21,10 +21,10 @@ sourceSets {
     }
     test {
         java {
-            srcDirs = ['src/test/java']
+            srcDirs = ['src/test/java', 'build/generated/source/kapt/main']
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ['src/main/resources', 'src/test/resources']
         }
     }
     main.java.srcDirs += 'src/main/kotlin'

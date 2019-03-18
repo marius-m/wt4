@@ -3,10 +3,11 @@ version '0.1'
 apply plugin: 'kotlin'
 
 dependencies {
-    compile project(':jira-client')
-    compile project(':database')
+    implementation project(':jira-client')
+    implementation project(':database')
     
-    compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'org.slf4j:slf4j-log4j12:1.7.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'org.slf4j:slf4j-api:1.7.12'
+    implementation 'org.slf4j:slf4j-log4j12:1.7.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation project(":mock-factory")
 }

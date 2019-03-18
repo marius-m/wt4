@@ -6,8 +6,7 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
-import lt.markmerkk.db2.TicketRepository
-import lt.markmerkk.db2.TicketRepositoryImpl
+import lt.markmerkk.db2.TicketsRepository
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
@@ -126,7 +125,7 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesDatabaseRepository(): TicketsDatabaseRepo {
+    fun providesDatabaseRepo(): TicketsDatabaseRepo {
         val migrations = listOf(
                 Migration0To1(oldDatabase = DBConnProvider("wt4_1.db"))
         )
@@ -137,16 +136,22 @@ class AppModule(
     @Provides
     @Singleton
     fun providesTicketsRepository(
-            ticketsDatabaseRepo: TicketsDatabaseRepo
-    ): TicketRepository {
-        return TicketRepositoryImpl(
-                ticketsDatabaseRepo
+            ticketsDatabaseRepo: TicketsDatabaseRepo,
+            ticketsNetworkRepo: TicketsNetworkRepo,
+            userSettings: UserSettings,
+            timeProvider: TimeProvider
+    ): TicketsRepository {
+        return TicketsRepository(
+                ticketsDatabaseRepo,
+                ticketsNetworkRepo,
+                userSettings,
+                timeProvider
         )
     }
 
     @Provides
     @Singleton
-    fun providesTicketsInteractor(
+    fun providesTicketsNetworkRepo(
             ticketsDatabaseRepo: TicketsDatabaseRepo,
             jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings
