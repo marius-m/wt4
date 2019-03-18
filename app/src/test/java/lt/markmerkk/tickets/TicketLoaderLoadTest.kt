@@ -1,4 +1,4 @@
-package lt.markmerkk.db2
+package lt.markmerkk.tickets
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
@@ -20,8 +20,8 @@ import rx.schedulers.Schedulers
 class TicketLoaderLoadTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
-    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
     @Mock lateinit var timeProvider: TimeProvider
+    @Mock lateinit var ticketsRepository: TicketsRepository
     lateinit var loader: TicketLoader
 
     @Before
@@ -29,7 +29,7 @@ class TicketLoaderLoadTest {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsNetworkRepo,
+                ticketsRepository,
                 timeProvider,
                 Schedulers.immediate(),
                 Schedulers.immediate()
@@ -41,7 +41,7 @@ class TicketLoaderLoadTest {
     fun valid() {
         // Assemble
         doReturn(Single.just(listOf(Mocks.createTicket())))
-                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+                .whenever(ticketsRepository).tickets(any())
 
         // Act
         loader.loadTickets()
@@ -54,7 +54,7 @@ class TicketLoaderLoadTest {
     fun noTickets() {
         // Assemble
         doReturn(Single.just(emptyList<Ticket>()))
-                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+                .whenever(ticketsRepository).tickets(any())
 
         // Act
         loader.loadTickets()
@@ -67,7 +67,7 @@ class TicketLoaderLoadTest {
     fun ticketFailure() {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
-                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+                .whenever(ticketsRepository).tickets(any())
 
         // Act
         loader.loadTickets()

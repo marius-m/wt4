@@ -1,4 +1,4 @@
-package lt.markmerkk.db2
+package lt.markmerkk.tickets
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.*

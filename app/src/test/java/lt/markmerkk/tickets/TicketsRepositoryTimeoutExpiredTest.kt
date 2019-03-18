@@ -1,4 +1,4 @@
-package lt.markmerkk.db2
+package lt.markmerkk.tickets
 
 import lt.markmerkk.tickets.TicketsRepository
 import org.assertj.core.api.Assertions.assertThat
