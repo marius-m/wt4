@@ -2,15 +2,10 @@ package lt.markmerkk.utils
 
 import com.nhaarman.mockito_kotlin.mock
 import lt.markmerkk.Config
-import java.util.Properties
-import org.junit.Test
-
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.*
+import org.junit.Test
+import java.util.*
 
-/**
- * Created by mariusmerkevicius on 12/21/15.
- */
 class AdvHashSettingsTest {
 
     val config = Config(
@@ -82,7 +77,7 @@ class AdvHashSettingsTest {
         settings.onLoad(outputProperties)
 
         // Assert
-        assertThat(settings.get("valid_key")).isNull()
+        assertThat(settings.get("valid_key")).isEmpty()
         assertThat(settings.keyValues.size).isZero()
     }
 

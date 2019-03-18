@@ -5,7 +5,6 @@ import lt.markmerkk.UserSettings
 import org.slf4j.LoggerFactory
 
 /**
- * Created by mariusmerkevicius on 12/21/15.
  * Controller for holding persistent data
  */
 class UserSettingsImpl(
@@ -17,37 +16,11 @@ class UserSettingsImpl(
         host = settings.get(HOST) ?: ""
         username = settings.get(USER) ?: ""
         password = settings.get(PASS) ?: ""
-        val versionString = settings.get(VERSION)
-        if (versionString != null) {
-            try {
-                version = Integer.parseInt(versionString)
-            } catch (e: NumberFormatException) {
-                version = -1
-            }
-        } else {
-            version = -1
-        }
-        val autoUpdateString = settings.get(AUTOUPDATE_TIMEOUT)
-        if (autoUpdateString != null) {
-            try {
-                autoUpdateMinutes = Integer.parseInt(autoUpdateString)
-            } catch (e: NumberFormatException) {
-                autoUpdateMinutes = -1
-            }
-        } else {
-            autoUpdateMinutes = -1
-        }
-        val lastUpdateString = settings.get(LAST_UPDATE)
-        if (lastUpdateString != null) {
-            try {
-                lastUpdate = lastUpdateString.toLong()
-            } catch (e: NumberFormatException) {
-                lastUpdate = -1
-            }
-        } else {
-            lastUpdate = -1
-        }
+        version = settings.getInt(VERSION, -1)
+        autoUpdateMinutes = settings.getLong(AUTOUPDATE_TIMEOUT, -1).toInt()
+        lastUpdate = settings.getLong(LAST_UPDATE, -1)
         issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
+        ticketLastUpdate = settings.getLong(TICKET_LAST_UPDATE, -1)
     }
 
     override fun onDetach() {
@@ -58,45 +31,27 @@ class UserSettingsImpl(
         settings.set(ISSUE_JQL, issueJql)
         settings.set(AUTOUPDATE_TIMEOUT, autoUpdateMinutes.toString())
         settings.set(LAST_UPDATE, lastUpdate.toString())
+        settings.set(TICKET_LAST_UPDATE, ticketLastUpdate.toString())
         settings.save()
     }
 
     override var host: String = ""
-
     override var username: String = ""
-
     override var password: String = ""
-
     override var issueJql: String = Const.DEFAULT_JQL_USER_ISSUES
-
     override var version = -1
-
     override var autoUpdateMinutes: Int = -1
-
     override var lastUpdate: Long = -1
-
-    //region Getters / Setters
-
-    override fun setCustom(key: String, value: String) {
-        settings.set(key, value)
-        settings.save()
-    }
-
-    override fun getCustom(key: String): String? {
-        return settings.get(key)
-    }
-
-    //endregion
+    override var ticketLastUpdate: Long = -1
 
     companion object {
-        private val logger = LoggerFactory.getLogger(UserSettingsImpl::class.java)!!
-
-        val HOST = "HOST"
-        val USER = "USER"
-        val PASS = "PASS"
-        val VERSION = "VERSION"
-        val ISSUE_JQL = "ISSUE_JQL"
-        val AUTOUPDATE_TIMEOUT = "AUTOUPDATE_TIMEOUT"
-        val LAST_UPDATE = "LAST_UPDATE"
+        const val HOST = "HOST"
+        const val USER = "USER"
+        const val PASS = "PASS"
+        const val VERSION = "VERSION"
+        const val ISSUE_JQL = "ISSUE_JQL"
+        const val AUTOUPDATE_TIMEOUT = "AUTOUPDATE_TIMEOUT"
+        const val LAST_UPDATE = "LAST_UPDATE"
+        const val TICKET_LAST_UPDATE = "TICKET_LAST_UPDATE"
     }
 }

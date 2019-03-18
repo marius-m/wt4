@@ -4,7 +4,6 @@ import lt.markmerkk.Config
 import java.util.*
 
 /**
- * Created by mariusmerkevicius on 11/24/15.
  * Stores string data
  */
 class AdvHashSettings(
@@ -13,10 +12,26 @@ class AdvHashSettings(
 
     val keyValues = mutableMapOf<String, String>()
 
-    override operator fun get(key: String): String? {
+    override operator fun get(key: String): String {
         if (!keyValues.containsKey(key))
-            return null
-        return keyValues[key]
+            return ""
+        return keyValues[key] ?: ""
+    }
+
+    override fun getLong(key: String, defaultValue: Long): Long {
+        return try {
+            get(key).toLong()
+        } catch (e: NumberFormatException) {
+            defaultValue
+        }
+    }
+
+    override fun getInt(key: String, defaultValue: Int): Int {
+        return try {
+            get(key).toInt()
+        } catch (e: NumberFormatException) {
+            defaultValue
+        }
     }
 
     override operator fun set(key: String, value: String) {
@@ -43,11 +58,11 @@ class AdvHashSettings(
     override fun onSave(properties: Properties) {
         for (s in keyValues.keys) {
             val value = keyValues[s]
-            properties.put(s, String(Base64.encode(value?.toByteArray(), 0)).trim { it <= ' ' })
+            properties[s] = String(Base64.encode(value?.toByteArray(), 0)).trim { it <= ' ' }
         }
     }
 
     companion object {
-        val PROPERTIES_PATH = "usr.properties"
+        const val PROPERTIES_PATH = "usr.properties"
     }
 }
