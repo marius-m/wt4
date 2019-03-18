@@ -13,13 +13,13 @@ class UserSettingsImpl(
 
     override fun onAttach() {
         settings.load()
-        host = settings.get(HOST) ?: ""
-        username = settings.get(USER) ?: ""
-        password = settings.get(PASS) ?: ""
+        host = settings.get(HOST, "")
+        username = settings.get(USER, "")
+        password = settings.get(PASS, "")
         version = settings.getInt(VERSION, -1)
         autoUpdateMinutes = settings.getLong(AUTOUPDATE_TIMEOUT, -1).toInt()
         lastUpdate = settings.getLong(LAST_UPDATE, -1)
-        issueJql = settings.get(ISSUE_JQL) ?: Const.DEFAULT_JQL_USER_ISSUES
+        issueJql = settings.get(ISSUE_JQL, Const.DEFAULT_JQL_USER_ISSUES)
         ticketLastUpdate = settings.getLong(TICKET_LAST_UPDATE, -1)
     }
 

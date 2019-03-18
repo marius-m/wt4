@@ -12,15 +12,15 @@ class AdvHashSettings(
 
     val keyValues = mutableMapOf<String, String>()
 
-    override operator fun get(key: String): String {
+    override operator fun get(key: String, defaultValue: String): String {
         if (!keyValues.containsKey(key))
-            return ""
-        return keyValues[key] ?: ""
+            return defaultValue
+        return keyValues[key] ?: defaultValue
     }
 
     override fun getLong(key: String, defaultValue: Long): Long {
         return try {
-            get(key).toLong()
+            get(key, defaultValue.toString()).toLong()
         } catch (e: NumberFormatException) {
             defaultValue
         }
@@ -28,7 +28,7 @@ class AdvHashSettings(
 
     override fun getInt(key: String, defaultValue: Int): Int {
         return try {
-            get(key).toInt()
+            get(key, defaultValue.toString()).toInt()
         } catch (e: NumberFormatException) {
             defaultValue
         }

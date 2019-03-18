@@ -46,24 +46,9 @@ class AdvHashSettingsTest {
         settings.onLoad(outputProperties)
 
         // Assert
-        assertThat(settings.get("valid_key")).isEqualTo("valid_value")
-        assertThat(settings.get("valid_key1")).isEqualTo("valid_value1")
-        assertThat(settings.get("valid_key2")).isEqualTo("valid_value2")
-    }
-
-    @Test
-    fun testMalformOutput() {
-        // Arrange
-        val settings = AdvHashSettings(config)
-
-        // Act
-        val outputProperties = Properties()
-        outputProperties.put("valid_key", "aaa") // Invalid, cant be decoded
-        settings.onLoad(outputProperties)
-
-        // Assert
-        assertThat(settings.get("valid_key")).isNotNull()
-        assertThat(settings.keyValues.size).isEqualTo(1)
+        assertThat(settings.get("valid_key", "no_default")).isEqualTo("valid_value")
+        assertThat(settings.get("valid_key1", "no_default")).isEqualTo("valid_value1")
+        assertThat(settings.get("valid_key2", "no_default")).isEqualTo("valid_value2")
     }
 
     @Test
@@ -77,7 +62,7 @@ class AdvHashSettingsTest {
         settings.onLoad(outputProperties)
 
         // Assert
-        assertThat(settings.get("valid_key")).isEmpty()
+        assertThat(settings.get("valid_key", "default_val")).isEqualTo("default_val")
         assertThat(settings.keyValues.size).isZero()
     }
 
