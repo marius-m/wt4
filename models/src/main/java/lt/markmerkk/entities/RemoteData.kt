@@ -33,7 +33,7 @@ data class RemoteData(
                 isError: Boolean = false,
                 errorMessage: String = "",
                 fetchTime: Long,
-                uri: String
+                url: String
         ): RemoteData? {
             if (remoteId == Const.NO_ID) {
                 return null
@@ -45,14 +45,14 @@ data class RemoteData(
                     isError = isError,
                     errorMessage = errorMessage,
                     fetchTime = fetchTime,
-                    url = uri
+                    url = url
             )
         }
 
         fun fromRemote(
                 remoteIdUrl: String,
                 fetchTime: Long,
-                uri: String
+                url: String
         ): RemoteData? {
             val remoteId = UriUtils.parseUri(remoteIdUrl)
             if (remoteId == Const.NO_ID) {
@@ -65,7 +65,7 @@ data class RemoteData(
                     isError = false,
                     errorMessage = "",
                     fetchTime = fetchTime,
-                    url = uri
+                    url = url
             )
         }
     }

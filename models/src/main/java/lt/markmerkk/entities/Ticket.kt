@@ -59,7 +59,7 @@ fun Ticket.bindRemoteData(
                     isError = false,
                     errorMessage = "",
                     fetchTime = now.millis,
-                    uri = remoteUri
+                    url = remoteUri
             )
     )
 }

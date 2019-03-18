@@ -29,7 +29,7 @@ class TicketsInteractor(
                             remoteData = RemoteData.fromRemote(
                                     remoteIdUrl = it.id,
                                     fetchTime = now.millis,
-                                    uri = it.url
+                                    url = it.url
                             )
                     )
                 }

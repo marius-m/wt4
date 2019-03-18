@@ -12,7 +12,7 @@ fun Issue.toTicket(
             remoteData = RemoteData.fromRemote(
                     remoteIdUrl = this.id,
                     fetchTime = now.millis,
-                    uri = this.self
+                    url = this.self
             )
     )
 }

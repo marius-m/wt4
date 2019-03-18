@@ -14,3 +14,4 @@ object Const {
 fun Int.toBoolean(): Boolean = this == 1
 fun Boolean.toInt(): Int = if (this) 1 else 0
 fun Boolean.toByte(): Byte = (if (this) 1 else 0).toByte()
+fun Byte.toBoolean(): Boolean = this == 1.toByte()

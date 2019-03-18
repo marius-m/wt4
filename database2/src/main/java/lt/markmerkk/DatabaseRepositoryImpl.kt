@@ -1,12 +1,14 @@
 package lt.markmerkk
 
-import javafx.beans.binding.BooleanBinding
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.migrations.DBMigration
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.records.TicketRecord
-import org.jooq.*
+import org.jooq.DSLContext
+import org.jooq.Result
+import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 
@@ -38,47 +40,30 @@ class DatabaseRepositoryImpl(
         dslContext = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
     }
 
-    override fun ticketByRemoteId(remoteId: Long): Ticket? {
-        val create = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
-        val ticketRecord = create.select()
-                .from(TICKET)
-                .where(TICKET.REMOTE_ID.eq(remoteId))
-                .fetchInto(TICKET)
-        return null
-    }
-
-    override fun updateTicket(oldticket: Ticket, newTicket: Ticket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun markTicketAsError(ticket: Ticket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun loadTickets(): List<Ticket> {
-        val create = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
-        val dbResult: Result<TicketRecord> = create
+        val dbResult: Result<TicketRecord> = dslContext
                 .select()
                 .from(TICKET)
                 .fetchInto(TICKET)
         val tickets = dbResult
-                .map {
-                    //                    Ticket(
-//                            _id = it.id.toLong(),
-//                            id = it.id.toLong(),
-//                            code = it.code,
-//                            description = it.description
-//                    )
+                .map { ticket ->
+                    Ticket(
+                            id = ticket.id.toLong(),
+                            code = TicketCode.new(ticket.code),
+                            description = ticket.description,
+                            parentId = ticket.parentId,
+                            remoteData = RemoteData.new(
+                                    remoteId = ticket.remoteId,
+                                    isDeleted = ticket.isDeleted.toBoolean(),
+                                    isDirty = ticket.isDirty.toBoolean(),
+                                    isError = ticket.isError.toBoolean(),
+                                    errorMessage = ticket.errorMessage,
+                                    fetchTime = ticket.fetchtime,
+                                    url = ticket.url
+                            )
+                    )
                 }
-        return emptyList()
-    }
-
-    override fun insertTicket(ticket: Ticket) {
-//        val dbResult = dbDsl
-//                .insertInto(TICKET)
-//                .columns(TICKET.CODE, TICKET.DESCRIPTION)
-//                .values(ticket.code, ticket.description)
-//                .execute()
+        return tickets
     }
 
     override fun insertOrUpdate(ticket: Ticket): Int {

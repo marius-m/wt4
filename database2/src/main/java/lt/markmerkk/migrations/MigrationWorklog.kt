@@ -3,9 +3,7 @@ package lt.markmerkk.migrations
 import lt.markmerkk.DBConnProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.Worklog
-import lt.markmerkk.schema1.Tables.TICKET
 import lt.markmerkk.schema1.tables.Worklog.WORKLOG
 import lt.markmerkk.toBoolean
 import lt.markmerkk.toByte
@@ -99,7 +97,7 @@ class MigrationWorklog(
                                 isDirty = dirty.toBoolean(),
                                 isError = error.toBoolean(),
                                 errorMessage = errorMessage,
-                                uri = uri,
+                                url = uri,
                                 fetchTime = now
                         )
                 )
