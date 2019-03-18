@@ -1,10 +1,9 @@
-package lt.markmerkk.db2
+package lt.markmerkk.tickets
 
 import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.tickets.TicketsNetworkRepo
 import org.joda.time.DateTime
 import rx.Single
 

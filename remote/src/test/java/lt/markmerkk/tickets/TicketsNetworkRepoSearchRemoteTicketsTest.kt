@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations
 import rx.Observable
 import rx.Single
 
-class TicketsInteractorSearchRemoteTicketsTest {
+class TicketsNetworkRepoSearchRemoteTicketsTest {
 
     @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraTicketSearch: JiraTicketSearch

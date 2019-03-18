@@ -1,4 +1,4 @@
-package lt.markmerkk.tickets
+package lt.markmerkk.db2
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
@@ -8,15 +8,16 @@ import lt.markmerkk.Mocks
 import lt.markmerkk.TimeMachine
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.tickets.TicketLoader
+import lt.markmerkk.tickets.TicketsNetworkRepo
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Single
 import rx.schedulers.Schedulers
-import java.lang.RuntimeException
 
-class TicketLoaderLoadTicketsTest {
+class TicketLoaderLoadTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
     @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo

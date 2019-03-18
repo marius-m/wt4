@@ -1,5 +1,6 @@
 package lt.markmerkk.db2
 
+import lt.markmerkk.tickets.TicketsRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.joda.time.DateTime
 import org.joda.time.DateTimeUtils

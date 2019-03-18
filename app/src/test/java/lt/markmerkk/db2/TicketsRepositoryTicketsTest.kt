@@ -3,8 +3,8 @@ package lt.markmerkk.db2
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.*
 import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.tickets.TicketsRepository
 import org.joda.time.DateTime
-import org.joda.time.DateTimeUtils
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

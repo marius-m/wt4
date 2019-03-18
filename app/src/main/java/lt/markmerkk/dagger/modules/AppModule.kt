@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
-import lt.markmerkk.db2.TicketsRepository
+import lt.markmerkk.tickets.TicketsRepository
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
