@@ -14,7 +14,7 @@ import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
-import lt.markmerkk.tickets.TicketsInteractor
+import lt.markmerkk.tickets.TicketsNetworkRepo
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
@@ -126,35 +126,35 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesDatabaseRepository(): DatabaseRepository {
+    fun providesDatabaseRepository(): TicketsDatabaseRepo {
         val migrations = listOf(
                 Migration0To1(oldDatabase = DBConnProvider("wt4_1.db"))
         )
         val database = DBConnProvider("wt4_2.db")
-        return DatabaseRepositoryImpl(database, migrations)
+        return TicketsDatabaseRepo(database, migrations)
     }
 
     @Provides
     @Singleton
     fun providesTicketsRepository(
-            databaseRepository: DatabaseRepository
+            ticketsDatabaseRepo: TicketsDatabaseRepo
     ): TicketRepository {
         return TicketRepositoryImpl(
-                databaseRepository
+                ticketsDatabaseRepo
         )
     }
 
     @Provides
     @Singleton
     fun providesTicketsInteractor(
-            databaseRepository: DatabaseRepository,
+            ticketsDatabaseRepo: TicketsDatabaseRepo,
             jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings
-    ): TicketsInteractor {
-        return TicketsInteractor(
+    ): TicketsNetworkRepo {
+        return TicketsNetworkRepo(
                 jiraClientProvider,
                 JiraTicketSearch(),
-                databaseRepository,
+                ticketsDatabaseRepo,
                 userSettings
         )
     }

@@ -10,7 +10,7 @@ import rx.Subscription
  */
 class TicketLoader(
         private val listener: Listener,
-        private val ticketsInteractor: TicketsInteractor,
+        private val ticketsNetworkRepo: TicketsNetworkRepo,
         private val timeProvider: TimeProvider,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
@@ -25,7 +25,7 @@ class TicketLoader(
 
     fun loadTickets() {
         subscription?.unsubscribe()
-        subscription = ticketsInteractor.searchRemoteTickets(timeProvider.now())
+        subscription = ticketsNetworkRepo.searchRemoteTicketsAndCache(timeProvider.now())
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({

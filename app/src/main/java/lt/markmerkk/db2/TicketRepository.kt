@@ -6,6 +6,4 @@ interface TicketRepository {
 
     fun allTickets(): List<Ticket>
 
-    fun insertTicket(ticket: Ticket)
-
 }

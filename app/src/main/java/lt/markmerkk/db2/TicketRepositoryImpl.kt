@@ -1,14 +1,14 @@
 package lt.markmerkk.db2
 
-import lt.markmerkk.DatabaseRepository
+import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.entities.Ticket
 
 class TicketRepositoryImpl(
-        private val dbRepository: DatabaseRepository
+        private val dbRepoTickets: TicketsDatabaseRepo
 ): TicketRepository {
 
     override fun allTickets(): List<Ticket> {
-        return dbRepository.loadTickets()
+        return dbRepoTickets.loadTickets()
     }
 
 }

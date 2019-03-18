@@ -19,7 +19,7 @@ import java.lang.RuntimeException
 class TicketLoaderLoadTicketsTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
-    @Mock lateinit var ticketsInteractor: TicketsInteractor
+    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
     @Mock lateinit var timeProvider: TimeProvider
     lateinit var loader: TicketLoader
 
@@ -28,7 +28,7 @@ class TicketLoaderLoadTicketsTest {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsInteractor,
+                ticketsNetworkRepo,
                 timeProvider,
                 Schedulers.immediate(),
                 Schedulers.immediate()
@@ -40,7 +40,7 @@ class TicketLoaderLoadTicketsTest {
     fun valid() {
         // Assemble
         doReturn(Single.just(listOf(Mocks.createTicket())))
-                .whenever(ticketsInteractor).searchRemoteTickets(any())
+                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
 
         // Act
         loader.loadTickets()
@@ -53,7 +53,7 @@ class TicketLoaderLoadTicketsTest {
     fun noTickets() {
         // Assemble
         doReturn(Single.just(emptyList<Ticket>()))
-                .whenever(ticketsInteractor).searchRemoteTickets(any())
+                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
 
         // Act
         loader.loadTickets()
@@ -66,7 +66,7 @@ class TicketLoaderLoadTicketsTest {
     fun ticketFailure() {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
-                .whenever(ticketsInteractor).searchRemoteTickets(any())
+                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
 
         // Act
         loader.loadTickets()

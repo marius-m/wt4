@@ -1,6 +1,6 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.DatabaseRepository
+import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.RemoteData
@@ -9,14 +9,14 @@ import org.joda.time.DateTime
 import rx.Observable
 import rx.Single
 
-class TicketsInteractor(
+class TicketsNetworkRepo(
         private val jiraClientProvider: JiraClientProvider,
         private val jiraTicketSearch: JiraTicketSearch,
-        private val databaseRepository: DatabaseRepository,
+        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
         private val userSettings: UserSettings
 ) {
 
-    fun searchRemoteTickets(
+    fun searchRemoteTicketsAndCache(
             now: DateTime
     ): Single<List<Ticket>> {
         return jiraClientProvider.clientStream()
@@ -33,9 +33,9 @@ class TicketsInteractor(
                             )
                     )
                 }
-                .doOnNext { databaseRepository.insertOrUpdate(it) }
+                .doOnNext { ticketsDatabaseRepo.insertOrUpdate(it) }
                 .toList()
-                .flatMapSingle { Single.just(databaseRepository.loadTickets()) }
+                .flatMapSingle { Single.just(ticketsDatabaseRepo.loadTickets()) }
                 .toSingle()
     }
 

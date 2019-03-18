@@ -12,10 +12,10 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 
-class DatabaseRepositoryImpl(
+class TicketsDatabaseRepo(
         private val connProvider: DBConnProvider,
         private val migrations: List<DBMigration>
-) : DatabaseRepository {
+) {
 
     private val dslContext: DSLContext
 
@@ -40,7 +40,7 @@ class DatabaseRepositoryImpl(
         dslContext = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
     }
 
-    override fun loadTickets(): List<Ticket> {
+    fun loadTickets(): List<Ticket> {
         val dbResult: Result<TicketRecord> = dslContext
                 .select()
                 .from(TICKET)
@@ -66,7 +66,7 @@ class DatabaseRepositoryImpl(
         return tickets
     }
 
-    override fun insertOrUpdate(ticket: Ticket): Int {
+    fun insertOrUpdate(ticket: Ticket): Int {
         val isTicketExist = isTicketExist(dslContext, ticket)
         val remoteData: RemoteData = ticket.remoteData ?: RemoteData.asEmpty()
         if (isTicketExist) {
@@ -130,7 +130,7 @@ class DatabaseRepositoryImpl(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger("DB")!!
+        private val logger = LoggerFactory.getLogger(Tags.DB)!!
     }
 
 }

@@ -16,18 +16,18 @@ class TicketsInteractorSearchRemoteTicketsTest {
 
     @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraTicketSearch: JiraTicketSearch
-    @Mock lateinit var databaseRepository: DatabaseRepository
+    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Mock lateinit var jiraClient: JiraClient
     @Mock lateinit var userSettings: UserSettings
-    lateinit var ticketsInteractor: TicketsInteractor
+    lateinit var ticketsNetworkRepo: TicketsNetworkRepo
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        ticketsInteractor = TicketsInteractor(
+        ticketsNetworkRepo = TicketsNetworkRepo(
                 jiraClientProvider,
                 jiraTicketSearch,
-                databaseRepository,
+                ticketsDatabaseRepo,
                 userSettings
         )
         doReturn("valid_jql").whenever(userSettings).issueJql
@@ -48,10 +48,10 @@ class TicketsInteractorSearchRemoteTicketsTest {
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
         doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any())
-        doReturn(dbTickets).whenever(databaseRepository).loadTickets()
+        doReturn(dbTickets).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
-        val result = ticketsInteractor.searchRemoteTickets(now = TimeMachine.now())
+        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
@@ -60,8 +60,8 @@ class TicketsInteractorSearchRemoteTicketsTest {
         val resultItems = result.onNextEvents.first()
         assertThat(resultItems.size).isEqualTo(3)
 
-        verify(databaseRepository, times(3)).insertOrUpdate(any())
-        verify(databaseRepository).loadTickets()
+        verify(ticketsDatabaseRepo, times(3)).insertOrUpdate(any())
+        verify(ticketsDatabaseRepo).loadTickets()
     }
 
     @Test
@@ -85,18 +85,18 @@ class TicketsInteractorSearchRemoteTicketsTest {
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
         doReturn(Observable.from(listOf(remoteIssuesPage1, remoteIssuesPage2)))
                 .whenever(jiraTicketSearch).searchIssues(any(), any())
-        doReturn(dbTickets).whenever(databaseRepository).loadTickets()
+        doReturn(dbTickets).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
-        val result = ticketsInteractor.searchRemoteTickets(now = TimeMachine.now())
+        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
         result.assertNoErrors()
         result.assertValueCount(1)
 
-        verify(databaseRepository, times(6)).insertOrUpdate(any())
-        verify(databaseRepository).loadTickets()
+        verify(ticketsDatabaseRepo, times(6)).insertOrUpdate(any())
+        verify(ticketsDatabaseRepo).loadTickets()
     }
 
     @Test
@@ -105,12 +105,12 @@ class TicketsInteractorSearchRemoteTicketsTest {
         doReturn(Single.error<Any>(IllegalArgumentException())).whenever(jiraClientProvider).clientStream()
 
         // Act
-        val result = ticketsInteractor.searchRemoteTickets(now = TimeMachine.now())
+        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
         result.assertError(java.lang.IllegalArgumentException::class.java)
-        verifyZeroInteractions(databaseRepository)
+        verifyZeroInteractions(ticketsDatabaseRepo)
     }
 
     @Test
@@ -124,10 +124,10 @@ class TicketsInteractorSearchRemoteTicketsTest {
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
         doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any())
-        doReturn(dbTickets).whenever(databaseRepository).loadTickets()
+        doReturn(dbTickets).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
-        val result = ticketsInteractor.searchRemoteTickets(now = TimeMachine.now())
+        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
@@ -136,8 +136,8 @@ class TicketsInteractorSearchRemoteTicketsTest {
         val resultItems = result.onNextEvents.first()
         assertThat(resultItems.size).isEqualTo(3)
 
-        verify(databaseRepository, times(0)).insertOrUpdate(any())
-        verify(databaseRepository).loadTickets()
+        verify(ticketsDatabaseRepo, times(0)).insertOrUpdate(any())
+        verify(ticketsDatabaseRepo).loadTickets()
     }
 
 }
