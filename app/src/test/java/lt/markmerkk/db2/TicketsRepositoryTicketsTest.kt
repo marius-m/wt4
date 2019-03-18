@@ -1,12 +1,7 @@
 package lt.markmerkk.db2
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
-import lt.markmerkk.TicketsDatabaseRepo
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
+import com.nhaarman.mockito_kotlin.*
+import lt.markmerkk.*
 import lt.markmerkk.tickets.TicketsNetworkRepo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeUtils
@@ -14,6 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import rx.Single
 
 class TicketsRepositoryTicketsTest {
 
@@ -32,21 +28,48 @@ class TicketsRepositoryTicketsTest {
                 userSettings,
                 timeProvider
         )
-        DateTimeUtils.setCurrentMillisFixed(1L)
-        doReturn(DateTime.now()).whenever(timeProvider).now()
+        doReturn(TimeMachine.now()).whenever(timeProvider).now()
     }
 
     @Test
     fun neverFetched() {
         // Assemble
+        val now = DateTime.now().plusDays(10)
         doReturn(-1L).whenever(userSettings).ticketLastUpdate
+        doReturn(Single.just(listOf(Mocks.createTicket())))
+                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        doReturn(now).whenever(timeProvider).now()
 
         // Act
-        val resultTickets = ticketsRepository.tickets().test()
+        val resultTickets = ticketsRepository.tickets(
+                ticketRefreshTimeoutInDays = 1
+        ).test()
 
         // Assert
         resultTickets.assertNoErrors()
         resultTickets.assertValueCount(1)
         verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        verify(userSettings).ticketLastUpdate = now.millis
+    }
+
+    @Test
+    fun networkAlreadyFreshEnough() {
+        // Assemble
+        doReturn(TimeMachine.now().plusDays(2).millis).whenever(userSettings).ticketLastUpdate
+        doReturn(Single.just(listOf(Mocks.createTicket())))
+                .whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        doReturn(listOf(Mocks.createTicket()))
+                .whenever(ticketsDatabaseRepo).loadTickets()
+
+        // Act
+        val resultTickets = ticketsRepository.tickets(
+                ticketRefreshTimeoutInDays = 1
+        ).test()
+
+        // Assert
+        resultTickets.assertNoErrors()
+        resultTickets.assertValueCount(1)
+        verify(ticketsNetworkRepo, never()).searchRemoteTicketsAndCache(any())
+        verify(userSettings, never()).ticketLastUpdate = any()
     }
 }

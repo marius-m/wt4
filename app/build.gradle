@@ -61,6 +61,7 @@ dependencies {
     compile project(':models')
     compile project(':components')
     compile project(':database2')
+    compile project(':mock-factory')
 
     // Google analytics
     compile 'com.brsanthu:google-analytics-java:1.1.2'
