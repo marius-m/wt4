@@ -10,14 +10,14 @@ object Mocks {
             id: Long = Const.NO_ID,
             code: String = "TTS-123",
             description: String = "valid_descriotion",
-            parentTicket: Ticket? = null,
+            parentId: Long = -1,
             remoteData: RemoteData? = null
     ): Ticket {
         return Ticket(
                 id = id,
                 code = TicketCode.new(code),
                 description = description,
-                parentTicket = parentTicket,
+                parentId = parentId,
                 remoteData = remoteData
         )
     }
