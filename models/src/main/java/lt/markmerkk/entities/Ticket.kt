@@ -8,9 +8,11 @@ data class Ticket(
         val id: Long = Const.NO_ID,
         val code: TicketCode = TicketCode.asEmpty(),
         val description: String = "",
-        val parentTicket: Ticket? = null,
+        val parentId: Long = Const.NO_ID,
         val remoteData: RemoteData? = null
 ) {
+
+    var parentTicket: Ticket? =null
 
     companion object {
         fun new(
@@ -69,7 +71,7 @@ fun Ticket.markAsError(
             id = id,
             code = code,
             description = description,
-            parentTicket = parentTicket,
+            parentId = parentId,
             remoteData = remoteData.markAsError(errorMessage)
     )
 }

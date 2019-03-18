@@ -1,14 +1,12 @@
 package lt.markmerkk
 
 import javafx.beans.binding.BooleanBinding
+import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.migrations.DBMigration
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.records.TicketRecord
-import org.jooq.Record
-import org.jooq.Record1
-import org.jooq.Result
-import org.jooq.SQLDialect
+import org.jooq.*
 import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 
@@ -16,6 +14,8 @@ class DatabaseRepositoryImpl(
         private val connProvider: DBConnProvider,
         private val migrations: List<DBMigration>
 ) : DatabaseRepository {
+
+    private val dslContext: DSLContext
 
     init {
         val conn = connProvider.connect()
@@ -35,6 +35,7 @@ class DatabaseRepositoryImpl(
         } finally {
             conn.close()
         }
+        dslContext = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
     }
 
     override fun ticketByRemoteId(remoteId: Long): Ticket? {
@@ -73,7 +74,6 @@ class DatabaseRepositoryImpl(
     }
 
     override fun insertTicket(ticket: Ticket) {
-        val dbDsl = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
 //        val dbResult = dbDsl
 //                .insertInto(TICKET)
 //                .columns(TICKET.CODE, TICKET.DESCRIPTION)
@@ -81,8 +81,67 @@ class DatabaseRepositoryImpl(
 //                .execute()
     }
 
-    override fun insertOrUpdate(ticket: Ticket): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun insertOrUpdate(ticket: Ticket): Int {
+        val isTicketExist = isTicketExist(dslContext, ticket)
+        val remoteData: RemoteData = ticket.remoteData ?: RemoteData.asEmpty()
+        if (isTicketExist) {
+            return dslContext.update(TICKET)
+                    .set(TICKET.CODE, ticket.code.code)
+                    .set(TICKET.CODE_PROJECT, ticket.code.codeProject)
+                    .set(TICKET.CODE_NUMBER, ticket.code.codeNumber)
+                    .set(TICKET.DESCRIPTION, ticket.description)
+                    .set(TICKET.PARENT_ID, ticket.parentId)
+                    .set(TICKET.REMOTE_ID, remoteData.remoteId)
+                    .set(TICKET.IS_DELETED, remoteData.isDeleted.toByte())
+                    .set(TICKET.IS_DIRTY, remoteData.isDirty.toByte())
+                    .set(TICKET.IS_ERROR, remoteData.isError.toByte())
+                    .set(TICKET.ERROR_MESSAGE, remoteData.errorMessage)
+                    .set(TICKET.FETCHTIME, remoteData.fetchTime)
+                    .set(TICKET.URL, remoteData.url)
+                    .where(TICKET.REMOTE_ID.eq(remoteData.remoteId))
+                    .execute()
+        } else {
+            return dslContext.insertInto(
+                    TICKET,
+                    TICKET.CODE,
+                    TICKET.CODE_PROJECT,
+                    TICKET.CODE_NUMBER,
+                    TICKET.DESCRIPTION,
+                    TICKET.PARENT_ID,
+                    TICKET.REMOTE_ID,
+                    TICKET.IS_DELETED,
+                    TICKET.IS_DIRTY,
+                    TICKET.IS_ERROR,
+                    TICKET.ERROR_MESSAGE,
+                    TICKET.FETCHTIME,
+                    TICKET.URL
+            ).values(
+                    ticket.code.code,
+                    ticket.code.codeProject,
+                    ticket.code.codeNumber,
+                    ticket.description,
+                    ticket.parentId,
+                    remoteData.remoteId,
+                    remoteData.isDeleted.toByte(),
+                    remoteData.isDirty.toByte(),
+                    remoteData.isError.toByte(),
+                    remoteData.errorMessage,
+                    remoteData.fetchTime,
+                    remoteData.url
+            ).execute()
+        }
+    }
+
+    private fun isTicketExist(dslContext: DSLContext, ticket: Ticket): Boolean {
+        val remoteId = ticket.remoteData?.remoteId ?: Const.NO_ID
+        if (remoteId == Const.NO_ID) {
+            return false
+        }
+        val ticketCount = dslContext.selectCount()
+                .from(TICKET)
+                .where(TICKET.REMOTE_ID.eq(remoteId))
+                .fetchOne(0, Integer::class.java)
+        return ticketCount > 0
     }
 
     companion object {

@@ -13,6 +13,8 @@ import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.mvp.HostServicesInteractor
+import lt.markmerkk.tickets.JiraTicketSearch
+import lt.markmerkk.tickets.TicketsInteractor
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
@@ -140,6 +142,27 @@ class AppModule(
         return TicketRepositoryImpl(
                 databaseRepository
         )
+    }
+
+    @Provides
+    @Singleton
+    fun providesTicketsInteractor(
+            databaseRepository: DatabaseRepository,
+            jiraClientProvider: JiraClientProvider,
+            userSettings: UserSettings
+    ): TicketsInteractor {
+        return TicketsInteractor(
+                jiraClientProvider,
+                JiraTicketSearch(),
+                databaseRepository,
+                userSettings
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesTimeProvider(): TimeProvider {
+        return TimeProvider()
     }
 
     @Provides
