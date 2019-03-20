@@ -11,6 +11,7 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui.MainView
 import lt.markmerkk.ui_2.MainView2
+import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
 import org.apache.log4j.PatternLayout
 import org.apache.log4j.Priority
@@ -62,7 +63,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
     fun initApp(stage: Stage) {
         component = DaggerAppComponent
                 .builder()
-                .appModule(AppModule(this))
+                .appModule(AppModule(this, StageProperties(stage)))
                 .build()
         component!!.inject(this)
         initLoggerSettings()

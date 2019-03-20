@@ -60,4 +60,6 @@ interface PresenterComponent {
 
     fun inject(profilesController: ProfilesController)
 
+    fun inject(ticketsController: TicketsController)
+
 }

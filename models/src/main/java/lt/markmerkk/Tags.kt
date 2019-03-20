@@ -7,4 +7,5 @@ object Tags {
 
     // Screens
     const val MAIN = "MAIN"
+    const val TICKETS = "TICKETS"
 }

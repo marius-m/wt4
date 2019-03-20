@@ -26,6 +26,7 @@ import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week2.WeekView2
 import lt.markmerkk.ui_2.bridges.*
 import lt.markmerkk.utils.hourglass.HourGlass
+import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
@@ -224,5 +225,9 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     }
 
     //endregion
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(Tags.MAIN)
+    }
 
 }

@@ -14,6 +14,7 @@ import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
@@ -29,13 +30,20 @@ import javax.inject.Singleton
  */
 @Module
 class AppModule(
-        val application: Application
+        val application: Application,
+        val sceneProperties: StageProperties
 ) {
 
     @Provides
     @Singleton
     fun providesApplication(): Application {
         return application
+    }
+
+    @Provides
+    @Singleton
+    fun providesSceneProperties(): StageProperties {
+        return sceneProperties
     }
 
     @Provides
