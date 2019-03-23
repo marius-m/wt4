@@ -1,9 +1,11 @@
 package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.*
+import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.StackPane
+import lt.markmerkk.Graphics
 import lt.markmerkk.Main
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
@@ -32,12 +34,15 @@ class TicketsController : Initializable {
     @Inject lateinit var ticketsRepository: TicketsRepository
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var stageProperties: StageProperties
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
 
     lateinit var ticketsListAdaper: TicketListAdapter
     lateinit var ticketLoader: TicketLoader
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
+
+        // Views
         val dialogPadding = 100.0
         stageProperties.propertyWidth.addListener { _, _, newValue ->
             jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
@@ -47,7 +52,12 @@ class TicketsController : Initializable {
         }
         jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
-        ticketsListAdaper = TicketListAdapter(jfxDialogLayout, jfxTable)
+        ticketsListAdaper = TicketListAdapter(jfxDialogLayout, jfxTable, graphics)
+        jfxTextFieldTicketSearch.textProperty().addListener { _, _, newValue ->
+            ticketLoader.search(newValue)
+        }
+
+        // Loaders
         ticketLoader = TicketLoader(
                 listener = object : TicketLoader.Listener {
                     override fun onTicketsReady(tickets: List<Ticket>) {
