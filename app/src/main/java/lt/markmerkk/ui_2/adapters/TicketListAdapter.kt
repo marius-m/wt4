@@ -2,21 +2,32 @@ package lt.markmerkk.ui_2.adapters
 
 import com.jfoenix.controls.*
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
+import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.control.*
-import javafx.scene.control.PopupControl.USE_COMPUTED_SIZE
-import javafx.scene.layout.StackPane
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.CornerRadii
+import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.util.Callback
+import lt.markmerkk.Glyph
+import lt.markmerkk.Graphics
+import lt.markmerkk.GraphicsGlyph
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.Ticket
 import org.slf4j.LoggerFactory
 
 class TicketListAdapter(
         private val jfxDialogLayout: JFXDialogLayout,
-        private val jfxTable: JFXTreeTableView<TicketViewItem>
+        private val jfxTable: JFXTreeTableView<TicketViewItem>,
+        private val graphics: Graphics<SVGGlyph>
 ) {
 
     private val ticketViewItems: ObservableList<TicketViewItem>
@@ -30,16 +41,39 @@ class TicketListAdapter(
         }
         colCode.isResizable = false
         val colDescription = JFXTreeTableColumn<TicketViewItem, String>("Description")
-        colDescription.prefWidth = 200.0
         colDescription.setCellValueFactory { param -> param.value.value.propertyDescription }
         colDescription.isResizable = false
-        val colPick = JFXTreeTableColumn<TicketViewItem, JFXButton>("P")
+        colDescription.cellFactory = object : Callback<TreeTableColumn<TicketViewItem, String>, TreeTableCell<TicketViewItem, String>> {
+            override fun call(param: TreeTableColumn<TicketViewItem, String>): TreeTableCell<TicketViewItem, String> {
+                return object : TreeTableCell<TicketViewItem, String>() {
+                    val label = Label()
+                            .apply {
+                                isWrapText = true
+                                alignment = Pos.CENTER_LEFT
+                                prefWidth = Double.MAX_VALUE
+                            }
+
+                    override fun updateItem(item: String?, empty: Boolean) {
+                        super.updateItem(item, empty)
+                        if (empty) {
+                            label.text = ""
+                            graphic = null
+                        } else {
+                            label.text = item
+                            graphic = label
+                        }
+                    }
+                }
+            }
+        }
+        val colPick = JFXTreeTableColumn<TicketViewItem, JFXButton>("")
         colPick.prefWidth = 60.0
         colPick.isResizable = false
         colPick.cellFactory = object : Callback<TreeTableColumn<TicketViewItem, JFXButton>, TreeTableCell<TicketViewItem, JFXButton>> {
             override fun call(param: TreeTableColumn<TicketViewItem, JFXButton>): TreeTableCell<TicketViewItem, JFXButton> {
                 return object : TreeTableCell<TicketViewItem, JFXButton>() {
-                    val button = JFXButton("Test")
+                    val button = JFXButton()
+                            .apply { graphic = graphics.from(Glyph.INPUT, Color.BLACK, 20.0, 16.0) }
                     override fun updateItem(item: JFXButton?, empty: Boolean) {
                         super.updateItem(item, empty)
                         if (empty) {
