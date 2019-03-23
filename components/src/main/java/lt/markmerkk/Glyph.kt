@@ -25,5 +25,6 @@ enum class Glyph {
     ACCOUNT,
     INPUT,
     SEARCH,
+    CLEAR,
     ;
 }

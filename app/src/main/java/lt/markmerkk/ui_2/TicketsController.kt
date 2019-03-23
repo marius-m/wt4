@@ -6,6 +6,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.EventSuggestTicket
@@ -34,6 +35,7 @@ class TicketsController : Initializable {
     @FXML lateinit var jfxSpinnerProgress: JFXSpinner
     @FXML lateinit var jfxButtonProgressRefresh: JFXButton
     @FXML lateinit var jfxButtonProgressStop: JFXButton
+    @FXML lateinit var jfxButtonClear: JFXButton
 
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Inject lateinit var ticketsNetworkRepo: TicketsNetworkRepo
@@ -89,6 +91,19 @@ class TicketsController : Initializable {
                     }
                 }
         )
+        jfxTextFieldTicketSearch.textProperty().addListener { _, _, newValue ->
+            if (newValue.isEmpty()) {
+                jfxButtonClear.isVisible = false
+                jfxButtonClear.isManaged = false
+            } else {
+                jfxButtonClear.isVisible = true
+                jfxButtonClear.isManaged = true
+            }
+        }
+        jfxButtonClear.setOnAction { jfxTextFieldTicketSearch.text = "" }
+        jfxButtonClear.isVisible = false
+        jfxButtonClear.isManaged = false
+        jfxButtonClear.graphic = graphics.from(Glyph.CLEAR, Color.BLACK, 12.0)
 
         // Loaders
         ticketLoader = TicketLoader(

@@ -32,6 +32,7 @@
                                     HBox.hgrow="ALWAYS"
                                     VBox.vgrow="NEVER">
                             </JFXTextField>
+                            <JFXButton fx:id="jfxButtonClear"></JFXButton>
                             <StackPane fx:id="jfxContainerContentRefresh">
                                 <children>
                                     <JFXSpinner fx:id="jfxSpinnerProgress" StackPane.alignment="CENTER"></JFXSpinner>
