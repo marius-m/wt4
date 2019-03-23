@@ -6,15 +6,28 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.*
 
-/**
- * @author mariusmerkevicius
- * @since 2017-09-17
- */
-class GraphicsImpl : Graphics<SVGGlyph> {
+class GraphicsGlyph : Graphics<SVGGlyph> {
 
     lateinit var glyphs: Map<String, String>
 
-    override fun glyph(
+    override fun from(
+            glyph: Glyph,
+            color: Color,
+            width: Double,
+            height: Double
+    ): SVGGlyph {
+        return glyph(glyph.name.toLowerCase(), color, width, height)
+    }
+
+    override fun from(
+            glyph: Glyph,
+            color: Color,
+            size: Double
+    ): SVGGlyph {
+        return glyph(glyph.name.toLowerCase(), color, size)
+    }
+
+    private fun glyph(
             key: String,
             color: Color,
             width: Double,
@@ -33,7 +46,7 @@ class GraphicsImpl : Graphics<SVGGlyph> {
         return svgGlyph
     }
 
-    override fun glyph(
+    private fun glyph(
             key: String,
             color: Color,
             size: Double

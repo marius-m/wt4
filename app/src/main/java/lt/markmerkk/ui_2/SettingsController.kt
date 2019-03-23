@@ -62,7 +62,7 @@ class SettingsController : Initializable {
         authServiceView.hideProgress()
 
         jfxInfo.text = strings.getString("settings_info")
-        jfxStatusButton.graphic = graphics.glyph("emoticon_neutral", Color.BLACK, 60.0)
+        jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 60.0)
         jfxStatusLabel.text = strings.getString("settings_state_neutral")
         jfxStatusLabel.isWrapText = true
         jfxTextFieldHost.text = userSettings.host
@@ -98,7 +98,7 @@ class SettingsController : Initializable {
             jfxStatusProgress.isManaged = true
             jfxOutputProgress.isVisible = true
             jfxOutputProgress.isManaged = true
-            jfxStatusButton.graphic = graphics.glyph("emoticon_tongue", Color.BLACK, 60.0)
+            jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_TONGUE, Color.BLACK, 60.0)
             jfxStatusLabel.text = strings.getString("settings_state_loading")
         }
 
@@ -112,28 +112,28 @@ class SettingsController : Initializable {
         override fun showAuthResult(result: AuthService.AuthResult) {
             when (result) {
                 AuthService.AuthResult.SUCCESS -> {
-                    jfxStatusButton.graphic = graphics.glyph("emoticon_cool", Color.BLACK, 60.0)
+                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 60.0)
                     jfxStatusLabel.text = strings.getString("settings_state_success")
                     saveUserSettings()
                     return
                 }
                 AuthService.AuthResult.ERROR_EMPTY_FIELDS -> {
-                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
                     jfxStatusLabel.text = strings.getString("settings_state_error_empty_fields")
                     return
                 }
                 AuthService.AuthResult.ERROR_UNAUTHORISED -> {
-                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
                     jfxStatusLabel.text = strings.getString("settings_state_error_unauthorised")
                     return
                 }
                 AuthService.AuthResult.ERROR_INVALID_HOSTNAME -> {
-                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
                     jfxStatusLabel.text = strings.getString("settings_state_error_invalid_hostname")
                     return
                 }
                 AuthService.AuthResult.ERROR_UNDEFINED -> {
-                    jfxStatusButton.graphic = graphics.glyph("emoticon_dead", Color.BLACK, 60.0)
+                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
                     jfxStatusLabel.text = strings.getString("settings_state_error_undefined")
                     return
                 }

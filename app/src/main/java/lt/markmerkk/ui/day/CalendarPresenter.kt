@@ -136,15 +136,15 @@ class CalendarPresenter : Initializable {
                 val contextMenu = ContextMenu()
                 val updateItem = MenuItem(
                         strings.getString("general_update"),
-                        graphics.glyph("update", Color.BLACK, 16.0, 16.0)
+                        graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
                 )
                 val deleteItem = MenuItem(
                         strings.getString("general_delete"),
-                        graphics.glyph("delete", Color.BLACK, 12.0, 16.0)
+                        graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
                 )
                 val cloneItem = MenuItem(
                         strings.getString("general_clone"),
-                        graphics.glyph("clone", Color.BLACK, 16.0, 12.0)
+                        graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
                 )
                 contextMenu.items.addAll(updateItem, deleteItem, cloneItem)
                 contextMenu.onAction = object : EventHandler<ActionEvent> {

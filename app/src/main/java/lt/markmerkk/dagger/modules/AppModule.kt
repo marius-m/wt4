@@ -220,7 +220,7 @@ class AppModule(
     @Provides
     @Singleton
     fun provideGraphics(): Graphics<SVGGlyph> {
-        return GraphicsImpl()
+        return GraphicsGlyph()
     }
 
 }

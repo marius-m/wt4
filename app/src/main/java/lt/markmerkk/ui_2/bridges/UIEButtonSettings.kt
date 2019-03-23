@@ -11,15 +11,18 @@ import javafx.scene.control.Label
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Main
 import lt.markmerkk.Strings
 import lt.markmerkk.afterburner.InjectorNoDI
+import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ProfilesDialog
 import lt.markmerkk.ui_2.SettingsDialog
 import lt.markmerkk.ui_2.StatisticsDialog
+import lt.markmerkk.ui_2.TicketsDialog
 
 /**
  * Represents settings button, its graphics, animations
@@ -35,23 +38,28 @@ class UIEButtonSettings(
 
     private val labelStatistics = Label(
             strings.getString("ui_button_settings_total"),
-            graphics.glyph("statistics", Color.BLACK, 20.0)
+            graphics.from(Glyph.STATISTICS, Color.BLACK, 20.0)
     )
     private val labelBackToDefault = Label(
             strings.getString("ui_button_settings_default_view"),
-            graphics.glyph("paint", Color.BLACK, 20.0)
+            graphics.from(Glyph.PAINT, Color.BLACK, 20.0)
     )
     private val labelSettings = Label(
             strings.getString("ui_button_settings_settings"),
-            graphics.glyph("settings", Color.BLACK, 20.0)
+            graphics.from(Glyph.SETTINGS, Color.BLACK, 20.0)
     )
     private val labelProfiles = Label(
             strings.getString("ui_button_settings_profiles"),
-            graphics.glyph("account", Color.BLACK, 20.0)
+            graphics.from(Glyph.ACCOUNT, Color.BLACK, 20.0)
+    )
+
+    private val labelTest = Label(
+            strings.getString("ui_button_settings_test"),
+            graphics.from(Glyph.ACCOUNT, Color.BLACK, 20.0)
     )
 
     init {
-        button.graphic = graphics.glyph("settings", Color.WHITE, 20.0)
+        button.graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
         button.setOnMouseClicked {
             jfxPopup = JFXPopup(createSelectionList())
             jfxPopup.isAutoFix = true
@@ -78,6 +86,7 @@ class UIEButtonSettings(
         labelsList.items.add(labelStatistics)
         labelsList.items.add(labelSettings)
         labelsList.items.add(labelBackToDefault)
+        labelsList.items.add(labelTest)
         labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
             override fun changed(observable: ObservableValue<out Label>?, oldValue: Label?, newValue: Label) {
                 jfxPopup.hide()
@@ -108,6 +117,12 @@ class UIEButtonSettings(
             }
             labelProfiles -> {
                 val dialog = ProfilesDialog()
+                val jfxDialog = dialog.view as JFXDialog
+                jfxDialog.show(externalSourceNode.rootNode())
+                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+            }
+            labelTest -> {
+                val dialog = TicketsDialog()
                 val jfxDialog = dialog.view as JFXDialog
                 jfxDialog.show(externalSourceNode.rootNode())
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }

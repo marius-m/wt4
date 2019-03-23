@@ -6,6 +6,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.DisplayType
+import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.ui.ExternalSourceNode
@@ -23,7 +24,7 @@ class UIEButtonDisplayView(
         private val externalListener: ExternalListener
 ) : UIElement<JFXButton> {
 
-    private val glyphView = graphics.glyph("view", Color.WHITE, 20.0)
+    private val glyphView = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
 
     init {
         button.graphic = glyphView

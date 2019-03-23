@@ -10,6 +10,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
+import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
@@ -83,7 +84,7 @@ class LogEditController : Initializable, LogEditService.Listener {
             hostServices.copyLinkToClipboard(issue)
         }
         jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
-        jfxTextFieldTicketLink.graphic = graphics.glyph("link", Color.BLACK, 16.0, 20.0)
+        jfxTextFieldTicketLink.graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
             override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
                 logEditService.updateDateTime(

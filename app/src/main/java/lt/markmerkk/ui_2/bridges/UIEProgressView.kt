@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
@@ -31,8 +32,8 @@ class UIEProgressView(
         jfxButtonProgressStop.setOnAction {
             syncInteractor.stop()
         }
-        jfxButtonProgressRefresh.graphic = graphics.glyph("refresh2", Color.BLACK, 12.0)
-        jfxButtonProgressStop.graphic = graphics.glyph("cancel", Color.BLACK, 12.0)
+        jfxButtonProgressRefresh.graphic = graphics.from(Glyph.REFRESH2, Color.BLACK, 12.0)
+        jfxButtonProgressStop.graphic = graphics.from(Glyph.CANCEL, Color.BLACK, 12.0)
         onLoadChange(syncInteractor.isLoading())
     }
 
