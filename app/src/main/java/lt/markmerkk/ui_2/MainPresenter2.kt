@@ -90,8 +90,17 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxButtonProgressStop,
                 jfxSpinnerProgress,
                 graphics,
-                syncInteractor
+                refreshListener = object : UIEProgressView.RefreshListener {
+                    override fun onClickRefresh() {
+                        syncInteractor.syncLogs()
+                    }
+
+                    override fun onClickStop() {
+                        syncInteractor.stop()
+                    }
+                }
         )
+        uieProgressView.onLoadChange(syncInteractor.isLoading())
         uieDateSwitcher = UIEDateSwitcher(
                 this,
                 jfxContainerContentDateSwitcher,

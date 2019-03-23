@@ -11,6 +11,7 @@ import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.tickets.TicketsNetworkRepo
 import lt.markmerkk.ui_2.adapters.TicketListAdapter
 import lt.markmerkk.ui_2.adapters.TicketViewItem
+import lt.markmerkk.ui_2.bridges.UIEProgressView
 import org.slf4j.LoggerFactory
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
@@ -27,6 +28,10 @@ class TicketsController : Initializable {
     @FXML lateinit var jfxButtonDismiss: JFXButton
     @FXML lateinit var jfxTextFieldTicketSearch: JFXTextField
     @FXML lateinit var jfxTable: JFXTreeTableView<TicketViewItem>
+    @FXML lateinit var jfxContainerContentRefresh: StackPane
+    @FXML lateinit var jfxSpinnerProgress: JFXSpinner
+    @FXML lateinit var jfxButtonProgressRefresh: JFXButton
+    @FXML lateinit var jfxButtonProgressStop: JFXButton
 
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Inject lateinit var ticketsNetworkRepo: TicketsNetworkRepo
@@ -37,6 +42,7 @@ class TicketsController : Initializable {
 
     lateinit var ticketsListAdaper: TicketListAdapter
     lateinit var ticketLoader: TicketLoader
+    lateinit var uieProgressView: UIEProgressView
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
@@ -53,10 +59,35 @@ class TicketsController : Initializable {
         jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
         ticketsListAdaper = TicketListAdapter(jfxDialogLayout, jfxTable, graphics)
         jfxTextFieldTicketSearch.textProperty().addListener { _, _, newValue -> ticketLoader.applyFilter(newValue) }
+        uieProgressView = UIEProgressView(
+                jfxContainerContentRefresh,
+                jfxButtonProgressRefresh,
+                jfxButtonProgressStop,
+                jfxSpinnerProgress,
+                graphics,
+                refreshListener = object : UIEProgressView.RefreshListener {
+                    override fun onClickRefresh() {
+                        ticketLoader.fetchTickets(forceRefresh = true)
+                    }
+
+                    override fun onClickStop() {
+                        uieProgressView.hide()
+                        ticketLoader.stopFetch()
+                    }
+                }
+        )
 
         // Loaders
         ticketLoader = TicketLoader(
                 listener = object : TicketLoader.Listener {
+                    override fun onLoadStart() {
+                        uieProgressView.show()
+                    }
+
+                    override fun onLoadFinish() {
+                        uieProgressView.hide()
+                    }
+
                     override fun onNewTickets(tickets: List<Ticket>) { }
 
                     override fun onTicketsAvailable(tickets: List<Ticket>) {

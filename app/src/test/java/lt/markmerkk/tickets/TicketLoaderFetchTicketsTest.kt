@@ -48,6 +48,7 @@ class TicketLoaderFetchTicketsTest {
         loaderSpy.fetchTickets()
 
         // Assert
+        verify(userSettings).ticketLastUpdate = TimeMachine.now().plusHours(1).millis
         verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
         verify(listener).onNewTickets(any())
         verify(loaderSpy).loadTickets() // load tickets after fetch
@@ -66,6 +67,7 @@ class TicketLoaderFetchTicketsTest {
         loaderSpy.fetchTickets()
 
         // Assert
+        verify(userSettings, never()).ticketLastUpdate = any()
         verify(ticketsNetworkRepo, never()).searchRemoteTicketsAndCache(any())
         verify(listener, never()).onNewTickets(any())
         verify(loaderSpy, never()).loadTickets()
@@ -84,6 +86,7 @@ class TicketLoaderFetchTicketsTest {
         loaderSpy.fetchTickets(forceRefresh = true)
 
         // Assert
+        verify(userSettings).ticketLastUpdate = any()
         verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
         verify(listener).onNewTickets(any())
     }
@@ -99,6 +102,7 @@ class TicketLoaderFetchTicketsTest {
         loaderSpy.fetchTickets()
 
         // Assert
+        verify(userSettings).ticketLastUpdate = any()
         verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
         verify(listener, never()).onNewTickets(any())
         verify(loaderSpy, never()).loadTickets()
@@ -114,6 +118,7 @@ class TicketLoaderFetchTicketsTest {
         loaderSpy.fetchTickets()
 
         // Assert
+        verify(userSettings, never()).ticketLastUpdate = any()
         verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
         verify(listener, never()).onNewTickets(any())
         verify(loaderSpy, never()).loadTickets()

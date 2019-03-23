@@ -68,14 +68,21 @@ class TicketLoader(
         networkSubscription = ticketsNetworkRepo.searchRemoteTicketsAndCache(timeProvider.now())
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
+                .doOnSubscribe { listener.onLoadStart() }
+                .doAfterTerminate { listener.onLoadFinish() }
                 .subscribe({
+                    userSettings.ticketLastUpdate = now.millis
                     if (it.isNotEmpty()) {
                         listener.onNewTickets(it)
-                        loadTickets()
+                        loadTickets(inputFilter)
                     }
                 }, {
                     listener.onError(it)
                 })
+    }
+
+    fun stopFetch() {
+        networkSubscription?.unsubscribe()
     }
 
     fun loadTickets(inputFilter: String = "") {
@@ -106,6 +113,8 @@ class TicketLoader(
     }
 
     interface Listener {
+        fun onLoadStart()
+        fun onLoadFinish()
         fun onNewTickets(tickets: List<Ticket>)
         fun onTicketsAvailable(tickets: List<Ticket>)
         fun onNoTickets()
