@@ -86,6 +86,7 @@
                                        VBox.vgrow="NEVER" >
                                </JFXTextField>
                                <Hyperlink fx:id="jfxTextFieldTicketLink"></Hyperlink>
+                               <JFXButton fx:id="jfxButtonSearch"></JFXButton>
                            </children>
                        </HBox>
                        <HBox alignment="CENTER_LEFT">

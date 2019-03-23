@@ -3,18 +3,17 @@ package lt.markmerkk.entities
 import lt.markmerkk.utils.LogUtils
 
 data class TicketCode(
-        val code: String,
         val codeProject: String,
         val codeNumber: String
 ) {
 
-    fun isEmpty(): Boolean = code.isEmpty()
-            && codeProject.isEmpty()
+    val code: String = "$codeProject-$codeNumber"
+
+    fun isEmpty(): Boolean = codeProject.isEmpty()
             && codeNumber.isEmpty()
 
     companion object {
         fun asEmpty(): TicketCode = TicketCode(
-                code = "",
                 codeProject = "",
                 codeNumber = ""
         )
@@ -26,7 +25,6 @@ data class TicketCode(
                 return asEmpty()
             }
             return TicketCode(
-                    code = validTicketCode,
                     codeProject = LogUtils.splitTaskTitle(validTicketCode),
                     codeNumber = LogUtils.splitTaskNumber(validTicketCode).toString()
             )

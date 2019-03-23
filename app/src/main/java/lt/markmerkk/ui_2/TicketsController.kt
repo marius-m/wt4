@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2
 
+import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
@@ -7,6 +8,7 @@ import javafx.fxml.Initializable
 import javafx.scene.layout.StackPane
 import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.tickets.TicketsNetworkRepo
 import lt.markmerkk.ui_2.adapters.TicketListAdapter
@@ -39,6 +41,7 @@ class TicketsController : Initializable {
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var userSettings: UserSettings
+    @Inject lateinit var eventBus: EventBus
 
     lateinit var ticketsListAdaper: TicketListAdapter
     lateinit var ticketLoader: TicketLoader
@@ -48,7 +51,7 @@ class TicketsController : Initializable {
         Main.component!!.presenterComponent().inject(this)
 
         // Views
-        val dialogPadding = 100.0
+        val dialogPadding = 160.0
         stageProperties.propertyWidth.addListener { _, _, newValue ->
             jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
         }
@@ -57,7 +60,17 @@ class TicketsController : Initializable {
         }
         jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
-        ticketsListAdaper = TicketListAdapter(jfxDialogLayout, jfxTable, graphics)
+        ticketsListAdaper = TicketListAdapter(
+                listener = object : TicketListAdapter.Listener {
+                    override fun onTicketSelect(ticket: Ticket) {
+                        eventBus.post(EventSuggestTicket(ticket))
+                        jfxDialog.close()
+                    }
+                },
+                jfxDialogLayout = jfxDialogLayout,
+                jfxTable = jfxTable,
+                graphics = graphics
+        )
         jfxTextFieldTicketSearch.textProperty().addListener { _, _, newValue -> ticketLoader.applyFilter(newValue) }
         uieProgressView = UIEProgressView(
                 jfxContainerContentRefresh,

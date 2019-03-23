@@ -3,6 +3,8 @@ package lt.markmerkk.ui_2.adapters
 import com.jfoenix.controls.*
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
@@ -21,6 +23,7 @@ import lt.markmerkk.entities.Ticket
 import org.slf4j.LoggerFactory
 
 class TicketListAdapter(
+        private val listener: Listener,
         private val jfxDialogLayout: JFXDialogLayout,
         private val jfxTable: JFXTreeTableView<TicketViewItem>,
         private val graphics: Graphics<SVGGlyph>
@@ -62,20 +65,26 @@ class TicketListAdapter(
                 }
             }
         }
-        val colPick = JFXTreeTableColumn<TicketViewItem, JFXButton>("")
+        val colPick = JFXTreeTableColumn<TicketViewItem, Ticket>("")
+        colPick.setCellValueFactory { param -> param.value.value.propertyTicket }
         colPick.prefWidth = 60.0
         colPick.isResizable = false
-        colPick.cellFactory = object : Callback<TreeTableColumn<TicketViewItem, JFXButton>, TreeTableCell<TicketViewItem, JFXButton>> {
-            override fun call(param: TreeTableColumn<TicketViewItem, JFXButton>): TreeTableCell<TicketViewItem, JFXButton> {
-                return object : TreeTableCell<TicketViewItem, JFXButton>() {
+        colPick.cellFactory = object : Callback<TreeTableColumn<TicketViewItem, Ticket>, TreeTableCell<TicketViewItem, Ticket>> {
+            override fun call(param: TreeTableColumn<TicketViewItem, Ticket>): TreeTableCell<TicketViewItem, Ticket> {
+                return object : TreeTableCell<TicketViewItem, Ticket>() {
                     val button = JFXButton()
-                            .apply { graphic = graphics.from(Glyph.INPUT, Color.BLACK, 20.0, 16.0) }
-                    override fun updateItem(item: JFXButton?, empty: Boolean) {
+                            .apply {
+                                graphic = graphics.from(Glyph.INPUT, Color.BLACK, 20.0, 16.0)
+                            }
+
+                    override fun updateItem(item: Ticket?, empty: Boolean) {
                         super.updateItem(item, empty)
-                        if (empty) {
+                        if (empty || item == null) {
                             graphic = null
+                            button.setOnAction {  }
                         } else {
                             graphic = button
+                            button.setOnAction { listener.onTicketSelect(item) }
                         }
                     }
                 }
@@ -107,6 +116,10 @@ class TicketListAdapter(
         ticketViewItems.addAll(ticketAsItems)
     }
 
+    interface Listener {
+        fun onTicketSelect(ticket: Ticket)
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.TICKETS)
     }
@@ -118,6 +131,7 @@ data class TicketViewItem(
         private val code: String,
         private val description: String
 ) : RecursiveTreeObject<TicketViewItem>() {
+    val propertyTicket = SimpleObjectProperty<Ticket>(ticket)
     val propertyCode: StringProperty = SimpleStringProperty(code)
     val propertyDescription: StringProperty = SimpleStringProperty(description)
 }

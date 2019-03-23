@@ -7,4 +7,4 @@ import lt.markmerkk.DisplayType
  */
 class EventChangeDisplayType(
         val displayType: DisplayType
-)
+): EventsBusEvent
