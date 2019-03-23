@@ -5,13 +5,10 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.layout.StackPane
-import lt.markmerkk.Graphics
-import lt.markmerkk.Main
-import lt.markmerkk.Tags
-import lt.markmerkk.TimeProvider
+import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.TicketLoader
-import lt.markmerkk.tickets.TicketsRepository
+import lt.markmerkk.tickets.TicketsNetworkRepo
 import lt.markmerkk.ui_2.adapters.TicketListAdapter
 import lt.markmerkk.ui_2.adapters.TicketViewItem
 import org.slf4j.LoggerFactory
@@ -31,10 +28,12 @@ class TicketsController : Initializable {
     @FXML lateinit var jfxTextFieldTicketSearch: JFXTextField
     @FXML lateinit var jfxTable: JFXTreeTableView<TicketViewItem>
 
-    @Inject lateinit var ticketsRepository: TicketsRepository
+    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var ticketsNetworkRepo: TicketsNetworkRepo
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var userSettings: UserSettings
 
     lateinit var ticketsListAdaper: TicketListAdapter
     lateinit var ticketLoader: TicketLoader
@@ -60,7 +59,9 @@ class TicketsController : Initializable {
         // Loaders
         ticketLoader = TicketLoader(
                 listener = object : TicketLoader.Listener {
-                    override fun onTicketsReady(tickets: List<Ticket>) {
+                    override fun onNewTickets(tickets: List<Ticket>) { }
+
+                    override fun onTicketsAvailable(tickets: List<Ticket>) {
                         ticketsListAdaper.renewTickets(tickets)
                     }
 
@@ -73,8 +74,10 @@ class TicketsController : Initializable {
                     }
 
                 },
-                ticketsRepository = ticketsRepository,
+                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                ticketsNetworkRepo = ticketsNetworkRepo,
                 timeProvider = timeProvider,
+                userSettings = userSettings,
                 ioScheduler = Schedulers.io(),
                 uiScheduler = JavaFxScheduler.getInstance()
         )
@@ -82,6 +85,7 @@ class TicketsController : Initializable {
             jfxDialog.close()
         }
         ticketLoader.onAttach()
+        ticketLoader.fetchTickets()
         ticketLoader.loadTickets()
     }
 

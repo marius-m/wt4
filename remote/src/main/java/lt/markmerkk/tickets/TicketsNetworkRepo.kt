@@ -1,7 +1,7 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
@@ -33,9 +33,9 @@ class TicketsNetworkRepo(
                             )
                     )
                 }
-                .doOnNext { ticketsDatabaseRepo.insertOrUpdate(it) }
+                .doOnNext { ticketsDatabaseRepo.insertOrUpdate(it).subscribe() }
                 .toList()
-                .flatMapSingle { Single.just(ticketsDatabaseRepo.loadTickets()) }
+                .flatMapSingle { ticketsDatabaseRepo.loadTickets() }
                 .toSingle()
     }
 

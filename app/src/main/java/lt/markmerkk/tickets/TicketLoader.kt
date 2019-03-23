@@ -1,8 +1,13 @@
 package lt.markmerkk.tickets
 
+import lt.markmerkk.Tags
+import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import rx.Scheduler
 import rx.Subscription
 
@@ -11,28 +16,61 @@ import rx.Subscription
  */
 class TicketLoader(
         private val listener: Listener,
-        private val ticketsRepository: TicketsRepository,
+        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
+        private val ticketsNetworkRepo: TicketsNetworkRepo,
         private val timeProvider: TimeProvider,
+        private val userSettings: UserSettings,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
 
-    private var subscription: Subscription? = null
+    private var networkSubscription: Subscription? = null
+    private var dbSubscription: Subscription? = null
     private var tickets: List<Ticket> = emptyList()
 
     fun onAttach() {}
     fun onDetach() {
-        subscription?.unsubscribe()
+        dbSubscription?.unsubscribe()
+        networkSubscription?.unsubscribe()
     }
 
-    fun loadTickets() {
-        subscription?.unsubscribe()
-        subscription = ticketsRepository.tickets(ticketRefreshTimeoutInDays = 1)
+    fun fetchTickets(
+            forceRefresh: Boolean = false
+    ) {
+        networkSubscription?.unsubscribe()
+        val now = timeProvider.now()
+        val isFreshEnough = isTicketFreshEnough(
+                lastTimeout = DateTime(userSettings.ticketLastUpdate),
+                timeoutInMinutes = TICKET_TIMEOUT_MINUTES,
+                now = now
+        )
+        if (isFreshEnough && !forceRefresh) {
+            logger.info("Ignoring ticket search, as tickets are fresh enough")
+            return
+        }
+        logger.info("Refreshing tickets")
+        networkSubscription = ticketsNetworkRepo.searchRemoteTicketsAndCache(timeProvider.now())
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({
                     if (it.isNotEmpty()) {
-                        listener.onTicketsReady(it)
+                        listener.onNewTickets(it)
+                        loadTickets()
+                    }
+                }, {
+                    listener.onError(it)
+                })
+    }
+
+    fun loadTickets() {
+        logger.info("Loading tickets from database")
+        dbSubscription?.unsubscribe()
+        dbSubscription = ticketsDatabaseRepo.loadTickets()
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .subscribe({
+                    if (it.isNotEmpty()) {
+                        listener.onTicketsAvailable(it)
                         tickets = it
                     } else {
                         listener.onNoTickets()
@@ -46,7 +84,7 @@ class TicketLoader(
 
     fun search(searchInput: String) {
         if (searchInput.length <= 1) {
-            listener.onTicketsReady(tickets)
+            listener.onTicketsAvailable(tickets)
             return
         }
         val ticketDescriptions = tickets.map { it.description }
@@ -62,18 +100,32 @@ class TicketLoader(
         val ticketsWithFilterOnDescriptions = tickets.filter { topDescriptions.contains(it.description) }
         val ticketResult = ticketsWithSimilarCode
                 .plus(ticketsWithFilterOnDescriptions)
-        listener.onTicketsReady(ticketResult)
+        listener.onTicketsAvailable(ticketResult)
     }
 
     interface Listener {
-        fun onTicketsReady(tickets: List<Ticket>)
+        fun onNewTickets(tickets: List<Ticket>)
+        fun onTicketsAvailable(tickets: List<Ticket>)
         fun onNoTickets()
         fun onError(throwable: Throwable)
     }
 
-    data class TicketSearchResult(
-            val ticket: Ticket,
-            val score: Int
-    )
+    companion object {
+        private val logger = LoggerFactory.getLogger(Tags.TICKETS)
+        const val TICKET_TIMEOUT_MINUTES = 30
+
+        /**
+         * Checks if timeout has expired to fetch new tickets from
+         * the network
+         */
+        fun isTicketFreshEnough(
+                lastTimeout: DateTime,
+                timeoutInMinutes: Int,
+                now: DateTime
+        ): Boolean {
+            return DateTime(lastTimeout).plusMinutes(timeoutInMinutes)
+                    .isAfter(now)
+        }
+    }
 
 }

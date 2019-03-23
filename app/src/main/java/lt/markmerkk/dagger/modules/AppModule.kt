@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
-import lt.markmerkk.tickets.TicketsRepository
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
@@ -139,22 +138,6 @@ class AppModule(
         )
         val database = DBConnProvider("wt4_2.db")
         return TicketsDatabaseRepo(database, migrations)
-    }
-
-    @Provides
-    @Singleton
-    fun providesTicketsRepository(
-            ticketsDatabaseRepo: TicketsDatabaseRepo,
-            ticketsNetworkRepo: TicketsNetworkRepo,
-            userSettings: UserSettings,
-            timeProvider: TimeProvider
-    ): TicketsRepository {
-        return TicketsRepository(
-                ticketsDatabaseRepo,
-                ticketsNetworkRepo,
-                userSettings,
-                timeProvider
-        )
     }
 
     @Provides

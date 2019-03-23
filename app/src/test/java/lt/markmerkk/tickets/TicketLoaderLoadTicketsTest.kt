@@ -4,24 +4,23 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import lt.markmerkk.Mocks
-import lt.markmerkk.TimeMachine
-import lt.markmerkk.TimeProvider
+import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.tickets.TicketLoader
-import lt.markmerkk.tickets.TicketsNetworkRepo
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Single
 import rx.schedulers.Schedulers
+import java.lang.RuntimeException
 
-class TicketLoaderLoadTest {
+class TicketLoaderLoadTicketsTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
     @Mock lateinit var timeProvider: TimeProvider
-    @Mock lateinit var ticketsRepository: TicketsRepository
+    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
 
     @Before
@@ -29,8 +28,10 @@ class TicketLoaderLoadTest {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsRepository,
+                ticketsDatabaseRepo,
+                ticketsNetworkRepo,
                 timeProvider,
+                userSettings,
                 Schedulers.immediate(),
                 Schedulers.immediate()
         )
@@ -41,20 +42,20 @@ class TicketLoaderLoadTest {
     fun valid() {
         // Assemble
         doReturn(Single.just(listOf(Mocks.createTicket())))
-                .whenever(ticketsRepository).tickets(any())
+                .whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
         loader.loadTickets()
 
         // Assert
-        verify(listener).onTicketsReady(any())
+        verify(listener).onTicketsAvailable(any())
     }
 
     @Test
     fun noTickets() {
         // Assemble
-        doReturn(Single.just(emptyList<Ticket>()))
-                .whenever(ticketsRepository).tickets(any())
+        doReturn(Single.just(emptyList<List<Ticket>>()))
+                .whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
         loader.loadTickets()
@@ -67,7 +68,7 @@ class TicketLoaderLoadTest {
     fun ticketFailure() {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
-                .whenever(ticketsRepository).tickets(any())
+                .whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
         loader.loadTickets()
