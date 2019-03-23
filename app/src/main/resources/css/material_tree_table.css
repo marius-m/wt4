@@ -51,7 +51,7 @@
 }
 
 .tree-table-view .column-header .label {
-    -fx-text-fill: -color-header-text;
+    -fx-text-fill: black;
     -fx-padding: 8 0 8 0;
 }
 

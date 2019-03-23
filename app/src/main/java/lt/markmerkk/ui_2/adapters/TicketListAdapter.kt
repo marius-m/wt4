@@ -5,21 +5,17 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.control.*
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.CornerRadii
+import javafx.scene.control.Label
+import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeTableCell
+import javafx.scene.control.TreeTableColumn
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import javafx.util.Callback
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
-import lt.markmerkk.GraphicsGlyph
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.Ticket
 import org.slf4j.LoggerFactory
@@ -106,9 +102,6 @@ class TicketListAdapter(
     }
 
     fun renewTickets(tickets: List<Ticket>) {
-//        val ticketsAsString = tickets
-//                .map { "${it.code.code}: ${it.description}" }
-//                .map { Label(it) }
         val ticketAsItems = tickets.map { TicketViewItem(it, it.code.code, it.description) }
         ticketViewItems.clear()
         ticketViewItems.addAll(ticketAsItems)
