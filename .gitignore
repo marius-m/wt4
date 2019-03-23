@@ -30,21 +30,35 @@ proguard/
 # OS X
 .DS_Store
 
-# Android Studio
+# app module
+app/src/main/resources/version.properties
+app/src/main/deploy/package/macosx/Info.plist
+app/src/main/deploy/keystore.jks
+app/out
+app/test_database.db
+app/nullusr.properties
+app/wt4_1.db
+app/wt4_2.db
+
+# components module
+components/nullusr.properties
+
+# database2 module
+database2/generate/wt4_2.db
+database2/out
+
+# mock factory
+mock-factory/out
+
+# Other
 out4/
 build/
 usr.properties
-app/src/main/resources/version.properties
 deploy_pass.properties
 tools/remote.txt
 tools/client.txt
-app/src/main/deploy/package/macosx/Info.plist
-app/test_database.db
-app/nullusr.properties
 database/test_database.db
-app/out
 components/out
 database/out
 models/out
 remote/out
-app/src/main/deploy/keystore.jks
