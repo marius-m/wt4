@@ -23,6 +23,19 @@ class TicketLoaderLoadTicketsTest {
     @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
 
+    private val tickets: List<Ticket> = listOf(
+            "google",           // TTS-1
+            "bing",             // TTS-2
+            "facebook",         // TTS-3
+            "linkedin",         // TTS-4
+            "twitter",          // TTS-5
+            "googleplus",       // TTS-6
+            "bingnews",         // TTS-7
+            "plexoogl"          // TTS-8
+    ).mapIndexed { index: Int, description: String ->
+        Mocks.createTicket(code = "TTS-00${index + 1}", description = description)
+    }
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
@@ -41,7 +54,7 @@ class TicketLoaderLoadTicketsTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn(Single.just(listOf(Mocks.createTicket())))
+        doReturn(Single.just(tickets))
                 .whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
@@ -49,6 +62,19 @@ class TicketLoaderLoadTicketsTest {
 
         // Assert
         verify(listener).onTicketsAvailable(any())
+    }
+
+    @Test
+    fun valid_withFilter() {
+        // Assemble
+        doReturn(Single.just(tickets))
+                .whenever(ticketsDatabaseRepo).loadTickets()
+
+        // Act
+        loader.loadTickets(inputFilter = "TTS-005")
+
+        // Assert
+        verify(listener).onTicketsAvailable(listOf(tickets[4]))
     }
 
     @Test

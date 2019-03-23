@@ -52,9 +52,7 @@ class TicketsController : Initializable {
         jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
         ticketsListAdaper = TicketListAdapter(jfxDialogLayout, jfxTable, graphics)
-        jfxTextFieldTicketSearch.textProperty().addListener { _, _, newValue ->
-            ticketLoader.search(newValue)
-        }
+        jfxTextFieldTicketSearch.textProperty().addListener { _, _, newValue -> ticketLoader.applyFilter(newValue) }
 
         // Loaders
         ticketLoader = TicketLoader(
