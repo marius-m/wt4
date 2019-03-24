@@ -3,6 +3,7 @@ package lt.markmerkk.tickets
 import lt.markmerkk.Tags
 import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketCode
 import org.slf4j.LoggerFactory
 import rx.Scheduler
 import rx.Subscription
@@ -43,6 +44,10 @@ class TicketInfoLoader(
     }
 
     fun findTicket(inputCode: String) {
+        val ticketCode = TicketCode.new(inputCode)
+        if (ticketCode.isEmpty()) {
+            return
+        }
         searchSubscription?.unsubscribe()
         searchSubscription = ticketsDatabaseRepo.findTicketsByCode(inputCode)
                 .subscribeOn(ioScheduler)

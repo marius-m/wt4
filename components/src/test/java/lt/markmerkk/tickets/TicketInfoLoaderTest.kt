@@ -1,9 +1,6 @@
 package lt.markmerkk.tickets
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.Mocks
 import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.entities.Ticket
@@ -44,6 +41,26 @@ class TicketInfoLoaderTest {
 
         // Assert
         verify(listener).onTicketFound(tickets[0])
+    }
+
+    @Test
+    fun noInput() {
+        // Assemble
+        // Act
+        ticketInfoLoader.findTicket("")
+
+        // Assert
+        verify(ticketsDatabaseRepo, never()).findTicketsByCode(any())
+    }
+
+    @Test
+    fun malformedTicket() {
+        // Assemble
+        // Act
+        ticketInfoLoader.findTicket("asdf")
+
+        // Assert
+        verify(ticketsDatabaseRepo, never()).findTicketsByCode(any())
     }
 
     @Test
