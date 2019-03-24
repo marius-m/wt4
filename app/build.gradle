@@ -1,6 +1,7 @@
 
 apply plugin: 'application'
 apply plugin: 'kotlin'
+apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply from: 'deploy.gradle'
@@ -78,5 +79,5 @@ dependencies {
     implementation 'com.calendarfx:view:8.4.2'
 }
 
-shadowJar.dependsOn assemble
+//shadowJar.dependsOn assemble
 //jfxNative.dependsOn processJar
