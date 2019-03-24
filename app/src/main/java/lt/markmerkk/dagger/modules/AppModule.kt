@@ -7,6 +7,7 @@ import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
@@ -198,6 +199,14 @@ class AppModule(
     @Singleton
     fun provideGraphics(): Graphics<SVGGlyph> {
         return GraphicsGlyph()
+    }
+
+    @Provides
+    @Singleton
+    fun provideActiveLogData(
+            timeProvider: TimeProvider
+    ): ActiveLogPersistence {
+        return ActiveLogPersistence(timeProvider)
     }
 
 }

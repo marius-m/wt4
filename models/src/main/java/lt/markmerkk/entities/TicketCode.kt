@@ -7,7 +7,7 @@ data class TicketCode(
         val codeNumber: String
 ) {
 
-    val code: String = "$codeProject-$codeNumber"
+    val code: String = if (isEmpty()) "" else "$codeProject-$codeNumber"
 
     fun isEmpty(): Boolean = codeProject.isEmpty()
             && codeNumber.isEmpty()

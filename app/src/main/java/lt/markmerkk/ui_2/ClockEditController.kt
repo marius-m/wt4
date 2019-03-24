@@ -4,7 +4,6 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import javafx.event.EventType
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Hyperlink
@@ -12,19 +11,18 @@ import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
+import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.*
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
-import rx.observables.JavaFxObservable
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import java.net.URL
@@ -62,6 +60,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Inject lateinit var hostServices: HostServicesInteractor
+    @Inject lateinit var activeLogPersistence: ActiveLogPersistence
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -189,6 +188,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                     task = jfxTextFieldTicket.text,
                     comment = jfxTextFieldComment.text
             )
+            activeLogPersistence.reset()
         }
         jfxButtonSearch.graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0, 20.0)
         jfxButtonSearch.setOnAction {
@@ -211,6 +211,14 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         }
         jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
         jfxTextFieldTicketLink.graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
+        jfxTextFieldTicket.text = activeLogPersistence.ticketCode.code
+        jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->
+            activeLogPersistence.changeTicketCode(newValue)
+        }
+        jfxTextFieldComment.text = activeLogPersistence.comment
+        jfxTextFieldComment.textProperty().addListener { _, _, newValue ->
+            activeLogPersistence.changeComment(newValue)
+        }
         clockEditPresenter.onAttach()
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
