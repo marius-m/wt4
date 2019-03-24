@@ -99,11 +99,13 @@ Tricks that were being tackled in this project:
 ## Changelog
 
 ### 1.1.0
+
 Features:
   - Ticket search screen for easier ticket number binding to a log
   - Persistence when editing currently active log
   - Ticket name overview when ticket is bound to a log
   - Rewrite ticket synchronization with the remote server
+
 Tech:
   - Started removal of a custom ORM implementation
   - ..replacing with a lovely implementation of jOOQ!
