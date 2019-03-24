@@ -4,7 +4,6 @@ import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

@@ -16,11 +16,6 @@ import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 import kotlin.test.assertEquals
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-07-09
- */
 class JiraSearchSubscriberImplTest {
     val jiraClient: JiraClient = mock()
     val testSubscriber = TestSubscriber<Issue.SearchResult>()

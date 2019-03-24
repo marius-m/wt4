@@ -1,7 +1,6 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
@@ -15,11 +14,6 @@ import org.mockito.MockitoAnnotations
 import rx.Single
 import rx.schedulers.Schedulers
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-08-08
- */
 class JiraInteractorImplLocalWorksTest {
     @Mock lateinit var clientProvider: JiraClientProvider
     @Mock lateinit var searchSubscriber: JiraSearchSubscriber

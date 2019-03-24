@@ -1,10 +1,6 @@
 package lt.markmerkk
 
-import javafx.collections.ObservableList
-import lt.markmerkk.IDataListener
-
 /**
- * Created by mariusmerkevicius on 12/13/15.
  * Represents the exposed methods for handling simple events on the database.
  */
 interface IDataStorage<T> {

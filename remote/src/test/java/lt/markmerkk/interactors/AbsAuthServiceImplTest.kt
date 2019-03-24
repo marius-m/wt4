@@ -1,5 +1,8 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.interactors
 
+import lt.markmerkk.interactors.AuthService
+import lt.markmerkk.interactors.AuthServiceImpl
+import lt.markmerkk.interactors.LogLoader
 import org.junit.Before
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations

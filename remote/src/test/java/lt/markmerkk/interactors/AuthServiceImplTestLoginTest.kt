@@ -1,4 +1,4 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.interactors
 
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*

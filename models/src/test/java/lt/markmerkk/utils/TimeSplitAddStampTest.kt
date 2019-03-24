@@ -1,6 +1,5 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.utils.TimeSplit
 import org.junit.Test
 
 import org.assertj.core.api.Assertions.assertThat

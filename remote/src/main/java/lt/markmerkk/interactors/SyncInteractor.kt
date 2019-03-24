@@ -11,7 +11,6 @@ interface SyncInteractor {
     fun stop()
     fun syncAll()
     fun syncLogs()
-    fun syncIssues()
     fun addLoadingListener(listener: IRemoteLoadListener)
     fun removeLoadingListener(listener: IRemoteLoadListener)
 }

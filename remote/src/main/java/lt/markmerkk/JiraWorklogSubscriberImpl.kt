@@ -11,8 +11,6 @@ import rx.Observable
 import rx.Subscriber
 
 /**
- * @author mariusmerkevicius
- * @since 2016-07-09
  * Responsible for pulling worklogs from jira
  */
 class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<JiraWork> {

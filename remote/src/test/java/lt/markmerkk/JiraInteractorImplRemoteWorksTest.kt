@@ -4,7 +4,6 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import jdk.nashorn.internal.objects.NativeRegExp.test
 import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
@@ -19,7 +18,6 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Observable
 import rx.Single
-import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 
 class JiraInteractorImplRemoteWorksTest {

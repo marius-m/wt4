@@ -2,7 +2,6 @@ package lt.markmerkk.mvp
 
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
 import org.slf4j.LoggerFactory
 import rx.Observable

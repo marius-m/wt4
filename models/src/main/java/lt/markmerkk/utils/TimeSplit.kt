@@ -22,7 +22,7 @@ object TimeSplit {
         if (rawComment.isNullOrEmpty()) return null
         rawComment = removeStamp(rawComment) ?: "" // Will remove older comment if found one
         return String.format(
-                "%s - %s " + TimeSplit.SEPERATOR + " %s",
+                "%s - %s " + SEPERATOR + " %s",
                 LogFormatters.shortFormat.print(start),
                 LogFormatters.shortFormat.print(end),
                 rawComment

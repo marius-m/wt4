@@ -3,7 +3,6 @@ package lt.markmerkk.merger
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.utils.TimeSplit
-import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime

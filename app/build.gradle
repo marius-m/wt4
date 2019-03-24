@@ -55,12 +55,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    implementation project(':jira-client')
-    implementation project(':database')
-    implementation project(':remote')
-    implementation project(':models')
     implementation project(':components')
+    implementation project(':database')
     implementation project(':database2')
+    implementation project(':remote')
+    implementation project(':jira-client')
+    implementation project(':models')
     implementation project(':mock-factory')
 
     implementation 'com.brsanthu:google-analytics-java:1.1.2'
@@ -76,7 +76,6 @@ dependencies {
     implementation 'com.airhacks:afterburner.fx:1.7.0'
     implementation 'org.jfxtras:jfxtras-agenda:8.0-r5'
     implementation 'com.calendarfx:view:8.4.2'
-    implementation 'me.xdrop:fuzzywuzzy:1.2.0' // source: https://github.com/xdrop/fuzzywuzzy
 }
 
 shadowJar.dependsOn assemble

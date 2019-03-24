@@ -34,7 +34,6 @@ class SyncInteractorImplDownloadTest {
     val controller = SyncInteractorImpl(
             jiraInteractor = jiraInteractor,
             logStorage = logStorage,
-            issueStorage = issueStorage,
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,
             dayProvider = dayProvider,

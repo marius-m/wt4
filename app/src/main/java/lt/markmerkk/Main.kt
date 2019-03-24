@@ -9,7 +9,6 @@ import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
-import lt.markmerkk.ui.MainView
 import lt.markmerkk.ui_2.MainView2
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
@@ -96,19 +95,12 @@ class Main : Application(), KeepAliveInteractor.Listener {
     }
 
     fun initScene(stage: Stage): Scene {
-        if (MATERIAL) {
-            val stackContainer = StackPane(MainView2().view)
-            val scene = Scene(stackContainer)
-            stackContainer.prefWidthProperty().bind(scene.widthProperty())
-            stackContainer.prefHeightProperty().bind(scene.heightProperty())
-            scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
-            scene.stylesheets.add(javaClass.getResource("/css/material_tree_table.css").toExternalForm())
-            return scene
-        }
-        val mainView = MainView(stage)
-        val scene = Scene(mainView.view)
-        val cssResource1 = javaClass.getResource("/text-field-red-border.css").toExternalForm()
-        scene.stylesheets.add(cssResource1)
+        val stackContainer = StackPane(MainView2().view)
+        val scene = Scene(stackContainer)
+        stackContainer.prefWidthProperty().bind(scene.widthProperty())
+        stackContainer.prefHeightProperty().bind(scene.heightProperty())
+        scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
+        scene.stylesheets.add(javaClass.getResource("/css/material_tree_table.css").toExternalForm())
         return scene
     }
 
@@ -160,7 +152,6 @@ class Main : Application(), KeepAliveInteractor.Listener {
         val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
 
         var DEBUG = false
-        var MATERIAL = true
 
         var SCENE_WIDTH = 600
         var SCENE_HEIGHT = 500

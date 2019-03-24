@@ -1,4 +1,4 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.interactors
 
 import org.slf4j.LoggerFactory
 import java.io.File

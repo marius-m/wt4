@@ -16,7 +16,6 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.Main
 import lt.markmerkk.Strings
 import lt.markmerkk.afterburner.InjectorNoDI
-import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ProfilesDialog
@@ -104,10 +103,6 @@ class UIEButtonSettings(
                 val jfxDialog = StatisticsDialog().view as JFXDialog
                 jfxDialog.show(externalSourceNode.rootNode())
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
-            }
-            labelBackToDefault -> {
-                Main.Companion.MATERIAL = false
-                Main.Companion.mainInstance!!.restart()
             }
             labelSettings -> {
                 val dialog = SettingsDialog()

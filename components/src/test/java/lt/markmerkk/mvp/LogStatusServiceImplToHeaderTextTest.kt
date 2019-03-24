@@ -4,7 +4,6 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.mvp.MocksLogEditService.createValidLogWithDate
 import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Assert.*
 import org.junit.Before
@@ -12,7 +11,6 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.schedulers.Schedulers
-import java.time.LocalDateTime
 
 /**
  * @author mariusmerkevicius

@@ -2,20 +2,14 @@ package lt.markmerkk
 
 import lt.markmerkk.entities.*
 import lt.markmerkk.tickets.JiraSearchSubscriber
-import net.rcarz.jiraclient.Issue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 
-/**
- * @author mariusmerkevicius
- * @since 2016-07-03
- */
 class JiraInteractorImpl(
         val jiraClientProvider: JiraClientProvider,
         val logStorage: IDataStorage<SimpleLog>,
-        val issueStorage: IDataStorage<LocalIssue>,
         val jiraSearchSubscriber: JiraSearchSubscriber,
         val jiraWorklogSubscriber: JiraWorklogSubscriber,
         val ioScheduler: Scheduler
@@ -45,32 +39,6 @@ class JiraInteractorImpl(
         return Observable.defer { jiraClientProvider.clientStream().toObservable() }
                 .subscribeOn(ioScheduler)
                 .flatMap { Observable.from(logStorage.data) }
-                .toList()
-    }
-
-    // fixme: Should not provide schedulers with observables
-    override fun jiraIssues(): Observable<List<Issue>> {
-        return Observable.defer { jiraClientProvider.clientStream().toObservable() }
-                .subscribeOn(ioScheduler)
-                .flatMap { jiraSearchSubscriber.userIssuesObservable() }
-                .flatMap { Observable.from(it.issues) }
-                .toList()
-    }
-
-    // fixme: Should not provide schedulers with observables
-    override fun jiraLocalIssuesOld(startSync: Long): Observable<List<LocalIssue>> {
-        return Observable.defer {
-            Observable.from(
-                    issueStorage.customQuery(
-                            String.format(
-                                    "%s < %d",
-                                    RemoteEntity.KEY_DOWNLOAD_MILLIS,
-                                    startSync
-                            )
-                    ))
-        }.subscribeOn(ioScheduler)
-                .filter { startSync > it.download_millis } // assuring old items, not necessary
-                .subscribeOn(ioScheduler)
                 .toList()
     }
 

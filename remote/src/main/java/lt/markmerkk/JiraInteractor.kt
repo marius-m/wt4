@@ -13,6 +13,4 @@ import rx.Observable
 interface JiraInteractor {
     fun jiraRemoteWorks(start: Long, end: Long): Observable<List<JiraWork>>
     fun jiraLocalWorks(): Observable<List<SimpleLog>>
-    fun jiraIssues(): Observable<List<Issue>>
-    fun jiraLocalIssuesOld(startSync: Long): Observable<List<LocalIssue>>
 }

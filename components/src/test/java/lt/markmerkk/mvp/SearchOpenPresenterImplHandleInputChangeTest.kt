@@ -2,8 +2,6 @@ package lt.markmerkk.mvp
 
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import lt.markmerkk.utils.IssueSplitImpl
-import org.junit.Assert.*
 import org.junit.Test
 
 /**

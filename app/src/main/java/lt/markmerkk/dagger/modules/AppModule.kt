@@ -169,12 +169,6 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideBasicIssueStorage(dbExecutor: IExecutor): IssueStorage {
-        return IssueStorage(dbExecutor)
-    }
-
-    @Provides
-    @Singleton
     fun provideHourGlass(): HourGlass {
         return HourGlass()
     }

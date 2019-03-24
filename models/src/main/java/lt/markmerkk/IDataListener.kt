@@ -1,7 +1,5 @@
 package lt.markmerkk
 
-import javafx.collections.ObservableList
-
 /**
  * A callback listener when some event occurs on
  * storage

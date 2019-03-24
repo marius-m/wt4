@@ -11,9 +11,9 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import lt.markmerkk.*
 import lt.markmerkk.events.EventSnackBarMessage
-import lt.markmerkk.mvp.AuthService
-import lt.markmerkk.mvp.AuthServiceImpl
-import lt.markmerkk.mvp.LogLoaderImpl
+import lt.markmerkk.interactors.AuthService
+import lt.markmerkk.interactors.AuthServiceImpl
+import lt.markmerkk.interactors.LogLoaderImpl
 import org.slf4j.LoggerFactory
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers

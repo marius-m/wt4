@@ -1,7 +1,6 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.mvp.AuthService
 import rx.Completable
 import rx.Observable
 

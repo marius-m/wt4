@@ -5,7 +5,6 @@ import com.calendarfx.model.CalendarEvent
 import com.calendarfx.model.CalendarSource
 import com.calendarfx.model.Entry
 import com.calendarfx.view.DateControl
-import com.calendarfx.view.DayViewBase
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
 import com.jfoenix.svg.SVGGlyph
@@ -35,7 +34,6 @@ import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZonedDateTime
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject

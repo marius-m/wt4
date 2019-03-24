@@ -1,10 +1,8 @@
 package lt.markmerkk.ui_2.bridges
 
-import com.airhacks.afterburner.views.FXMLView
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.svg.SVGGlyph
-import javafx.geometry.Insets
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import lt.markmerkk.*
