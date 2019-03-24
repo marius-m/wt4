@@ -10,18 +10,12 @@ import org.junit.Test
 import rx.Observable
 import rx.schedulers.Schedulers
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-07-03
- */
 class SyncInteractorImplTest {
     val settings: UserSettings = mock()
     val dayProvider: DayProvider = mock()
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
     val logStorage: IDataStorage<SimpleLog> = mock()
-    val issueStorage: IDataStorage<LocalIssue> = mock()
     val autoUpdateInteractor: AutoUpdateInteractor = mock()
 
     val controller = SyncInteractorImpl(

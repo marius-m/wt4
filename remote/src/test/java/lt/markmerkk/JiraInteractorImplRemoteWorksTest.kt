@@ -5,7 +5,6 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.tickets.JiraSearchSubscriber
 import net.rcarz.jiraclient.Issue
@@ -26,7 +25,6 @@ class JiraInteractorImplRemoteWorksTest {
     @Mock lateinit var searchSubscriber: JiraSearchSubscriber
     @Mock lateinit var worklogSubscriber: JiraWorklogSubscriber
     @Mock lateinit var dataStorage: IDataStorage<SimpleLog>
-    @Mock lateinit var issueStorage: IDataStorage<LocalIssue>
     @Mock lateinit var jiraClient: JiraClient
 
     lateinit var interactor: JiraInteractorImpl
@@ -37,7 +35,6 @@ class JiraInteractorImplRemoteWorksTest {
         interactor = JiraInteractorImpl(
                 clientProvider,
                 dataStorage,
-                issueStorage,
                 searchSubscriber,
                 worklogSubscriber,
                 Schedulers.immediate()

@@ -12,18 +12,12 @@ import rx.Observable
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-08-07
- */
 class SyncInteractorImplDownloadTest {
     val settings: UserSettings = mock()
     val dayProvider: DayProvider = mock()
     val jiraInteractor: JiraInteractor = mock()
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
     val logStorage: IDataStorage<SimpleLog> = mock()
-    val issueStorage: IDataStorage<LocalIssue> = mock()
     val autoUpdateInteractor: AutoUpdateInteractor = mock()
 
     val remoteLogPull: RemoteLogPull = mock()

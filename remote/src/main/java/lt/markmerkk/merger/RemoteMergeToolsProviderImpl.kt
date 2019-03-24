@@ -2,9 +2,7 @@ package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 
 /**
@@ -13,8 +11,7 @@ import net.rcarz.jiraclient.WorkLog
  */
 class RemoteMergeToolsProviderImpl(
         private val remoteMergeClient: RemoteMergeClient,
-        private val remoteLogMergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>,
-        private val remoteIssueMergeExecutor: RemoteMergeExecutor<LocalIssue, Issue>
+        private val remoteLogMergeExecutor: RemoteMergeExecutor<SimpleLog, WorkLog>
 ) : RemoteMergeToolsProvider {
 
     override fun logPushMerger(
@@ -37,19 +34,6 @@ class RemoteMergeToolsProviderImpl(
                 mergeExecutor = remoteLogMergeExecutor,
                 remoteLogFilter = filter,
                 remoteIssue = remoteLog
-        )
-    }
-
-    override fun issuePullMerger(
-            downloadMillis: Long,
-            issue: Issue,
-            filter: JiraFilter<Issue>
-    ): RemoteIssuePull {
-        return RemoteIssuePullImpl(
-                remoteMergeExecutor = remoteIssueMergeExecutor,
-                filter = filter,
-                downloadMillis = downloadMillis,
-                issue = issue
         )
     }
 

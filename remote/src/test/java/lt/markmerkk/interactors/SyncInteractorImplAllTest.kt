@@ -2,31 +2,22 @@ package lt.markmerkk.interactors
 
 import com.nhaarman.mockito_kotlin.*
 import lt.markmerkk.DayProvider
-import lt.markmerkk.JiraInteractor
-import lt.markmerkk.entities.LocalIssue
-import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.merger.RemoteIssuePull
-import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
+import lt.markmerkk.JiraInteractor
 import lt.markmerkk.UserSettings
-import net.rcarz.jiraclient.Issue
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.merger.RemoteMergeToolsProvider
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
 import rx.schedulers.Schedulers
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-08-09
- */
 class SyncInteractorImplAllTest {
 
     val jiraInteractor: JiraInteractor = mock()
     val userSettings: UserSettings = mock()
     val logStorage: IDataStorage<SimpleLog> = mock()
     val remoteToolsProvider: RemoteMergeToolsProvider = mock()
-    val remoteIssueMerge: RemoteIssuePull = mock()
     val dayProvider: DayProvider = mock()
     val autoUpdateInteractor: AutoUpdateInteractor = mock()
 

@@ -15,10 +15,6 @@ import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-07
- */
 @Module
 class SyncModule {
 
@@ -45,14 +41,6 @@ class SyncModule {
             jiraClientProvider: JiraClientProvider
     ): JiraWorklogSubscriber {
         return JiraWorklogSubscriberImpl(jiraClientProvider)
-    }
-
-    @Provides
-    @Singleton
-    fun providesRemoteIssueMergeExecutor(
-            executor: IExecutor
-    ): RemoteIssueMergeExecutorImpl {
-        return RemoteIssueMergeExecutorImpl(executor)
     }
 
     @Provides
@@ -92,13 +80,11 @@ class SyncModule {
     @Singleton
     fun providesRemoteMergeToolsProvider(
             remoteMergeClient: RemoteMergeClient,
-            remoteLogMergeExecutor: RemoteLogMergeExecutorImpl,
-            remoteIssueMergeExecutor: RemoteIssueMergeExecutorImpl
+            remoteLogMergeExecutor: RemoteLogMergeExecutorImpl
     ): RemoteMergeToolsProvider {
         return RemoteMergeToolsProviderImpl(
                 remoteMergeClient = remoteMergeClient,
-                remoteLogMergeExecutor = remoteLogMergeExecutor,
-                remoteIssueMergeExecutor = remoteIssueMergeExecutor
+                remoteLogMergeExecutor = remoteLogMergeExecutor
         )
     }
 

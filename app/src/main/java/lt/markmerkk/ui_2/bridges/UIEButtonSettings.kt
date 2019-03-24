@@ -39,10 +39,6 @@ class UIEButtonSettings(
             strings.getString("ui_button_settings_total"),
             graphics.from(Glyph.STATISTICS, Color.BLACK, 20.0)
     )
-    private val labelBackToDefault = Label(
-            strings.getString("ui_button_settings_default_view"),
-            graphics.from(Glyph.PAINT, Color.BLACK, 20.0)
-    )
     private val labelSettings = Label(
             strings.getString("ui_button_settings_settings"),
             graphics.from(Glyph.SETTINGS, Color.BLACK, 20.0)
@@ -84,7 +80,6 @@ class UIEButtonSettings(
         labelsList.items.add(labelProfiles)
         labelsList.items.add(labelStatistics)
         labelsList.items.add(labelSettings)
-        labelsList.items.add(labelBackToDefault)
         labelsList.items.add(labelTest)
         labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
             override fun changed(observable: ObservableValue<out Label>?, oldValue: Label?, newValue: Label) {

@@ -7,7 +7,6 @@ import lt.markmerkk.ui.display.DisplayLogPresenter
 import lt.markmerkk.ui.graphs.GraphsFxPresenter
 import lt.markmerkk.ui.settings.SettingsPresenter
 import lt.markmerkk.ui.status.StatusPresenter
-import lt.markmerkk.ui.update.UpdateLogPresenter
 import lt.markmerkk.ui.version.VersionPresenter
 import lt.markmerkk.ui.week.WeekPresenter
 import lt.markmerkk.ui_2.*
@@ -25,8 +24,6 @@ interface PresenterComponent {
     fun inject(displayLogPresenter: DisplayLogPresenter)
 
     fun inject(weekPresenter: WeekPresenter)
-
-    fun inject(updateLogPresenter: UpdateLogPresenter)
 
     fun inject(settingsPresenter: SettingsPresenter)
 
