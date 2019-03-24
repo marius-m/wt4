@@ -74,9 +74,10 @@
                                        HBox.hgrow="NEVER"
                                        VBox.vgrow="NEVER">
                                </JFXTextField>
+                               <JFXButton fx:id="jfxButtonSearch"></JFXButton>
                            </children>
                        </HBox>
-                       <HBox alignment="CENTER_LEFT">
+                       <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                            <padding>
                                <Insets
                                        top="26.0"

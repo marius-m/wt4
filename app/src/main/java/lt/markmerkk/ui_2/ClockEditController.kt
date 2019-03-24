@@ -1,14 +1,18 @@
 package lt.markmerkk.ui_2
 
 import com.google.common.eventbus.EventBus
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
+import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Label
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
-import lt.markmerkk.Strings
+import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
+import lt.markmerkk.*
+import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.events.EventSnackBarMessage
+import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.*
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
@@ -37,11 +41,14 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @FXML lateinit var jfxTextFieldTicket: JFXTextField
     @FXML lateinit var jfxTextFieldComment: JFXTextArea
     @FXML lateinit var jfxButtonSave: JFXButton
+    @FXML lateinit var jfxButtonSearch: JFXButton
 
     @Inject lateinit var hourglass: HourGlass
     @Inject lateinit var storage: LogStorage
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var strings: Strings
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var stageProperties: StageProperties
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -51,7 +58,16 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private lateinit var logEditService: LogEditService
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.Companion.component!!.presenterComponent().inject(this)
+        Main.component!!.presenterComponent().inject(this)
+        val dialogPadding = 100.0
+        stageProperties.propertyWidth.addListener { _, _, newValue ->
+            jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
+        }
+        stageProperties.propertyHeight.addListener { _, _, newValue ->
+            jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
+        }
+        jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
+        jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
         jfxButtonDismiss.setOnAction {
             jfxDialog.close()
         }
@@ -146,15 +162,33 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                     comment = jfxTextFieldComment.text
             )
         }
+        jfxButtonSearch.graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0, 20.0)
+        jfxButtonSearch.setOnAction {
+            val dialog = TicketsDialog()
+            val jfxDialog = dialog.view as JFXDialog
+            jfxDialog.show(jfxDialogLayout.parent as StackPane) // is this correct ?
+            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+        }
         clockEditPresenter.onAttach()
         uiBridgeDateTimeHandler.onAttach()
+        eventBus.register(this)
     }
 
     @PreDestroy
     fun destroy() {
+        eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
         clockEditPresenter.onDetach()
     }
+
+    //region Events
+
+    @Subscribe
+    fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
+        jfxTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+    }
+
+    //endregion
 
     //region MVP Impl
 
