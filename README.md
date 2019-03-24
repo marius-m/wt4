@@ -87,6 +87,7 @@ Tricks that were being tackled in this project:
 * [FXExperiende](http://fxexperience.com/) - Advanced components for the jfx
   - Auto completion text view
 * [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
+* [jOOQ](https://www.jooq.org/)
 
 ## FAQ
 
@@ -96,6 +97,17 @@ Tricks that were being tackled in this project:
 * A: Try checking settings window, as most of the stuff that is done in the background are printed out. That might give you an idea when might not be working.
 
 ## Changelog
+
+### 1.1.0
+Features:
+  - Ticket search screen for easier ticket number binding to a log
+  - Persistence when editing currently active log
+  - Ticket name overview when ticket is bound to a log
+  - Rewrite ticket synchronization with the remote server
+Tech:
+  - Started removal of a custom ORM implementation
+  - ..replacing with a lovely implementation of jOOQ!
+  - Simplifying synchronization mechanism altogether
 
 ### 1.0.9
 - Bugfix when JIRA ticket code has numbers (for ex.: T2EE-123)

@@ -15,8 +15,8 @@ buildscript {
 }
 
 allprojects {
-  ext.versionName = "1.0.9"
-  ext.versionCode = "28"
+  ext.versionName = "1.1.0"
+  ext.versionCode = "29"
 
   apply plugin: 'maven'
   apply plugin: 'kotlin'
