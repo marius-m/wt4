@@ -2,19 +2,16 @@ package lt.markmerkk.interactors
 
 import lt.markmerkk.*
 import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.UserSettings
-import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import rx.schedulers.Schedulers
 import rx.util.async.Async
 
 /**
@@ -23,7 +20,6 @@ import rx.util.async.Async
 class SyncInteractorImpl(
         private val jiraInteractor: JiraInteractor,
         private val userSettings: UserSettings,
-        private val issueStorage: IDataStorage<LocalIssue>,
         private val logStorage: IDataStorage<SimpleLog>,
         private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
         private val dayProvider: DayProvider,
@@ -64,11 +60,8 @@ class SyncInteractorImpl(
                 dayProvider.startDay(),
                 dayProvider.endDay()
         )
-        val issueValidator = JiraFilterIssue()
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
-                .flatMap { issueCacheObservable(issueValidator, syncStart) }
-                .flatMap { clearOldIssueCacheObservable(syncStart) }
                 .doOnSubscribe { loading = true }
                 .doOnTerminate { loading = false }
                 .observeOn(uiScheduler)
@@ -81,11 +74,9 @@ class SyncInteractorImpl(
                     val errorMsg = it.message
                     remoteLoadListeners.forEach { it.onError(errorMsg) }
                     logStorage.notifyDataChange()
-                    issueStorage.notifyDataChange()
                     autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 }, {
                     logStorage.notifyDataChange()
-                    issueStorage.notifyDataChange()
                     autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })
     }
@@ -121,30 +112,6 @@ class SyncInteractorImpl(
                 })
     }
 
-    override fun syncIssues() {
-        if (loading) {
-            logger.info("Sync in progress")
-            return
-        }
-        val syncStart = System.currentTimeMillis()
-        val filter = JiraFilterIssue()
-        subscription = issueCacheObservable(filter, syncStart)
-                .flatMap { clearOldIssueCacheObservable(syncStart) }
-                .doOnSubscribe { loading = true }
-                .doOnUnsubscribe { loading = false }
-                .observeOn(uiScheduler)
-                .subscribe({
-                    val syncEnd = System.currentTimeMillis()
-                    logger.info("Issue sync success in ${syncEnd - syncStart}ms!")
-                }, {
-                    logger.info("Issue sync error: ${it.message}")
-                    logger.error("Log sync error data: ", it)
-                    issueStorage.notifyDataChange()
-                }, {
-                    issueStorage.notifyDataChange()
-                })
-    }
-
     //region Observables
 
     fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<List<SimpleLog>> {
@@ -173,26 +140,6 @@ class SyncInteractorImpl(
                 .toList()
     }
 
-    fun issueCacheObservable(filter: JiraFilter<Issue>, syncStart: Long): Observable<List<Issue>> {
-        return jiraInteractor.jiraIssues()
-                .flatMap { Observable.from(it) }
-                .flatMap {
-                    val merger = remoteMergeToolsProvider.issuePullMerger(syncStart, it, filter)
-                    Observable.fromCallable(merger)
-                }
-                .toList()
-    }
-
-    fun clearOldIssueCacheObservable(syncStart: Long): Observable<List<LocalIssue>> {
-        return jiraInteractor.jiraLocalIssuesOld(syncStart)
-                .flatMap { Observable.from(it) }
-                .flatMap {
-                    issueStorage.delete(it)
-                    Observable.just(it)
-                }
-                .toList()
-    }
-
     //endregion
 
     override fun addLoadingListener(listener: IRemoteLoadListener) {
@@ -206,7 +153,7 @@ class SyncInteractorImpl(
     override fun isLoading(): Boolean = loading
 
     companion object {
-        private val logger = LoggerFactory.getLogger(JiraSearchSubscriberImpl::class.java)
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)
     }
 
 }

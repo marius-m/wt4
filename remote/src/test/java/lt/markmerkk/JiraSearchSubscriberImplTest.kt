@@ -4,23 +4,18 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import lt.markmerkk.UserSettings
+import lt.markmerkk.tickets.JiraSearchSubscriberImpl
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
-import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
+import rx.Single
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 import kotlin.test.assertEquals
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-07-09
- */
 class JiraSearchSubscriberImplTest {
     val jiraClient: JiraClient = mock()
     val testSubscriber = TestSubscriber<Issue.SearchResult>()
@@ -30,7 +25,7 @@ class JiraSearchSubscriberImplTest {
 
     @Before
     fun setUp() {
-        doReturn(jiraClient).whenever(jiraClientProvider).client()
+        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
     }
 
     @Test

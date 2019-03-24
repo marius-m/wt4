@@ -213,41 +213,41 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     }
 }
 
-remotes {
-    webServer {
+//remotes {
+//    webServer {
 //        host = '212.24.100.154'
 //        user = deployProps.getProperty("remote_user")
 //        password = deployProps.getProperty("remote_pass")
 //        authentications = ['password']
-    }
-}
+//    }
+//}
 
 task deploy << {
-    ssh.settings {
-        knownHosts = allowAnyHosts
-    }
-    ssh.run {
-        session(remotes.webServer) {
-            def localPath = files(
-                    new File(rootDir, "out4/app/app.jar"),
-                    new File(rootDir, "out4/app/getdown.txt"),
-                    new File(rootDir, "out4/app/digest.txt"),
-                    new File(rootDir, "out4/app/digest2.txt"),
-            )
-            def localResource = files (
-                    new File(rootDir, "out4/app/resources/splash.png"),
-                    new File(rootDir, "out4/app/resources/icon.png")
-            )
-            def remotePath = "/var/www/html/$appPath"
-            def remoteResourcePath = "$remotePath/resources"
-            execute "mkdir -p $remotePath"
-            execute "rm -r $remotePath/*"
-            execute "mkdir $remoteResourcePath"
-            put from: localPath, into: remotePath
-            put from: localResource, into: remoteResourcePath
-            execute "ls -la $remotePath"
-            execute "ls -la $remoteResourcePath"
-        }
-    }
+//    ssh.settings {
+//        knownHosts = allowAnyHosts
+//    }
+//    ssh.run {
+//        session(remotes.webServer) {
+//            def localPath = files(
+//                    new File(rootDir, "out4/app/app.jar"),
+//                    new File(rootDir, "out4/app/getdown.txt"),
+//                    new File(rootDir, "out4/app/digest.txt"),
+//                    new File(rootDir, "out4/app/digest2.txt"),
+//            )
+//            def localResource = files (
+//                    new File(rootDir, "out4/app/resources/splash.png"),
+//                    new File(rootDir, "out4/app/resources/icon.png")
+//            )
+//            def remotePath = "/var/www/html/$appPath"
+//            def remoteResourcePath = "$remotePath/resources"
+//            execute "mkdir -p $remotePath"
+//            execute "rm -r $remotePath/*"
+//            execute "mkdir $remoteResourcePath"
+//            put from: localPath, into: remotePath
+//            put from: localResource, into: remoteResourcePath
+//            execute "ls -la $remotePath"
+//            execute "ls -la $remoteResourcePath"
+//        }
+//    }
 }
 

@@ -5,7 +5,6 @@ import com.calendarfx.model.CalendarEvent
 import com.calendarfx.model.CalendarSource
 import com.calendarfx.model.Entry
 import com.calendarfx.view.DateControl
-import com.calendarfx.view.DayViewBase
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
 import com.jfoenix.svg.SVGGlyph
@@ -35,7 +34,6 @@ import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZonedDateTime
 import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -136,15 +134,15 @@ class CalendarPresenter : Initializable {
                 val contextMenu = ContextMenu()
                 val updateItem = MenuItem(
                         strings.getString("general_update"),
-                        graphics.glyph("update", Color.BLACK, 16.0, 16.0)
+                        graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
                 )
                 val deleteItem = MenuItem(
                         strings.getString("general_delete"),
-                        graphics.glyph("delete", Color.BLACK, 12.0, 16.0)
+                        graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
                 )
                 val cloneItem = MenuItem(
                         strings.getString("general_clone"),
-                        graphics.glyph("clone", Color.BLACK, 16.0, 12.0)
+                        graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
                 )
                 contextMenu.items.addAll(updateItem, deleteItem, cloneItem)
                 contextMenu.onAction = object : EventHandler<ActionEvent> {

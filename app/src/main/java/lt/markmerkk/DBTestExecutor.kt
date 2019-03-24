@@ -1,16 +1,13 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import java.io.IOException
-import java.net.URI
-import java.net.URISyntaxException
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Paths
 import lt.markmerkk.entities.database.DBBaseExecutor
 import lt.markmerkk.entities.jobs.CreateJobIfNeeded
 import org.slf4j.LoggerFactory
+import java.io.IOException
+import java.net.URI
+import java.nio.file.FileSystems
+import java.nio.file.Files
 
 /**
  * Created by mariusmerkevicius on 11/21/15.
@@ -24,7 +21,6 @@ class DBTestExecutor : DBBaseExecutor() {
             val path = FileSystems.getDefault().getPath(FILE)
             val result = Files.deleteIfExists(path)
             executeOrThrow(CreateJobIfNeeded(SimpleLog::class.java))
-            executeOrThrow(CreateJobIfNeeded(LocalIssue::class.java))
         } catch (e: IOException) {
             e.printStackTrace()
         }

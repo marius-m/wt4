@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<JFXDialog
+        fx:id="jfxDialog"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="lt.markmerkk.ui_2.TicketsController">
+
+    <JFXDialogLayout
+            fx:id="jfxDialogLayout">
+        <heading>
+            <Label fx:id="jfxHeaderLabel" styleClass="dialog-header">Ticket search</Label>
+        </heading>
+        <body>
+            <VBox>
+                <children>
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox.margin>
+                            <Insets top="10.0"/>
+                        </VBox.margin>
+                        <children>
+                            <JFXTextField
+                                    fx:id="jfxTextFieldTicketSearch"
+                                    focusColor="#e91e63"
+                                    labelFloat="true"
+                                    promptText="Search ticket by ID / Summary"
+                                    unFocusColor="black"
+                                    HBox.hgrow="ALWAYS"
+                                    VBox.vgrow="NEVER">
+                            </JFXTextField>
+                            <JFXButton fx:id="jfxButtonClear"></JFXButton>
+                            <StackPane fx:id="jfxContainerContentRefresh">
+                                <children>
+                                    <JFXSpinner fx:id="jfxSpinnerProgress" StackPane.alignment="CENTER"></JFXSpinner>
+                                    <JFXButton fx:id="jfxButtonProgressRefresh"></JFXButton>
+                                    <JFXButton fx:id="jfxButtonProgressStop"></JFXButton>
+                                </children>
+                            </StackPane>
+                        </children>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox.margin>
+                            <Insets top="10.0"/>
+                        </VBox.margin>
+                        <children>
+                            <JFXTreeTableView
+                                    fx:id="jfxTable"
+                                    styleClass="tree-table-view">
+                            </JFXTreeTableView>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+        </body>
+        <actions>
+            <JFXButton fx:id="jfxButtonDismiss">DISMISS</JFXButton>
+        </actions>
+    </JFXDialogLayout>
+
+</JFXDialog>
+

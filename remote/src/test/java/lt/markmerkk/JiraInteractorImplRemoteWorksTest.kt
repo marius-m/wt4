@@ -5,42 +5,40 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import lt.markmerkk.entities.JiraWork
-import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.IDataStorage
+import lt.markmerkk.tickets.JiraSearchSubscriber
 import net.rcarz.jiraclient.Issue
-import net.rcarz.jiraclient.JiraException
+import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.WorkLog
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import rx.Observable
-import rx.observers.TestSubscriber
+import rx.Single
 import rx.schedulers.Schedulers
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-08-08
- */
 class JiraInteractorImplRemoteWorksTest {
-    val testSubscriber = TestSubscriber<List<JiraWork>>()
-    val clientProvider: JiraClientProvider = mock()
-    val searchSubscriber: JiraSearchSubscriber = mock()
-    val worklogSubscriber: JiraWorklogSubscriber = mock()
-    val dataStorage: IDataStorage<SimpleLog> = mock()
-    val issueStorage: IDataStorage<LocalIssue> = mock()
-    val interactor = JiraInteractorImpl(
-            clientProvider,
-            dataStorage,
-            issueStorage,
-            searchSubscriber,
-            worklogSubscriber,
-            Schedulers.immediate()
-    )
+
+    @Mock lateinit var clientProvider: JiraClientProvider
+    @Mock lateinit var searchSubscriber: JiraSearchSubscriber
+    @Mock lateinit var worklogSubscriber: JiraWorklogSubscriber
+    @Mock lateinit var dataStorage: IDataStorage<SimpleLog>
+    @Mock lateinit var jiraClient: JiraClient
+
+    lateinit var interactor: JiraInteractorImpl
 
     @Before
     fun setUp() {
+        MockitoAnnotations.initMocks(this)
+        interactor = JiraInteractorImpl(
+                clientProvider,
+                dataStorage,
+                searchSubscriber,
+                worklogSubscriber,
+                Schedulers.immediate()
+        )
         doReturn(
                 listOf(
                         SimpleLog(),
@@ -48,6 +46,7 @@ class JiraInteractorImplRemoteWorksTest {
                         SimpleLog()
                 )
         ).whenever(dataStorage).data
+        doReturn(Single.just(jiraClient)).whenever(clientProvider).clientStream()
     }
 
     @Test
@@ -61,15 +60,13 @@ class JiraInteractorImplRemoteWorksTest {
                 .thenReturn(Observable.from(listOf(fakeJiraWork, fakeJiraWork, fakeJiraWork)))
 
         // Act
-        interactor.jiraRemoteWorks(1000, 2000)
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
+        val result = interactor.jiraRemoteWorks(1000, 2000)
+                .test()
 
 
         // Assert
-        testSubscriber.assertNoErrors()
-        testSubscriber.assertValueCount(1) // list with items
+        result.assertNoErrors()
+        result.assertValueCount(1) // list with items
     }
 
     @Test
@@ -84,14 +81,12 @@ class JiraInteractorImplRemoteWorksTest {
 
 
         // Act
-        interactor.jiraRemoteWorks(1000, 2000)
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
+        val result = interactor.jiraRemoteWorks(1000, 2000)
+                .test()
 
 
         // Assert
-        assertEquals(3, testSubscriber.onNextEvents[0].size)
+        assertEquals(3, result.onNextEvents[0].size)
     }
 
     @Test
@@ -106,14 +101,12 @@ class JiraInteractorImplRemoteWorksTest {
 
 
         // Act
-        interactor.jiraRemoteWorks(1000, 2000)
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
+        val result = interactor.jiraRemoteWorks(1000, 2000)
+                .test()
 
 
         // Assert
-        assertEquals(0, testSubscriber.onNextEvents[0].size)
+        assertEquals(0, result.onNextEvents[0].size)
     }
 
     @Test
@@ -125,16 +118,14 @@ class JiraInteractorImplRemoteWorksTest {
                 .thenReturn(Observable.just(fakeIssueResult))
         whenever(worklogSubscriber.worklogResultObservable(any()))
                 .thenReturn(Observable.from(listOf(invalidJiraWork, invalidJiraWork)))
-        whenever(clientProvider.client()).thenThrow(IllegalStateException("error_client"))
+        doReturn(Single.error<Any>(IllegalStateException())).whenever(clientProvider).clientStream()
 
         // Act
-        interactor.jiraRemoteWorks(1000, 2000)
-                .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
-                .subscribe(testSubscriber)
+        val result = interactor.jiraRemoteWorks(1000, 2000)
+                .test()
 
         // Assert
-        testSubscriber.assertError(IllegalStateException::class.java)
+        result.assertError(IllegalStateException::class.java)
     }
 
     // Convenience

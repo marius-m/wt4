@@ -3,23 +3,18 @@ package lt.markmerkk.dagger.modules
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
-import lt.markmerkk.IssueStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.*
 import lt.markmerkk.merger.*
-import lt.markmerkk.mvp.AuthService
-import lt.markmerkk.mvp.AuthServiceImpl
-import lt.markmerkk.utils.*
+import lt.markmerkk.interactors.AuthService
+import lt.markmerkk.tickets.JiraSearchSubscriber
+import lt.markmerkk.tickets.JiraSearchSubscriberImpl
 import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-07
- */
 @Module
 class SyncModule {
 
@@ -28,7 +23,7 @@ class SyncModule {
     fun providesClientProvider(
             userSettings: UserSettings
     ): JiraClientProvider {
-        return JiraClientProviderImpl(userSettings)
+        return JiraClientProvider(userSettings)
     }
 
     @Provides
@@ -46,14 +41,6 @@ class SyncModule {
             jiraClientProvider: JiraClientProvider
     ): JiraWorklogSubscriber {
         return JiraWorklogSubscriberImpl(jiraClientProvider)
-    }
-
-    @Provides
-    @Singleton
-    fun providesRemoteIssueMergeExecutor(
-            executor: IExecutor
-    ): RemoteIssueMergeExecutorImpl {
-        return RemoteIssueMergeExecutorImpl(executor)
     }
 
     @Provides
@@ -76,14 +63,12 @@ class SyncModule {
     @Singleton
     fun providesInteractor(
             localStorage: LogStorage,
-            issueStorage: IssueStorage,
             jiraClientProvider: JiraClientProvider,
             jiraSearchSubscriber: JiraSearchSubscriber,
             jiraWorklogSubscriber: JiraWorklogSubscriber
     ): JiraInteractor {
         return JiraInteractorImpl(
                 logStorage = localStorage,
-                issueStorage = issueStorage,
                 jiraClientProvider = jiraClientProvider,
                 jiraSearchSubscriber = jiraSearchSubscriber,
                 jiraWorklogSubscriber = jiraWorklogSubscriber,
@@ -95,13 +80,11 @@ class SyncModule {
     @Singleton
     fun providesRemoteMergeToolsProvider(
             remoteMergeClient: RemoteMergeClient,
-            remoteLogMergeExecutor: RemoteLogMergeExecutorImpl,
-            remoteIssueMergeExecutor: RemoteIssueMergeExecutorImpl
+            remoteLogMergeExecutor: RemoteLogMergeExecutorImpl
     ): RemoteMergeToolsProvider {
         return RemoteMergeToolsProviderImpl(
                 remoteMergeClient = remoteMergeClient,
-                remoteLogMergeExecutor = remoteLogMergeExecutor,
-                remoteIssueMergeExecutor = remoteIssueMergeExecutor
+                remoteLogMergeExecutor = remoteLogMergeExecutor
         )
     }
 
@@ -123,13 +106,11 @@ class SyncModule {
             dayProvider: DayProvider,
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
-            issueStorage: IssueStorage,
             autoUpdateInteractor: AutoUpdateInteractor
     ): SyncInteractor {
         return SyncInteractorImpl(
                 jiraInteractor = jiraInteractor,
                 logStorage = logStorage,
-                issueStorage = issueStorage,
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
                 dayProvider = dayProvider,

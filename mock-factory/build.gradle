@@ -1,0 +1,9 @@
+version '0.1'
+
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation project(":models")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'joda-time:joda-time:2.9.1'
+}

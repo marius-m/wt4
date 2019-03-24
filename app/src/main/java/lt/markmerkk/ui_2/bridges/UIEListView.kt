@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2.bridges
 
-import com.jfoenix.controls.JFXPopup
 import com.jfoenix.controls.JFXTreeTableColumn
 import com.jfoenix.controls.JFXTreeTableView
 import com.jfoenix.controls.RecursiveTreeItem
@@ -14,7 +13,6 @@ import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.TreeContextMenu
 import lt.markmerkk.utils.LogUtils
 
 class UIEListView(

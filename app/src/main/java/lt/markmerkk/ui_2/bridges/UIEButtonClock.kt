@@ -6,6 +6,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElementText
@@ -23,7 +24,7 @@ class UIEButtonClock(
         private val buttonToggle: JFXToggleNode
 ) : UIElementText<JFXButton> {
 
-    private val glyphClock = graphics.glyph("clock", Color.WHITE, 20.0)
+    private val glyphClock = graphics.from(Glyph.CLOCK, Color.WHITE, 20.0)
 
     init {
         buttonSettings.setOnAction {
@@ -32,7 +33,7 @@ class UIEButtonClock(
         buttonToggle.setOnAction {
             listener.onClickClock(buttonToggle.isSelected)
         }
-        buttonSettings.graphic = graphics.glyph("insert", Color.WHITE, 10.0)
+        buttonSettings.graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
         hide()
     }
 

@@ -4,6 +4,13 @@ version '0.1'
 apply plugin: 'kotlin'
 
 dependencies {
-    compile project(':models')
-    compile 'joda-time:joda-time:2.9.1'
+    implementation project(':models')
+    implementation project(':database')
+    implementation project(':remote')
+    implementation project(':database2')
+
+    implementation 'me.xdrop:fuzzywuzzy:1.2.0' // source: https://github.com/xdrop/fuzzywuzzy
+    implementation 'joda-time:joda-time:2.9.1'
+
+    testImplementation project(':mock-factory')
 }

@@ -3,7 +3,7 @@ package lt.markmerkk
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import lt.markmerkk.UserSettings
+import lt.markmerkk.tickets.JiraSearchSubscriberImpl
 import net.rcarz.jiraclient.Issue
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -38,7 +38,7 @@ class IntegrationJiraSearchSubscriberImplTest {
         doReturn(properties["username"].toString()).whenever(userSettings).username
         doReturn(properties["password"].toString()).whenever(userSettings).password
         doReturn(Const.DEFAULT_JQL_USER_ISSUES).whenever(userSettings).issueJql
-        clientProvider = JiraClientProviderImpl(userSettings)
+        clientProvider = JiraClientProvider(userSettings)
     }
 
     @Test

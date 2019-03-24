@@ -1,6 +1,5 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.LocalIssue
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.DBBaseExecutor
 import lt.markmerkk.entities.jobs.CreateJobIfNeeded
@@ -25,7 +24,6 @@ class DBProdExecutor(
 //            migrate()
 //        }
         executeOrThrow(CreateJobIfNeeded(SimpleLog::class.java))
-        executeOrThrow(CreateJobIfNeeded(LocalIssue::class.java))
     }
 
     override fun database(): String {

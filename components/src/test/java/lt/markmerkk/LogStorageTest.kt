@@ -1,11 +1,8 @@
 package lt.markmerkk
 
 import com.nhaarman.mockito_kotlin.*
-import lt.markmerkk.IDataListener
-import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
-import org.junit.Ignore
 import org.junit.Test
 
 /**

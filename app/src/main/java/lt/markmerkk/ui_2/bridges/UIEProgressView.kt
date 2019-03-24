@@ -5,8 +5,8 @@ import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
-import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.UIElement
 
@@ -19,21 +19,17 @@ class UIEProgressView(
         private val jfxButtonProgressStop: JFXButton,
         private val jfxSpinnerProgress: JFXSpinner,
         private val graphics: Graphics<SVGGlyph>,
-        private val syncInteractor: SyncInteractor
+        private val refreshListener: RefreshListener
 ) : UIElement<StackPane>, IRemoteLoadListener {
 
     init {
         jfxSpinnerProgress.prefWidth = 12.0
         jfxSpinnerProgress.prefHeight = 12.0
-        jfxButtonProgressRefresh.setOnAction {
-            syncInteractor.syncLogs()
-        }
-        jfxButtonProgressStop.setOnAction {
-            syncInteractor.stop()
-        }
-        jfxButtonProgressRefresh.graphic = graphics.glyph("refresh2", Color.BLACK, 12.0)
-        jfxButtonProgressStop.graphic = graphics.glyph("cancel", Color.BLACK, 12.0)
-        onLoadChange(syncInteractor.isLoading())
+        jfxButtonProgressRefresh.setOnAction { refreshListener.onClickRefresh() }
+        jfxButtonProgressStop.setOnAction { refreshListener.onClickStop() }
+        jfxButtonProgressRefresh.graphic = graphics.from(Glyph.REFRESH2, Color.BLACK, 12.0)
+        jfxButtonProgressStop.graphic = graphics.from(Glyph.CANCEL, Color.BLACK, 12.0)
+        hide()
     }
 
     override fun raw() = jfxContainerContentRefresh
@@ -66,6 +62,11 @@ class UIEProgressView(
 
     override fun onError(error: String) {
         hide()
+    }
+
+    interface RefreshListener {
+        fun onClickRefresh()
+        fun onClickStop()
     }
 
 }

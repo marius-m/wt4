@@ -2,6 +2,7 @@ package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.interactors.ActiveLogPersistence
 import org.joda.time.DateTime
 import java.time.*
 

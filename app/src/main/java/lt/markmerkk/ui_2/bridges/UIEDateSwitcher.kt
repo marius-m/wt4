@@ -1,16 +1,11 @@
 package lt.markmerkk.ui_2.bridges
 
-import com.airhacks.afterburner.views.FXMLView
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.svg.SVGGlyph
-import javafx.geometry.Insets
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.Graphics
-import lt.markmerkk.IDataListener
-import lt.markmerkk.LogStorage
+import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.ExternalSourceNode
@@ -43,8 +38,8 @@ class UIEDateSwitcher(
     }
 
     init {
-        jfxDateSwitcherPrev.graphic = graphics.glyph("arrow_left", Color.BLACK, 8.0, 12.0)
-        jfxDateSwitcherNext.graphic = graphics.glyph("arrow_right", Color.BLACK, 8.0, 12.0)
+        jfxDateSwitcherPrev.graphic = graphics.from(Glyph.ARROW_LEFT, Color.BLACK, 8.0, 12.0)
+        jfxDateSwitcherNext.graphic = graphics.from(Glyph.ARROW_RIGHT, Color.BLACK, 8.0, 12.0)
         jfxDateSwitcherDate.setOnAction {
             val jfxDialog = CurrentDayDialog().view as JFXDialog
             jfxDialog.show(node.rootNode())

@@ -8,10 +8,13 @@
  */
 
 dependencies {
-    compile project(':jira-client')
-    compile project(':components')
-    compile project(':models')
+    implementation project(':jira-client')
+    implementation project(':database')
+    implementation project(':database2')
+    implementation project(':models')
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'joda-time:joda-time:2.9.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'joda-time:joda-time:2.9.1'
+
+    testImplementation project(':mock-factory')
 }

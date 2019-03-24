@@ -7,9 +7,14 @@ import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
+import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.mvp.HostServicesInteractor
+import lt.markmerkk.tickets.JiraTicketSearch
+import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
@@ -25,13 +30,20 @@ import javax.inject.Singleton
  */
 @Module
 class AppModule(
-        val application: Application
+        val application: Application,
+        val sceneProperties: StageProperties
 ) {
 
     @Provides
     @Singleton
     fun providesApplication(): Application {
         return application
+    }
+
+    @Provides
+    @Singleton
+    fun providesSceneProperties(): StageProperties {
+        return sceneProperties
     }
 
     @Provides
@@ -121,14 +133,39 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideBasicLogStorage(dbExecutor: IExecutor): LogStorage { // todo : temp solution
-        return LogStorage(dbExecutor)
+    fun providesDatabaseRepo(): TicketsDatabaseRepo {
+        val migrations = listOf(
+                Migration0To1(oldDatabase = DBConnProvider("wt4_1.db"))
+        )
+        val database = DBConnProvider("wt4_2.db")
+        return TicketsDatabaseRepo(database, migrations)
     }
 
     @Provides
     @Singleton
-    fun provideBasicIssueStorage(dbExecutor: IExecutor): IssueStorage {
-        return IssueStorage(dbExecutor)
+    fun providesTicketsNetworkRepo(
+            ticketsDatabaseRepo: TicketsDatabaseRepo,
+            jiraClientProvider: JiraClientProvider,
+            userSettings: UserSettings
+    ): TicketsNetworkRepo {
+        return TicketsNetworkRepo(
+                jiraClientProvider,
+                JiraTicketSearch(),
+                ticketsDatabaseRepo,
+                userSettings
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesTimeProvider(): TimeProvider {
+        return TimeProvider()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBasicLogStorage(dbExecutor: IExecutor): LogStorage { // todo : temp solution
+        return LogStorage(dbExecutor)
     }
 
     @Provides
@@ -161,7 +198,15 @@ class AppModule(
     @Provides
     @Singleton
     fun provideGraphics(): Graphics<SVGGlyph> {
-        return GraphicsImpl()
+        return GraphicsGlyph()
+    }
+
+    @Provides
+    @Singleton
+    fun provideActiveLogData(
+            timeProvider: TimeProvider
+    ): ActiveLogPersistence {
+        return ActiveLogPersistence(timeProvider)
     }
 
 }

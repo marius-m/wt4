@@ -11,8 +11,6 @@ import rx.Observable
 import rx.Subscriber
 
 /**
- * @author mariusmerkevicius
- * @since 2016-07-09
  * Responsible for pulling worklogs from jira
  */
 class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<JiraWork> {
@@ -59,7 +57,7 @@ class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<
     }
 
     override fun worklogResultObservable(searchResult: Issue.SearchResult): Observable<JiraWork> {
-        return Observable.just(jiraClientProvider.client())
+        return jiraClientProvider.clientStream().toObservable()
                 .flatMap { Observable.create(JiraWorklogSubscriberImpl(jiraClientProvider, searchResult, it)) }
     }
 

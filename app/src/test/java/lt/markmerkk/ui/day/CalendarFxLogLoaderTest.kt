@@ -1,6 +1,7 @@
 package lt.markmerkk.ui.day
 
 import com.calendarfx.model.Entry
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import lt.markmerkk.entities.SimpleLog
@@ -37,7 +38,10 @@ class CalendarFxLogLoaderTest {
         // Assert
         val calendarEntryCaptor = argumentCaptor<List<Entry<SimpleLog>>>()
         verify(view).onCalendarEntries(
-                calendarEntryCaptor.capture()
+                calendarEntryCaptor.capture(),
+                any(),
+                any(),
+                any()
         )
         assertThat(calendarEntryCaptor.firstValue).hasSize(1)
     }
