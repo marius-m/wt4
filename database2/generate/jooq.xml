@@ -101,7 +101,7 @@
       <packageName>lt.markmerkk.schema1</packageName>
 
       <!-- The destination directory of your generated classes -->
-      <directory>build</directory>
+      <directory>src</directory>
     </target>
   </generator>
 </configuration>

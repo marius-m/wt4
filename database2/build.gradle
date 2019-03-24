@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
-    main.java.srcDirs += 'generate/build'
+    main.java.srcDirs += 'generate/src'
 }
 
 dependencies {
