@@ -4,20 +4,27 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
+import javafx.event.EventType
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.scene.text.Text
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
+import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.*
+import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
+import rx.observables.JavaFxObservable
+import rx.schedulers.JavaFxScheduler
+import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
@@ -42,6 +49,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @FXML lateinit var jfxTextFieldComment: JFXTextArea
     @FXML lateinit var jfxButtonSave: JFXButton
     @FXML lateinit var jfxButtonSearch: JFXButton
+    @FXML lateinit var jfxTextTicketDescription: Label
 
     @Inject lateinit var hourglass: HourGlass
     @Inject lateinit var storage: LogStorage
@@ -49,6 +57,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var stageProperties: StageProperties
+    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -56,6 +65,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private lateinit var clockEditPresenter: ClockEditMVP.Presenter
     private lateinit var timeQuickModifier: TimeQuickModifier
     private lateinit var logEditService: LogEditService
+    private lateinit var ticketInfoLoader: TicketInfoLoader
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
@@ -132,6 +142,20 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 }
         )
         logEditService.serviceType = LogEditService.ServiceType.CREATE
+        ticketInfoLoader = TicketInfoLoader(
+                listener = object : TicketInfoLoader.Listener {
+                    override fun onTicketFound(ticket: Ticket) {
+                        jfxTextTicketDescription.text = ticket.description
+                    }
+
+                    override fun onNoTicket() {
+                        jfxTextTicketDescription.text = ""
+                    }
+                },
+                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                ioScheduler = Schedulers.io(),
+                uiScheduler = JavaFxScheduler.getInstance()
+        )
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
                 jfxSubtractFrom,
                 jfxSubtractTo,
@@ -169,13 +193,18 @@ class ClockEditController : Initializable, ClockEditMVP.View {
             jfxDialog.show(jfxDialogLayout.parent as StackPane) // is this correct ?
             jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
         }
+        jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->
+            ticketInfoLoader.changeInputCode(newValue)
+        }
         clockEditPresenter.onAttach()
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
+        ticketInfoLoader.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        ticketInfoLoader.onDetach()
         eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
         clockEditPresenter.onDetach()

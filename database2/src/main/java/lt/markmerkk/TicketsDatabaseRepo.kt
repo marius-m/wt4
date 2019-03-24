@@ -123,6 +123,33 @@ class TicketsDatabaseRepo(
         }
     }
 
+    fun findTicketsByCode(inputCode: String): Single<List<Ticket>> {
+        return Single.defer {
+            val tickets = dslContext.select()
+                    .from(TICKET)
+                    .where(TICKET.CODE.eq(inputCode))
+                    .fetchInto(TICKET)
+                    .map { ticket ->
+                        Ticket(
+                                id = ticket.id.toLong(),
+                                code = TicketCode.new(ticket.code),
+                                description = ticket.description,
+                                parentId = ticket.parentId,
+                                remoteData = RemoteData.new(
+                                        remoteId = ticket.remoteId,
+                                        isDeleted = ticket.isDeleted.toBoolean(),
+                                        isDirty = ticket.isDirty.toBoolean(),
+                                        isError = ticket.isError.toBoolean(),
+                                        errorMessage = ticket.errorMessage,
+                                        fetchTime = ticket.fetchtime,
+                                        url = ticket.url
+                                )
+                        )
+                    }
+            Single.just(tickets)
+        }
+    }
+
     private fun isTicketExist(dslContext: DSLContext, ticket: Ticket): Boolean {
         val remoteId = ticket.remoteData?.remoteId ?: Const.NO_ID
         if (remoteId == Const.NO_ID) {
