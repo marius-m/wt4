@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Hyperlink?>
 <JFXDialog
         fx:id="jfxDialog"
         xmlns="http://javafx.com/javafx/8"
@@ -76,7 +77,12 @@
                                        HBox.hgrow="NEVER"
                                        VBox.vgrow="NEVER">
                                </JFXTextField>
-                               <Label fx:id="jfxTextTicketDescription" HBox.hgrow="ALWAYS"></Label>
+                               <Label fx:id="jfxTextTicketDescription" HBox.hgrow="ALWAYS">
+                                   <padding>
+                                       <Insets left="10.0" right="10.0" />
+                                   </padding>
+                               </Label>
+                               <Hyperlink fx:id="jfxTextFieldTicketLink"></Hyperlink>
                                <JFXButton fx:id="jfxButtonSearch"></JFXButton>
                            </children>
                        </HBox>

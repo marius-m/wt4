@@ -12,17 +12,18 @@ import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import lt.markmerkk.Glyph
-import lt.markmerkk.Graphics
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
+import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.*
+import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
+import rx.schedulers.JavaFxScheduler
+import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
@@ -52,17 +53,20 @@ class LogEditController : Initializable, LogEditService.Listener {
     @FXML lateinit var jfxSubtractTo: JFXButton
     @FXML lateinit var jfxAppendTo: JFXButton
     @FXML lateinit var jfxButtonSearch: JFXButton
+    @FXML lateinit var jfxTextTicketDescription: Label
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServices: HostServicesInteractor
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var stageProperties: StageProperties
+    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
     private lateinit var logEditService: LogEditService
     private lateinit var timeQuickModifier: TimeQuickModifier
+    private lateinit var ticketInfoLoader: TicketInfoLoader
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
@@ -87,7 +91,6 @@ class LogEditController : Initializable, LogEditService.Listener {
             )
         }
         jfxTextFieldTicketLink.setOnAction {
-            //            hostServices.openExternalIssue(jfxTextFieldTicket.text)
             val issue = jfxTextFieldTicket.text.toString()
             eventBus.post(
                     EventSnackBarMessage(
@@ -95,6 +98,9 @@ class LogEditController : Initializable, LogEditService.Listener {
                     )
             )
             hostServices.copyLinkToClipboard(issue)
+        }
+        jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->
+            ticketInfoLoader.changeInputCode(newValue)
         }
         jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
         jfxTextFieldTicketLink.graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
@@ -119,6 +125,21 @@ class LogEditController : Initializable, LogEditService.Listener {
         timeQuickModifier = TimeQuickModifierImpl(
                 timeQuickModifierListener
         )
+        ticketInfoLoader = TicketInfoLoader(
+                listener = object : TicketInfoLoader.Listener {
+                    override fun onTicketFound(ticket: Ticket) {
+                        jfxTextTicketDescription.text = ticket.description
+                    }
+
+                    override fun onNoTicket() {
+                        jfxTextTicketDescription.text = ""
+                    }
+                },
+                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                ioScheduler = Schedulers.io(),
+                uiScheduler = JavaFxScheduler.getInstance()
+        )
+        ticketInfoLoader.onAttach()
     }
 
     /**
@@ -167,6 +188,7 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     @PreDestroy
     fun destroy() {
+        ticketInfoLoader.onDetach()
         eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
     }

@@ -7,7 +7,9 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.event.EventType
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
+import javafx.scene.control.Tooltip
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
@@ -50,6 +52,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @FXML lateinit var jfxButtonSave: JFXButton
     @FXML lateinit var jfxButtonSearch: JFXButton
     @FXML lateinit var jfxTextTicketDescription: Label
+    @FXML lateinit var jfxTextFieldTicketLink: Hyperlink
 
     @Inject lateinit var hourglass: HourGlass
     @Inject lateinit var storage: LogStorage
@@ -58,6 +61,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var hostServices: HostServicesInteractor
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -196,6 +200,17 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->
             ticketInfoLoader.changeInputCode(newValue)
         }
+        jfxTextFieldTicketLink.setOnAction {
+            val issue = jfxTextFieldTicket.text.toString()
+            eventBus.post(
+                    EventSnackBarMessage(
+                            String.format("Copied %s to clipboard", hostServices.generateLink(issue))
+                    )
+            )
+            hostServices.copyLinkToClipboard(issue)
+        }
+        jfxTextFieldTicketLink.tooltip = Tooltip("Copy issue link to clipboard")
+        jfxTextFieldTicketLink.graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
         clockEditPresenter.onAttach()
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
