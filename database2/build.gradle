@@ -1,16 +1,17 @@
-apply plugin: 'kotlin'
+apply plugin: "kotlin"
 
 sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-    main.java.srcDirs += 'generate/src'
+    main.java.srcDirs += "src/main/kotlin"
+    main.java.srcDirs += "generate/src"
 }
 
 dependencies {
-    implementation project(':models')
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":models")
+    implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'org.slf4j:slf4j-api:1.7.12'
-    implementation 'org.slf4j:slf4j-log4j12:1.7.12'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'joda-time:joda-time:2.9.1'
+    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "joda-time:joda-time:${versions.jodaTime}"
+    implementation "io.reactivex:rxjava:${versions.rxJava}"
 }

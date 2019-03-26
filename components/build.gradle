@@ -1,16 +1,18 @@
-version '0.1'
-
-
-apply plugin: 'kotlin'
+apply plugin: "kotlin"
 
 dependencies {
-    implementation project(':models')
-    implementation project(':database')
-    implementation project(':remote')
-    implementation project(':database2')
+    implementation project(":models")
+    implementation project(":database")
+    implementation project(":remote")
+    implementation project(":database2")
 
-    implementation 'me.xdrop:fuzzywuzzy:1.2.0' // source: https://github.com/xdrop/fuzzywuzzy
-    implementation 'joda-time:joda-time:2.9.1'
+    implementation "me.xdrop:fuzzywuzzy:1.2.0" // source: https://github.com/xdrop/fuzzywuzzy
+    implementation "joda-time:joda-time:${versions.jodaTime}"
+    implementation "io.reactivex:rxjava:${versions.rxJava}"
+    implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
 
-    testImplementation project(':mock-factory')
+    testImplementation project(":mock-factory")
 }

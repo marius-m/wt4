@@ -1,54 +1,29 @@
 buildscript {
-  ext.kotlin_version = '1.3.21'
-  ext.kotlin_test_version = '1.4.0'
+    apply from: "versions.gradle"
+    ext.kotlin_test_version = '1.4.0'
 
-  repositories {
-    mavenLocal()
-    jcenter()
-  }
+    ext.versionName = "1.1.0"
+    ext.versionCode = "29"
 
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
-    classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
-  }
+    repositories {
+        mavenLocal()
+        jcenter()
+
+        maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
+        maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
+        classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
+    }
 }
 
 allprojects {
-  ext.versionName = "1.1.0"
-  ext.versionCode = "29"
-
-  apply plugin: 'maven'
-  apply plugin: 'kotlin'
-  apply plugin: 'java'
-
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-
-  repositories {
-    mavenLocal()
-
-    maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
-    maven { url "http://repo.maven.apache.org/maven2" }
-    maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
-    maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
-
-  }
-
-//  configurations.all {}
-  dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'org.slf4j:slf4j-log4j12:1.7.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    compile 'io.reactivex:rxjava:1.3.6'
-    compile 'io.reactivex:rxjava-async-util:0.21.0'
-
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    testCompile "com.nhaarman:mockito-kotlin:$kotlin_test_version"
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.8.9'
-    testCompile 'org.assertj:assertj-core:2.2.0'
-  }
-
+    repositories {
+        mavenCentral()
+    }
 }

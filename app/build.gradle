@@ -1,34 +1,34 @@
 
-apply plugin: 'application'
-apply plugin: 'kotlin'
-apply plugin: 'org.jetbrains.kotlin.kapt'
-apply plugin: 'idea'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply from: 'deploy.gradle'
+apply plugin: "application"
+apply plugin: "kotlin"
+apply plugin: "org.jetbrains.kotlin.kapt"
+apply plugin: "idea"
+apply plugin: "com.github.johnrengelman.shadow"
+apply from: "deploy.gradle"
 
 mainClassName = "lt.markmerkk.Main2"
 
-group = 'lt.markmerkk'
+group = "lt.markmerkk"
 version = versionName
 
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'build/generated/source/kapt/main']
+            srcDirs = ["src/main/java", "build/generated/source/kapt/main"]
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ["src/main/resources"]
         }
     }
     test {
         java {
-            srcDirs = ['src/test/java', 'build/generated/source/kapt/main']
+            srcDirs = ["src/test/java", "build/generated/source/kapt/main"]
         }
         resources {
-            srcDirs = ['src/main/resources', 'src/test/resources']
+            srcDirs = ["src/main/resources", "src/test/resources"]
         }
     }
-    main.java.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += "src/main/kotlin"
 }
 
 kapt {
@@ -37,7 +37,7 @@ kapt {
 
 idea {
     module {
-        sourceDirs += file('generated/')
+        sourceDirs += file("generated/")
     }
 }
 
@@ -51,32 +51,40 @@ run {
 }
 
 dependencies {
-    ext.dagger_version = "2.6"
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation project(":components")
+    implementation project(":database")
+    implementation project(":database2")
+    implementation project(":remote")
+    implementation project(":jira-client")
+    implementation project(":models")
+    implementation project(":mock-factory")
 
-    implementation project(':components')
-    implementation project(':database')
-    implementation project(':database2')
-    implementation project(':remote')
-    implementation project(':jira-client')
-    implementation project(':models')
-    implementation project(':mock-factory')
+    implementation "com.brsanthu:google-analytics-java:1.1.2"
+    implementation "io.reactivex:rxjavafx:0.0.2"
+    implementation "com.google.guava:guava:21.0"
+    implementation "com.jfoenix:jfoenix:1.4.0"
+    implementation "io.reactivex:rxjava:${versions.rxJava}"
+    implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
 
-    implementation 'com.brsanthu:google-analytics-java:1.1.2'
-    implementation 'io.reactivex:rxjavafx:0.0.2'
-    implementation 'com.google.guava:guava:21.0'
-    implementation 'com.jfoenix:jfoenix:1.4.0'
+    implementation("com.google.dagger:dagger:${versions.dagger}")
+    kapt("com.google.dagger:dagger-compiler:${versions.dagger}")
 
-    implementation("com.google.dagger:dagger:${dagger_version}")
-    kapt("com.google.dagger:dagger-compiler:${dagger_version}")
-//    provided 'javax.annotation:jsr250-api:1.0'
+    implementation "joda-time:joda-time:${versions.jodaTime}"
+    implementation "com.airhacks:afterburner.fx:1.7.0"
+    implementation "org.jfxtras:jfxtras-agenda:8.0-r5"
+    implementation "com.calendarfx:view:8.4.2"
 
-    implementation 'joda-time:joda-time:2.9.1'
-    implementation 'com.airhacks:afterburner.fx:1.7.0'
-    implementation 'org.jfxtras:jfxtras-agenda:8.0-r5'
-    implementation 'com.calendarfx:view:8.4.2'
+    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testCompile "com.nhaarman:mockito-kotlin:${versions.kotlinTest}"
+    testCompile "junit:junit:${versions.junit}"
+    testCompile "org.mockito:mockito-core:${versions.mockito}"
+    testCompile "org.assertj:assertj-core:${versions.assertj}"
 }
 
 //shadowJar.dependsOn assemble

@@ -3,7 +3,6 @@ package lt.markmerkk.utils
 import lt.markmerkk.Const
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.isEmpty
-import org.apache.http.Consts
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.URISyntaxException
