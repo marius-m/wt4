@@ -4,6 +4,7 @@ apply plugin: "kotlin"
 apply plugin: "org.jetbrains.kotlin.kapt"
 apply plugin: "idea"
 apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "de.fuerstenau.buildconfig"
 apply from: "deploy.gradle"
 
 mainClassName = "lt.markmerkk.Main2"
@@ -41,15 +42,6 @@ idea {
     }
 }
 
-run {
-    jvmArgs = [
-            "-Dversion_code=" + versionCode,
-            "-Dversion_name=" + versionName,
-            "-Dga_key=test",
-            "-Drelease=false"
-    ]
-}
-
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
@@ -68,6 +60,8 @@ dependencies {
     implementation "com.jfoenix:jfoenix:1.4.0"
     implementation "io.reactivex:rxjava:${versions.rxJava}"
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
+    implementation "org.bouncycastle:bcprov-jdk15on:1.51"
+    implementation "com.google.protobuf:protobuf-java:3.7.0"
 
     implementation("com.google.dagger:dagger:${versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${versions.dagger}")
@@ -85,6 +79,24 @@ dependencies {
     testCompile "junit:junit:${versions.junit}"
     testCompile "org.mockito:mockito-core:${versions.mockito}"
     testCompile "org.assertj:assertj-core:${versions.assertj}"
+}
+
+buildConfig {
+    appName = "WT4"
+    version = project.versionName
+
+    buildConfigField("String", "versionName", project.versionName)
+    buildConfigField("int", "versionCode", project.versionCode)
+    buildConfigField("boolean", "debug", project.debug.toString())
+    buildConfigField("String", "gaKey", project.gaKey)
+
+//    versionCode = project.versionCode
+//    debug = false
+//    gaKey = "test"
+
+    clsName = 'BuildConfig'
+    packageName = project.group
+    charset = 'UTF-8'
 }
 
 //shadowJar.dependsOn assemble

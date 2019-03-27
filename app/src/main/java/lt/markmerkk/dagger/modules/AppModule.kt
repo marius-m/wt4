@@ -56,8 +56,7 @@ class AppModule(
     @Provides
     @Singleton
     fun providesConfigPathProvider(): ConfigPathProvider {
-        val debug = System.getProperty("release") == "false"
-        return ConfigPathProviderImpl(debug)
+        return ConfigPathProviderImpl(BuildConfig.debug)
     }
 
     @Provides
@@ -72,12 +71,11 @@ class AppModule(
             configPathProvider: ConfigPathProvider,
             configSetSettings: ConfigSetSettings
     ): Config {
-        val debug = System.getProperty("release") == "false"
         val config = Config(
-                debug = debug,
-                versionName = System.getProperty("version_name"),
-                versionCode = System.getProperty("version_code").toInt(),
-                gaKey = System.getProperty("ga_key"),
+                debug = BuildConfig.debug,
+                versionName = BuildConfig.versionName,
+                versionCode = BuildConfig.versionCode,
+                gaKey = BuildConfig.gaKey,
                 configPathProvider = configPathProvider,
                 configSetSettings = configSetSettings
         )
