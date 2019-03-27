@@ -1,5 +1,9 @@
 package lt.markmerkk
 
+import com.vinumeris.updatefx.AppDirectory
+import com.vinumeris.updatefx.Crypto
+import com.vinumeris.updatefx.UpdateFX
+import com.vinumeris.updatefx.Updater
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.layout.StackPane
@@ -18,6 +22,7 @@ import org.apache.log4j.PropertyConfigurator
 import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
 import rx.schedulers.Schedulers
+import java.net.URI
 import javax.inject.Inject
 
 class Main : Application(), KeepAliveInteractor.Listener {
@@ -60,12 +65,50 @@ class Main : Application(), KeepAliveInteractor.Listener {
     //region DI
 
     fun initApp(stage: Stage) {
+        Thread.currentThread().contextClassLoader = Main::class.java.classLoader
+        AppDirectory.initAppDir("WT4")
+
         component = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this, StageProperties(stage)))
                 .build()
         component!!.inject(this)
         initLoggerSettings()
+
+        val pubkeys = Crypto.decode("03240B61A44F940A85443C7C6CBDD7141B65619AAB66B3D867630B82AA10453BD6")
+        logger.debug("Initialize updater")
+        val updater = object : Updater(URI.create("http://89.40.3.216/wt4_2/index"), "WT4/${settings.version}",
+                AppDirectory.dir(), UpdateFX.findCodePath(Main::class.java), pubkeys, 1) {
+            override fun updateProgress(workDone: Long, max: Long) {
+                super.updateProgress(workDone, max)
+                // Give UI a chance to show.
+//                Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS)
+                logger.debug("Update progress: workDone: ${workDone} / max: ${max}")
+            }
+        }
+
+        logger.info("Checking for updates!")
+        updater.setOnSucceeded { event ->
+            try {
+                val summary = updater.get()
+                if (summary.descriptions.size > 0) {
+                    logger.info("One liner: {}", summary.descriptions[0].oneLiner)
+                    logger.info("{}", summary.descriptions[0].description)
+                }
+                if (summary.highestVersion > config.versionCode) {
+                    logger.info("Restarting to get version " + summary.highestVersion)
+                    if (UpdateFX.getVersionPin(AppDirectory.dir()) == 0)
+                        UpdateFX.restartApp()
+                }
+            } catch (e: Throwable) {
+                logger.error("oops", e)
+            }
+        }
+        updater.setOnFailed { event ->
+            logger.error("Update error: {}", updater.exception)
+            updater.exception.printStackTrace()
+        }
+        Thread(updater, "UpdateFX Thread").start()
 
         DEBUG = config.debug
         Translation.getInstance() // Initializing translations on first launch
@@ -82,7 +125,8 @@ class Main : Application(), KeepAliveInteractor.Listener {
         stage.minHeight = SCENE_HEIGHT.toDouble()
         stage.scene = initScene(stage)
         stage.show()
-        stage.title = "WT4"
+        val titlePrefix = if (config.debug) " !!DEBUG!! " else ""
+        stage.title = "WT4 (${config.versionName}-${config.versionCode}) ${titlePrefix}"
         tracker.sendEvent(
                 GAStatics.CATEGORY_BUTTON,
                 GAStatics.ACTION_START
