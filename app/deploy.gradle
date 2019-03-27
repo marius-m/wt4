@@ -18,15 +18,17 @@ repositories {
 ext.appPath = "wt4"
 
 def deployPropertyFile = new File("${rootDir}","deploy.properties")
-def deployPassProperties = new File("${rootDir}","deploy_pass.properties")
+def deployPassFile = new File("${rootDir}","deploy_pass.properties")
 assert deployPropertyFile.exists()
 Properties deployProps = new Properties()
 deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+Properties deployPassProps = new Properties()
+deployPassProps.load(new FileInputStream(deployPassFile.getAbsolutePath()))
 
 jfx {
     verbose = true
-//    mainClass = "com.threerings.getdown.launcher.GetdownApp"
-    mainClass = "lt.markmerkk.Main2"
+    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+//    mainClass = "lt.markmerkk.Main2"
     jfxAppOutputDir = "build/libs"
     jfxMainAppJarName = "app.jar"
     deployDir = "src/main/deploy"
@@ -55,10 +57,10 @@ jfx {
     nativeReleaseVersion = "4.0"
     needShortcut = false
     needMenu = false
-//    bundleArguments = [
+    bundleArguments = [
 //            runtime: null,
-//            classpath: "getdown-1.7.0.jar app/app.jar"
-//    ]
+            classpath: "getdown-launcher-1.8.2.jar app/app.jar"
+    ]
     appName = "WT4"
     additionalAppResources = null
     fileAssociations = null
@@ -75,18 +77,18 @@ jfx {
     skipSizeRecalculationForJNLP185 = false
 
     // gradle jfxGenerateKeyStore
-//    keyStore = "src/main/deploy/keystore.jks"
-//    keyStoreAlias = "wt4"
-//    keyStorePassword = deployProps.getProperty("cert_pass")
-//    keyPassword = null
-//    keyStoreType = "jks"
-//    overwriteKeyStore = false
+    keyStore = "src/main/deploy/keystore.jks"
+    keyStoreAlias = "wt4"
+    keyStorePassword = deployProps.getProperty("cert_pass")
+    keyPassword = null
+    keyStoreType = "jks"
+    overwriteKeyStore = false
 
-//    certDomain = "http://545149.s.dedikuoti.lt:8080/"
-//    certOrgUnit = "none"
-//    certOrg = "WT4"
-//    certState = "LT"
-//    certCountry = "LT"
+    certDomain = "http://545149.s.dedikuoti.lt:8080/"
+    certOrgUnit = "none"
+    certOrg = "WT4"
+    certState = "LT"
+    certCountry = "LT"
 }
 
 task processJar(dependsOn:shadowJar, type: JavaExec) {
@@ -94,7 +96,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
     def appDir = new File(rootDir, "out4/app")
     def libsDir = new File(projectDir, "build/libs")
     def digestFile = new File(rootDir, "out4/app/digest.txt")
-    def toolsFile = new File(rootDir, "tools/getdown-1.7.0.jar")
+    def toolsFile = new File(rootDir, "tools/getdown-launcher-1.8.2.jar")
     def toolsResourceDir = new File(rootDir, "tools/resource")
     def clientConfigDir = new File(projectDir, "build/libs/app")
     def clientConfig = new File(rootDir, "tools/client.txt")
@@ -111,7 +113,7 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
         // Prepare
         project.delete siteDir
 
-        clientConfig.write("appbase = http://212.24.100.154/$appPath\n")
+        clientConfig.write("appbase = http://${deployPassProps.getProperty("remote_host")}/$appPath\n")
         clientConfig << "resource = resources/splash.png\n"
         clientConfig << "resource = resources/icon.png\n"
         clientConfig << "ui.name = WT4\n"
@@ -229,39 +231,40 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 
 //remotes {
 //    webServer {
-//        host = '212.24.100.154'
-//        user = deployProps.getProperty("remote_user")
-//        password = deployProps.getProperty("remote_pass")
+//        host = deployPassProps.getProperty("remote_host")
+//        user = deployPassProps.getProperty("remote_user")
+//        password = deployPassProps.getProperty("remote_pass")
 //        authentications = ['password']
 //    }
 //}
 
 task deploy << {
-//    ssh.settings {
-//        knownHosts = allowAnyHosts
-//    }
-//    ssh.run {
-//        session(remotes.webServer) {
-//            def localPath = files(
-//                    new File(rootDir, "out4/app/app.jar"),
-//                    new File(rootDir, "out4/app/getdown.txt"),
-//                    new File(rootDir, "out4/app/digest.txt"),
-//                    new File(rootDir, "out4/app/digest2.txt"),
-//            )
-//            def localResource = files (
-//                    new File(rootDir, "out4/app/resources/splash.png"),
-//                    new File(rootDir, "out4/app/resources/icon.png")
-//            )
-//            def remotePath = "/var/www/html/$appPath"
-//            def remoteResourcePath = "$remotePath/resources"
-//            execute "mkdir -p $remotePath"
-//            execute "rm -r $remotePath/*"
-//            execute "mkdir $remoteResourcePath"
-//            put from: localPath, into: remotePath
-//            put from: localResource, into: remoteResourcePath
-//            execute "ls -la $remotePath"
-//            execute "ls -la $remoteResourcePath"
-//        }
-//    }
+    ssh.settings {
+        knownHosts = allowAnyHosts
+    }
+    ssh.run {
+        session(remotes.webServer) {
+            def localPath = files(
+                    new File(rootDir, "out4/app/app.jar"),
+                    new File(rootDir, "out4/app/getdown.txt"),
+                    new File(rootDir, "out4/app/digest.txt"),
+                    new File(rootDir, "out4/app/digest2.txt"),
+            )
+            def localResource = files (
+                    
+                    new File(rootDir, "out4/app/resources/splash.png"),
+                    new File(rootDir, "out4/app/resources/icon.png")
+            )
+            def remotePath = "/var/www/html/$appPath"
+            def remoteResourcePath = "$remotePath/resources"
+            execute "mkdir -p $remotePath"
+            execute "rm -r $remotePath/*"
+            execute "mkdir $remoteResourcePath"
+            put from: localPath, into: remotePath
+            put from: localResource, into: remoteResourcePath
+            execute "ls -la $remotePath"
+            execute "ls -la $remoteResourcePath"
+        }
+    }
 }
 
