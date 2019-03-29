@@ -53,15 +53,15 @@ class TicketsController : Initializable {
         Main.component!!.presenterComponent().inject(this)
 
         // Views
-        val dialogPadding = 160.0
-        stageProperties.propertyWidth.addListener { _, _, newValue ->
-            jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
-        }
-        stageProperties.propertyHeight.addListener { _, _, newValue ->
-            jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
-        }
-        jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
-        jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
+//        val dialogPadding = 160.0
+//        stageProperties.propertyWidth.addListener { _, _, newValue ->
+//            jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
+//        }
+//        stageProperties.propertyHeight.addListener { _, _, newValue ->
+//            jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
+//        }
+//        jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
+//        jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
         ticketsListAdaper = TicketListAdapter(
                 listener = object : TicketListAdapter.Listener {
                     override fun onTicketSelect(ticket: Ticket) {
