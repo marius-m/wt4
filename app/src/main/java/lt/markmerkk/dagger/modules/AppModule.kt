@@ -207,4 +207,10 @@ class AppModule(
         return ActiveLogPersistence(timeProvider)
     }
 
+    @Provides
+    @Singleton
+    fun provideResultDispatcher(): ResultDispatcher {
+        return ResultDispatcher()
+    }
+
 }

@@ -61,6 +61,7 @@ class LogEditController : Initializable, LogEditService.Listener {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var resultDispatcher: ResultDispatcher
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -139,14 +140,6 @@ class LogEditController : Initializable, LogEditService.Listener {
                 ioScheduler = Schedulers.io(),
                 uiScheduler = JavaFxScheduler.getInstance()
         )
-        ticketInfoLoader.onAttach()
-    }
-
-    /**
-     * Called directly from the view, whenever entity is ready for control.
-     * If entity is provided, will provide update for the entity, otherwise it will create new one.
-     */
-    fun initFromView(entity: SimpleLog?) {
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(logStorage),
                 this
@@ -171,6 +164,7 @@ class LogEditController : Initializable, LogEditService.Listener {
                 clockEditPresenter = null,
                 logEditService = logEditService
         )
+        val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
         if (entity != null) {
             logEditService.serviceType = LogEditService.ServiceType.UPDATE
             logEditService.entityInEdit = entity
@@ -184,6 +178,7 @@ class LogEditController : Initializable, LogEditService.Listener {
         logEditService.redraw()
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
+        ticketInfoLoader.onAttach()
     }
 
     @PreDestroy
@@ -256,5 +251,9 @@ class LogEditController : Initializable, LogEditService.Listener {
     }
 
     //endregion
+
+    companion object {
+        const val RESULT_DISPATCH_KEY_ENTITY = "AueWCx04wQ"
+    }
 
 }

@@ -13,7 +13,9 @@ import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventChangeDisplayType
+import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
@@ -56,6 +58,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
+    @Inject lateinit var resultDispatcher: ResultDispatcher
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
@@ -65,11 +68,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
     lateinit var snackBar: JFXSnackbar
+    lateinit var dialogInflater: DialogInflater
 
     var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.Companion.component!!.presenterComponent().inject(this)
+        Main.component!!.presenterComponent().inject(this)
 
         // Init ui elements
         snackBar = JFXSnackbar(jfxRoot)
@@ -118,13 +122,16 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 hourGlass,
                 logStorage
         )
+        dialogInflater = DialogInflater(this, eventBus)
         eventBus.register(this)
         syncInteractor.addLoadingListener(uieProgressView)
         uieDateSwitcher.onAttach()
+        dialogInflater.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        dialogInflater.onDetach()
         uieDateSwitcher.onDetach()
         syncInteractor.removeLoadingListener(uieProgressView)
         eventBus.unregister(this)
@@ -187,13 +194,11 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     //region Listeners
 
     // todo : move this later on
-    val simpleUpdateListener: UpdateListener = object : UpdateListener {
+    private val simpleUpdateListener = object : UpdateListener {
 
         override fun onUpdate(entity: SimpleLog) {
-            val logEditDialog = LogEditDialog(entity)
-            val jfxDialog = logEditDialog.view as JFXDialog
-            jfxDialog.show(rootNode())
-            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(logEditDialog) }
+            resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, entity)
+            dialogInflater.eventInflateDialog(EventInflateDialog(DialogType.LOG_EDIT))
         }
 
         override fun onDelete(entity: SimpleLog) {
@@ -212,23 +217,20 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     }
 
-    val buttonChangeDisplayViewExternalListener: UIEButtonDisplayView.ExternalListener = object : UIEButtonDisplayView.ExternalListener {
+    private val buttonChangeDisplayViewExternalListener = object : UIEButtonDisplayView.ExternalListener {
         override fun currentDisplayType(): DisplayType {
             return currentDisplayType
         }
     }
 
-    private val buttonClockListener: UIEButtonClock.Listener = object : UIEButtonClock.Listener {
+    private val buttonClockListener = object : UIEButtonClock.Listener {
 
         override fun onClickClock(isSelected: Boolean) {
             clockRunBridge.setRunning(isSelected)
         }
 
         override fun onClickClockSettings() {
-            val dialog = ClockEditDialog()
-            val jfxDialog = dialog.view as JFXDialog
-            jfxDialog.show(rootNode())
-            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+            eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
         }
 
     }
