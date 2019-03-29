@@ -7,7 +7,8 @@ apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "de.fuerstenau.buildconfig"
 apply from: "deploy.gradle"
 
-mainClassName = "lt.markmerkk.Main2"
+//mainClassName = "lt.markmerkk.Main2"
+mainClassName = "lt.markmerkk.GetDownLocalApp"
 
 group = "lt.markmerkk"
 version = versionName

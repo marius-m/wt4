@@ -27,7 +27,8 @@ deployPassProps.load(new FileInputStream(deployPassFile.getAbsolutePath()))
 
 jfx {
     verbose = true
-    mainClass = "com.threerings.getdown.launcher.GetdownApp"
+    mainClass = "lt.markmerkk.GetDownLocalApp"
+//    mainClass = "com.threerings.getdown.launcher.GetdownApp"
 //    mainClass = "lt.markmerkk.Main2"
     jfxAppOutputDir = "build/libs"
     jfxMainAppJarName = "app.jar"
@@ -50,7 +51,7 @@ jfx {
             version_code: versionCode,
             version_name: versionName,
             ga_key: deployProps.getProperty("ga"),
-            release: "true",
+            release: "false",
     ]
     userJvmArgs = null
     launcherArguments = ["app"]
@@ -59,7 +60,7 @@ jfx {
     needMenu = false
     bundleArguments = [
 //            runtime: null,
-            classpath: "getdown-launcher-1.8.2.jar app/app.jar"
+            classpath: "app/app.jar"
     ]
     appName = "WT4"
     additionalAppResources = null
@@ -239,32 +240,32 @@ task processJar(dependsOn:shadowJar, type: JavaExec) {
 //}
 
 task deploy << {
-    ssh.settings {
-        knownHosts = allowAnyHosts
-    }
-    ssh.run {
-        session(remotes.webServer) {
-            def localPath = files(
-                    new File(rootDir, "out4/app/app.jar"),
-                    new File(rootDir, "out4/app/getdown.txt"),
-                    new File(rootDir, "out4/app/digest.txt"),
-                    new File(rootDir, "out4/app/digest2.txt"),
-            )
-            def localResource = files (
-                    
-                    new File(rootDir, "out4/app/resources/splash.png"),
-                    new File(rootDir, "out4/app/resources/icon.png")
-            )
-            def remotePath = "/var/www/html/$appPath"
-            def remoteResourcePath = "$remotePath/resources"
-            execute "mkdir -p $remotePath"
-            execute "rm -r $remotePath/*"
-            execute "mkdir $remoteResourcePath"
-            put from: localPath, into: remotePath
-            put from: localResource, into: remoteResourcePath
-            execute "ls -la $remotePath"
-            execute "ls -la $remoteResourcePath"
-        }
-    }
+//    ssh.settings {
+//        knownHosts = allowAnyHosts
+//    }
+//    ssh.run {
+//        session(remotes.webServer) {
+//            def localPath = files(
+//                    new File(rootDir, "out4/app/app.jar"),
+//                    new File(rootDir, "out4/app/getdown.txt"),
+//                    new File(rootDir, "out4/app/digest.txt"),
+//                    new File(rootDir, "out4/app/digest2.txt"),
+//            )
+//            def localResource = files (
+//                    
+//                    new File(rootDir, "out4/app/resources/splash.png"),
+//                    new File(rootDir, "out4/app/resources/icon.png")
+//            )
+//            def remotePath = "/var/www/html/$appPath"
+//            def remoteResourcePath = "$remotePath/resources"
+//            execute "mkdir -p $remotePath"
+//            execute "rm -r $remotePath/*"
+//            execute "mkdir $remoteResourcePath"
+//            put from: localPath, into: remotePath
+//            put from: localResource, into: remoteResourcePath
+//            execute "ls -la $remotePath"
+//            execute "ls -la $remoteResourcePath"
+//        }
+//    }
 }
 
