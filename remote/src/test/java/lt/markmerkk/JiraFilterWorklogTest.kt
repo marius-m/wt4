@@ -1,6 +1,6 @@
 package lt.markmerkk
 
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.whenever
 import net.rcarz.jiraclient.User
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime

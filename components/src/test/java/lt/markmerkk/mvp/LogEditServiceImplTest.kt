@@ -1,6 +1,6 @@
 package lt.markmerkk.mvp
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.mvp.MocksLogEditService.createValidLogWithDate
 import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Before

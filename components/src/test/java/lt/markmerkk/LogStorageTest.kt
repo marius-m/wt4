@@ -1,6 +1,6 @@
 package lt.markmerkk
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import org.junit.Test

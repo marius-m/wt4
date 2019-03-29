@@ -1,6 +1,6 @@
 package lt.markmerkk.interactors
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.*
 import org.junit.Test
 import rx.Observable

@@ -1,6 +1,6 @@
 package lt.markmerkk.interactors
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.LogStorage
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.utils.tracker.ITracker

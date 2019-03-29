@@ -1,6 +1,6 @@
 package lt.markmerkk.interactors
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.mvp.HostServicesInteractor
 import org.junit.Assert.*

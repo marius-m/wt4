@@ -1,6 +1,6 @@
 package lt.markmerkk.tickets
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import org.junit.Before

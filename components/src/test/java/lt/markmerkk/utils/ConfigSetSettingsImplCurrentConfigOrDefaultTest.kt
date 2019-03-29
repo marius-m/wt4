@@ -1,6 +1,6 @@
 package lt.markmerkk.utils
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import lt.markmerkk.ConfigPathProvider
 import org.junit.Assert.*
 import org.junit.Test

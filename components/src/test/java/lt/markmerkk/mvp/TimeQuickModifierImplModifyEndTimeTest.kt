@@ -1,6 +1,6 @@
 package lt.markmerkk.mvp
 
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime

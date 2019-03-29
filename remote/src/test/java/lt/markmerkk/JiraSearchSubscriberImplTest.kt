@@ -1,9 +1,9 @@
 package lt.markmerkk
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.tickets.JiraSearchSubscriberImpl
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
