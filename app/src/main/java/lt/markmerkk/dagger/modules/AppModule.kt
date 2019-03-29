@@ -31,7 +31,7 @@ import javax.inject.Singleton
 @Module
 class AppModule(
         val application: Application,
-        val sceneProperties: StageProperties
+        private val stageProperties: StageProperties
 ) {
 
     @Provides
@@ -43,7 +43,7 @@ class AppModule(
     @Provides
     @Singleton
     fun providesSceneProperties(): StageProperties {
-        return sceneProperties
+        return stageProperties
     }
 
     @Provides
