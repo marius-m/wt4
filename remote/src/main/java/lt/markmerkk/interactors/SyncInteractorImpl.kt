@@ -62,9 +62,10 @@ class SyncInteractorImpl(
         )
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
                 .doOnSubscribe { loading = true }
                 .doOnTerminate { loading = false }
-                .observeOn(uiScheduler)
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
                     logger.info("Sync all success in ${syncEnd - syncStart}ms!")
@@ -95,9 +96,10 @@ class SyncInteractorImpl(
         val syncStart = System.currentTimeMillis()
         subscription = uploadObservable(uploadValidator)
                 .flatMap { downloadObservable(downloadValidator) }
-                .doOnSubscribe { loading = true }
-                .doOnUnsubscribe { loading = false }
+                .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
+                .doOnSubscribe { loading = true }
+                .doOnTerminate { loading = false }
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
                     logger.info("Log sync success in ${syncEnd - syncStart}ms!")

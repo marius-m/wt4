@@ -29,8 +29,6 @@ import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
@@ -43,6 +41,7 @@ class CalendarPresenter : Initializable {
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
@@ -198,13 +197,13 @@ class CalendarPresenter : Initializable {
         }
         logLoader = CalendarFxLogLoader(
                 calendarLoaderListener,
-                Schedulers.io(),
-                JavaFxScheduler.getInstance()
+                schedulerProvider.io(),
+                schedulerProvider.ui()
         )
         calendarUpdater = CalendarFxUpdater(
                 calendarUpdateListener,
-                Schedulers.io(),
-                JavaFxScheduler.getInstance()
+                schedulerProvider.waitScheduler(),
+                schedulerProvider.ui()
         )
         calendarEditRules = CalendarFxEditRules(object : CalendarFxEditRules.Listener {
             override fun showIsEditMode() {

@@ -11,8 +11,6 @@ import lt.markmerkk.merger.*
 import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.tickets.JiraSearchSubscriber
 import lt.markmerkk.tickets.JiraSearchSubscriberImpl
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
 @Module
@@ -71,8 +69,7 @@ class SyncModule {
                 logStorage = localStorage,
                 jiraClientProvider = jiraClientProvider,
                 jiraSearchSubscriber = jiraSearchSubscriber,
-                jiraWorklogSubscriber = jiraWorklogSubscriber,
-                ioScheduler = Schedulers.computation()
+                jiraWorklogSubscriber = jiraWorklogSubscriber
         )
     }
 
@@ -106,7 +103,8 @@ class SyncModule {
             dayProvider: DayProvider,
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
-            autoUpdateInteractor: AutoUpdateInteractor
+            autoUpdateInteractor: AutoUpdateInteractor,
+            schedulerProvider: SchedulerProvider
     ): SyncInteractor {
         return SyncInteractorImpl(
                 jiraInteractor = jiraInteractor,
@@ -114,8 +112,8 @@ class SyncModule {
                 userSettings = settings,
                 remoteMergeToolsProvider = remoteMergeToolsProvider,
                 dayProvider = dayProvider,
-                uiScheduler = JavaFxScheduler.getInstance(),
-                ioScheduler = Schedulers.immediate(),
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui(),
                 autoUpdateInteractor = autoUpdateInteractor
         )
     }

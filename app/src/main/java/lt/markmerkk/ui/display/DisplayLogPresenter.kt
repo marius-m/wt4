@@ -23,10 +23,9 @@ import javax.inject.Inject
  * Represents the presenter to display the log list
  */
 class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
-    @Inject
-    lateinit var storage: LogStorage
-    @Inject
-    lateinit var tracker: ITracker
+
+    @Inject lateinit var storage: LogStorage
+    @Inject lateinit var tracker: ITracker
 
     @FXML
     lateinit var tableView: TableView<SimpleLog>

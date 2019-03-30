@@ -13,5 +13,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
 
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.kotlinTest}"
+    testImplementation "junit:junit:${versions.junit}"
+    testImplementation "org.mockito:mockito-core:${versions.mockito}"
+    testImplementation "org.assertj:assertj-core:${versions.assertj}"
     testImplementation project(":mock-factory")
 }

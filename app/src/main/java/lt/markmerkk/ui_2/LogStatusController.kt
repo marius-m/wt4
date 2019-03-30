@@ -10,13 +10,12 @@ import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
+import lt.markmerkk.SchedulerProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.LogStatusService
 import lt.markmerkk.mvp.LogStatusServiceImpl
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
@@ -25,6 +24,7 @@ import javax.inject.Inject
 class LogStatusController : Initializable, LogStatusCallback {
 
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     @FXML lateinit var jfxDialog: JFXDialog
     @FXML lateinit var jfxDialogLayout: JFXDialogLayout
@@ -44,8 +44,8 @@ class LogStatusController : Initializable, LogStatusCallback {
 
         logStatusService = LogStatusServiceImpl(
                 logStatusServiceListener,
-                Schedulers.io(),
-                JavaFxScheduler.getInstance(),
+                schedulerProvider.io(),
+                schedulerProvider.ui(),
                 logStorage
         )
         logStatusService.onAttach()

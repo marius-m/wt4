@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.schedulers.JavaFxScheduler;
-import rx.schedulers.Schedulers;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -38,6 +36,7 @@ public class WeekPresenter implements Initializable, AgendaView {
   public static final Logger logger = LoggerFactory.getLogger(WeekPresenter.class);
   @Inject LogStorage storage;
   @Inject ITracker tracker;
+  @Inject SchedulerProvider schedulerProvider;
 
   @FXML StackPane jfxWeekContainer;
   Agenda agenda;
@@ -77,8 +76,8 @@ public class WeekPresenter implements Initializable, AgendaView {
             agenda.appointmentGroups().get(0),
             agenda.appointmentGroups().get(10),
             agenda.appointmentGroups().get(13),
-            Schedulers.computation(),
-            JavaFxScheduler.getInstance()
+            schedulerProvider.io(),
+            schedulerProvider.ui()
     );
     agendaPresenter.onAttach();
     agendaPresenter.reloadView(storage.getData());

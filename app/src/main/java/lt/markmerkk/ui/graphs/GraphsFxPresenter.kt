@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.transform.Translate
 import javafx.util.StringConverter
 import lt.markmerkk.Main
+import lt.markmerkk.SchedulerProvider
 import lt.markmerkk.Translation
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.database.interfaces.IExecutor
@@ -24,9 +25,6 @@ import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.graphs.GraphDrawerPieDrilldown
 import lt.markmerkk.utils.graphs.GraphDrawerXYBars
 import org.joda.time.DateTime
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
-import java.awt.BorderLayout
 import java.net.URL
 import java.time.LocalDate
 import java.util.*
@@ -39,22 +37,16 @@ import javax.inject.Inject
  */
 class GraphsFxPresenter : Initializable, GraphMvp.View {
 
-    @Inject
-    lateinit var executor: IExecutor
-    @Inject
-    lateinit var hostServicesInteractor: HostServicesInteractor
-    @FXML
-    lateinit var viewGraphType: ComboBox<GraphDrawer<*>>
-    @FXML
-    lateinit var viewGraphContainer: BorderPane
-    @FXML
-    lateinit var viewDatePickerFrom: DatePicker
-    @FXML
-    lateinit var viewDatePickerTo: DatePicker
-    @FXML
-    lateinit var viewProgress: ProgressIndicator
-    @FXML
-    lateinit var buttonRefresh: Button
+    @Inject lateinit var executor: IExecutor
+    @Inject lateinit var hostServicesInteractor: HostServicesInteractor
+    @Inject lateinit var schedulerProvider: SchedulerProvider
+
+    @FXML lateinit var viewGraphType: ComboBox<GraphDrawer<*>>
+    @FXML lateinit var viewGraphContainer: BorderPane
+    @FXML lateinit var viewDatePickerFrom: DatePicker
+    @FXML lateinit var viewDatePickerTo: DatePicker
+    @FXML lateinit var viewProgress: ProgressIndicator
+    @FXML lateinit var buttonRefresh: Button
 
     val graphs: List<GraphDrawer<*>> by lazy {
         listOf(
@@ -76,11 +68,11 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
                 view = this,
                 logInteractor = LogInteractorImpl(
                         QueryResultProviderImpl<List<SimpleLog>>(executor),
-                        Schedulers.io()
+                        schedulerProvider.io()
                 ),
                 graphDrawers = graphs,
-                uiScheduler = JavaFxScheduler.getInstance(),
-                ioScheduler = Schedulers.io()
+                uiScheduler = schedulerProvider.ui(),
+                ioScheduler = schedulerProvider.io()
         )
     }
 

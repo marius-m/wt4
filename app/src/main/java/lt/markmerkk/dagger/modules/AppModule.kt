@@ -20,8 +20,6 @@ import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
 /**
@@ -33,6 +31,11 @@ class AppModule(
         val application: Application,
         private val stageProperties: StageProperties
 ) {
+
+    @Provides
+    @Singleton
+    fun providesSchedulersProvider(): SchedulerProvider = SchedulerProviderFx()
+
 
     @Provides
     @Singleton
@@ -174,10 +177,12 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideKeepAliveInteractor(): KeepAliveInteractor {
+    fun provideKeepAliveInteractor(
+            schedulerProvider: SchedulerProvider
+    ): KeepAliveInteractor {
         return KeepAliveInteractorImpl(
-                uiSCheduler = JavaFxScheduler.getInstance(),
-                ioScheduler = Schedulers.computation()
+                uiSCheduler = schedulerProvider.ui(),
+                waitScheduler = schedulerProvider.waitScheduler()
         )
     }
 
