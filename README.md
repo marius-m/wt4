@@ -98,6 +98,10 @@ Tricks that were being tackled in this project:
 
 ## Changelog
 
+### 1.1.1
+- Update jfoenix
+- Fix memory leaks
+
 ### 1.1.0
 
 Features:
