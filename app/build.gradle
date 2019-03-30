@@ -57,7 +57,7 @@ dependencies {
     implementation "com.brsanthu:google-analytics-java:1.1.2"
     implementation "io.reactivex:rxjavafx:0.0.2"
     implementation "com.google.guava:guava:21.0"
-    implementation "com.jfoenix:jfoenix:1.4.0"
+    implementation "com.jfoenix:jfoenix:8.0.8"
     implementation "io.reactivex:rxjava:${versions.rxJava}"
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
     implementation "org.bouncycastle:bcprov-jdk15on:1.51"

@@ -35,10 +35,10 @@ class UIBridgeDateTimeHandler(
     override fun onAttach() {
         jfxDateFrom.converter = dateConverter
         jfxTimeFrom.converter = timeConverter
-        jfxTimeFrom.setIs24HourView(true)
+        jfxTimeFrom.is24HourView = true
         jfxDateTo.converter = dateConverter
         jfxTimeTo.converter = timeConverter
-        jfxTimeTo.setIs24HourView(true)
+        jfxTimeTo.is24HourView = true
 
         jfxDateFrom.valueProperty().addListener(startDateChangeListener)
         jfxTimeFrom.valueProperty().addListener(startTimeChangeListener)

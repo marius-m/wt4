@@ -16,6 +16,8 @@ import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.*
@@ -69,17 +71,12 @@ class LogEditController : Initializable, LogEditService.Listener {
     private lateinit var timeQuickModifier: TimeQuickModifier
     private lateinit var ticketInfoLoader: TicketInfoLoader
 
+    private val dialogPadding = 100.0
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
-//        val dialogPadding = 100.0
-//        stageProperties.propertyWidth.addListener { _, _, newValue ->
-//            jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
-//        }
-//        stageProperties.propertyHeight.addListener { _, _, newValue ->
-//            jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
-//        }
-//        jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
-//        jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
+        jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
+        jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         jfxButtonCancel.setOnAction { jfxDialog.close() }
         jfxButtonAccept.setOnAction {
             logEditService.saveEntity(
@@ -107,10 +104,7 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxTextFieldTicketLink.graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
         jfxButtonSearch.graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0, 20.0)
         jfxButtonSearch.setOnAction {
-            val dialog = TicketsDialog()
-            val jfxDialog = dialog.view as JFXDialog
-            jfxDialog.show(jfxDialogLayout.parent as StackPane) // is this correct ?
-            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+            eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
         }
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
             override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
@@ -179,10 +173,12 @@ class LogEditController : Initializable, LogEditService.Listener {
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
+        stageProperties.register(stageChangeListener)
     }
 
     @PreDestroy
     fun destroy() {
+        stageProperties.unregister(stageChangeListener)
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
@@ -197,7 +193,7 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     //endregion
 
-    //region Edit service callbacks
+    //region Listeners
 
     override fun onDataChange(
             startDateTime: LocalDateTime,
@@ -248,6 +244,18 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     override fun onDisableSaving() {
         jfxButtonAccept.isDisable = true
+    }
+
+    private val stageChangeListener: StageProperties.StageChangeListener = object : StageProperties.StageChangeListener {
+        override fun onNewWidth(newWidth: Double) {
+            jfxDialogLayout.prefWidth = newWidth - dialogPadding
+        }
+
+        override fun onNewHeight(newHeight: Double) {
+            jfxDialogLayout.prefHeight = newHeight - dialogPadding
+        }
+
+        override fun onFocusChange(focus: Boolean) { }
     }
 
     //endregion

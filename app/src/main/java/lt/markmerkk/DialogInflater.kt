@@ -6,10 +6,12 @@ import com.jfoenix.controls.JFXDialog
 import javafx.scene.layout.StackPane
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.DialogType.*
 import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.ClockEditDialog
 import lt.markmerkk.ui_2.LogEditDialog
+import lt.markmerkk.ui_2.TicketsDialog
 
 /**
  * Responsible for initializing dialogs
@@ -31,8 +33,9 @@ class DialogInflater(
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
         val dialog = when (event.type) {
-            DialogType.ACTIVE_CLOCK -> ClockEditDialog()
-            DialogType.LOG_EDIT -> LogEditDialog()
+            ACTIVE_CLOCK -> ClockEditDialog()
+            LOG_EDIT -> LogEditDialog()
+            TICKET_SEARCH -> TicketsDialog()
         }
         val jfxDialog = dialog.view as JFXDialog
         jfxDialog.show(externalSourceNode.rootNode())

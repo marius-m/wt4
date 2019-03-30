@@ -50,7 +50,9 @@ class UIEProgressView(
         jfxButtonProgressStop.isManaged = false
     }
 
-    override fun reset() {}
+    override fun reset() {
+        hide()
+    }
 
     override fun onLoadChange(loading: Boolean) {
         if (loading) {

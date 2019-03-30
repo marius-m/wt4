@@ -77,7 +77,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
         // Init ui elements
         snackBar = JFXSnackbar(jfxRoot)
-        uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings)
+        uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings, eventBus)
         uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
                 graphics,

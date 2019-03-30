@@ -15,6 +15,8 @@ import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.interactors.ActiveLogPersistence
@@ -72,24 +74,10 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private lateinit var ticketInfoLoader: TicketInfoLoader
 
     private val dialogPadding = 100.0
-    private val stageChangeListener: StageProperties.StageChangeListener = object : StageProperties.StageChangeListener {
-        override fun onNewWidth(newWidth: Double) {
-            jfxDialogLayout.prefWidth = newWidth - dialogPadding
-        }
-
-        override fun onNewHeight(newHeight: Double) {
-            jfxDialogLayout.prefHeight = newHeight - dialogPadding
-        }
-
-        override fun onFocusChange(focus: Boolean) { }
-    }
-
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
-        jfxButtonDismiss.setOnAction {
-            jfxDialog.close()
-        }
+        jfxButtonDismiss.setOnAction { jfxDialog.close() }
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
             override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
                 clockEditPresenter.updateDateTime(
@@ -100,9 +88,9 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 )
             }
         }
-        timeQuickModifier = TimeQuickModifierImpl(
-                timeQuickModifierListener
-        )
+        jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
+        jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
+        timeQuickModifier = TimeQuickModifierImpl(timeQuickModifierListener)
         clockEditPresenter = ClockEditPresenterImpl(this, hourglass)
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(storage),
@@ -197,12 +185,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
             activeLogPersistence.reset()
         }
         jfxButtonSearch.graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0, 20.0)
-        jfxButtonSearch.setOnAction {
-            val dialog = TicketsDialog()
-            val jfxDialog = dialog.view as JFXDialog
-            jfxDialog.show(jfxDialogLayout.parent as StackPane) // is this correct ?
-            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
-        }
+        jfxButtonSearch.setOnAction { eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH)) }
         jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->
             ticketInfoLoader.changeInputCode(newValue)
         }
@@ -250,7 +233,19 @@ class ClockEditController : Initializable, ClockEditMVP.View {
 
     //endregion
 
-    //region MVP Impl
+    //region Listeners
+
+    private val stageChangeListener: StageProperties.StageChangeListener = object : StageProperties.StageChangeListener {
+        override fun onNewWidth(newWidth: Double) {
+            jfxDialogLayout.prefWidth = newWidth - dialogPadding
+        }
+
+        override fun onNewHeight(newHeight: Double) {
+            jfxDialogLayout.prefHeight = newHeight - dialogPadding
+        }
+
+        override fun onFocusChange(focus: Boolean) { }
+    }
 
     override fun onDateChange(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
         uiBridgeDateTimeHandler.changeDate(startDateTime, endDateTime)
@@ -258,18 +253,6 @@ class ClockEditController : Initializable, ClockEditMVP.View {
 
     override fun onHintChange(hint: String) {
         jfxHint.text = hint
-    }
-
-    //endregion
-
-    //region Listeners
-
-    private val stageChangePropertyWidth: (ObservableValue<out Number>, Number, Number) -> Unit = { _, _, newValue ->
-        jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
-    }
-
-    private val stageChangePropertyHeight: (ObservableValue<out Number>, Number, Number) -> Unit = { _, _, newValue ->
-        jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
     }
 
     //endregion
