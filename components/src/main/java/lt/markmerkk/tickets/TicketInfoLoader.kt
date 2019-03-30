@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit
 class TicketInfoLoader(
         private val listener: Listener,
         private val ticketsDatabaseRepo: TicketsDatabaseRepo,
+        private val waitScheduler: Scheduler,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
@@ -27,7 +28,7 @@ class TicketInfoLoader(
     fun onAttach() {
         inputSubscription = inputCodeSubject
                 .throttleLast(INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
-                .subscribeOn(ioScheduler)
+                .subscribeOn(waitScheduler)
                 .observeOn(uiScheduler)
                 .subscribe {
                     findTicket(it)

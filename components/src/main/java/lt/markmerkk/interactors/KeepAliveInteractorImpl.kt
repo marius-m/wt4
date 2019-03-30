@@ -6,13 +6,9 @@ import rx.Scheduler
 import rx.Subscription
 import java.util.concurrent.TimeUnit
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-12
- */
 class KeepAliveInteractorImpl(
         private val uiSCheduler: Scheduler,
-        private val ioScheduler: Scheduler
+        private val waitScheduler: Scheduler
 ) : KeepAliveInteractor {
 
     private var subscription: Subscription? = null
@@ -27,11 +23,11 @@ class KeepAliveInteractorImpl(
     }
 
     override fun onAttach() {
-        subscription = Observable.interval(0, 1, TimeUnit.MINUTES, ioScheduler)
+        subscription = Observable.interval(0, 1, TimeUnit.MINUTES, waitScheduler)
                 .observeOn(uiSCheduler)
-                .subscribe({
+                .subscribe {
                     listeners.forEach { it.update() }
-                })
+                }
     }
 
     override fun onDetach() {

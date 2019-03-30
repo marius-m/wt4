@@ -17,7 +17,6 @@ import org.apache.log4j.Priority
 import org.apache.log4j.PropertyConfigurator
 import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
-import rx.schedulers.Schedulers
 import javax.inject.Inject
 
 class Main : Application(), KeepAliveInteractor.Listener {
@@ -30,10 +29,11 @@ class Main : Application(), KeepAliveInteractor.Listener {
     @Inject lateinit var config: Config
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var stageProperties: StageProperties
+    @Inject lateinit var schedulersProvider: SchedulerProvider
+
+    private lateinit var keepAliveGASession: KeepAliveGASession
 
     lateinit var primaryStage: Stage
-
-    var keepAliveGASession: KeepAliveGASession? = null
 
     override fun start(stage: Stage) {
         this.primaryStage = stage
@@ -85,8 +85,9 @@ class Main : Application(), KeepAliveInteractor.Listener {
         keepAliveGASession = KeepAliveGASessionImpl(
                 logStorage,
                 tracker,
-                Schedulers.computation())
-        keepAliveGASession?.onAttach()
+                schedulersProvider.waitScheduler()
+        )
+        keepAliveGASession.onAttach()
         stageProperties.onAttach()
     }
 
@@ -102,7 +103,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
 
     fun destroyApp() {
         stageProperties.onDetach()
-        keepAliveGASession?.onDetach()
+        keepAliveGASession.onDetach()
         syncInteractor.onDetach()
         keepAliveInteractor.unregister(this)
         keepAliveInteractor.onDetach()
@@ -145,8 +146,8 @@ class Main : Application(), KeepAliveInteractor.Listener {
     //endregion
 
     companion object {
-        val LOG_LAYOUT_DEBUG = "%t / %d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n"
-        val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
+        const val LOG_LAYOUT_DEBUG = "%t / %d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n"
+        const val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
 
         var DEBUG = false
 

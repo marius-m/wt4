@@ -13,7 +13,6 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.*
-import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.DialogType
@@ -24,8 +23,6 @@ import lt.markmerkk.mvp.*
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
@@ -64,6 +61,7 @@ class LogEditController : Initializable, LogEditService.Listener {
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Inject lateinit var resultDispatcher: ResultDispatcher
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -131,8 +129,9 @@ class LogEditController : Initializable, LogEditService.Listener {
                     }
                 },
                 ticketsDatabaseRepo = ticketsDatabaseRepo,
-                ioScheduler = Schedulers.io(),
-                uiScheduler = JavaFxScheduler.getInstance()
+                waitScheduler = schedulerProvider.waitScheduler(),
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
         )
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(logStorage),

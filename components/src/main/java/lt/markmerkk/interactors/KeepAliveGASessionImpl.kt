@@ -8,21 +8,17 @@ import rx.Scheduler
 import rx.Subscription
 import java.util.concurrent.TimeUnit
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-13
- */
 class KeepAliveGASessionImpl(
         private val logStorage: LogStorage,
         private val tracker: ITracker,
-        private val ioScheduler: Scheduler
+        private val waitScheduler: Scheduler
 ) : KeepAliveGASession {
 
     private var subscription: Subscription? = null
 
     override fun onAttach() {
-        subscription = Observable.interval(MINUTE_DELAY, MINUTE_DELAY, TimeUnit.MINUTES, ioScheduler)
-                .subscribe({ tracker.sendView(logStorage.displayType.name) })
+        subscription = Observable.interval(MINUTE_DELAY, TimeUnit.MINUTES, waitScheduler)
+                .subscribe { tracker.sendView(logStorage.displayType.name) }
     }
 
     override fun onDetach() {

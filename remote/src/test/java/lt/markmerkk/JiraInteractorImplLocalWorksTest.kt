@@ -29,8 +29,7 @@ class JiraInteractorImplLocalWorksTest {
                 clientProvider,
                 dataStorage,
                 searchSubscriber,
-                worklogSubscriber,
-                Schedulers.immediate()
+                worklogSubscriber
         )
         val logs = listOf(
                 SimpleLog(),

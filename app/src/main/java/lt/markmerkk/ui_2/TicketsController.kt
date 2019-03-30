@@ -16,8 +16,6 @@ import lt.markmerkk.ui_2.adapters.TicketListAdapter
 import lt.markmerkk.ui_2.adapters.TicketViewItem
 import lt.markmerkk.ui_2.bridges.UIEProgressView
 import org.slf4j.LoggerFactory
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
@@ -43,6 +41,7 @@ class TicketsController : Initializable {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     lateinit var ticketsListAdaper: TicketListAdapter
     lateinit var ticketLoader: TicketLoader
@@ -129,8 +128,8 @@ class TicketsController : Initializable {
                 ticketsNetworkRepo = ticketsNetworkRepo,
                 timeProvider = timeProvider,
                 userSettings = userSettings,
-                ioScheduler = Schedulers.io(),
-                uiScheduler = JavaFxScheduler.getInstance()
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
         )
         jfxButtonDismiss.setOnAction {
             jfxDialog.close()

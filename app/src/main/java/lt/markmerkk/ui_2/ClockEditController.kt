@@ -26,8 +26,6 @@ import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
@@ -64,6 +62,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Inject lateinit var hostServices: HostServicesInteractor
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -150,8 +149,9 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                     }
                 },
                 ticketsDatabaseRepo = ticketsDatabaseRepo,
-                ioScheduler = Schedulers.io(),
-                uiScheduler = JavaFxScheduler.getInstance()
+                waitScheduler = schedulerProvider.waitScheduler(),
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
         )
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
                 jfxSubtractFrom,

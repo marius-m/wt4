@@ -12,15 +12,14 @@ import java.util.concurrent.TimeUnit
  */
 class CalendarFxUpdater(
         private val listener: Listener,
-        private val ioScheduler: Scheduler,
+        private val waitScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
 
     private var subscription: Subscription? = null
 
     fun onAttach() {
-        subscription = Observable.interval(30, 30, TimeUnit.SECONDS, ioScheduler)
-                .subscribeOn(ioScheduler)
+        subscription = Observable.interval(30, 30, TimeUnit.SECONDS, waitScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({
                     listener.onCurrentTimeUpdate(LocalTime.now())
