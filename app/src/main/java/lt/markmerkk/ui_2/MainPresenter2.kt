@@ -6,9 +6,14 @@ import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.geometry.Insets
+import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
+import javafx.scene.paint.Paint
+import javafx.scene.text.Text
+import javafx.util.Duration
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
@@ -59,6 +64,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
     @Inject lateinit var resultDispatcher: ResultDispatcher
+    @Inject lateinit var stageProperties: StageProperties
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
@@ -150,7 +156,16 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @Subscribe
     fun onSnackBarMessage(event: EventSnackBarMessage) {
-        snackBar.show(event.message, Const.TIMEOUT_2s)
+        val label = Label(event.message)
+                .apply {
+                    val paddingHorizontal = 10.0
+                    val paddingVertical = 8.0
+                    padding = Insets(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal)
+                    textFill = Paint.valueOf("white")
+                    maxWidth = stageProperties.width
+                }
+        val hBox = HBox(10.0, label)
+        snackBar.enqueue(JFXSnackbar.SnackbarEvent(hBox))
     }
 
     //endregion
