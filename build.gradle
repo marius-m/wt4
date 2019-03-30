@@ -2,10 +2,19 @@ buildscript {
     apply from: "versions.gradle"
     ext.kotlin_test_version = '1.4.0'
 
+
     ext.versionName = "1.1.1"
     ext.versionCode = "30"
-    ext.debug = true
-    ext.gaKey = "test" // incorrect value
+//    ext.debug = true
+//    ext.gaKey = "test"
+
+    // Release properties
+    def deployPropertyFile = new File("${rootDir}","deploy.properties")
+    assert deployPropertyFile.exists()
+    Properties deployProps = new Properties()
+    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
+    ext.debug = false
+    ext.gaKey = deployProps.getProperty("ga")
 
     repositories {
         mavenLocal()
