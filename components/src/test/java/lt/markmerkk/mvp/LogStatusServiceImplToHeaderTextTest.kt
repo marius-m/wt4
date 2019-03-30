@@ -1,7 +1,7 @@
 package lt.markmerkk.mvp
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith

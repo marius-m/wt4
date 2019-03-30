@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Hyperlink
@@ -14,6 +15,8 @@ import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.interactors.ActiveLogPersistence
@@ -70,20 +73,11 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private lateinit var logEditService: LogEditService
     private lateinit var ticketInfoLoader: TicketInfoLoader
 
+    private val dialogPadding = 100.0
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
-        val dialogPadding = 100.0
-        stageProperties.propertyWidth.addListener { _, _, newValue ->
-            jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
-        }
-        stageProperties.propertyHeight.addListener { _, _, newValue ->
-            jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
-        }
-        jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
-        jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
-        jfxButtonDismiss.setOnAction {
-            jfxDialog.close()
-        }
+        jfxButtonDismiss.setOnAction { jfxDialog.close() }
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
             override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
                 clockEditPresenter.updateDateTime(
@@ -94,9 +88,9 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 )
             }
         }
-        timeQuickModifier = TimeQuickModifierImpl(
-                timeQuickModifierListener
-        )
+        jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
+        jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
+        timeQuickModifier = TimeQuickModifierImpl(timeQuickModifierListener)
         clockEditPresenter = ClockEditPresenterImpl(this, hourglass)
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(storage),
@@ -191,12 +185,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
             activeLogPersistence.reset()
         }
         jfxButtonSearch.graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0, 20.0)
-        jfxButtonSearch.setOnAction {
-            val dialog = TicketsDialog()
-            val jfxDialog = dialog.view as JFXDialog
-            jfxDialog.show(jfxDialogLayout.parent as StackPane) // is this correct ?
-            jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
-        }
+        jfxButtonSearch.setOnAction { eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH)) }
         jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->
             ticketInfoLoader.changeInputCode(newValue)
         }
@@ -223,10 +212,12 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
+        stageProperties.register(stageChangeListener)
     }
 
     @PreDestroy
     fun destroy() {
+        stageProperties.unregister(stageChangeListener)
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
@@ -242,7 +233,19 @@ class ClockEditController : Initializable, ClockEditMVP.View {
 
     //endregion
 
-    //region MVP Impl
+    //region Listeners
+
+    private val stageChangeListener: StageProperties.StageChangeListener = object : StageProperties.StageChangeListener {
+        override fun onNewWidth(newWidth: Double) {
+            jfxDialogLayout.prefWidth = newWidth - dialogPadding
+        }
+
+        override fun onNewHeight(newHeight: Double) {
+            jfxDialogLayout.prefHeight = newHeight - dialogPadding
+        }
+
+        override fun onFocusChange(focus: Boolean) { }
+    }
 
     override fun onDateChange(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
         uiBridgeDateTimeHandler.changeDate(startDateTime, endDateTime)

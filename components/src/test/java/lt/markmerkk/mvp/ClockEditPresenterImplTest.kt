@@ -1,6 +1,6 @@
 package lt.markmerkk.mvp
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.junit.Assert.*
 import org.junit.Before

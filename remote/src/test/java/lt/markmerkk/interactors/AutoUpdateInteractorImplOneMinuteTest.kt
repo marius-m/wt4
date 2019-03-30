@@ -1,7 +1,7 @@
 package lt.markmerkk.interactors
 
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.UserSettings
 import org.junit.Assert.*
 import org.junit.Before

@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2.bridges
 
+import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXListView
@@ -16,6 +17,8 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.Main
 import lt.markmerkk.Strings
 import lt.markmerkk.afterburner.InjectorNoDI
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ProfilesDialog
@@ -30,7 +33,8 @@ class UIEButtonSettings(
         private val graphics: Graphics<SVGGlyph>,
         private val strings: Strings,
         private val externalSourceNode: ExternalSourceNode<StackPane>,
-        private val button: JFXButton
+        private val button: JFXButton,
+        private val eventBus: EventBus
 ) : UIElement<JFXButton> {
 
     private var jfxPopup: JFXPopup = JFXPopup()
@@ -112,10 +116,7 @@ class UIEButtonSettings(
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
             }
             labelTest -> {
-                val dialog = TicketsDialog()
-                val jfxDialog = dialog.view as JFXDialog
-                jfxDialog.show(externalSourceNode.rootNode())
-                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+                eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
             }
             else -> throw IllegalStateException("Cannot define selected label")
         }

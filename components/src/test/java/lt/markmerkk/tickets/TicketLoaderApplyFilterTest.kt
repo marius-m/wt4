@@ -1,6 +1,6 @@
 package lt.markmerkk.tickets
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.Mocks
 import lt.markmerkk.TicketsDatabaseRepo
 import lt.markmerkk.TimeProvider

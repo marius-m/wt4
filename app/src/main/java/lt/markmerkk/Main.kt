@@ -21,20 +21,15 @@ import rx.schedulers.Schedulers
 import javax.inject.Inject
 
 class Main : Application(), KeepAliveInteractor.Listener {
-    @Inject
-    lateinit var settings: UserSettings
-    @Inject
-    lateinit var logStorage: LogStorage
-    @Inject
-    lateinit var keepAliveInteractor: KeepAliveInteractor
-    @Inject
-    lateinit var syncInteractor: SyncInteractor
-    @Inject
-    lateinit var autoUpdateInteractor: AutoUpdateInteractor
-    @Inject
-    lateinit var config: Config
-    @Inject
-    lateinit var tracker: ITracker
+
+    @Inject lateinit var settings: UserSettings
+    @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var keepAliveInteractor: KeepAliveInteractor
+    @Inject lateinit var syncInteractor: SyncInteractor
+    @Inject lateinit var autoUpdateInteractor: AutoUpdateInteractor
+    @Inject lateinit var config: Config
+    @Inject lateinit var tracker: ITracker
+    @Inject lateinit var stageProperties: StageProperties
 
     lateinit var primaryStage: Stage
 
@@ -92,6 +87,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
                 tracker,
                 Schedulers.computation())
         keepAliveGASession?.onAttach()
+        stageProperties.onAttach()
     }
 
     fun initScene(stage: Stage): Scene {
@@ -105,6 +101,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
     }
 
     fun destroyApp() {
+        stageProperties.onDetach()
         keepAliveGASession?.onDetach()
         syncInteractor.onDetach()
         keepAliveInteractor.unregister(this)

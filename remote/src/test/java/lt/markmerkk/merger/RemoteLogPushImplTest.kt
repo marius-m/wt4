@@ -1,6 +1,6 @@
 package lt.markmerkk.merger
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.JiraFilter
 import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.JiraException

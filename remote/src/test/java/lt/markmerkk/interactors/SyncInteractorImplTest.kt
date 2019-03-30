@@ -1,6 +1,6 @@
 package lt.markmerkk.interactors
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.entities.*

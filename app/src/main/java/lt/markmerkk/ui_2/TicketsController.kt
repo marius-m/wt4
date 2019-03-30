@@ -20,7 +20,6 @@ import rx.schedulers.JavaFxScheduler
 import rx.schedulers.Schedulers
 import java.net.URL
 import java.util.*
-import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
@@ -49,19 +48,14 @@ class TicketsController : Initializable {
     lateinit var ticketLoader: TicketLoader
     lateinit var uieProgressView: UIEProgressView
 
+    private val dialogPadding = 160.0
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
         // Views
-        val dialogPadding = 160.0
-        stageProperties.propertyWidth.addListener { _, _, newValue ->
-            jfxDialogLayout.prefWidth = newValue.toDouble() - dialogPadding
-        }
-        stageProperties.propertyHeight.addListener { _, _, newValue ->
-            jfxDialogLayout.prefHeight = newValue.toDouble() - dialogPadding
-        }
-        jfxDialogLayout.prefWidth = stageProperties.propertyWidth.get() - dialogPadding
-        jfxDialogLayout.prefHeight = stageProperties.propertyHeight.get() - dialogPadding
+        jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
+        jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         ticketsListAdaper = TicketListAdapter(
                 listener = object : TicketListAdapter.Listener {
                     override fun onTicketSelect(ticket: Ticket) {
@@ -144,17 +138,25 @@ class TicketsController : Initializable {
         ticketLoader.onAttach()
         ticketLoader.fetchTickets()
         ticketLoader.loadTickets()
-    }
-
-    @PostConstruct
-    fun afterLoad() {
-        logger.debug("On attach")
+        stageProperties.register(stageChangeListener)
     }
 
     @PreDestroy
     fun destroy() {
-        logger.debug("On detach")
+        stageProperties.unregister(stageChangeListener)
         ticketLoader.onDetach()
+    }
+
+    private val stageChangeListener = object : StageProperties.StageChangeListener {
+        override fun onNewWidth(newWidth: Double) {
+            jfxDialogLayout.prefWidth = newWidth - dialogPadding
+        }
+
+        override fun onNewHeight(newHeight: Double) {
+            jfxDialogLayout.prefHeight = newHeight - dialogPadding
+        }
+
+        override fun onFocusChange(focus: Boolean) { }
     }
 
     companion object {
