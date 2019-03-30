@@ -15,8 +15,6 @@ import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.interactors.AuthServiceImpl
 import lt.markmerkk.interactors.LogLoaderImpl
 import org.slf4j.LoggerFactory
-import rx.schedulers.JavaFxScheduler
-import rx.schedulers.Schedulers
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
@@ -25,6 +23,7 @@ import javax.inject.Inject
 class SettingsController : Initializable {
 
     @FXML lateinit var jfxDialog: JFXDialog
+    @FXML lateinit var jfxDialogLayout: JFXDialogLayout
     @FXML lateinit var jfxInfo: Text
     @FXML lateinit var jfxStatusContainer: BorderPane
     @FXML lateinit var jfxStatusProgress: JFXProgressBar
@@ -47,19 +46,28 @@ class SettingsController : Initializable {
     @Inject lateinit var jiraAuthInteractor: AuthService.AuthInteractor
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var stageProperties: StageProperties
 
-    lateinit var authService: AuthService
+    private lateinit var authService: AuthService
+
+    private val dialogPadding = 100.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.Companion.component!!.presenterComponent().inject(this)
+        Main.component!!.presenterComponent().inject(this)
         authService = AuthServiceImpl(
                 authServiceView,
-                Schedulers.io(),
-                JavaFxScheduler.getInstance(),
+                schedulerProvider.io(),
+                schedulerProvider.ui(),
                 jiraAuthInteractor,
                 LogLoaderImpl(config.cfgPath)
         )
         authServiceView.hideProgress()
+        jfxOutputTextArea.widthProperty().addListener { _, _, newValue ->
+            val width = newValue.toDouble()
+            jfxOutputProgress.prefWidth = width
+        }
+        jfxOutputProgress.prefWidth = jfxOutputTextArea.width
 
         jfxInfo.text = strings.getString("settings_info")
         jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 60.0)
@@ -68,6 +76,8 @@ class SettingsController : Initializable {
         jfxTextFieldHost.text = userSettings.host
         jfxTextFieldUsername.text = userSettings.username
         jfxTextFieldPassword.text = userSettings.password
+        jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
+        jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
 
         authService.onAttach()
         jfxButtonCancel.setOnAction { jfxDialog.close() }
@@ -82,10 +92,12 @@ class SettingsController : Initializable {
         jfxButtonTroubleshoot.setOnAction { authService.toggleDisplayType() }
         jfxButtonApply.setOnAction { saveUserSettings() }
         showStatusContainer()
+        stageProperties.register(stagePropertiesListener)
     }
 
     @PreDestroy
     fun destroy() {
+        stageProperties.unregister(stagePropertiesListener)
         authService.onDetach()
     }
 
@@ -162,6 +174,18 @@ class SettingsController : Initializable {
             jfxOutputTextArea.positionCaret(length)
         }
 
+    }
+
+    private val stagePropertiesListener = object : StageProperties.StageChangeListener {
+        override fun onNewWidth(newWidth: Double) {
+            jfxDialogLayout.prefWidth = newWidth - dialogPadding
+        }
+
+        override fun onNewHeight(newHeight: Double) {
+            jfxDialogLayout.prefHeight = newHeight - dialogPadding
+        }
+
+        override fun onFocusChange(focus: Boolean) { }
     }
 
     //endregion
