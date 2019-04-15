@@ -25,6 +25,7 @@ class TicketInfoLoaderTest {
                 listener,
                 ticketsDatabaseRepo,
                 Schedulers.immediate(),
+                Schedulers.immediate(),
                 Schedulers.immediate()
         )
     }

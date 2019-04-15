@@ -8,6 +8,8 @@ import com.calendarfx.view.DateControl
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.Observable
+import javafx.collections.SetChangeListener
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -99,7 +101,7 @@ class CalendarPresenter : Initializable {
                     calendarEditRules.disable()
                 }
         )
-        uiDndButton.hide()
+//        uiDndButton.hide()
 
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
@@ -207,26 +209,37 @@ class CalendarPresenter : Initializable {
         )
         calendarEditRules = CalendarFxEditRules(object : CalendarFxEditRules.Listener {
             override fun showIsEditMode() {
-                uiDndButton.show()
+//                uiDndButton.show()
             }
 
             override fun hideIsEditMode() {
-                uiDndButton.hide()
+//                uiDndButton.hide()
             }
         })
         logLoader.onAttach()
         calendarUpdater.onAttach()
         logLoader.load(storage.data)
+        jfxCalendarView.selections.addListener(jfxCalSelectionListener)
     }
 
     @PreDestroy
     fun destroy() {
+        jfxCalendarView.selections.removeListener(jfxCalSelectionListener)
         calendarUpdater.onDetach()
         logLoader.onDetach()
         storage.unregister(storageListener)
     }
 
     //region Listeners
+
+    private val jfxCalSelectionListener = SetChangeListener<Entry<*>> {
+        val currentSelection = jfxCalendarView.selections.toList()
+        if (currentSelection.isNotEmpty()) {
+            uiDndButton.show()
+        } else {
+            uiDndButton.hide()
+        }
+    }
 
     private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
         override fun onDataChange(data: List<SimpleLog>) {

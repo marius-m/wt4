@@ -3,6 +3,8 @@ package lt.markmerkk.ui_2.bridges
 import com.jfoenix.controls.JFXButton
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.CornerRadii
@@ -11,43 +13,33 @@ import javafx.scene.paint.Color
 import lt.markmerkk.Strings
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
+import lt.markmerkk.ui_2.views.QuickEditView
 
 
-/**
- * Represents clock jfxCommitButton, its graphics, animations
- */
 class UIEButtonDragAndDrop(
         private val node: ExternalSourceNode<StackPane>,
         private val strings: Strings,
         private val onClick: () -> Unit
-) : UIElement<JFXButton> {
+) : UIElement<Node> {
 
-    private val button: JFXButton = JFXButton(strings.getString("calendar_button_edit_title"))
+    private val viewQuickEdit = QuickEditView()
 
     init {
-        node.rootNode().children.add(button)
-        StackPane.setAlignment(button, Pos.TOP_RIGHT)
-        StackPane.setMargin(button, Insets(10.0))
-        val backgroundFill = BackgroundFill(
-                Color.web("#E91E63"),
-                CornerRadii(10.0),
-                Insets(0.0, 0.0, 0.0, 0.0)
-        )
-        button.background = Background(backgroundFill)
-        button.textFill = Color.WHITE
-        button.setOnAction { onClick.invoke() }
+        node.rootNode().children.add(viewQuickEdit.root)
+        StackPane.setAlignment(viewQuickEdit.root, Pos.TOP_RIGHT)
+        StackPane.setMargin(viewQuickEdit.root, Insets(10.0, 20.0, 0.0, 0.0))
     }
 
-    override fun raw(): JFXButton = button
+    override fun raw(): Node = viewQuickEdit.root
 
     override fun show() {
-        button.isVisible = true
-        button.isManaged = true
+        viewQuickEdit.root.isVisible = true
+        viewQuickEdit.root.isManaged = true
     }
 
     override fun hide() {
-        button.isVisible = false
-        button.isManaged = false
+        viewQuickEdit.root.isVisible = false
+        viewQuickEdit.root.isManaged = false
     }
 
     override fun reset() {}

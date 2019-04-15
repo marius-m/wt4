@@ -32,6 +32,10 @@ sourceSets {
     main.java.srcDirs += "src/main/kotlin"
 }
 
+compileKotlin {
+    kotlinOptions.jvmTarget= "1.8"
+}
+
 kapt {
     generateStubs = true
 }
@@ -54,6 +58,7 @@ dependencies {
     implementation project(":models")
     implementation project(":mock-factory")
 
+    implementation 'no.tornado:tornadofx:1.7.17'
     implementation "com.brsanthu:google-analytics-java:1.1.2"
     implementation "io.reactivex:rxjavafx:0.0.2"
     implementation "com.google.guava:guava:21.0"
