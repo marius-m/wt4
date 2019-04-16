@@ -24,7 +24,6 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui_2.bridges.UIEButtonCalendarQuickEdit
-import lt.markmerkk.utils.CalendarFxEditRules
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
@@ -43,6 +42,7 @@ class CalendarPresenter : Initializable {
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var timeProvider: TimeProvider
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
@@ -189,6 +189,7 @@ class CalendarPresenter : Initializable {
         }
         logLoader = CalendarFxLogLoader(
                 calendarLoaderListener,
+                timeProvider,
                 schedulerProvider.io(),
                 schedulerProvider.ui()
         )

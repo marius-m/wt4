@@ -160,7 +160,7 @@ class AppModule(
     @Provides
     @Singleton
     fun providesTimeProvider(): TimeProvider {
-        return TimeProvider()
+        return TimeProviderJfx()
     }
 
     @Provides

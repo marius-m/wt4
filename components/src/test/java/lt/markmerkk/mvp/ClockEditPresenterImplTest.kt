@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.junit.Assert.*
 import org.junit.Before
@@ -16,10 +17,12 @@ class ClockEditPresenterImplTest {
     @Mock lateinit var view: ClockEditMVP.View
     lateinit var presenter: ClockEditPresenterImpl
 
+    private val timeProvider = TimeProviderTest()
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = ClockEditPresenterImpl(view, hourglass)
+        presenter = ClockEditPresenterImpl(view, hourglass, timeProvider)
     }
 
     @Test

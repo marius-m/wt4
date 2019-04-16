@@ -1,13 +1,14 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.IDataStorage
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 class LogEditInteractorImpl(
-        private val dataStorage: IDataStorage<SimpleLog>
+        private val dataStorage: IDataStorage<SimpleLog>,
+        private val timeProvider: TimeProvider
 ) : LogEditInteractor {
 
     override fun updateDateTime(
@@ -15,8 +16,8 @@ class LogEditInteractorImpl(
             startInDateTime: LocalDateTime,
             endInDateTime: LocalDateTime
     ): SimpleLog {
-        val startInMillis = startInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val endInMillis = endInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val startInMillis = timeProvider.jMillisFrom(startInDateTime)
+        val endInMillis = timeProvider.jMillisFrom(endInDateTime)
         return updateCurrentEntity(
                 currentEntity,
                 startInMillis,
@@ -33,8 +34,8 @@ class LogEditInteractorImpl(
             task: String,
             comment: String
     ): SimpleLog {
-        val startInMillis = startInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val endInMillis = endInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val startInMillis = timeProvider.jMillisFrom(startInDateTime)
+        val endInMillis = timeProvider.jMillisFrom(endInDateTime)
         return updateCurrentEntity(
                 currentEntity,
                 startInMillis,

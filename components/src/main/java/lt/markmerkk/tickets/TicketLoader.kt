@@ -1,16 +1,12 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.Tags
-import lt.markmerkk.TicketsDatabaseRepo
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
-import rx.Single
 import rx.Subscription
 import rx.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit

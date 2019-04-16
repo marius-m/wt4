@@ -1,7 +1,6 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.entities.TicketCode
 import org.joda.time.DateTime

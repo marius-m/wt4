@@ -1,10 +1,7 @@
 package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.Mocks
-import lt.markmerkk.TicketsDatabaseRepo
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import org.junit.Before
 import org.junit.Test

@@ -12,7 +12,6 @@ import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui.UILifecycleBridge
 import lt.markmerkk.ui_2.CurrentDayDialog
-import lt.markmerkk.utils.DateCompat
 import lt.markmerkk.utils.DateSwittcherFormatter
 
 /**
@@ -60,7 +59,7 @@ class UIEDateSwitcher(
     }
 
     private fun render() {
-        val localDate = DateCompat.toJavaLocalDate(storage.targetDate)
+        val localDate = TimeProvider.toJavaLocalDate(storage.targetDate)
         when (storage.displayType) {
             DisplayTypeLength.DAY -> jfxDateSwitcherDate.text = DateSwittcherFormatter.formatDateForDay(localDate)
             DisplayTypeLength.WEEK -> jfxDateSwitcherDate.text = DateSwittcherFormatter.formatDateForWeek(localDate)

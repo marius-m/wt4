@@ -1,6 +1,6 @@
 package lt.markmerkk.mvp
 
-import lt.markmerkk.utils.DateCompat
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
 import java.time.LocalDate
@@ -10,7 +10,8 @@ import java.time.format.DateTimeFormatter
 
 class ClockEditPresenterImpl(
         private val view: ClockEditMVP.View,
-        private val hourglass: HourGlass
+        private val hourglass: HourGlass,
+        private val timeProvider: TimeProvider
 ) : ClockEditMVP.Presenter {
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")!!
@@ -18,8 +19,8 @@ class ClockEditPresenterImpl(
     override fun onAttach() {
         handleReportDate(
                 hourglass,
-                DateCompat.toJodaDateTime(hourglass.startMillis),
-                DateCompat.toJodaDateTime(hourglass.endMillis)
+                timeProvider.jLocalDateTimeFrom(hourglass.startMillis),
+                timeProvider.jLocalDateTimeFrom(hourglass.endMillis)
         )
         handleDurationReport(hourglass)
     }

@@ -11,10 +11,6 @@ import lt.markmerkk.ui.version.VersionPresenter
 import lt.markmerkk.ui.week.WeekPresenter
 import lt.markmerkk.ui_2.*
 
-/**
- * @author mariusmerkevicius
- * @since 2016-07-17
- */
 @PerPresenterScope
 @Subcomponent
 interface PresenterComponent {

@@ -1,13 +1,14 @@
 package lt.markmerkk.mvp
 
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.interactors.ActiveLogPersistence
 import org.joda.time.DateTime
 import java.time.*
 
 class LogEditServiceImpl(
         private val logEditInteractor: LogEditInteractor,
+        private val timeProvider: TimeProvider,
         private val listener: LogEditService.Listener
 ) : LogEditService {
 
@@ -70,8 +71,8 @@ class LogEditServiceImpl(
      * Triggers according functions to show on screen
      */
     override fun redraw() {
-        val start = Instant.ofEpochMilli(entityInEdit.start).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        val end = Instant.ofEpochMilli(entityInEdit.end).atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val start = timeProvider.jLocalDateTimeFrom(entityInEdit.start)
+        val end = timeProvider.jLocalDateTimeFrom(entityInEdit.end)
         listener.onDataChange(
                 start,
                 end,

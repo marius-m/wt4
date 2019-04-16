@@ -10,7 +10,6 @@ import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
@@ -62,6 +61,7 @@ class LogEditController : Initializable, LogEditService.Listener {
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var timeProvider: TimeProvider
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -134,7 +134,8 @@ class LogEditController : Initializable, LogEditService.Listener {
                 uiScheduler = schedulerProvider.ui()
         )
         logEditService = LogEditServiceImpl(
-                LogEditInteractorImpl(logStorage),
+                LogEditInteractorImpl(logStorage, timeProvider),
+                timeProvider,
                 this
         )
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(

@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.mvp.MocksLogEditService.createValidLogWithDate
 import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Before
@@ -11,22 +12,20 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2017-05-10
- */
 class LogEditServiceImplTest {
 
     @Mock lateinit var listener: LogEditService.Listener
     @Mock lateinit var logEditInteractor: LogEditInteractor
     lateinit var service: LogEditServiceImpl
 
+    private val timeProvider = TimeProviderTest()
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         service = LogEditServiceImpl(
                 logEditInteractor,
+                timeProvider,
                 listener
         )
     }

@@ -1,5 +1,6 @@
 package lt.markmerkk.mvp
 
+import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.junit.Before
 import org.mockito.Mock
@@ -19,7 +20,7 @@ abstract class AbsClockEditPresenterImplTest {
     @Before
     open fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = ClockEditPresenterImpl(view, hourglass)
+        presenter = ClockEditPresenterImpl(view, hourglass, TimeProviderTest())
     }
 
 }

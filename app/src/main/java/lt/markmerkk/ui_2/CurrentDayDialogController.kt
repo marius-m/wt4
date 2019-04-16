@@ -3,20 +3,16 @@ package lt.markmerkk.ui_2
 import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXDialogLayout
-import com.jfoenix.skins.JFXDatePickerContent
 import com.jfoenix.skins.JFXDatePickerContentLocal
-import com.jfoenix.skins.JFXDatePickerSkin
 import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.geometry.Insets
-import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
-import lt.markmerkk.utils.DateCompat
+import lt.markmerkk.TimeProvider
 import java.net.URL
 import java.time.LocalDate
 import java.util.*
@@ -37,7 +33,7 @@ class CurrentDayDialogController : Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
-        jfxDatePicker = JFXDatePicker(DateCompat.toJavaLocalDate(logStorage.targetDate))
+        jfxDatePicker = JFXDatePicker(TimeProvider.toJavaLocalDate(logStorage.targetDate))
         jfxDatePicker.defaultColor = Color.web("#E91E63")
         jfxDatePicker.valueProperty().addListener(dateChangeListener)
         val jfxDatePickerContent = JFXDatePickerContentLocal(jfxDatePicker)
@@ -62,7 +58,7 @@ class CurrentDayDialogController : Initializable {
     // region Listeners
 
     private val dateChangeListener: ChangeListener<LocalDate> = ChangeListener { _, _, newValue ->
-        logStorage.targetDate = DateCompat.toJodaDateTime(newValue)
+        logStorage.targetDate = TimeProvider.toJodaLocalDate(newValue).toDateTimeAtStartOfDay()
         jfxDialog.close()
     }
 

@@ -4,16 +4,13 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import javafx.beans.value.ObservableValue
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.*
-import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
@@ -63,6 +60,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     @Inject lateinit var hostServices: HostServicesInteractor
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var timeProvider: TimeProvider
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -90,9 +88,10 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         timeQuickModifier = TimeQuickModifierImpl(timeQuickModifierListener)
-        clockEditPresenter = ClockEditPresenterImpl(this, hourglass)
+        clockEditPresenter = ClockEditPresenterImpl(this, hourglass, timeProvider)
         logEditService = LogEditServiceImpl(
-                LogEditInteractorImpl(storage),
+                LogEditInteractorImpl(storage, timeProvider),
+                timeProvider,
                 object : LogEditService.Listener {
                     override fun onDataChange(
                             startDateTime: LocalDateTime,
