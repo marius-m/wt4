@@ -8,7 +8,6 @@ import com.calendarfx.view.DateControl
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
 import com.jfoenix.svg.SVGGlyph
-import javafx.beans.Observable
 import javafx.collections.SetChangeListener
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -24,7 +23,7 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.interfaces.UpdateListener
-import lt.markmerkk.ui_2.bridges.UIEButtonDragAndDrop
+import lt.markmerkk.ui_2.bridges.UIEButtonCalendarQuickEdit
 import lt.markmerkk.utils.CalendarFxEditRules
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarFxUpdater
@@ -47,7 +46,7 @@ class CalendarPresenter : Initializable {
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
-    private lateinit var uiDndButton: UIEButtonDragAndDrop
+    private lateinit var uiCalendarQuickEdit: UIEButtonCalendarQuickEdit
 
     lateinit var updateListener: UpdateListener
 
@@ -88,20 +87,16 @@ class CalendarPresenter : Initializable {
 
     private lateinit var logLoader: CalendarFxLogLoader
     private lateinit var calendarUpdater: CalendarFxUpdater
-    private lateinit var calendarEditRules: CalendarFxEditRules
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
-        uiDndButton = UIEButtonDragAndDrop(
+        uiCalendarQuickEdit = UIEButtonCalendarQuickEdit(
                 node = object : ExternalSourceNode<StackPane> {
                     override fun rootNode(): StackPane = jfxContainer
                 },
-                strings = strings,
-                onClick = {
-                    calendarEditRules.disable()
-                }
+                strings = strings
         )
-//        uiDndButton.hide()
+        uiCalendarQuickEdit.hide()
 
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
@@ -118,7 +113,6 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryDetailsCallback = object : Callback<DateControl.EntryDetailsParameter, Boolean> {
             override fun call(param: DateControl.EntryDetailsParameter): Boolean {
-                if (calendarEditRules.isInEditMode()) return true
                 if (param.inputEvent.eventType != MouseEvent.MOUSE_CLICKED) {
                     return true
                 }
@@ -131,7 +125,6 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryContextMenuCallback = object : Callback<DateControl.EntryContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.EntryContextMenuParameter): ContextMenu {
-                if (calendarEditRules.isInEditMode()) return ContextMenu()
                 val contextMenu = ContextMenu()
                 val updateItem = MenuItem(
                         strings.getString("general_update"),
@@ -161,7 +154,6 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.contextMenuCallback = object : Callback<DateControl.ContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.ContextMenuParameter): ContextMenu {
-                if (calendarEditRules.isInEditMode()) return ContextMenu()
                 val contextMenu = ContextMenu()
                 contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemNewItem(param.zonedDateTime, strings, storage))
                 if (jfxCalendarView is DetailedDayView) {
@@ -170,7 +162,6 @@ class CalendarPresenter : Initializable {
                 if (jfxCalendarView is DetailedWeekView) {
                     contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemScale(jfxCalendarView as DetailedWeekView, strings))
                 }
-                contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemEditMode(strings, calendarEditRules))
                 contextMenu.onAction = object : EventHandler<ActionEvent> {
                     override fun handle(event: ActionEvent) {
                         contextMenu.hide()
@@ -181,7 +172,6 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryFactory = object : Callback<DateControl.CreateEntryParameter, Entry<*>> {
             override fun call(param: DateControl.CreateEntryParameter): Entry<SimpleLog>? {
-                if (calendarEditRules.isInEditMode()) return null
                 val startMillis = param.zonedDateTime.toInstant().toEpochMilli()
                 val endMillis = param.zonedDateTime.plusHours(1).toInstant().toEpochMilli()
                 val simpleLog = SimpleLogBuilder()
@@ -194,7 +184,7 @@ class CalendarPresenter : Initializable {
         }
         jfxCalendarView.entryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
             override fun call(param: DateControl.EntryEditParameter): Boolean {
-                return calendarEditRules.isInEditMode()
+                return false
             }
         }
         logLoader = CalendarFxLogLoader(
@@ -207,15 +197,6 @@ class CalendarPresenter : Initializable {
                 schedulerProvider.waitScheduler(),
                 schedulerProvider.ui()
         )
-        calendarEditRules = CalendarFxEditRules(object : CalendarFxEditRules.Listener {
-            override fun showIsEditMode() {
-//                uiDndButton.show()
-            }
-
-            override fun hideIsEditMode() {
-//                uiDndButton.hide()
-            }
-        })
         logLoader.onAttach()
         calendarUpdater.onAttach()
         logLoader.load(storage.data)
@@ -235,9 +216,9 @@ class CalendarPresenter : Initializable {
     private val jfxCalSelectionListener = SetChangeListener<Entry<*>> {
         val currentSelection = jfxCalendarView.selections.toList()
         if (currentSelection.isNotEmpty()) {
-            uiDndButton.show()
+            uiCalendarQuickEdit.show()
         } else {
-            uiDndButton.hide()
+            uiCalendarQuickEdit.hide()
         }
     }
 
