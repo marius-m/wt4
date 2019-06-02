@@ -21,18 +21,6 @@ class TicketLoaderApplyFilterTest {
     lateinit var loader: TicketLoader
 
     private val testScheduler = TestScheduler()
-    private val tickets: List<Ticket> = listOf(
-            "google",           // TTS-001
-            "bing",             // TTS-002
-            "facebook",         // TTS-003
-            "linkedin",         // TTS-004
-            "twitter",          // TTS-005
-            "googleplus",       // TTS-006
-            "bingnews",         // TTS-007
-            "plexoogl"          // TTS-008
-    ).mapIndexed { index: Int, description: String ->
-        Mocks.createTicket(code = "TTS-00${index + 1}", description = description)
-    }
 
     @Before
     fun setUp() {
@@ -46,7 +34,7 @@ class TicketLoaderApplyFilterTest {
                 testScheduler,
                 testScheduler
         )
-        doReturn(Single.just(tickets)).whenever(ticketsDatabaseRepo).loadTickets()
+        doReturn(Single.just(MocksTickets.tickets)).whenever(ticketsDatabaseRepo).loadTickets()
     }
 
     @Test
@@ -57,11 +45,11 @@ class TicketLoaderApplyFilterTest {
         loader.loadTickets()
         reset(listener)
 
-        loader.applyFilter(inputFilter = "TTS-005")
+        loader.applyFilter(inputFilter = "TTS-115")
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verify(listener).onTicketsAvailable(listOf(tickets[4])) // only TTS-005
+        verify(listener).onTicketsAvailable(listOf(MocksTickets.tickets[4])) // only TTS-005
     }
 
     @Test

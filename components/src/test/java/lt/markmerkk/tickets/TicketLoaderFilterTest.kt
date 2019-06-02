@@ -7,19 +7,6 @@ import org.junit.Test
 
 class TicketLoaderFilterTest {
 
-    private val tickets: List<Ticket> = listOf(
-            "google",           // TTS-1
-            "bing",             // TTS-2
-            "facebook",         // TTS-3
-            "linkedin",         // TTS-4
-            "twitter",          // TTS-5
-            "googleplus",       // TTS-6
-            "bingnews",         // TTS-7
-            "plexoogl"          // TTS-8
-    ).mapIndexed { index: Int, description: String ->
-        Mocks.createTicket(code = "TTS-00${index + 1}", description = description)
-    }
-
     @Test
     fun noTickets() {
         // Act
@@ -37,12 +24,12 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
+                inputTickets = MocksTickets.tickets,
                 searchInput = ""
         )
 
         // Assert
-        assertThat(result.size).isEqualTo(tickets.size)
+        assertThat(result.size).isEqualTo(MocksTickets.tickets.size)
     }
 
     @Test
@@ -50,12 +37,12 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
+                inputTickets = MocksTickets.tickets,
                 searchInput = "a"
         )
 
         // Assert
-        assertThat(result.size).isEqualTo(tickets.size)
+        assertThat(result.size).isEqualTo(MocksTickets.tickets.size)
     }
 
     @Test
@@ -63,15 +50,15 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
+                inputTickets = MocksTickets.tickets,
                 searchInput = "goog"
         )
 
         // Assert
         assertThat(result).contains(
-                tickets[0], // google
-                tickets[5], // googleplus
-                tickets[7]  // plexoogl
+                MocksTickets.tickets[0], // google
+                MocksTickets.tickets[5], // googleplus
+                MocksTickets.tickets[7]  // plexoogl
         )
         assertThat(result.size).isEqualTo(3)
     }
@@ -81,12 +68,12 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
+                inputTickets = MocksTickets.tickets,
                 searchInput = "TTS"
         )
 
         // Assert
-        assertThat(result.size).isEqualTo(tickets.size)
+        assertThat(result.size).isEqualTo(MocksTickets.tickets.size)
     }
 
     @Test
@@ -94,12 +81,12 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
+                inputTickets = MocksTickets.tickets,
                 searchInput = "tt"
         )
 
         // Assert
-        assertThat(result.size).isEqualTo(tickets.size)
+        assertThat(result.size).isEqualTo(MocksTickets.tickets.size)
     }
 
     @Test
@@ -107,13 +94,13 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
-                searchInput = "TTS-005"
+                inputTickets = MocksTickets.tickets,
+                searchInput = "TTS-115"
         )
 
         // Assert
         assertThat(result.size).isEqualTo(1)
-        assertThat(result).containsExactly(tickets[4])
+        assertThat(result).containsExactly(MocksTickets.tickets[4])
     }
 
     @Test
@@ -121,12 +108,12 @@ class TicketLoaderFilterTest {
         // Assemble
         // Act
         val result = TicketLoader.filter(
-                inputTickets = tickets,
-                searchInput = "005"
+                inputTickets = MocksTickets.tickets,
+                searchInput = "115"
         )
 
         // Assert
         assertThat(result.size).isEqualTo(1)
-        assertThat(result).containsExactly(tickets[4])
+        assertThat(result).containsExactly(MocksTickets.tickets[4])
     }
 }
