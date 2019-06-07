@@ -1,31 +1,31 @@
 package lt.markmerkk.ui_2.views
 
-import apple.laf.JRSUIConstants
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.layout.*
 import javafx.scene.paint.Paint
 import tornadofx.View
-import tornadofx.combobox
 import tornadofx.hgrow
 import tornadofx.vgrow
-import javax.swing.SingleSelectionModel
 
 class QuickEditView: View() {
 
     override val root: VBox = VBox()
 
+    private val containerWidth = 90.0
+
     init {
         with(root) {
-            val prefWidth = root.prefWidth
-            jfxButton("-10")
-            jfxButton("-1")
+            jfxButton("-10 min")
+                    .apply { setPrefWidth(containerWidth) }
+            jfxButton("-1 min")
+                    .apply { setPrefWidth(containerWidth) }
             jfxCombobox(SimpleStringProperty(""), listOf("MOVE", "SCALE"))
-            jfxButton("+1")
-                    .apply { setPrefWidth(prefWidth) }
-            jfxButton("+10")
-                    .apply { setPrefWidth(prefWidth) }
+            jfxButton("+1 min")
+                    .apply { setPrefWidth(containerWidth) }
+            jfxButton("+10 min")
+                    .apply { setPrefWidth(containerWidth) }
         }
         root.alignment = Pos.CENTER
         root.background = Background(
@@ -35,8 +35,8 @@ class QuickEditView: View() {
                         Insets.EMPTY
                 )
         )
-        root.maxWidth = 100.0
-        root.maxHeight = 100.0
+        root.maxWidth = containerWidth
+        root.maxHeight = containerWidth
         root.vgrow = Priority.NEVER
         root.hgrow = Priority.NEVER
     }
