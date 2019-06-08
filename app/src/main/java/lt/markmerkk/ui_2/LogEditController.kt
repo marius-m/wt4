@@ -140,7 +140,6 @@ class LogEditController : Initializable, LogEditService.Listener {
                 jfxDateTo = jfxDateTo,
                 jfxTimeTo = jfxTimeTo,
                 timeProvider = timeProvider,
-                timeQuickModifier = null,
                 clockEditPresenter = null,
                 logEditService = logEditService
         )

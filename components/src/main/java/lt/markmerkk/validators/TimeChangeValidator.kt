@@ -1,6 +1,7 @@
 package lt.markmerkk.validators
 
 import org.joda.time.DateTime
+import java.lang.UnsupportedOperationException
 
 /**
  * Responsible for modifying time in correct time gaps
@@ -97,6 +98,32 @@ object TimeChangeValidator {
                 start = timeGap.start.minusMinutes(minutes),
                 end = timeGap.end.minusMinutes(minutes)
         )
+    }
+
+    /**
+     * Changes start of the gap
+     */
+    fun changeStart(
+            start: DateTime,
+            end: DateTime
+    ): TimeGap {
+        return TimeGap.from(start, end)
+    }
+
+    /**
+     * Changes end of the gap
+     */
+    fun changeEnd(
+            start: DateTime,
+            end: DateTime
+    ): TimeGap {
+        if (end.isBefore(start)) {
+            return TimeGap.from(
+                    start = end,
+                    end = end
+            )
+        }
+        return TimeGap.from(start, end)
     }
 
 }
