@@ -4,9 +4,9 @@ import lt.markmerkk.TimeMachine
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class QuickTimeModifyValidatorExpandToStartTest {
+class TimeChangeValidatorExpandToStartTest {
 
-    private val validator = QuickTimeModifyValidator
+    private val validator = TimeChangeValidator
 
     @Test
     fun simple() {

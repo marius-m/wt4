@@ -1,14 +1,12 @@
 package lt.markmerkk.validators
 
 import lt.markmerkk.TimeMachine
-import lt.markmerkk.validators.QuickTimeModifyValidator
-import lt.markmerkk.validators.TimeGap
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class QuickTimeModifyValidatorMoveBackwardTest {
+class TimeChangeValidatorMoveBackwardTest {
 
-    private val validator = QuickTimeModifyValidator
+    private val validator = TimeChangeValidator
 
     @Test
     fun simple() {

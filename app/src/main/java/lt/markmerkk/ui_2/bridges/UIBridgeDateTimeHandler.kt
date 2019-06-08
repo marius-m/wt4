@@ -7,11 +7,11 @@ import javafx.util.StringConverter
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.mvp.ClockEditMVP
 import lt.markmerkk.mvp.LogEditService
-import lt.markmerkk.mvp.TimeQuickModifier
 import lt.markmerkk.ui.UILifecycleBridge
+import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.validators.TimeChangeValidator
 import org.joda.time.DateTime
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -25,13 +25,13 @@ class UIBridgeDateTimeHandler(
         private val jfxDateTo: JFXDatePicker,
         private val jfxTimeTo: JFXTimePicker,
         private val timeProvider: TimeProvider,
-        private val timeQuickModifier: TimeQuickModifier?,
         private val clockEditPresenter: ClockEditMVP.Presenter?,
         private val logEditService: LogEditService?
 ) : UILifecycleBridge {
 
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")!!
-    private val dateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")!!
+    private val timeFormatter = DateTimeFormatter.ofPattern(LogFormatters.TIME_SHORT_FORMAT)!!
+    private val dateFormatter = DateTimeFormatter.ofPattern(LogFormatters.DATE_SHORT_FORMAT)!!
+    private val quickTimeModifyValidator = TimeChangeValidator
 
     override fun onAttach() {
         jfxDateFrom.converter = dateConverter

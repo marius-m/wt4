@@ -166,7 +166,6 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 jfxDateTo = jfxDateTo,
                 jfxTimeTo = jfxTimeTo,
                 timeProvider = timeProvider,
-                timeQuickModifier = null,
                 clockEditPresenter = clockEditPresenter,
                 logEditService = logEditService
         )

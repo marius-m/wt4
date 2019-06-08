@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 /**
  * Responsible for modifying time in correct time gaps
  */
-object QuickTimeModifyValidator {
+object TimeChangeValidator {
 
     /**
      * Appends minutes to the end of the time gap

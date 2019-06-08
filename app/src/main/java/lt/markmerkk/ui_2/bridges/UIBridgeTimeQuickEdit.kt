@@ -5,7 +5,7 @@ import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTimePicker
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.mvp.LogEditService
-import lt.markmerkk.validators.QuickTimeModifyValidator
+import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.validators.TimeGap
 import lt.markmerkk.ui.UIBridge
 
@@ -25,7 +25,7 @@ class UIBridgeTimeQuickEdit(
         private val timeProvider: TimeProvider
 ) : UIBridge {
 
-    private val timeEditValidator = QuickTimeModifyValidator
+    private val timeEditValidator = TimeChangeValidator
 
     init {
         jfxSubtractFrom.setOnAction {
