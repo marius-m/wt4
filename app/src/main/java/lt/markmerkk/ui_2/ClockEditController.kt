@@ -77,10 +77,10 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         Main.component!!.presenterComponent().inject(this)
         jfxButtonDismiss.setOnAction { jfxDialog.close() }
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
-            override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
+            override fun onTimeModified(startDateTime: DateTime, endDateTime: DateTime) {
                 clockEditPresenter.updateDateTime(
-                        timeProvider.toJodaDateTime(startDateTime),
-                        timeProvider.toJodaDateTime(endDateTime)
+                        startDateTime,
+                        endDateTime
                 )
             }
         }
@@ -242,7 +242,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         override fun onFocusChange(focus: Boolean) { }
     }
 
-    override fun onDateChange(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
+    override fun onDateChange(startDateTime: DateTime, endDateTime: DateTime) {
         uiBridgeDateTimeHandler.changeDate(startDateTime, endDateTime)
     }
 

@@ -3,11 +3,11 @@ package lt.markmerkk.ui_2.bridges
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTimePicker
-import javafx.scene.layout.StackPane
-import lt.markmerkk.mvp.TimeQuickModifier
-import lt.markmerkk.ui.ExternalSourceNode
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.mvp.LogEditService
+import lt.markmerkk.validators.QuickTimeModifyValidator
+import lt.markmerkk.validators.TimeGap
 import lt.markmerkk.ui.UIBridge
-import java.time.LocalDateTime
 
 /**
  * Represents controls to quickly edit time
@@ -21,57 +21,76 @@ class UIBridgeTimeQuickEdit(
         private val jfxTimeFrom: JFXTimePicker,
         private val jfxDateTo: JFXDatePicker,
         private val jfxTimeTo: JFXTimePicker,
-        private val timeQuickModifier: TimeQuickModifier
+        private val logEditService: LogEditService,
+        private val timeProvider: TimeProvider
 ) : UIBridge {
+
+    private val timeEditValidator = QuickTimeModifyValidator
 
     init {
         jfxSubtractFrom.setOnAction {
-            timeQuickModifier.subtractStartTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
+            val dateTimeStart = timeProvider.toJodaDateTime(
+                    jfxDateFrom.value,
+                    jfxTimeFrom.value
             )
+            val dateTimeEnd = timeProvider.toJodaDateTime(
+                    jfxDateTo.value,
+                    jfxTimeTo.value
+            )
+            val newTimeGap = timeEditValidator.expandToStart(
+                    TimeGap.from(dateTimeStart, dateTimeEnd),
+                    minutes = 1
+            )
+            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
+            logEditService.redraw()
         }
         jfxAppendFrom.setOnAction {
-            timeQuickModifier.appendStartTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
+            val dateTimeStart = timeProvider.toJodaDateTime(
+                    jfxDateFrom.value,
+                    jfxTimeFrom.value
             )
+            val dateTimeEnd = timeProvider.toJodaDateTime(
+                    jfxDateTo.value,
+                    jfxTimeTo.value
+            )
+            val newTimeGap = timeEditValidator.shrinkFromStart(
+                    TimeGap.from(dateTimeStart, dateTimeEnd),
+                    minutes = 1
+            )
+            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
+            logEditService.redraw()
         }
         jfxSubtractTo.setOnAction {
-            timeQuickModifier.subtractEndTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
+            val dateTimeStart = timeProvider.toJodaDateTime(
+                    jfxDateFrom.value,
+                    jfxTimeFrom.value
             )
+            val dateTimeEnd = timeProvider.toJodaDateTime(
+                    jfxDateTo.value,
+                    jfxTimeTo.value
+            )
+            val newTimeGap = timeEditValidator.shrinkFromEnd(
+                    TimeGap.from(dateTimeStart, dateTimeEnd),
+                    minutes = 1
+            )
+            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
+            logEditService.redraw()
         }
         jfxAppendTo.setOnAction {
-            timeQuickModifier.appendEndTime(
-                    LocalDateTime.of(
-                            jfxDateFrom.value,
-                            jfxTimeFrom.value
-                    ),
-                    LocalDateTime.of(
-                            jfxDateTo.value,
-                            jfxTimeTo.value
-                    )
+            val dateTimeStart = timeProvider.toJodaDateTime(
+                    jfxDateFrom.value,
+                    jfxTimeFrom.value
             )
+            val dateTimeEnd = timeProvider.toJodaDateTime(
+                    jfxDateTo.value,
+                    jfxTimeTo.value
+            )
+            val newTimeGap = timeEditValidator.expandToEnd(
+                    TimeGap.from(dateTimeStart, dateTimeEnd),
+                    minutes = 1
+            )
+            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
+            logEditService.redraw()
         }
     }
 

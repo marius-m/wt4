@@ -1,10 +1,12 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.validators
 
 import lt.markmerkk.TimeMachine
+import lt.markmerkk.validators.QuickTimeModifyValidator
+import lt.markmerkk.validators.TimeGap
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class QuickTimeModifyValidatorMoveForwardTest {
+class QuickTimeModifyValidatorShrinkFromEndTest {
 
     private val validator = QuickTimeModifyValidator
 
@@ -19,30 +21,27 @@ class QuickTimeModifyValidatorMoveForwardTest {
                 .withMinuteOfHour(10)
 
         // Act
-        val resultTimeGap = validator.moveForward(
+        val resultTimeGap = validator.shrinkFromEnd(
                 timeGap = TimeGap.from(
                         start,
                         end
                 ),
-                minutes = 60
+                minutes = 1
         )
 
         // Assert
         assertThat(resultTimeGap.start).isEqualTo(
                 TimeMachine.now()
-                        .withHourOfDay(11)
-                        .withMinuteOfHour(0)
-        )
+                        .withHourOfDay(10)
+                        .withMinuteOfHour(0))
         assertThat(resultTimeGap.end).isEqualTo(
                 TimeMachine.now()
-                        .withHourOfDay(11)
-                        .withMinuteOfHour(10)
-        )
+                        .withHourOfDay(10)
+                        .withMinuteOfHour(9))
     }
 
-
     @Test
-    fun simple2() {
+    fun shrinkMoreThanStart() {
         // Assemble
         val start = TimeMachine.now()
                 .withHourOfDay(10)
@@ -52,7 +51,7 @@ class QuickTimeModifyValidatorMoveForwardTest {
                 .withMinuteOfHour(10)
 
         // Act
-        val resultTimeGap = validator.moveForward(
+        val resultTimeGap = validator.shrinkFromEnd(
                 timeGap = TimeGap.from(
                         start,
                         end
@@ -63,14 +62,12 @@ class QuickTimeModifyValidatorMoveForwardTest {
         // Assert
         assertThat(resultTimeGap.start).isEqualTo(
                 TimeMachine.now()
-                        .withHourOfDay(10)
-                        .withMinuteOfHour(20)
-        )
+                        .withHourOfDay(9)
+                        .withMinuteOfHour(50))
         assertThat(resultTimeGap.end).isEqualTo(
                 TimeMachine.now()
-                        .withHourOfDay(10)
-                        .withMinuteOfHour(30)
-        )
+                        .withHourOfDay(9)
+                        .withMinuteOfHour(50))
     }
 
 }

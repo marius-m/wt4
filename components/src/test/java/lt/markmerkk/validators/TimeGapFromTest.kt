@@ -1,6 +1,7 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.validators
 
 import lt.markmerkk.TimeMachine
+import lt.markmerkk.validators.TimeGap
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -44,7 +45,7 @@ class TimeGapFromTest {
         )
         assertThat(resultTimeGap.end).isEqualTo(
                 TimeMachine.now().withHourOfDay(10)
-                        .withMinuteOfHour(1)
+                        .withMinuteOfHour(0)
         )
     }
 
@@ -65,7 +66,7 @@ class TimeGapFromTest {
         )
         assertThat(resultTimeGap.end).isEqualTo(
                 TimeMachine.now().withHourOfDay(10)
-                        .withMinuteOfHour(1)
+                        .withMinuteOfHour(0)
         )
     }
 }

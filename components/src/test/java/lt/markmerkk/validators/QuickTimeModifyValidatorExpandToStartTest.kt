@@ -1,4 +1,4 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.validators
 
 import lt.markmerkk.TimeMachine
 import org.assertj.core.api.Assertions.assertThat

@@ -1,16 +1,14 @@
-package lt.markmerkk.mvp
+package lt.markmerkk.validators
 
 import org.joda.time.DateTime
 
 /**
  * Responsible for modifying time in correct time gaps
- * Note: There should always be at least 1 min gap between
  */
 object QuickTimeModifyValidator {
 
     /**
      * Appends minutes to the end of the time gap
-     * Note: There should always be 1 min gap
      */
     fun expandToEnd(
             timeGap: TimeGap,
@@ -24,21 +22,26 @@ object QuickTimeModifyValidator {
 
     /**
      * Subtracts minutes from the end of the time gap
-     * Note: There will always be 1 min gap
      */
     fun shrinkFromEnd(
             timeGap: TimeGap,
             minutes: Int
     ): TimeGap {
+        val newEnd = timeGap.end.minusMinutes(minutes)
+        if (newEnd.isBefore(timeGap.start)) {
+            return TimeGap.from(
+                    start = newEnd,
+                    end = newEnd
+            )
+        }
         return TimeGap.from(
                 start = timeGap.start,
-                end = timeGap.end.minusMinutes(minutes)
+                end = newEnd
         )
     }
 
     /**
      * Adds more minutes to start of the time gap
-     * Note: There will always be a 1 min gap
      */
     fun expandToStart(
             timeGap: TimeGap,
@@ -52,7 +55,6 @@ object QuickTimeModifyValidator {
 
     /**
      * Subtracts minutes from time gap
-     * Note: There will always be a 1 min gap
      */
     fun shrinkFromStart(
             timeGap: TimeGap,
@@ -61,8 +63,8 @@ object QuickTimeModifyValidator {
         val newStart = timeGap.start.plusMinutes(minutes)
         if (newStart.isAfter(timeGap.end)) {
             return TimeGap.from(
-                    start = timeGap.end.minusMinutes(1),
-                    end = timeGap.end
+                    start = newStart,
+                    end = newStart
             )
         }
         return TimeGap.from(
@@ -111,7 +113,7 @@ data class TimeGap private constructor(
         fun from(start: DateTime, end: DateTime): TimeGap {
             if (start.isEqual(end)
                     || end.isBefore(start)) {
-                return TimeGap(start, start.plusMinutes(1))
+                return TimeGap(start, start)
             }
             return TimeGap(start, end)
         }
