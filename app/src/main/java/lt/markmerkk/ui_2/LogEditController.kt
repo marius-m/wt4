@@ -67,7 +67,6 @@ class LogEditController : Initializable, LogEditService.Listener {
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
     private lateinit var logEditService: LogEditService
-    private lateinit var timeQuickModifier: TimeQuickModifier
     private lateinit var ticketInfoLoader: TicketInfoLoader
 
     private val dialogPadding = 100.0
@@ -103,18 +102,6 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxButtonSearch.setOnAction {
             eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
         }
-        val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
-            override fun onTimeModified(startDateTime: DateTime, endDateTime: DateTime) {
-                logEditService.updateDateTime(
-                        startDateTime,
-                        endDateTime
-                )
-                logEditService.redraw()
-            }
-        }
-        timeQuickModifier = TimeQuickModifierImpl(
-                timeQuickModifierListener
-        )
         ticketInfoLoader = TicketInfoLoader(
                 listener = object : TicketInfoLoader.Listener {
                     override fun onTicketFound(ticket: Ticket) {
