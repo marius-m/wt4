@@ -2,15 +2,12 @@ package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.TimeProviderTest
-import lt.markmerkk.mvp.MocksLogEditService.createValidLogWithDate
-import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
+import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 class LogEditServiceImplTest {
 
@@ -33,7 +30,7 @@ class LogEditServiceImplTest {
     @Test
     fun populateData() {
         // Assemble
-        val simpleLog = createValidLogWithDate()
+        val simpleLog = MocksLogEditService.createValidLogWithDate()
         doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
@@ -51,9 +48,9 @@ class LogEditServiceImplTest {
     @Test
     fun whenInError_appendToDuration() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = mockValidLogWith(
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.mockValidLogWith(
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
@@ -79,9 +76,9 @@ class LogEditServiceImplTest {
     @Test
     fun whenAlreadyInSync_appendToDuration() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = mockValidLogWith(
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.mockValidLogWith(
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
@@ -105,17 +102,15 @@ class LogEditServiceImplTest {
     @Test
     fun updateTime() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = createValidLogWithDate(fakeStart, fakeEnd)
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.createValidLogWithDate(fakeStart, fakeEnd)
         doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act
         service.updateDateTime(
-                LocalDate.from(fakeStart),
-                LocalTime.from(fakeStart),
-                LocalDate.from(fakeEnd),
-                LocalTime.from(fakeEnd)
+                fakeStart,
+                fakeEnd
         )
 
         // Assert
@@ -126,19 +121,17 @@ class LogEditServiceImplTest {
     @Test
     fun updateTime_failBuildingNewEntity() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = createValidLogWithDate()
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.createValidLogWithDate()
         doThrow(IllegalArgumentException()).whenever(logEditInteractor)
                 .updateDateTime(any(), any(), any())
 
         // Act
         service.entityInEdit = simpleLog
         service.updateDateTime(
-                LocalDate.from(fakeStart),
-                LocalTime.from(fakeStart),
-                LocalDate.from(fakeEnd),
-                LocalTime.from(fakeEnd)
+                fakeStart,
+                fakeEnd
         )
 
         // Assert
@@ -149,9 +142,9 @@ class LogEditServiceImplTest {
     @Test
     fun validUpdate() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = createValidLogWithDate()
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.createValidLogWithDate()
         doReturn(simpleLog).whenever(logEditInteractor).updateTimeConvenience(
                 any(),
                 any(),
@@ -164,10 +157,8 @@ class LogEditServiceImplTest {
         // Act
         service.entityInEdit = simpleLog
         service.saveEntity(
-                LocalDate.from(fakeStart),
-                LocalTime.from(fakeStart),
-                LocalDate.from(fakeEnd),
-                LocalTime.from(fakeEnd),
+                fakeStart,
+                fakeEnd,
                 "valid_ticket",
                 "valid_comment"
         )
@@ -180,9 +171,9 @@ class LogEditServiceImplTest {
     @Test
     fun validInsert() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = createValidLogWithDate()
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.createValidLogWithDate()
         doReturn(simpleLog).whenever(logEditInteractor).updateTimeConvenience(
                 any(),
                 any(),
@@ -195,10 +186,8 @@ class LogEditServiceImplTest {
         // Act
         service.entityInEdit = simpleLog
         service.saveEntity(
-                LocalDate.from(fakeStart),
-                LocalTime.from(fakeStart),
-                LocalDate.from(fakeEnd),
-                LocalTime.from(fakeEnd),
+                fakeStart,
+                fakeEnd,
                 "valid_ticket",
                 "valid_comment"
         )
@@ -211,9 +200,9 @@ class LogEditServiceImplTest {
     @Test
     fun invalidEntity_onSave() {
         // Assemble
-        val fakeStart = LocalDateTime.of(2014, 1, 12, 12, 30, 0)
-        val fakeEnd = LocalDateTime.of(2014, 1, 12, 13, 0, 0)
-        val simpleLog = createValidLogWithDate()
+        val fakeStart = DateTime(2014, 1, 12, 12, 30, 0)
+        val fakeEnd = DateTime(2014, 1, 12, 13, 0, 0)
+        val simpleLog = MocksLogEditService.createValidLogWithDate()
         doThrow(IllegalArgumentException()).whenever(logEditInteractor).updateTimeConvenience(
                 any(),
                 any(),
@@ -225,10 +214,8 @@ class LogEditServiceImplTest {
         // Act
         service.entityInEdit = simpleLog
         service.saveEntity(
-                LocalDate.from(fakeStart),
-                LocalTime.from(fakeStart),
-                LocalDate.from(fakeEnd),
-                LocalTime.from(fakeEnd),
+                fakeStart,
+                fakeEnd,
                 "valid_ticket",
                 "valid_comment"
         )

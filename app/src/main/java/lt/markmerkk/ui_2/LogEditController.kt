@@ -22,6 +22,7 @@ import lt.markmerkk.mvp.*
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
+import org.joda.time.DateTime
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
@@ -78,10 +79,8 @@ class LogEditController : Initializable, LogEditService.Listener {
         jfxButtonCancel.setOnAction { jfxDialog.close() }
         jfxButtonAccept.setOnAction {
             logEditService.saveEntity(
-                    startDate = jfxDateFrom.value,
-                    startTime = jfxTimeFrom.value,
-                    endDate = jfxDateTo.value,
-                    endTime = jfxTimeTo.value,
+                    start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value),
+                    end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value),
                     task = jfxTextFieldTicket.text,
                     comment = jfxTextFieldComment.text
             )
@@ -105,12 +104,10 @@ class LogEditController : Initializable, LogEditService.Listener {
             eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
         }
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
-            override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
+            override fun onTimeModified(startDateTime: DateTime, endDateTime: DateTime) {
                 logEditService.updateDateTime(
-                        startDateTime.toLocalDate(),
-                        startDateTime.toLocalTime(),
-                        endDateTime.toLocalDate(),
-                        endDateTime.toLocalTime()
+                        startDateTime,
+                        endDateTime
                 )
                 logEditService.redraw()
             }
@@ -198,12 +195,12 @@ class LogEditController : Initializable, LogEditService.Listener {
     //region Listeners
 
     override fun onDataChange(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime,
+            start: DateTime,
+            end: DateTime,
             ticket: String,
             comment: String
     ) {
-        uiBridgeDateTimeHandler.changeDate(startDateTime, endDateTime)
+        uiBridgeDateTimeHandler.changeDate(start, end)
         jfxTextFieldTicket.text = ticket
         jfxTextFieldComment.text = comment
     }

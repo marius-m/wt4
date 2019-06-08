@@ -28,4 +28,14 @@ open class TimeProviderTest: TimeProvider {
     override fun jMillisFrom(dateTime: LocalDateTime): Long {
         return realTimeProvider.jMillisFrom(dateTime)
     }
+
+    override fun dateTimeFromMillis(millis: Long): DateTime {
+        return DateTime(millis, dateTimeZone)
+    }
+
+    override fun millisFrom(dateTime: DateTime): Long {
+        return dateTime.withZone(dateTimeZone)
+                .millis
+    }
+
 }

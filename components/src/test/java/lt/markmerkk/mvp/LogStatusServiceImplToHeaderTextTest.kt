@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.IDataStorage
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -38,7 +37,7 @@ class LogStatusServiceImplToHeaderTextTest {
     @Test
     fun validLog() {
         // Assemble
-        val validLog = mockValidLogWith(
+        val validLog = MocksLogEditService.mockValidLogWith(
                 "valid_title",
                 "valid_message"
         )
@@ -54,7 +53,7 @@ class LogStatusServiceImplToHeaderTextTest {
     @Test
     fun noTask() {
         // Assemble
-        val validLog = mockValidLogWith(
+        val validLog = MocksLogEditService.mockValidLogWith(
                 "",
                 "valid_message"
         )

@@ -1,33 +1,33 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.verify
+import lt.markmerkk.TimeMachine
+import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 import org.junit.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 class TimeQuickModifierImplModifyEndTimeTest : AbsTimeQuickModifierImplTest() {
 
     @Test
     fun valid_subtractMinute() {
         // Assemble
-        val currentDay = LocalDate.of(2001, 12, 10)
-        val startTime = LocalTime.of(21, 30, 30)
-        val endTime = LocalTime.of(21, 45, 30)
+        val currentDay = LocalDate(2001, 12, 10)
+        val startTime = LocalTime(21, 30, 30)
+        val endTime = LocalTime(21, 45, 30)
 
         // Act
         modifier.subtractEndTime(
-                LocalDateTime.of(currentDay, startTime),
-                LocalDateTime.of(currentDay, endTime)
+                TimeMachine.withDateTime(currentDay, startTime),
+                TimeMachine.withDateTime(currentDay, endTime)
         )
 
         // Assert
         verify(listener).onTimeModified(
-                LocalDateTime.of(
+                TimeMachine.withDateTime(
                         currentDay,
                         startTime
                 ),
-                LocalDateTime.of(
+                TimeMachine.withDateTime(
                         currentDay,
                         endTime.minusMinutes(1)
                 )
@@ -37,23 +37,23 @@ class TimeQuickModifierImplModifyEndTimeTest : AbsTimeQuickModifierImplTest() {
     @Test
     fun ignore_equalTime_subtractMinute() {
         // Assemble
-        val currentDay = LocalDate.of(2001, 12, 10)
-        val startTime = LocalTime.of(21, 30, 30)
-        val endTime = LocalTime.of(21, 30, 30)
+        val currentDay = LocalDate(2001, 12, 10)
+        val startTime = LocalTime(21, 30, 30)
+        val endTime = LocalTime(21, 30, 30)
 
         // Act
         modifier.subtractEndTime(
-                LocalDateTime.of(currentDay, startTime),
-                LocalDateTime.of(currentDay, endTime)
+                TimeMachine.withDateTime(currentDay, startTime),
+                TimeMachine.withDateTime(currentDay, endTime)
         )
 
         // Assert
         verify(listener).onTimeModified(
-                LocalDateTime.of(
+                TimeMachine.withDateTime(
                         currentDay,
                         startTime
                 ),
-                LocalDateTime.of(
+                TimeMachine.withDateTime(
                         currentDay,
                         endTime
                 )
@@ -63,23 +63,23 @@ class TimeQuickModifierImplModifyEndTimeTest : AbsTimeQuickModifierImplTest() {
     @Test
     fun valid_appendMinute() {
         // Assemble
-        val currentDay = LocalDate.of(2001, 12, 10)
-        val startTime = LocalTime.of(21, 30, 30)
-        val endTime = LocalTime.of(21, 45, 30)
+        val currentDay = LocalDate(2001, 12, 10)
+        val startTime = LocalTime(21, 30, 30)
+        val endTime = LocalTime(21, 45, 30)
 
         // Act
         modifier.appendEndTime(
-                LocalDateTime.of(currentDay, startTime),
-                LocalDateTime.of(currentDay, endTime)
+                TimeMachine.withDateTime(currentDay, startTime),
+                TimeMachine.withDateTime(currentDay, endTime)
         )
 
         // Assert
         verify(listener).onTimeModified(
-                LocalDateTime.of(
+                TimeMachine.withDateTime(
                         currentDay,
                         startTime
                 ),
-                LocalDateTime.of(
+                TimeMachine.withDateTime(
                         currentDay,
                         endTime.plusMinutes(1)
                 )

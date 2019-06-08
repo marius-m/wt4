@@ -2,8 +2,8 @@ package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.IDataStorage
+import lt.markmerkk.Mocks
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.mvp.MocksLogEditService.mockValidLogWith
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -37,7 +37,7 @@ class LogStatusServiceImplTest {
     fun validLog() {
         // Assemble
         val validId = 1L
-        val validLog = mockValidLogWith(
+        val validLog = MocksLogEditService.mockValidLogWith(
                 "valid_task",
                 "valid_message"
         )
@@ -64,7 +64,7 @@ class LogStatusServiceImplTest {
     fun validLog_displayCalledTwice_showOnce() {
         // Assemble
         val validId = 1L
-        val validLog = mockValidLogWith(
+        val validLog = MocksLogEditService.mockValidLogWith(
                 "valid_task",
                 "valid_message"
         )

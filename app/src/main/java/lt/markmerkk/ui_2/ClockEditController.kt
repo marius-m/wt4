@@ -172,10 +172,8 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         )
         jfxButtonSave.setOnAction {
             logEditService.saveEntity(
-                    startDate = jfxDateFrom.value,
-                    startTime = jfxTimeFrom.value,
-                    endDate = jfxDateTo.value,
-                    endTime = jfxTimeTo.value,
+                    start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value),
+                    end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value),
                     task = jfxTextFieldTicket.text,
                     comment = jfxTextFieldComment.text
             )

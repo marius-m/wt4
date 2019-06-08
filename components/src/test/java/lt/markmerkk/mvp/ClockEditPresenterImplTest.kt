@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.TimeMachine
 import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.junit.Assert.*
@@ -57,10 +58,8 @@ class ClockEditPresenterImplTest {
         // Assemble
         // Act
         presenter.updateDateTime(
-                LocalDate.now(),
-                LocalTime.now(),
-                LocalDate.now(),
-                LocalTime.now()
+                TimeMachine.now(),
+                TimeMachine.now()
         )
 
         // Assert
@@ -74,10 +73,8 @@ class ClockEditPresenterImplTest {
 
         // Act
         presenter.updateDateTime(
-                LocalDate.now(),
-                LocalTime.now(),
-                LocalDate.now(),
-                LocalTime.now()
+                TimeMachine.now(),
+                TimeMachine.now()
         )
 
         // Assert

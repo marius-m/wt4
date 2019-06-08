@@ -1,63 +1,63 @@
 package lt.markmerkk.mvp
 
-import java.time.LocalDateTime
+import org.joda.time.DateTime
 
 class TimeQuickModifierImpl(
         private val listener: TimeQuickModifier.Listener
 ) : TimeQuickModifier {
     override fun subtractStartTime(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            start: DateTime,
+            end: DateTime
     ) {
         listener.onTimeModified(
-                startDateTime.minusMinutes(1),
-                endDateTime
+                start.minusMinutes(1),
+                end
         )
     }
 
     override fun appendStartTime(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            start: DateTime,
+            end: DateTime
     ) {
-        val newStartTime = startDateTime.plusMinutes(1)
-        if (newStartTime.isAfter(endDateTime)) {
+        val newStartTime = start.plusMinutes(1)
+        if (newStartTime.isAfter(end)) {
             listener.onTimeModified(
-                    startDateTime,
-                    endDateTime
+                    start,
+                    end
             )
             return
         }
         listener.onTimeModified(
                 newStartTime,
-                endDateTime
+                end
         )
     }
 
     override fun subtractEndTime(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            start: DateTime,
+            end: DateTime
     ) {
-        val newEndTime = endDateTime.minusMinutes(1)
-        if (newEndTime.isBefore(startDateTime)) {
+        val newEndTime = end.minusMinutes(1)
+        if (newEndTime.isBefore(start)) {
             listener.onTimeModified(
-                    startDateTime,
-                    endDateTime
+                    start,
+                    end
             )
             return
         }
         listener.onTimeModified(
-                startDateTime,
+                start,
                 newEndTime
         )
     }
 
     override fun appendEndTime(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            start: DateTime,
+            end: DateTime
     ) {
         listener.onTimeModified(
-                startDateTime,
-                endDateTime.plusMinutes(1)
+                start,
+                end.plusMinutes(1)
         )
     }
 }

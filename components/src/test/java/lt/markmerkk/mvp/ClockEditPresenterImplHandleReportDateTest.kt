@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.TimeMachine
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.junit.Test
 import java.time.LocalDateTime
@@ -13,7 +14,7 @@ class ClockEditPresenterImplHandleReportDateTest : AbsClockEditPresenterImplTest
         doReturn(true).whenever(hourglass).isValid
 
         // Act
-        presenter.handleReportDate(hourglass, LocalDateTime.now(), LocalDateTime.now())
+        presenter.handleReportDate(hourglass, TimeMachine.now(), TimeMachine.now())
 
         // Assert
         verify(view).onDateChange(any(), any())
@@ -26,7 +27,7 @@ class ClockEditPresenterImplHandleReportDateTest : AbsClockEditPresenterImplTest
         doReturn(false).whenever(hourglass).isValid
 
         // Act
-        presenter.handleReportDate(hourglass, LocalDateTime.now(), LocalDateTime.now())
+        presenter.handleReportDate(hourglass, TimeMachine.now(), TimeMachine.now())
 
         // Assert
         verify(view, never()).onDateChange(any(), any())
@@ -40,7 +41,7 @@ class ClockEditPresenterImplHandleReportDateTest : AbsClockEditPresenterImplTest
         doReturn(HourGlass.State.STOPPED).whenever(hourglass).state
 
         // Act
-        presenter.handleReportDate(hourglass, LocalDateTime.now(), LocalDateTime.now())
+        presenter.handleReportDate(hourglass, TimeMachine.now(), TimeMachine.now())
 
         // Assert
         verify(view, never()).onDateChange(any(), any())
