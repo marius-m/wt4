@@ -1,12 +1,10 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import org.joda.time.DateTime
 
 class ClockEditPresenterImpl(
         private val view: ClockEditMVP.View,
@@ -14,13 +12,11 @@ class ClockEditPresenterImpl(
         private val timeProvider: TimeProvider
 ) : ClockEditMVP.Presenter {
 
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")!!
-
     override fun onAttach() {
         handleReportDate(
                 hourglass,
-                timeProvider.jLocalDateTimeFrom(hourglass.startMillis),
-                timeProvider.jLocalDateTimeFrom(hourglass.endMillis)
+                timeProvider.dateTimeFromMillis(hourglass.startMillis),
+                timeProvider.dateTimeFromMillis(hourglass.endMillis)
         )
         handleDurationReport(hourglass)
     }
@@ -29,15 +25,13 @@ class ClockEditPresenterImpl(
     }
 
     override fun updateDateTime(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime
+            start: DateTime,
+            end: DateTime
     ) {
         handleReportDate(
                 hourglass,
-                LocalDateTime.of(startDate, startTime),
-                LocalDateTime.of(endDate, endTime)
+                start,
+                end
         )
         handleDurationReport(hourglass)
     }
@@ -49,15 +43,15 @@ class ClockEditPresenterImpl(
      */
     fun handleReportDate(
             hourglass: HourGlass,
-            start: LocalDateTime,
-            end: LocalDateTime
+            start: DateTime,
+            end: DateTime
     ) {
         if (hourglass.state == HourGlass.State.STOPPED) {
             return
         }
         hourglass.updateTimers(
-                start.format(dateTimeFormatter),
-                end.format(dateTimeFormatter)
+                LogFormatters.longFormat.print(start),
+                LogFormatters.longFormat.print(end)
         )
         if (!hourglass.isValid) {
             return

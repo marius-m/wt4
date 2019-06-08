@@ -22,6 +22,7 @@ import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.utils.hourglass.HourGlass
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.LocalDateTime
@@ -78,10 +79,8 @@ class ClockEditController : Initializable, ClockEditMVP.View {
         val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
             override fun onTimeModified(startDateTime: LocalDateTime, endDateTime: LocalDateTime) {
                 clockEditPresenter.updateDateTime(
-                        startDateTime.toLocalDate(),
-                        startDateTime.toLocalTime(),
-                        endDateTime.toLocalDate(),
-                        endDateTime.toLocalTime()
+                        timeProvider.toJodaDateTime(startDateTime),
+                        timeProvider.toJodaDateTime(endDateTime)
                 )
             }
         }
@@ -94,15 +93,12 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 timeProvider,
                 object : LogEditService.Listener {
                     override fun onDataChange(
-                            startDateTime: LocalDateTime,
-                            endDateTime: LocalDateTime,
+                            start: DateTime,
+                            end: DateTime,
                             ticket: String,
                             comment: String
                     ) {
-                        uiBridgeDateTimeHandler.changeDate(
-                                startDateTime,
-                                endDateTime
-                        )
+                        uiBridgeDateTimeHandler.changeDate(start, end)
                     }
 
                     override fun onDurationChange(durationAsString: String) {
@@ -161,13 +157,15 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 jfxTimeFrom,
                 jfxDateTo,
                 jfxTimeTo,
-                timeQuickModifier
+                logEditService,
+                timeProvider
         )
         uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
                 jfxDateFrom = jfxDateFrom,
                 jfxTimeFrom = jfxTimeFrom,
                 jfxDateTo = jfxDateTo,
                 jfxTimeTo = jfxTimeTo,
+                timeProvider = timeProvider,
                 timeQuickModifier = null,
                 clockEditPresenter = clockEditPresenter,
                 logEditService = logEditService

@@ -22,6 +22,10 @@ class TimeProviderJfx(
 
     //region Convenience
 
+    override fun dateTimeFromMillis(millis: Long): DateTime {
+        return DateTime(millis, dateTimeZone)
+    }
+
     override fun jLocalDateTimeFrom(millis: Long): java.time.LocalDateTime {
         return java.time.LocalDateTime.ofInstant(
                 java.time.Instant.ofEpochMilli(millis),
@@ -31,6 +35,11 @@ class TimeProviderJfx(
 
     override fun jMillisFrom(dateTime: java.time.LocalDateTime): Long {
         return dateTime.atZone(zoneId).toInstant().toEpochMilli()
+    }
+
+    override fun millisFrom(dateTime: DateTime): Long {
+        return dateTime.withZone(dateTimeZone)
+                .millis
     }
 
     //endregion

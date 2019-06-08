@@ -58,7 +58,7 @@ class CurrentDayDialogController : Initializable {
     // region Listeners
 
     private val dateChangeListener: ChangeListener<LocalDate> = ChangeListener { _, _, newValue ->
-        logStorage.targetDate = TimeProvider.toJodaLocalDate(newValue).toDateTimeAtStartOfDay()
+        logStorage.targetDate = TimeProvider.toJodaDate(newValue).toDateTimeAtStartOfDay()
         jfxDialog.close()
     }
 

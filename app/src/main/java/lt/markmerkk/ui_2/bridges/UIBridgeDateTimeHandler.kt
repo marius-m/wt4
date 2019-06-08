@@ -1,15 +1,15 @@
 package lt.markmerkk.ui_2.bridges
 
-import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTimePicker
 import javafx.beans.value.ChangeListener
 import javafx.util.StringConverter
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.mvp.ClockEditMVP
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.TimeQuickModifier
-import lt.markmerkk.ui.UIBridge
 import lt.markmerkk.ui.UILifecycleBridge
+import org.joda.time.DateTime
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -24,6 +24,7 @@ class UIBridgeDateTimeHandler(
         private val jfxTimeFrom: JFXTimePicker,
         private val jfxDateTo: JFXDatePicker,
         private val jfxTimeTo: JFXTimePicker,
+        private val timeProvider: TimeProvider,
         private val timeQuickModifier: TimeQuickModifier?,
         private val clockEditPresenter: ClockEditMVP.Presenter?,
         private val logEditService: LogEditService?
@@ -54,13 +55,13 @@ class UIBridgeDateTimeHandler(
     }
 
     fun changeDate(
-            startDateTime: LocalDateTime,
-            endDateTime: LocalDateTime
+            startDateTime: DateTime,
+            endDateTime: DateTime
     ) {
-        jfxDateFrom.value = startDateTime.toLocalDate()
-        jfxTimeFrom.value = startDateTime.toLocalTime()
-        jfxDateTo.value = endDateTime.toLocalDate()
-        jfxTimeTo.value = endDateTime.toLocalTime()
+        jfxDateFrom.value = TimeProvider.toJavaLocalDate(startDateTime)
+        jfxTimeFrom.value = TimeProvider.toJavaLocalTime(startDateTime)
+        jfxDateTo.value = TimeProvider.toJavaLocalDate(endDateTime)
+        jfxTimeTo.value = TimeProvider.toJavaLocalTime(endDateTime)
     }
 
     fun enable() {
@@ -102,63 +103,31 @@ class UIBridgeDateTimeHandler(
 
 
     private val startDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
-        clockEditPresenter?.updateDateTime(
-                startDate = newValue,
-                startTime = jfxTimeFrom.value,
-                endDate = jfxDateTo.value,
-                endTime = jfxTimeTo.value
-        )
-        logEditService?.updateDateTime(
-                startDate = newValue,
-                startTime = jfxTimeFrom.value,
-                endDate = jfxDateTo.value,
-                endTime = jfxTimeTo.value
-        )
+        val start = timeProvider.toJodaDateTime(newValue, jfxTimeFrom.value)
+        val end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value)
+        clockEditPresenter?.updateDateTime(start, end)
+        logEditService?.updateDateTime(start, end)
     }
 
     private val startTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
-        clockEditPresenter?.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = newValue,
-                endDate = jfxDateTo.value,
-                endTime = jfxTimeTo.value
-        )
-        logEditService?.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = newValue,
-                endDate = jfxDateTo.value,
-                endTime = jfxTimeTo.value
-        )
+        val start = timeProvider.toJodaDateTime(jfxDateFrom.value, newValue)
+        val end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value)
+        clockEditPresenter?.updateDateTime(start, end)
+        logEditService?.updateDateTime(start, end)
     }
 
     private val endDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
-        clockEditPresenter?.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = jfxTimeFrom.value,
-                endDate = newValue,
-                endTime = jfxTimeTo.value
-        )
-        logEditService?.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = jfxTimeFrom.value,
-                endDate = newValue,
-                endTime = jfxTimeTo.value
-        )
+        val start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value)
+        val end = timeProvider.toJodaDateTime(newValue, jfxTimeTo.value)
+        clockEditPresenter?.updateDateTime(start, end)
+        logEditService?.updateDateTime(start, end)
     }
 
     private val endTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
-        clockEditPresenter?.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = jfxTimeFrom.value,
-                endDate = jfxDateTo.value,
-                endTime = newValue
-        )
-        logEditService?.updateDateTime(
-                startDate = jfxDateFrom.value,
-                startTime = jfxTimeFrom.value,
-                endDate = jfxDateTo.value,
-                endTime = newValue
-        )
+        val start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value)
+        val end = timeProvider.toJodaDateTime(jfxDateTo.value, newValue)
+        clockEditPresenter?.updateDateTime(start, end)
+        logEditService?.updateDateTime(start, end)
     }
 
     //endregion

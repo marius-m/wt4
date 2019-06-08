@@ -1,15 +1,14 @@
 package lt.markmerkk.mvp
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import org.joda.time.DateTime
+
 
 interface ClockEditMVP {
 
     interface View {
         fun onDateChange(
-                startDateTime: LocalDateTime,
-                endDateTime: LocalDateTime
+                startDateTime: DateTime,
+                endDateTime: DateTime
         )
         fun onHintChange(
                 hint: String
@@ -21,10 +20,8 @@ interface ClockEditMVP {
         fun onDetach()
 
         fun updateDateTime(
-                startDate: LocalDate,
-                startTime: LocalTime,
-                endDate: LocalDate,
-                endTime: LocalTime
+                start: DateTime,
+                end: DateTime
         )
     }
 

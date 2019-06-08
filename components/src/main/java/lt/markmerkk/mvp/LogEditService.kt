@@ -1,9 +1,7 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import org.joda.time.DateTime
 
 /**
  * Responsible for updating log and controlling the input view changes
@@ -23,10 +21,8 @@ interface LogEditService {
      * Updates current date time for the [entityInEdit]
      */
     fun updateDateTime(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime
+            start: DateTime,
+            end: DateTime
     )
 
     /**
@@ -34,10 +30,8 @@ interface LogEditService {
      * Depends on the [serviceType]. If CREATE, will create a new entity.
      */
     fun saveEntity(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime,
+            start: DateTime,
+            end: DateTime,
             task: String,
             comment: String
     )
@@ -47,8 +41,8 @@ interface LogEditService {
          * Refresh views with new log data
          */
         fun onDataChange(
-                startDateTime: LocalDateTime,
-                endDateTime: LocalDateTime,
+                start: DateTime,
+                end: DateTime,
                 ticket: String,
                 comment: String
         )

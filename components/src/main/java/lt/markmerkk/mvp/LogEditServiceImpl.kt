@@ -4,7 +4,6 @@ import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.joda.time.DateTime
-import java.time.*
 
 class LogEditServiceImpl(
         private val logEditInteractor: LogEditInteractor,
@@ -21,15 +20,11 @@ class LogEditServiceImpl(
             .build()
 
     override fun updateDateTime(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime
+            start: DateTime,
+            end: DateTime
     ) {
-        val startInDateTime = LocalDateTime.of(startDate, startTime)
-        val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
-            entityInEdit = logEditInteractor.updateDateTime(entityInEdit, startInDateTime, endInDateTime)
+            entityInEdit = logEditInteractor.updateDateTime(entityInEdit, start, end)
             listener.onDurationChange(entityInEdit.prettyDuration)
             listener.onEnableSaving()
         } catch(e: IllegalArgumentException) {
@@ -39,20 +34,16 @@ class LogEditServiceImpl(
     }
 
     override fun saveEntity(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime,
+            start: DateTime,
+            end: DateTime,
             task: String,
             comment: String
     ) {
-        val startInDateTime = LocalDateTime.of(startDate, startTime)
-        val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
             entityInEdit = logEditInteractor.updateTimeConvenience(
                     entityInEdit,
-                    startInDateTime,
-                    endInDateTime,
+                    start,
+                    end,
                     task,
                     comment
             )
@@ -71,20 +62,15 @@ class LogEditServiceImpl(
      * Triggers according functions to show on screen
      */
     override fun redraw() {
-        val start = timeProvider.jLocalDateTimeFrom(entityInEdit.start)
-        val end = timeProvider.jLocalDateTimeFrom(entityInEdit.end)
+        val start = timeProvider.dateTimeFromMillis(entityInEdit.start)
+        val end = timeProvider.dateTimeFromMillis(entityInEdit.end)
         listener.onDataChange(
                 start,
                 end,
                 entityInEdit.task ?: "",
                 entityInEdit.comment ?: ""
         )
-        updateDateTime(
-                start.toLocalDate(),
-                start.toLocalTime(),
-                end.toLocalDate(),
-                end.toLocalTime()
-        )
+        updateDateTime(start, end)
         printNotificationIfNeeded(entityInEdit)
     }
 

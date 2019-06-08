@@ -147,13 +147,15 @@ class LogEditController : Initializable, LogEditService.Listener {
                 jfxTimeFrom,
                 jfxDateTo,
                 jfxTimeTo,
-                timeQuickModifier
+                logEditService,
+                timeProvider
         )
         uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
                 jfxDateFrom = jfxDateFrom,
                 jfxTimeFrom = jfxTimeFrom,
                 jfxDateTo = jfxDateTo,
                 jfxTimeTo = jfxTimeTo,
+                timeProvider = timeProvider,
                 timeQuickModifier = null,
                 clockEditPresenter = null,
                 logEditService = logEditService
