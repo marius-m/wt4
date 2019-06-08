@@ -1,7 +1,6 @@
 package lt.markmerkk.mvp
 
 import org.joda.time.DateTime
-import java.lang.UnsupportedOperationException
 
 /**
  * Responsible for modifying time in correct time gaps
@@ -37,6 +36,10 @@ object QuickTimeModifyValidator {
         )
     }
 
+    /**
+     * Adds more minutes to start of the time gap
+     * Note: There will always be a 1 min gap
+     */
     fun expandToStart(
             timeGap: TimeGap,
             minutes: Int
@@ -47,6 +50,10 @@ object QuickTimeModifyValidator {
         )
     }
 
+    /**
+     * Subtracts minutes from time gap
+     * Note: There will always be a 1 min gap
+     */
     fun shrinkFromStart(
             timeGap: TimeGap,
             minutes: Int
@@ -64,18 +71,30 @@ object QuickTimeModifyValidator {
         )
     }
 
-    fun moveForwardMinutes(
+    /**
+     * Moves time gap by provided minutes
+     */
+    fun moveForward(
             timeGap: TimeGap,
             minutes: Int
     ): TimeGap {
-        throw UnsupportedOperationException()
+        return TimeGap.from(
+                start = timeGap.start.plusMinutes(minutes),
+                end = timeGap.end.plusMinutes(minutes)
+        )
     }
 
-    fun moveBackwardMinutes(
+    /**
+     * Moves time gap by providede minutes
+     */
+    fun moveBackward(
             timeGap: TimeGap,
             minutes: Int
     ): TimeGap {
-        throw UnsupportedOperationException()
+        return TimeGap.from(
+                start = timeGap.start.minusMinutes(minutes),
+                end = timeGap.end.minusMinutes(minutes)
+        )
     }
 
 }
