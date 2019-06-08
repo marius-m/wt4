@@ -67,7 +67,6 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
 
     private lateinit var clockEditPresenter: ClockEditMVP.Presenter
-    private lateinit var timeQuickModifier: TimeQuickModifier
     private lateinit var logEditService: LogEditService
     private lateinit var ticketInfoLoader: TicketInfoLoader
 
@@ -76,17 +75,8 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
         jfxButtonDismiss.setOnAction { jfxDialog.close() }
-        val timeQuickModifierListener: TimeQuickModifier.Listener = object : TimeQuickModifier.Listener {
-            override fun onTimeModified(startDateTime: DateTime, endDateTime: DateTime) {
-                clockEditPresenter.updateDateTime(
-                        startDateTime,
-                        endDateTime
-                )
-            }
-        }
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
-        timeQuickModifier = TimeQuickModifierImpl(timeQuickModifierListener)
         clockEditPresenter = ClockEditPresenterImpl(this, hourglass, timeProvider)
         logEditService = LogEditServiceImpl(
                 LogEditInteractorImpl(storage, timeProvider),
