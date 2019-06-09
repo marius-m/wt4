@@ -26,5 +26,7 @@ enum class Glyph {
     INPUT,
     SEARCH,
     CLEAR,
+    EXPAND_LESS,
+    EXPAND_MORE,
     ;
 }

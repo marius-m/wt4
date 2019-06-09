@@ -97,7 +97,8 @@ class CalendarPresenter : Initializable {
                 },
                 strings = strings,
                 logStorage = storage,
-                timeProvider = timeProvider
+                timeProvider = timeProvider,
+                graphics = graphics
         )
         uiCalendarQuickEdit.hide()
 

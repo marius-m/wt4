@@ -1,15 +1,13 @@
 package lt.markmerkk.ui_2.bridges
 
+import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Strings
-import lt.markmerkk.Tags
-import lt.markmerkk.TimeProvider
+import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
@@ -17,6 +15,7 @@ import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.validators.TimeGap
 import org.slf4j.LoggerFactory
+import tornadofx.View
 import tornadofx.hgrow
 import tornadofx.vgrow
 
@@ -25,7 +24,8 @@ class UIEButtonCalendarQuickEdit(
         private val node: ExternalSourceNode<StackPane>,
         private val strings: Strings,
         private val logStorage: LogStorage,
-        private val timeProvider: TimeProvider
+        private val timeProvider: TimeProvider,
+        private val graphics: Graphics<SVGGlyph>
 ) : UIElement<Node>, QuickEditActionChangeListener {
 
     private val mainContainer = VBox()
@@ -42,6 +42,7 @@ class UIEButtonCalendarQuickEdit(
             quickEditActions = quickEditActions,
             quickEditActionChangeListener = this,
             containerWidth = CONTAINER_WIDTH,
+            graphics = graphics,
             listener = object : QuickEditWidgetMove.Listener {
                 override fun moveForward(minutes: Int) {
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
@@ -80,6 +81,7 @@ class UIEButtonCalendarQuickEdit(
             quickEditActions = quickEditActions,
             quickEditActionChangeListener = this,
             containerWidth = CONTAINER_WIDTH,
+            graphics = graphics,
             listener = object : QuickEditWidgetShrink.Listener {
                 override fun shrinkFromStart(minutes: Int) {
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
@@ -114,29 +116,11 @@ class UIEButtonCalendarQuickEdit(
                 }
             })
 
-    override fun onActiveActionChange(quickEditAction: QuickEditAction) {
-        mainContainer.children.clear()
-        when (quickEditAction) {
-            QuickEditAction.MOVE -> {
-                viewQuickEditWidgetMove.changeActiveSelection(quickEditAction)
-                mainContainer.children.add(viewQuickEditWidgetMove.root)
-            }
-            QuickEditAction.SHRINK -> {
-                viewQuickEditWidgetShrink.changeActiveSelection(quickEditAction)
-                mainContainer.children.add(viewQuickEditWidgetShrink.root)
-            }
-            QuickEditAction.EXPAND -> {
-                viewQuickEditWidgetExpand.changeActiveSelection(quickEditAction)
-                mainContainer.children.add(viewQuickEditWidgetExpand.root)
-            }
-        }
-        logger.debug("Active action change: $quickEditAction")
-    }
-
     private val viewQuickEditWidgetExpand = QuickEditWidgetExpand(
             quickEditActions = quickEditActions,
             quickEditActionChangeListener = this,
             containerWidth = CONTAINER_WIDTH,
+            graphics = graphics,
             listener = object : QuickEditWidgetExpand.Listener {
                 override fun expandToStart(minutes: Int) {
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
@@ -171,8 +155,32 @@ class UIEButtonCalendarQuickEdit(
                 }
             })
 
+    override fun onActiveActionChange(quickEditAction: QuickEditAction) {
+        viewsQuickEditWidgets
+                .filter { it.value is QuickEditChangableAction }
+                .map { it.value as QuickEditChangableAction }
+                .forEach { it.changeActiveAction(quickEditAction) }
+        val viewActive = viewsQuickEditWidgets.getValue(quickEditAction)
+        viewActive.root.isVisible = true
+        viewActive.root.isManaged = true
+        val inactiveViews = viewsQuickEditWidgets
+                .filter { it.key != quickEditAction }
+                .map { it.value }
+        inactiveViews.forEach {
+            it.root.isVisible = false
+            it.root.isManaged = false
+        }
+    }
+
+
+    private val viewsQuickEditWidgets = mapOf<QuickEditAction, View>(
+            QuickEditAction.MOVE to viewQuickEditWidgetMove,
+            QuickEditAction.SHRINK to viewQuickEditWidgetShrink,
+            QuickEditAction.EXPAND to viewQuickEditWidgetExpand
+    )
+
     init {
-        mainContainer.children.add(viewQuickEditWidgetMove.root)
+        viewsQuickEditWidgets.values.forEach { mainContainer.children.add(it.root) }
         mainContainer.maxWidth = CONTAINER_WIDTH
         mainContainer.maxHeight = CONTAINER_WIDTH
         mainContainer.vgrow = Priority.NEVER
@@ -180,6 +188,7 @@ class UIEButtonCalendarQuickEdit(
         node.rootNode().children.add(mainContainer)
         StackPane.setAlignment(mainContainer, Pos.TOP_RIGHT)
         StackPane.setMargin(mainContainer, Insets(10.0, 20.0, 0.0, 0.0))
+        onActiveActionChange(QuickEditAction.MOVE)
     }
 
     fun changeLogSelection(id: Long) {
