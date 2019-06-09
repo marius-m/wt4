@@ -13,9 +13,7 @@ import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.views.QuickEditWidgetExpand
-import lt.markmerkk.ui_2.views.QuickEditWidgetMove
-import lt.markmerkk.ui_2.views.QuickEditWidgetShrink
+import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.validators.TimeGap
 import org.slf4j.LoggerFactory
@@ -28,14 +26,21 @@ class UIEButtonCalendarQuickEdit(
         private val strings: Strings,
         private val logStorage: LogStorage,
         private val timeProvider: TimeProvider
-) : UIElement<Node> {
+) : UIElement<Node>, QuickEditActionChangeListener {
 
     private val mainContainer = VBox()
     private val timeChangeValidator = TimeChangeValidator
+    private val quickEditActions = setOf(
+            QuickEditAction.MOVE,
+            QuickEditAction.SHRINK,
+            QuickEditAction.EXPAND
+    )
     var selectLogId: Long = NO_ID
         private set
 
     private val viewQuickEditWidgetMove = QuickEditWidgetMove(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
             containerWidth = CONTAINER_WIDTH,
             listener = object : QuickEditWidgetMove.Listener {
                 override fun moveForward(minutes: Int) {
@@ -72,6 +77,8 @@ class UIEButtonCalendarQuickEdit(
             })
 
     private val viewQuickEditWidgetShrink = QuickEditWidgetShrink(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
             containerWidth = CONTAINER_WIDTH,
             listener = object : QuickEditWidgetShrink.Listener {
                 override fun shrinkFromStart(minutes: Int) {
@@ -107,7 +114,28 @@ class UIEButtonCalendarQuickEdit(
                 }
             })
 
+    override fun onActiveActionChange(quickEditAction: QuickEditAction) {
+        mainContainer.children.clear()
+        when (quickEditAction) {
+            QuickEditAction.MOVE -> {
+                viewQuickEditWidgetMove.changeActiveSelection(quickEditAction)
+                mainContainer.children.add(viewQuickEditWidgetMove.root)
+            }
+            QuickEditAction.SHRINK -> {
+                viewQuickEditWidgetShrink.changeActiveSelection(quickEditAction)
+                mainContainer.children.add(viewQuickEditWidgetShrink.root)
+            }
+            QuickEditAction.EXPAND -> {
+                viewQuickEditWidgetExpand.changeActiveSelection(quickEditAction)
+                mainContainer.children.add(viewQuickEditWidgetExpand.root)
+            }
+        }
+        logger.debug("Active action change: $quickEditAction")
+    }
+
     private val viewQuickEditWidgetExpand = QuickEditWidgetExpand(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
             containerWidth = CONTAINER_WIDTH,
             listener = object : QuickEditWidgetExpand.Listener {
                 override fun expandToStart(minutes: Int) {
@@ -144,9 +172,6 @@ class UIEButtonCalendarQuickEdit(
             })
 
     init {
-//        node.mainContainer().children.add(viewQuickEditWidgetMove.root)
-//        node.mainContainer().children.add(viewQuickEditWidgetShrink.root)
-//        node.mainContainer().children.add(viewQuickEditWidgetExpand.root)
         mainContainer.children.add(viewQuickEditWidgetMove.root)
         mainContainer.maxWidth = CONTAINER_WIDTH
         mainContainer.maxHeight = CONTAINER_WIDTH

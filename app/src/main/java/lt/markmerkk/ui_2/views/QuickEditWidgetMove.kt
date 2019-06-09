@@ -1,23 +1,28 @@
 package lt.markmerkk.ui_2.views
 
+import com.jfoenix.controls.JFXComboBox
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.layout.*
 import javafx.scene.paint.Paint
-import lt.markmerkk.LogStorage
 import tornadofx.View
 import tornadofx.hgrow
+import tornadofx.selectedItem
 import tornadofx.vgrow
 
 class QuickEditWidgetMove(
         private val listener: Listener,
-        private val containerWidth: Double
+        private val containerWidth: Double,
+        private val quickEditActions: Set<QuickEditAction>,
+        private val quickEditActionChangeListener: QuickEditActionChangeListener
 ): View() {
 
+    private val jfxComboBox: JFXComboBox<String>
     override val root: VBox = VBox()
 
     init {
+        val quickEditActionsAsString = quickEditActions.map { it.name }
         with(root) {
             jfxButton("-10 min")
                     .apply { setPrefWidth(containerWidth) }
@@ -25,7 +30,14 @@ class QuickEditWidgetMove(
             jfxButton("-1 min")
                     .apply { setPrefWidth(containerWidth) }
                     .setOnAction { listener.moveBackward(1) }
-            jfxCombobox(SimpleStringProperty(""), listOf("MOVE", "SCALE"))
+            jfxComboBox = jfxCombobox(SimpleStringProperty(QuickEditAction.MOVE.name), quickEditActionsAsString)
+                    .apply {
+                        setOnAction {
+                            val selectAction = QuickEditAction
+                                    .valueOf((it.source as JFXComboBox<String>).selectedItem!!)
+                            quickEditActionChangeListener.onActiveActionChange(selectAction)
+                        }
+                    }
             jfxButton("+1 min")
                     .apply { setPrefWidth(containerWidth) }
                     .setOnAction { listener.moveForward(1) }
@@ -45,6 +57,10 @@ class QuickEditWidgetMove(
         root.maxHeight = containerWidth
         root.vgrow = Priority.NEVER
         root.hgrow = Priority.NEVER
+    }
+
+    fun changeActiveSelection(quickEditAction: QuickEditAction) {
+        jfxComboBox.selectionModel.select(quickEditAction.name)
     }
 
     interface Listener {
