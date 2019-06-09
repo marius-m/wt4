@@ -10,29 +10,28 @@ import tornadofx.View
 import tornadofx.hgrow
 import tornadofx.vgrow
 
-class QuickEditView(
-        private val listener: Listener
+class QuickEditWidgetShrink(
+        private val listener: Listener,
+        private val containerWidth: Double
 ): View() {
 
     override val root: VBox = VBox()
-
-    private val containerWidth = 90.0
 
     init {
         with(root) {
             jfxButton("-10 min")
                     .apply { setPrefWidth(containerWidth) }
-                    .setOnAction { listener.moveBackward(10) }
+                    .setOnAction { listener.shrinkFromStart(10) }
             jfxButton("-1 min")
                     .apply { setPrefWidth(containerWidth) }
-                    .setOnAction { listener.moveBackward(1) }
-            jfxCombobox(SimpleStringProperty(""), listOf("MOVE", "SCALE"))
+                    .setOnAction { listener.shrinkFromStart(1) }
+            jfxCombobox(SimpleStringProperty(""), listOf("SHRINK"))
             jfxButton("+1 min")
                     .apply { setPrefWidth(containerWidth) }
-                    .setOnAction { listener.moveForward(1) }
+                    .setOnAction { listener.shrinkFromEnd(1) }
             jfxButton("+10 min")
                     .apply { setPrefWidth(containerWidth) }
-                    .setOnAction { listener.moveForward(10) }
+                    .setOnAction { listener.shrinkFromEnd(10) }
         }
         root.alignment = Pos.CENTER
         root.background = Background(
@@ -49,8 +48,8 @@ class QuickEditView(
     }
 
     interface Listener {
-        fun moveForward(minutes: Int)
-        fun moveBackward(minutes: Int)
+        fun shrinkFromStart(minutes: Int)
+        fun shrinkFromEnd(minutes: Int)
     }
 
 }
