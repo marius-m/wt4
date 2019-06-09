@@ -13,7 +13,8 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.*
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.MenuItem
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
@@ -94,7 +95,9 @@ class CalendarPresenter : Initializable {
                 node = object : ExternalSourceNode<StackPane> {
                     override fun rootNode(): StackPane = jfxContainer
                 },
-                strings = strings
+                strings = strings,
+                logStorage = storage,
+                timeProvider = timeProvider
         )
         uiCalendarQuickEdit.hide()
 
@@ -217,8 +220,11 @@ class CalendarPresenter : Initializable {
     private val jfxCalSelectionListener = SetChangeListener<Entry<*>> {
         val currentSelection = jfxCalendarView.selections.toList()
         if (currentSelection.isNotEmpty()) {
+            val simpleLog = currentSelection.first().userObject as SimpleLog
+            uiCalendarQuickEdit.changeLogSelection(simpleLog._id)
             uiCalendarQuickEdit.show()
         } else {
+            uiCalendarQuickEdit.changeLogSelectionToNoSelection()
             uiCalendarQuickEdit.hide()
         }
     }
@@ -265,6 +271,8 @@ class CalendarPresenter : Initializable {
             calendarInSync.stopBatchUpdates()
             calendarWaitingForSync.stopBatchUpdates()
             calendarError.stopBatchUpdates()
+
+            selectActiveLog(allEntries)
         }
 
         override fun onCalendarNoEntries() {
@@ -281,10 +289,24 @@ class CalendarPresenter : Initializable {
 
     }
 
+    private fun findEntryByLocalIdOrNull(
+            localId: Long,
+            entries: List<Entry<SimpleLog>>
+    ): Entry<SimpleLog>? {
+        return entries.firstOrNull { it.userObject._id == localId }
+    }
+
+    private fun selectActiveLog(allEntries: List<Entry<SimpleLog>>) {
+        val selection = findEntryByLocalIdOrNull(uiCalendarQuickEdit.selectLogId, allEntries)
+        if (selection != null) {
+            jfxCalendarView.select(selection)
+        }
+    }
+
     //endregion
 
     companion object {
-        val logger = LoggerFactory.getLogger(CalendarPresenter::class.java)!!
+        val logger = LoggerFactory.getLogger(Tags.CALENDAR)!!
     }
 
 }

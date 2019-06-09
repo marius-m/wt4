@@ -8,6 +8,8 @@ import lt.markmerkk.entities.database.annotations.FieldType;
 import lt.markmerkk.entities.database.annotations.Table;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 /**
  * Created by mariusmerkevicius on 11/20/15.
@@ -111,11 +113,26 @@ public class SimpleLog extends RemoteEntity {
 
   //endregion
 
-  @Override public String toString() {
-    return task + " : " +
-        LogFormatters.INSTANCE.getLongFormat().print(start) +
-        " + " + LogFormatters.INSTANCE.getLongFormat().print(end) +
-        " = " + LogUtils.INSTANCE.formatShortDuration(duration) +
-        " / \"" + comment + "\"";
+
+  @Override
+  public String toString() {
+    final DateTime dateTimeStart = new DateTime(start);
+    final DateTime dateTimeEnd = new DateTime(end);
+    final Duration durationObj = new Duration(duration);
+    return "SimpleLog{" +
+            "start=" + LogFormatters.INSTANCE.getLongFormat().print(dateTimeStart) +
+            ", end=" + LogFormatters.INSTANCE.getLongFormat().print(dateTimeEnd) +
+            ", duration=" + durationObj.toString() +
+            ", task='" + task + '\'' +
+            ", comment='" + comment + '\'' +
+            ", id=" + id +
+            ", uri='" + uri + '\'' +
+            ", deleted=" + deleted +
+            ", dirty=" + dirty +
+            ", error=" + error +
+            ", errorMessage='" + errorMessage + '\'' +
+            ", download_millis=" + download_millis +
+            ", _id=" + _id +
+            '}';
   }
 }

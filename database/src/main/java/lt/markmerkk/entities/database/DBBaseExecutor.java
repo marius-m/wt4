@@ -1,5 +1,6 @@
 package lt.markmerkk.entities.database;
 
+import lt.markmerkk.DBConsts;
 import lt.markmerkk.entities.database.interfaces.IExecutor;
 import lt.markmerkk.entities.database.interfaces.IQueryJob;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import java.sql.SQLException;
  */
 public abstract class DBBaseExecutor implements IExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(DBBaseExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DBConsts.TAG);
 
     Connection connection;
 

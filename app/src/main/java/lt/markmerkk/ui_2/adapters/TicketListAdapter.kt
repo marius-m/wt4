@@ -3,7 +3,6 @@ package lt.markmerkk.ui_2.adapters
 import com.jfoenix.controls.*
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
 import com.jfoenix.svg.SVGGlyph
-import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
