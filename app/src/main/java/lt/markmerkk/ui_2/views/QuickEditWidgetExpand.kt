@@ -19,7 +19,7 @@ import tornadofx.vgrow
 
 class QuickEditWidgetExpand(
         private val listener: Listener,
-        private val containerWidth: Double,
+        private val uiPrefs: QuickEditUiPrefs,
         private val quickEditActions: Set<QuickEditAction>,
         private val graphics: Graphics<SVGGlyph>,
         private val quickEditActionChangeListener: QuickEditActionChangeListener
@@ -27,42 +27,64 @@ class QuickEditWidgetExpand(
 
     private val quickEditActionsAsString = quickEditActions.map { it.name }
     private val jfxComboBox: JFXComboBox<String>
-    override val root: VBox = VBox()
+    override val root = HBox()
 
     init {
         with(root) {
-            jfxButton("10 min")
+            jfxButton()
                     .apply {
                         setOnAction { listener.expandToStart(10) }
-                        prefWidth = containerWidth
-                        graphic = graphics.from(Glyph.EXPAND_LESS, Color.BLACK, 10.0, 8.0)
+                        prefWidth = uiPrefs.prefWidthActionIcons
+                        graphic = graphics.from(
+                                Glyph.ARROW_FAST_REWIND,
+                                Color.BLACK,
+                                uiPrefs.widthActionIconFaster,
+                                uiPrefs.heightActionIconFaster
+                        )
                     }
-            jfxButton("1 min")
+            jfxButton()
                     .apply {
                         setOnAction { listener.expandToStart(1) }
-                        prefWidth = containerWidth
-                        graphic = graphics.from(Glyph.EXPAND_LESS, Color.BLACK, 10.0, 8.0)
+                        prefWidth = uiPrefs.prefWidthActionIcons
+                        graphic = graphics.from(
+                                Glyph.ARROW_REWIND,
+                                Color.BLACK,
+                                uiPrefs.widthActionIcon,
+                                uiPrefs.heightActionIcon
+                        )
                     }
                     .setOnAction { listener.expandToStart(1) }
             jfxComboBox = jfxCombobox(SimpleStringProperty(QuickEditAction.EXPAND.name), quickEditActionsAsString)
                     .apply {
+                        minWidth = uiPrefs.prefWidthTypeSelector
+                        prefWidth = uiPrefs.prefWidthTypeSelector
                         setOnAction {
                             val selectAction = QuickEditAction
                                     .valueOf((it.source as JFXComboBox<String>).selectedItem!!)
                             quickEditActionChangeListener.onActiveActionChange(selectAction)
                         }
                     }
-            jfxButton("1 min")
+            jfxButton()
                     .apply {
                         setOnAction { listener.expandToEnd(1) }
-                        prefWidth = containerWidth
-                        graphic = graphics.from(Glyph.EXPAND_MORE, Color.BLACK, 10.0, 8.0)
+                        prefWidth = uiPrefs.prefWidthActionIcons
+                        graphic = graphics.from(
+                                Glyph.ARROW_FORWARD,
+                                Color.BLACK,
+                                uiPrefs.widthActionIcon,
+                                uiPrefs.heightActionIcon
+                        )
                     }
-            jfxButton("10 min")
+            jfxButton()
                     .apply {
                         setOnAction { listener.expandToEnd(10) }
-                        prefWidth = containerWidth
-                        graphic = graphics.from(Glyph.EXPAND_MORE, Color.BLACK, 10.0, 8.0)
+                        prefWidth = uiPrefs.prefWidthActionIcons
+                        graphic = graphics.from(
+                                Glyph.ARROW_FAST_FORWARD,
+                                Color.BLACK,
+                                uiPrefs.widthActionIconFaster,
+                                uiPrefs.heightActionIconFaster
+                        )
                     }
         }
         root.alignment = Pos.CENTER
@@ -73,8 +95,9 @@ class QuickEditWidgetExpand(
                         Insets.EMPTY
                 )
         )
-        root.maxWidth = containerWidth
-        root.maxHeight = containerWidth
+        root.maxWidth = uiPrefs.maxWidthContainer
+        root.maxHeight = uiPrefs.prefHeightContainer
+        root.prefHeight = uiPrefs.prefHeightContainer
         root.vgrow = Priority.NEVER
         root.hgrow = Priority.NEVER
     }

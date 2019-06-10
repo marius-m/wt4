@@ -28,5 +28,9 @@ enum class Glyph {
     CLEAR,
     EXPAND_LESS,
     EXPAND_MORE,
+    ARROW_FORWARD,
+    ARROW_REWIND,
+    ARROW_FAST_FORWARD,
+    ARROW_FAST_REWIND,
     ;
 }

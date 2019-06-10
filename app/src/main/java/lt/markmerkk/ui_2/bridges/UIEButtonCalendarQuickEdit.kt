@@ -35,13 +35,23 @@ class UIEButtonCalendarQuickEdit(
             QuickEditAction.SHRINK,
             QuickEditAction.EXPAND
     )
+    private val uiPrefs = QuickEditUiPrefs(
+            prefHeightContainer = 32.0,
+            prefWidthTypeSelector = 100.0,
+            prefWidthActionIcons = 30.0,
+            maxWidthContainer = 220.0, // 4 * actionIcons + typeSelector
+            widthActionIcon = 8.0,
+            heightActionIcon = 8.0,
+            widthActionIconFaster = 14.0,
+            heightActionIconFaster = 10.0
+    )
     var selectLogId: Long = NO_ID
         private set
 
     private val viewQuickEditWidgetMove = QuickEditWidgetMove(
             quickEditActions = quickEditActions,
             quickEditActionChangeListener = this,
-            containerWidth = CONTAINER_WIDTH,
+            uiPrefs = uiPrefs,
             graphics = graphics,
             listener = object : QuickEditWidgetMove.Listener {
                 override fun moveForward(minutes: Int) {
@@ -80,7 +90,7 @@ class UIEButtonCalendarQuickEdit(
     private val viewQuickEditWidgetShrink = QuickEditWidgetShrink(
             quickEditActions = quickEditActions,
             quickEditActionChangeListener = this,
-            containerWidth = CONTAINER_WIDTH,
+            uiPrefs = uiPrefs,
             graphics = graphics,
             listener = object : QuickEditWidgetShrink.Listener {
                 override fun shrinkFromStart(minutes: Int) {
@@ -119,7 +129,7 @@ class UIEButtonCalendarQuickEdit(
     private val viewQuickEditWidgetExpand = QuickEditWidgetExpand(
             quickEditActions = quickEditActions,
             quickEditActionChangeListener = this,
-            containerWidth = CONTAINER_WIDTH,
+            uiPrefs = uiPrefs,
             graphics = graphics,
             listener = object : QuickEditWidgetExpand.Listener {
                 override fun expandToStart(minutes: Int) {
@@ -181,8 +191,8 @@ class UIEButtonCalendarQuickEdit(
 
     init {
         viewsQuickEditWidgets.values.forEach { mainContainer.children.add(it.root) }
-        mainContainer.maxWidth = CONTAINER_WIDTH
-        mainContainer.maxHeight = CONTAINER_WIDTH
+        mainContainer.maxWidth = uiPrefs.prefHeightContainer
+        mainContainer.maxHeight = uiPrefs.prefHeightContainer
         mainContainer.vgrow = Priority.NEVER
         mainContainer.hgrow = Priority.NEVER
         node.rootNode().children.add(mainContainer)
@@ -215,7 +225,6 @@ class UIEButtonCalendarQuickEdit(
 
     companion object {
         const val NO_ID = -1L
-        const val CONTAINER_WIDTH = 120.0
         val logger = LoggerFactory.getLogger(Tags.CALENDAR)!!
     }
 
