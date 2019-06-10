@@ -29,6 +29,7 @@ import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
 import lt.markmerkk.utils.tracker.ITracker
+import lt.markmerkk.validators.LogChangeValidator
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.LocalDate
@@ -44,6 +45,7 @@ class CalendarPresenter : Initializable {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var logChangeValidator: LogChangeValidator
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
@@ -98,7 +100,8 @@ class CalendarPresenter : Initializable {
                 strings = strings,
                 logStorage = storage,
                 timeProvider = timeProvider,
-                graphics = graphics
+                graphics = graphics,
+                logChangeValidator = logChangeValidator
         )
         uiCalendarQuickEdit.hide()
 
@@ -223,10 +226,8 @@ class CalendarPresenter : Initializable {
         if (currentSelection.isNotEmpty()) {
             val simpleLog = currentSelection.first().userObject as SimpleLog
             uiCalendarQuickEdit.changeLogSelection(simpleLog._id)
-            uiCalendarQuickEdit.show()
         } else {
             uiCalendarQuickEdit.changeLogSelectionToNoSelection()
-            uiCalendarQuickEdit.hide()
         }
     }
 

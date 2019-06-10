@@ -8,10 +8,6 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.joda.time.DateTime
 
-/**
- * @author mariusmerkevicius
- * @since 2017-05-11
- */
 object MocksLogEditService {
 
     fun createValidLogWithDate(): SimpleLog {
@@ -62,6 +58,21 @@ object MocksLogEditService {
         doReturn(endMillis).whenever(simpleLog).end
         doReturn(task).whenever(simpleLog).task
         doReturn(comment).whenever(simpleLog).comment
+        return simpleLog
+    }
+
+    fun mockRemoteLog(
+            remoteId: Long = 1L
+    ): SimpleLog {
+        val simpleLog: SimpleLog = mock()
+        val startMillis = TimeMachine.now().millis
+        val endMillis = TimeMachine.now().millis
+        doReturn(startMillis).whenever(simpleLog).start
+        doReturn(endMillis).whenever(simpleLog).end
+        doReturn("valid_task").whenever(simpleLog).task
+        doReturn("valid_comment").whenever(simpleLog).comment
+        doReturn(remoteId).whenever(simpleLog).id
+        doReturn(true).whenever(simpleLog).isRemote()
         return simpleLog
     }
 

@@ -88,6 +88,10 @@ public class SimpleLog extends RemoteEntity {
     return id <= 0;
   }
 
+  public boolean isRemote() {
+    return id > 0;
+  }
+
   //endregion
 
   //region Archiving

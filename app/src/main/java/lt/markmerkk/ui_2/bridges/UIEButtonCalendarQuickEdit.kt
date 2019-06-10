@@ -12,6 +12,7 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.validators.TimeGap
 import org.slf4j.LoggerFactory
@@ -25,7 +26,8 @@ class UIEButtonCalendarQuickEdit(
         private val strings: Strings,
         private val logStorage: LogStorage,
         private val timeProvider: TimeProvider,
-        private val graphics: Graphics<SVGGlyph>
+        private val graphics: Graphics<SVGGlyph>,
+        private val logChangeValidator: LogChangeValidator
 ) : UIElement<Node>, QuickEditActionChangeListener {
 
     private val mainContainer = VBox()
@@ -67,7 +69,9 @@ class UIEButtonCalendarQuickEdit(
                             .setStart(newTimeGap.start.millis)
                             .setEnd(newTimeGap.end.millis)
                             .build()
-                    logStorage.update(newSimpleLog)
+                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+                        logStorage.update(newSimpleLog)
+                    }
                 }
 
                 override fun moveBackward(minutes: Int) {
@@ -83,7 +87,9 @@ class UIEButtonCalendarQuickEdit(
                             .setStart(newTimeGap.start.millis)
                             .setEnd(newTimeGap.end.millis)
                             .build()
-                    logStorage.update(newSimpleLog)
+                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+                        logStorage.update(newSimpleLog)
+                    }
                 }
             })
 
@@ -106,7 +112,9 @@ class UIEButtonCalendarQuickEdit(
                             .setStart(newTimeGap.start.millis)
                             .setEnd(newTimeGap.end.millis)
                             .build()
-                    logStorage.update(newSimpleLog)
+                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+                        logStorage.update(newSimpleLog)
+                    }
                 }
 
                 override fun shrinkFromEnd(minutes: Int) {
@@ -122,7 +130,9 @@ class UIEButtonCalendarQuickEdit(
                             .setStart(newTimeGap.start.millis)
                             .setEnd(newTimeGap.end.millis)
                             .build()
-                    logStorage.update(newSimpleLog)
+                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+                        logStorage.update(newSimpleLog)
+                    }
                 }
             })
 
@@ -145,7 +155,9 @@ class UIEButtonCalendarQuickEdit(
                             .setStart(newTimeGap.start.millis)
                             .setEnd(newTimeGap.end.millis)
                             .build()
-                    logStorage.update(newSimpleLog)
+                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+                        logStorage.update(newSimpleLog)
+                    }
                 }
 
                 override fun expandToEnd(minutes: Int) {
@@ -161,7 +173,9 @@ class UIEButtonCalendarQuickEdit(
                             .setStart(newTimeGap.start.millis)
                             .setEnd(newTimeGap.end.millis)
                             .build()
-                    logStorage.update(newSimpleLog)
+                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+                        logStorage.update(newSimpleLog)
+                    }
                 }
             })
 
@@ -203,10 +217,16 @@ class UIEButtonCalendarQuickEdit(
 
     fun changeLogSelection(id: Long) {
         this.selectLogId = id
+        if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+            show()
+        } else {
+            hide()
+        }
     }
 
     fun changeLogSelectionToNoSelection() {
         this.selectLogId = NO_ID
+        hide()
     }
 
     override fun raw(): Node = mainContainer

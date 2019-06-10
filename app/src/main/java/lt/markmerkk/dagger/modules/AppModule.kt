@@ -20,6 +20,7 @@ import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
+import lt.markmerkk.validators.LogChangeValidator
 import javax.inject.Singleton
 
 /**
@@ -216,6 +217,14 @@ class AppModule(
     @Singleton
     fun provideResultDispatcher(): ResultDispatcher {
         return ResultDispatcher()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogChangeValidator(
+            logStorage: LogStorage
+    ): LogChangeValidator {
+        return LogChangeValidator(logStorage)
     }
 
 }
