@@ -19,22 +19,22 @@ open class TimeProviderTest: TimeProvider {
 
     override fun now(): DateTime = DateTime.now()
 
-    override fun jNow(): LocalDateTime = jLocalDateTimeFrom(now().millis)
+    override fun jNow(): LocalDateTime = roundDateTimeJava8(now().millis)
 
-    override fun jLocalDateTimeFrom(millis: Long): LocalDateTime {
-        return realTimeProvider.jLocalDateTimeFrom(millis)
+    override fun roundDateTimeJava8(millis: Long): LocalDateTime {
+        return realTimeProvider.roundDateTimeJava8(millis)
+                .withSecond(0)
+                .withNano(0)
     }
 
-    override fun jMillisFrom(dateTime: LocalDateTime): Long {
-        return realTimeProvider.jMillisFrom(dateTime)
-    }
-
-    override fun dateTimeFromMillis(millis: Long): DateTime {
+    override fun roundDateTime(millis: Long): DateTime {
         return DateTime(millis, dateTimeZone)
     }
 
-    override fun millisFrom(dateTime: DateTime): Long {
+    override fun roundMillis(dateTime: DateTime): Long {
         return dateTime.withZone(dateTimeZone)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
                 .millis
     }
 

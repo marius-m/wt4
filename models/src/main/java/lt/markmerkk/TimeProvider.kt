@@ -19,24 +19,19 @@ interface TimeProvider {
     fun jNow(): java.time.LocalDateTime
 
     /**
+     * Converts millis to joda datetime
+     */
+    fun roundDateTime(millis: Long): DateTime
+
+    /**
+     * Converts joda date time without seconds
+     */
+    fun roundMillis(dateTime: DateTime): Long
+
+    /**
      * Converts millis to java8 datetime
      */
-    fun dateTimeFromMillis(millis: Long): DateTime
-
-    /**
-     * Converts java8 datetime to millis
-     */
-    fun millisFrom(dateTime: DateTime): Long
-
-    /**
-     * Converts millis to java8 datetime
-     */
-    fun jLocalDateTimeFrom(millis: Long): java.time.LocalDateTime
-
-    /**
-     * Converts java8 datetime to millis
-     */
-    fun jMillisFrom(dateTime: java.time.LocalDateTime): Long
+    fun roundDateTimeJava8(millis: Long): java.time.LocalDateTime
 
     /**
      * Converts date time from java8 to joda DateTime
@@ -53,7 +48,8 @@ interface TimeProvider {
                 javaLocalTime.minute,
                 javaLocalTime.second,
                 dateTimeZone
-        )
+        ).withSecondOfMinute(0)
+                .withMillisOfSecond(0)
     }
 
     /**

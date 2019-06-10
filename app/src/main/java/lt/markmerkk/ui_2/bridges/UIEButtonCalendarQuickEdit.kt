@@ -60,8 +60,8 @@ class UIEButtonCalendarQuickEdit(
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
                     val newTimeGap = timeChangeValidator.moveForward(
                             TimeGap.from(
-                                    timeProvider.dateTimeFromMillis(simpleLog.start),
-                                    timeProvider.dateTimeFromMillis(simpleLog.end)
+                                    timeProvider.roundDateTime(simpleLog.start),
+                                    timeProvider.roundDateTime(simpleLog.end)
                             ),
                             minutes
                     )
@@ -78,8 +78,8 @@ class UIEButtonCalendarQuickEdit(
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
                     val newTimeGap = timeChangeValidator.moveBackward(
                             TimeGap.from(
-                                    timeProvider.dateTimeFromMillis(simpleLog.start),
-                                    timeProvider.dateTimeFromMillis(simpleLog.end)
+                                    timeProvider.roundDateTime(simpleLog.start),
+                                    timeProvider.roundDateTime(simpleLog.end)
                             ),
                             minutes
                     )
@@ -103,8 +103,8 @@ class UIEButtonCalendarQuickEdit(
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
                     val newTimeGap = timeChangeValidator.shrinkFromStart(
                             TimeGap.from(
-                                    timeProvider.dateTimeFromMillis(simpleLog.start),
-                                    timeProvider.dateTimeFromMillis(simpleLog.end)
+                                    timeProvider.roundDateTime(simpleLog.start),
+                                    timeProvider.roundDateTime(simpleLog.end)
                             ),
                             minutes
                     )
@@ -121,8 +121,8 @@ class UIEButtonCalendarQuickEdit(
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
                     val newTimeGap = timeChangeValidator.shrinkFromEnd(
                             TimeGap.from(
-                                    timeProvider.dateTimeFromMillis(simpleLog.start),
-                                    timeProvider.dateTimeFromMillis(simpleLog.end)
+                                    timeProvider.roundDateTime(simpleLog.start),
+                                    timeProvider.roundDateTime(simpleLog.end)
                             ),
                             minutes
                     )
@@ -146,8 +146,8 @@ class UIEButtonCalendarQuickEdit(
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
                     val newTimeGap = timeChangeValidator.expandToStart(
                             TimeGap.from(
-                                    timeProvider.dateTimeFromMillis(simpleLog.start),
-                                    timeProvider.dateTimeFromMillis(simpleLog.end)
+                                    timeProvider.roundDateTime(simpleLog.start),
+                                    timeProvider.roundDateTime(simpleLog.end)
                             ),
                             minutes
                     )
@@ -164,8 +164,8 @@ class UIEButtonCalendarQuickEdit(
                     val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
                     val newTimeGap = timeChangeValidator.expandToEnd(
                             TimeGap.from(
-                                    timeProvider.dateTimeFromMillis(simpleLog.start),
-                                    timeProvider.dateTimeFromMillis(simpleLog.end)
+                                    timeProvider.roundDateTime(simpleLog.start),
+                                    timeProvider.roundDateTime(simpleLog.end)
                             ),
                             minutes
                     )

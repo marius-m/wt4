@@ -62,8 +62,8 @@ class LogEditServiceImpl(
      * Triggers according functions to show on screen
      */
     override fun redraw() {
-        val start = timeProvider.dateTimeFromMillis(entityInEdit.start)
-        val end = timeProvider.dateTimeFromMillis(entityInEdit.end)
+        val start = timeProvider.roundDateTime(entityInEdit.start)
+        val end = timeProvider.roundDateTime(entityInEdit.end)
         listener.onDataChange(
                 start,
                 end,

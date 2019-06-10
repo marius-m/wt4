@@ -15,8 +15,8 @@ class ClockEditPresenterImpl(
     override fun onAttach() {
         handleReportDate(
                 hourglass,
-                timeProvider.dateTimeFromMillis(hourglass.startMillis),
-                timeProvider.dateTimeFromMillis(hourglass.endMillis)
+                timeProvider.roundDateTime(hourglass.startMillis),
+                timeProvider.roundDateTime(hourglass.endMillis)
         )
         handleDurationReport(hourglass)
     }

@@ -16,8 +16,8 @@ class LogEditInteractorImpl(
             startInDateTime: DateTime,
             endInDateTime: DateTime
     ): SimpleLog {
-        val startInMillis = timeProvider.millisFrom(startInDateTime)
-        val endInMillis = timeProvider.millisFrom(endInDateTime)
+        val startInMillis = timeProvider.roundMillis(startInDateTime)
+        val endInMillis = timeProvider.roundMillis(endInDateTime)
         return updateCurrentEntity(
                 currentEntity,
                 startInMillis,
@@ -34,8 +34,8 @@ class LogEditInteractorImpl(
             task: String,
             comment: String
     ): SimpleLog {
-        val startInMillis = timeProvider.millisFrom(startInDateTime)
-        val endInMillis = timeProvider.millisFrom(endInDateTime)
+        val startInMillis = timeProvider.roundMillis(startInDateTime)
+        val endInMillis = timeProvider.roundMillis(endInDateTime)
         return updateCurrentEntity(
                 currentEntity,
                 startInMillis,

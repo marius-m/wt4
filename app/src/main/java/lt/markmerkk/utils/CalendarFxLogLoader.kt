@@ -34,8 +34,8 @@ class CalendarFxLogLoader(
                 .subscribeOn(ioScheduler)
                 .map { logEntry ->
                     logEntry.map {
-                        val startDateTime = timeProvider.jLocalDateTimeFrom(it.start)
-                        val endDateTime = timeProvider.jLocalDateTimeFrom(it.end)
+                        val startDateTime = timeProvider.roundDateTimeJava8(it.start)
+                        val endDateTime = timeProvider.roundDateTimeJava8(it.end)
                         val entry = Entry<SimpleLog>(
                                 LogUtils.formatLogToText(it),
                                 Interval(

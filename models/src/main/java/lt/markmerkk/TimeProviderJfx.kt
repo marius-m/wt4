@@ -17,28 +17,29 @@ class TimeProviderJfx(
 
     override fun jNow(): java.time.LocalDateTime {
         val nowMillis = now().millis
-        return jLocalDateTimeFrom(nowMillis)
+        return roundDateTimeJava8(nowMillis)
     }
 
     //region Convenience
 
-    override fun dateTimeFromMillis(millis: Long): DateTime {
+    override fun roundDateTime(millis: Long): DateTime {
         return DateTime(millis, dateTimeZone)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
     }
 
-    override fun jLocalDateTimeFrom(millis: Long): java.time.LocalDateTime {
+    override fun roundDateTimeJava8(millis: Long): java.time.LocalDateTime {
         return java.time.LocalDateTime.ofInstant(
                 java.time.Instant.ofEpochMilli(millis),
                 zoneId
-        )
+        ).withSecond(0)
+                .withNano(0)
     }
 
-    override fun jMillisFrom(dateTime: java.time.LocalDateTime): Long {
-        return dateTime.atZone(zoneId).toInstant().toEpochMilli()
-    }
-
-    override fun millisFrom(dateTime: DateTime): Long {
+    override fun roundMillis(dateTime: DateTime): Long {
         return dateTime.withZone(dateTimeZone)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
                 .millis
     }
 
