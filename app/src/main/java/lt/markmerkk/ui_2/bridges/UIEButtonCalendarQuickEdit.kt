@@ -8,6 +8,7 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import lt.markmerkk.*
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
@@ -15,6 +16,7 @@ import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.validators.TimeGap
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import tornadofx.View
 import tornadofx.hgrow
@@ -34,14 +36,14 @@ class UIEButtonCalendarQuickEdit(
     private val timeChangeValidator = TimeChangeValidator
     private val quickEditActions = setOf(
             QuickEditAction.MOVE,
-            QuickEditAction.SHRINK,
-            QuickEditAction.EXPAND
+            QuickEditAction.SCALE,
+            QuickEditAction.SCALE10x
     )
     private val uiPrefs = QuickEditUiPrefs(
             prefHeightContainer = 32.0,
-            prefWidthTypeSelector = 100.0,
+            prefWidthTypeSelector = 120.0,
             prefWidthActionIcons = 30.0,
-            maxWidthContainer = 220.0, // 4 * actionIcons + typeSelector
+            maxWidthContainer = 240.0, // 4 * actionIcons + typeSelector
             widthActionIcon = 8.0,
             heightActionIcon = 8.0,
             widthActionIconFaster = 14.0,
@@ -49,6 +51,74 @@ class UIEButtonCalendarQuickEdit(
     )
     var selectLogId: Long = NO_ID
         private set
+
+    private val listenerViewScale = object : QuickEditWidgetScale.Listener {
+        override fun shrinkFromStart(minutes: Int) {
+            val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
+            val newTimeGap = timeChangeValidator.shrinkFromStart(
+                    TimeGap.from(
+                            timeProvider.roundDateTime(simpleLog.start),
+                            timeProvider.roundDateTime(simpleLog.end)
+                    ),
+                    minutes
+            )
+            updateLog(simpleLog, newTimeGap.start, newTimeGap.end)
+        }
+
+        override fun expandToStart(minutes: Int) {
+            val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
+            val newTimeGap = timeChangeValidator.expandToStart(
+                    TimeGap.from(
+                            timeProvider.roundDateTime(simpleLog.start),
+                            timeProvider.roundDateTime(simpleLog.end)
+                    ),
+                    minutes
+            )
+            updateLog(simpleLog, newTimeGap.start, newTimeGap.end)
+        }
+
+        override fun shrinkFromEnd(minutes: Int) {
+            val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
+            val newTimeGap = timeChangeValidator.shrinkFromEnd(
+                    TimeGap.from(
+                            timeProvider.roundDateTime(simpleLog.start),
+                            timeProvider.roundDateTime(simpleLog.end)
+                    ),
+                    minutes
+            )
+            updateLog(simpleLog, newTimeGap.start, newTimeGap.end)
+        }
+
+        override fun expandToEnd(minutes: Int) {
+            val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
+            val newTimeGap = timeChangeValidator.expandToEnd(
+                    TimeGap.from(
+                            timeProvider.roundDateTime(simpleLog.start),
+                            timeProvider.roundDateTime(simpleLog.end)
+                    ),
+                    minutes
+            )
+            updateLog(simpleLog, newTimeGap.start, newTimeGap.end)
+        }
+
+    }
+    private val viewQuickEditWidgetScale = QuickEditWidgetScale(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
+            uiPrefs = uiPrefs,
+            graphics = graphics,
+            scaleStepMinutes = 1,
+            listener = listenerViewScale
+    )
+
+    private val viewQuickEditWidgetScale10 = QuickEditWidgetScale(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
+            uiPrefs = uiPrefs,
+            graphics = graphics,
+            scaleStepMinutes = 10,
+            listener = listenerViewScale
+    )
 
     private val viewQuickEditWidgetMove = QuickEditWidgetMove(
             quickEditActions = quickEditActions,
@@ -65,13 +135,7 @@ class UIEButtonCalendarQuickEdit(
                             ),
                             minutes
                     )
-                    val newSimpleLog = SimpleLogBuilder(simpleLog)
-                            .setStart(newTimeGap.start.millis)
-                            .setEnd(newTimeGap.end.millis)
-                            .build()
-                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
-                        logStorage.update(newSimpleLog)
-                    }
+                    updateLog(simpleLog, newTimeGap.start, newTimeGap.end)
                 }
 
                 override fun moveBackward(minutes: Int) {
@@ -83,99 +147,7 @@ class UIEButtonCalendarQuickEdit(
                             ),
                             minutes
                     )
-                    val newSimpleLog = SimpleLogBuilder(simpleLog)
-                            .setStart(newTimeGap.start.millis)
-                            .setEnd(newTimeGap.end.millis)
-                            .build()
-                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
-                        logStorage.update(newSimpleLog)
-                    }
-                }
-            })
-
-    private val viewQuickEditWidgetShrink = QuickEditWidgetShrink(
-            quickEditActions = quickEditActions,
-            quickEditActionChangeListener = this,
-            uiPrefs = uiPrefs,
-            graphics = graphics,
-            listener = object : QuickEditWidgetShrink.Listener {
-                override fun shrinkFromStart(minutes: Int) {
-                    val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
-                    val newTimeGap = timeChangeValidator.shrinkFromStart(
-                            TimeGap.from(
-                                    timeProvider.roundDateTime(simpleLog.start),
-                                    timeProvider.roundDateTime(simpleLog.end)
-                            ),
-                            minutes
-                    )
-                    val newSimpleLog = SimpleLogBuilder(simpleLog)
-                            .setStart(newTimeGap.start.millis)
-                            .setEnd(newTimeGap.end.millis)
-                            .build()
-                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
-                        logStorage.update(newSimpleLog)
-                    }
-                }
-
-                override fun shrinkFromEnd(minutes: Int) {
-                    val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
-                    val newTimeGap = timeChangeValidator.shrinkFromEnd(
-                            TimeGap.from(
-                                    timeProvider.roundDateTime(simpleLog.start),
-                                    timeProvider.roundDateTime(simpleLog.end)
-                            ),
-                            minutes
-                    )
-                    val newSimpleLog = SimpleLogBuilder(simpleLog)
-                            .setStart(newTimeGap.start.millis)
-                            .setEnd(newTimeGap.end.millis)
-                            .build()
-                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
-                        logStorage.update(newSimpleLog)
-                    }
-                }
-            })
-
-    private val viewQuickEditWidgetExpand = QuickEditWidgetExpand(
-            quickEditActions = quickEditActions,
-            quickEditActionChangeListener = this,
-            uiPrefs = uiPrefs,
-            graphics = graphics,
-            listener = object : QuickEditWidgetExpand.Listener {
-                override fun expandToStart(minutes: Int) {
-                    val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
-                    val newTimeGap = timeChangeValidator.expandToStart(
-                            TimeGap.from(
-                                    timeProvider.roundDateTime(simpleLog.start),
-                                    timeProvider.roundDateTime(simpleLog.end)
-                            ),
-                            minutes
-                    )
-                    val newSimpleLog = SimpleLogBuilder(simpleLog)
-                            .setStart(newTimeGap.start.millis)
-                            .setEnd(newTimeGap.end.millis)
-                            .build()
-                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
-                        logStorage.update(newSimpleLog)
-                    }
-                }
-
-                override fun expandToEnd(minutes: Int) {
-                    val simpleLog = logStorage.findByIdOrNull(selectLogId) ?: return
-                    val newTimeGap = timeChangeValidator.expandToEnd(
-                            TimeGap.from(
-                                    timeProvider.roundDateTime(simpleLog.start),
-                                    timeProvider.roundDateTime(simpleLog.end)
-                            ),
-                            minutes
-                    )
-                    val newSimpleLog = SimpleLogBuilder(simpleLog)
-                            .setStart(newTimeGap.start.millis)
-                            .setEnd(newTimeGap.end.millis)
-                            .build()
-                    if (logChangeValidator.canEditSimpleLog(selectLogId)) {
-                        logStorage.update(newSimpleLog)
-                    }
+                    updateLog(simpleLog, newTimeGap.start, newTimeGap.end)
                 }
             })
 
@@ -196,11 +168,10 @@ class UIEButtonCalendarQuickEdit(
         }
     }
 
-
     private val viewsQuickEditWidgets = mapOf<QuickEditAction, View>(
             QuickEditAction.MOVE to viewQuickEditWidgetMove,
-            QuickEditAction.SHRINK to viewQuickEditWidgetShrink,
-            QuickEditAction.EXPAND to viewQuickEditWidgetExpand
+            QuickEditAction.SCALE to viewQuickEditWidgetScale,
+            QuickEditAction.SCALE10x to viewQuickEditWidgetScale10
     )
 
     init {
@@ -227,6 +198,20 @@ class UIEButtonCalendarQuickEdit(
     fun changeLogSelectionToNoSelection() {
         this.selectLogId = NO_ID
         hide()
+    }
+
+    private fun updateLog(
+            oldLog: SimpleLog,
+            start: DateTime,
+            end: DateTime
+    ) {
+        val newSimpleLog = SimpleLogBuilder(oldLog)
+                .setStart(start.millis)
+                .setEnd(end.millis)
+                .build()
+        if (logChangeValidator.canEditSimpleLog(selectLogId)) {
+            logStorage.update(newSimpleLog)
+        }
     }
 
     override fun raw(): Node = mainContainer

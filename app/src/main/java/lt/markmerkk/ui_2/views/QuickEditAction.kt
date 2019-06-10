@@ -5,7 +5,7 @@ package lt.markmerkk.ui_2.views
  */
 enum class QuickEditAction {
     MOVE,
-    SHRINK,
-    EXPAND,
+    SCALE,
+    SCALE10x,
     ;
 }
