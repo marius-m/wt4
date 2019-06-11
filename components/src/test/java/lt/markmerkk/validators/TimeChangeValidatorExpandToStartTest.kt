@@ -1,6 +1,7 @@
 package lt.markmerkk.validators
 
 import lt.markmerkk.TimeMachine
+import lt.markmerkk.entities.TimeGap
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

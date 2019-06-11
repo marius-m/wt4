@@ -6,7 +6,7 @@ import com.jfoenix.controls.JFXTimePicker
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.validators.TimeChangeValidator
-import lt.markmerkk.validators.TimeGap
+import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.ui.UIBridge
 
 /**

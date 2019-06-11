@@ -15,7 +15,7 @@ import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
-import lt.markmerkk.validators.TimeGap
+import lt.markmerkk.entities.TimeGap
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import tornadofx.View
