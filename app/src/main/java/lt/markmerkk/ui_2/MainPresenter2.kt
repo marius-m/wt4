@@ -2,7 +2,9 @@ package lt.markmerkk.ui_2
 
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
-import com.jfoenix.controls.*
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXSnackbar
+import com.jfoenix.controls.JFXToggleNode
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -12,8 +14,6 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Paint
-import javafx.scene.text.Text
-import javafx.util.Duration
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.SimpleLog
@@ -31,7 +31,14 @@ import lt.markmerkk.ui.display.DisplayLogView
 import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week2.WeekView2
-import lt.markmerkk.ui_2.bridges.*
+import lt.markmerkk.ui_2.bridges.UIEButtonClock
+import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
+import lt.markmerkk.ui_2.bridges.UIEButtonSettings
+import lt.markmerkk.ui_2.bridges.UIECenterView
+import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
+import lt.markmerkk.ui_2.views.date.QuickDateChangeWidgetPresenterDefault
+import lt.markmerkk.ui_2.views.progress.ProgressWidget
+import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
 import java.net.URL
@@ -48,14 +55,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @FXML lateinit var jfxButtonSettings: JFXButton
     @FXML lateinit var jfxButtonDisplayView: JFXButton
     @FXML lateinit var jfxContainerContent: BorderPane
-    @FXML lateinit var jfxContainerContentDateSwitcher: HBox
-    @FXML lateinit var jfxDateSwitcherPrev: JFXButton
-    @FXML lateinit var jfxDateSwitcherDate: JFXButton
-    @FXML lateinit var jfxDateSwitcherNext: JFXButton
-    @FXML lateinit var jfxSpinnerProgress: JFXSpinner
-    @FXML lateinit var jfxButtonProgressRefresh: JFXButton
-    @FXML lateinit var jfxButtonProgressStop: JFXButton
-    @FXML lateinit var jfxContainerContentRefresh: StackPane
+    @FXML lateinit var jfxContainerContentLeft: HBox
+    @FXML lateinit var jfxContainerContentRight: HBox
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
@@ -70,11 +71,11 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCenterView: UIECenterView
-    lateinit var uieDateSwitcher: UIEDateSwitcher
-    lateinit var uieProgressView: UIEProgressView
     lateinit var clockRunBridge: ClockRunBridge
     lateinit var snackBar: JFXSnackbar
     lateinit var dialogInflater: DialogInflater
+    lateinit var widgetDateChange: QuickDateChangeWidget
+    lateinit var widgetProgress: ProgressWidget
 
     var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
@@ -82,6 +83,17 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         Main.component!!.presenterComponent().inject(this)
 
         // Init ui elements
+        widgetDateChange = QuickDateChangeWidget(
+                graphics,
+                QuickDateChangeWidgetPresenterDefault(
+                        this,
+                        logStorage
+                )
+        )
+        widgetProgress = ProgressWidget(
+                presenter = ProgressWidgetPresenter(syncInteractor),
+                graphics = graphics
+        )
         snackBar = JFXSnackbar(jfxRoot)
         uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings, eventBus)
         uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
@@ -94,32 +106,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 jfxToggleClock
         )
         uieCenterView = UIECenterView(jfxContainerContent)
-        uieProgressView = UIEProgressView(
-                jfxContainerContentRefresh,
-                jfxButtonProgressRefresh,
-                jfxButtonProgressStop,
-                jfxSpinnerProgress,
-                graphics,
-                refreshListener = object : UIEProgressView.RefreshListener {
-                    override fun onClickRefresh() {
-                        syncInteractor.syncLogs()
-                    }
-
-                    override fun onClickStop() {
-                        syncInteractor.stop()
-                    }
-                }
-        )
-        uieProgressView.onLoadChange(syncInteractor.isLoading())
-        uieDateSwitcher = UIEDateSwitcher(
-                this,
-                jfxContainerContentDateSwitcher,
-                jfxDateSwitcherNext,
-                jfxDateSwitcherPrev,
-                jfxDateSwitcherDate,
-                graphics,
-                logStorage
-        )
+        jfxContainerContentRight.children.add(widgetProgress.root)
+        jfxContainerContentLeft.children.add(widgetDateChange.root)
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
@@ -130,16 +118,16 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         )
         dialogInflater = DialogInflater(this, eventBus)
         eventBus.register(this)
-        syncInteractor.addLoadingListener(uieProgressView)
-        uieDateSwitcher.onAttach()
         dialogInflater.onAttach()
+        widgetDateChange.onAttach()
+        widgetProgress.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        widgetProgress.onDetach()
+        widgetDateChange.onDetach()
         dialogInflater.onDetach()
-        uieDateSwitcher.onDetach()
-        syncInteractor.removeLoadingListener(uieProgressView)
         eventBus.unregister(this)
         if (hourGlass.state == HourGlass.State.RUNNING) {
             hourGlass.stop()

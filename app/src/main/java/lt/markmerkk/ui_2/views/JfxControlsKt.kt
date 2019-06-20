@@ -2,6 +2,7 @@ package lt.markmerkk.ui_2.views
 
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXComboBox
+import com.jfoenix.controls.JFXSpinner
 import javafx.beans.property.Property
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
@@ -44,6 +45,9 @@ fun EventTarget.jfxButton(
 ) = JFXButton(text).attachTo(this, op) {
     if (graphic != null) it.graphic = graphic
 }
+
+// Spinner
+fun EventTarget.jfxSpinner(op: JFXSpinner.() -> Unit = {}) = JFXSpinner().attachTo(this, op)
 
 // Combo
 fun <T> EventTarget.jfxCombobox(
