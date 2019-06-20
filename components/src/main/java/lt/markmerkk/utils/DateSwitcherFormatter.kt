@@ -4,7 +4,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-object DateSwittcherFormatter {
+object DateSwitcherFormatter {
 
     private val dayOfWeekFormatter = DateTimeFormatter.ofPattern("EE")
     private val shortFormatter = DateTimeFormatter.ofPattern("dd MMMM")
