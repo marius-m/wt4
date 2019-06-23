@@ -6,8 +6,10 @@ import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.Parent
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
+import lt.markmerkk.MaterialColors
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSpinner
 import tornadofx.*
@@ -37,6 +39,10 @@ class ProgressWidget(
             maxHeight = 24.0
         }
         hideProgress()
+        style {
+            backgroundColor.add(Paint.valueOf(MaterialColors.LIGHTEST))
+            backgroundRadius.add(box(20.px))
+        }
     }
 
     override fun onAttach() {

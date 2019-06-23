@@ -90,13 +90,6 @@ class QuickEditWidgetScale(
             }
         }
         root.alignment = Pos.CENTER
-        root.background = Background(
-                BackgroundFill(
-                        Paint.valueOf("white"),
-                        CornerRadii(6.0, false),
-                        Insets.EMPTY
-                )
-        )
         root.maxWidth = uiPrefs.maxWidthContainer
         root.maxHeight = uiPrefs.prefHeightContainer
         root.prefHeight = uiPrefs.prefHeightContainer

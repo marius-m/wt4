@@ -4,15 +4,11 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.Parent
 import javafx.scene.paint.Color
-import lt.markmerkk.Glyph
-import lt.markmerkk.Graphics
-import lt.markmerkk.Tags
-import lt.markmerkk.TimeProvider
+import javafx.scene.paint.Paint
+import lt.markmerkk.*
 import lt.markmerkk.ui_2.views.jfxButton
 import org.slf4j.LoggerFactory
-import tornadofx.View
-import tornadofx.hbox
-import tornadofx.style
+import tornadofx.*
 
 class QuickDateChangeWidget(
         private val graphics: Graphics<SVGGlyph>,
@@ -24,6 +20,10 @@ class QuickDateChangeWidget(
     private lateinit var viewButtonDate: JFXButton
 
     override val root: Parent = hbox {
+        style {
+            backgroundColor.add(Paint.valueOf(MaterialColors.LIGHTEST))
+            backgroundRadius.add(box(20.px))
+        }
         viewArrowLeft = jfxButton {
             graphic = graphics.from(Glyph.ARROW_LEFT, Color.BLACK, 6.0, 8.0)
             setOnAction { presenter.onClickPrev() }

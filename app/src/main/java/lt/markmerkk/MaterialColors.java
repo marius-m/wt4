@@ -13,4 +13,6 @@ public final class MaterialColors {
     public static final String ACTIVATE_DARK = "#FF9100";
     public static final String ACTIVATE_DARKEST = "#FF6D00";
 
+    public static final String ACTIVATE_RED = "#E91E63";
+
 }

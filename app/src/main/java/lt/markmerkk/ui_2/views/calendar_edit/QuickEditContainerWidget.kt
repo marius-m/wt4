@@ -3,10 +3,8 @@ package lt.markmerkk.ui_2.views.calendar_edit
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.Parent
 import javafx.scene.layout.Priority
-import lt.markmerkk.Const
-import lt.markmerkk.Graphics
-import lt.markmerkk.LogStorage
-import lt.markmerkk.TimeProvider
+import javafx.scene.paint.Paint
+import lt.markmerkk.*
 import lt.markmerkk.ui_2.views.LifecycleView
 import lt.markmerkk.ui_2.views.SelectableView
 import lt.markmerkk.ui_2.views.VisibilityChangeableView
@@ -34,9 +32,9 @@ class QuickEditContainerWidget(
             QuickEditAction.SCALE10x
     )
     private val uiPrefs = QuickEditUiPrefs(
-            prefHeightContainer = 30.0,
+            prefHeightContainer = 28.0,
             prefWidthTypeSelector = 120.0,
-            prefWidthActionIcons = 30.0,
+            prefWidthActionIcons = 28.0,
             maxWidthContainer = 240.0, // 4 * actionIcons + typeSelector
             widthActionIcon = 8.0,
             heightActionIcon = 8.0,
@@ -91,6 +89,10 @@ class QuickEditContainerWidget(
         maxWidth = uiPrefs.prefHeightContainer
         maxHeight = uiPrefs.prefHeightContainer
         widgetMap.forEach { children.add(it.value.root) }
+        style {
+            backgroundColor.add(Paint.valueOf(MaterialColors.LIGHTEST))
+            backgroundRadius.add(box(20.px))
+        }
     }
 
     private var selectedLogId: Long = Const.NO_ID
