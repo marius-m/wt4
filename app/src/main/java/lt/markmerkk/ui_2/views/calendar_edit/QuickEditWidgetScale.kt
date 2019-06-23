@@ -20,13 +20,18 @@ import tornadofx.selectedItem
 import tornadofx.vgrow
 
 class QuickEditWidgetScale(
-        private val listener: Listener,
+        private val presenter: QuickEditContract.ScalePresenter,
         private val uiPrefs: QuickEditUiPrefs,
         private val quickEditActions: Set<QuickEditAction>,
         private val graphics: Graphics<SVGGlyph>,
         private val scaleStepMinutes: Int,
         private val quickEditActionChangeListener: QuickEditActionChangeListener
-): View(), QuickEditChangableAction {
+): View(),
+        QuickEditChangableAction,
+        QuickEditContract.ScaleView,
+        QuickEditContract.SelectableView,
+        QuickEditContract.LifecycleView
+{
 
     private val quickEditActionsAsString = quickEditActions.map { it.name }
     private val jfxComboBox: JFXComboBox<String>
@@ -35,7 +40,7 @@ class QuickEditWidgetScale(
     init {
         with(root) {
             jfxButton {
-                setOnAction { listener.expandToStart(scaleStepMinutes) }
+                setOnAction { presenter.expandToStart(scaleStepMinutes) }
                 prefWidth = uiPrefs.prefWidthActionIcons
                 graphic = graphics.from(
                         Glyph.ARROW_REWIND,
@@ -45,7 +50,7 @@ class QuickEditWidgetScale(
                 )
             }
             jfxButton {
-                setOnAction { listener.shrinkFromStart(scaleStepMinutes) }
+                setOnAction { presenter.shrinkFromStart(scaleStepMinutes) }
                 prefWidth = uiPrefs.prefWidthActionIcons
                 graphic = graphics.from(
                         Glyph.ARROW_FORWARD,
@@ -64,7 +69,7 @@ class QuickEditWidgetScale(
                 }
             }
             jfxButton {
-                setOnAction { listener.shrinkFromEnd(scaleStepMinutes) }
+                setOnAction { presenter.shrinkFromEnd(scaleStepMinutes) }
                 prefWidth = uiPrefs.prefWidthActionIcons
                 graphic = graphics.from(
                         Glyph.ARROW_REWIND,
@@ -74,7 +79,7 @@ class QuickEditWidgetScale(
                 )
             }
             jfxButton {
-                setOnAction { listener.expandToEnd(scaleStepMinutes) }
+                setOnAction { presenter.expandToEnd(scaleStepMinutes) }
                 prefWidth = uiPrefs.prefWidthActionIcons
                 graphic = graphics.from(
                         Glyph.ARROW_FORWARD,
@@ -99,17 +104,22 @@ class QuickEditWidgetScale(
         root.hgrow = Priority.NEVER
     }
 
+    override fun onAttach() {
+        presenter.onAttach(this)
+    }
+
+    override fun onDetach() {
+        presenter.onDetach()
+    }
+
+    override fun onSelectLog(logId: Long) {
+        presenter.selectLogId(logId)
+    }
+
     override fun changeActiveAction(quickEditAction: QuickEditAction) {
         val actionIndex = quickEditActionsAsString
                 .indexOf(quickEditAction.name)
         jfxComboBox.selectionModel.clearAndSelect(actionIndex)
-    }
-
-    interface Listener {
-        fun shrinkFromStart(minutes: Int)
-        fun expandToStart(minutes: Int)
-        fun shrinkFromEnd(minutes: Int)
-        fun expandToEnd(minutes: Int)
     }
 
     companion object {

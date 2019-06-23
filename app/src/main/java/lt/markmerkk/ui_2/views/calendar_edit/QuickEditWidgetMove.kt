@@ -12,18 +12,20 @@ import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxCombobox
-import tornadofx.View
-import tornadofx.hgrow
-import tornadofx.selectedItem
-import tornadofx.vgrow
+import tornadofx.*
 
 class QuickEditWidgetMove(
-        private val listener: Listener,
+        private val presenter: QuickEditContract.MovePresenter,
         private val uiPrefs: QuickEditUiPrefs,
         private val quickEditActions: Set<QuickEditAction>,
         private val graphics: Graphics<SVGGlyph>,
         private val quickEditActionChangeListener: QuickEditActionChangeListener
-) : View(), QuickEditChangableAction {
+) : View(),
+        QuickEditChangableAction,
+        QuickEditContract.MoveView,
+        QuickEditContract.SelectableView,
+        QuickEditContract.LifecycleView
+{
 
     private val quickEditActionsAsString = quickEditActions.map { it.name }
     private val jfxComboBox: JFXComboBox<String>
@@ -33,7 +35,7 @@ class QuickEditWidgetMove(
         with(root) {
             jfxButton()
                     .apply {
-                        setOnAction { listener.moveBackward(10) }
+                        setOnAction { presenter.moveBackward(10) }
                         prefWidth = uiPrefs.prefWidthActionIcons
                         graphic = graphics.from(
                                 Glyph.ARROW_FAST_REWIND,
@@ -44,7 +46,7 @@ class QuickEditWidgetMove(
                     }
             jfxButton()
                     .apply {
-                        setOnAction { listener.moveBackward(1) }
+                        setOnAction { presenter.moveBackward(1) }
                         prefWidth = uiPrefs.prefWidthActionIcons
                         graphic = graphics.from(
                                 Glyph.ARROW_REWIND,
@@ -53,7 +55,7 @@ class QuickEditWidgetMove(
                                 uiPrefs.heightActionIcon
                         )
                     }
-                    .setOnAction { listener.moveBackward(1) }
+                    .setOnAction { presenter.moveBackward(1) }
             jfxComboBox = jfxCombobox(SimpleStringProperty(QuickEditAction.MOVE.name), quickEditActionsAsString)
                     .apply {
                         minWidth = uiPrefs.prefWidthTypeSelector
@@ -66,7 +68,7 @@ class QuickEditWidgetMove(
                     }
             jfxButton()
                     .apply {
-                        setOnAction { listener.moveForward(1) }
+                        setOnAction { presenter.moveForward(1) }
                         prefWidth = uiPrefs.prefWidthActionIcons
                         graphic = graphics.from(
                                 Glyph.ARROW_FORWARD,
@@ -77,7 +79,7 @@ class QuickEditWidgetMove(
                     }
             jfxButton()
                     .apply {
-                        setOnAction { listener.moveForward(10) }
+                        setOnAction { presenter.moveForward(10) }
                         prefWidth = uiPrefs.prefWidthActionIcons
                         graphic = graphics.from(
                                 Glyph.ARROW_FAST_FORWARD,
@@ -102,15 +104,22 @@ class QuickEditWidgetMove(
         root.hgrow = Priority.NEVER
     }
 
+    override fun onAttach() {
+        presenter.onAttach(this)
+    }
+
+    override fun onDetach() {
+        presenter.onDetach()
+    }
+
+    override fun onSelectLog(logId: Long) {
+        presenter.selectLogId(logId)
+    }
+
     override fun changeActiveAction(quickEditAction: QuickEditAction) {
         val actionIndex = quickEditActionsAsString
                 .indexOf(quickEditAction.name)
         jfxComboBox.selectionModel.clearAndSelect(actionIndex)
-    }
-
-    interface Listener {
-        fun moveForward(minutes: Int)
-        fun moveBackward(minutes: Int)
     }
 
 }

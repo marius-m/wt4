@@ -209,10 +209,12 @@ class CalendarPresenter : Initializable {
         calendarUpdater.onAttach()
         logLoader.load(storage.data)
         jfxCalendarView.selections.addListener(jfxCalSelectionListener)
+        uiCalendarQuickEdit.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        uiCalendarQuickEdit.onDetach()
         jfxCalendarView.selections.removeListener(jfxCalSelectionListener)
         calendarUpdater.onDetach()
         logLoader.onDetach()
@@ -299,7 +301,7 @@ class CalendarPresenter : Initializable {
     }
 
     private fun selectActiveLog(allEntries: List<Entry<SimpleLog>>) {
-        val selection = findEntryByLocalIdOrNull(uiCalendarQuickEdit.selectLogId, allEntries)
+        val selection = findEntryByLocalIdOrNull(uiCalendarQuickEdit.logSelection(), allEntries)
         if (selection != null) {
             jfxCalendarView.select(selection)
         }
