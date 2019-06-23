@@ -1,4 +1,4 @@
-package lt.markmerkk.ui_2.views
+package lt.markmerkk.ui_2.views.calendar_edit
 
 /**
  * Defines ui prefs how to display quick edit

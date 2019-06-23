@@ -12,10 +12,10 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.entities.TimeGap
+import lt.markmerkk.ui_2.views.calendar_edit.*
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import tornadofx.View

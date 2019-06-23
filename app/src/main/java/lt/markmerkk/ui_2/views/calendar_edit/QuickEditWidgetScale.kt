@@ -1,4 +1,4 @@
-package lt.markmerkk.ui_2.views
+package lt.markmerkk.ui_2.views.calendar_edit
 
 import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.svg.SVGGlyph
@@ -11,6 +11,8 @@ import javafx.scene.paint.Paint
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Tags
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxCombobox
 import org.slf4j.LoggerFactory
 import tornadofx.View
 import tornadofx.hgrow
