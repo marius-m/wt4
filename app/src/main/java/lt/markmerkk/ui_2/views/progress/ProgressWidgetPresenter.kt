@@ -1,7 +1,9 @@
 package lt.markmerkk.ui_2.views.progress
 
+import lt.markmerkk.Tags
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
+import org.slf4j.LoggerFactory
 
 class ProgressWidgetPresenter(
         private val syncInteractor: SyncInteractor
@@ -42,6 +44,10 @@ class ProgressWidgetPresenter(
         override fun onError(error: String?) {
             view?.hideProgress()
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(Tags.MAIN)
     }
 
     //endregion

@@ -26,10 +26,15 @@ class ProgressWidget(
             setOnAction { presenter.onClickSync() }
         }
         viewProgress = jfxSpinner {
-            minWidth = 18.0
-            minHeight = 18.0
-            maxWidth = 18.0
-            maxHeight = 18.0
+            style {
+                padding = box(2.0.px)
+            }
+            minWidth = 24.0
+            minHeight = 24.0
+            prefWidth = 24.0
+            prefHeight = 24.0
+            maxWidth = 24.0
+            maxHeight = 24.0
         }
         hideProgress()
     }

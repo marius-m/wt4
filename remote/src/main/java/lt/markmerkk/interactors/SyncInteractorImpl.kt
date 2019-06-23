@@ -104,7 +104,7 @@ class SyncInteractorImpl(
                     val syncEnd = System.currentTimeMillis()
                     logger.info("Log sync success in ${syncEnd - syncStart}ms!")
                 }, {
-                    logger.info("Log sync error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
+                    logger.info("Log sync error: ${it.message}")
                     logger.error("Log sync error data: ", it)
                     logStorage.notifyDataChange()
                     autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
