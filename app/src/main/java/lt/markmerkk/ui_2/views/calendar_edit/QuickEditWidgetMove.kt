@@ -10,8 +10,7 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
-import lt.markmerkk.ui_2.views.jfxButton
-import lt.markmerkk.ui_2.views.jfxCombobox
+import lt.markmerkk.ui_2.views.*
 import tornadofx.*
 
 class QuickEditWidgetMove(
@@ -23,8 +22,9 @@ class QuickEditWidgetMove(
 ) : View(),
         QuickEditChangableAction,
         QuickEditContract.MoveView,
-        QuickEditContract.SelectableView,
-        QuickEditContract.LifecycleView
+        SelectableView,
+        LifecycleView,
+        VisibilityChangeableView
 {
 
     private val quickEditActionsAsString = quickEditActions.map { it.name }
@@ -114,6 +114,11 @@ class QuickEditWidgetMove(
 
     override fun onSelectLog(logId: Long) {
         presenter.selectLogId(logId)
+    }
+
+    override fun changeVisibility(isVisible: Boolean) {
+        root.isVisible = isVisible
+        root.isManaged = isVisible
     }
 
     override fun changeActiveAction(quickEditAction: QuickEditAction) {

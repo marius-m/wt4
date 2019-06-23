@@ -10,6 +10,8 @@ import javafx.scene.layout.VBox
 import lt.markmerkk.*
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
+import lt.markmerkk.ui_2.views.LifecycleView
+import lt.markmerkk.ui_2.views.SelectableView
 import lt.markmerkk.ui_2.views.calendar_edit.*
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
@@ -123,13 +125,13 @@ class UIEButtonCalendarQuickEdit(
 
     fun onAttach() {
         viewsQuickEditWidgets.values
-                .filterIsInstance<QuickEditContract.LifecycleView>()
+                .filterIsInstance<LifecycleView>()
                 .forEach { it.onAttach() }
     }
 
     fun onDetach() {
         viewsQuickEditWidgets.values
-                .filterIsInstance<QuickEditContract.LifecycleView>()
+                .filterIsInstance<LifecycleView>()
                 .forEach { it.onDetach() }
     }
 
@@ -138,7 +140,7 @@ class UIEButtonCalendarQuickEdit(
     fun changeLogSelection(id: Long) {
         this.selectedLogId = id
         viewsQuickEditWidgets.values
-                .filterIsInstance<QuickEditContract.SelectableView>()
+                .filterIsInstance<SelectableView>()
                 .forEach { it.onSelectLog(id) }
         if (logChangeValidator.canEditSimpleLog(id)) {
             show()
@@ -150,7 +152,7 @@ class UIEButtonCalendarQuickEdit(
     fun changeLogSelectionToNoSelection() {
         this.selectedLogId = Const.NO_ID
         viewsQuickEditWidgets.values
-                .filterIsInstance<QuickEditContract.SelectableView>()
+                .filterIsInstance<SelectableView>()
                 .forEach { it.onSelectLog(Const.NO_ID) }
         hide()
     }

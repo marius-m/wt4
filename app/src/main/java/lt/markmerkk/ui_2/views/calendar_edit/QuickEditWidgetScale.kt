@@ -11,8 +11,7 @@ import javafx.scene.paint.Paint
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Tags
-import lt.markmerkk.ui_2.views.jfxButton
-import lt.markmerkk.ui_2.views.jfxCombobox
+import lt.markmerkk.ui_2.views.*
 import org.slf4j.LoggerFactory
 import tornadofx.View
 import tornadofx.hgrow
@@ -29,8 +28,9 @@ class QuickEditWidgetScale(
 ): View(),
         QuickEditChangableAction,
         QuickEditContract.ScaleView,
-        QuickEditContract.SelectableView,
-        QuickEditContract.LifecycleView
+        SelectableView,
+        LifecycleView,
+        VisibilityChangeableView
 {
 
     private val quickEditActionsAsString = quickEditActions.map { it.name }
@@ -120,6 +120,11 @@ class QuickEditWidgetScale(
         val actionIndex = quickEditActionsAsString
                 .indexOf(quickEditAction.name)
         jfxComboBox.selectionModel.clearAndSelect(actionIndex)
+    }
+
+    override fun changeVisibility(isVisible: Boolean) {
+        root.isVisible = isVisible
+        root.isManaged = isVisible
     }
 
     companion object {

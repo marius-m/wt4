@@ -1,22 +1,19 @@
 package lt.markmerkk.ui_2.views.calendar_edit
 
-import lt.markmerkk.entities.SimpleLog
-
 interface QuickEditContract {
 
-    interface LifecycleView {
-        fun onAttach()
+    interface ContainerView {
+        fun changeLogSelection(selectId: Long)
+        fun changeToNoSelection()
+        fun selectedId(): Long
+    }
+
+    interface ContainerPresenter {
+        fun onAttach(view: ContainerView)
         fun onDetach()
     }
 
-    interface SelectableView {
-        fun onSelectLog(logId: Long)
-    }
-
-    interface MoveView {
-        fun onAttach()
-        fun onDetach()
-    }
+    interface MoveView { }
 
     interface MovePresenter {
         fun onAttach(view: MoveView)
@@ -26,10 +23,7 @@ interface QuickEditContract {
         fun selectLogId(logId: Long)
     }
 
-    interface ScaleView {
-        fun onAttach()
-        fun onDetach()
-    }
+    interface ScaleView { }
 
     interface ScalePresenter {
         fun onAttach(view: ScaleView)

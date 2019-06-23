@@ -25,6 +25,9 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui_2.bridges.UIEButtonCalendarQuickEdit
+import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
+import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
+import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContract
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
@@ -49,7 +52,8 @@ class CalendarPresenter : Initializable {
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
-    private lateinit var uiCalendarQuickEdit: UIEButtonCalendarQuickEdit
+
+    private lateinit var widgetQuickEditContainer: QuickEditContainerWidget
 
     lateinit var updateListener: UpdateListener
 
@@ -93,17 +97,15 @@ class CalendarPresenter : Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
-        uiCalendarQuickEdit = UIEButtonCalendarQuickEdit(
-                node = object : ExternalSourceNode<StackPane> {
-                    override fun rootNode(): StackPane = jfxContainer
-                },
-                strings = strings,
+        widgetQuickEditContainer = QuickEditContainerWidget(
+                presenter = QuickEditContainerPresenter(),
                 logStorage = storage,
                 timeProvider = timeProvider,
                 graphics = graphics,
                 logChangeValidator = logChangeValidator
+
         )
-        uiCalendarQuickEdit.hide()
+        jfxContainer.children.add(widgetQuickEditContainer.root)
 
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
@@ -209,12 +211,12 @@ class CalendarPresenter : Initializable {
         calendarUpdater.onAttach()
         logLoader.load(storage.data)
         jfxCalendarView.selections.addListener(jfxCalSelectionListener)
-        uiCalendarQuickEdit.onAttach()
+        widgetQuickEditContainer.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
-        uiCalendarQuickEdit.onDetach()
+        widgetQuickEditContainer.onDetach()
         jfxCalendarView.selections.removeListener(jfxCalSelectionListener)
         calendarUpdater.onDetach()
         logLoader.onDetach()
@@ -227,9 +229,9 @@ class CalendarPresenter : Initializable {
         val currentSelection = jfxCalendarView.selections.toList()
         if (currentSelection.isNotEmpty()) {
             val simpleLog = currentSelection.first().userObject as SimpleLog
-            uiCalendarQuickEdit.changeLogSelection(simpleLog._id)
+            widgetQuickEditContainer.changeLogSelection(simpleLog._id)
         } else {
-            uiCalendarQuickEdit.changeLogSelectionToNoSelection()
+            widgetQuickEditContainer.changeToNoSelection()
         }
     }
 
@@ -301,7 +303,7 @@ class CalendarPresenter : Initializable {
     }
 
     private fun selectActiveLog(allEntries: List<Entry<SimpleLog>>) {
-        val selection = findEntryByLocalIdOrNull(uiCalendarQuickEdit.logSelection(), allEntries)
+        val selection = findEntryByLocalIdOrNull(widgetQuickEditContainer.selectedId(), allEntries)
         if (selection != null) {
             jfxCalendarView.select(selection)
         }
