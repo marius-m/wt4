@@ -24,7 +24,8 @@ class QuickEditContainerWidget(
         QuickEditContract.ContainerView,
         QuickEditActionChangeListener,
         LifecycleView,
-        VisibilityChangeableView {
+        VisibilityChangeableView
+{
 
     private val timeChangeValidator = TimeChangeValidator
     private val quickEditActions = setOf(
@@ -33,7 +34,7 @@ class QuickEditContainerWidget(
             QuickEditAction.SCALE10x
     )
     private val uiPrefs = QuickEditUiPrefs(
-            prefHeightContainer = 32.0,
+            prefHeightContainer = 30.0,
             prefWidthTypeSelector = 120.0,
             prefWidthActionIcons = 30.0,
             maxWidthContainer = 240.0, // 4 * actionIcons + typeSelector

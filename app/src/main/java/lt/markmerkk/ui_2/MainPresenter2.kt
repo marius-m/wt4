@@ -35,11 +35,14 @@ import lt.markmerkk.ui_2.bridges.UIEButtonClock
 import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
 import lt.markmerkk.ui_2.bridges.UIEButtonSettings
 import lt.markmerkk.ui_2.bridges.UIECenterView
+import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
+import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidgetPresenterDefault
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.validators.LogChangeValidator
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
@@ -66,6 +69,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     @Inject lateinit var strings: Strings
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var stageProperties: StageProperties
+    @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var logChangeValidator: LogChangeValidator
 
     lateinit var uieButtonClock: UIEButtonClock
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
@@ -76,6 +81,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     lateinit var dialogInflater: DialogInflater
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
+    lateinit var widgetLogQuickEdit: QuickEditContainerWidget
 
     var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
@@ -94,6 +100,13 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 presenter = ProgressWidgetPresenter(syncInteractor),
                 graphics = graphics
         )
+        widgetLogQuickEdit = QuickEditContainerWidget(
+                presenter = QuickEditContainerPresenter(eventBus),
+                logStorage = logStorage,
+                timeProvider = timeProvider,
+                graphics = graphics,
+                logChangeValidator = logChangeValidator
+        )
         snackBar = JFXSnackbar(jfxRoot)
         uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings, eventBus)
         uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
@@ -108,6 +121,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         uieCenterView = UIECenterView(jfxContainerContent)
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
+        jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
@@ -121,10 +135,12 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         dialogInflater.onAttach()
         widgetDateChange.onAttach()
         widgetProgress.onAttach()
+        widgetLogQuickEdit.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        widgetLogQuickEdit.onDetach()
         widgetProgress.onDetach()
         widgetDateChange.onDetach()
         dialogInflater.onDetach()
