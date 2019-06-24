@@ -1,12 +1,8 @@
 package lt.markmerkk.ui_2.views.ticket_split
 
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Strings
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.entities.TimeGap
-import lt.markmerkk.entities.TimeSplitPair
+import lt.markmerkk.*
+import lt.markmerkk.entities.*
+import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.utils.LogSplitter
 
 class TicketSplitPresenter(
@@ -14,7 +10,9 @@ class TicketSplitPresenter(
         private val timeProvider: TimeProvider,
         private val logStorage: LogStorage,
         private val logSplitter: LogSplitter,
-        private val strings: Strings
+        private val strings: Strings,
+        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
+        private val schedulerProvider: SchedulerProvider
 ) : TicketSplitContract.Presenter {
 
     private var timeSplitPair: TimeSplitPair = logSplitter.split(
@@ -25,21 +23,40 @@ class TicketSplitPresenter(
             splitPercent = 50
     )
     private var view: TicketSplitContract.View? = null
+    private val ticketInfoLoader = TicketInfoLoader(
+            listener = object : TicketInfoLoader.Listener {
+                override fun onTicketFound(ticket: Ticket) {
+                    view?.showTicketLabel(ticketTitle = ticket.description)
+                }
+
+                override fun onNoTicket() {
+                    view?.showTicketLabel(ticketTitle = "")
+                }
+            },
+            ticketsDatabaseRepo = ticketsDatabaseRepo,
+            waitScheduler = schedulerProvider.waitScheduler(),
+            ioScheduler = schedulerProvider.io(),
+            uiScheduler = schedulerProvider.ui()
+    )
+
 
     override fun onAttach(view: TicketSplitContract.View) {
         this.view = view
         changeSplitBalance(balancePercent = 50)
         handleWorklogInit(input)
+        ticketInfoLoader.onAttach()
+        ticketInfoLoader.findTicket(input.task)
     }
 
     override fun onDetach() {
+        ticketInfoLoader.onDetach()
         this.view = null
     }
 
     internal fun handleWorklogInit(simpleLog: SimpleLog) {
         view?.onWorklogInit(
                 showTicket = simpleLog.task.isNotEmpty(),
-                ticketLabel = simpleLog.task,
+                ticketCode = simpleLog.task,
                 originalComment = simpleLog.comment,
                 isSplitEnabled = !simpleLog.isRemote
         )

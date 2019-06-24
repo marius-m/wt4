@@ -46,7 +46,7 @@ class TicketSplitPresenterWorklogInitTest {
         verify(view).hideError()
         verify(view).onWorklogInit(
                 showTicket = true,
-                ticketLabel = "DEV-123",
+                ticketCode = "DEV-123",
                 originalComment = "valid_comment",
                 isSplitEnabled = true
         )
@@ -66,7 +66,7 @@ class TicketSplitPresenterWorklogInitTest {
         verify(view).hideError()
         verify(view).onWorklogInit(
                 showTicket = false,
-                ticketLabel = "",
+                ticketCode = "",
                 originalComment = "valid_comment",
                 isSplitEnabled = true
         )
@@ -80,7 +80,7 @@ class TicketSplitPresenterWorklogInitTest {
         // Assert
         verify(view).onWorklogInit(
                 showTicket = true,
-                ticketLabel = "DEV-123",
+                ticketCode = "DEV-123",
                 originalComment = "valid_comment",
                 isSplitEnabled = false
         )

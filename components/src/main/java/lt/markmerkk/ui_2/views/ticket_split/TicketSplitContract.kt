@@ -6,12 +6,11 @@ interface TicketSplitContract {
     interface View {
         fun onWorklogInit(
                 showTicket: Boolean,
-                ticketLabel: String,
+                ticketCode: String,
                 originalComment: String,
                 isSplitEnabled: Boolean
         )
-        fun showTicketLabel()
-        fun hideTicketLabel()
+        fun showTicketLabel(ticketTitle: String)
         fun onSplitTimeUpdate(
                 start: DateTime,
                 end: DateTime,

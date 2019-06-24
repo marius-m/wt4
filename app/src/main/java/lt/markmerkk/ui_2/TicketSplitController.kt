@@ -27,6 +27,8 @@ class TicketSplitController : Initializable {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     private lateinit var widgetTicketSplit: TicketSplitWidget
     private val dialogPadding = 100.0
@@ -44,7 +46,9 @@ class TicketSplitController : Initializable {
                         timeProvider,
                         logStorage,
                         LogSplitter,
-                        strings
+                        strings,
+                        ticketsDatabaseRepo,
+                        schedulerProvider
                 )
         )
         jfxDialogLayout.setHeading(widgetTicketSplit.header)

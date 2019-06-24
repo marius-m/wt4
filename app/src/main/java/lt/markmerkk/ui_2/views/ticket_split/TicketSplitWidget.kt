@@ -12,10 +12,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
-import lt.markmerkk.Glyph
-import lt.markmerkk.Graphics
-import lt.markmerkk.Strings
-import lt.markmerkk.Tags
+import lt.markmerkk.*
 import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
@@ -174,11 +171,11 @@ class TicketSplitWidget(
 
     override fun onWorklogInit(
             showTicket: Boolean,
-            ticketLabel: String,
+            ticketCode: String,
             originalComment: String,
             isSplitEnabled: Boolean
     ) {
-        viewTextTicketCode.text = ticketLabel
+        viewTextTicketCode.text = ticketCode
         viewTextTicketCode.isVisible = showTicket
         viewTextTicketCode.isManaged = showTicket
         viewTextCommentOriginal.text = originalComment
@@ -195,14 +192,8 @@ class TicketSplitWidget(
         viewDateTimeMiddle.text = LogFormatters.shortFormat.print(splitGap)
     }
 
-    override fun showTicketLabel() {
-        viewContainerTicket.isVisible = true
-        viewContainerTicket.isManaged = true
-    }
-
-    override fun hideTicketLabel() {
-        viewContainerTicket.isVisible = false
-        viewContainerTicket.isManaged = false
+    override fun showTicketLabel(ticketTitle: String) {
+        viewTextTicketTitle.text = ticketTitle
     }
 
     override fun showError(error: String) {
