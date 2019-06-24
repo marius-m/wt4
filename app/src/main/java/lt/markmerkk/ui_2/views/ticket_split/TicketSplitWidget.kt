@@ -2,12 +2,14 @@ package lt.markmerkk.ui_2.views.ticket_split
 
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXSlider
+import com.jfoenix.controls.JFXTextArea
+import com.jfoenix.controls.JFXTextField
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.Glyph
@@ -33,16 +35,32 @@ class TicketSplitWidget(
     private lateinit var viewDateTimeMiddle: Label
     private lateinit var viewDateTimeTo: Label
     private lateinit var viewSlider: JFXSlider
+    private lateinit var viewContainerTicket: HBox
+    private lateinit var viewTextTicketCode: JFXTextField
+    private lateinit var viewTextTicketTitle: Label
+    private lateinit var viewTextCommentOriginal: JFXTextArea
+    private lateinit var viewTextCommentNew: JFXTextArea
+    private lateinit var viewLabelError: Label
     val header: Parent = vbox {
         label(strings.getString("ticket_split_header_title")) {
             addClass("dialog-header")
         }
     }
 
+    private val actionSplit = jfxButton(strings.getString("general_split").toUpperCase()) {
+        graphic = graphics.from(Glyph.SPLIT, Color.BLACK, size = 12.0)
+        setOnAction {
+            presenter.split(
+                    ticketName = viewTextTicketCode.text,
+                    originalComment = viewTextCommentOriginal.text,
+                    newComment = viewTextCommentNew.text
+            )
+            jfxDialog.close()
+        }
+    }
+
     val actions: List<Parent> = listOf(
-            jfxButton(strings.getString("general_split").toUpperCase()) {
-                graphic = graphics.from(Glyph.SPLIT, Color.BLACK, size = 12.0)
-            },
+            actionSplit,
             jfxButton(strings.getString("general_dismiss").toUpperCase()) {
                 setOnAction { jfxDialog.close() }
             }
@@ -59,7 +77,7 @@ class TicketSplitWidget(
             min = 1.0
             max = 100.0
         }
-        hbox {
+        viewContainerTicket = hbox {
             style {
                 padding = box(
                         top = 20.px,
@@ -68,7 +86,7 @@ class TicketSplitWidget(
                         bottom = 0.px
                 )
             }
-            jfxTextField {
+            viewTextTicketCode = jfxTextField {
                 hgrow = Priority.NEVER
                 vgrow = Priority.NEVER
                 isLabelFloat = true
@@ -77,7 +95,7 @@ class TicketSplitWidget(
                 text = ""
                 prefWidth = 80.0
             }
-            label {
+            viewTextTicketTitle = label {
                 style {
                     padding = box(
                             top = 4.px,
@@ -100,7 +118,7 @@ class TicketSplitWidget(
                 )
             }
             vgrow = Priority.ALWAYS
-            jfxTextArea {
+            viewTextCommentOriginal = jfxTextArea {
                 style {
                     padding = box(
                             top = 0.px,
@@ -113,7 +131,7 @@ class TicketSplitWidget(
                 isLabelFloat = true
                 promptText = strings.getString("ticket_split_label_comment_original")
             }
-            jfxTextArea {
+            viewTextCommentNew = jfxTextArea {
                 style {
                     padding = box(
                             top = 0.px,
@@ -125,6 +143,17 @@ class TicketSplitWidget(
                 hgrow = Priority.ALWAYS
                 isLabelFloat = true
                 promptText = strings.getString("ticket_split_label_comment_new")
+            }
+        }
+        viewLabelError = label {
+            addClass("mini-label")
+            style {
+                padding = box(
+                        top = 10.px,
+                        left = 0.px,
+                        right = 0.px,
+                        bottom = 0.px
+                )
             }
         }
     }
@@ -143,6 +172,19 @@ class TicketSplitWidget(
         presenter.onDetach()
     }
 
+    override fun onWorklogInit(
+            showTicket: Boolean,
+            ticketLabel: String,
+            originalComment: String,
+            isSplitEnabled: Boolean
+    ) {
+        viewTextTicketCode.text = ticketLabel
+        viewTextTicketCode.isVisible = showTicket
+        viewTextTicketCode.isManaged = showTicket
+        viewTextCommentOriginal.text = originalComment
+        actionSplit.isDisable = !isSplitEnabled
+    }
+
     override fun onSplitTimeUpdate(
             start: DateTime,
             end: DateTime,
@@ -151,6 +193,28 @@ class TicketSplitWidget(
         viewDateTimeFrom.text = LogFormatters.longFormat.print(start)
         viewDateTimeTo.text = LogFormatters.longFormat.print(end)
         viewDateTimeMiddle.text = LogFormatters.shortFormat.print(splitGap)
+    }
+
+    override fun showTicketLabel() {
+        viewContainerTicket.isVisible = true
+        viewContainerTicket.isManaged = true
+    }
+
+    override fun hideTicketLabel() {
+        viewContainerTicket.isVisible = false
+        viewContainerTicket.isManaged = false
+    }
+
+    override fun showError(error: String) {
+        viewLabelError.text = error
+        viewLabelError.isVisible = true
+        viewLabelError.isManaged = true
+    }
+
+    override fun hideError() {
+        viewLabelError.text = ""
+        viewLabelError.isVisible = false
+        viewLabelError.isManaged = false
     }
 
     companion object {

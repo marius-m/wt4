@@ -1,0 +1,89 @@
+package lt.markmerkk.ui_2.views.ticket_split
+
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import lt.markmerkk.LogStorage
+import lt.markmerkk.Mocks
+import lt.markmerkk.Strings
+import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.utils.LogSplitter
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+
+class TicketSplitPresenterWorklogInitTest {
+    @Mock lateinit var view: TicketSplitContract.View
+    @Mock lateinit var inputLog: SimpleLog
+    @Mock lateinit var logStorage: LogStorage
+    @Mock lateinit var strings: Strings
+    lateinit var presenter: TicketSplitPresenter
+    private val timeProvider = TimeProviderTest()
+
+    @Before
+    fun setUp() {
+        MockitoAnnotations.initMocks(this)
+        presenter = TicketSplitPresenter(
+                inputLog,
+                timeProvider,
+                logStorage,
+                LogSplitter,
+                strings
+        )
+        doReturn("valid_string").whenever(strings).getString(any())
+        presenter.onAttach(view)
+    }
+
+    @Test
+    fun valid() {
+        // Act
+        presenter.handleWorklogInit(Mocks.createLocalLog(timeProvider))
+
+        // Assert
+        verify(view).hideError()
+        verify(view).onWorklogInit(
+                showTicket = true,
+                ticketLabel = "DEV-123",
+                originalComment = "valid_comment",
+                isSplitEnabled = true
+        )
+    }
+
+    @Test
+    fun noTicket() {
+        // Act
+        presenter.handleWorklogInit(
+                Mocks.createLocalLog(
+                        timeProvider,
+                        task = ""
+                )
+        )
+
+        // Assert
+        verify(view).hideError()
+        verify(view).onWorklogInit(
+                showTicket = false,
+                ticketLabel = "",
+                originalComment = "valid_comment",
+                isSplitEnabled = true
+        )
+    }
+
+    @Test
+    fun remoteTask() {
+        // Act
+        presenter.handleWorklogInit(Mocks.mockRemoteLog(timeProvider, task = "DEV-123"))
+
+        // Assert
+        verify(view).onWorklogInit(
+                showTicket = true,
+                ticketLabel = "DEV-123",
+                originalComment = "valid_comment",
+                isSplitEnabled = false
+        )
+        verify(view).showError(any())
+    }
+}

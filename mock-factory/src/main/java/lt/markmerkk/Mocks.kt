@@ -1,8 +1,10 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.Ticket
-import lt.markmerkk.entities.TicketCode
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
+import lt.markmerkk.entities.*
+import org.joda.time.DateTime
 
 object Mocks {
 
@@ -20,6 +22,43 @@ object Mocks {
                 parentId = parentId,
                 remoteData = remoteData
         )
+    }
+
+    fun createLocalLog(
+            timeProvider: TimeProvider,
+            start: DateTime = timeProvider.now(),
+            end: DateTime = timeProvider.now().plusMinutes(10),
+            task: String = "DEV-123",
+            comment: String = "valid_comment"
+    ): SimpleLog {
+        return SimpleLogBuilder(timeProvider.now().millis)
+                .setStart(timeProvider.roundMillis(start))
+                .setEnd(timeProvider.roundMillis(end))
+                .setTask(task)
+                .setComment(comment)
+                .build()
+    }
+
+    fun mockRemoteLog(
+            timeProvider: TimeProvider,
+            task: String,
+            start: DateTime = timeProvider.now(),
+            end: DateTime = timeProvider.now().plusMinutes(10),
+            comment: String = "valid_comment",
+            remoteId: Long = 1,
+            localId: Long = 1
+    ): SimpleLog {
+        val log: SimpleLog = mock()
+        doReturn(task).whenever(log).task
+        doReturn(timeProvider.roundMillis(start)).whenever(log).start
+        doReturn(timeProvider.roundMillis(end)).whenever(log).end
+        doReturn(comment).whenever(log).comment
+        doReturn(remoteId).whenever(log).id
+        doReturn(localId).whenever(log)._id
+        doReturn(true).whenever(log).isRemote
+        doReturn(false).whenever(log).isDirty
+        doReturn(false).whenever(log).isDeleted
+        return log
     }
 
 }
