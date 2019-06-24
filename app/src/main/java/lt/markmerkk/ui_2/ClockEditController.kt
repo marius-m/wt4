@@ -168,6 +168,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
             )
             activeLogPersistence.reset()
         }
+        jfxButtonSave.graphic = graphics.from(Glyph.NEW, Color.BLACK, 12.0)
         jfxButtonSearch.graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0, 20.0)
         jfxButtonSearch.setOnAction { eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH)) }
         jfxTextFieldTicket.textProperty().addListener { _, _, newValue ->

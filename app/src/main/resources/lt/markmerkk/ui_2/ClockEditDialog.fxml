@@ -128,8 +128,8 @@
                </VBox>
            </body>
            <actions>
-               <JFXButton fx:id="jfxButtonDismiss" styleClass="dialog-accept">DISMISS</JFXButton>
                <JFXButton fx:id="jfxButtonSave" styleClass="dialog-accept">SAVE</JFXButton>
+               <JFXButton fx:id="jfxButtonDismiss" styleClass="dialog-accept">DISMISS</JFXButton>
            </actions>
        </JFXDialogLayout>
    </content>

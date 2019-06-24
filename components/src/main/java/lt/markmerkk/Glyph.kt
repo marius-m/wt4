@@ -34,5 +34,6 @@ enum class Glyph {
     ARROW_FAST_REWIND,
     SPLIT,
     MERGE,
+    NEW,
     ;
 }

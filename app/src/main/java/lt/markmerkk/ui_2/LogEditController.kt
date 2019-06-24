@@ -149,10 +149,12 @@ class LogEditController : Initializable, LogEditService.Listener {
             logEditService.entityInEdit = entity
             jfxHeaderLabel.text = "Update log"
             jfxButtonAccept.text = "UPDATE"
+            jfxButtonAccept.graphic = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0)
         } else {
             logEditService.serviceType = LogEditService.ServiceType.CREATE
             jfxHeaderLabel.text = "Create new log"
             jfxButtonAccept.text = "CREATE"
+            jfxButtonAccept.graphic = graphics.from(Glyph.NEW, Color.BLACK, 12.0)
         }
         logEditService.redraw()
         uiBridgeDateTimeHandler.onAttach()
