@@ -6,10 +6,12 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import lt.markmerkk.Main
 import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.Strings
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import org.slf4j.LoggerFactory
+import tornadofx.Stylesheet.Companion.label
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
@@ -22,6 +24,7 @@ class TicketSplitController : Initializable {
 
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var resultDispatcher: ResultDispatcher
+    @Inject lateinit var strings: Strings
 
     private lateinit var logToSplit: SimpleLog
     private lateinit var widgetTicketSplit: TicketSplitWidget
@@ -32,7 +35,10 @@ class TicketSplitController : Initializable {
         logToSplit = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)!!
 
         // Views
-        widgetTicketSplit = TicketSplitWidget()
+        widgetTicketSplit = TicketSplitWidget(strings, jfxDialog)
+        jfxDialogLayout.setHeading(widgetTicketSplit.header)
+        jfxDialogLayout.setBody(widgetTicketSplit.root)
+        jfxDialogLayout.setActions(widgetTicketSplit.actions)
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         stageProperties.register(stageChangeListener)
@@ -44,7 +50,6 @@ class TicketSplitController : Initializable {
     }
 
     private fun initDialogContent() {
-        jfxDialogLayout.setBody(widgetTicketSplit.root)
     }
 
     private val stageChangeListener = object : StageProperties.StageChangeListener {
