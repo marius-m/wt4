@@ -1,7 +1,10 @@
 package lt.markmerkk.ui_2.views.ticket_split
 
 import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.JFXSlider
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -10,21 +13,26 @@ import javafx.scene.paint.Color
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Strings
-import lt.markmerkk.ui_2.views.jfxButton
-import lt.markmerkk.ui_2.views.jfxSlider
-import lt.markmerkk.ui_2.views.jfxTextArea
-import lt.markmerkk.ui_2.views.jfxTextField
+import lt.markmerkk.Tags
+import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.utils.LogFormatters
+import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import tornadofx.*
 
 class TicketSplitWidget(
         private val strings: Strings,
         private val graphics: Graphics<SVGGlyph>,
-        private val jfxDialog: JFXDialog
-) : View() {
-
+        private val jfxDialog: JFXDialog,
+        private val presenter: TicketSplitContract.Presenter
+) : View(),
+        TicketSplitContract.View,
+        LifecycleView
+{
     private lateinit var viewDateTimeFrom: Label
     private lateinit var viewDateTimeMiddle: Label
     private lateinit var viewDateTimeTo: Label
+    private lateinit var viewSlider: JFXSlider
     val header: Parent = vbox {
         label(strings.getString("ticket_split_header_title")) {
             addClass("dialog-header")
@@ -42,18 +50,14 @@ class TicketSplitWidget(
 
     override val root: Parent = vbox {
         borderpane {
-            left {
-                viewDateTimeFrom = label("2018-05-20 14:30")
-            }
-            center {
-                viewDateTimeMiddle = label("14:30")
-            }
-            right {
-                viewDateTimeTo = label("2018-05-20 14:30")
-            }
+            left { viewDateTimeFrom = label() }
+            center { viewDateTimeMiddle = label() }
+            right { viewDateTimeTo = label() }
         }
-        jfxSlider {
+        viewSlider = jfxSlider {
             orientation = Orientation.HORIZONTAL
+            min = 1.0
+            max = 100.0
         }
         hbox {
             style {
@@ -68,9 +72,9 @@ class TicketSplitWidget(
                 hgrow = Priority.NEVER
                 vgrow = Priority.NEVER
                 isLabelFloat = true
-                promptText = "Ticket"
+                promptText = strings.getString("ticket_split_label_ticket")
                 isEditable = false
-                text = "DEV-12334"
+                text = ""
                 prefWidth = 80.0
             }
             label {
@@ -82,7 +86,7 @@ class TicketSplitWidget(
                             bottom = 0.px
                     )
                 }
-                text = "Code review"
+                text = ""
                 hgrow = Priority.ALWAYS
             }
         }
@@ -107,7 +111,7 @@ class TicketSplitWidget(
                 }
                 hgrow = Priority.ALWAYS
                 isLabelFloat = true
-                promptText = "Original comment"
+                promptText = strings.getString("ticket_split_label_comment_original")
             }
             jfxTextArea {
                 style {
@@ -120,8 +124,38 @@ class TicketSplitWidget(
                 }
                 hgrow = Priority.ALWAYS
                 isLabelFloat = true
-                promptText = "New comment"
+                promptText = strings.getString("ticket_split_label_comment_new")
             }
         }
     }
+
+    private val viewSliderChangeListener = ChangeListener<Number> { observable, from, to ->
+        presenter.changeSplitBalance(balancePercent = to.toInt())
+    }
+
+    override fun onAttach() {
+        presenter.onAttach(this)
+        viewSlider.valueProperty().addListener(viewSliderChangeListener)
+    }
+
+    override fun onDetach() {
+        viewSlider.valueProperty().removeListener(viewSliderChangeListener)
+        presenter.onDetach()
+    }
+
+    override fun onSplitTimeUpdate(
+            start: DateTime,
+            end: DateTime,
+            splitGap: DateTime
+    ) {
+        viewDateTimeFrom.text = LogFormatters.longFormat.print(start)
+        viewDateTimeTo.text = LogFormatters.longFormat.print(end)
+        viewDateTimeMiddle.text = LogFormatters.shortFormat.print(splitGap)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(Tags.TICKET_SPLIT)
+        const val RESULT_DISPATCH_KEY_ENTITY = "EIE5nv2wNk"
+    }
+
 }
