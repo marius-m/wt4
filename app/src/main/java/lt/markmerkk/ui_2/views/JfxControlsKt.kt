@@ -1,8 +1,6 @@
 package lt.markmerkk.ui_2.views
 
-import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXComboBox
-import com.jfoenix.controls.JFXSpinner
+import com.jfoenix.controls.*
 import javafx.beans.property.Property
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
@@ -58,3 +56,7 @@ fun <T> EventTarget.jfxCombobox(
     if (property != null) it.bind(property)
     it.selectionModel.select(0)
 }
+
+// Dialog
+fun EventTarget.jfxDialog(op: JFXDialog.() -> Unit = {}) = JFXDialog().attachTo(this, op)
+fun EventTarget.jfxDialogLayout(op: JFXDialogLayout.() -> Unit = {}) = JFXDialogLayout().attachTo(this, op)

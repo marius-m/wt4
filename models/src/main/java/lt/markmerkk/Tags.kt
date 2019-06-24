@@ -9,4 +9,5 @@ object Tags {
     // Screens
     const val MAIN = "MAIN"
     const val TICKETS = "TICKETS"
+    const val TICKET_SPLIT = "TICKET_SPLIT"
 }

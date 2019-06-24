@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import com.airhacks.afterburner.views.FXMLView
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXDialog
@@ -9,9 +10,8 @@ import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.DialogType.*
 import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui_2.ClockEditDialog
-import lt.markmerkk.ui_2.LogEditDialog
-import lt.markmerkk.ui_2.TicketsDialog
+import lt.markmerkk.ui_2.*
+import tornadofx.*
 
 /**
  * Responsible for initializing dialogs
@@ -32,12 +32,22 @@ class DialogInflater(
 
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
-        val dialog = when (event.type) {
-            ACTIVE_CLOCK -> ClockEditDialog()
-            LOG_EDIT -> LogEditDialog()
-            TICKET_SEARCH -> TicketsDialog()
+        when (event.type) {
+            ACTIVE_CLOCK -> openDialog(ClockEditDialog())
+            LOG_EDIT -> openDialog(LogEditDialog())
+            TICKET_SEARCH -> openDialog(TicketsDialog())
+            TICKET_SPLIT -> openDialog(TicketSplitDialog())
         }
+    }
+
+    private fun openDialog(dialog: FXMLView) {
         val jfxDialog = dialog.view as JFXDialog
+        jfxDialog.show(externalSourceNode.rootNode())
+        jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+    }
+
+    private fun openDialogTornado(dialog: View) {
+        val jfxDialog = dialog.root as JFXDialog
         jfxDialog.show(externalSourceNode.rootNode())
         jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
     }
