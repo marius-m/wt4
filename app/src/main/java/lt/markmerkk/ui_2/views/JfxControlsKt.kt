@@ -47,6 +47,13 @@ fun EventTarget.jfxButton(
 // Spinner
 fun EventTarget.jfxSpinner(op: JFXSpinner.() -> Unit = {}) = JFXSpinner().attachTo(this, op)
 
+// Slider
+fun EventTarget.jfxSlider(op: JFXSlider.() -> Unit = {}) = JFXSlider().attachTo(this, op)
+
+// Text
+fun EventTarget.jfxTextArea(op: JFXTextArea.() -> Unit = {}) = JFXTextArea().attachTo(this, op)
+fun EventTarget.jfxTextField(op: JFXTextField.() -> Unit = {}) = JFXTextField().attachTo(this, op)
+
 // Combo
 fun <T> EventTarget.jfxCombobox(
         property: Property<T>? = null,

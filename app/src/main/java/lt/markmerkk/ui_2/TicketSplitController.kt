@@ -2,12 +2,10 @@ package lt.markmerkk.ui_2
 
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXDialogLayout
+import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import lt.markmerkk.Main
-import lt.markmerkk.ResultDispatcher
-import lt.markmerkk.Strings
-import lt.markmerkk.Tags
+import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import org.slf4j.LoggerFactory
@@ -25,17 +23,18 @@ class TicketSplitController : Initializable {
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var strings: Strings
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
 
     private lateinit var logToSplit: SimpleLog
     private lateinit var widgetTicketSplit: TicketSplitWidget
-    private val dialogPadding = 160.0
+    private val dialogPadding = 100.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
         logToSplit = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)!!
 
         // Views
-        widgetTicketSplit = TicketSplitWidget(strings, jfxDialog)
+        widgetTicketSplit = TicketSplitWidget(strings, graphics, jfxDialog)
         jfxDialogLayout.setHeading(widgetTicketSplit.header)
         jfxDialogLayout.setBody(widgetTicketSplit.root)
         jfxDialogLayout.setActions(widgetTicketSplit.actions)
