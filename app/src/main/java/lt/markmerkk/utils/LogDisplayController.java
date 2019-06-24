@@ -1,5 +1,6 @@
 package lt.markmerkk.utils;
 
+import com.google.common.eventbus.EventBus;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -11,16 +12,22 @@ import javafx.util.Callback;
 import lt.markmerkk.Translation;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SyncStatus;
+import lt.markmerkk.ui_2.views.ContextMenuEditLog;
 
 /**
  * Created by mariusm on 1/19/15.
  * Responsible for displaying {@link SimpleLog} in the
  * {@link TableView}
  */
-public class LogDisplayController extends TableDisplayController<SimpleLog> {
+public class LogDisplayController extends TableDisplayController {
 
-    public LogDisplayController(TableView table, ObservableList<SimpleLog> items, Listener listener) {
-        super(table, items, listener);
+    public LogDisplayController(
+            TableView table,
+            ObservableList<SimpleLog> items,
+            ContextMenuEditLog contextMenuEditLog,
+            EventBus eventBus
+    ) {
+        super(table, items, contextMenuEditLog, eventBus);
     }
 
     @Override

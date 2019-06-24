@@ -21,12 +21,14 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.util.Callback
 import lt.markmerkk.*
+import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.events.EventLogSelection
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui_2.bridges.UIEButtonCalendarQuickEdit
+import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContract
@@ -56,7 +58,7 @@ class CalendarPresenter : Initializable {
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl
 
-    lateinit var updateListener: UpdateListener
+    private lateinit var contextMenu: ContextMenuEditLog
 
     private val calendarChangeEventHandler: EventHandler<CalendarEvent> = object : EventHandler<CalendarEvent> {
         override fun handle(event: CalendarEvent) {
@@ -101,6 +103,7 @@ class CalendarPresenter : Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
+        contextMenu = ContextMenuEditLog(strings, graphics, storage, eventBus)
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         storage.register(storageListener)
 
@@ -122,39 +125,19 @@ class CalendarPresenter : Initializable {
                 if ((param.inputEvent as MouseEvent).clickCount < 2) {
                     return true
                 }
-                updateListener.onUpdate(param.entry.userObject as SimpleLog)
+                val simpleLog = param.entry.userObject as SimpleLog
+                eventBus.post(EventEditLog(LogEditType.UPDATE, simpleLog))
                 return true
             }
         }
         jfxCalendarView.entryContextMenuCallback = object : Callback<DateControl.EntryContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.EntryContextMenuParameter): ContextMenu {
-                val contextMenu = ContextMenu()
-                val updateItem = MenuItem(
-                        strings.getString("general_update"),
-                        graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
-                )
-                val deleteItem = MenuItem(
-                        strings.getString("general_delete"),
-                        graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
-                )
-                val cloneItem = MenuItem(
-                        strings.getString("general_clone"),
-                        graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
-                )
-                contextMenu.items.addAll(updateItem, deleteItem, cloneItem)
-                contextMenu.onAction = object : EventHandler<ActionEvent> {
-                    override fun handle(event: ActionEvent) {
-                        when (event.target) {
-                            updateItem -> updateListener.onUpdate(param.entry.userObject as SimpleLog)
-                            deleteItem -> updateListener.onDelete(param.entry.userObject as SimpleLog)
-                            cloneItem -> updateListener.onClone(param.entry.userObject as SimpleLog)
-                        }
-                        contextMenu.hide()
-                    }
-                }
-                return contextMenu
+                val simpleLog = param.entry.userObject as SimpleLog
+                contextMenu.bindLog(simpleLog._id)
+                return contextMenu.root
             }
         }
+        // todo incomplete menu actions
         jfxCalendarView.contextMenuCallback = object : Callback<DateControl.ContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.ContextMenuParameter): ContextMenu {
                 val contextMenu = ContextMenu()

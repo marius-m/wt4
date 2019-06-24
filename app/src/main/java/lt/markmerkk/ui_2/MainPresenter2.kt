@@ -16,12 +16,9 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Paint
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventChangeDisplayType
-import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.events.EventSnackBarMessage
+import lt.markmerkk.events.*
 import lt.markmerkk.interactors.ClockRunBridge
 import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.interactors.SyncInteractor
@@ -29,7 +26,6 @@ import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
 import lt.markmerkk.ui.graphs.GraphsFxView
-import lt.markmerkk.ui.interfaces.UpdateListener
 import lt.markmerkk.ui.week2.WeekView2
 import lt.markmerkk.ui_2.bridges.UIEButtonClock
 import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
@@ -172,6 +168,30 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         snackBar.enqueue(JFXSnackbar.SnackbarEvent(hBox))
     }
 
+    @Subscribe
+    fun onEventEditLog(event: EventEditLog) {
+        when (event.editType) {
+            LogEditType.UPDATE -> {
+                resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, event.log)
+                dialogInflater.eventInflateDialog(EventInflateDialog(DialogType.LOG_EDIT))
+            }
+            LogEditType.DELETE -> logStorage.delete(event.log)
+            LogEditType.CLONE -> {
+                val newLog = SimpleLogBuilder()
+                        .setStart(event.log.start)
+                        .setEnd(event.log.end)
+                        .setTask(event.log.task)
+                        .setComment(event.log.comment)
+                        .build()
+                logStorage.insert(newLog)
+            }
+            LogEditType.SPLIT -> {
+                resultDispatcher.publish(TicketSplitController.RESULT_DISPATCH_KEY_ENTITY, event.log)
+                eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
+            }
+        }
+    }
+
     //endregion
 
     //region Convenience
@@ -181,20 +201,15 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         when (displayType) {
             DisplayType.TABLE_VIEW_DETAIL -> {
                 logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(
-                        DisplayLogView(
-                                listener = simpleUpdateListener,
-                                isViewSimplified = false
-                        )
-                )
+                uieCenterView.populate(DisplayLogView())
             }
             DisplayType.CALENDAR_VIEW_DAY -> {
                 logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(DayView(simpleUpdateListener))
+                uieCenterView.populate(DayView())
             }
             DisplayType.CALENDAR_VIEW_WEEK -> {
                 logStorage.displayType = DisplayTypeLength.WEEK
-                uieCenterView.populate(WeekView2(simpleUpdateListener))
+                uieCenterView.populate(WeekView2())
             }
             DisplayType.GRAPHS -> {
                 logStorage.displayType = DisplayTypeLength.DAY
@@ -211,30 +226,6 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     override fun rootNode(): StackPane = jfxRoot.parent as StackPane
 
     //region Listeners
-
-    // todo : move this later on
-    private val simpleUpdateListener = object : UpdateListener {
-
-        override fun onUpdate(entity: SimpleLog) {
-            resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, entity)
-            dialogInflater.eventInflateDialog(EventInflateDialog(DialogType.LOG_EDIT))
-        }
-
-        override fun onDelete(entity: SimpleLog) {
-            logStorage.delete(entity)
-        }
-
-        override fun onClone(entity: SimpleLog) {
-            val newLog = SimpleLogBuilder()
-                    .setStart(entity.start)
-                    .setEnd(entity.end)
-                    .setTask(entity.task)
-                    .setComment(entity.comment)
-                    .build()
-            logStorage.insert(newLog)
-        }
-
-    }
 
     private val buttonChangeDisplayViewExternalListener = object : UIEButtonDisplayView.ExternalListener {
         override fun currentDisplayType(): DisplayType {

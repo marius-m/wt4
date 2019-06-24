@@ -1,78 +1,72 @@
 package lt.markmerkk.utils;
 
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
+import com.google.common.eventbus.EventBus;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.util.Callback;
-import lt.markmerkk.Translation;
+import lt.markmerkk.Tags;
+import lt.markmerkk.entities.LogEditType;
+import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.events.EventEditLog;
+import lt.markmerkk.ui_2.views.ContextMenuEditLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
- * Created by mariusm on 11/6/14.
+ * Sets up table and binds it to the TableView
+ * Lifecycle events: {@link #onAttach()} {@link #onDetach()}
  */
-public abstract class TableDisplayController<Type> {
-    protected TableView table;
-    protected ObservableList<Type> items;
-    protected Listener listener;
+public abstract class TableDisplayController {
 
-    public TableDisplayController(TableView table, ObservableList<Type> items, Listener listener) {
+    private static final Logger logger = LoggerFactory.getLogger(Tags.INTERNAL);
+
+    protected TableView table;
+    protected ObservableList<SimpleLog> items;
+    private ContextMenuEditLog contextMenu;
+    private EventBus eventBus;
+
+    public TableDisplayController(
+            TableView table,
+            ObservableList<SimpleLog> items,
+            ContextMenuEditLog contextMenu,
+            EventBus eventBus
+    ) {
         this.table = table;
         this.items = items;
-        this.listener = listener;
+        this.contextMenu = contextMenu;
+        this.eventBus = eventBus;
         table.getColumns().clear();
         table.setEditable(false);
-
-        final ContextMenu contextMenu = new ContextMenu();
-        MenuItem updateItem = new MenuItem(Translation.getInstance().getString("general_update"),
-            new ImageView(new Image(getClass().getResource("/update_2.png").toString())));
-        updateItem.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                if (table.getSelectionModel().getSelectedItem() != null && listener != null)
-                    listener.onUpdate(table.getSelectionModel().getSelectedItem());
-            }
-        });
-        MenuItem deleteItem = new MenuItem(Translation.getInstance().getString("general_delete"),
-            new ImageView(new Image(getClass().getResource("/delete_2.png").toString())));
-        deleteItem.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                if (table.getSelectionModel().getSelectedItem() != null && listener != null)
-                    listener.onDelete(table.getSelectionModel().getSelectedItem());
-//                System.out.println("Delete "+table.getSelectionModel().getSelectedItem());
-            }
-        });
-        MenuItem cloneItem = new MenuItem(Translation.getInstance().getString("general_clone"),
-            new ImageView(new Image(getClass().getResource("/clone_2.png").toString())));
-        cloneItem.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                if (table.getSelectionModel().getSelectedItem() != null && listener != null)
-                    listener.onClone(table.getSelectionModel().getSelectedItem());
-            }
-        });
-        contextMenu.getItems().addAll(updateItem, deleteItem, cloneItem);
-        table.setContextMenu(contextMenu);
-
-        table.setRowFactory( tv -> {
-            TableRow<Type> row = new TableRow<>();
+        table.setContextMenu(contextMenu.getRoot());
+        table.setRowFactory(tv -> {
+            TableRow<SimpleLog> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                    if (listener != null)
-                        listener.onUpdate(row.getItem());
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    eventBus.post(
+                            new EventEditLog(
+                                    LogEditType.UPDATE,
+                                    (SimpleLog) row.getItem()
+                            )
+                    );
                 }
             });
-            return row ;
+            return row;
         });
         init();
         table.setItems(items);
+    }
+
+    public void onAttach() {
+        table.getSelectionModel().getSelectedItems().addListener(listChangeListener);
+    }
+
+    public void onDetach() {
+        table.getSelectionModel().getSelectedItems().removeListener(listChangeListener);
     }
 
     protected abstract void init();
@@ -80,32 +74,22 @@ public abstract class TableDisplayController<Type> {
     protected TableColumn insertTableColumn(String caption, String property, float widthDivide) {
         TableColumn firstNameCol = new TableColumn(caption);
         firstNameCol.prefWidthProperty().bind(table.widthProperty().divide(widthDivide).subtract(1));
-        firstNameCol.setCellValueFactory(new PropertyValueFactory<Type, String>(property));
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<SimpleLog, String>(property));
         return firstNameCol;
     }
 
-    /**
-     * Helper listener for execution actions on entities from the tableview
-     * @param <Type>
-     */
-    public interface Listener<Type> {
-        /**
-         * Update action
-         * @param updateableObject
-         */
-        void onUpdate(Type updateableObject);
+    private ListChangeListener<SimpleLog> listChangeListener = new ListChangeListener<SimpleLog>() {
+        @Override
+        public void onChanged(Change change) {
+            if (change.next()) {
+                final List<SimpleLog> selectedItems = change.getList();
+                if (selectedItems.size() > 0) {
+                    final SimpleLog selectedLog = selectedItems.get(0);
+                    contextMenu.bindLog(selectedLog.get_id());
+                }
+            }
+        }
+    };
 
-        /**
-         * Delete action
-         * @param deleteableObject
-         */
-        void onDelete(Type deleteableObject);
-
-        /**
-         * Clone action
-         * @param cloneableObject
-         */
-        void onClone(Type cloneableObject);
-    }
 
 }
