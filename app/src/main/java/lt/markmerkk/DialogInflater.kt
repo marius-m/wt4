@@ -1,12 +1,10 @@
 package lt.markmerkk
 
 import com.airhacks.afterburner.views.FXMLView
-import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXDialog
 import javafx.scene.layout.StackPane
 import lt.markmerkk.afterburner.InjectorNoDI
-import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.DialogType.*
 import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.ui.ExternalSourceNode
@@ -19,7 +17,7 @@ import tornadofx.*
  */
 class DialogInflater(
         private val externalSourceNode: ExternalSourceNode<StackPane>,
-        private val eventBus: EventBus
+        private val eventBus: WTEventBus
 ) {
 
     fun onAttach() {

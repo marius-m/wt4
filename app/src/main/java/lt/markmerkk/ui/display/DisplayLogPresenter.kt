@@ -1,6 +1,5 @@
 package lt.markmerkk.ui.display
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -12,7 +11,6 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.utils.LogDisplayController
-import lt.markmerkk.utils.LogDisplayControllerSimple
 import lt.markmerkk.utils.TableDisplayController
 import lt.markmerkk.utils.tracker.ITracker
 import java.net.URL
@@ -21,14 +19,13 @@ import javax.annotation.PreDestroy
 import javax.inject.Inject
 
 /**
- * Created by mariusmerkevicius on 12/5/15.
  * Represents the presenter to display the log list
  */
 class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
 
     @Inject lateinit var storage: LogStorage
     @Inject lateinit var tracker: ITracker
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
 

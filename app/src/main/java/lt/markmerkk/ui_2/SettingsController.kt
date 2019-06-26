@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.fxml.FXML
@@ -45,7 +44,7 @@ class SettingsController : Initializable {
     @Inject lateinit var strings: Strings
     @Inject lateinit var jiraAuthInteractor: AuthService.AuthInteractor
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var stageProperties: StageProperties
 

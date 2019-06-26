@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import lt.markmerkk.Translation;
+import lt.markmerkk.WTEventBus;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.entities.SyncStatus;
 import lt.markmerkk.ui_2.views.ContextMenuEditLog;
@@ -25,7 +26,7 @@ public class LogDisplayController extends TableDisplayController {
             TableView table,
             ObservableList<SimpleLog> items,
             ContextMenuEditLog contextMenuEditLog,
-            EventBus eventBus
+            WTEventBus eventBus
     ) {
         super(table, items, contextMenuEditLog, eventBus);
     }

@@ -53,7 +53,7 @@ class CalendarPresenter : Initializable {
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var logChangeValidator: LogChangeValidator
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
 
     @FXML private lateinit var jfxContainer: StackPane
     @FXML private lateinit var jfxCalendarView: DateControl

@@ -1,6 +1,5 @@
 package lt.markmerkk.utils;
 
-import com.google.common.eventbus.EventBus;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -8,6 +7,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lt.markmerkk.Tags;
+import lt.markmerkk.WTEventBus;
 import lt.markmerkk.entities.LogEditType;
 import lt.markmerkk.entities.SimpleLog;
 import lt.markmerkk.events.EventEditLog;
@@ -28,13 +28,13 @@ public abstract class TableDisplayController {
     protected TableView table;
     protected ObservableList<SimpleLog> items;
     private ContextMenuEditLog contextMenu;
-    private EventBus eventBus;
+    private WTEventBus eventBus;
 
     public TableDisplayController(
             TableView table,
             ObservableList<SimpleLog> items,
             ContextMenuEditLog contextMenu,
-            EventBus eventBus
+            WTEventBus eventBus
     ) {
         this.table = table;
         this.items = items;

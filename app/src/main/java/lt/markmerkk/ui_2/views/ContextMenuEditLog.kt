@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2.views
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
@@ -18,7 +17,7 @@ class ContextMenuEditLog(
         private val strings: Strings,
         private val graphics: Graphics<SVGGlyph>,
         private val logStorage: LogStorage,
-        private val eventBus: EventBus
+        private val eventBus: WTEventBus
 ) {
     val root: ContextMenu = ContextMenu()
             .apply {

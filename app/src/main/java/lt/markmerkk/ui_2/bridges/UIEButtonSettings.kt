@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2.bridges
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXListView
@@ -12,10 +11,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import lt.markmerkk.Glyph
-import lt.markmerkk.Graphics
-import lt.markmerkk.Main
-import lt.markmerkk.Strings
+import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
@@ -34,7 +30,7 @@ class UIEButtonSettings(
         private val strings: Strings,
         private val externalSourceNode: ExternalSourceNode<StackPane>,
         private val button: JFXButton,
-        private val eventBus: EventBus
+        private val eventBus: WTEventBus
 ) : UIElement<JFXButton> {
 
     private var jfxPopup: JFXPopup = JFXPopup()

@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -10,6 +9,7 @@ import javafx.scene.control.Toggle
 import javafx.scene.control.ToggleGroup
 import lt.markmerkk.DisplayType
 import lt.markmerkk.Main
+import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventChangeDisplayType
 import java.net.URL
 import java.util.*
@@ -28,7 +28,7 @@ class DisplaySelectDialogController : Initializable {
     @FXML lateinit var jfxRadioGraphs: JFXRadioButton
     @FXML lateinit var jfxToggleGroup: ToggleGroup
 
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
 
     var currentDisplayType: DisplayType = DisplayType.CALENDAR_VIEW_DAY
         set(value) {

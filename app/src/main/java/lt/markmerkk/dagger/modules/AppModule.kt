@@ -23,10 +23,6 @@ import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import javax.inject.Singleton
 
-/**
- * @author mariusmerkevicius
- * @since 2016-07-17
- */
 @Module
 class AppModule(
         val application: Application,
@@ -52,8 +48,8 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesEventBus(): EventBus {
-        return EventBus()
+    fun providesEventBus(): WTEventBus {
+        return WTEventBusImpl(EventBus())
     }
 
 

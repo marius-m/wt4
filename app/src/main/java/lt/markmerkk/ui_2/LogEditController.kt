@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2
 
-import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
@@ -56,7 +55,7 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServices: HostServicesInteractor
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo

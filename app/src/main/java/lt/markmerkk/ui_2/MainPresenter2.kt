@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2
 
-import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSnackbar
@@ -59,7 +58,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
