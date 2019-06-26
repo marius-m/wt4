@@ -170,26 +170,34 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @Subscribe
     fun onEventEditLog(event: EventEditLog) {
+        if (event.logs.isEmpty()) {
+            logger.warn("No items are selected. Have you bound selected items ?")
+            return
+        }
         when (event.editType) {
             LogEditType.UPDATE -> {
-                resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, event.log)
+                resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 dialogInflater.eventInflateDialog(EventInflateDialog(DialogType.LOG_EDIT))
             }
-            LogEditType.DELETE -> logStorage.delete(event.log)
+            LogEditType.DELETE -> logStorage.delete(event.logs.first())
             LogEditType.CLONE -> {
+                val logToClone = event.logs.first()
                 val newLog = SimpleLogBuilder()
-                        .setStart(event.log.start)
-                        .setEnd(event.log.end)
-                        .setTask(event.log.task)
-                        .setComment(event.log.comment)
+                        .setStart(logToClone.start)
+                        .setEnd(logToClone.end)
+                        .setTask(logToClone.task)
+                        .setComment(logToClone.comment)
                         .build()
                 logStorage.insert(newLog)
             }
             LogEditType.SPLIT -> {
-                resultDispatcher.publish(TicketSplitController.RESULT_DISPATCH_KEY_ENTITY, event.log)
+                resultDispatcher.publish(TicketSplitController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
             }
-        }
+            LogEditType.MERGE -> {
+                logger.debug("Trying to merge ${event.logs}")
+            }
+        }.javaClass
     }
 
     //endregion

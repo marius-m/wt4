@@ -10,11 +10,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import lt.markmerkk.Tags;
 import lt.markmerkk.entities.LogEditType;
 import lt.markmerkk.entities.SimpleLog;
+import lt.markmerkk.entities.SimpleLogUtilsKt;
 import lt.markmerkk.events.EventEditLog;
 import lt.markmerkk.ui_2.views.ContextMenuEditLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,7 +52,7 @@ public abstract class TableDisplayController {
                     eventBus.post(
                             new EventEditLog(
                                     LogEditType.UPDATE,
-                                    (SimpleLog) row.getItem()
+                                    Collections.singletonList(row.getItem())
                             )
                     );
                 }
@@ -83,10 +85,7 @@ public abstract class TableDisplayController {
         public void onChanged(Change change) {
             if (change.next()) {
                 final List<SimpleLog> selectedItems = change.getList();
-                if (selectedItems.size() > 0) {
-                    final SimpleLog selectedLog = selectedItems.get(0);
-                    contextMenu.bindLog(selectedLog.get_id());
-                }
+                contextMenu.bindLogs(SimpleLogUtilsKt.asIds(selectedItems));
             }
         }
     };

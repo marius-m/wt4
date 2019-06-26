@@ -126,14 +126,16 @@ class CalendarPresenter : Initializable {
                     return true
                 }
                 val simpleLog = param.entry.userObject as SimpleLog
-                eventBus.post(EventEditLog(LogEditType.UPDATE, simpleLog))
+                eventBus.post(EventEditLog(LogEditType.UPDATE, listOf(simpleLog)))
                 return true
             }
         }
         jfxCalendarView.entryContextMenuCallback = object : Callback<DateControl.EntryContextMenuParameter, ContextMenu> {
             override fun call(param: DateControl.EntryContextMenuParameter): ContextMenu {
-                val simpleLog = param.entry.userObject as SimpleLog
-                contextMenu.bindLog(simpleLog._id)
+                val selectedLogs = jfxCalendarView.selections
+                        .map { it.userObject as SimpleLog }
+                        .map { it._id }
+                contextMenu.bindLogs(selectedLogs)
                 return contextMenu.root
             }
         }

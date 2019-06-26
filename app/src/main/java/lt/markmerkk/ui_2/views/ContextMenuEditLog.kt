@@ -22,48 +22,42 @@ class ContextMenuEditLog(
 ) {
     val root: ContextMenu = ContextMenu()
             .apply {
-                val updateItem = MenuItem(
-                        strings.getString("general_update"),
-                        graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
-                ).apply { id = LogEditType.UPDATE.name }
-                val deleteItem = MenuItem(
-                        strings.getString("general_delete"),
-                        graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
-                ).apply { id = LogEditType.DELETE.name }
-                val cloneItem = MenuItem(
-                        strings.getString("general_clone"),
-                        graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
-                ).apply { id = LogEditType.CLONE.name }
-                val splitItem = MenuItem(
-                        strings.getString("general_split"),
-                        graphics.from(Glyph.SPLIT, Color.BLACK, 16.0, 12.0)
-                ).apply { id = LogEditType.SPLIT.name }
-                items.addAll(updateItem, deleteItem, cloneItem, splitItem)
+                items.addAll(
+                        MenuItem(
+                                strings.getString("general_update"),
+                                graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
+                        ).apply { id = LogEditType.UPDATE.name },
+                        MenuItem(
+                                strings.getString("general_delete"),
+                                graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
+                        ).apply { id = LogEditType.DELETE.name },
+                        MenuItem(
+                                strings.getString("general_clone"),
+                                graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
+                        ).apply { id = LogEditType.CLONE.name },
+                        MenuItem(
+                                strings.getString("general_split"),
+                                graphics.from(Glyph.SPLIT, Color.BLACK, 16.0, 12.0)
+                        ).apply { id = LogEditType.SPLIT.name },
+                        MenuItem(
+                                strings.getString("general_merge"),
+                                graphics.from(Glyph.MERGE, Color.BLACK, 16.0, 16.0)
+                        ).apply { id = LogEditType.MERGE.name }
+                )
                 setOnAction { event ->
                     val logEditType = LogEditType.valueOf((event.target as MenuItem).id)
-                    val simpleLog: SimpleLog? = logStorage.findByIdOrNull(logId)
-                    if (simpleLog != null) {
-                        eventBus.post(EventEditLog(logEditType, simpleLog))
-                    } else {
-                        logger.warn("Cannot find log with id $logId. Have you used `bindLog` before ?")
-                    }
+                    val selectedLogs = selectedLogIds
+                            .mapNotNull { logStorage.findByIdOrNull(it) }
+                    eventBus.post(EventEditLog(logEditType, selectedLogs))
                 }
             }
-    private var logId = Const.NO_ID
+    private var selectedLogIds = emptyList<Long>()
 
     /**
      * Binds [SimpleLog] that is triggered for editing
      */
-    fun bindLog(logId: Long) {
-        this.logId = logId
-    }
-
-    fun unbindLog() {
-        this.logId = Const.NO_ID
-    }
-
-    fun handleEditType(editType: LogEditType) {
-
+    fun bindLogs(logIds: List<Long>) {
+        selectedLogIds = logIds
     }
 
     companion object {

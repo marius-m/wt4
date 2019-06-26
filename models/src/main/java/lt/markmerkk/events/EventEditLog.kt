@@ -5,5 +5,5 @@ import lt.markmerkk.entities.SimpleLog
 
 class EventEditLog(
         val editType: LogEditType,
-        val log: SimpleLog
+        val logs: List<SimpleLog>
 )
