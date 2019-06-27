@@ -37,7 +37,8 @@ class DialogInflater(
             LOG_EDIT -> openDialog(LogEditDialog())
             TICKET_SEARCH -> openDialog(TicketsDialog())
             TICKET_SPLIT -> openDialog(TicketSplitDialog())
-        }
+            TICKET_MERGE -> openDialog(TicketMergeDialog())
+        }.javaClass
     }
 
     private fun openDialog(dialog: FXMLView) {

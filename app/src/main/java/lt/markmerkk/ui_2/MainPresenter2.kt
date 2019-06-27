@@ -195,7 +195,8 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
                 eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
             }
             LogEditType.MERGE -> {
-                logger.debug("Trying to merge ${event.logs}")
+                resultDispatcher.publish(TicketMergeController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
+                eventBus.post(EventInflateDialog(DialogType.TICKET_MERGE))
             }
         }.javaClass
     }
