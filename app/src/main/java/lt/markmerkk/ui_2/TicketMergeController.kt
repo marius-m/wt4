@@ -7,6 +7,8 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.ui_2.views.ticket_merge.TicketMergePresenter
+import lt.markmerkk.ui_2.views.ticket_merge.TicketMergeWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitPresenter
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.LogSplitter
@@ -28,22 +30,31 @@ class TicketMergeController : Initializable {
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var timeProvider: TimeProvider
 
+    private lateinit var widgetTicketMerge: TicketMergeWidget
     private val dialogPadding = 100.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         Main.component!!.presenterComponent().inject(this)
 
         // Views
-//        jfxDialogLayout.setHeading(widgetTicketSplit.header)
-//        jfxDialogLayout.setBody(widgetTicketSplit.root)
-//        jfxDialogLayout.setActions(widgetTicketSplit.actions)
+        widgetTicketMerge = TicketMergeWidget(
+                strings,
+                graphics,
+                jfxDialog,
+                TicketMergePresenter()
+        )
+        jfxDialogLayout.setHeading(widgetTicketMerge.header)
+        jfxDialogLayout.setBody(widgetTicketMerge.root)
+        jfxDialogLayout.setActions(widgetTicketMerge.actions)
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         stageProperties.register(stageChangeListener)
+        widgetTicketMerge.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
+        widgetTicketMerge.onDetach()
         stageProperties.unregister(stageChangeListener)
     }
 
@@ -60,7 +71,7 @@ class TicketMergeController : Initializable {
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(Tags.TICKET_SPLIT)
+        private val logger = LoggerFactory.getLogger(Tags.TICKET_MERGE)
         const val RESULT_DISPATCH_KEY_ENTITY = ""
     }
 

@@ -1,5 +1,6 @@
 package lt.markmerkk.ui_2.views
 
+import com.calendarfx.view.DetailedDayView
 import com.jfoenix.controls.*
 import javafx.beans.property.Property
 import javafx.collections.ObservableList
@@ -67,3 +68,6 @@ fun <T> EventTarget.jfxCombobox(
 // Dialog
 fun EventTarget.jfxDialog(op: JFXDialog.() -> Unit = {}) = JFXDialog().attachTo(this, op)
 fun EventTarget.jfxDialogLayout(op: JFXDialogLayout.() -> Unit = {}) = JFXDialogLayout().attachTo(this, op)
+
+// Calendar
+fun EventTarget.calendarFxDetailedDay(op: DetailedDayView.() -> Unit = {}) = DetailedDayView().attachTo(this, op)
