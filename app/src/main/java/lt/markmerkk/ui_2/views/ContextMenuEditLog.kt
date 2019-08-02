@@ -38,11 +38,12 @@ class ContextMenuEditLog(
                         MenuItem(
                                 strings.getString("general_split"),
                                 graphics.from(Glyph.SPLIT, Color.BLACK, 16.0, 12.0)
-                        ).apply { id = LogEditType.SPLIT.name },
-                        MenuItem(
-                                strings.getString("general_merge"),
-                                graphics.from(Glyph.MERGE, Color.BLACK, 16.0, 16.0)
-                        ).apply { id = LogEditType.MERGE.name }
+                        ).apply { id = LogEditType.SPLIT.name }
+                        // Disabled for incomplete feature
+//                        MenuItem(
+//                                strings.getString("general_merge"),
+//                                graphics.from(Glyph.MERGE, Color.BLACK, 16.0, 16.0)
+//                        ).apply { id = LogEditType.MERGE.name }
                 )
                 setOnAction { event ->
                     val logEditType = LogEditType.valueOf((event.target as MenuItem).id)

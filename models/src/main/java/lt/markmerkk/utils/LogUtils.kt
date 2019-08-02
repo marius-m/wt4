@@ -100,7 +100,10 @@ object LogUtils {
      * Formats log as a pretty text
      */
     @JvmStatic fun formatLogToText(simpleLog: SimpleLog): String {
-        return "${simpleLog.task} (${formatShortDuration(simpleLog.duration)}) ${simpleLog.comment}"
+        val timeFrom = LogFormatters.shortFormat.print(simpleLog.start)
+        val timeTo = LogFormatters.shortFormat.print(simpleLog.end)
+        val duration = formatShortDuration(simpleLog.duration)
+        return "${simpleLog.task} ($timeFrom - $timeTo = $duration) ${simpleLog.comment}"
                 .trim()
     }
 
