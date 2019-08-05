@@ -45,6 +45,7 @@ import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
+@Deprecated("Replaced by MainWidget")
 class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
 
     @FXML lateinit var jfxRoot: BorderPane

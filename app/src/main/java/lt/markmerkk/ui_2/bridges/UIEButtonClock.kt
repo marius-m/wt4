@@ -15,6 +15,7 @@ import lt.markmerkk.utils.UIEUtils
 /**
  * Represents clock jfxCommitButton, its graphics, animations
  */
+@Deprecated("Should be removed")
 class UIEButtonClock(
         private val graphics: Graphics<SVGGlyph>,
         private val listener: Listener,
