@@ -1,8 +1,7 @@
 package lt.markmerkk
 
+import com.google.inject.Injector
 import javafx.application.Application
-import javafx.scene.Scene
-import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.dagger.components.AppComponent
@@ -19,6 +18,7 @@ import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 class Main : App(), KeepAliveInteractor.Listener {
 
@@ -31,6 +31,7 @@ class Main : App(), KeepAliveInteractor.Listener {
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var schedulersProvider: SchedulerProvider
+    @Inject lateinit var guiceInjector: Injector
 
     private lateinit var keepAliveGASession: KeepAliveGASession
     private lateinit var appComponent: AppComponent
@@ -43,6 +44,9 @@ class Main : App(), KeepAliveInteractor.Listener {
                 .appModule(AppModule(this, StageProperties(stage)))
                 .build()
         appComponent.inject(this)
+        FX.dicontainer = object : DIContainer {
+            override fun <T : Any> getInstance(type: KClass<T>) = guiceInjector.getInstance(type.java)
+        }
         initLoggerSettings()
 
         DEBUG = appConfig.debug

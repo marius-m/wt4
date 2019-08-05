@@ -1,11 +1,14 @@
 package lt.markmerkk.dagger.modules
 
 import com.google.common.eventbus.EventBus
+import com.google.inject.Guice
+import com.google.inject.Injector
 import com.jfoenix.svg.SVGGlyph
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
+import lt.markmerkk.di.GuiceModuleApp
 import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.interactors.KeepAliveInteractor
@@ -225,6 +228,60 @@ class AppModule(
             logStorage: LogStorage
     ): LogChangeValidator {
         return LogChangeValidator(logStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGuiceModuleApp(
+            schedulerProvider: SchedulerProvider,
+            stageProperties: StageProperties,
+            eventBus: EventBus,
+            configPathProvider: ConfigPathProvider,
+            configSetSettings: ConfigSetSettings,
+            config: Config,
+            hostServiceInteractor: HostServicesInteractor,
+            tracker: ITracker,
+            userPrefs: UserSettings,
+            dbExecutor: IExecutor,
+            ticketsDatabaseRepo: TicketsDatabaseRepo,
+            ticketsNetworkRepo: TicketsNetworkRepo,
+            timeProvider: TimeProvider,
+            basicLogStorage: LogStorage,
+            hourGlass: HourGlass,
+            keepAliveInteractor: KeepAliveInteractor,
+            dayProvider: DayProvider,
+            strings: Strings,
+            graphics: Graphics<SVGGlyph>,
+            activeLogPersistence: ActiveLogPersistence,
+            resultDispatcher: ResultDispatcher,
+            logChangeValidator: LogChangeValidator
+    ): Injector {
+        val guiceModuleApp = GuiceModuleApp(
+                schedulerProvider,
+                stageProperties,
+                eventBus,
+                configPathProvider,
+                configSetSettings,
+                config,
+                hostServiceInteractor,
+                tracker,
+                userPrefs,
+                dbExecutor,
+                ticketsDatabaseRepo,
+                ticketsNetworkRepo,
+                timeProvider,
+                basicLogStorage,
+                hourGlass,
+                keepAliveInteractor,
+                dayProvider,
+                strings,
+                graphics,
+                activeLogPersistence,
+                resultDispatcher,
+                logChangeValidator
+        )
+        val guice = Guice.createInjector(guiceModuleApp)
+        return guice
     }
 
 }

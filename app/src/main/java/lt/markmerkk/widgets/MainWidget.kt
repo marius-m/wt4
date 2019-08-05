@@ -1,17 +1,23 @@
 package lt.markmerkk.widgets
 
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.svg.SVGGlyph
+import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.OverrunStyle
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
-import lt.markmerkk.Config
-import lt.markmerkk.LogStorage
-import lt.markmerkk.SchedulerProvider
-import lt.markmerkk.UserSettings
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
+import lt.markmerkk.*
 import lt.markmerkk.interactors.AutoUpdateInteractor
 import lt.markmerkk.interactors.KeepAliveGASession
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui_2.MainView2
 import lt.markmerkk.ui_2.StageProperties
+import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -19,29 +25,59 @@ import javax.inject.Inject
 
 class MainWidget: View() {
 
-    @Inject lateinit var settings: UserSettings
-    @Inject lateinit var logStorage: LogStorage
-    @Inject lateinit var keepAliveInteractor: KeepAliveInteractor
-    @Inject lateinit var syncInteractor: SyncInteractor
-    @Inject lateinit var autoUpdateInteractor: AutoUpdateInteractor
-    @Inject lateinit var appConfig: Config
-    @Inject lateinit var tracker: ITracker
-    @Inject lateinit var stageProperties: StageProperties
-    @Inject lateinit var schedulersProvider: SchedulerProvider
+    private val graphics: Graphics<SVGGlyph> by di()
 
-    private lateinit var keepAliveGASession: KeepAliveGASession
+    lateinit var jfxButtonDisplay: JFXButton
+    lateinit var jfxButtonSettings: JFXButton
+    lateinit var jfxContainerContent: VBox
+    lateinit var jfxContainerContentLeft: HBox
+    lateinit var jfxContainerContentRight: HBox
 
-    override val root: Parent = stackpane {
-        add(MainView2().view)
+    override val root: Parent = borderpane {
+        left {
+            vbox {
+                add(ClockWidget().root)
+                vbox {
+                    jfxButtonDisplay = jfxButton("Display") {
+                        addClass("button-default-clock")
+                        ellipsisString = "..."
+                        textOverrun = OverrunStyle.WORD_ELLIPSIS
+                    }
+                    jfxButtonSettings = jfxButton("Settings") {
+                        addClass("button-default-clock")
+                        ellipsisString = "..."
+                        textOverrun = OverrunStyle.WORD_ELLIPSIS
+                        graphic = graphics.from(Glyph.SETTINGS, Color.BLACK, 24.0)
+                    }
+                }
+            }
+        }
+        center {
+            borderpane {
+                top {
+                    borderpane {
+                        left {
+                            jfxContainerContentLeft = hbox {  }
+                            jfxContainerContentRight = hbox {  }
+                        }
+                    }
+                }
+                center {
+                    jfxContainerContent = vbox {  }
+                }
+            }
+        }
+    }
+
+    init {
+        Main.component().inject(this)
     }
 
     override fun onDock() {
         super.onDock()
-        logger.debug("onDockMainWidget")
     }
 
     override fun onUndock() {
-        logger.debug("onUndockMainWidget")
         super.onUndock()
     }
 

@@ -67,6 +67,7 @@ dependencies {
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
     implementation "org.bouncycastle:bcprov-jdk15on:1.51"
     implementation "com.google.protobuf:protobuf-java:3.7.0"
+    implementation "com.google.inject:guice:4.2.2"
 
     implementation("com.google.dagger:dagger:${versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${versions.dagger}")
