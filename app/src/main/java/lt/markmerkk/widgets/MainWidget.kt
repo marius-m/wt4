@@ -5,11 +5,13 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSnackbar
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.OverrunStyle
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -84,17 +86,21 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     override val root: Parent = stackpane {
         borderpane {
             left {
-                vbox {
-                    add(ClockWidget().root)
-                    vbox {
-                        jfxButtonDisplayView = jfxButton("Display") {
-                            addClass("button-default-clock")
+                vbox(spacing = 4) {
+                    style {
+                        backgroundColor.add(Styles.cBackgroundPrimary)
+                        padding = box(vertical = 4.px, horizontal = 10.px)
+                    }
+                    add(find<ClockWidget>().root)
+                    vbox(spacing = 4, alignment = Pos.BOTTOM_CENTER) {
+                        vgrow = Priority.ALWAYS
+                        jfxButtonDisplayView = jfxButton {
+                            addClass(Styles.buttonMenu)
                             ellipsisString = "..."
                             textOverrun = OverrunStyle.WORD_ELLIPSIS
-                            text = ""
                         }
-                        jfxButtonSettings = jfxButton("Settings") {
-                            addClass("button-default-clock")
+                        jfxButtonSettings = jfxButton {
+                            addClass(Styles.buttonMenu)
                             ellipsisString = "..."
                             textOverrun = OverrunStyle.WORD_ELLIPSIS
                             graphic = graphics.from(Glyph.SETTINGS, Color.BLACK, 24.0)

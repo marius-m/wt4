@@ -25,6 +25,7 @@ class Styles: Stylesheet() {
 
         val cActivateRed = c("#E91E63")
         val cActivateOrange = Color.ORANGE
+        val cBackgroundPrimary = c("#5C6BC0")
     }
 
     init {

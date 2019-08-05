@@ -17,7 +17,6 @@ import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener {
 
