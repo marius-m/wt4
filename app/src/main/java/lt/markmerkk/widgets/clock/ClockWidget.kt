@@ -10,8 +10,6 @@ import javafx.scene.text.Font
 import lt.markmerkk.*
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.interactors.ClockRunBridgeImpl
-import lt.markmerkk.ui_2.bridges.UIEButtonClock
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
 import lt.markmerkk.utils.hourglass.HourGlass

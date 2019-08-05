@@ -21,8 +21,6 @@ interface PresenterComponent {
 
     fun inject(presenter: GraphsFxPresenter)
 
-    fun inject(presenter: MainPresenter2)
-
     fun inject(presenter: CalendarPresenter)
 
     fun inject(dialog: DisplaySelectDialogController)
