@@ -12,49 +12,34 @@ import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.MainView2
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
+import lt.markmerkk.widgets.MainWidget
 import org.apache.log4j.PatternLayout
 import org.apache.log4j.Priority
 import org.apache.log4j.PropertyConfigurator
 import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
+import tornadofx.*
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
-class Main : Application(), KeepAliveInteractor.Listener {
+class Main : App(), KeepAliveInteractor.Listener {
 
     @Inject lateinit var settings: UserSettings
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var keepAliveInteractor: KeepAliveInteractor
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var autoUpdateInteractor: AutoUpdateInteractor
-    @Inject lateinit var config: Config
+    @Inject lateinit var appConfig: Config
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var schedulersProvider: SchedulerProvider
 
     private lateinit var keepAliveGASession: KeepAliveGASession
 
-    lateinit var primaryStage: Stage
+
+    override val primaryView = MainWidget::class
 
     override fun start(stage: Stage) {
-        this.primaryStage = stage
-        mainInstance = this
-        initApp(primaryStage)
-    }
-
-    override fun stop() {
-        destroyApp()
-        mainInstance = null
-        super.stop()
-    }
-
-    fun restart() {
-        destroyApp()
-        initApp(primaryStage)
-    }
-
-    //region DI
-
-    fun initApp(stage: Stage) {
         component = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this, StageProperties(stage)))
@@ -62,9 +47,13 @@ class Main : Application(), KeepAliveInteractor.Listener {
         component!!.inject(this)
         initLoggerSettings()
 
-        DEBUG = config.debug
+        DEBUG = appConfig.debug
         Translation.getInstance() // Initializing translations on first launch
+        super.start(stage)
+
         logger.info("Running in " + config)
+        stage.scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
+        stage.scene.stylesheets.add(javaClass.getResource("/css/material_tree_table.css").toExternalForm())
 
         settings.onAttach()
         keepAliveInteractor.onAttach()
@@ -75,9 +64,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         stage.height = SCENE_HEIGHT.toDouble()
         stage.minWidth = SCENE_WIDTH.toDouble()
         stage.minHeight = SCENE_HEIGHT.toDouble()
-        stage.scene = initScene(stage)
-        stage.show()
-        stage.title = "WT4"
+        stage.title
         tracker.sendEvent(
                 GAStatics.CATEGORY_BUTTON,
                 GAStatics.ACTION_START
@@ -91,17 +78,7 @@ class Main : Application(), KeepAliveInteractor.Listener {
         stageProperties.onAttach()
     }
 
-    fun initScene(stage: Stage): Scene {
-        val stackContainer = StackPane(MainView2().view)
-        val scene = Scene(stackContainer)
-        stackContainer.prefWidthProperty().bind(scene.widthProperty())
-        stackContainer.prefHeightProperty().bind(scene.heightProperty())
-        scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
-        scene.stylesheets.add(javaClass.getResource("/css/material_tree_table.css").toExternalForm())
-        return scene
-    }
-
-    fun destroyApp() {
+    override fun stop() {
         stageProperties.onDetach()
         keepAliveGASession.onDetach()
         syncInteractor.onDetach()
@@ -110,9 +87,12 @@ class Main : Application(), KeepAliveInteractor.Listener {
         settings.onDetach()
         tracker.stop()
         InjectorNoDI.forgetAll()
+        super.stop()
     }
 
-    //endregion
+    fun restart() {
+        find<MainWidget>().showInfo("Restart app to take effect")
+    }
 
     override fun update() {
         if (autoUpdateInteractor.isAutoUpdateTimeoutHit(System.currentTimeMillis())) {
@@ -124,19 +104,19 @@ class Main : Application(), KeepAliveInteractor.Listener {
 
     private fun initLoggerSettings() {
         PropertyConfigurator.configure(javaClass.getResource("/custom_log4j.properties"))
-        val fileAppenderProd = RollingFileAppender(PatternLayout(LOG_LAYOUT_PROD), config.cfgPath + "info_prod.log", true)
+        val fileAppenderProd = RollingFileAppender(PatternLayout(LOG_LAYOUT_PROD), appConfig.cfgPath + "info_prod.log", true)
         fileAppenderProd.setMaxFileSize("100KB")
         fileAppenderProd.maxBackupIndex = 0
         fileAppenderProd.threshold = Priority.INFO
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderProd)
 
-        val fileAppenderDebug = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), config.cfgPath + "info.log", true)
+        val fileAppenderDebug = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), appConfig.cfgPath + "info.log", true)
         fileAppenderDebug.setMaxFileSize("1MB")
         fileAppenderDebug.maxBackupIndex = 0
         fileAppenderDebug.threshold = Priority.INFO
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderDebug)
 
-        val errorAppender = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), config.cfgPath + "debug.log", true)
+        val errorAppender = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), appConfig.cfgPath + "debug.log", true)
         errorAppender.setMaxFileSize("1MB")
         errorAppender.maxBackupIndex = 0
         errorAppender.threshold = Priority.toPriority(Priority.ALL_INT)
@@ -160,4 +140,8 @@ class Main : Application(), KeepAliveInteractor.Listener {
         private val logger = LoggerFactory.getLogger(Main::class.java)!!
     }
 
+}
+
+fun main(args: Array<String>) {
+    Application.launch(Main::class.java)
 }
