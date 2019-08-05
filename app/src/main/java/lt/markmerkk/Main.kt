@@ -1,6 +1,5 @@
 package lt.markmerkk
 
-import com.google.inject.Injector
 import javafx.application.Application
 import javafx.stage.Stage
 import lt.markmerkk.afterburner.InjectorNoDI
@@ -20,7 +19,7 @@ import tornadofx.*
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class Main : App(), KeepAliveInteractor.Listener {
+class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener {
 
     @Inject lateinit var settings: UserSettings
     @Inject lateinit var logStorage: LogStorage
@@ -31,12 +30,9 @@ class Main : App(), KeepAliveInteractor.Listener {
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var schedulersProvider: SchedulerProvider
-    @Inject lateinit var guiceInjector: Injector
 
     private lateinit var keepAliveGASession: KeepAliveGASession
     private lateinit var appComponent: AppComponent
-
-    override val primaryView = MainWidget::class
 
     override fun start(stage: Stage) {
         appComponent = DaggerAppComponent
@@ -44,9 +40,6 @@ class Main : App(), KeepAliveInteractor.Listener {
                 .appModule(AppModule(this, StageProperties(stage)))
                 .build()
         appComponent.inject(this)
-        FX.dicontainer = object : DIContainer {
-            override fun <T : Any> getInstance(type: KClass<T>) = guiceInjector.getInstance(type.java)
-        }
         initLoggerSettings()
 
         DEBUG = appConfig.debug
