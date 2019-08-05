@@ -20,8 +20,6 @@ import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
-import lt.markmerkk.interactors.ClockRunBridge
-import lt.markmerkk.interactors.ClockRunBridgeImpl
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.day.DayView
@@ -32,7 +30,6 @@ import lt.markmerkk.ui_2.LogEditController
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.ui_2.TicketMergeController
 import lt.markmerkk.ui_2.TicketSplitController
-import lt.markmerkk.ui_2.bridges.UIEButtonClock
 import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
 import lt.markmerkk.ui_2.bridges.UIEButtonSettings
 import lt.markmerkk.ui_2.bridges.UIECenterView
@@ -45,6 +42,7 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.widgets.clock.ClockWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject

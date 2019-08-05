@@ -1,6 +1,7 @@
 package lt.markmerkk
 
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import tornadofx.*
@@ -39,6 +40,7 @@ class Styles: Stylesheet() {
             maxHeight = dimen
             backgroundRadius.add(box(50.px))
             backgroundColor.add(cActivateRed)
+            textFill = Color.WHITE
         }
         buttonMenuMini {
             val dimen = 20.px
@@ -50,6 +52,7 @@ class Styles: Stylesheet() {
             maxHeight = dimen
             backgroundRadius.add(box(50.px))
             backgroundColor.add(cActivateOrange)
+            textFill = Color.WHITE
         }
     }
 
