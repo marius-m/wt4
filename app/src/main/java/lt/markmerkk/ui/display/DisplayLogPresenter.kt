@@ -39,7 +39,7 @@ class DisplayLogPresenter : Initializable, IDataListener<SimpleLog> {
     private lateinit var tableDisplayController: TableDisplayController
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
         contextMenuEditLog = ContextMenuEditLog(strings, graphics, storage, eventBus)
         logs.addAll(storage.data)
         tableView.tooltip = Tooltip(Translation.getInstance().getString("daylog_tooltip_title"))

@@ -72,7 +72,7 @@ class LogEditController : Initializable, LogEditService.Listener {
     private val dialogPadding = 100.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         jfxButtonCancel.setOnAction { jfxDialog.close() }

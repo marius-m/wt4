@@ -37,7 +37,7 @@ class DisplaySelectDialogController : Initializable {
         }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.Companion.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         jfxButtonCancel.setOnAction {
             jfxDialog.close()

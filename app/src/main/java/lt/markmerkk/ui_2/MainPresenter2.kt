@@ -82,7 +82,7 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
     var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         // Init ui elements
         widgetDateChange = QuickDateChangeWidget(

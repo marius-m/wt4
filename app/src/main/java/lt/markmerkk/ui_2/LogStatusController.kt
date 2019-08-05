@@ -37,7 +37,7 @@ class LogStatusController : Initializable, LogStatusCallback {
     lateinit var logStatusService: LogStatusService
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.Companion.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
         jfxDialog.transitionType = JFXDialog.DialogTransition.TOP
         jfxDialogTextBody.isWrapText = true
         jfxButtonCancel.setOnAction { logStatusService.showWithId(null) }

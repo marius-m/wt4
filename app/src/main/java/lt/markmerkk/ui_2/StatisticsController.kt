@@ -24,7 +24,7 @@ class StatisticsController : Initializable {
     @Inject lateinit var logStorage: LogStorage
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.Companion.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         jfxButtonDismiss.setOnAction {
             jfxDialog.close()

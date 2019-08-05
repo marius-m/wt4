@@ -33,7 +33,7 @@ class ProfilesController : Initializable {
     @Inject lateinit var strings: Strings
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
         jfxButtonDismiss.setOnAction {
             jfxDialog.close()
         }
@@ -48,7 +48,7 @@ class ProfilesController : Initializable {
         jfxButtonApply.setOnAction {
             configSetSettings.configSetName = jfxProfileSelection.value
             configSetSettings.save()
-            Main.mainInstance!!.restart()
+            Main.mainInstance().restart()
         }
         jfxInfo.text = strings.getString("profiles_info")
     }

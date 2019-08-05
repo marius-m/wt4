@@ -31,7 +31,7 @@ class CurrentDayDialogController : Initializable {
     private val maxWidth = 370.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         jfxDatePicker = JFXDatePicker(TimeProvider.toJavaLocalDate(logStorage.targetDate))
         jfxDatePicker.defaultColor = Color.web("#E91E63")

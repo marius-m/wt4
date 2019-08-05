@@ -47,7 +47,7 @@ class VersionPresenter : Initializable, VersioningMvp.View {
     private var dialogListener: DialogListener? = null
 
     override fun initialize(location: URL, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
         labelVersion.text = String.format("Version: %s", config.versionName)
     }
 

@@ -101,7 +101,7 @@ class CalendarPresenter : Initializable {
     private var selectedId: Long = Const.NO_ID
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         contextMenu = ContextMenuEditLog(strings, graphics, storage, eventBus)
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)

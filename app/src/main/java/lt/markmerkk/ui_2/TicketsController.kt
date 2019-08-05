@@ -50,7 +50,7 @@ class TicketsController : Initializable {
     private val dialogPadding = 160.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         // Views
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding

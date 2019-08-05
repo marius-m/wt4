@@ -73,7 +73,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
     private val dialogPadding = 100.0
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
         jfxButtonDismiss.setOnAction { jfxDialog.close() }
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding

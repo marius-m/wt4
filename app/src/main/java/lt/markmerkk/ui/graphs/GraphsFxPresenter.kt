@@ -79,7 +79,7 @@ class GraphsFxPresenter : Initializable, GraphMvp.View {
     //region Life-cycle
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        Main.component!!.presenterComponent().inject(this)
+        Main.component().presenterComponent().inject(this)
 
         viewProgress.isVisible = false
         viewProgress.isManaged = false

@@ -9,7 +9,6 @@ import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
-import lt.markmerkk.ui_2.MainView2
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.MainWidget
@@ -20,7 +19,6 @@ import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 class Main : App(), KeepAliveInteractor.Listener {
 
@@ -35,16 +33,16 @@ class Main : App(), KeepAliveInteractor.Listener {
     @Inject lateinit var schedulersProvider: SchedulerProvider
 
     private lateinit var keepAliveGASession: KeepAliveGASession
-
+    private lateinit var appComponent: AppComponent
 
     override val primaryView = MainWidget::class
 
     override fun start(stage: Stage) {
-        component = DaggerAppComponent
+        appComponent = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this, StageProperties(stage)))
                 .build()
-        component!!.inject(this)
+        appComponent.inject(this)
         initLoggerSettings()
 
         DEBUG = appConfig.debug
@@ -134,8 +132,8 @@ class Main : App(), KeepAliveInteractor.Listener {
         var SCENE_WIDTH = 600
         var SCENE_HEIGHT = 500
 
-        var component: AppComponent? = null
-        var mainInstance: Main? = null
+        @JvmStatic fun mainInstance(): Main = (FX.application as Main)
+        @JvmStatic fun component(): AppComponent = (FX.application as Main).appComponent
 
         private val logger = LoggerFactory.getLogger(Main::class.java)!!
     }
