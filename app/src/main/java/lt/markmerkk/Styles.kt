@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import javafx.scene.control.OverrunStyle
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
@@ -41,6 +42,8 @@ class Styles: Stylesheet() {
             backgroundRadius.add(box(50.px))
             backgroundColor.add(cActivateRed)
             textFill = Color.WHITE
+            ellipsisString = "..."
+            textOverrun = OverrunStyle.WORD_ELLIPSIS
         }
         buttonMenuMini {
             val dimen = 20.px
@@ -53,6 +56,8 @@ class Styles: Stylesheet() {
             backgroundRadius.add(box(50.px))
             backgroundColor.add(cActivateOrange)
             textFill = Color.WHITE
+            ellipsisString = "..."
+            textOverrun = OverrunStyle.WORD_ELLIPSIS
         }
     }
 

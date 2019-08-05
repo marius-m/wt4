@@ -94,15 +94,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         vgrow = Priority.ALWAYS
                         jfxButtonDisplayView = jfxButton {
                             addClass(Styles.buttonMenu)
-                            ellipsisString = "..."
-                            textOverrun = OverrunStyle.WORD_ELLIPSIS
                         }
                         jfxButtonSettings = jfxButton {
                             addClass(Styles.buttonMenu)
-                            ellipsisString = "..."
-                            textOverrun = OverrunStyle.WORD_ELLIPSIS
                             graphic = graphics.from(Glyph.SETTINGS, Color.BLACK, 24.0)
-                            text = ""
                         }
                     }
                 }
@@ -113,6 +108,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         borderpane {
                             left {
                                 jfxContainerContentLeft = hbox { }
+                            }
+                            right {
                                 jfxContainerContentRight = hbox { }
                             }
                         }
