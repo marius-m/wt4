@@ -42,10 +42,6 @@ class ClockRunBridgeImpl(
                     .build()
             logStorage.insert(log)
             hourGlass.restart()
-//            tracker.sendEvent(
-//                    GAStatics.CATEGORY_BUTTON,
-//                    GAStatics.ACTION_ENTER
-//            )
         } catch (e: IllegalArgumentException) {
             println(e.message)
         }

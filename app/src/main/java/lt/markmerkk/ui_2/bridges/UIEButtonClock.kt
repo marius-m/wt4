@@ -17,11 +17,9 @@ import lt.markmerkk.utils.UIEUtils
  */
 class UIEButtonClock(
         private val graphics: Graphics<SVGGlyph>,
-        private val node: ExternalSourceNode<StackPane>,
         private val listener: Listener,
         private val button: JFXButton,
-        private val buttonSettings: JFXButton,
-        private val buttonToggle: JFXToggleNode
+        private val buttonSettings: JFXButton
 ) : UIElementText<JFXButton> {
 
     private val glyphClock = graphics.from(Glyph.CLOCK, Color.WHITE, 20.0)
@@ -29,9 +27,6 @@ class UIEButtonClock(
     init {
         buttonSettings.setOnAction {
             listener.onClickClockSettings()
-        }
-        buttonToggle.setOnAction {
-            listener.onClickClock(buttonToggle.isSelected)
         }
         buttonSettings.graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
         hide()

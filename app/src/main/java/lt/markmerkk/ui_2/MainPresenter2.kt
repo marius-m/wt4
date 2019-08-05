@@ -108,11 +108,9 @@ class MainPresenter2 : Initializable, ExternalSourceNode<StackPane> {
         uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
         uieButtonClock = UIEButtonClock(
                 graphics,
-                this,
                 buttonClockListener,
                 jfxButtonClock,
-                jfxButtonClockSettings,
-                jfxToggleClock
+                jfxButtonClockSettings
         )
         uieCenterView = UIECenterView(jfxContainerContent)
         jfxContainerContentRight.children.add(widgetProgress.root)
