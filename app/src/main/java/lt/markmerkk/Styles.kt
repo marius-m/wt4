@@ -2,16 +2,16 @@ package lt.markmerkk
 
 import javafx.scene.control.OverrunStyle
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
-import javafx.scene.text.Font
-import javafx.scene.text.FontWeight
 import tornadofx.*
 
 class Styles: Stylesheet() {
 
     companion object {
+        val labelDialogHeader by cssclass()
         val buttonMenu by cssclass()
         val buttonMenuMini by cssclass()
+        val inputTextField by cssclass()
+        val dialogCommon by cssclass()
 
         val cLightest = c("#E8EAF6")
         val cLight = c("#7986CB")
@@ -31,6 +31,21 @@ class Styles: Stylesheet() {
     }
 
     init {
+        dialogCommon {
+            minWidth = 400.px
+            padding = box(10.px)
+        }
+
+        labelDialogHeader {
+            fontSize = 24.pt
+            fontFamily = "Verdana"
+            padding = box(
+                    top = 0.px,
+                    left = 0.px,
+                    right = 0.px,
+                    bottom = 20.px
+            )
+        }
         buttonMenu {
             val dimen = 46.px
             prefWidth = dimen

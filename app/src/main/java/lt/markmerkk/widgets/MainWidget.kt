@@ -1,20 +1,23 @@
 package lt.markmerkk.widgets
 
+import com.airhacks.afterburner.views.FXMLView
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXSnackbar
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
-import javafx.scene.control.OverrunStyle
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
+import javafx.stage.Modality
+import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.LogEditType
@@ -26,10 +29,7 @@ import lt.markmerkk.ui.day.DayView
 import lt.markmerkk.ui.display.DisplayLogView
 import lt.markmerkk.ui.graphs.GraphsFxView
 import lt.markmerkk.ui.week2.WeekView2
-import lt.markmerkk.ui_2.LogEditController
-import lt.markmerkk.ui_2.StageProperties
-import lt.markmerkk.ui_2.TicketMergeController
-import lt.markmerkk.ui_2.TicketSplitController
+import lt.markmerkk.ui_2.*
 import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
 import lt.markmerkk.ui_2.bridges.UIEButtonSettings
 import lt.markmerkk.ui_2.bridges.UIECenterView
@@ -43,6 +43,7 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.clock.ClockWidget
+import lt.markmerkk.widgets.tickets.TicketWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -70,7 +71,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var uieCenterView: UIECenterView
     lateinit var snackBar: JFXSnackbar
-    lateinit var dialogInflater: DialogInflater
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
     lateinit var widgetLogQuickEdit: QuickEditContainerWidget
@@ -151,9 +151,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
-        dialogInflater = DialogInflater(this, eventBus)
         eventBus.register(this)
-        dialogInflater.onAttach()
         widgetDateChange.onAttach()
         widgetProgress.onAttach()
         widgetLogQuickEdit.onAttach()
@@ -163,7 +161,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         widgetLogQuickEdit.onDetach()
         widgetProgress.onDetach()
         widgetDateChange.onDetach()
-        dialogInflater.onDetach()
         eventBus.unregister(this)
         if (hourGlass.state == HourGlass.State.RUNNING) {
             hourGlass.stop()
@@ -201,7 +198,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         when (event.editType) {
             LogEditType.UPDATE -> {
                 resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
-                dialogInflater.eventInflateDialog(EventInflateDialog(DialogType.LOG_EDIT))
+                eventBus.post(EventInflateDialog(DialogType.LOG_EDIT))
             }
             LogEditType.DELETE -> logStorage.delete(event.logs.first())
             LogEditType.CLONE -> {
@@ -267,6 +264,49 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     //endregion
+
+    @Subscribe
+    fun eventInflateDialog(event: EventInflateDialog) {
+        when (event.type) {
+            DialogType.ACTIVE_CLOCK -> openDialog(ClockEditDialog())
+            DialogType.LOG_EDIT -> {
+                openDialog(LogEditDialog())
+//                openInternalWindow(
+//                        view = find<LogDetailsWidget>(),
+//                        modal = true,
+//                        closeButton = true,
+//                        escapeClosesWindow = true
+//                )
+//                find<LogDetailsWidget>().openModal(
+//                        stageStyle = StageStyle.UTILITY,
+//                        modality = Modality.APPLICATION_MODAL,
+//                        block = false,
+//                        resizable = false
+//                )
+            }
+            DialogType.TICKET_SEARCH -> {
+//                openDialog(TicketsDialog())
+//                openInternalWindow(
+//                        view = find<TicketWidget>(),
+//                        modal = false
+//                )
+                find<TicketWidget>().openModal(
+                        stageStyle = StageStyle.UTILITY,
+                        modality = Modality.APPLICATION_MODAL,
+                        block = true,
+                        resizable = true
+                )
+            }
+            DialogType.TICKET_SPLIT -> openDialog(TicketSplitDialog())
+            DialogType.TICKET_MERGE -> openDialog(TicketMergeDialog())
+        }
+    }
+
+    private fun openDialog(dialog: FXMLView) {
+        val jfxDialog = dialog.view as JFXDialog
+        jfxDialog.show(root as StackPane)
+        jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+    }
 
     fun showInfo(message: String) {
         information(

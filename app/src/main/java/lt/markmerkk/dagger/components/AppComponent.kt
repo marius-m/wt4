@@ -6,6 +6,9 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.SyncModule
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.MainWidget
+import lt.markmerkk.widgets.edit.LogDetailsWidget
+import lt.markmerkk.widgets.tickets.TicketProgressWidget
+import lt.markmerkk.widgets.tickets.TicketWidget
 import javax.inject.Singleton
 
 @Singleton
@@ -18,7 +21,10 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(application: Main)
     fun inject(mainWidget: MainWidget)
+    fun inject(ticketWidget: TicketWidget)
+    fun inject(logDetailsWidget: LogDetailsWidget)
     fun inject(clockWidget: ClockWidget)
+    fun inject(ticketProgressWidget: TicketProgressWidget)
 
     fun presenterComponent(): PresenterComponent
 
