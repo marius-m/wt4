@@ -318,7 +318,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             )
                         }
                     }
-                    viewButtonDismiss = jfxButton("Dismiss") {
+                    viewButtonDismiss = jfxButton("Dismiss".toUpperCase()) {
                         setOnAction {
                             close()
                         }

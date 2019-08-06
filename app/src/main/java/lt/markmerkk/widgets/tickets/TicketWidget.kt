@@ -95,7 +95,7 @@ class TicketWidget: View(), TicketContract.View {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton("Dismiss") {
+                jfxButton("Dismiss".toUpperCase()) {
                     setOnAction {
                         close()
                     }
