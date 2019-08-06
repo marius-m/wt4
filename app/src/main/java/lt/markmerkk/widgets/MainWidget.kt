@@ -199,6 +199,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         when (event.editType) {
             LogEditType.UPDATE -> {
                 resultDispatcher.publish(LogEditController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
+                resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventInflateDialog(DialogType.LOG_EDIT))
             }
             LogEditType.DELETE -> logStorage.delete(event.logs.first())

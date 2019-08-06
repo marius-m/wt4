@@ -6,7 +6,6 @@ import org.joda.time.DateTime
 /**
  * Responsible for updating log and controlling the input view changes
  */
-// todo : rename this to MVP pattern generics
 interface LogEditService {
 
     var serviceType: ServiceType

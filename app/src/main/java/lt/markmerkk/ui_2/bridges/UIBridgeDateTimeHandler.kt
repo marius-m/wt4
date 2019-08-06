@@ -102,7 +102,7 @@ class UIBridgeDateTimeHandler(
     }
 
 
-    private val startDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
+    private val startDateChangeListener = ChangeListener<LocalDate> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(newValue, jfxTimeFrom.value)
         val end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value)
         val newTimeGap = timeChangeValidator.changeStart(start, end)
@@ -111,7 +111,7 @@ class UIBridgeDateTimeHandler(
         logEditService?.redraw()
     }
 
-    private val startTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
+    private val startTimeChangeListener = ChangeListener<LocalTime> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(jfxDateFrom.value, newValue)
         val end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value)
         val newTimeGap = timeChangeValidator.changeStart(start, end)
@@ -120,7 +120,7 @@ class UIBridgeDateTimeHandler(
         logEditService?.redraw()
     }
 
-    private val endDateChangeListener = ChangeListener<LocalDate> { observable, oldValue, newValue ->
+    private val endDateChangeListener = ChangeListener<LocalDate> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value)
         val end = timeProvider.toJodaDateTime(newValue, jfxTimeTo.value)
         val newTimeGap = timeChangeValidator.changeEnd(start, end)
@@ -129,7 +129,7 @@ class UIBridgeDateTimeHandler(
         logEditService?.redraw()
     }
 
-    private val endTimeChangeListener = ChangeListener<LocalTime> { observable, oldValue, newValue ->
+    private val endTimeChangeListener = ChangeListener<LocalTime> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value)
         val end = timeProvider.toJodaDateTime(jfxDateTo.value, newValue)
         val newTimeGap = timeChangeValidator.changeEnd(start, end)
