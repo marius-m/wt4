@@ -29,6 +29,7 @@ import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
+@Deprecated("Replace with LogDetailWidget")
 class LogEditController : Initializable, LogEditService.Listener {
 
     @FXML lateinit var jfxDialog: JFXDialog
