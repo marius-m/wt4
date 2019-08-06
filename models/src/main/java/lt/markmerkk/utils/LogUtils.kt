@@ -96,6 +96,11 @@ object LogUtils {
         return builder.toString()
     }
 
+    fun firstLine(input: String): String {
+        return input.split("\n")
+                .first()
+    }
+
     /**
      * Formats log as a pretty text
      */
@@ -103,7 +108,7 @@ object LogUtils {
         val timeFrom = LogFormatters.shortFormat.print(simpleLog.start)
         val timeTo = LogFormatters.shortFormat.print(simpleLog.end)
         val duration = formatShortDuration(simpleLog.duration)
-        return "${simpleLog.task} ($timeFrom - $timeTo = $duration) ${simpleLog.comment}"
+        return "${simpleLog.task} ($timeFrom - $timeTo = $duration) ${firstLine(simpleLog.comment)}"
                 .trim()
     }
 
