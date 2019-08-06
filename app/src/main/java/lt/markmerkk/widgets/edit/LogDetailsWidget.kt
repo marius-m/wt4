@@ -57,7 +57,8 @@ class LogDetailsWidget: View(), LogDetailsContract.View {
     private lateinit var viewTextComment: JFXTextArea
     private lateinit var viewButtonSave: JFXButton
     private lateinit var viewButtonDismiss: JFXButton
-
+    private lateinit var viewLabelHint: Label
+    private lateinit var viewLabelHint2: Label
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -103,11 +104,11 @@ class LogDetailsWidget: View(), LogDetailsContract.View {
                     }
 
                     override fun onDurationChange(durationAsString: String) {
-//                        jfxTextFieldHint.text = durationAsString // todo no field to display hint
+                        viewLabelHint.text = durationAsString
                     }
 
                     override fun onGenericNotification(notification: String) {
-//                        jfxTextFieldHint2.text = notification // todo no field to display generic notification
+                        viewLabelHint2.text = notification
                     }
 
                     override fun onEntitySaveComplete() {
@@ -115,7 +116,7 @@ class LogDetailsWidget: View(), LogDetailsContract.View {
                     }
 
                     override fun onEntitySaveFail(error: Throwable) {
-//                        jfxTextFieldHint.text = error.message ?: "Error saving entity!" // todo no field to display save fail
+                        viewLabelHint.text = error.message ?: "Error saving entity!"
                     }
 
                     override fun onEnableInput() {
@@ -269,6 +270,19 @@ class LogDetailsWidget: View(), LogDetailsContract.View {
                         promptText = "Comment"
                         prefRowCount = 5
                     }
+                }
+                hbox(alignment = Pos.CENTER) {
+                    hgrow = Priority.ALWAYS
+                    style {
+                        padding = box(
+                                top = 10.px,
+                                left = 0.px,
+                                right = 0.px,
+                                bottom = 0.px
+                        )
+                    }
+                    viewLabelHint = label { addClass(Styles.labelMini) }
+                    viewLabelHint2 = label { addClass(Styles.labelMini) }
                 }
             }
         }
