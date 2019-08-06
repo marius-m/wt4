@@ -14,6 +14,7 @@ class Styles: Stylesheet() {
         val buttonMenuMini by cssclass()
         val inputTextField by cssclass()
         val labelMini by cssclass()
+        val labelRegular by cssclass()
 
         val cLightest = c("#E8EAF6")
         val cLight = c("#7986CB")
@@ -92,6 +93,10 @@ class Styles: Stylesheet() {
         labelMini {
             textFill = Color.GRAY
             fontSize = 8.pt
+        }
+        labelRegular {
+            textFill = Color.GRAY
+            fontSize = 12.pt
         }
     }
 

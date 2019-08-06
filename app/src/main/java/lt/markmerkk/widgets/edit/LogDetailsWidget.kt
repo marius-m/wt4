@@ -212,7 +212,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             isFocusTraversable = false
                         }
                     }
-                    hbox(spacing = 4) {
+                    hbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
                         style {
                             padding = box(
                                     top = 20.px,
@@ -232,7 +232,9 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                                 ticketInfoLoader.changeInputCode(newValue)
                             }
                         }
-                        viewTextTicketDesc = label { }
+                        viewTextTicketDesc = label {
+                            addClass(Styles.labelRegular)
+                        }
                         viewButtonTicketLink = jfxButton {
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
