@@ -71,3 +71,7 @@ fun EventTarget.jfxDialogLayout(op: JFXDialogLayout.() -> Unit = {}) = JFXDialog
 
 // Calendar
 fun EventTarget.calendarFxDetailedDay(op: DetailedDayView.() -> Unit = {}) = DetailedDayView().attachTo(this, op)
+
+// DateTime
+fun EventTarget.jfxDatePicker(op: JFXDatePicker.() -> Unit = {}) = JFXDatePicker().attachTo(this, op)
+fun EventTarget.jfxTimePicker(op: JFXTimePicker.() -> Unit = {}) = JFXTimePicker().attachTo(this, op)

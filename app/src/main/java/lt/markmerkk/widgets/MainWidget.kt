@@ -43,6 +43,7 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.clock.ClockWidget
+import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.tickets.TicketWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -270,26 +271,21 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         when (event.type) {
             DialogType.ACTIVE_CLOCK -> openDialog(ClockEditDialog())
             DialogType.LOG_EDIT -> {
-                openDialog(LogEditDialog())
+//                openDialog(LogEditDialog())
 //                openInternalWindow(
 //                        view = find<LogDetailsWidget>(),
 //                        modal = true,
 //                        closeButton = true,
 //                        escapeClosesWindow = true
 //                )
-//                find<LogDetailsWidget>().openModal(
-//                        stageStyle = StageStyle.UTILITY,
-//                        modality = Modality.APPLICATION_MODAL,
-//                        block = false,
-//                        resizable = false
-//                )
+                find<LogDetailsWidget>().openModal(
+                        stageStyle = StageStyle.UTILITY,
+                        modality = Modality.APPLICATION_MODAL,
+                        block = false,
+                        resizable = true
+                )
             }
             DialogType.TICKET_SEARCH -> {
-//                openDialog(TicketsDialog())
-//                openInternalWindow(
-//                        view = find<TicketWidget>(),
-//                        modal = false
-//                )
                 find<TicketWidget>().openModal(
                         stageStyle = StageStyle.UTILITY,
                         modality = Modality.APPLICATION_MODAL,

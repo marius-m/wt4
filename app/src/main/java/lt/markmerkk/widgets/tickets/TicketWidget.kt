@@ -44,10 +44,10 @@ class TicketWidget: View(), TicketContract.View {
             .observable()
 
     override val root: Parent = borderpane {
-        addClass(Styles.dialogCommon)
+        addClass(Styles.dialogContainer)
         top {
             label("Tickets") {
-                addClass(Styles.labelDialogHeader)
+                addClass(Styles.dialogHeader)
             }
         }
         center {
@@ -56,7 +56,7 @@ class TicketWidget: View(), TicketContract.View {
                     viewTextFieldTicketSearch = jfxTextField {
                         hgrow = Priority.ALWAYS
                         addClass(Styles.inputTextField)
-                        focusColor = Styles.cActivateRed
+                        focusColor = Styles.cActiveRed
                         isLabelFloat = true
                         promptText = "Search ticket by ID / Summary"
                         textProperty().addListener { _, _, newValue -> presenter.applyFilter(newValue) }
@@ -94,6 +94,7 @@ class TicketWidget: View(), TicketContract.View {
         }
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
+                addClass(Styles.dialogContainerActionsButtons)
                 jfxButton("Dismiss") {
                     setOnAction {
                         close()

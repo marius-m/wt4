@@ -21,6 +21,7 @@ import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
+@Deprecated("Replaced with TicketWidget")
 class TicketsController : Initializable {
 
     @FXML lateinit var jfxDialog: JFXDialog

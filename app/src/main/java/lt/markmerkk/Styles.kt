@@ -7,11 +7,13 @@ import tornadofx.*
 class Styles: Stylesheet() {
 
     companion object {
-        val labelDialogHeader by cssclass()
+        val dialogHeader by cssclass()
+        val dialogContainer by cssclass()
+        val dialogContainerActionsButtons by cssclass()
         val buttonMenu by cssclass()
         val buttonMenuMini by cssclass()
         val inputTextField by cssclass()
-        val dialogCommon by cssclass()
+        val labelMini by cssclass()
 
         val cLightest = c("#E8EAF6")
         val cLight = c("#7986CB")
@@ -25,18 +27,31 @@ class Styles: Stylesheet() {
         val cActivateDark = c("#FF9100")
         val cActivateDarkest = c("#FF6D00")
 
-        val cActivateRed = c("#E91E63")
-        val cActivateOrange = Color.ORANGE
+        val cActiveRed = c("#E91E63")
+        val cActiveOrange = Color.ORANGE
         val cBackgroundPrimary = c("#5C6BC0")
     }
 
     init {
-        dialogCommon {
+        dialogContainer {
             minWidth = 400.px
-            padding = box(10.px)
+            padding = box(
+                    top = 10.px,
+                    left = 20.px,
+                    right = 20.px,
+                    bottom = 10.px
+            )
+        }
+        dialogContainerActionsButtons {
+            padding = box(
+                    top = 10.px,
+                    left = 0.px,
+                    right = 0.px,
+                    bottom = 0.px
+            )
         }
 
-        labelDialogHeader {
+        dialogHeader {
             fontSize = 24.pt
             fontFamily = "Verdana"
             padding = box(
@@ -55,7 +70,7 @@ class Styles: Stylesheet() {
             maxWidth = dimen
             maxHeight = dimen
             backgroundRadius.add(box(50.px))
-            backgroundColor.add(cActivateRed)
+            backgroundColor.add(cActiveRed)
             textFill = Color.WHITE
             ellipsisString = "..."
             textOverrun = OverrunStyle.WORD_ELLIPSIS
@@ -69,10 +84,14 @@ class Styles: Stylesheet() {
             maxWidth = dimen
             maxHeight = dimen
             backgroundRadius.add(box(50.px))
-            backgroundColor.add(cActivateOrange)
+            backgroundColor.add(cActiveOrange)
             textFill = Color.WHITE
             ellipsisString = "..."
             textOverrun = OverrunStyle.WORD_ELLIPSIS
+        }
+        labelMini {
+            textFill = Color.GRAY
+            fontSize = 8.pt
         }
     }
 
