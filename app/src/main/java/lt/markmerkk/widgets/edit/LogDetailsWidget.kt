@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsWidget: View(), LogDetailsContract.View {
+class LogDetailsWidget : View(), LogDetailsContract.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
@@ -144,164 +144,166 @@ class LogDetailsWidget: View(), LogDetailsContract.View {
         )
     }
 
-    override val root: Parent = borderpane {
-        addClass(Styles.dialogContainer)
-        top {
-            viewLabelHeader = label("Log details") {
-                addClass(Styles.dialogHeader)
+    override val root: Parent = stackpane {
+        borderpane {
+            addClass(Styles.dialogContainer)
+            top {
+                viewLabelHeader = label("Log details") {
+                    addClass(Styles.dialogHeader)
+                }
             }
-        }
-        center {
-            vbox {
-                label("From") {
-                    addClass(Styles.labelMini)
-                    style {
-                        padding = box(
-                                top = 10.px,
-                                left = 0.px,
-                                right = 0.px,
-                                bottom = 0.px
-                        )
-                    }
-                }
-                hbox(spacing = 4) {
-                    viewDatePickerFrom = jfxDatePicker {
-                        isFocusTraversable = false
-                        isOverLay = true
-                        defaultColor = Styles.cActiveRed
-                    }
-                    viewTimePickerFrom = jfxTimePicker {
-                        isFocusTraversable = false
-                        isOverLay = true
-                        defaultColor = Styles.cActiveRed
-                    }
-                    viewButtonSubtractFrom = jfxButton("-") {
-                        isFocusTraversable = false
-                    }
-                    viewButtonAppendFrom = jfxButton("+") {
-                        isFocusTraversable = false
-                    }
-                }
-                label("To") {
-                    addClass(Styles.labelMini)
-                    style {
-                        padding = box(
-                                top = 10.px,
-                                left = 0.px,
-                                right = 0.px,
-                                bottom = 0.px
-                        )
-                    }
-                }
-                hbox(spacing = 4) {
-                    viewDatePickerTo = jfxDatePicker {
-                        isFocusTraversable = false
-                        isOverLay = true
-                        defaultColor = Styles.cActiveRed
-                    }
-                    viewTimePickerTo = jfxTimePicker {
-                        isFocusTraversable = false
-                        isOverLay = true
-                        defaultColor = Styles.cActiveRed
-                    }
-                    viewButtonSubtractTo = jfxButton("-") {
-                        isFocusTraversable = false
-                    }
-                    viewButtonAppendTo = jfxButton("+") {
-                        isFocusTraversable = false
-                    }
-                }
-                hbox(spacing = 4) {
-                    style {
-                        padding = box(
-                                top = 20.px,
-                                left = 0.px,
-                                right = 0.px,
-                                bottom = 0.px
-                        )
-                    }
-                    viewTextFieldTicket = jfxTextField {
-                        minWidth = 120.0
-                        maxWidth = 120.0
-                        focusColor = Styles.cActiveRed
-                        isLabelFloat = true
-                        promptText = "Ticket ID"
-                        unFocusColor = Color.BLACK
-                        textProperty().addListener { _, _, newValue ->
-                            ticketInfoLoader.changeInputCode(newValue)
+            center {
+                vbox {
+                    label("From") {
+                        addClass(Styles.labelMini)
+                        style {
+                            padding = box(
+                                    top = 10.px,
+                                    left = 0.px,
+                                    right = 0.px,
+                                    bottom = 0.px
+                            )
                         }
                     }
-                    viewTextTicketDesc = label { }
-                    viewButtonTicketLink = jfxButton {
-                        isFocusTraversable = false
-                        graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
-                        tooltip = Tooltip("Copy issue link to clipboard")
-                        setOnAction {
-                            val issue = viewTextFieldTicket.text.toString()
-                            val issueLink = hostServicesInteractor.generateLink(issue)
-                            eventBus.post(EventSnackBarMessage("Copied $issueLink to clipboard"))
-                            hostServicesInteractor.copyLinkToClipboard(issue)
+                    hbox(spacing = 4) {
+                        viewDatePickerFrom = jfxDatePicker {
+                            isFocusTraversable = false
+                            isOverLay = true
+                            defaultColor = Styles.cActiveRed
+                        }
+                        viewTimePickerFrom = jfxTimePicker {
+                            isFocusTraversable = false
+                            isOverLay = true
+                            defaultColor = Styles.cActiveRed
+                        }
+                        viewButtonSubtractFrom = jfxButton("-") {
+                            isFocusTraversable = false
+                        }
+                        viewButtonAppendFrom = jfxButton("+") {
+                            isFocusTraversable = false
                         }
                     }
-                    viewButtonSearch = jfxButton {
-                        isFocusTraversable = false
-                        graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
-                        setOnAction {
-                            eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
+                    label("To") {
+                        addClass(Styles.labelMini)
+                        style {
+                            padding = box(
+                                    top = 10.px,
+                                    left = 0.px,
+                                    right = 0.px,
+                                    bottom = 0.px
+                            )
                         }
                     }
-                }
-                hbox {
-                    hgrow = Priority.ALWAYS
-                    vgrow = Priority.ALWAYS
-                    style {
-                        padding = box(
-                                top = 20.px,
-                                left = 0.px,
-                                right = 0.px,
-                                bottom = 0.px
-                        )
+                    hbox(spacing = 4) {
+                        viewDatePickerTo = jfxDatePicker {
+                            isFocusTraversable = false
+                            isOverLay = true
+                            defaultColor = Styles.cActiveRed
+                        }
+                        viewTimePickerTo = jfxTimePicker {
+                            isFocusTraversable = false
+                            isOverLay = true
+                            defaultColor = Styles.cActiveRed
+                        }
+                        viewButtonSubtractTo = jfxButton("-") {
+                            isFocusTraversable = false
+                        }
+                        viewButtonAppendTo = jfxButton("+") {
+                            isFocusTraversable = false
+                        }
                     }
-                    viewTextComment = jfxTextArea {
+                    hbox(spacing = 4) {
+                        style {
+                            padding = box(
+                                    top = 20.px,
+                                    left = 0.px,
+                                    right = 0.px,
+                                    bottom = 0.px
+                            )
+                        }
+                        viewTextFieldTicket = jfxTextField {
+                            minWidth = 120.0
+                            maxWidth = 120.0
+                            focusColor = Styles.cActiveRed
+                            isLabelFloat = true
+                            promptText = "Ticket ID"
+                            unFocusColor = Color.BLACK
+                            textProperty().addListener { _, _, newValue ->
+                                ticketInfoLoader.changeInputCode(newValue)
+                            }
+                        }
+                        viewTextTicketDesc = label { }
+                        viewButtonTicketLink = jfxButton {
+                            isFocusTraversable = false
+                            graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
+                            tooltip = Tooltip("Copy issue link to clipboard")
+                            setOnAction {
+                                val issue = viewTextFieldTicket.text.toString()
+                                val issueLink = hostServicesInteractor.generateLink(issue)
+                                eventBus.post(EventSnackBarMessage("Copied $issueLink to clipboard"))
+                                hostServicesInteractor.copyLinkToClipboard(issue)
+                            }
+                        }
+                        viewButtonSearch = jfxButton {
+                            isFocusTraversable = false
+                            graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
+                            setOnAction {
+                                eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
+                            }
+                        }
+                    }
+                    hbox {
                         hgrow = Priority.ALWAYS
                         vgrow = Priority.ALWAYS
-                        focusColor = Styles.cActiveRed
-                        isLabelFloat = true
-                        promptText = "Comment"
-                        prefRowCount = 5
+                        style {
+                            padding = box(
+                                    top = 20.px,
+                                    left = 0.px,
+                                    right = 0.px,
+                                    bottom = 0.px
+                            )
+                        }
+                        viewTextComment = jfxTextArea {
+                            hgrow = Priority.ALWAYS
+                            vgrow = Priority.ALWAYS
+                            focusColor = Styles.cActiveRed
+                            isLabelFloat = true
+                            promptText = "Comment"
+                            prefRowCount = 5
+                        }
                     }
-                }
-                hbox(alignment = Pos.CENTER) {
-                    hgrow = Priority.ALWAYS
-                    style {
-                        padding = box(
-                                top = 10.px,
-                                left = 0.px,
-                                right = 0.px,
-                                bottom = 0.px
-                        )
+                    hbox(alignment = Pos.CENTER) {
+                        hgrow = Priority.ALWAYS
+                        style {
+                            padding = box(
+                                    top = 10.px,
+                                    left = 0.px,
+                                    right = 0.px,
+                                    bottom = 0.px
+                            )
+                        }
+                        viewLabelHint = label { addClass(Styles.labelMini) }
+                        viewLabelHint2 = label { addClass(Styles.labelMini) }
                     }
-                    viewLabelHint = label { addClass(Styles.labelMini) }
-                    viewLabelHint2 = label { addClass(Styles.labelMini) }
                 }
             }
-        }
-        bottom {
-            hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
-                addClass(Styles.dialogContainerActionsButtons)
-                viewButtonSave = jfxButton("Save") {
-                    setOnAction {
-                        logEditService.saveEntity(
-                                start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-                                end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-                                task = viewTextFieldTicket.text,
-                                comment = viewTextComment.text
-                        )
+            bottom {
+                hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
+                    addClass(Styles.dialogContainerActionsButtons)
+                    viewButtonSave = jfxButton("Save") {
+                        setOnAction {
+                            logEditService.saveEntity(
+                                    start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+                                    end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+                                    task = viewTextFieldTicket.text,
+                                    comment = viewTextComment.text
+                            )
+                        }
                     }
-                }
-                viewButtonDismiss = jfxButton("Dismiss") {
-                    setOnAction {
-                        close()
+                    viewButtonDismiss = jfxButton("Dismiss") {
+                        setOnAction {
+                            close()
+                        }
                     }
                 }
             }
