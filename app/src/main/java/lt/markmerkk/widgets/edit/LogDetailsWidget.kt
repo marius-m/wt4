@@ -8,6 +8,7 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
@@ -145,6 +146,21 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
     }
 
     override val root: Parent = stackpane {
+        setOnKeyPressed { keyEvent ->
+            if (!logEditService.canEdit()) {
+                logger.debug("Cannot edit service")
+            } else {
+                if ((keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
+                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown)) {
+                    logEditService.saveEntity(
+                            start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+                            end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+                            task = viewTextFieldTicket.text,
+                            comment = viewTextComment.text
+                    )
+                }
+            }
+        }
         borderpane {
             addClass(Styles.dialogContainer)
             top {
@@ -354,6 +370,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
         eventBus.register(this)
         ticketInfoLoader.onAttach()
         presenter.onAttach(this)
+        viewTextComment.requestFocus()
     }
 
     override fun onUndock() {

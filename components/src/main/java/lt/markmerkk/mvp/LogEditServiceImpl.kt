@@ -74,6 +74,8 @@ class LogEditServiceImpl(
         printNotificationIfNeeded(entityInEdit)
     }
 
+    override fun canEdit(): Boolean = entityInEdit.canEdit() || !entityInEdit.isError
+
     /**
      * Generates a generic type of notification for the user
      */
