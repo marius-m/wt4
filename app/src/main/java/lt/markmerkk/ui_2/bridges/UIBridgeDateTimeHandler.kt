@@ -25,8 +25,7 @@ class UIBridgeDateTimeHandler(
         private val jfxDateTo: JFXDatePicker,
         private val jfxTimeTo: JFXTimePicker,
         private val timeProvider: TimeProvider,
-        private val clockEditPresenter: ClockEditMVP.Presenter?,
-        private val logEditService: LogEditService?
+        private val dateTimeUpdater: DateTimeUpdater
 ) : UILifecycleBridge {
 
     private val timeFormatter = DateTimeFormatter.ofPattern(LogFormatters.TIME_SHORT_FORMAT)!!
@@ -106,38 +105,34 @@ class UIBridgeDateTimeHandler(
         val start = timeProvider.toJodaDateTime(newValue, jfxTimeFrom.value)
         val end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value)
         val newTimeGap = timeChangeValidator.changeStart(start, end)
-        clockEditPresenter?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.redraw()
+        dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
     }
 
     private val startTimeChangeListener = ChangeListener<LocalTime> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(jfxDateFrom.value, newValue)
         val end = timeProvider.toJodaDateTime(jfxDateTo.value, jfxTimeTo.value)
         val newTimeGap = timeChangeValidator.changeStart(start, end)
-        clockEditPresenter?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.redraw()
+        dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
     }
 
     private val endDateChangeListener = ChangeListener<LocalDate> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value)
         val end = timeProvider.toJodaDateTime(newValue, jfxTimeTo.value)
         val newTimeGap = timeChangeValidator.changeEnd(start, end)
-        clockEditPresenter?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.redraw()
+        dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
     }
 
     private val endTimeChangeListener = ChangeListener<LocalTime> { _, _, newValue ->
         val start = timeProvider.toJodaDateTime(jfxDateFrom.value, jfxTimeFrom.value)
         val end = timeProvider.toJodaDateTime(jfxDateTo.value, newValue)
         val newTimeGap = timeChangeValidator.changeEnd(start, end)
-        clockEditPresenter?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.updateDateTime(newTimeGap.start, newTimeGap.end)
-        logEditService?.redraw()
+        dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
     }
 
     //endregion
+
+    interface DateTimeUpdater {
+        fun updateDateTime(start: DateTime, end: DateTime)
+    }
 
 }

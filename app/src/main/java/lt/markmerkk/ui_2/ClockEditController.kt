@@ -147,7 +147,11 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 jfxTimeFrom,
                 jfxDateTo,
                 jfxTimeTo,
-                logEditService,
+                object : UIBridgeTimeQuickEdit.DateTimeUpdater {
+                    override fun updateDateTime(start: DateTime, end: DateTime) {
+                        clockEditPresenter.updateDateTime(start, end)
+                    }
+                },
                 timeProvider
         )
         uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
@@ -156,8 +160,11 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 jfxDateTo = jfxDateTo,
                 jfxTimeTo = jfxTimeTo,
                 timeProvider = timeProvider,
-                clockEditPresenter = clockEditPresenter,
-                logEditService = logEditService
+                dateTimeUpdater = object : UIBridgeDateTimeHandler.DateTimeUpdater {
+                    override fun updateDateTime(start: DateTime, end: DateTime) {
+                        clockEditPresenter.updateDateTime(start, end)
+                    }
+                }
         )
         jfxButtonSave.setOnAction {
             logEditService.saveEntity(

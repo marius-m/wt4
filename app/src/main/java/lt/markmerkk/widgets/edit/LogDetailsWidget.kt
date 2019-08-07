@@ -8,7 +8,6 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
-import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
@@ -19,9 +18,6 @@ import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.mvp.LogEditInteractorImpl
-import lt.markmerkk.mvp.LogEditService
-import lt.markmerkk.mvp.LogEditServiceImpl
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
@@ -63,103 +59,28 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
-    private var presenter: LogDetailsContract.Presenter
-    private var logEditService: LogEditService
-    private val ticketInfoLoader: TicketInfoLoader
+    private lateinit var presenter: LogDetailsContract.Presenter
+    private lateinit var ticketInfoLoader: TicketInfoLoader
 
     init {
         Main.component().inject(this)
-        presenter = LogDetailsPresenter(
-                logStorage,
-                hostServicesInteractor,
-                eventBus,
-                graphics,
-                ticketsDatabaseRepo,
-                resultDispatcher,
-                schedulerProvider,
-                timeProvider
-        )
-        ticketInfoLoader = TicketInfoLoader(
-                listener = object : TicketInfoLoader.Listener {
-                    override fun onTicketFound(ticket: Ticket) {
-                        viewTextTicketDesc.text = ticket.description
-                    }
-
-                    override fun onNoTicket() {
-                        viewTextTicketDesc.text = ""
-                    }
-                },
-                ticketsDatabaseRepo = ticketsDatabaseRepo,
-                waitScheduler = schedulerProvider.waitScheduler(),
-                ioScheduler = schedulerProvider.io(),
-                uiScheduler = schedulerProvider.ui()
-        )
-        logEditService = LogEditServiceImpl(
-                logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
-                timeProvider = timeProvider,
-                listener = object : LogEditService.Listener {
-                    override fun onDataChange(start: DateTime, end: DateTime, ticket: String, comment: String) {
-                        uiBridgeDateTimeHandler.changeDate(start, end)
-                        viewTextFieldTicket.text = ticket
-                        viewTextComment.text = comment
-                    }
-
-                    override fun onDurationChange(durationAsString: String) {
-                        viewLabelHint.text = durationAsString
-                    }
-
-                    override fun onGenericNotification(notification: String) {
-                        viewLabelHint2.text = notification
-                    }
-
-                    override fun onEntitySaveComplete() {
-                        close()
-                    }
-
-                    override fun onEntitySaveFail(error: Throwable) {
-                        viewLabelHint.text = error.message ?: "Error saving entity!"
-                    }
-
-                    override fun onEnableInput() {
-                        viewTextFieldTicket.isEditable = true
-                        viewTextComment.isEditable = true
-                        uiBridgeDateTimeHandler.enable()
-                        uiBridgeTimeQuickEdit.enable()
-                    }
-
-                    override fun onDisableInput() {
-                        viewTextFieldTicket.isEditable = false
-                        viewTextComment.isEditable = false
-                        uiBridgeDateTimeHandler.disable()
-                        uiBridgeTimeQuickEdit.disable()
-                    }
-
-                    override fun onEnableSaving() {
-                        viewButtonSave.isDisable = false
-                    }
-
-                    override fun onDisableSaving() {
-                        viewButtonSave.isDisable = true
-                    }
-                }
-        )
     }
 
     override val root: Parent = stackpane {
         setOnKeyPressed { keyEvent ->
-            if (!logEditService.canEdit()) {
-                logger.debug("Cannot edit service")
-            } else {
-                if ((keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
-                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown)) {
-                    logEditService.saveEntity(
-                            start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-                            end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-                            task = viewTextFieldTicket.text,
-                            comment = viewTextComment.text
-                    )
-                }
-            }
+//            if (!logEditService.canEdit()) {
+//                logger.debug("Cannot edit service")
+//            } else {
+//                if ((keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
+//                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown)) {
+//                    logEditService.saveEntity(
+//                            start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+//                            end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+//                            task = viewTextFieldTicket.text,
+//                            comment = viewTextComment.text
+//                    )
+//                }
+//            }
         }
         borderpane {
             addClass(Styles.dialogContainer)
@@ -308,9 +229,9 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
             bottom {
                 hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                     addClass(Styles.dialogContainerActionsButtons)
-                    viewButtonSave = jfxButton("Save") {
+                    viewButtonSave = jfxButton("Save".toUpperCase()) {
                         setOnAction {
-                            logEditService.saveEntity(
+                            presenter.save(
                                     start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
                                     end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
                                     task = viewTextFieldTicket.text,
@@ -330,6 +251,46 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
 
     override fun onDock() {
         super.onDock()
+        val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
+        presenter = if (entity != null) {
+            LogDetailsPresenterUpdate(
+                    entity,
+                    logStorage,
+                    hostServicesInteractor,
+                    eventBus,
+                    graphics,
+                    ticketsDatabaseRepo,
+                    resultDispatcher,
+                    schedulerProvider,
+                    timeProvider
+            )
+        } else {
+            LogDetailsPresenterCreate(
+                    logStorage,
+                    hostServicesInteractor,
+                    eventBus,
+                    graphics,
+                    ticketsDatabaseRepo,
+                    resultDispatcher,
+                    schedulerProvider,
+                    timeProvider
+            )
+        }
+        ticketInfoLoader = TicketInfoLoader(
+                listener = object : TicketInfoLoader.Listener {
+                    override fun onTicketFound(ticket: Ticket) {
+                        viewTextTicketDesc.text = ticket.description
+                    }
+
+                    override fun onNoTicket() {
+                        viewTextTicketDesc.text = ""
+                    }
+                },
+                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                waitScheduler = schedulerProvider.waitScheduler(),
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
+        )
         viewTextTicketDesc.text = ""
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
                 viewButtonSubtractFrom,
@@ -340,7 +301,11 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                 viewTimePickerFrom,
                 viewDatePickerTo,
                 viewTimePickerTo,
-                logEditService,
+                object : UIBridgeTimeQuickEdit.DateTimeUpdater {
+                    override fun updateDateTime(start: DateTime, end: DateTime) {
+                        presenter.changeDateTime(start, end)
+                    }
+                },
                 timeProvider
         )
         uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
@@ -349,36 +314,80 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                 jfxDateTo = viewDatePickerTo,
                 jfxTimeTo = viewTimePickerTo,
                 timeProvider = timeProvider,
-                clockEditPresenter = null,
-                logEditService = logEditService
+                dateTimeUpdater = object : UIBridgeDateTimeHandler.DateTimeUpdater {
+                    override fun updateDateTime(start: DateTime, end: DateTime) {
+                        presenter.changeDateTime(start, end)
+                    }
+                }
         )
-        val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
-        if (entity != null) {
-            logEditService.serviceType = LogEditService.ServiceType.UPDATE
-            logEditService.entityInEdit = entity
-            viewLabelHeader.text = "Log details"
-            viewButtonSave.text = "UPDATE"
-            viewButtonSave.graphic = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0)
-        } else {
-            logEditService.serviceType = LogEditService.ServiceType.CREATE
-            viewLabelHeader.text = "New log details"
-            viewButtonSave.text = "CREATE"
-            viewButtonSave.graphic = graphics.from(Glyph.NEW, Color.BLACK, 12.0)
-        }
-        logEditService.redraw()
+        presenter.onAttach(this)
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
-        presenter.onAttach(this)
         viewTextComment.requestFocus()
     }
 
     override fun onUndock() {
-        presenter.onDetach()
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
+        presenter.onDetach()
         super.onUndock()
+    }
+
+    override fun initView(
+            labelHeader: String,
+            labelButtonSave: String,
+            glyphButtonSave: SVGGlyph,
+            initDateTimeStart: DateTime,
+            initDateTimeEnd: DateTime
+    ) {
+        viewLabelHeader.text = labelHeader
+        viewButtonSave.text = labelButtonSave.toUpperCase()
+        viewButtonSave.graphic = glyphButtonSave
+        uiBridgeDateTimeHandler.changeDate(initDateTimeStart, initDateTimeEnd)
+    }
+
+    override fun showDateTime(start: DateTime, end: DateTime) {
+        uiBridgeDateTimeHandler.changeDate(start, end)
+    }
+
+    override fun showTicket(ticket: String) {
+        viewTextFieldTicket.text = ticket
+    }
+
+    override fun showComment(comment: String) {
+        viewTextComment.text = comment
+    }
+
+    override fun showHint1(hint: String) {
+        viewLabelHint.text = hint
+    }
+
+    override fun showHint2(hint: String) {
+        viewLabelHint2.text = hint
+    }
+
+    override fun enableInput() {
+        viewTextFieldTicket.isEditable = true
+        viewTextComment.isEditable = true
+        uiBridgeDateTimeHandler.enable()
+        uiBridgeTimeQuickEdit.enable()
+    }
+
+    override fun disableInput() {
+        viewTextFieldTicket.isEditable = false
+        viewTextComment.isEditable = false
+        uiBridgeDateTimeHandler.disable()
+        uiBridgeTimeQuickEdit.disable()
+    }
+
+    override fun enableSaving() {
+        viewButtonSave.isDisable = false
+    }
+
+    override fun disableSaving() {
+        viewButtonSave.isDisable = true
     }
 
     @Subscribe

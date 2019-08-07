@@ -8,6 +8,7 @@ import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.validators.TimeChangeValidator
 import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.ui.UIBridge
+import org.joda.time.DateTime
 
 /**
  * Represents controls to quickly edit time
@@ -21,7 +22,7 @@ class UIBridgeTimeQuickEdit(
         private val jfxTimeFrom: JFXTimePicker,
         private val jfxDateTo: JFXDatePicker,
         private val jfxTimeTo: JFXTimePicker,
-        private val logEditService: LogEditService,
+        private val dateTimeUpdater: DateTimeUpdater,
         private val timeProvider: TimeProvider
 ) : UIBridge {
 
@@ -41,8 +42,7 @@ class UIBridgeTimeQuickEdit(
                     TimeGap.from(dateTimeStart, dateTimeEnd),
                     minutes = 1
             )
-            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
-            logEditService.redraw()
+            dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
         }
         jfxAppendFrom.setOnAction {
             val dateTimeStart = timeProvider.toJodaDateTime(
@@ -57,8 +57,7 @@ class UIBridgeTimeQuickEdit(
                     TimeGap.from(dateTimeStart, dateTimeEnd),
                     minutes = 1
             )
-            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
-            logEditService.redraw()
+            dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
         }
         jfxSubtractTo.setOnAction {
             val dateTimeStart = timeProvider.toJodaDateTime(
@@ -73,8 +72,7 @@ class UIBridgeTimeQuickEdit(
                     TimeGap.from(dateTimeStart, dateTimeEnd),
                     minutes = 1
             )
-            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
-            logEditService.redraw()
+            dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
         }
         jfxAppendTo.setOnAction {
             val dateTimeStart = timeProvider.toJodaDateTime(
@@ -89,8 +87,7 @@ class UIBridgeTimeQuickEdit(
                     TimeGap.from(dateTimeStart, dateTimeEnd),
                     minutes = 1
             )
-            logEditService.updateDateTime(newTimeGap.start, newTimeGap.end)
-            logEditService.redraw()
+            dateTimeUpdater.updateDateTime(newTimeGap.start, newTimeGap.end)
         }
     }
 
@@ -106,6 +103,10 @@ class UIBridgeTimeQuickEdit(
         jfxAppendFrom.isDisable = true
         jfxSubtractTo.isDisable = true
         jfxAppendTo.isDisable = true
+    }
+
+    interface DateTimeUpdater {
+        fun updateDateTime(start: DateTime, end: DateTime)
     }
 
 }

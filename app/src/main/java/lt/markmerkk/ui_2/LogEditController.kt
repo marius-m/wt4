@@ -132,7 +132,11 @@ class LogEditController : Initializable, LogEditService.Listener {
                 jfxTimeFrom,
                 jfxDateTo,
                 jfxTimeTo,
-                logEditService,
+                object : UIBridgeTimeQuickEdit.DateTimeUpdater {
+                    override fun updateDateTime(start: DateTime, end: DateTime) {
+                        logEditService.updateDateTime(start, end)
+                    }
+                },
                 timeProvider
         )
         uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
@@ -141,8 +145,11 @@ class LogEditController : Initializable, LogEditService.Listener {
                 jfxDateTo = jfxDateTo,
                 jfxTimeTo = jfxTimeTo,
                 timeProvider = timeProvider,
-                clockEditPresenter = null,
-                logEditService = logEditService
+                dateTimeUpdater = object : UIBridgeDateTimeHandler.DateTimeUpdater {
+                    override fun updateDateTime(start: DateTime, end: DateTime) {
+                        logEditService.updateDateTime(start, end)
+                    }
+                }
         )
         val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
         if (entity != null) {
