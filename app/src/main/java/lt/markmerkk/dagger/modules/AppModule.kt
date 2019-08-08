@@ -135,11 +135,13 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesDatabaseRepo(): TicketsDatabaseRepo {
+    fun providesDatabaseRepo(
+            config: Config
+    ): TicketsDatabaseRepo {
         val migrations = listOf(
-                Migration0To1(oldDatabase = DBConnProvider("wt4_1.db"))
+                Migration0To1(oldDatabase = DBConnProvider(databaseName = "wt4_1.db", databasePath = config.cfgPath))
         )
-        val database = DBConnProvider("wt4_2.db")
+        val database = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
         return TicketsDatabaseRepo(database, migrations)
     }
 
