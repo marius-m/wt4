@@ -14,7 +14,6 @@ import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
-import lt.markmerkk.Main
 import lt.markmerkk.Strings
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.events.DialogType
@@ -24,7 +23,6 @@ import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ProfilesDialog
 import lt.markmerkk.ui_2.SettingsDialog
 import lt.markmerkk.ui_2.StatisticsDialog
-import lt.markmerkk.ui_2.TicketsDialog
 
 /**
  * Represents settings button, its graphics, animations

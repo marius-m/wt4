@@ -388,6 +388,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
             viewDatePickerTo.isDisable = true
             viewTimePickerTo.isDisable = true
         }
+        ticketInfoLoader.changeInputCode(initTicket)
     }
 
     override fun showDateTime(start: DateTime, end: DateTime) {

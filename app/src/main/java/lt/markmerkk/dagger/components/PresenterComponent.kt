@@ -35,8 +35,6 @@ interface PresenterComponent {
 
     fun inject(profilesController: ProfilesController)
 
-    fun inject(ticketsController: TicketsController)
-
     fun inject(ticketSplitController: TicketSplitController)
 
     fun inject(ticketMergeController: TicketMergeController)
