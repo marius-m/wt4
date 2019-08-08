@@ -33,13 +33,7 @@ class TicketWidget: View(), TicketContract.View {
     private lateinit var viewProgress: TicketProgressWidget
     private lateinit var viewTable: TableView<TicketViewModel>
 
-    private val presenter: TicketContract.Presenter = TicketPresenter(
-            ticketsDatabaseRepo,
-            ticketsNetworkRepo,
-            timeProvider,
-            userSettings,
-            schedulerProvider
-    )
+    private lateinit var presenter: TicketContract.Presenter
     private val ticketViewModels = mutableListOf<TicketViewModel>()
             .observable()
 
@@ -68,7 +62,7 @@ class TicketWidget: View(), TicketContract.View {
                     }
                     viewProgress.viewButtonRefresh.setOnAction {
                         logger.debug("Trigger fetching ")
-                        presenter.fetchTickets()
+                        presenter.fetchTickets(forceFetch = true)
                     }
                     add(viewProgress)
                 }
@@ -106,7 +100,15 @@ class TicketWidget: View(), TicketContract.View {
 
     override fun onDock() {
         super.onDock()
+        presenter = TicketPresenter(
+                ticketsDatabaseRepo,
+                ticketsNetworkRepo,
+                timeProvider,
+                userSettings,
+                schedulerProvider
+        )
         presenter.onAttach(this)
+        presenter.fetchTickets(forceFetch = false)
         presenter.loadTickets()
     }
 

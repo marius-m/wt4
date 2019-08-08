@@ -53,8 +53,8 @@ class TicketPresenter(
         this.view = null
     }
 
-    override fun fetchTickets() {
-        ticketsLoader.fetchTickets(true)
+    override fun fetchTickets(forceFetch: Boolean) {
+        ticketsLoader.fetchTickets(forceFetch)
     }
 
     override fun stopFetch() {

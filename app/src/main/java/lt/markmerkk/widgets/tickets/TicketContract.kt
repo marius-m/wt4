@@ -9,7 +9,7 @@ interface TicketContract {
     interface Presenter {
         fun onAttach(view: View)
         fun onDetach()
-        fun fetchTickets()
+        fun fetchTickets(forceFetch: Boolean)
         fun stopFetch()
         fun loadTickets()
         fun applyFilter(filter: String)
