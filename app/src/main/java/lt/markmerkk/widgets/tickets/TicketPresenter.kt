@@ -61,12 +61,27 @@ class TicketPresenter(
         ticketsLoader.stopFetch()
     }
 
-    override fun loadTickets() {
-        ticketsLoader.loadTickets()
+    override fun loadTickets(filter: String) {
+        ticketsLoader.loadTickets(filter)
+        handleClearVisibility(filter)
     }
 
-    override fun applyFilter(filter: String) {
+    override fun changeFilter(filter: String) {
         ticketsLoader.applyFilter(filter)
+        handleClearVisibility(filter)
+    }
+
+    override fun clearFilter() {
+        ticketsLoader.loadTickets()
+        handleClearVisibility("")
+    }
+
+    private fun handleClearVisibility(filter: String) {
+        if (filter.isNotEmpty()) {
+            view?.showInputClear()
+        } else {
+            view?.hideInputClear()
+        }
     }
 
 }

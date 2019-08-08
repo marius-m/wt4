@@ -1,11 +1,13 @@
 package lt.markmerkk.widgets.tickets
 
+import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.TableView
 import javafx.scene.layout.Priority
+import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.tickets.TicketsNetworkRepo
@@ -32,6 +34,7 @@ class TicketWidget: View(), TicketContract.View {
     private lateinit var viewTextFieldTicketSearch: JFXTextField
     private lateinit var viewProgress: TicketProgressWidget
     private lateinit var viewTable: TableView<TicketViewModel>
+    private lateinit var viewButtonClear: JFXButton
 
     private lateinit var presenter: TicketContract.Presenter
     private val ticketViewModels = mutableListOf<TicketViewModel>()
@@ -53,7 +56,11 @@ class TicketWidget: View(), TicketContract.View {
                         focusColor = Styles.cActiveRed
                         isLabelFloat = true
                         promptText = "Search ticket by ID / Summary"
-                        textProperty().addListener { _, _, newValue -> presenter.applyFilter(newValue) }
+                        textProperty().addListener { _, _, newValue -> presenter.changeFilter(newValue) }
+                    }
+                    viewButtonClear = jfxButton {
+                        graphic = graphics.from(Glyph.CLEAR, Color.BLACK, 12.0)
+                        setOnAction { presenter.clearFilter() }
                     }
                     viewProgress = find<TicketProgressWidget>()
                     viewProgress.viewButtonStop.setOnAction {
@@ -109,7 +116,9 @@ class TicketWidget: View(), TicketContract.View {
         )
         presenter.onAttach(this)
         presenter.fetchTickets(forceFetch = false)
-        presenter.loadTickets()
+        presenter.loadTickets(viewTextFieldTicketSearch.text)
+        viewTextFieldTicketSearch.requestFocus()
+        viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
     }
 
     override fun onUndock() {
@@ -128,6 +137,14 @@ class TicketWidget: View(), TicketContract.View {
 
     override fun hideProgress() {
         viewProgress.changeProgressInactive()
+    }
+
+    override fun showInputClear() {
+        viewButtonClear.show()
+    }
+
+    override fun hideInputClear() {
+        viewButtonClear.hide()
     }
 
     companion object {
