@@ -3,9 +3,9 @@ buildscript {
     ext.kotlin_test_version = '1.4.0'
 
 
-    ext.versionName = "1.1.3_EAP"
-    ext.versionCode = "32"
-    ext.debug = true
+    ext.versionName = "1.2.0_EAP"
+    ext.versionCode = "33"
+    ext.debug = false
     ext.gaKey = "test"
 
     // Release properties
