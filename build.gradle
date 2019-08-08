@@ -3,8 +3,8 @@ buildscript {
     ext.kotlin_test_version = '1.4.0'
 
 
-    ext.versionName = "1.2.0"
-    ext.versionCode = "34"
+    ext.versionName = "1.2.1"
+    ext.versionCode = "35"
     ext.debug = false
     ext.gaKey = "test"
 
