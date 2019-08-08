@@ -1,6 +1,5 @@
 package lt.markmerkk
 
-import javafx.application.Application
 import javafx.stage.Stage
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.dagger.components.AppComponent
@@ -133,9 +132,5 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
 
         private val logger = LoggerFactory.getLogger(Main::class.java)!!
     }
-
 }
 
-fun main(args: Array<String>) {
-    Application.launch(Main::class.java)
-}

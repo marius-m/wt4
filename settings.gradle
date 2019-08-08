@@ -19,4 +19,4 @@ include ':models'
 include ':components'
 include ':database2'
 include ':mock-factory'
-
+include ':package'

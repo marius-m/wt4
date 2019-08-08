@@ -26,7 +26,7 @@ deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
 jfx {
     verbose = true
 //    mainClass = "com.threerings.getdown.launcher.GetdownApp"
-    mainClass = "lt.markmerkk.Main2"
+    mainClass = "lt.markmerkk.MainAsJava"
     jfxAppOutputDir = "build/libs"
     jfxMainAppJarName = "app.jar"
     deployDir = "src/main/deploy"
