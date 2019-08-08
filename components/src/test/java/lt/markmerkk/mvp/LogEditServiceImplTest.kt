@@ -38,7 +38,7 @@ class LogEditServiceImplTest {
         service.redraw()
 
         // Assert
-        verify(listener).onDataChange(any(), any(), any(), any())
+        verify(listener).onDataChange(any(), any())
         verify(listener).onDurationChange(eq("30m"))
         verify(listener).onGenericNotification(eq(""))
         verify(listener).onEnableInput() // Update time triggers it further

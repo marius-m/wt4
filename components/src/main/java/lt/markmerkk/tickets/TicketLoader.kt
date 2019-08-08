@@ -125,6 +125,16 @@ class TicketLoader(
         const val FILTER_INPUT_THROTTLE_MILLIS = 500L
 
         /**
+         * @return unique project codes in tickets
+         */
+        fun filterProjectCodes(tickets: List<Ticket>): List<String> {
+            return tickets
+                    .map { it.code.codeProject }
+                    .toSet()
+                    .toList()
+        }
+
+        /**
          * Checks if timeout has expired to fetch new tickets from
          * the network
          */
@@ -141,20 +151,13 @@ class TicketLoader(
             if (searchInput.length <= FILTER_MIN_INPUT) {
                 return inputTickets
             }
-            val ticketDescriptions = inputTickets.map { it.description }
+            val ticketDescriptions = inputTickets
+                    .map { "${it.code.code} ${it.description}" }
             val topDescriptions = FuzzySearch.extractTop(searchInput, ticketDescriptions, 100)
                     .filter { it.score > FILTER_FUZZY_SCORE }
                     .map { it.string }
-            val ticketsWithSimilarCode = inputTickets
-                    .filter {
-                        it.code.codeProject.contains(searchInput, ignoreCase = true)
-                                || it.code.codeNumber.contains(searchInput)
-                                || it.code.code.contains(searchInput, ignoreCase = true)
-                    }
-            val ticketsWithFilterOnDescriptions = inputTickets.filter { topDescriptions.contains(it.description) }
-            val ticketResult = ticketsWithSimilarCode
-                    .plus(ticketsWithFilterOnDescriptions)
-            return ticketResult.distinct()
+            return inputTickets
+                    .filter { topDescriptions.contains("${it.code.code} ${it.description}") }
         }
     }
 
