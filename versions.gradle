@@ -5,6 +5,7 @@ ext {
             dagger    : "2.6",
             junit     : "4.12",
             slf4j     : "1.7.12",
+            log4j     : "2.9.0",
             jodaTime  : "2.9.1",
             rxJava  : "1.3.6",
             rxJavaAsync  : "0.21.0", // should deprecate this

@@ -9,10 +9,6 @@ import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.MainWidget
-import org.apache.log4j.PatternLayout
-import org.apache.log4j.Priority
-import org.apache.log4j.PropertyConfigurator
-import org.apache.log4j.RollingFileAppender
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -38,7 +34,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
                 .appModule(AppModule(this, StageProperties(stage)))
                 .build()
         appComponent.inject(this)
-        initLoggerSettings()
 
         DEBUG = appConfig.debug
         Translation.getInstance() // Initializing translations on first launch
@@ -93,35 +88,7 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
         }
     }
 
-    //region Convenience
-
-    private fun initLoggerSettings() {
-        PropertyConfigurator.configure(javaClass.getResource("/custom_log4j.properties"))
-        val fileAppenderProd = RollingFileAppender(PatternLayout(LOG_LAYOUT_PROD), appConfig.cfgPath + "info_prod.log", true)
-        fileAppenderProd.setMaxFileSize("100KB")
-        fileAppenderProd.maxBackupIndex = 0
-        fileAppenderProd.threshold = Priority.INFO
-        org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderProd)
-
-        val fileAppenderDebug = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), appConfig.cfgPath + "info.log", true)
-        fileAppenderDebug.setMaxFileSize("1MB")
-        fileAppenderDebug.maxBackupIndex = 0
-        fileAppenderDebug.threshold = Priority.INFO
-        org.apache.log4j.Logger.getRootLogger().addAppender(fileAppenderDebug)
-
-        val errorAppender = RollingFileAppender(PatternLayout(LOG_LAYOUT_DEBUG), appConfig.cfgPath + "debug.log", true)
-        errorAppender.setMaxFileSize("1MB")
-        errorAppender.maxBackupIndex = 0
-        errorAppender.threshold = Priority.toPriority(Priority.ALL_INT)
-        org.apache.log4j.Logger.getRootLogger().addAppender(errorAppender)
-    }
-
-    //endregion
-
     companion object {
-        const val LOG_LAYOUT_DEBUG = "%t / %d{dd-MMM-yyyy HH:mm:ss} %5p %c{1}:%L - %m%n"
-        const val LOG_LAYOUT_PROD = "%d{dd-MMM-yyyy HH:mm:ss} %m%n"
-
         var DEBUG = false
 
         var SCENE_WIDTH = 600
