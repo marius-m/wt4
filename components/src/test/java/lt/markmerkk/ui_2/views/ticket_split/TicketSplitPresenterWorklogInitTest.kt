@@ -4,10 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Mocks
-import lt.markmerkk.Strings
-import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.utils.LogSplitter
 import org.junit.Before
@@ -20,6 +17,7 @@ class TicketSplitPresenterWorklogInitTest {
     @Mock lateinit var inputLog: SimpleLog
     @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var strings: Strings
+    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
     lateinit var presenter: TicketSplitPresenter
     private val timeProvider = TimeProviderTest()
 
@@ -31,7 +29,9 @@ class TicketSplitPresenterWorklogInitTest {
                 timeProvider,
                 logStorage,
                 LogSplitter,
-                strings
+                strings,
+                ticketsDatabaseRepo,
+                SchedulerProviderImmediate()
         )
         doReturn("valid_string").whenever(strings).getString(any())
         presenter.onAttach(view)

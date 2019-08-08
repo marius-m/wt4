@@ -46,9 +46,7 @@ interface LogEditService {
          */
         fun onDataChange(
                 start: DateTime,
-                end: DateTime,
-                ticket: String,
-                comment: String
+                end: DateTime
         )
 
         /**

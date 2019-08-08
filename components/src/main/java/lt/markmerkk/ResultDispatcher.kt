@@ -32,4 +32,19 @@ class ResultDispatcher {
         return null
     }
 
+    /**
+     * Consumes result entity by the [key]
+     * Will return [defaultValue] if not found
+     */
+    fun consumeBoolean(key: String, defaultValue: Boolean = false): Boolean {
+        if (resultEntities.containsKey(key)) {
+            val valueAsBoolean = resultEntities[key]
+            resultEntities.remove(key)
+            if (valueAsBoolean != null && valueAsBoolean is Boolean) {
+                return valueAsBoolean
+            }
+        }
+        return defaultValue
+    }
+
 }

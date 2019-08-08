@@ -6,7 +6,6 @@ import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.IndexRange
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyCode
@@ -17,11 +16,13 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
+import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -37,6 +38,8 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var activeLogPersistence: ActiveLogPersistence
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXDatePicker
@@ -167,6 +170,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             unFocusColor = Color.BLACK
                             textProperty().addListener { _, _, newValue ->
                                 ticketInfoLoader.changeInputCode(newValue)
+                                presenter.changeTicketCode(newValue)
                             }
                         }
                         viewTextTicketDesc = label {
@@ -209,6 +213,9 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             isLabelFloat = true
                             promptText = "Comment"
                             prefRowCount = 5
+                            textProperty().addListener { _, _, newValue ->
+                                presenter.changeComment(newValue)
+                            }
                         }
                     }
                     hbox(alignment = Pos.CENTER) {
@@ -251,43 +258,42 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
 
     override fun onDock() {
         super.onDock()
+        val isActiveClock = resultDispatcher.consumeBoolean(RESULT_DISPATCH_KEY_ACTIVE_CLOCK, false)
         val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
         presenter = if (entity != null) {
-            if (entity.canEdit()) {
-                LogDetailsPresenterUpdate(
+            when  {
+                entity.canEdit() -> LogDetailsPresenterUpdate(
                         entity,
                         logStorage,
-                        hostServicesInteractor,
                         eventBus,
                         graphics,
-                        ticketsDatabaseRepo,
-                        resultDispatcher,
-                        schedulerProvider,
                         timeProvider
                 )
-            } else {
-                LogDetailsPresenterReadOnly(
+                else -> LogDetailsPresenterReadOnly(
                         entity,
                         logStorage,
                         eventBus,
                         graphics,
-                        ticketsDatabaseRepo,
-                        resultDispatcher,
-                        schedulerProvider,
                         timeProvider
                 )
             }
         } else {
-            LogDetailsPresenterCreate(
-                    logStorage,
-                    hostServicesInteractor,
-                    eventBus,
-                    graphics,
-                    ticketsDatabaseRepo,
-                    resultDispatcher,
-                    schedulerProvider,
-                    timeProvider
-            )
+            when  {
+                isActiveClock -> LogDetailsPresenterUpdateActiveClock(
+                        logStorage,
+                        eventBus,
+                        graphics,
+                        timeProvider,
+                        hourGlass,
+                        activeLogPersistence
+                )
+                else -> LogDetailsPresenterCreate(
+                        logStorage,
+                        eventBus,
+                        graphics,
+                        timeProvider
+                )
+            }
         }
         ticketInfoLoader = TicketInfoLoader(
                 listener = object : TicketInfoLoader.Listener {
@@ -355,12 +361,16 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
             glyphButtonSave: SVGGlyph,
             initDateTimeStart: DateTime,
             initDateTimeEnd: DateTime,
+            initTicket: String,
+            initComment: String,
             enableFindTickets: Boolean,
             enableDateTimeChange: Boolean
     ) {
         viewLabelHeader.text = labelHeader
         viewButtonSave.text = labelButtonSave.toUpperCase()
         viewButtonSave.graphic = glyphButtonSave
+        viewTextFieldTicket.text = initTicket
+        viewTextComment.text = initComment
         uiBridgeDateTimeHandler.changeDate(initDateTimeStart, initDateTimeEnd)
         if (enableFindTickets) {
             viewButtonSearch.show()
@@ -384,7 +394,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
         uiBridgeDateTimeHandler.changeDate(start, end)
     }
 
-    override fun showTicket(ticket: String) {
+    override fun showTicketCode(ticket: String) {
         viewTextFieldTicket.text = ticket
     }
 
@@ -428,7 +438,8 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
     }
 
     companion object {
-        const val RESULT_DISPATCH_KEY_ENTITY = "VEggqIVId1"
+        const val RESULT_DISPATCH_KEY_ENTITY = "732b4810-2a44-4aee-b63d-da8252e1f1a0"
+        const val RESULT_DISPATCH_KEY_ACTIVE_CLOCK = "78c9df52-c092-4e87-aaad-67c9b3b43977"
         private val logger = LoggerFactory.getLogger(LogDetailsWidget::class.java)!!
     }
 

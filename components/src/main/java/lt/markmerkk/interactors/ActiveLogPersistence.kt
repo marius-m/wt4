@@ -14,18 +14,10 @@ class ActiveLogPersistence(
         private var timeProvider: TimeProvider
 ) {
 
-    private var start: DateTime = timeProvider.now()
-    private var end: DateTime = timeProvider.now()
     var ticketCode: TicketCode = TicketCode.asEmpty()
         private set
     var comment: String = ""
         private set
-
-    // todo: Does not provide persistence for time changes
-//    fun changeDateTime(start: DateTime, end: DateTime) {
-//        this.start = start
-//        this.end = end
-//    }
 
     fun changeTicketCode(ticketCode: String) {
         this.ticketCode = TicketCode.new(ticketCode)
@@ -36,8 +28,6 @@ class ActiveLogPersistence(
     }
 
     fun reset() {
-        this.start = timeProvider.now()
-        this.end = timeProvider.now()
         this.ticketCode = TicketCode.asEmpty()
         this.comment = ""
     }

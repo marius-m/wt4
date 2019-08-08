@@ -192,13 +192,9 @@ class LogEditController : Initializable, LogEditService.Listener {
 
     override fun onDataChange(
             start: DateTime,
-            end: DateTime,
-            ticket: String,
-            comment: String
+            end: DateTime
     ) {
         uiBridgeDateTimeHandler.changeDate(start, end)
-        jfxTextFieldTicket.text = ticket
-        jfxTextFieldComment.text = comment
     }
 
     override fun onDurationChange(durationAsString: String) {

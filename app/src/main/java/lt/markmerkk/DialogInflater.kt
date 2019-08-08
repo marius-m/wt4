@@ -17,6 +17,7 @@ import tornadofx.*
  * Responsible for initializing dialogs
  * Lifecycle: [onAttach], [onDetach]
  */
+@Deprecated("Not used any more")
 class DialogInflater(
         private val externalSourceNode: ExternalSourceNode<StackPane>,
         private val eventBus: EventBus

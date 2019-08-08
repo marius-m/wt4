@@ -11,12 +11,14 @@ interface LogDetailsContract {
                 glyphButtonSave: SVGGlyph,
                 initDateTimeStart: DateTime,
                 initDateTimeEnd: DateTime,
+                initTicket: String,
+                initComment: String,
                 enableFindTickets: Boolean,
                 enableDateTimeChange: Boolean
         )
         fun close()
         fun showDateTime(start: DateTime, end: DateTime)
-        fun showTicket(ticket: String)
+        fun showTicketCode(ticket: String)
         fun showComment(comment: String)
         fun showHint1(hint: String)
         fun showHint2(hint: String)
@@ -36,5 +38,7 @@ interface LogDetailsContract {
         )
         fun changeDateTime(start: DateTime, end: DateTime)
         fun openFindTickets()
+        fun changeTicketCode(ticket: String)
+        fun changeComment(comment: String)
     }
 }

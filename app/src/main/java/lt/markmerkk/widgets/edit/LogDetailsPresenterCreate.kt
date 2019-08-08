@@ -7,7 +7,6 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
@@ -15,12 +14,8 @@ import org.joda.time.DateTime
 
 class LogDetailsPresenterCreate(
         private val logStorage: LogStorage,
-        private val hostServices: HostServicesInteractor,
         private val eventBus: EventBus,
         private val graphics: Graphics<SVGGlyph>,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
-        private val resultDispatcher: ResultDispatcher,
-        private val schedulerProvider: SchedulerProvider,
         private val timeProvider: TimeProvider
 ): LogDetailsContract.Presenter {
 
@@ -31,13 +26,9 @@ class LogDetailsPresenterCreate(
             listener = object : LogEditService.Listener {
                 override fun onDataChange(
                         start: DateTime,
-                        end: DateTime,
-                        ticket: String,
-                        comment: String
+                        end: DateTime
                 ) {
                     view?.showDateTime(start, end)
-                    view?.showTicket(ticket)
-                    view?.showComment(comment)
                 }
 
                 override fun onDurationChange(durationAsString: String) {
@@ -91,6 +82,8 @@ class LogDetailsPresenterCreate(
                 glyphButtonSave = graphics.from(Glyph.NEW, Color.BLACK, 12.0),
                 initDateTimeStart = now,
                 initDateTimeEnd = now,
+                initTicket = "",
+                initComment = "",
                 enableFindTickets = true,
                 enableDateTimeChange = true
         )
@@ -113,5 +106,9 @@ class LogDetailsPresenterCreate(
     override fun openFindTickets() {
         eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
     }
+
+    override fun changeTicketCode(ticket: String) { }
+
+    override fun changeComment(comment: String) { }
 
 }

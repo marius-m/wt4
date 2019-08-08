@@ -7,7 +7,6 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
@@ -16,12 +15,8 @@ import org.joda.time.DateTime
 class LogDetailsPresenterUpdate(
         private val entityInEdit: SimpleLog,
         private val logStorage: LogStorage,
-        private val hostServices: HostServicesInteractor,
         private val eventBus: EventBus,
         private val graphics: Graphics<SVGGlyph>,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
-        private val resultDispatcher: ResultDispatcher,
-        private val schedulerProvider: SchedulerProvider,
         private val timeProvider: TimeProvider
 ): LogDetailsContract.Presenter {
 
@@ -32,13 +27,9 @@ class LogDetailsPresenterUpdate(
             listener = object : LogEditService.Listener {
                 override fun onDataChange(
                         start: DateTime,
-                        end: DateTime,
-                        ticket: String,
-                        comment: String
+                        end: DateTime
                 ) {
                     view?.showDateTime(start, end)
-                    view?.showTicket(ticket)
-                    view?.showComment(comment)
                 }
 
                 override fun onDurationChange(durationAsString: String) {
@@ -86,6 +77,8 @@ class LogDetailsPresenterUpdate(
                 glyphButtonSave = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0),
                 initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
                 initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
+                initTicket = entityInEdit.task,
+                initComment = entityInEdit.comment,
                 enableFindTickets = true,
                 enableDateTimeChange = true
         )
@@ -108,5 +101,9 @@ class LogDetailsPresenterUpdate(
     override fun openFindTickets() {
         eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
     }
+
+    override fun changeTicketCode(ticket: String) { }
+
+    override fun changeComment(comment: String) { }
 
 }

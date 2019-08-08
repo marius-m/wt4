@@ -270,7 +270,14 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
         when (event.type) {
-            DialogType.ACTIVE_CLOCK -> openDialog(ClockEditDialog())
+            DialogType.ACTIVE_CLOCK -> {
+                find<LogDetailsWidget>().openModal(
+                        stageStyle = StageStyle.UTILITY,
+                        modality = Modality.APPLICATION_MODAL,
+                        block = false,
+                        resizable = true
+                )
+            }
             DialogType.LOG_EDIT -> {
                 find<LogDetailsWidget>().openModal(
                         stageStyle = StageStyle.UTILITY,

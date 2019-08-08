@@ -13,6 +13,7 @@ import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.widgets.edit.LogDetailsWidget
 import tornadofx.*
 import javax.inject.Inject
 
@@ -23,6 +24,7 @@ class ClockWidget: View(), ClockContract.View {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var resultDispatcher: ResultDispatcher
 
     private lateinit var jfxButtonClock: JFXButton
     private lateinit var jfxButtonClockSettings: JFXButton
@@ -48,6 +50,7 @@ class ClockWidget: View(), ClockContract.View {
                 addClass(Styles.buttonMenuMini)
                 graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
                 setOnAction {
+                    resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
                     eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
                 }
             }

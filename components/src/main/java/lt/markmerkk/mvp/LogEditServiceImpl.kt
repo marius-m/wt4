@@ -64,12 +64,7 @@ class LogEditServiceImpl(
     override fun redraw() {
         val start = timeProvider.roundDateTime(entityInEdit.start)
         val end = timeProvider.roundDateTime(entityInEdit.end)
-        listener.onDataChange(
-                start,
-                end,
-                entityInEdit.task ?: "",
-                entityInEdit.comment ?: ""
-        )
+        listener.onDataChange(start, end)
         updateDateTime(start, end)
         printNotificationIfNeeded(entityInEdit)
     }

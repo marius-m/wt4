@@ -30,6 +30,7 @@ import java.util.*
 import javax.annotation.PreDestroy
 import javax.inject.Inject
 
+@Deprecated("Replacted with LogDetailsWidget")
 class ClockEditController : Initializable, ClockEditMVP.View {
 
     @FXML lateinit var jfxDialog: JFXDialog
@@ -84,9 +85,7 @@ class ClockEditController : Initializable, ClockEditMVP.View {
                 object : LogEditService.Listener {
                     override fun onDataChange(
                             start: DateTime,
-                            end: DateTime,
-                            ticket: String,
-                            comment: String
+                            end: DateTime
                     ) {
                         uiBridgeDateTimeHandler.changeDate(start, end)
                     }
