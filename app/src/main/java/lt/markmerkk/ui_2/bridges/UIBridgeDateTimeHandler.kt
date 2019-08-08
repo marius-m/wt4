@@ -5,8 +5,6 @@ import com.jfoenix.controls.JFXTimePicker
 import javafx.beans.value.ChangeListener
 import javafx.util.StringConverter
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.mvp.ClockEditMVP
-import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.ui.UILifecycleBridge
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.validators.TimeChangeValidator

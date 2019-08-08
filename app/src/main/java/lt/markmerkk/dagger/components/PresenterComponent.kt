@@ -25,11 +25,7 @@ interface PresenterComponent {
 
     fun inject(dialog: DisplaySelectDialogController)
 
-    fun inject(dialog: LogEditController)
-
     fun inject(dialog: CurrentDayDialogController)
-
-    fun inject(dialog: ClockEditController)
 
     fun inject(dialog: StatisticsController)
 

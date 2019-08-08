@@ -11,7 +11,6 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
-import lt.markmerkk.ui_2.ClockEditDialog
 import lt.markmerkk.ui_2.DisplaySelectDialog
 
 /**
