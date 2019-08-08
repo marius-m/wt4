@@ -4,8 +4,9 @@ import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
 import lt.markmerkk.*
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
@@ -89,7 +90,9 @@ class LogDetailsPresenterCreate(
                 labelButtonSave = "Create",
                 glyphButtonSave = graphics.from(Glyph.NEW, Color.BLACK, 12.0),
                 initDateTimeStart = now,
-                initDateTimeEnd = now
+                initDateTimeEnd = now,
+                enableFindTickets = true,
+                enableDateTimeChange = true
         )
         logEditService.redraw()
     }
@@ -105,6 +108,10 @@ class LogDetailsPresenterCreate(
     override fun changeDateTime(start: DateTime, end: DateTime) {
         logEditService.updateDateTime(start, end)
         logEditService.redraw()
+    }
+
+    override fun openFindTickets() {
+        eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
     }
 
 }

@@ -6,15 +6,15 @@ import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.IndexRange
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -68,19 +68,19 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
 
     override val root: Parent = stackpane {
         setOnKeyPressed { keyEvent ->
-//            if (!logEditService.canEdit()) {
-//                logger.debug("Cannot edit service")
-//            } else {
-//                if ((keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
-//                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown)) {
-//                    logEditService.saveEntity(
-//                            start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-//                            end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-//                            task = viewTextFieldTicket.text,
-//                            comment = viewTextComment.text
-//                    )
-//                }
-//            }
+            if ((keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
+                    || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown)) {
+                presenter.save(
+                        start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+                        end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+                        task = viewTextFieldTicket.text,
+                        comment = viewTextComment.text
+                )
+            }
+            if ((keyEvent.code == KeyCode.SLASH && keyEvent.isMetaDown)
+                    || (keyEvent.code == KeyCode.SLASH && keyEvent.isControlDown)) {
+                presenter.openFindTickets()
+            }
         }
         borderpane {
             addClass(Styles.dialogContainer)
@@ -187,7 +187,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
                             setOnAction {
-                                eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
+                                presenter.openFindTickets()
                             }
                         }
                     }
@@ -253,17 +253,30 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
         super.onDock()
         val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
         presenter = if (entity != null) {
-            LogDetailsPresenterUpdate(
-                    entity,
-                    logStorage,
-                    hostServicesInteractor,
-                    eventBus,
-                    graphics,
-                    ticketsDatabaseRepo,
-                    resultDispatcher,
-                    schedulerProvider,
-                    timeProvider
-            )
+            if (entity.canEdit()) {
+                LogDetailsPresenterUpdate(
+                        entity,
+                        logStorage,
+                        hostServicesInteractor,
+                        eventBus,
+                        graphics,
+                        ticketsDatabaseRepo,
+                        resultDispatcher,
+                        schedulerProvider,
+                        timeProvider
+                )
+            } else {
+                LogDetailsPresenterReadOnly(
+                        entity,
+                        logStorage,
+                        eventBus,
+                        graphics,
+                        ticketsDatabaseRepo,
+                        resultDispatcher,
+                        schedulerProvider,
+                        timeProvider
+                )
+            }
         } else {
             LogDetailsPresenterCreate(
                     logStorage,
@@ -325,6 +338,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
         eventBus.register(this)
         ticketInfoLoader.onAttach()
         viewTextComment.requestFocus()
+        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     override fun onUndock() {
@@ -340,12 +354,30 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
             labelButtonSave: String,
             glyphButtonSave: SVGGlyph,
             initDateTimeStart: DateTime,
-            initDateTimeEnd: DateTime
+            initDateTimeEnd: DateTime,
+            enableFindTickets: Boolean,
+            enableDateTimeChange: Boolean
     ) {
         viewLabelHeader.text = labelHeader
         viewButtonSave.text = labelButtonSave.toUpperCase()
         viewButtonSave.graphic = glyphButtonSave
         uiBridgeDateTimeHandler.changeDate(initDateTimeStart, initDateTimeEnd)
+        if (enableFindTickets) {
+            viewButtonSearch.show()
+        } else {
+            viewButtonSearch.hide()
+        }
+        if (enableDateTimeChange) {
+            viewDatePickerFrom.isDisable = false
+            viewTimePickerFrom.isDisable = false
+            viewDatePickerTo.isDisable = false
+            viewTimePickerTo.isDisable = false
+        } else {
+            viewDatePickerFrom.isDisable = true
+            viewTimePickerFrom.isDisable = true
+            viewDatePickerTo.isDisable = true
+            viewTimePickerTo.isDisable = true
+        }
     }
 
     override fun showDateTime(start: DateTime, end: DateTime) {

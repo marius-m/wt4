@@ -272,13 +272,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         when (event.type) {
             DialogType.ACTIVE_CLOCK -> openDialog(ClockEditDialog())
             DialogType.LOG_EDIT -> {
-//                openDialog(LogEditDialog())
-//                openInternalWindow(
-//                        view = find<LogDetailsWidget>(),
-//                        modal = true,
-//                        closeButton = true,
-//                        escapeClosesWindow = true
-//                )
                 find<LogDetailsWidget>().openModal(
                         stageStyle = StageStyle.UTILITY,
                         modality = Modality.APPLICATION_MODAL,
@@ -290,7 +283,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 find<TicketWidget>().openModal(
                         stageStyle = StageStyle.UTILITY,
                         modality = Modality.APPLICATION_MODAL,
-                        block = true,
+                        block = false,
                         resizable = true
                 )
             }

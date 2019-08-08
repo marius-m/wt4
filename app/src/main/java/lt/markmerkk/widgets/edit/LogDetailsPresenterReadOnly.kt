@@ -5,18 +5,16 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
 import org.joda.time.DateTime
 
-class LogDetailsPresenterUpdate(
+class LogDetailsPresenterReadOnly(
         private val entityInEdit: SimpleLog,
         private val logStorage: LogStorage,
-        private val hostServices: HostServicesInteractor,
         private val eventBus: EventBus,
         private val graphics: Graphics<SVGGlyph>,
         private val ticketsDatabaseRepo: TicketsDatabaseRepo,
@@ -49,9 +47,7 @@ class LogDetailsPresenterUpdate(
                     view?.showHint2(notification)
                 }
 
-                override fun onEntitySaveComplete() {
-                    view?.close()
-                }
+                override fun onEntitySaveComplete() { }
 
                 override fun onEntitySaveFail(error: Throwable) {
                     val errorMessage = error.message ?: "Error saving entity!"
@@ -59,19 +55,19 @@ class LogDetailsPresenterUpdate(
                 }
 
                 override fun onEnableInput() {
-                    view?.enableInput()
+                    // Always disabled
                 }
 
                 override fun onDisableInput() {
-                    view?.disableInput()
+                    // Always disabled
                 }
 
                 override fun onEnableSaving() {
-                    view?.enableSaving()
+                    // Always disabled
                 }
 
                 override fun onDisableSaving() {
-                    view?.disableSaving()
+                    // Always disabled
                 }
             }
     )
@@ -81,14 +77,16 @@ class LogDetailsPresenterUpdate(
         logEditService.entityInEdit = entityInEdit
         logEditService.serviceType = LogEditService.ServiceType.UPDATE
         view.initView(
-                labelHeader = "Log details (Update)",
+                labelHeader = "Log details (Read-only)",
                 labelButtonSave = "Update",
                 glyphButtonSave = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0),
                 initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
                 initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
-                enableFindTickets = true,
-                enableDateTimeChange = true
+                enableFindTickets = false,
+                enableDateTimeChange = false
         )
+        view.disableInput()
+        view.disableSaving()
         logEditService.redraw()
     }
 
@@ -97,16 +95,15 @@ class LogDetailsPresenterUpdate(
     }
 
     override fun save(start: DateTime, end: DateTime, task: String, comment: String) {
-        logEditService.saveEntity(start, end, task, comment)
+        eventBus.post(EventSnackBarMessage("Ticket in 'Read-only' mode, cannot be updated!"))
     }
 
     override fun changeDateTime(start: DateTime, end: DateTime) {
-        logEditService.updateDateTime(start, end)
         logEditService.redraw()
     }
 
     override fun openFindTickets() {
-        eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
+        eventBus.post(EventSnackBarMessage("Ticket in 'Read-only' mode, cannot be updated!"))
     }
 
 }
