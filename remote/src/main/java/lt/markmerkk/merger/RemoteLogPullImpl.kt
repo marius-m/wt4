@@ -1,6 +1,7 @@
 package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
+import lt.markmerkk.Tags
 import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
@@ -51,7 +52,7 @@ class RemoteLogPullImpl(
     }
 
     companion object {
-        val logger: Logger = LoggerFactory.getLogger("RemoteLogPull2")
+        val logger: Logger = LoggerFactory.getLogger(Tags.JIRA)
     }
 
 }

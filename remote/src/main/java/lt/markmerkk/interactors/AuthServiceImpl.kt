@@ -1,5 +1,6 @@
 package lt.markmerkk.interactors
 
+import lt.markmerkk.Tags
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
@@ -98,7 +99,7 @@ class AuthServiceImpl(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(AuthService::class.java)!!
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

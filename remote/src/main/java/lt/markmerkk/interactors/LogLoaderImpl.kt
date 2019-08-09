@@ -1,5 +1,6 @@
 package lt.markmerkk.interactors
 
+import lt.markmerkk.Tags
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
@@ -54,7 +55,7 @@ class LogLoaderImpl(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(LogLoaderImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

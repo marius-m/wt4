@@ -1,6 +1,7 @@
 package lt.markmerkk.merger
 
 import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.Tags
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.utils.TimeSplit
 import net.rcarz.jiraclient.JiraException
@@ -37,7 +38,7 @@ class RemoteMergeClientImpl(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(RemoteMergeClientImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

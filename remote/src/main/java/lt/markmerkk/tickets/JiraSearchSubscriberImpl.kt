@@ -1,6 +1,7 @@
 package lt.markmerkk.tickets
 
 import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.Tags
 import lt.markmerkk.UserSettings
 import lt.markmerkk.utils.LogFormatters
 import net.rcarz.jiraclient.Issue
@@ -88,7 +89,7 @@ class JiraSearchSubscriberImpl(
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger("JiraSearchJQL")
+        private val logger: Logger = LoggerFactory.getLogger(Tags.JIRA)
     }
 
 }

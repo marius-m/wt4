@@ -62,7 +62,7 @@ class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<
     }
 
     companion object {
-        val logger: Logger = LoggerFactory.getLogger(JiraException::class.java)
+        val logger: Logger = LoggerFactory.getLogger(Tags.JIRA)
     }
 
 }

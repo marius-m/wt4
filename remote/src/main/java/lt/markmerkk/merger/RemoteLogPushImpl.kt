@@ -1,6 +1,7 @@
 package lt.markmerkk.merger
 
 import lt.markmerkk.JiraFilter
+import lt.markmerkk.Tags
 import lt.markmerkk.entities.SimpleLog
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.WorkLog
@@ -37,7 +38,7 @@ class RemoteLogPushImpl(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(RemoteLogPushImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

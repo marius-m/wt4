@@ -1,5 +1,6 @@
 package lt.markmerkk.interactors
 
+import lt.markmerkk.Tags
 import lt.markmerkk.UserSettings
 import lt.markmerkk.utils.LogUtils
 import org.slf4j.LoggerFactory
@@ -35,7 +36,7 @@ class AutoUpdateInteractorImpl(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(AutoUpdateInteractorImpl::class.java)!!
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

@@ -40,7 +40,7 @@ class JiraInteractorImpl(
     //endregion
 
     companion object {
-        val logger: Logger = LoggerFactory.getLogger("JiraObservables2")
+        val logger: Logger = LoggerFactory.getLogger(Tags.JIRA)
     }
 
 }

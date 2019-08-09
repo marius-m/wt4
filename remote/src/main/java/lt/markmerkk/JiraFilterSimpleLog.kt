@@ -21,7 +21,7 @@ class JiraFilterSimpleLog() : JiraFilter<SimpleLog> {
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(JiraFilterSimpleLog::class.java)!!
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

@@ -31,7 +31,7 @@ class JiraFilterWorklog(
     //region Classes
 
     companion object {
-        var logger: Logger = LoggerFactory.getLogger(JiraFilterWorklog::class.java)
+        var logger: Logger = LoggerFactory.getLogger(Tags.JIRA)
     }
 
     //endregion
