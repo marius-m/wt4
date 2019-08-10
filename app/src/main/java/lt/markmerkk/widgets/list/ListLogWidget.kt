@@ -1,32 +1,59 @@
 package lt.markmerkk.widgets.list
 
+import com.google.common.eventbus.EventBus
+import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
 import javafx.scene.control.TableView
-import lt.markmerkk.IDataListener
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
+import lt.markmerkk.*
+import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SyncStatus
+import lt.markmerkk.events.EventEditLog
+import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
 import org.slf4j.LoggerFactory
+import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
 class ListLogWidget: View(), IDataListener<SimpleLog> {
 
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var strings: Strings
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var eventBus: EventBus
 
     init {
         Main.component().inject(this)
     }
 
+    private lateinit var viewTable: TableView<LogViewModel>
+
+    private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
     private val logs = mutableListOf<LogViewModel>()
             .observable()
 
     override val root: Parent = tableview(logs) {
+        viewTable = this
         columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+        JavaFxObservable.valuesOf(selectionModel.selectedItemProperty())
+                .subscribe { selectItem ->
+                    val selectItemIds = listOf(selectItem)
+                            .filter { it != null }
+                            .filter { selectItem.editable }
+                            .map { selectItem.id }
+                    contextMenuEditLog.bindLogs(selectItemIds)
+                }
+        setOnMouseClicked { mouseEvent ->
+            val selectLogId = viewTable.selectionModel.selectedItems.firstOrNull()?.id
+            val selectLog = logStorage.findByIdOrNull(selectLogId ?: -1)
+            if (mouseEvent.clickCount >= 2 && selectLog != null) {
+                eventBus.post(EventEditLog(LogEditType.UPDATE, listOf(selectLog)))
+            }
+        }
+        contextMenu = contextMenuEditLog.root
         column("S", LogViewModel::color) {
             minWidth = 32.0
             maxWidth = 32.0
@@ -62,8 +89,10 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
         super.onUndock()
     }
 
+    // todo should be moved to presenter side
     override fun onDataChange(data: List<SimpleLog>) {
         val totalViewModel = LogViewModel(
+                id = -1,
                 editable = false,
                 syncStatusColor = SyncStatus.INVALID.toColor().toString(),
                 ticketCode = "TOTAL",
@@ -75,6 +104,7 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
         val logViewModels = logStorage.data
                 .map {
                     LogViewModel(
+                            id = it._id,
                             editable = true,
                             syncStatusColor = SyncStatus.exposeStatus(it).toColor().toString(),
                             ticketCode = it.task,
@@ -91,6 +121,7 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
     }
 
     data class LogViewModel(
+            val id: Long,
             val editable: Boolean,
             val syncStatusColor: String,
             val ticketCode: String,
