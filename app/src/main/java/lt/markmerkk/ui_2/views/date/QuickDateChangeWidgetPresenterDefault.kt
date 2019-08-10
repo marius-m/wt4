@@ -2,6 +2,7 @@ package lt.markmerkk.ui_2.views.date
 
 import com.jfoenix.controls.JFXDialog
 import javafx.scene.layout.StackPane
+import javafx.stage.StageStyle
 import lt.markmerkk.DisplayTypeLength
 import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
@@ -11,6 +12,8 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.CurrentDayDialog
 import lt.markmerkk.utils.DateSwitcherFormatter
+import lt.markmerkk.widgets.DatePickerWidget
+import tornadofx.*
 
 class QuickDateChangeWidgetPresenterDefault(
         private val externalSourceNode: ExternalSourceNode<StackPane>,
@@ -45,9 +48,11 @@ class QuickDateChangeWidgetPresenterDefault(
     }
 
     override fun onClickDate() {
-        val jfxDialog = CurrentDayDialog().view as JFXDialog
-        jfxDialog.show(externalSourceNode.rootNode())
-        jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
+        find<DatePickerWidget>().openModal(
+                stageStyle = StageStyle.UTILITY,
+                block = true,
+                resizable = false
+        )
     }
 
     private fun activeDateAsString(): String {
