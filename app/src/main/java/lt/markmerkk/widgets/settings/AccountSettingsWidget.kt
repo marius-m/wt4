@@ -1,7 +1,9 @@
 package lt.markmerkk.widgets.settings
 
+import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -10,6 +12,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import lt.markmerkk.*
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.interactors.AuthServiceImpl
 import lt.markmerkk.interactors.LogLoaderImpl
@@ -20,10 +23,12 @@ import javax.inject.Inject
 
 class AccountSettingsWidget : View() {
 
-    @Inject lateinit var grahics: Graphics<SVGGlyph>
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var jiraAuthInteractor: AuthService.AuthInteractor
     @Inject lateinit var userSettings: UserSettings
+    @Inject lateinit var strings: Strings
+    @Inject lateinit var eventBus: EventBus
 
     private lateinit var viewInputHostname: JFXTextField
     private lateinit var viewInputUsername: JFXTextField
@@ -45,19 +50,33 @@ class AccountSettingsWidget : View() {
     override val root: Parent = borderpane {
         addClass(Styles.dialogContainer)
         top {
-            hbox(spacing = 10, alignment = Pos.CENTER_LEFT) {
+            hbox(spacing = 10, alignment = Pos.TOP_LEFT) {
                 label("Account settings") {
                     addClass(Styles.dialogHeader)
                 }
                 viewProgress = jfxSpinner {
-                    minWidth = 24.0
-                    maxWidth = 24.0
+                    style {
+                        padding = box(all = 4.px)
+                    }
+                    val boxDimen = 42.0
+                    minWidth = boxDimen
+                    maxWidth = boxDimen
+                    minHeight = boxDimen
+                    maxHeight = boxDimen
                     hide()
                 }
             }
         }
         left {
             vbox(spacing = 20) {
+                style {
+                    padding = box(
+                            top = 0.px,
+                            left = 0.px,
+                            right = 4.px,
+                            bottom = 0.px
+                    )
+                }
                 minWidth = 160.0
                 viewInputHostname = jfxTextField {
                     addClass(Styles.inputTextField)
@@ -77,7 +96,7 @@ class AccountSettingsWidget : View() {
                     addClass(Styles.inputTextField)
                     focusColor = Styles.cActiveRed
                     isLabelFloat = true
-                    promptText = "Password"
+                    promptText = "Password / API token"
                     unFocusColor = Color.BLACK
                 }
                 text {
@@ -94,7 +113,7 @@ class AccountSettingsWidget : View() {
                     stackpane {
                         viewContainerStatusBasic = vbox(spacing = 4, alignment = Pos.CENTER) {
                             viewButtonStatus = jfxButton {
-                                graphic = grahics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
+                                graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
                                 setOnAction {
                                     authService.testLogin(
                                             hostname = viewInputHostname.text,
@@ -138,7 +157,15 @@ class AccountSettingsWidget : View() {
                         )
                     }
                 }
-                jfxButton("Save".toUpperCase()) { }
+                jfxButton("Save".toUpperCase()) {
+                    setOnAction {
+                        userSettings.host = viewInputHostname.text
+                        userSettings.username = viewInputUsername.text
+                        userSettings.password = viewInputPassword.text
+                        eventBus.post(EventSnackBarMessage("Settings saved!"))
+                        close()
+                    }
+                }
                 jfxButton("Dismiss".toUpperCase()) {
                     setOnAction {
                         close()
@@ -196,48 +223,40 @@ class AccountSettingsWidget : View() {
 
         override fun showProgress() {
             viewProgress.show()
-//            jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_TONGUE, Color.BLACK, 60.0)
-//            jfxStatusLabel.text = strings.getString("settings_state_loading")
+            viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_TONGUE, Color.BLACK, 60.0)
+            viewLabelStatus.text = strings.getString("settings_state_loading")
         }
 
         override fun hideProgress() {
             viewProgress.hide()
-//            jfxStatusProgress.isVisible = false
-//            jfxStatusProgress.isManaged = false
-//            jfxOutputProgress.isVisible = false
-//            jfxOutputProgress.isManaged = false
         }
 
         override fun showAuthResult(result: AuthService.AuthResult) {
             when (result) {
                 AuthService.AuthResult.SUCCESS -> {
-//                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 60.0)
-//                    jfxStatusLabel.text = strings.getString("settings_state_success")
+                    viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 60.0)
+                    viewLabelStatus.text = strings.getString("settings_state_success")
 //                    saveUserSettings()
-//                    return
                 }
                 AuthService.AuthResult.ERROR_EMPTY_FIELDS -> {
-//                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
-//                    jfxStatusLabel.text = strings.getString("settings_state_error_empty_fields")
-//                    return
+                    viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
+                    viewLabelStatus.text = strings.getString("settings_state_error_empty_fields")
                 }
                 AuthService.AuthResult.ERROR_UNAUTHORISED -> {
-//                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
-//                    jfxStatusLabel.text = strings.getString("settings_state_error_unauthorised")
-//                    return
+                    viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
+                    viewLabelStatus.text = strings.getString("settings_state_error_unauthorised")
                 }
                 AuthService.AuthResult.ERROR_INVALID_HOSTNAME -> {
-//                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
-//                    jfxStatusLabel.text = strings.getString("settings_state_error_invalid_hostname")
-//                    return
+                    viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
+                    viewLabelStatus.text = strings.getString("settings_state_error_invalid_hostname")
                 }
                 AuthService.AuthResult.ERROR_UNDEFINED -> {
-//                    jfxStatusButton.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
-//                    jfxStatusLabel.text = strings.getString("settings_state_error_undefined")
-//                    return
+                    viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
+                    viewLabelStatus.text = strings.getString("settings_state_error_undefined")
                 }
                 else -> {
-//                    jfxStatusLabel.text = strings.getString("settings_state_error_undefined")
+                    viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)
+                    viewLabelStatus.text = strings.getString("settings_state_error_undefined")
                 }
             }
         }
