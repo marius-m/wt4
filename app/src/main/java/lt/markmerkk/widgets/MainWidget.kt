@@ -25,6 +25,7 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
+import lt.markmerkk.ui.day.CalendarPresenter
 import lt.markmerkk.ui_2.*
 import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
 import lt.markmerkk.ui_2.bridges.UIEButtonSettings
@@ -75,7 +76,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     override val root: Parent = stackpane {
+        setOnKeyReleased { keyEvent ->
+            if (keyEvent.code == KeyCode.ALT) {
+                find<CalendarWidget>().changeEditMode(false)
+            }
+        }
         setOnKeyPressed { keyEvent ->
+            if (keyEvent.code == KeyCode.ALT) {
+                find<CalendarWidget>().changeEditMode(true)
+            }
             when {
                 (keyEvent.code == KeyCode.S && keyEvent.isMetaDown)
                         || (keyEvent.code == KeyCode.S && keyEvent.isControlDown) -> {

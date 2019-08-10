@@ -14,6 +14,7 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
+import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.util.Callback
@@ -49,6 +50,10 @@ class CalendarWidget: View() {
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
+
+    private lateinit var logLoader: CalendarFxLogLoader
+    private lateinit var calendarUpdater: CalendarFxUpdater
+
 
     init {
         Main.component().inject(this)
@@ -96,10 +101,8 @@ class CalendarWidget: View() {
         calendars.addAll(calendarInSync, calendarWaitingForSync, calendarError)
     }
 
-    private lateinit var logLoader: CalendarFxLogLoader
-    private lateinit var calendarUpdater: CalendarFxUpdater
-
     private var selectedId: Long = Const.NO_ID
+    private var inEditMode: Boolean = false
 
     override val root: Parent = stackpane {
         viewContainer = borderpane {
@@ -158,6 +161,10 @@ class CalendarWidget: View() {
         logLoader.onDetach()
         logStorage.unregister(storageListener)
         super.onUndock()
+    }
+
+    fun changeEditMode(inEditMode: Boolean) {
+        this.inEditMode = inEditMode
     }
 
     //region Calendar listeners
@@ -220,7 +227,7 @@ class CalendarWidget: View() {
 
     private val calendarEntryEditPolicy = object : Callback<DateControl.EntryEditParameter, Boolean> {
         override fun call(param: DateControl.EntryEditParameter): Boolean {
-            return false
+            return inEditMode
         }
     }
 
