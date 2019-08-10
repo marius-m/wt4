@@ -47,6 +47,7 @@ fun EventTarget.jfxButton(
 
 // Spinner
 fun EventTarget.jfxSpinner(op: JFXSpinner.() -> Unit = {}) = JFXSpinner().attachTo(this, op)
+fun EventTarget.jfxProgressBar(op: JFXProgressBar.() -> Unit = {}) = JFXProgressBar().attachTo(this, op)
 
 // Slider
 fun EventTarget.jfxSlider(op: JFXSlider.() -> Unit = {}) = JFXSlider().attachTo(this, op)
@@ -54,6 +55,7 @@ fun EventTarget.jfxSlider(op: JFXSlider.() -> Unit = {}) = JFXSlider().attachTo(
 // Text
 fun EventTarget.jfxTextArea(op: JFXTextArea.() -> Unit = {}) = JFXTextArea().attachTo(this, op)
 fun EventTarget.jfxTextField(op: JFXTextField.() -> Unit = {}) = JFXTextField().attachTo(this, op)
+fun EventTarget.jfxPassField(op: JFXPasswordField.() -> Unit = {}) = JFXPasswordField().attachTo(this, op)
 
 // Combo
 fun <T> EventTarget.jfxCombobox(

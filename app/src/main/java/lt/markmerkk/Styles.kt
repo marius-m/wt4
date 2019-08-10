@@ -90,6 +90,7 @@ class Styles: Stylesheet() {
             ellipsisString = "..."
             textOverrun = OverrunStyle.WORD_ELLIPSIS
         }
+        inputTextField { }
         labelMini {
             textFill = Color.GRAY
             fontSize = 8.pt

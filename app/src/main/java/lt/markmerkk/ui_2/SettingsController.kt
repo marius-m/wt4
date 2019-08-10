@@ -59,8 +59,7 @@ class SettingsController : Initializable {
                 authServiceView,
                 schedulerProvider.io(),
                 schedulerProvider.ui(),
-                jiraAuthInteractor,
-                LogLoaderImpl(config.cfgPath)
+                jiraAuthInteractor
         )
         authServiceView.hideProgress()
         jfxOutputTextArea.widthProperty().addListener { _, _, newValue ->
@@ -89,7 +88,7 @@ class SettingsController : Initializable {
             )
         }
         jfxStatusButton.setOnAction { jfxButtonTest.fire() }
-        jfxButtonTroubleshoot.setOnAction { authService.toggleDisplayType() }
+//        jfxButtonTroubleshoot.setOnAction { authService.toggleDisplayType() }
         jfxButtonApply.setOnAction { saveUserSettings() }
         showStatusContainer()
         stageProperties.register(stagePropertiesListener)
@@ -153,26 +152,26 @@ class SettingsController : Initializable {
             }
         }
 
-        override fun showDebugLogs() {
-            showOutputContainer()
-        }
-
-        override fun hideDebugLogs() {
-            showStatusContainer()
-        }
-
-        override fun fillDebugLogs(logs: String) {
-            jfxOutputTextArea.text = logs
-        }
-
-        override fun errorFillingDebugLogs(throwable: Throwable) {
-            logger.error("[ERROR] Cant read debug log", throwable)
-            jfxOutputTextArea.text = "[ERROR] Cant read debug log"
-        }
-
-        override fun scrollToBottomOfDebugLogs(length: Int) {
-            jfxOutputTextArea.positionCaret(length)
-        }
+//        override fun showDebugLogs() {
+//            showOutputContainer()
+//        }
+//
+//        override fun hideDebugLogs() {
+//            showStatusContainer()
+//        }
+//
+//        override fun fillDebugLogs(logs: String) {
+//            jfxOutputTextArea.text = logs
+//        }
+//
+//        override fun errorFillingDebugLogs(throwable: Throwable) {
+//            logger.error("[ERROR] Cant read debug log", throwable)
+//            jfxOutputTextArea.text = "[ERROR] Cant read debug log"
+//        }
+//
+//        override fun scrollToBottomOfDebugLogs(length: Int) {
+//            jfxOutputTextArea.positionCaret(length)
+//        }
 
     }
 

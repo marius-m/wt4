@@ -6,15 +6,27 @@
         </Console>
         <File name="FileAllLogs" fileName="logs/out.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1M"/>
+            </Policies>
         </File>
         <File name="FileAllErrors" fileName="logs/errors.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100K"/>
+            </Policies>
         </File>
         <File name="FileAllJira" fileName="logs/jira.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100K"/>
+            </Policies>
         </File>
         <File name="FileAllDb" fileName="logs/db.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100K"/>
+            </Policies>
         </File>
     </Appenders>
     <Loggers>
@@ -25,13 +37,34 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="FileAllLogs"/>
         </Logger>
+        <Logger name="DB" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileAllDb"/>
+        </Logger>
+        <Logger name="INTERNAL" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
         <Logger name="JIRA" level="TRACE" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="FileAllJira"/>
         </Logger>
-        <Logger name="DB" level="TRACE" additivity="false">
+        <Logger name="MAIN" level="TRACE" additivity="false">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="FileAllDb"/>
+        </Logger>
+        <Logger name="CALENDAR" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TICKETS" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TICKET_SPLIT" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TICKET_MERGE" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TRANSLATE" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
         </Logger>
     </Loggers>
 </Configuration>
