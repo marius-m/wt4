@@ -71,18 +71,20 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
 
     override val root: Parent = stackpane {
         setOnKeyPressed { keyEvent ->
-            if ((keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
-                    || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown)) {
-                presenter.save(
-                        start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-                        end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-                        task = viewTextFieldTicket.text,
-                        comment = viewTextComment.text
-                )
-            }
-            if ((keyEvent.code == KeyCode.SLASH && keyEvent.isMetaDown)
-                    || (keyEvent.code == KeyCode.SLASH && keyEvent.isControlDown)) {
-                presenter.openFindTickets()
+            when {
+                (keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
+                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown) -> {
+                    presenter.save(
+                            start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+                            end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+                            task = viewTextFieldTicket.text,
+                            comment = viewTextComment.text
+                    )
+                }
+                (keyEvent.code == KeyCode.SLASH && keyEvent.isMetaDown)
+                        || (keyEvent.code == KeyCode.SLASH && keyEvent.isControlDown) -> {
+                    presenter.openFindTickets()
+                }
             }
         }
         borderpane {

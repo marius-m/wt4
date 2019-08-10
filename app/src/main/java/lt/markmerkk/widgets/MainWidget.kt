@@ -10,6 +10,7 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
@@ -83,6 +84,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     override val root: Parent = stackpane {
+        setOnKeyPressed { keyEvent ->
+            when {
+                (keyEvent.code == KeyCode.S && keyEvent.isMetaDown)
+                        || (keyEvent.code == KeyCode.S && keyEvent.isControlDown) -> {
+                    resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
+                    eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
+                }
+            }
+        }
         borderpane {
             left {
                 vbox(spacing = 4) {
