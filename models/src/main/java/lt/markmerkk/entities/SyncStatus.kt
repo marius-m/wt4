@@ -1,5 +1,7 @@
 package lt.markmerkk.entities
 
+import javafx.scene.paint.Color
+
 /**
  * Defines sync status for the entries
  */
@@ -24,6 +26,15 @@ enum class SyncStatus {
      */
     WAITING_FOR_SYNC,
     ;
+
+    fun toColor(): Color {
+        return when (this) {
+            INVALID -> Color.TRANSPARENT
+            IN_SYNC -> Color.GREEN
+            ERROR -> Color.RED
+            WAITING_FOR_SYNC -> Color.ORANGE
+        }
+    }
 
     companion object {
         /**
