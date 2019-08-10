@@ -3,6 +3,7 @@ package lt.markmerkk
 import lt.markmerkk.entities.JiraCreds
 import net.rcarz.jiraclient.BasicCredentials
 import net.rcarz.jiraclient.JiraClient
+import net.rcarz.jiraclient.TokenCredentials
 import org.slf4j.LoggerFactory
 import rx.Single
 

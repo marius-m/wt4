@@ -26,15 +26,13 @@ abstract class AbsAuthServiceImplTest {
                 view,
                 Schedulers.immediate(),
                 Schedulers.immediate(),
-                authInteractor,
-                logLoader
+                authInteractor
         )
         serviceWithTestSchedulers = AuthServiceImpl(
                 view,
                 testScheduler,
                 testScheduler,
-                authInteractor,
-                logLoader
+                authInteractor
         )
     }
 

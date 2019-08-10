@@ -5,6 +5,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -110,8 +111,11 @@ class AccountSettingsWidget : View() {
                                     style {
                                         fontSize = 8.pt
                                         fontFamily = "monospaced"
+                                        hBarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
+                                        vBarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
                                     }
                                     isEditable = false
+                                    isWrapText = false
                                 }
                             }
                         }

@@ -1,10 +1,12 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.Tags
+import net.rcarz.jiraclient.RestException
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
+import java.lang.Exception
 
 class AuthServiceImpl(
         private val view: AuthService.View,
@@ -29,7 +31,7 @@ class AuthServiceImpl(
         testConnectionSubscription?.unsubscribe()
         testConnectionSubscription = Observable.defer { authInteractor.jiraTestValidConnection(hostname, username, password) }
                 .flatMap {
-                    logger.info("[INFO] Success logging in!")
+                    logger.info("Success logging in!")
                     Observable.just(AuthService.AuthResult.SUCCESS)
                 }
                 .onErrorResumeNext { Observable.just(handleError(it)) }
@@ -40,29 +42,59 @@ class AuthServiceImpl(
                 .subscribe({
                     view.showAuthResult(it)
                 }, {
-                    logger.error("[ERROR] Error checking status of jira validation")
+                    logger.error("Error checking status of jira validation")
                 })
-    }
-
-    fun handleError(error: Throwable): AuthService.AuthResult {
-        if (error is IllegalArgumentException) {
-            logger.warn("[WARNING] ${error.message}")
-            return AuthService.AuthResult.ERROR_EMPTY_FIELDS
-        }
-        if (error.message != null && error.message!!.contains("401 Unauthorized")) {
-            logger.warn("[WARNING] Unauthorized!")
-            return AuthService.AuthResult.ERROR_UNAUTHORISED
-        }
-        if (error.message != null && error.message!!.contains("404 Not Found")) {
-            logger.warn("[WARNING] Hostname not found!")
-            return AuthService.AuthResult.ERROR_INVALID_HOSTNAME
-        }
-        logger.warn("[WARNING] Undefined error!", error)
-        return AuthService.AuthResult.ERROR_UNDEFINED
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
+        fun handleError(error: Throwable): AuthService.AuthResult {
+            if (error is IllegalArgumentException) {
+                logger.warn(error.message.toString())
+                return AuthService.AuthResult.ERROR_EMPTY_FIELDS
+            }
+            val restException = error.findRestException()
+            if (restException == null) {
+                logger.warn("Undefined error: $error")
+                return AuthService.AuthResult.ERROR_UNDEFINED
+            }
+            return when (restException.httpStatusCode) {
+                401 -> {
+                    logger.warn("Error accessing using credentials! Status:${restException.httpStatusCode}") // lots of noise
+                    AuthService.AuthResult.ERROR_UNAUTHORISED
+                }
+                404 -> {
+                    logger.warn("Host or endpoint not found: Status: ${restException.httpStatusCode} / ${restException.httpResult}")
+                    AuthService.AuthResult.ERROR_INVALID_HOSTNAME
+                }
+                else -> {
+                    logger.warn("Undefined error!", error)
+                    AuthService.AuthResult.ERROR_UNDEFINED
+                }
+            }
+        }
     }
 
 }
+
+fun Throwable.findRestException(): RestException? {
+    val exceptions = mutableListOf<Throwable>()
+    var iterableThrowable: Throwable? = this
+    do {
+        if (iterableThrowable != null) {
+            exceptions.add(iterableThrowable)
+            iterableThrowable = iterableThrowable.cause
+        } else {
+            iterableThrowable = null
+        }
+    } while (iterableThrowable != null)
+    return exceptions
+            .mapNotNull {
+                if (it is RestException) {
+                    it
+                } else {
+                    null
+                }
+            }.firstOrNull()
+}
+
