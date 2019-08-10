@@ -31,8 +31,6 @@ interface PresenterComponent {
 
     fun inject(statusController: LogStatusController)
 
-    fun inject(settingsController: SettingsController)
-
     fun inject(profilesController: ProfilesController)
 
     fun inject(ticketSplitController: TicketSplitController)

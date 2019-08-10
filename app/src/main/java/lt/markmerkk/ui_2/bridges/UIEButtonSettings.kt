@@ -12,6 +12,8 @@ import javafx.scene.control.Label
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.stage.Modality
+import javafx.stage.StageStyle
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Strings
@@ -21,8 +23,9 @@ import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui.UIElement
 import lt.markmerkk.ui_2.ProfilesDialog
-import lt.markmerkk.ui_2.SettingsDialog
 import lt.markmerkk.ui_2.StatisticsDialog
+import lt.markmerkk.widgets.settings.AccountSettingsWidget
+import tornadofx.*
 
 /**
  * Represents settings button, its graphics, animations
@@ -82,7 +85,7 @@ class UIEButtonSettings(
         labelsList.items.add(labelProfiles)
         labelsList.items.add(labelStatistics)
         labelsList.items.add(labelSettings)
-        labelsList.items.add(labelTest)
+//        labelsList.items.add(labelTest)
         labelsList.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Label> {
             override fun changed(observable: ObservableValue<out Label>?, oldValue: Label?, newValue: Label) {
                 jfxPopup.hide()
@@ -102,10 +105,12 @@ class UIEButtonSettings(
                 jfxDialog.setOnDialogClosed { InjectorNoDI.forget(jfxDialog) }
             }
             labelSettings -> {
-                val dialog = SettingsDialog()
-                val jfxDialog = dialog.view as JFXDialog
-                jfxDialog.show(externalSourceNode.rootNode())
-                jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
+                find<AccountSettingsWidget>().openModal(
+                        stageStyle = StageStyle.UTILITY,
+                        modality = Modality.APPLICATION_MODAL,
+                        block = false,
+                        resizable = true
+                )
             }
             labelProfiles -> {
                 val dialog = ProfilesDialog()
