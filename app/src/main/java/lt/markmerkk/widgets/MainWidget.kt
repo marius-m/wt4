@@ -132,7 +132,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
 
     override fun onDock() {
         super.onDock()
-
+        val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
+        title = "WT4 - ${BuildConfig.VERSION} $titleSuffix"
         // Init ui elements
         widgetDateChange = QuickDateChangeWidget(
                 graphics,
