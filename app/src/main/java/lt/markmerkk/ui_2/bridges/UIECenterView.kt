@@ -8,6 +8,7 @@ import lt.markmerkk.ui.UIElement
 /**
  * Represents clock jfxCommitButton, its graphics, animations
  */
+@Deprecated("Should be replaced")
 class UIECenterView(
         private val jfxContainerContent: BorderPane
 ) : UIElement<StackPane> {

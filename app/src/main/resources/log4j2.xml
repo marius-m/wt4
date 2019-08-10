@@ -47,6 +47,17 @@
                 <SizeBasedTriggeringPolicy size="100 KB"/>
             </Policies>
         </RollingFile>
+        <RollingFile name="FileTmp"
+                     fileName="logs/tmp.log"
+                     immediateFlush="true"
+                     filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
+                     append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 KB"/>
+            </Policies>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="ERROR">
@@ -84,6 +95,9 @@
         </Logger>
         <Logger name="TRANSLATE" level="TRACE" additivity="false">
             <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="lt.markmerkk.widgets.MainContentWidget" level="TRACE" additivity="false">
+            <AppenderRef ref="FileTmp" />
         </Logger>
     </Loggers>
 </Configuration>

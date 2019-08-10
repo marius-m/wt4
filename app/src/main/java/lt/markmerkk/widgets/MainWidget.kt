@@ -11,7 +11,6 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
@@ -26,14 +25,9 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui.day.DayView
-import lt.markmerkk.ui.display.DisplayLogView
-import lt.markmerkk.ui.graphs.GraphsFxView
-import lt.markmerkk.ui.week2.WeekView2
 import lt.markmerkk.ui_2.*
 import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
 import lt.markmerkk.ui_2.bridges.UIEButtonSettings
-import lt.markmerkk.ui_2.bridges.UIECenterView
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
@@ -43,6 +37,7 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.tickets.TicketWidget
@@ -65,19 +60,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
-    lateinit var jfxContainerContent: BorderPane
     lateinit var jfxContainerContentLeft: HBox
     lateinit var jfxContainerContentRight: HBox
 
     lateinit var uieButtonDisplayView: UIEButtonDisplayView
     lateinit var uieButtonSettings: UIEButtonSettings
-    lateinit var uieCenterView: UIECenterView
     lateinit var snackBar: JFXSnackbar
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
     lateinit var widgetLogQuickEdit: QuickEditContainerWidget
-
-    var currentDisplayType = DisplayType.CALENDAR_VIEW_DAY
 
     init {
         Main.component().inject(this)
@@ -114,7 +105,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 }
             }
             center {
-                jfxContainerContent = borderpane {
+                borderpane {
                     top {
                         borderpane {
                             left {
@@ -124,6 +115,9 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                                 jfxContainerContentRight = hbox { }
                             }
                         }
+                    }
+                    center {
+                        add(find<CalendarWidget>())
                     }
                 }
             }
@@ -155,12 +149,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         )
         snackBar = JFXSnackbar(root as StackPane)
         uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings, eventBus)
-        uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView, buttonChangeDisplayViewExternalListener)
-        uieCenterView = UIECenterView(jfxContainerContent)
+        uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView)
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
-        changeDisplayByDisplayType(currentDisplayType)
 
         // Init interactors
         eventBus.register(this)
@@ -180,12 +172,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     //region Events
-
-    // todo : function will probably will have to be extracted to somewhere else
-    @Subscribe
-    fun onDisplayTypeChange(eventChangeDisplayType: EventChangeDisplayType) {
-        changeDisplayByDisplayType(eventChangeDisplayType.displayType)
-    }
 
     @Subscribe
     fun onSnackBarMessage(event: EventSnackBarMessage) {
@@ -236,46 +222,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
 
     //endregion
 
-    //region Convenience
-
-    fun changeDisplayByDisplayType(displayType: DisplayType) {
-        val oldView = uieCenterView.raw()
-        when (displayType) {
-            DisplayType.TABLE_VIEW_DETAIL -> {
-                logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(DisplayLogView())
-            }
-            DisplayType.CALENDAR_VIEW_DAY -> {
-                logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(DayView())
-            }
-            DisplayType.CALENDAR_VIEW_WEEK -> {
-                logStorage.displayType = DisplayTypeLength.WEEK
-                uieCenterView.populate(WeekView2())
-            }
-            DisplayType.GRAPHS -> {
-                logStorage.displayType = DisplayTypeLength.DAY
-                uieCenterView.populate(GraphsFxView())
-            }
-            else -> throw IllegalStateException("Display cannot be handled")
-        }
-        InjectorNoDI.forget(oldView)
-        currentDisplayType = displayType
-    }
-
-    //endregion
-
     override fun rootNode(): StackPane = root as StackPane
-
-    //region Listeners
-
-    private val buttonChangeDisplayViewExternalListener = object : UIEButtonDisplayView.ExternalListener {
-        override fun currentDisplayType(): DisplayType {
-            return currentDisplayType
-        }
-    }
-
-    //endregion
 
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {

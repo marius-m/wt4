@@ -13,6 +13,7 @@ import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
+import lt.markmerkk.widgets.MainContainerNavigator
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -31,6 +32,11 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
 
     private lateinit var viewTable: TableView<LogViewModel>
 
+    private val mainContainerNavigator = MainContainerNavigator(
+            logStorage,
+            eventBus,
+            this
+    )
     private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
     private val logs = mutableListOf<LogViewModel>()
             .observable()
@@ -82,9 +88,11 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
         super.onDock()
         onDataChange(logStorage.data)
         logStorage.register(this)
+        mainContainerNavigator.onAttach()
     }
 
     override fun onUndock() {
+        mainContainerNavigator.onDetach()
         logStorage.unregister(this)
         super.onUndock()
     }

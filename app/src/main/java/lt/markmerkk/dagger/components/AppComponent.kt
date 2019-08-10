@@ -5,7 +5,6 @@ import lt.markmerkk.Main
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.SyncModule
 import lt.markmerkk.widgets.DatePickerWidget
-import lt.markmerkk.widgets.MainContentWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
@@ -33,7 +32,6 @@ interface AppComponent {
     fun inject(accountSettings: AccountSettingsWidget)
     fun inject(datePickerWidget: DatePickerWidget)
     fun inject(calendarWidget: CalendarWidget)
-    fun inject(mainContentWidget: MainContentWidget)
     fun inject(listLogWidget: ListLogWidget)
 
     fun presenterComponent(): PresenterComponent

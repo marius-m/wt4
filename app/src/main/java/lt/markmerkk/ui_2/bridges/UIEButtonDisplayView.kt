@@ -16,11 +16,11 @@ import lt.markmerkk.ui_2.DisplaySelectDialog
 /**
  * Represents settings button, its graphics, animations
  */
+@Deprecated("Up for replacement")
 class UIEButtonDisplayView(
         private val graphics: Graphics<SVGGlyph>,
         private val node: ExternalSourceNode<StackPane>,
-        private val button: JFXButton,
-        private val externalListener: ExternalListener
+        private val button: JFXButton
 ) : UIElement<JFXButton> {
 
     private val glyphView = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
@@ -28,7 +28,7 @@ class UIEButtonDisplayView(
     init {
         button.graphic = glyphView
         button.setOnAction {
-            val fxmlView = DisplaySelectDialog(externalListener.currentDisplayType())
+            val fxmlView = DisplaySelectDialog(DisplayType.GRAPHS)
             val jfxDialog = fxmlView.view as JFXDialog
             jfxDialog.show(node.rootNode())
             jfxDialog.setOnDialogClosed { InjectorNoDI.forget(fxmlView) }
@@ -44,15 +44,5 @@ class UIEButtonDisplayView(
     }
 
     override fun reset() {}
-
-    /**
-     * Gathers additional data
-     */
-    interface ExternalListener {
-        /**
-         * Gets current display type
-         */
-        fun currentDisplayType(): DisplayType
-    }
 
 }
