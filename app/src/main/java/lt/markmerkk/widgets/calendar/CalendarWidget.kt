@@ -12,11 +12,14 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.collections.SetChangeListener
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
+import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
@@ -50,6 +53,7 @@ class CalendarWidget: View() {
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
+    private lateinit var viewDragIndicator: VBox
 
     private lateinit var logLoader: CalendarFxLogLoader
     private lateinit var calendarUpdater: CalendarFxUpdater
@@ -108,6 +112,18 @@ class CalendarWidget: View() {
         viewContainer = borderpane {
             center { }
         }
+        viewDragIndicator = vbox(alignment = Pos.BOTTOM_CENTER) {
+            isMouseTransparent = true
+            label("Drag worklog to move or scale") {
+                style {
+                    padding = box(vertical = 8.px, horizontal = 14.px)
+                    backgroundColor.add(Color.BLACK)
+                    fontSize = 14.pt
+                }
+                textFill = Color.WHITE
+            }
+            hide()
+        }
     }
 
     override fun onDock() {
@@ -165,6 +181,11 @@ class CalendarWidget: View() {
 
     fun changeEditMode(inEditMode: Boolean) {
         this.inEditMode = inEditMode
+        if (inEditMode) {
+            viewDragIndicator.show()
+        } else {
+            viewDragIndicator.hide()
+        }
     }
 
     //region Calendar listeners
