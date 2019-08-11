@@ -26,7 +26,6 @@ import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.*
-import lt.markmerkk.ui_2.bridges.UIEButtonSettings
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
@@ -227,10 +226,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 resultDispatcher.publish(TicketSplitController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
             }
-            LogEditType.MERGE -> {
-                resultDispatcher.publish(TicketMergeController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
-                eventBus.post(EventInflateDialog(DialogType.TICKET_MERGE))
-            }
         }.javaClass
     }
 
@@ -266,7 +261,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 )
             }
             DialogType.TICKET_SPLIT -> openDialog(TicketSplitDialog())
-            DialogType.TICKET_MERGE -> openDialog(TicketMergeDialog())
         }
     }
 

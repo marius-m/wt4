@@ -7,6 +7,5 @@ enum class DialogType {
     LOG_EDIT,
     TICKET_SEARCH,
     TICKET_SPLIT,
-    TICKET_MERGE,
     ;
 }
