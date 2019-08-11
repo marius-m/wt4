@@ -39,6 +39,8 @@ import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
+import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
+import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -62,7 +64,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var jfxContainerContentLeft: HBox
     lateinit var jfxContainerContentRight: HBox
 
-    lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var snackBar: JFXSnackbar
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
@@ -104,17 +105,17 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                             addClass(Styles.buttonMenu)
                             graphic = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
                             setOnAction {
-                                find<DisplaySelectWidget>().openModal(
-                                        stageStyle = StageStyle.UTILITY,
-                                        modality = Modality.APPLICATION_MODAL,
-                                        block = false,
-                                        resizable = false
-                                )
+                                PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
+                                        .show()
                             }
                         }
                         jfxButtonSettings = jfxButton {
                             addClass(Styles.buttonMenu)
-                            graphic = graphics.from(Glyph.SETTINGS, Color.BLACK, 24.0)
+                            graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
+                            setOnAction {
+                                PopUpSettings(graphics, jfxButtonSettings)
+                                        .show()
+                            }
                         }
                     }
                 }
@@ -163,7 +164,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 logChangeValidator = logChangeValidator
         )
         snackBar = JFXSnackbar(root as StackPane)
-        uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings, eventBus)
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)

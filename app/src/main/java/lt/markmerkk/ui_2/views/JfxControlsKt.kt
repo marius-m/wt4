@@ -7,10 +7,7 @@ import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.control.Button
-import tornadofx.addChildIfPossible
-import tornadofx.attachTo
-import tornadofx.bind
-import tornadofx.observable
+import tornadofx.*
 
 /**
  * Add the given node to the pane, invoke the node operation and return the node. The `opcr` name
@@ -70,6 +67,11 @@ fun <T> EventTarget.jfxCombobox(
     if (property != null) it.bind(property)
     it.selectionModel.select(0)
 }
+fun <T> EventTarget.jfxListview(
+        childWidgets: List<T> = emptyList(),
+        op: JFXListView<T>.() -> Unit = {}
+) = JFXListView<T>()
+        .attachTo(this, op)
 
 // Dialog
 fun EventTarget.jfxDialog(op: JFXDialog.() -> Unit = {}) = JFXDialog().attachTo(this, op)

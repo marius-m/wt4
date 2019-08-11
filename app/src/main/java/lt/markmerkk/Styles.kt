@@ -15,6 +15,7 @@ class Styles: Stylesheet() {
         val inputTextField by cssclass()
         val labelMini by cssclass()
         val labelRegular by cssclass()
+        val popUpLabel by cssclass()
 
         val cLightest = c("#E8EAF6")
         val cLight = c("#7986CB")
@@ -97,7 +98,10 @@ class Styles: Stylesheet() {
         }
         labelRegular {
             textFill = Color.GRAY
-            fontSize = 12.pt
+            fontSize = 10.pt
+        }
+        popUpLabel {
+            fontSize = 10.pt
         }
     }
 

@@ -35,5 +35,8 @@ enum class Glyph {
     SPLIT,
     MERGE,
     NEW,
+    DISPLAY_DAY,
+    DISPLAY_WEEK,
+    DISPLAY_LIST,
     ;
 }
