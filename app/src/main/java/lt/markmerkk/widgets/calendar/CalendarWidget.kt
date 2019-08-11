@@ -15,7 +15,6 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
-import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
@@ -36,8 +35,10 @@ import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.MainContainerNavigator
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.WeekFields
 import javax.inject.Inject
 
 class CalendarWidget: View() {
@@ -144,8 +145,9 @@ class CalendarWidget: View() {
             jfxDayView.isShowAgendaView = false
         }
         if (viewCalendar is com.calendarfx.view.DetailedWeekView) {
-            val jfxDayView = viewCalendar as com.calendarfx.view.DetailedWeekView
-            jfxDayView.isShowAllDayView = false
+            val jfxWeekView = viewCalendar as com.calendarfx.view.DetailedWeekView
+            jfxWeekView.isShowAllDayView = false
+            jfxWeekView.weekFields = WeekFields.of(DayOfWeek.MONDAY, 7)
         }
         viewCalendar.entryDetailsCallback = calendarEntryDetailsCallback
         viewCalendar.entryContextMenuCallback = calendarEntryContextMenuCallback
