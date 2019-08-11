@@ -4,27 +4,34 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.chart.PieChart
 import javafx.scene.control.Label
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Main
-import lt.markmerkk.Styles
+import lt.markmerkk.*
+import lt.markmerkk.entities.Ticket
+import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogUtils
+import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
 class StatisticsWidget: View(), StatisticsContract.View {
 
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     init {
         Main.component().inject(this)
     }
 
+    private lateinit var viewLabelTicketInfo: Label
+    private lateinit var viewLabelTicketDuration: Label
     private lateinit var viewLabelTotal: Label
     private lateinit var viewPiechart: PieChart
 
     private lateinit var presenter: StatisticsContract.Presenter
+    private lateinit var ticketInfoLoader: TicketInfoLoader
     private val pieChartData = mutableListOf<PieChart.Data>()
             .observable()
 
@@ -36,9 +43,15 @@ class StatisticsWidget: View(), StatisticsContract.View {
             }
         }
         center {
-            vbox {
+            vbox(spacing = 4) {
                 viewPiechart = piechart("Tickets worked on", pieChartData) {
                     vgrow = Priority.ALWAYS
+                }
+                viewLabelTicketInfo = label {
+                    addClass(Styles.labelRegular)
+                }
+                viewLabelTicketDuration = label {
+                    addClass(Styles.labelRegular)
                 }
                 viewLabelTotal = label("Total: ") {
                     addClass(Styles.labelRegular)
@@ -61,16 +74,57 @@ class StatisticsWidget: View(), StatisticsContract.View {
     override fun onDock() {
         super.onDock()
         presenter = StatisticsPresenter(logStorage)
+        ticketInfoLoader = TicketInfoLoader(
+                listener = ticketInfoLoaderListener,
+                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                waitScheduler = schedulerProvider.waitScheduler(),
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
+        )
+        viewLabelTicketInfo.text = "Click on pie chart to find more info about work"
+        viewLabelTicketDuration.text = "Ticket duration: No ticket selected"
         viewLabelTotal.text = "Total: ${presenter.totalAsString()}"
-        val logsAsPieChartData = presenter.mapData()
+
+        presenter.onAttach(this)
+        ticketInfoLoader.onAttach()
+
+        val logsAsPieChartData: List<PieChart.Data> = presenter.mapData()
                 .map { PieChart.Data(it.key, it.value.toDouble()) }
         pieChartData.clear()
         pieChartData.addAll(logsAsPieChartData)
+        logsAsPieChartData
+                .forEach { data ->
+                    data.node.addEventHandler(MouseEvent.MOUSE_CLICKED) {
+                        ticketInfoLoader.findTicket(data.name)
+                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatDuration(data.pieValue.toLong())}"
+                    }
+                }
     }
 
     override fun onUndock() {
+        ticketInfoLoader.onDetach()
+        presenter.onDetach()
         pieChartData.clear()
         super.onUndock()
+    }
+
+    //region Listeners
+
+    private val ticketInfoLoaderListener = object : TicketInfoLoader.Listener {
+        override fun onTicketFound(ticket: Ticket) {
+            viewLabelTicketInfo.text = "Ticket info: ${ticket.code.code} - ${ticket.description}"
+        }
+
+        override fun onNoTicket(searchTicket: String) {
+            viewLabelTicketInfo.text = "Ticket info: No info on '$searchTicket'"
+        }
+
+    }
+
+    //endregion
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(StatisticsWidget::class.java)!!
     }
 
 }

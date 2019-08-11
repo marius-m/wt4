@@ -47,6 +47,7 @@ class TicketInfoLoader(
     fun findTicket(inputCode: String) {
         val ticketCode = TicketCode.new(inputCode)
         if (ticketCode.isEmpty()) {
+            listener.onNoTicket(inputCode)
             return
         }
         searchSubscription?.unsubscribe()
@@ -57,16 +58,16 @@ class TicketInfoLoader(
                     if (tickets.isNotEmpty()) {
                         listener.onTicketFound(tickets.first())
                     } else {
-                        listener.onNoTicket()
+                        listener.onNoTicket(inputCode)
                     }
                 }, {
-                    listener.onNoTicket()
+                    listener.onNoTicket(inputCode)
                 })
     }
 
     interface Listener {
         fun onTicketFound(ticket: Ticket)
-        fun onNoTicket()
+        fun onNoTicket(searchTicket: String)
     }
 
     companion object {

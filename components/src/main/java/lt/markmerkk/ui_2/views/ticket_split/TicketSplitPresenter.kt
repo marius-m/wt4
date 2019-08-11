@@ -29,7 +29,7 @@ class TicketSplitPresenter(
                     view?.showTicketLabel(ticketTitle = ticket.description)
                 }
 
-                override fun onNoTicket() {
+                override fun onNoTicket(searchTicket: String) {
                     view?.showTicketLabel(ticketTitle = "")
                 }
             },

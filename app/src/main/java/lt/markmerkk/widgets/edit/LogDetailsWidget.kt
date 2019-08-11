@@ -303,7 +303,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                         viewTextTicketDesc.text = ticket.description
                     }
 
-                    override fun onNoTicket() {
+                    override fun onNoTicket(searchTicket: String) {
                         viewTextTicketDesc.text = ""
                     }
                 },
