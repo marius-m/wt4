@@ -10,6 +10,7 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
+import lt.markmerkk.widgets.statistics.StatisticsWidget
 import tornadofx.*
 
 class PopUpSettings(
@@ -31,14 +32,19 @@ class PopUpSettings(
                                             resizable = true
                                     )
                                 }
+                        ),
+                        PopUpAction(
+                                title = "Statistics",
+                                graphic = graphics.from(Glyph.STATISTICS, Color.BLACK, 12.0),
+                                action = {
+                                    find<StatisticsWidget>().openModal(
+                                            stageStyle = StageStyle.UTILITY,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
                         )
-//                        PopUpAction(
-//                                title = "Profiles",
-//                                graphic = graphics.from(Glyph.SETTINGS, Color.BLACK, 12.0),
-//                                action = {
-//                                    openDialog(ProfilesDialog())
-//                                }
-//                        )
                 ),
                 attachTo = attachTo
         )
