@@ -4,7 +4,7 @@ import dagger.Component
 import lt.markmerkk.Main
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.SyncModule
-import lt.markmerkk.utils.DisplaySelectWidget
+import lt.markmerkk.widgets.DisplaySelectWidget
 import lt.markmerkk.widgets.DatePickerWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.MainWidget

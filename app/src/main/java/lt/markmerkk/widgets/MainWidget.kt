@@ -34,7 +34,6 @@ import lt.markmerkk.ui_2.views.date.QuickDateChangeWidgetPresenterDefault
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
-import lt.markmerkk.utils.DisplaySelectWidget
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.calendar.CalendarWidget

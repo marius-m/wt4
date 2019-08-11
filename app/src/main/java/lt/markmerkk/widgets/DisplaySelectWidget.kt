@@ -1,10 +1,9 @@
-package lt.markmerkk.utils
+package lt.markmerkk.widgets
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.JFXRadioButton
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.RadioButton
 import lt.markmerkk.DisplayType
 import lt.markmerkk.Main
 import lt.markmerkk.Styles
