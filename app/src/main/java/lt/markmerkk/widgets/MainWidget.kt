@@ -224,7 +224,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 logStorage.insert(newLog)
             }
             LogEditType.SPLIT -> {
-                resultDispatcher.publish(TicketSplitController.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
+                resultDispatcher.publish(TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
             }
         }.javaClass
