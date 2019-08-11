@@ -44,6 +44,10 @@ fun EventTarget.jfxButton(
 ) = JFXButton(text).attachTo(this, op) {
     if (graphic != null) it.graphic = graphic
 }
+fun EventTarget.jfxRadiobutton(
+        text: String = "",
+        op: JFXRadioButton.() -> Unit = {}
+) = JFXRadioButton(text).attachTo(this, op) { }
 
 // Spinner
 fun EventTarget.jfxSpinner(op: JFXSpinner.() -> Unit = {}) = JFXSpinner().attachTo(this, op)

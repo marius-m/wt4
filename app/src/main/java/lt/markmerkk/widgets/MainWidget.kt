@@ -25,9 +25,7 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui.day.CalendarPresenter
 import lt.markmerkk.ui_2.*
-import lt.markmerkk.ui_2.bridges.UIEButtonDisplayView
 import lt.markmerkk.ui_2.bridges.UIEButtonSettings
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
@@ -36,6 +34,7 @@ import lt.markmerkk.ui_2.views.date.QuickDateChangeWidgetPresenterDefault
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
+import lt.markmerkk.utils.DisplaySelectWidget
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.calendar.CalendarWidget
@@ -64,7 +63,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var jfxContainerContentLeft: HBox
     lateinit var jfxContainerContentRight: HBox
 
-    lateinit var uieButtonDisplayView: UIEButtonDisplayView
     lateinit var uieButtonSettings: UIEButtonSettings
     lateinit var snackBar: JFXSnackbar
     lateinit var widgetDateChange: QuickDateChangeWidget
@@ -105,6 +103,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         vgrow = Priority.ALWAYS
                         jfxButtonDisplayView = jfxButton {
                             addClass(Styles.buttonMenu)
+                            graphic = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
+                            setOnAction {
+                                find<DisplaySelectWidget>().openModal(
+                                        stageStyle = StageStyle.UTILITY,
+                                        modality = Modality.APPLICATION_MODAL,
+                                        block = false,
+                                        resizable = false
+                                )
+                            }
                         }
                         jfxButtonSettings = jfxButton {
                             addClass(Styles.buttonMenu)
@@ -158,7 +165,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         )
         snackBar = JFXSnackbar(root as StackPane)
         uieButtonSettings = UIEButtonSettings(graphics, strings, this, jfxButtonSettings, eventBus)
-        uieButtonDisplayView = UIEButtonDisplayView(graphics, this, jfxButtonDisplayView)
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
