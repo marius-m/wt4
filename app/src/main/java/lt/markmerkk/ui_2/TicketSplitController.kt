@@ -11,6 +11,7 @@ import lt.markmerkk.ui_2.views.ticket_split.TicketSplitPresenter
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.LogSplitter
 import org.slf4j.LoggerFactory
+import tornadofx.*
 import java.net.URL
 import java.util.*
 import javax.annotation.PreDestroy
@@ -37,32 +38,19 @@ class TicketSplitController : Initializable {
         Main.component().presenterComponent().inject(this)
 
         // Views
-        widgetTicketSplit = TicketSplitWidget(
-                strings,
-                graphics,
-                jfxDialog,
-                TicketSplitPresenter(
-                        resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)!!,
-                        timeProvider,
-                        logStorage,
-                        LogSplitter,
-                        strings,
-                        ticketsDatabaseRepo,
-                        schedulerProvider
-                )
-        )
+        widgetTicketSplit = find<TicketSplitWidget>()
         jfxDialogLayout.setHeading(widgetTicketSplit.header)
         jfxDialogLayout.setBody(widgetTicketSplit.root)
         jfxDialogLayout.setActions(widgetTicketSplit.actions)
         jfxDialogLayout.prefWidth = stageProperties.width - dialogPadding
         jfxDialogLayout.prefHeight = stageProperties.height - dialogPadding
         stageProperties.register(stageChangeListener)
-        widgetTicketSplit.onAttach()
+//        widgetTicketSplit.onAttach()
     }
 
     @PreDestroy
     fun destroy() {
-        widgetTicketSplit.onDetach()
+//        widgetTicketSplit.onDetach()
         stageProperties.unregister(stageChangeListener)
     }
 
