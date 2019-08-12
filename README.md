@@ -18,7 +18,7 @@ There are some builds that are not stable enough to use it as it's in developmen
 * Mac
   - [DMG installer](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.3.0.dmg)
 * Winows
-  - [Exe installer](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.3.0.exe)
+  - [Exe installer](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.3.0.exe)
 
 ## Download
 
