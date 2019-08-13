@@ -14,36 +14,12 @@ import org.slf4j.LoggerFactory
 import rx.Single
 
 class TicketsDatabaseRepo(
-        private val connProvider: DBConnProvider,
-        private val migrations: List<DBMigration>
+        private val connProvider: DBConnProvider
 ) {
-
-    private val dslContext: DSLContext
-
-    init {
-        val conn = connProvider.connect()
-        try {
-            val dbVersion = DBUtils.userVersion(conn)
-            logger.debug("Migrations start")
-            logger.debug("Current db version - ${dbVersion}")
-            migrations.forEach {
-                if (it.needMigration(dbVersion)) {
-                    logger.debug("Migrating from ${it.migrateVersionFrom} .. ${it.migrateVersionTo}")
-                    it.migrate(conn)
-                    logger.debug("Moving DB version to ${it.migrateVersionTo}")
-                    DBUtils.renewUserVersion(conn, it.migrateVersionTo)
-                }
-            }
-            logger.debug("Migrations finished")
-        } finally {
-            conn.close()
-        }
-        dslContext = DSL.using(connProvider.connect(), SQLDialect.SQLITE)
-    }
 
     fun loadTickets(): Single<List<Ticket>> {
         return Single.defer {
-            val dbResult: Result<TicketRecord> = dslContext
+            val dbResult: Result<TicketRecord> = connProvider.dsl
                     .select()
                     .from(TICKET)
                     .fetchInto(TICKET)
@@ -71,10 +47,10 @@ class TicketsDatabaseRepo(
 
     fun insertOrUpdate(ticket: Ticket): Single<Int> {
         return Single.defer {
-            val isTicketExist = isTicketExist(dslContext, ticket)
+            val isTicketExist = isTicketExist(connProvider.dsl, ticket)
             val remoteData: RemoteData = ticket.remoteData ?: RemoteData.asEmpty()
             val result = if (isTicketExist) {
-                dslContext.update(TICKET)
+                connProvider.dsl.update(TICKET)
                         .set(TICKET.CODE, ticket.code.code)
                         .set(TICKET.CODE_PROJECT, ticket.code.codeProject)
                         .set(TICKET.CODE_NUMBER, ticket.code.codeNumber)
@@ -90,7 +66,7 @@ class TicketsDatabaseRepo(
                         .where(TICKET.REMOTE_ID.eq(remoteData.remoteId))
                         .execute()
             } else {
-                dslContext.insertInto(
+                connProvider.dsl.insertInto(
                         TICKET,
                         TICKET.CODE,
                         TICKET.CODE_PROJECT,
@@ -125,7 +101,7 @@ class TicketsDatabaseRepo(
 
     fun findTicketsByCode(inputCode: String): Single<List<Ticket>> {
         return Single.defer {
-            val tickets = dslContext.select()
+            val tickets = connProvider.dsl.select()
                     .from(TICKET)
                     .where(TICKET.CODE.eq(inputCode))
                     .fetchInto(TICKET)

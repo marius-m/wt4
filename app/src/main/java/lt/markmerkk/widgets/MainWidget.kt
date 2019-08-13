@@ -58,6 +58,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var logChangeValidator: LogChangeValidator
     @Inject lateinit var syncInteractor: SyncInteractor
+    @Inject lateinit var connProvider: DBConnProvider
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton

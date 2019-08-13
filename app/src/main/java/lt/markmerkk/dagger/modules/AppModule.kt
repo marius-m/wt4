@@ -11,6 +11,7 @@ import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
+import lt.markmerkk.migrations.Migration1To2
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketsNetworkRepo
@@ -135,14 +136,25 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesDatabaseRepo(
+    fun providesDatabaseProvider(
             config: Config
-    ): TicketsDatabaseRepo {
+    ): DBConnProvider {
         val migrations = listOf(
-                Migration0To1(oldDatabase = DBConnProvider(databaseName = "wt4_1.db", databasePath = config.cfgPath))
+                Migration0To1(oldDatabase = DBConnProvider(databaseName = "wt4_1.db", databasePath = config.cfgPath)),
+                Migration1To2(oldDatabase = DBConnProvider(databaseName = "wt4_1.db", databasePath = config.cfgPath))
         )
-        val database = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
-        return TicketsDatabaseRepo(database, migrations)
+        val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
+        MigrationsRunner(dbConnProvider)
+                .run(migrations)
+        return dbConnProvider
+    }
+
+    @Provides
+    @Singleton
+    fun providesDatabaseRepo(
+            databaseProvider: DBConnProvider
+    ): TicketsDatabaseRepo {
+        return TicketsDatabaseRepo(databaseProvider)
     }
 
     @Provides

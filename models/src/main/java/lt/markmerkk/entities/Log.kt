@@ -2,7 +2,7 @@ package lt.markmerkk.entities
 
 import lt.markmerkk.Const
 
-data class Worklog(
+data class Log(
         val id: Long = Const.NO_ID,
         val start: Long = 0,
         val end: Long = 0,
@@ -20,8 +20,8 @@ data class Worklog(
                 code: String,
                 comment: String,
                 remoteData: RemoteData?
-        ): Worklog {
-            return Worklog(
+        ): Log {
+            return Log(
                     start = start,
                     end = end,
                     duration = duration,

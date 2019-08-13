@@ -3,7 +3,7 @@ package lt.markmerkk.migrations
 import lt.markmerkk.DBConnProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.Worklog
+import lt.markmerkk.entities.Log
 import lt.markmerkk.schema1.tables.Worklog.WORKLOG
 import lt.markmerkk.toBoolean
 import lt.markmerkk.toByte
@@ -19,12 +19,12 @@ import java.sql.SQLException
 /**
  * Migration for worklog (not used yet)
  */
-class MigrationWorklog(
+class Migration1To2(
         private val oldDatabase: DBConnProvider
 ): DBMigration {
 
-    override val migrateVersionFrom: Int = 0
-    override val migrateVersionTo: Int = 1
+    override val migrateVersionFrom: Int = 1
+    override val migrateVersionTo: Int = 2
 
     override fun migrate(conn: Connection) {
         val currentDsl = DSL.using(conn, SQLDialect.SQLITE)
@@ -69,7 +69,7 @@ class MigrationWorklog(
             now: Long
     ) {
         val sql = "SELECT * FROM Log"
-        val oldWorklogs = mutableListOf<Worklog>()
+        val oldWorklogs = mutableListOf<Log>()
         try {
             val statement = oldConnection.createStatement()
             val rs = statement.executeQuery(sql)
@@ -85,7 +85,7 @@ class MigrationWorklog(
                 val dirty = rs.getInt("dirty")
                 val error = rs.getInt("error")
                 val errorMessage: String = rs.getString("errorMessage") ?: ""
-                val worklog = Worklog.new(
+                val worklog = Log.new(
                         start = start,
                         end = end,
                         duration = duration,
