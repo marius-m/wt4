@@ -54,6 +54,10 @@ class WorklogRepository(
         }
     }
 
+    fun loadWorklogsSync(from: LocalDate, to: LocalDate): List<Log> {
+        return loadWorklogs(from, to).toBlocking().value()
+    }
+
     fun insertOrUpdate(log: Log): Single<Int> {
         return Single.defer {
             val worklogExist = isWorklogExistLocally(connProvider.dsl, log)
@@ -108,6 +112,10 @@ class WorklogRepository(
         }
     }
 
+    fun insertOrUpdateSync(log: Log): Int {
+        return insertOrUpdate(log).toBlocking().value()
+    }
+
     fun update(log: Log): Single<Int> {
         return Single.defer {
             val worklogExist = isWorklogExistLocally(connProvider.dsl, log)
@@ -136,11 +144,57 @@ class WorklogRepository(
         }
     }
 
+    fun reinsert(oldEntryLocalId: Long, newEntry: Log): Single<Int> {
+        return delete(oldEntryLocalId)
+                .flatMap { insertOrUpdate(newEntry) }
+    }
+
+    fun reinsertSync(oldEntryLocalId: Long, newEntry: Log): Int {
+        return reinsert(oldEntryLocalId, newEntry).toBlocking().value()
+    }
+
+    fun updateSync(log: Log): Int {
+        return update(log).toBlocking().value()
+    }
+
     fun findById(localId: Long): Log? {
+        if (localId <= 0) {
+            return null
+        }
         val dbResult: Result<WorklogRecord> = connProvider.dsl
                 .select()
                 .from(WORKLOG)
                 .where(WORKLOG.ID.eq(localId.toInt()))
+                .fetchInto(WORKLOG)
+        return dbResult
+                .map { worklog ->
+                    Log.fromDatabase(
+                            timeProvider = timeProvider,
+                            id = worklog.id.toLong(),
+                            start = worklog.start,
+                            end = worklog.end,
+                            code = worklog.code,
+                            comment = worklog.comment,
+                            remoteData = RemoteData.new(
+                                    isDeleted = worklog.isDeleted.toBoolean(),
+                                    isDirty = worklog.isDirty.toBoolean(),
+                                    isError = worklog.isError.toBoolean(),
+                                    errorMessage = worklog.errorMessage,
+                                    fetchTime = worklog.fetchtime,
+                                    url = worklog.url
+                            )
+                    )
+                }.firstOrNull()
+    }
+
+    fun findByRemoteId(remoteId: Long): Log? {
+        if (remoteId <= 0) {
+            return null
+        }
+        val dbResult: Result<WorklogRecord> = connProvider.dsl
+                .select()
+                .from(WORKLOG)
+                .where(WORKLOG.REMOTE_ID.eq(remoteId))
                 .fetchInto(WORKLOG)
         return dbResult
                 .map { worklog ->
@@ -170,6 +224,10 @@ class WorklogRepository(
                     .execute()
             Single.just(result)
         }
+    }
+
+    fun deleteSync(localId: Long): Int {
+        return delete(localId).toBlocking().value()
     }
 
     private fun isWorklogExistLocally(dslContext: DSLContext, log: Log): Boolean {

@@ -2,7 +2,6 @@ apply plugin: "kotlin"
 
 dependencies {
     implementation project(":jira-client")
-    implementation project(":database")
     implementation project(":database2")
     implementation project(":models")
 

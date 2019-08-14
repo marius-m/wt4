@@ -4,8 +4,7 @@ apply plugin: "kotlin"
 
 dependencies {
     implementation project(":jira-client")
-    implementation project(":database")
-    
+
     implementation "org.slf4j:slf4j-api:${versions.slf4j}"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"

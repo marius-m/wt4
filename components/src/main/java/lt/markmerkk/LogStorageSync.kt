@@ -41,25 +41,19 @@ class LogStorage(
 
     override fun insert(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.insertOrUpdate(log)
-                .toBlocking()
-                .value()
+        worklogRepository.insertOrUpdateSync(log)
         notifyDataChange()
     }
 
     override fun delete(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.delete(log.id)
-                .toBlocking()
-                .value()
+        worklogRepository.deleteSync(log.id)
         notifyDataChange()
     }
 
     override fun update(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.update(log)
-                .toBlocking()
-                .value()
+        worklogRepository.updateSync(log)
         notifyDataChange()
     }
 
@@ -82,9 +76,7 @@ class LogStorage(
                     .withTimeAtStartOfDay()
                     .toLocalDate()
         }
-        data = worklogRepository.loadWorklogs(fromDate, toDate)
-                .toBlocking()
-                .value()
+        data = worklogRepository.loadWorklogsSync(fromDate, toDate)
                 .map { it.toLegacyLog(timeProvider) }
         listeners.forEach { it.onDataChange(data) }
     }

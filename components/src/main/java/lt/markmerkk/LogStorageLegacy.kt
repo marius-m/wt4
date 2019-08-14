@@ -1,22 +1,17 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.database.interfaces.IExecutor
-import lt.markmerkk.entities.jobs.DeleteJob
-import lt.markmerkk.entities.jobs.InsertJob
-import lt.markmerkk.entities.jobs.QueryListJob
-import lt.markmerkk.entities.jobs.UpdateJob
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
 import org.slf4j.LoggerFactory
 
 /**
  * Created by mariusmerkevicius on 12/13/15.
  * Represents the storage for simple use.
  */
+@Deprecated("Old database access, not used any more")
 class LogStorageLegacy(
-        private var executor: IExecutor,
+//        private var executor: IExecutor,
         private val worklogRepository: WorklogRepository,
         private val timeProvider: TimeProvider
 ) : IDataStorage<SimpleLog> {

@@ -3,9 +3,6 @@ package lt.markmerkk.entities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import lt.markmerkk.entities.database.annotations.Column;
-import lt.markmerkk.entities.database.annotations.FieldType;
-import lt.markmerkk.entities.database.annotations.Table;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
 import org.joda.time.DateTime;
@@ -16,7 +13,7 @@ import org.joda.time.Duration;
  * Represents a worklog entity
  */
 @Deprecated // Should be replaced with 'Log' eventually
-@Table(name = "Log")
+//@Table(name = "Log")
 public class SimpleLog extends RemoteEntity {
   //public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
   //public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
@@ -28,15 +25,15 @@ public class SimpleLog extends RemoteEntity {
   private static final String KEY_TASK = "task";
   private static final String KEY_COMMENT = "comment";
 
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long start;
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long end;
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long duration;
-  @Column(value = FieldType.TEXT)
+//  @Column(value = FieldType.TEXT)
   String task;
-  @Column(value = FieldType.TEXT)
+//  @Column(value = FieldType.TEXT)
   String comment;
 
   //region Getters / Setters

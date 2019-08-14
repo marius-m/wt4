@@ -7,7 +7,6 @@ sourceSets {
 
 dependencies {
     implementation project(":models")
-    implementation project(":database")
     implementation project(":remote")
     implementation project(":database2")
 

@@ -5,7 +5,6 @@ import dagger.Provides
 import lt.markmerkk.*
 import lt.markmerkk.UserSettings
 import lt.markmerkk.LogStorage
-import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.*
 import lt.markmerkk.merger.*
 import lt.markmerkk.interactors.AuthService
@@ -44,9 +43,10 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesRemoteLogMergeExecutor(
-            executor: IExecutor
+            worklogRepository: WorklogRepository,
+            timeProvider: TimeProvider
     ): RemoteLogMergeExecutorImpl {
-        return RemoteLogMergeExecutorImpl(executor)
+        return RemoteLogMergeExecutorImpl(worklogRepository, timeProvider)
     }
 
     @Provides

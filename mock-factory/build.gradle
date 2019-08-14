@@ -2,7 +2,6 @@ apply plugin: "kotlin"
 
 dependencies {
     implementation project(":models")
-    implementation project(":database")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "joda-time:joda-time:${versions.jodaTime}"
 

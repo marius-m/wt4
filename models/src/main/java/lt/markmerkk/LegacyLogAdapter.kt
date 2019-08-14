@@ -10,6 +10,13 @@ import lt.markmerkk.entities.SimpleLogBuilder
  */
 object LegacyLogAdapter { }
 
+fun SimpleLog?.toLogOrNull(timeProvider: TimeProvider): Log? {
+    if (this == null) {
+        return null
+    }
+    return this.toLog(timeProvider)
+}
+
 fun SimpleLog.toLog(
         timeProvider: TimeProvider
 ): Log {
@@ -29,6 +36,13 @@ fun SimpleLog.toLog(
                     url = this.uri ?: ""
             )
     )
+}
+
+fun Log?.toLegacyLogOrNull(timeProvider: TimeProvider): SimpleLog? {
+    if (this == null) {
+        return null
+    }
+    return this.toLegacyLog(timeProvider)
 }
 
 fun Log.toLegacyLog(

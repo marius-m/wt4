@@ -51,7 +51,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
     implementation project(":components")
-    implementation project(":database")
     implementation project(":database2")
     implementation project(":remote")
     implementation project(":jira-client")

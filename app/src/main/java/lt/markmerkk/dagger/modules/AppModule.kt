@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
-import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
@@ -121,22 +120,6 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesDbExecutor(
-            config: Config,
-            userSettings: UserSettings
-    ): IExecutor {
-//        if (config.debug) {
-//            return DBTestExecutor()
-//        }
-        // App path will be different for debug anyway
-        return DBProdExecutor(
-                config = config,
-                settings = userSettings
-        )
-    }
-
-    @Provides
-    @Singleton
     fun providesDatabaseProvider(
             config: Config,
             timeProvider: TimeProvider
@@ -209,13 +192,12 @@ class AppModule(
     @Provides
     @Singleton
     fun provideBasicLogStorage(
-            dbExecutor: IExecutor,
             worklogRepo: WorklogRepository,
             timeProvider: TimeProvider,
             schedulerProvider: SchedulerProvider
     ): LogStorage {
 //        return LogStorageLegacy(dbExecutor, worklogRepo, timeProvider) // rename to restore old usage
-        return LogStorage(worklogRepo, timeProvider, schedulerProvider)
+        return LogStorage(worklogRepo, timeProvider)
     }
 
     @Provides
