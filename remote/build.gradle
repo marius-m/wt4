@@ -9,7 +9,6 @@ dependencies {
     implementation "joda-time:joda-time:${versions.jodaTime}"
     implementation "io.reactivex:rxjava:${versions.rxJava}"
     implementation "org.slf4j:slf4j-api:${versions.slf4j}"
-//    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"

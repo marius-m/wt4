@@ -72,12 +72,9 @@ dependencies {
     kapt("com.google.dagger:dagger-compiler:${versions.dagger}")
 
     implementation "joda-time:joda-time:${versions.jodaTime}"
-    implementation "com.airhacks:afterburner.fx:1.7.0"
-    implementation "org.jfxtras:jfxtras-agenda:8.0-r5"
     implementation "com.calendarfx:view:8.5.0"
 
     implementation "org.slf4j:slf4j-api:${versions.slf4j}"
-//    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j}"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"

@@ -17,7 +17,6 @@ dependencies {
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.slf4j:slf4j-api:${versions.slf4j}"
-//    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j}"
     implementation "commons-io:commons-io:2.6"
 
