@@ -26,12 +26,13 @@ object Mocks {
 
     fun createLocalLog(
             timeProvider: TimeProvider,
-            start: DateTime = timeProvider.now(),
+            start: DateTime = timeProvider.now().plusMinutes(1),
             end: DateTime = timeProvider.now().plusMinutes(10),
             task: String = "DEV-123",
             comment: String = "valid_comment"
     ): SimpleLog {
-        return SimpleLogBuilder(timeProvider.now().millis)
+        val now = timeProvider.now().plusMinutes(1).millis
+        return SimpleLogBuilder(now)
                 .setStart(timeProvider.roundMillis(start))
                 .setEnd(timeProvider.roundMillis(end))
                 .setTask(task)

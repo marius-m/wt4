@@ -1,6 +1,7 @@
 package lt.markmerkk.interactors
 
 import com.nhaarman.mockitokotlin2.*
+import net.rcarz.jiraclient.RestException
 import org.junit.Assert.*
 import org.junit.Test
 import rx.Observable
@@ -97,7 +98,13 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
     @Test
     fun validInvalidUnauthorised() {
         // Assemble
-        doReturn(Observable.error<Any>(RuntimeException("Error: 401 Unauthorized")))
+        val restException = RestException(
+                "message",
+                401,
+                "hostname_not_found",
+                emptyArray()
+        )
+        doReturn(Observable.error<Any>(RuntimeException(restException)))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
@@ -116,7 +123,13 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
     @Test
     fun validInvalidHostname() {
         // Assemble
-        doReturn(Observable.error<Any>(RuntimeException("Error: 404 Not Found")))
+        val restException = RestException(
+                "message",
+                404,
+                "hostname_not_found",
+                emptyArray()
+        )
+        doReturn(Observable.error<Any>(RuntimeException(restException)))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
@@ -135,7 +148,7 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
     @Test
     fun validInvalidUndefined() {
         // Assemble
-        doReturn(Observable.error<Any>(RuntimeException("Error: Undefined error!")))
+        doReturn(Observable.error<Any>(RuntimeException()))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act

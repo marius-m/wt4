@@ -47,7 +47,7 @@ class StatisticsPresenterMapDataTest {
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 599999)
+                entry("DEV-1", 540000)
         )
     }
 
@@ -75,8 +75,8 @@ class StatisticsPresenterMapDataTest {
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 599999),
-                entry("DEV-2", 599999)
+                entry("DEV-1", 540000),
+                entry("DEV-2", 540000)
         )
     }
 
@@ -104,7 +104,7 @@ class StatisticsPresenterMapDataTest {
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 1199998L)
+                entry("DEV-1", 1080000)
         )
     }
 
@@ -144,8 +144,8 @@ class StatisticsPresenterMapDataTest {
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 1199998L),
-                entry("Not mapped", 539998L)
+                entry("DEV-1", 1080000),
+                entry("Not mapped", 420000)
         )
     }
 }

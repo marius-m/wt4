@@ -93,7 +93,7 @@ class TicketInfoLoaderTest {
         ticketInfoLoader.findTicket("tts-222")
 
         // Assert
-        verify(listener).onNoTicket()
+        verify(listener).onNoTicket(any())
     }
 
     @Test
@@ -106,6 +106,6 @@ class TicketInfoLoaderTest {
         ticketInfoLoader.findTicket("tts-222")
 
         // Assert
-        verify(listener).onNoTicket()
+        verify(listener).onNoTicket(any())
     }
 }
