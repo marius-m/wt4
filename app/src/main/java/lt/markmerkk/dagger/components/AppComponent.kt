@@ -37,6 +37,4 @@ interface AppComponent {
     fun inject(listLogWidget: ListLogWidget)
     fun inject(ticketSplitWidget: TicketSplitWidget)
     fun inject(statisticsWidget: StatisticsWidget)
-
-    fun presenterComponent(): PresenterComponent
 }
