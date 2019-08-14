@@ -1,7 +1,6 @@
 package lt.markmerkk
 
 import javafx.stage.Stage
-import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
@@ -40,9 +39,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
         super.start(stage)
 
         logger.info("Running in " + config)
-        stage.scene.stylesheets.add(javaClass.getResource("/css/material.css").toExternalForm())
-        stage.scene.stylesheets.add(javaClass.getResource("/css/material_tree_table.css").toExternalForm())
-
         settings.onAttach()
         keepAliveInteractor.onAttach()
         keepAliveInteractor.register(this)
@@ -74,7 +70,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
         keepAliveInteractor.onDetach()
         settings.onDetach()
         tracker.stop()
-        InjectorNoDI.forgetAll()
         super.stop()
     }
 

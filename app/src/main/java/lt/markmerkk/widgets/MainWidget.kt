@@ -1,9 +1,7 @@
 package lt.markmerkk.widgets
 
-import com.airhacks.afterburner.views.FXMLView
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXDialog
 import com.jfoenix.controls.JFXSnackbar
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Insets
@@ -19,7 +17,6 @@ import javafx.scene.paint.Paint
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
-import lt.markmerkk.afterburner.InjectorNoDI
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
@@ -271,12 +268,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 )
             }
         }
-    }
-
-    private fun openDialog(dialog: FXMLView) {
-        val jfxDialog = dialog.view as JFXDialog
-        jfxDialog.show(root as StackPane)
-        jfxDialog.setOnDialogClosed { InjectorNoDI.forget(dialog) }
     }
 
     fun showInfo(message: String) {

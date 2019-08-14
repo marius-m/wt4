@@ -52,7 +52,7 @@ class TicketSplitWidget : View(), TicketSplitContract.View {
 
     val header: Parent = vbox {
         label(strings.getString("ticket_split_header_title")) {
-            addClass("dialog-header")
+            addClass(Styles.dialogHeader)
         }
     }
 
