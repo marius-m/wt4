@@ -15,6 +15,7 @@ import org.joda.time.Duration;
  * Created by mariusmerkevicius on 11/20/15.
  * Represents a worklog entity
  */
+@Deprecated // Should be replaced with 'Log' eventually
 @Table(name = "Log")
 public class SimpleLog extends RemoteEntity {
   //public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
@@ -85,7 +86,7 @@ public class SimpleLog extends RemoteEntity {
    * @return
    */
   public boolean canEdit() {
-    return id <= 0;
+    return !isRemote();
   }
 
   public boolean isRemote() {

@@ -83,6 +83,24 @@ data class Log private constructor(
             )
         }
 
+        fun asRaw(
+                timeProvider: TimeProvider,
+                id: Long,
+                start: Long,
+                end: Long,
+                code: String,
+                comment: String,
+                remoteData: RemoteData?
+        ): Log {
+            return Log(
+                    id = id,
+                    time = LogTime.fromRaw(timeProvider, start, end),
+                    code = TicketCode.new(code),
+                    comment = comment,
+                    remoteData = remoteData
+            )
+        }
+
         fun fromRemoteData(
                 timeProvider: TimeProvider,
                 code: String,

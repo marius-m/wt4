@@ -12,6 +12,7 @@ import org.joda.time.DurationFieldType;
  * Created by mariusmerkevicius on 11/22/15.
  * A helper class to validate and build {@link SimpleLog} object
  */
+@Deprecated // should be replaced with 'Log' eventually
 public class SimpleLogBuilder {
   private long _id = -1;
   private long now;
@@ -165,6 +166,45 @@ public class SimpleLogBuilder {
     newSimpleLog.error = true;
     newSimpleLog.errorMessage = errorMessage;
     return newSimpleLog;
+  }
+
+  /**
+   * Builds {@link SimpleLog} with legacy params
+   * Temporary measure to handle migration
+   * @return
+   */
+  public SimpleLog buildLegacy(
+          long now,
+          long localId,
+          long start,
+          long end,
+          long duration,
+          String task,
+          String comment,
+          long remoteId,
+          boolean isDeleted,
+          boolean isDirty,
+          boolean isError,
+          String errorMessage,
+          long fetchTime,
+          String url
+  ) {
+    SimpleLog legacyLog = new SimpleLogBuilder(now)
+            .build();
+    legacyLog._id = localId;
+    legacyLog.start = start;
+    legacyLog.end = end;
+    legacyLog.duration = duration;
+    legacyLog.task = task;
+    legacyLog.comment = comment;
+    legacyLog.id = remoteId;
+    legacyLog.deleted = isDeleted;
+    legacyLog.dirty = isDirty;
+    legacyLog.error = isError;
+    legacyLog.errorMessage = errorMessage;
+    legacyLog.download_millis = fetchTime;
+    legacyLog.uri = url;
+    return legacyLog;
   }
 
   /**

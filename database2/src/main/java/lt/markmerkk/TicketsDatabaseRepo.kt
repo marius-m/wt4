@@ -31,7 +31,6 @@ class TicketsDatabaseRepo(
                                 description = ticket.description,
                                 parentId = ticket.parentId,
                                 remoteData = RemoteData.new(
-                                        remoteId = ticket.remoteId,
                                         isDeleted = ticket.isDeleted.toBoolean(),
                                         isDirty = ticket.isDirty.toBoolean(),
                                         isError = ticket.isError.toBoolean(),
@@ -112,7 +111,6 @@ class TicketsDatabaseRepo(
                                 description = ticket.description,
                                 parentId = ticket.parentId,
                                 remoteData = RemoteData.new(
-                                        remoteId = ticket.remoteId,
                                         isDeleted = ticket.isDeleted.toBoolean(),
                                         isDirty = ticket.isDirty.toBoolean(),
                                         isError = ticket.isError.toBoolean(),

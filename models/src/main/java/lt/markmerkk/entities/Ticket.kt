@@ -53,7 +53,6 @@ fun Ticket.bindRemoteData(
             code = TicketCode.new(remoteProjectKey),
             description = remoteDescription,
             remoteData = RemoteData.new(
-                    remoteId = UriUtils.parseUri(remoteIdUrl),
                     isDeleted = false,
                     isDirty = false,
                     isError = false,

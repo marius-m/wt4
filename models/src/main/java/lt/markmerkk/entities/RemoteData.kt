@@ -27,14 +27,14 @@ data class RemoteData(
         }
 
         fun new(
-                remoteId: Long,
                 isDeleted: Boolean = false,
-                isDirty: Boolean = false,
+                isDirty: Boolean = true,
                 isError: Boolean = false,
                 errorMessage: String = "",
                 fetchTime: Long,
                 url: String
         ): RemoteData? {
+            val remoteId = UriUtils.parseUri(url)
             if (remoteId == Const.NO_ID) {
                 return null
             }

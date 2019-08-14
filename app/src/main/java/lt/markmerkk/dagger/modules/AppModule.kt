@@ -12,6 +12,7 @@ import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.migrations.Migration1To2
+import lt.markmerkk.migrations.Migration2To3
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketsNetworkRepo
@@ -153,6 +154,12 @@ class AppModule(
                                 databasePath = config.cfgPath
                         ),
                         timeProvider = timeProvider
+                ),
+                Migration2To3(
+                        oldDatabase = DBConnProvider(
+                                databaseName = "wt4_1.db",
+                                databasePath = config.cfgPath
+                        )
                 )
         )
         val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
@@ -167,6 +174,15 @@ class AppModule(
             databaseProvider: DBConnProvider
     ): TicketsDatabaseRepo {
         return TicketsDatabaseRepo(databaseProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun providesWorklogsRepo(
+            dbProvider: DBConnProvider,
+            timeProvider: TimeProvider
+    ): WorklogRepository {
+        return WorklogRepository(dbProvider, timeProvider)
     }
 
     @Provides
@@ -192,8 +208,14 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideBasicLogStorage(dbExecutor: IExecutor): LogStorage { // todo : temp solution
-        return LogStorage(dbExecutor)
+    fun provideBasicLogStorage(
+            dbExecutor: IExecutor,
+            worklogRepo: WorklogRepository,
+            timeProvider: TimeProvider,
+            schedulerProvider: SchedulerProvider
+    ): LogStorage {
+//        return LogStorageLegacy(dbExecutor, worklogRepo, timeProvider) // rename to restore old usage
+        return LogStorage(worklogRepo, timeProvider, schedulerProvider)
     }
 
     @Provides

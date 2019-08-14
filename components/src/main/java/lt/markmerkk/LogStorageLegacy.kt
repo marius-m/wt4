@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory
  * Created by mariusmerkevicius on 12/13/15.
  * Represents the storage for simple use.
  */
-class LogStorage(
-        private var executor: IExecutor
+class LogStorageLegacy(
+        private var executor: IExecutor,
+        private val worklogRepository: WorklogRepository,
+        private val timeProvider: TimeProvider
 ) : IDataStorage<SimpleLog> {
 
     override var data = mutableListOf<SimpleLog>()
@@ -60,55 +62,50 @@ class LogStorage(
     }
 
     override fun insert(dataEntity: SimpleLog) {
-        executor.execute(InsertJob(SimpleLog::class.java, dataEntity))
-        notifyDataChange()
+//        executor.execute(InsertJob(SimpleLog::class.java, dataEntity))
+//        notifyDataChange()
     }
 
     override fun delete(dataEntity: SimpleLog) {
-        executor.execute(DeleteJob(SimpleLog::class.java, dataEntity))
-        notifyDataChange()
+//        executor.execute(DeleteJob(SimpleLog::class.java, dataEntity))
+//        notifyDataChange()
     }
 
     override fun update(dataEntity: SimpleLog) {
-        executor.execute(UpdateJob(SimpleLog::class.java, dataEntity))
-        notifyDataChange()
+//        executor.execute(UpdateJob(SimpleLog::class.java, dataEntity))
+//        notifyDataChange()
     }
 
     override fun findByIdOrNull(id: Long): SimpleLog? {
-        val queryJob = QueryListJob<SimpleLog>(
-                SimpleLog::class.java,
-                { "_id = " + id }
-        )
-        executor.execute(queryJob)
-        return queryJob.result().firstOrNull()
+//        val queryJob = QueryListJob<SimpleLog>(
+//                SimpleLog::class.java,
+//                { "_id = " + id }
+//        )
+//        executor.execute(queryJob)
+//        return queryJob.result().firstOrNull()
+        throw UnsupportedOperationException()
     }
 
     override fun notifyDataChange() {
-        val queryJob: QueryListJob<SimpleLog>
-        when (displayType) {
-            DisplayTypeLength.WEEK -> {
-                val weekStart = targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
-                val weekEnd = targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay()
-                queryJob = QueryListJob(SimpleLog::class.java, {
-                    "(start > ${weekStart.millis} AND start < ${weekEnd.millis}) ORDER BY start ASC"
-                })
-            }
-            else -> queryJob = QueryListJob(SimpleLog::class.java, {
-                "(start > ${targetDate.millis} AND start < ${targetDate.plusDays(1).millis})"
-            })
-        }
-        executor.execute(queryJob)
-        data.clear()
-        if (queryJob.result() != null)
-            data.addAll(queryJob.result())
-        total()
-        listeners.forEach { it.onDataChange(data) }
-    }
-
-    override fun customQuery(queryPredicate: String): List<SimpleLog> {
-        val query = QueryListJob(SimpleLog::class.java, { queryPredicate })
-        executor.execute(query)
-        return query.result()
+//        val queryJob: QueryListJob<SimpleLog>
+//        when (displayType) {
+//            DisplayTypeLength.WEEK -> {
+//                val weekStart = targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
+//                val weekEnd = targetDate.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withTimeAtStartOfDay()
+//                queryJob = QueryListJob(SimpleLog::class.java, {
+//                    "(start > ${weekStart.millis} AND start < ${weekEnd.millis}) ORDER BY start ASC"
+//                })
+//            }
+//            else -> queryJob = QueryListJob(SimpleLog::class.java, {
+//                "(start > ${targetDate.millis} AND start < ${targetDate.plusDays(1).millis})"
+//            })
+//        }
+//        executor.execute(queryJob)
+//        data.clear()
+//        if (queryJob.result() != null)
+//            data.addAll(queryJob.result())
+//        total()
+//        listeners.forEach { it.onDataChange(data) }
     }
 
     //region Custom impl
