@@ -72,11 +72,12 @@ class Migration1To2(
             val statement = oldConnection.createStatement()
             val rs = statement.executeQuery(sql)
             while (rs.next()) {
+                val _id = rs.getLong("_id")
                 val start = rs.getLong("start")
                 val end = rs.getLong("end")
                 val task = rs.getString("task")
                 val comment = rs.getString("comment")
-                val _id = rs.getLong("_id")
+                val id = rs.getLong("id")
                 val uri = rs.getString("uri")
                 val deleted = rs.getInt("deleted")
                 val dirty = rs.getInt("dirty")
@@ -89,7 +90,6 @@ class Migration1To2(
                         code = task,
                         comment = comment,
                         remoteData = RemoteData.new(
-                                remoteId = _id,
                                 isDeleted = deleted.toBoolean(),
                                 isDirty = dirty.toBoolean(),
                                 isError = error.toBoolean(),

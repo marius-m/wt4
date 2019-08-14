@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.SQLException
 
-class Migration0To1(
+class Migration2To3(
         private val oldDatabase: DBConnProvider
 ): DBMigration {
 
-    override val migrateVersionFrom: Int = 0
-    override val migrateVersionTo: Int = 1
+    override val migrateVersionFrom: Int = 2
+    override val migrateVersionTo: Int = 3
 
     override fun migrate(conn: Connection) {
         val currentDsl = DSL.using(conn, SQLDialect.SQLITE)
@@ -73,7 +73,6 @@ class Migration0To1(
             while (rs.next()) {
                 val key = rs.getString("key")
                 val description = rs.getString("description")
-                val _id = rs.getLong("_id")
                 val uri = rs.getString("uri")
                 val deleted = rs.getInt("deleted")
                 val dirty = rs.getInt("dirty")
@@ -96,6 +95,8 @@ class Migration0To1(
         } catch (e: SQLException) {
             logger.warn("Could not read old database", e)
         }
+        currentDsl.truncate(TICKET)
+                .execute()
         val issueMigration = oldTickets.map { ticket ->
             val remoteData: RemoteData = ticket.remoteData ?: RemoteData.asEmpty()
             currentDsl
