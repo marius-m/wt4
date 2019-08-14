@@ -137,11 +137,23 @@ class AppModule(
     @Provides
     @Singleton
     fun providesDatabaseProvider(
-            config: Config
+            config: Config,
+            timeProvider: TimeProvider
     ): DBConnProvider {
         val migrations = listOf(
-                Migration0To1(oldDatabase = DBConnProvider(databaseName = "wt4_1.db", databasePath = config.cfgPath)),
-                Migration1To2(oldDatabase = DBConnProvider(databaseName = "wt4_1.db", databasePath = config.cfgPath))
+                Migration0To1(
+                        oldDatabase = DBConnProvider(
+                                databaseName = "wt4_1.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration1To2(
+                        oldDatabase = DBConnProvider(
+                                databaseName = "wt4_1.db",
+                                databasePath = config.cfgPath
+                        ),
+                        timeProvider = timeProvider
+                )
         )
         val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
         MigrationsRunner(dbConnProvider)

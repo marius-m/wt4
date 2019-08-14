@@ -1,12 +1,9 @@
 package lt.markmerkk.migrations
 
-import lt.markmerkk.DBConnProvider
-import lt.markmerkk.Tags
+import lt.markmerkk.*
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Log
 import lt.markmerkk.schema1.tables.Worklog.WORKLOG
-import lt.markmerkk.toBoolean
-import lt.markmerkk.toByte
 import org.joda.time.DateTime
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
@@ -20,7 +17,8 @@ import java.sql.SQLException
  * Migration for worklog (not used yet)
  */
 class Migration1To2(
-        private val oldDatabase: DBConnProvider
+        private val oldDatabase: DBConnProvider,
+        private val timeProvider: TimeProvider
 ): DBMigration {
 
     override val migrateVersionFrom: Int = 1
@@ -76,7 +74,6 @@ class Migration1To2(
             while (rs.next()) {
                 val start = rs.getLong("start")
                 val end = rs.getLong("end")
-                val duration = rs.getLong("duration")
                 val task = rs.getString("task")
                 val comment = rs.getString("comment")
                 val _id = rs.getLong("_id")
@@ -85,10 +82,10 @@ class Migration1To2(
                 val dirty = rs.getInt("dirty")
                 val error = rs.getInt("error")
                 val errorMessage: String = rs.getString("errorMessage") ?: ""
-                val worklog = Log.new(
+                val worklog = Log.newRaw(
+                        timeProvider = timeProvider,
                         start = start,
                         end = end,
-                        duration = duration,
                         code = task,
                         comment = comment,
                         remoteData = RemoteData.new(
@@ -125,10 +122,10 @@ class Migration1To2(
                             WORKLOG.URL
                     )
                     .values(
-                            worklog.start,
-                            worklog.end,
-                            worklog.duration,
-                            worklog.code,
+                            timeProvider.roundMillis(worklog.time.start),
+                            timeProvider.roundMillis(worklog.time.end),
+                            worklog.time.duration.millis,
+                            worklog.code.code,
                             worklog.comment,
                             remoteData.remoteId,
                             remoteData.isDeleted.toByte(),

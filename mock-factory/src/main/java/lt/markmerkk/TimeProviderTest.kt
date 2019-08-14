@@ -17,7 +17,11 @@ open class TimeProviderTest: TimeProvider {
         DateTimeUtils.setCurrentMillisFixed(1L)
     }
 
-    override fun now(): DateTime = DateTime.now()
+    override fun now(): DateTime = DateTime.now(dateTimeZone)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+
+    override fun nowMillis(): Long = roundMillis(now())
 
     override fun jNow(): LocalDateTime = roundDateTimeJava8(now().millis)
 

@@ -13,6 +13,8 @@ interface TimeProvider {
      */
     fun now(): DateTime
 
+    fun nowMillis(): Long
+
     /**
      * @return instance of 'now' in java8 datetime
      */
