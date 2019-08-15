@@ -26,11 +26,12 @@ class JiraFilterWorklogTest {
         validWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(validWorklog).started
         doReturn(user).whenever(validWorklog).author
-        doReturn("valid_username").whenever(user).email
+        doReturn("valid_username@email.com").whenever(user).email
+        doReturn("valid_username").whenever(user).name
     }
 
     @Test
-    fun valid_returnTrue() {
+    fun valid1() {
         // Arrange
         val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
@@ -42,7 +43,19 @@ class JiraFilterWorklogTest {
     }
 
     @Test
-    fun endEqualCreate_returnTrue() {
+    fun valid2() {
+        // Arrange
+        val filterer = JiraFilterWorklog("valid_username@email.com", 500L, 2000L)
+
+        // Act
+        val out = filterer.valid(validWorklog)
+
+        // Assert
+        assertTrue(out)
+    }
+
+    @Test
+    fun endEqualCreate() {
         // Arrange
         val filterer = JiraFilterWorklog("valid_username", 500L, 1000L)
 
@@ -54,7 +67,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test
-    fun startEqualCreate_returnTrue() {
+    fun startEqualCreate() {
         // Arrange
         val filterer = JiraFilterWorklog("valid_username", 1000L, 2000L)
 
@@ -66,7 +79,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun endBeforeCreate_returnFalse() {
+    fun endBeforeCreate() {
         // Arrange
         val filterer = JiraFilterWorklog("valid_username", 500L, 900L)
 
@@ -78,7 +91,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun startAfterCreate_returnFalse() {
+    fun startAfterCreate() {
         // Arrange
         val filterer = JiraFilterWorklog("valid_username", 1200L, 2000L)
 
@@ -90,7 +103,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun invalidUser_returnFalse() {
+    fun invalidUser() {
         // Arrange
         val filterer = JiraFilterWorklog("invalid_username", 500L, 2000L)
 
@@ -102,7 +115,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun nullWorkLog_returnFalse() {
+    fun nullWorkLog() {
         // Arrange
         val filterer = JiraFilterWorklog("valid_username", 500L, 2000L)
 
@@ -114,7 +127,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun invalidWorkLogStartedNull_returnFalse() {
+    fun invalidWorkLogStartedNull() {
         // Arrange
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(null).whenever(invalidWorklog).started
@@ -129,7 +142,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun invalidWorkLogAuthorNull_returnFalse() {
+    fun invalidWorkLogAuthorNull() {
         // Arrange
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started
@@ -144,7 +157,7 @@ class JiraFilterWorklogTest {
     }
 
     @Test(expected = JiraFilter.FilterErrorException::class)
-    fun invalidWorkLogAuthorNameNull_returnFalse() {
+    fun invalidWorkLogAuthorNameNull() {
         // Arrange
         val invalidWorklog = mock(WorkLog::class.java)
         doReturn(Date(DateTime(worklogTime).millis)).whenever(invalidWorklog).started

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
  * Synchronous storage
  */
 class LogStorage(
-        private val worklogRepository: WorklogRepository,
+        private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider
 ) : IDataStorage<SimpleLog> {
 
@@ -41,24 +41,24 @@ class LogStorage(
 
     override fun insert(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.insertOrUpdateSync(log)
+        worklogStorage.insertOrUpdateSync(log)
         notifyDataChange()
     }
 
     override fun delete(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.deleteSync(log.id)
+        worklogStorage.deleteSync(log.id)
         notifyDataChange()
     }
 
     override fun update(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.updateSync(log)
+        worklogStorage.updateSync(log)
         notifyDataChange()
     }
 
     override fun findByIdOrNull(id: Long): SimpleLog? {
-        return worklogRepository.findById(id)
+        return worklogStorage.findById(id)
                 ?.toLegacyLog(timeProvider)
     }
 
@@ -76,7 +76,7 @@ class LogStorage(
                     .withTimeAtStartOfDay()
                     .toLocalDate()
         }
-        data = worklogRepository.loadWorklogsSync(fromDate, toDate)
+        data = worklogStorage.loadWorklogsSync(fromDate, toDate)
                 .map { it.toLegacyLog(timeProvider) }
         listeners.forEach { it.onDataChange(data) }
     }

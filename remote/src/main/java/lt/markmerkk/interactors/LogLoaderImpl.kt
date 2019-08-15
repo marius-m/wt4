@@ -7,6 +7,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.RandomAccessFile
 
+@Deprecated("Rm this")
 class LogLoaderImpl(
         private val configPath: String
 ) : LogLoader {

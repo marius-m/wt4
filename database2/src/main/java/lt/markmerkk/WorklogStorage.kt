@@ -10,7 +10,7 @@ import org.jooq.Result
 import org.slf4j.LoggerFactory
 import rx.Single
 
-class WorklogRepository(
+class WorklogStorage(
         private val connProvider: DBConnProvider,
         private val timeProvider: TimeProvider
 ) {

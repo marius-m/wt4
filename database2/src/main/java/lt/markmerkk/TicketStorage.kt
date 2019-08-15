@@ -95,6 +95,10 @@ class TicketStorage(
         }
     }
 
+    fun insertOrUpdateSync(ticket: Ticket): Int {
+        return insertOrUpdate(ticket).toBlocking().value()
+    }
+
     fun findTicketsByCode(inputCode: String): Single<List<Ticket>> {
         return Single.defer {
             val tickets = connProvider.dsl.select()

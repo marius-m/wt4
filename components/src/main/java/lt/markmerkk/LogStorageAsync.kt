@@ -11,7 +11,7 @@ import rx.Single
  * Controls inner storage in asynchronous way
  */
 class LogStorageAsync(
-        private val worklogRepository: WorklogRepository,
+        private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider,
         private val schedulerProvider: SchedulerProvider
 ) : IDataStorage<SimpleLog> {
@@ -44,7 +44,7 @@ class LogStorageAsync(
 
     override fun insert(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.insertOrUpdate(log)
+        worklogStorage.insertOrUpdate(log)
                 .flatMap { activeWorklogs() }
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
@@ -60,7 +60,7 @@ class LogStorageAsync(
 
     override fun delete(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.delete(log.id)
+        worklogStorage.delete(log.id)
                 .flatMap { activeWorklogs() }
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
@@ -76,7 +76,7 @@ class LogStorageAsync(
 
     override fun update(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogRepository.update(log)
+        worklogStorage.update(log)
                 .flatMap { activeWorklogs() }
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
@@ -91,7 +91,7 @@ class LogStorageAsync(
     }
 
     override fun findByIdOrNull(id: Long): SimpleLog? {
-        return worklogRepository.findById(id)
+        return worklogStorage.findById(id)
                 ?.toLegacyLog(timeProvider)
     }
 
@@ -123,7 +123,7 @@ class LogStorageAsync(
                     .withTimeAtStartOfDay()
                     .toLocalDate()
         }
-        return worklogRepository.loadWorklogs(fromDate, toDate)
+        return worklogStorage.loadWorklogs(fromDate, toDate)
     }
 
     fun total() = data.sumBy { it.duration.toInt() }

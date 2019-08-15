@@ -47,7 +47,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
                 Mocks.createTicket()
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any())
+        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
 
@@ -85,7 +85,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
         doReturn(Observable.from(listOf(remoteIssuesPage1, remoteIssuesPage2)))
-                .whenever(jiraTicketSearch).searchIssues(any(), any())
+                .whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
 
@@ -125,7 +125,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
                 Mocks.createTicket()
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any())
+        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act

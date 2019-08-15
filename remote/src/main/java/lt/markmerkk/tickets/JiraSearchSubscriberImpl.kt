@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Subscriber
 
+@Deprecated("Use JiraTicketEmitter instead")
 class JiraSearchSubscriberImpl(
         private val jiraClientProvider: JiraClientProvider,
         private val userSettings: UserSettings,
@@ -83,9 +84,8 @@ class JiraSearchSubscriberImpl(
     ): String {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
-        return "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\")" +
-                " AND " +
-                "(assignee = currentUser() OR reporter = currentUser() OR watcher = currentUser())"
+//        return "worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\""
+        return "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
     }
 
     companion object {

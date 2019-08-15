@@ -38,14 +38,16 @@ class JiraWorklogSubscriberImpl : JiraWorklogSubscriber, Observable.OnSubscribe<
         try {
             val searchResult = this.searchResult ?: throw IllegalStateException("No issues")
             if (searchResult.issues == null) throw IllegalStateException("No issues")
-            searchResult.issues.forEach {
-                val issue = jiraClient?.getIssue(it.key)
-                var worklogs = emptyList<WorkLog>()
-                if (issue != null) {
-                    worklogs = issue.allWorkLogs
-                }
-                t.onNext(JiraWork(issue, worklogs))
-            }
+            searchResult.issues
+                    .map { issue ->
+                        logger.debug("Fetching worklogs for ${issue.key}")
+                        issue to issue.allWorkLogs
+                    }
+                    .forEach { issueWorklogPair ->
+                        logger.debug("Found ${issueWorklogPair.second.size} worklogs")
+                        t.onNext(JiraWork(issueWorklogPair.first, issueWorklogPair.second))
+                    }
+            logger.debug("Finish worklog remap")
             t.onCompleted()
         } catch(e: IllegalStateException) {
             logger.info("Illegal state: ${e.message}")

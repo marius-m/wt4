@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 @Deprecated("Old database access, not used any more")
 class LogStorageLegacy(
 //        private var executor: IExecutor,
-        private val worklogRepository: WorklogRepository,
+        private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider
 ) : IDataStorage<SimpleLog> {
 

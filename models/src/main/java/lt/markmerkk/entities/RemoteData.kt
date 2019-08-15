@@ -18,7 +18,7 @@ data class RemoteData(
             return RemoteData(
                     remoteId = Const.NO_ID,
                     isDeleted = false,
-                    isDirty = false,
+                    isDirty = true,
                     isError = false,
                     errorMessage = "",
                     fetchTime = 0,
@@ -50,11 +50,10 @@ data class RemoteData(
         }
 
         fun fromRemote(
-                remoteIdUrl: String,
                 fetchTime: Long,
                 url: String
         ): RemoteData? {
-            val remoteId = UriUtils.parseUri(remoteIdUrl)
+            val remoteId = UriUtils.parseUri(url)
             if (remoteId == Const.NO_ID) {
                 return null
             }

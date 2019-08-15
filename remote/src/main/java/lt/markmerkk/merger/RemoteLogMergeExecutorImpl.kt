@@ -7,20 +7,20 @@ import lt.markmerkk.utils.UriUtils
 import net.rcarz.jiraclient.WorkLog
 
 class RemoteLogMergeExecutorImpl(
-        private val worklogRepository: WorklogRepository,
+        private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider
 ) : RemoteMergeExecutor<SimpleLog, WorkLog> {
 
     override fun create(entry: SimpleLog) {
 //        dbExecutor.execute(InsertJob(SimpleLog::class.java, entry))
         val log = entry.toLog(timeProvider)
-        worklogRepository.insertOrUpdateSync(log)
+        worklogStorage.insertOrUpdateSync(log)
    }
 
     override fun update(entry: SimpleLog) {
 //        dbExecutor.execute(UpdateJob(SimpleLog::class.java, entry));
         val log = entry.toLog(timeProvider)
-        worklogRepository.updateSync(log)
+        worklogStorage.updateSync(log)
     }
 
     override fun localEntityFromRemote(remoteEntry: WorkLog): SimpleLog? {
@@ -30,7 +30,7 @@ class RemoteLogMergeExecutorImpl(
 //        dbExecutor.execute(queryJob)
 //        return queryJob.result()
         val remoteId = UriUtils.parseUri(remoteEntry.url)
-        return worklogRepository.findByRemoteId(remoteId)
+        return worklogStorage.findByRemoteId(remoteId)
                 .toLegacyLogOrNull(timeProvider)
     }
 
@@ -44,7 +44,7 @@ class RemoteLogMergeExecutorImpl(
 //        )
         val newEntry = SimpleLogBuilder(oldLocalEntry.task, remoteEntry).build()
                 .toLog(timeProvider)
-        worklogRepository.reinsert(oldLocalEntry._id, newEntry)
+        worklogStorage.reinsert(oldLocalEntry._id, newEntry)
     }
 
     override fun markAsError(oldLocalEntry: SimpleLog, error: Throwable) {
@@ -56,7 +56,7 @@ class RemoteLogMergeExecutorImpl(
 //        )
         val oldEntryAsError = SimpleLogBuilder(oldLocalEntry).buildWithError(error.message)
                 .toLog(timeProvider)
-        worklogRepository.update(oldEntryAsError)
+        worklogStorage.update(oldEntryAsError)
     }
 
 }

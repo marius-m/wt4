@@ -107,7 +107,6 @@ data class Log private constructor(
                 started: java.util.Date,
                 comment: String,
                 timeSpentSeconds: Int,
-                remoteIdUrl: String,
                 fetchTime: DateTime,
                 url: String
         ): Log {
@@ -119,7 +118,6 @@ data class Log private constructor(
                     code = TicketCode.new(code),
                     comment = comment,
                     remoteData = RemoteData.fromRemote(
-                            remoteIdUrl = remoteIdUrl,
                             fetchTime = fetchTime.millis,
                             url = url
                     )

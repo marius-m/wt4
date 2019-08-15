@@ -22,6 +22,8 @@ import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.worklogs.JiraWorklogSearch
+import lt.markmerkk.worklogs.WorklogApi
 import javax.inject.Singleton
 
 /**
@@ -161,11 +163,29 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesWorklogsRepo(
+    fun providesWorklogStorage(
             dbProvider: DBConnProvider,
             timeProvider: TimeProvider
-    ): WorklogRepository {
-        return WorklogRepository(dbProvider, timeProvider)
+    ): WorklogStorage {
+        return WorklogStorage(dbProvider, timeProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun providesWorklogApi(
+            jiraClientProvider: JiraClientProvider,
+            userSettings: UserSettings,
+            timeProvider: TimeProvider,
+            ticketStorage: TicketStorage,
+            worklogStorage: WorklogStorage
+    ): WorklogApi {
+        return WorklogApi(
+                jiraClientProvider,
+                JiraWorklogSearch(timeProvider, userSettings),
+                ticketStorage,
+                worklogStorage,
+                userSettings
+        )
     }
 
     @Provides
@@ -192,7 +212,7 @@ class AppModule(
     @Provides
     @Singleton
     fun provideBasicLogStorage(
-            worklogRepo: WorklogRepository,
+            worklogRepo: WorklogStorage,
             timeProvider: TimeProvider,
             schedulerProvider: SchedulerProvider
     ): LogStorage {

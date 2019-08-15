@@ -10,6 +10,7 @@ import lt.markmerkk.merger.*
 import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.tickets.JiraSearchSubscriber
 import lt.markmerkk.tickets.JiraSearchSubscriberImpl
+import lt.markmerkk.worklogs.WorklogApi
 import javax.inject.Singleton
 
 @Module
@@ -43,10 +44,10 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesRemoteLogMergeExecutor(
-            worklogRepository: WorklogRepository,
+            worklogStorage: WorklogStorage,
             timeProvider: TimeProvider
     ): RemoteLogMergeExecutorImpl {
-        return RemoteLogMergeExecutorImpl(worklogRepository, timeProvider)
+        return RemoteLogMergeExecutorImpl(worklogStorage, timeProvider)
     }
 
     @Provides
@@ -104,7 +105,10 @@ class SyncModule {
             jiraInteractor: JiraInteractor,
             logStorage: LogStorage,
             autoUpdateInteractor: AutoUpdateInteractor,
-            schedulerProvider: SchedulerProvider
+            schedulerProvider: SchedulerProvider,
+            timeProvider: TimeProvider,
+            worklogStorage: WorklogStorage,
+            worklogApi: WorklogApi
     ): SyncInteractor {
         return SyncInteractorImpl(
                 jiraInteractor = jiraInteractor,
@@ -114,7 +118,10 @@ class SyncModule {
                 dayProvider = dayProvider,
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui(),
-                autoUpdateInteractor = autoUpdateInteractor
+                autoUpdateInteractor = autoUpdateInteractor,
+                timeProvider = timeProvider,
+                worklogStorage = worklogStorage,
+                worklogApi = worklogApi
         )
     }
 
