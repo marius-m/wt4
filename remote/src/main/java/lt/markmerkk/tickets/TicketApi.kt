@@ -1,7 +1,7 @@
 package lt.markmerkk.tickets
 
 import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.TicketsDatabaseRepo
+import lt.markmerkk.TicketStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
@@ -9,10 +9,13 @@ import org.joda.time.DateTime
 import rx.Observable
 import rx.Single
 
-class TicketsNetworkRepo(
+/**
+ * This probably should be renamed as 'Api' as it would be more explicit
+ */
+class TicketApi(
         private val jiraClientProvider: JiraClientProvider,
         private val jiraTicketSearch: JiraTicketSearch,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
+        private val ticketsDatabaseRepo: TicketStorage,
         private val userSettings: UserSettings
 ) {
 
@@ -20,19 +23,7 @@ class TicketsNetworkRepo(
             now: DateTime
     ): Single<List<Ticket>> {
         return jiraClientProvider.clientStream()
-                .flatMapObservable { jiraTicketSearch.searchIssues(it, userSettings.issueJql) }
-                .flatMap { Observable.from(it) }
-                .map {
-                    Ticket.fromRemoteData(
-                            code = it.key,
-                            description = it.summary,
-                            remoteData = RemoteData.fromRemote(
-                                    remoteIdUrl = it.id,
-                                    fetchTime = now.millis,
-                                    url = it.url
-                            )
-                    )
-                }
+                .flatMapObservable { jiraTicketSearch.searchIssues(now, it, userSettings.issueJql) }
                 .doOnNext { ticketsDatabaseRepo.insertOrUpdate(it).subscribe() }
                 .toList()
                 .flatMapSingle { ticketsDatabaseRepo.loadTickets() }

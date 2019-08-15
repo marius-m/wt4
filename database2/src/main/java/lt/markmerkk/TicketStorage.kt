@@ -3,17 +3,14 @@ package lt.markmerkk
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
-import lt.markmerkk.migrations.DBMigration
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.records.TicketRecord
 import org.jooq.DSLContext
 import org.jooq.Result
-import org.jooq.SQLDialect
-import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 import rx.Single
 
-class TicketsDatabaseRepo(
+class TicketStorage(
         private val connProvider: DBConnProvider
 ) {
 

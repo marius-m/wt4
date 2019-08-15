@@ -16,15 +16,15 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
 
     @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraTicketSearch: JiraTicketSearch
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Mock lateinit var ticketsDatabaseRepo: TicketStorage
     @Mock lateinit var jiraClient: JiraClient
     @Mock lateinit var userSettings: UserSettings
-    lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    lateinit var ticketApi: TicketApi
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        ticketsNetworkRepo = TicketsNetworkRepo(
+        ticketApi = TicketApi(
                 jiraClientProvider,
                 jiraTicketSearch,
                 ticketsDatabaseRepo,
@@ -52,7 +52,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
@@ -90,7 +90,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
@@ -107,7 +107,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         doReturn(Single.error<Any>(IllegalArgumentException())).whenever(jiraClientProvider).clientStream()
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
@@ -129,7 +129,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert

@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit
  */
 class TicketLoader(
         private val listener: Listener,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
-        private val ticketsNetworkRepo: TicketsNetworkRepo,
+        private val ticketStorage: TicketStorage,
+        private val ticketApi: TicketApi,
         private val timeProvider: TimeProvider,
         private val userSettings: UserSettings,
         private val ioScheduler: Scheduler,
@@ -61,7 +61,7 @@ class TicketLoader(
             return
         }
         logger.info("Refreshing tickets")
-        networkSubscription = ticketsNetworkRepo.searchRemoteTicketsAndCache(timeProvider.now())
+        networkSubscription = ticketApi.searchRemoteTicketsAndCache(timeProvider.now())
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { listener.onLoadStart() }
@@ -85,7 +85,7 @@ class TicketLoader(
         logger.info("Loading tickets from database with filter: $inputFilter")
         this.inputFilter = inputFilter
         dbSubscription?.unsubscribe()
-        dbSubscription = ticketsDatabaseRepo.loadTickets()
+        dbSubscription = ticketStorage.loadTickets()
                 .map { filter(it, searchInput = inputFilter) }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)

@@ -17,7 +17,7 @@ class TicketSplitPresenterWorklogInitTest {
     @Mock lateinit var inputLog: SimpleLog
     @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var strings: Strings
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Mock lateinit var ticketStorage: TicketStorage
     lateinit var presenter: TicketSplitPresenter
     private val timeProvider = TimeProviderTest()
 
@@ -30,7 +30,7 @@ class TicketSplitPresenterWorklogInitTest {
                 logStorage,
                 LogSplitter,
                 strings,
-                ticketsDatabaseRepo,
+                ticketStorage,
                 SchedulerProviderImmediate()
         )
         doReturn("valid_string").whenever(strings).getString(any())

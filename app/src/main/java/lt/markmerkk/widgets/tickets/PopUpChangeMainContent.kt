@@ -35,7 +35,7 @@ class PopUpChangeMainContent(
                         ),
                         PopUpAction(
                                 title = "Day as list",
-                                graphic = graphics.from(Glyph.DISPLAY_LIST, Color.BLACK, 12.0),
+                                graphic = graphics.from(Glyph.DISPLAY_LIST, Color.BLACK, 12.0, 10.0),
                                 action = {
                                     eventBus.post(EventChangeDisplayType(DisplayType.TABLE_VIEW_DETAIL))
                                 }

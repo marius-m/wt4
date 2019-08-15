@@ -34,7 +34,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
@@ -307,7 +307,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                         viewTextTicketDesc.text = ""
                     }
                 },
-                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                ticketStorage = ticketStorage,
                 waitScheduler = schedulerProvider.waitScheduler(),
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()

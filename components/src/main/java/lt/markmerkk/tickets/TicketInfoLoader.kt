@@ -1,7 +1,7 @@
 package lt.markmerkk.tickets
 
 import lt.markmerkk.Tags
-import lt.markmerkk.TicketsDatabaseRepo
+import lt.markmerkk.TicketStorage
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import org.slf4j.LoggerFactory
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
  */
 class TicketInfoLoader(
         private val listener: Listener,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
+        private val ticketStorage: TicketStorage,
         private val waitScheduler: Scheduler,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
@@ -51,7 +51,7 @@ class TicketInfoLoader(
             return
         }
         searchSubscription?.unsubscribe()
-        searchSubscription = ticketsDatabaseRepo.findTicketsByCode(inputCode)
+        searchSubscription = ticketStorage.findTicketsByCode(inputCode)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({ tickets ->

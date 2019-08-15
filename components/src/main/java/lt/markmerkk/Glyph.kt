@@ -38,5 +38,6 @@ enum class Glyph {
     DISPLAY_DAY,
     DISPLAY_WEEK,
     DISPLAY_LIST,
+    PAGE,
     ;
 }

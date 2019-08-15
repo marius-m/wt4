@@ -15,8 +15,8 @@ class TicketLoaderFetchTicketsTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
     @Mock lateinit var timeProvider: TimeProvider
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
-    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    @Mock lateinit var ticketStorage: TicketStorage
+    @Mock lateinit var ticketApi: TicketApi
     @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
 
@@ -25,8 +25,8 @@ class TicketLoaderFetchTicketsTest {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsDatabaseRepo,
-                ticketsNetworkRepo,
+                ticketStorage,
+                ticketApi,
                 timeProvider,
                 userSettings,
                 Schedulers.immediate(),
@@ -40,8 +40,8 @@ class TicketLoaderFetchTicketsTest {
     fun valid() {
         // Assemble
         val newTickets = listOf(Mocks.createTicket())
-        doReturn(Single.just(newTickets)).whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketsDatabaseRepo).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
         val loaderSpy = spy(loader)
 
         // Act
@@ -49,7 +49,7 @@ class TicketLoaderFetchTicketsTest {
 
         // Assert
         verify(userSettings).ticketLastUpdate = TimeMachine.now().plusHours(1).millis
-        verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(listener).onNewTickets(any())
         verify(loaderSpy).loadTickets() // load tickets after fetch
     }
@@ -58,8 +58,8 @@ class TicketLoaderFetchTicketsTest {
     fun ticketsFreshEnough() {
         // Assemble
         val newTickets = listOf(Mocks.createTicket())
-        doReturn(Single.just(newTickets)).whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketsDatabaseRepo).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
         val loaderSpy = spy(loader)
         doReturn(TimeMachine.now()).whenever(timeProvider).now()
 
@@ -68,7 +68,7 @@ class TicketLoaderFetchTicketsTest {
 
         // Assert
         verify(userSettings, never()).ticketLastUpdate = any()
-        verify(ticketsNetworkRepo, never()).searchRemoteTicketsAndCache(any())
+        verify(ticketApi, never()).searchRemoteTicketsAndCache(any())
         verify(listener, never()).onNewTickets(any())
         verify(loaderSpy, never()).loadTickets()
     }
@@ -77,8 +77,8 @@ class TicketLoaderFetchTicketsTest {
     fun ticketsFreshEnough_forceRefresh() {
         // Assemble
         val newTickets = listOf(Mocks.createTicket())
-        doReturn(Single.just(newTickets)).whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketsDatabaseRepo).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
         val loaderSpy = spy(loader)
         doReturn(TimeMachine.now()).whenever(timeProvider).now()
 
@@ -87,7 +87,7 @@ class TicketLoaderFetchTicketsTest {
 
         // Assert
         verify(userSettings).ticketLastUpdate = any()
-        verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(listener).onNewTickets(any())
     }
 
@@ -95,7 +95,7 @@ class TicketLoaderFetchTicketsTest {
     fun noTickets() {
         // Assemble
         val newTickets = emptyList<Ticket>()
-        doReturn(Single.just(newTickets)).whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
         val loaderSpy = spy(loader)
 
         // Act
@@ -103,7 +103,7 @@ class TicketLoaderFetchTicketsTest {
 
         // Assert
         verify(userSettings).ticketLastUpdate = any()
-        verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(listener, never()).onNewTickets(any())
         verify(loaderSpy, never()).loadTickets()
     }
@@ -111,7 +111,7 @@ class TicketLoaderFetchTicketsTest {
     @Test
     fun errorFetching() {
         // Assemble
-        doReturn(Single.error<Any>(RuntimeException())).whenever(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        doReturn(Single.error<Any>(RuntimeException())).whenever(ticketApi).searchRemoteTicketsAndCache(any())
         val loaderSpy = spy(loader)
 
         // Act
@@ -119,7 +119,7 @@ class TicketLoaderFetchTicketsTest {
 
         // Assert
         verify(userSettings, never()).ticketLastUpdate = any()
-        verify(ticketsNetworkRepo).searchRemoteTicketsAndCache(any())
+        verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(listener, never()).onNewTickets(any())
         verify(loaderSpy, never()).loadTickets()
     }

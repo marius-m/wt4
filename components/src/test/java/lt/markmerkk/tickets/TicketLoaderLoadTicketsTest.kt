@@ -18,8 +18,8 @@ class TicketLoaderLoadTicketsTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
     @Mock lateinit var timeProvider: TimeProvider
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
-    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    @Mock lateinit var ticketStorage: TicketStorage
+    @Mock lateinit var ticketApi: TicketApi
     @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
 
@@ -28,8 +28,8 @@ class TicketLoaderLoadTicketsTest {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsDatabaseRepo,
-                ticketsNetworkRepo,
+                ticketStorage,
+                ticketApi,
                 timeProvider,
                 userSettings,
                 Schedulers.immediate(),
@@ -42,7 +42,7 @@ class TicketLoaderLoadTicketsTest {
     fun valid() {
         // Assemble
         doReturn(Single.just(MocksTickets.tickets))
-                .whenever(ticketsDatabaseRepo).loadTickets()
+                .whenever(ticketStorage).loadTickets()
 
         // Act
         loader.loadTickets()
@@ -55,7 +55,7 @@ class TicketLoaderLoadTicketsTest {
     fun valid_withFilter() {
         // Assemble
         doReturn(Single.just(MocksTickets.tickets))
-                .whenever(ticketsDatabaseRepo).loadTickets()
+                .whenever(ticketStorage).loadTickets()
 
         // Act
         loader.loadTickets(inputFilter = "TTS-115")
@@ -68,7 +68,7 @@ class TicketLoaderLoadTicketsTest {
     fun noTickets() {
         // Assemble
         doReturn(Single.just(emptyList<List<Ticket>>()))
-                .whenever(ticketsDatabaseRepo).loadTickets()
+                .whenever(ticketStorage).loadTickets()
 
         // Act
         loader.loadTickets()
@@ -81,7 +81,7 @@ class TicketLoaderLoadTicketsTest {
     fun ticketFailure() {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
-                .whenever(ticketsDatabaseRepo).loadTickets()
+                .whenever(ticketStorage).loadTickets()
 
         // Act
         loader.loadTickets()

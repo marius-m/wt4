@@ -14,7 +14,7 @@ import lt.markmerkk.migrations.Migration1To2
 import lt.markmerkk.migrations.Migration2To3
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
-import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -155,8 +155,8 @@ class AppModule(
     @Singleton
     fun providesDatabaseRepo(
             databaseProvider: DBConnProvider
-    ): TicketsDatabaseRepo {
-        return TicketsDatabaseRepo(databaseProvider)
+    ): TicketStorage {
+        return TicketStorage(databaseProvider)
     }
 
     @Provides
@@ -171,11 +171,11 @@ class AppModule(
     @Provides
     @Singleton
     fun providesTicketsNetworkRepo(
-            ticketsDatabaseRepo: TicketsDatabaseRepo,
+            ticketsDatabaseRepo: TicketStorage,
             jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings
-    ): TicketsNetworkRepo {
-        return TicketsNetworkRepo(
+    ): TicketApi {
+        return TicketApi(
                 jiraClientProvider,
                 JiraTicketSearch(),
                 ticketsDatabaseRepo,

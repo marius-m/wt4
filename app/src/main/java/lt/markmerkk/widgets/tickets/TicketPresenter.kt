@@ -1,16 +1,16 @@
 package lt.markmerkk.widgets.tickets
 
 import lt.markmerkk.SchedulerProvider
-import lt.markmerkk.TicketsDatabaseRepo
+import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.TicketLoader
-import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.tickets.TicketApi
 
 class TicketPresenter(
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
-        private val ticketsNetworkRepo: TicketsNetworkRepo,
+        private val ticketStorage: TicketStorage,
+        private val ticketApi: TicketApi,
         private val timeProvider: TimeProvider,
         private val userSettings: UserSettings,
         private val schedulerProvider: SchedulerProvider
@@ -35,8 +35,8 @@ class TicketPresenter(
                 }
                 override fun onError(throwable: Throwable) { }
             },
-            ticketsDatabaseRepo = ticketsDatabaseRepo,
-            ticketsNetworkRepo = ticketsNetworkRepo,
+            ticketStorage = ticketStorage,
+            ticketApi = ticketApi,
             timeProvider = timeProvider,
             userSettings = userSettings,
             ioScheduler = schedulerProvider.io(),

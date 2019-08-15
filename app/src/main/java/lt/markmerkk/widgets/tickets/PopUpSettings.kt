@@ -44,6 +44,18 @@ class PopUpSettings(
                                             resizable = true
                                     )
                                 }
+                        ),
+                        PopUpAction(
+                                title = "Tickets",
+                                graphic = graphics.from(Glyph.PAGE, Color.BLACK, 10.0, 12.0),
+                                action = {
+                                    find<TicketWidget>().openModal(
+                                            stageStyle = StageStyle.UTILITY,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
                         )
                 ),
                 attachTo = attachTo

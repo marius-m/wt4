@@ -30,7 +30,7 @@ class TicketSplitWidget : View(), TicketSplitContract.View {
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var logStorage: LogStorage
-    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
 
     private lateinit var viewDateTimeFrom: Label
@@ -230,7 +230,7 @@ class TicketSplitWidget : View(), TicketSplitContract.View {
                 logStorage,
                 LogSplitter,
                 strings,
-                ticketsDatabaseRepo,
+                ticketStorage,
                 schedulerProvider
         )
         presenter.onAttach(this)

@@ -2,7 +2,7 @@ package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.Mocks
-import lt.markmerkk.TicketsDatabaseRepo
+import lt.markmerkk.TicketStorage
 import lt.markmerkk.entities.Ticket
 import org.junit.Before
 import org.junit.Test
@@ -15,7 +15,7 @@ import java.lang.RuntimeException
 class TicketInfoLoaderTest {
 
     @Mock lateinit var listener: TicketInfoLoader.Listener
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Mock lateinit var ticketStorage: TicketStorage
     lateinit var ticketInfoLoader: TicketInfoLoader
 
     @Before
@@ -23,7 +23,7 @@ class TicketInfoLoaderTest {
         MockitoAnnotations.initMocks(this)
         ticketInfoLoader = TicketInfoLoader(
                 listener,
-                ticketsDatabaseRepo,
+                ticketStorage,
                 Schedulers.immediate(),
                 Schedulers.immediate(),
                 Schedulers.immediate()
@@ -35,7 +35,7 @@ class TicketInfoLoaderTest {
         // Assemble
         val tickets = listOf(Mocks.createTicket())
         doReturn(Single.just(tickets))
-                .whenever(ticketsDatabaseRepo).findTicketsByCode(any())
+                .whenever(ticketStorage).findTicketsByCode(any())
 
         // Act
         ticketInfoLoader.findTicket("tts-222")
@@ -51,7 +51,7 @@ class TicketInfoLoaderTest {
         ticketInfoLoader.findTicket("")
 
         // Assert
-        verify(ticketsDatabaseRepo, never()).findTicketsByCode(any())
+        verify(ticketStorage, never()).findTicketsByCode(any())
     }
 
     @Test
@@ -61,7 +61,7 @@ class TicketInfoLoaderTest {
         ticketInfoLoader.findTicket("asdf")
 
         // Assert
-        verify(ticketsDatabaseRepo, never()).findTicketsByCode(any())
+        verify(ticketStorage, never()).findTicketsByCode(any())
     }
 
     @Test
@@ -73,7 +73,7 @@ class TicketInfoLoaderTest {
                 Mocks.createTicket()
         )
         doReturn(Single.just(tickets))
-                .whenever(ticketsDatabaseRepo).findTicketsByCode(any())
+                .whenever(ticketStorage).findTicketsByCode(any())
 
         // Act
         ticketInfoLoader.findTicket("tts-222")
@@ -87,7 +87,7 @@ class TicketInfoLoaderTest {
         // Assemble
         val tickets = emptyList<Ticket>()
         doReturn(Single.just(tickets))
-                .whenever(ticketsDatabaseRepo).findTicketsByCode(any())
+                .whenever(ticketStorage).findTicketsByCode(any())
 
         // Act
         ticketInfoLoader.findTicket("tts-222")
@@ -100,7 +100,7 @@ class TicketInfoLoaderTest {
     fun error() {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
-                .whenever(ticketsDatabaseRepo).findTicketsByCode(any())
+                .whenever(ticketStorage).findTicketsByCode(any())
 
         // Act
         ticketInfoLoader.findTicket("tts-222")

@@ -11,7 +11,7 @@ class TicketSplitPresenter(
         private val logStorage: LogStorage,
         private val logSplitter: LogSplitter,
         private val strings: Strings,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
+        private val ticketStorage: TicketStorage,
         private val schedulerProvider: SchedulerProvider
 ) : TicketSplitContract.Presenter {
 
@@ -33,7 +33,7 @@ class TicketSplitPresenter(
                     view?.showTicketLabel(ticketTitle = "")
                 }
             },
-            ticketsDatabaseRepo = ticketsDatabaseRepo,
+            ticketStorage = ticketStorage,
             waitScheduler = schedulerProvider.waitScheduler(),
             ioScheduler = schedulerProvider.io(),
             uiScheduler = schedulerProvider.ui()

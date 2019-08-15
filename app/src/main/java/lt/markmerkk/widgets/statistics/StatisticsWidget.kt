@@ -18,7 +18,7 @@ import javax.inject.Inject
 class StatisticsWidget: View(), StatisticsContract.View {
 
     @Inject lateinit var logStorage: LogStorage
-    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
 
     init {
@@ -76,7 +76,7 @@ class StatisticsWidget: View(), StatisticsContract.View {
         presenter = StatisticsPresenter(logStorage)
         ticketInfoLoader = TicketInfoLoader(
                 listener = ticketInfoLoaderListener,
-                ticketsDatabaseRepo = ticketsDatabaseRepo,
+                ticketStorage = ticketStorage,
                 waitScheduler = schedulerProvider.waitScheduler(),
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()

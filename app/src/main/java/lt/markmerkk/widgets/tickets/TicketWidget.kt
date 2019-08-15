@@ -10,7 +10,7 @@ import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.events.EventSuggestTicket
-import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxTextField
 import org.slf4j.LoggerFactory
@@ -19,8 +19,8 @@ import javax.inject.Inject
 
 class TicketWidget: View(), TicketContract.View {
 
-    @Inject lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
-    @Inject lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    @Inject lateinit var ticketStorage: TicketStorage
+    @Inject lateinit var ticketApi: TicketApi
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var userSettings: UserSettings
@@ -108,8 +108,8 @@ class TicketWidget: View(), TicketContract.View {
     override fun onDock() {
         super.onDock()
         presenter = TicketPresenter(
-                ticketsDatabaseRepo,
-                ticketsNetworkRepo,
+                ticketStorage,
+                ticketApi,
                 timeProvider,
                 userSettings,
                 schedulerProvider

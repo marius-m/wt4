@@ -2,7 +2,6 @@ package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
-import lt.markmerkk.entities.Ticket
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -15,8 +14,8 @@ class TicketLoaderApplyFilterTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
     @Mock lateinit var timeProvider: TimeProvider
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
-    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    @Mock lateinit var ticketStorage: TicketStorage
+    @Mock lateinit var ticketApi: TicketApi
     @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
 
@@ -27,14 +26,14 @@ class TicketLoaderApplyFilterTest {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsDatabaseRepo,
-                ticketsNetworkRepo,
+                ticketStorage,
+                ticketApi,
                 timeProvider,
                 userSettings,
                 testScheduler,
                 testScheduler
         )
-        doReturn(Single.just(MocksTickets.tickets)).whenever(ticketsDatabaseRepo).loadTickets()
+        doReturn(Single.just(MocksTickets.tickets)).whenever(ticketStorage).loadTickets()
     }
 
     @Test
