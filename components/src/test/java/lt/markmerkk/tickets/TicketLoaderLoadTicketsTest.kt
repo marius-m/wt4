@@ -61,7 +61,12 @@ class TicketLoaderLoadTicketsTest {
         loader.loadTickets(inputFilter = "TTS-115")
 
         // Assert
-        verify(listener).onFoundTickets(listOf(MocksTickets.tickets[4]))
+        verify(listener).onFoundTickets(listOf(
+                TicketLoader.TicketScore(
+                        MocksTickets.tickets[4],
+                        29
+                )
+        ))
     }
 
     @Test

@@ -1,7 +1,5 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.Mocks
-import lt.markmerkk.entities.Ticket
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -56,11 +54,10 @@ class TicketLoaderFilterTest {
 
         // Assert
         assertThat(result).contains(
-                MocksTickets.tickets[0], // google
-                MocksTickets.tickets[5], // googleplus
-                MocksTickets.tickets[7]  // plexoogl
+                MocksTickets.tickets[5].withScore(90),
+                MocksTickets.tickets[0].withScore(90),
+                MocksTickets.tickets[7].withScore(68)
         )
-        assertThat(result.size).isEqualTo(3)
     }
 
 }

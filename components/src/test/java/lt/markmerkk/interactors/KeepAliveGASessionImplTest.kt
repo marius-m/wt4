@@ -2,7 +2,8 @@ package lt.markmerkk.interactors
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.LogStorage
-import lt.markmerkk.entities.database.interfaces.IExecutor
+import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.WorklogRepository
 import lt.markmerkk.utils.tracker.ITracker
 import org.junit.Assert.*
 import org.junit.Test
@@ -16,9 +17,9 @@ import java.util.concurrent.TimeUnit
  */
 class KeepAliveGASessionImplTest {
 
+    val worklogRepository: WorklogRepository = mock()
     val tracker: ITracker = mock()
-    val executor: IExecutor = mock()
-    val logStorage = LogStorage(executor)
+    val logStorage = LogStorage(worklogRepository, TimeProviderTest())
     val testScheduler = Schedulers.test()!!
     val keepAliveSession = KeepAliveGASessionImpl(
             logStorage,

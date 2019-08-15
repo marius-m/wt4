@@ -6,8 +6,10 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import rx.Observable
 import rx.Single
 import rx.schedulers.TestScheduler
+import rx.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class TicketLoaderApplyFilterTest {
@@ -44,27 +46,32 @@ class TicketLoaderApplyFilterTest {
         loader.loadTickets()
         reset(listener)
 
-        loader.changeFilterStream(inputFilter = "TTS-115")
+        loader.changeFilterStream(Observable.just("TTS-115"))
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verify(listener).onFoundTickets(listOf(MocksTickets.tickets[4])) // only TTS-005
+        verify(listener).onFoundTickets(listOf(
+                TicketLoader.TicketScore(MocksTickets.tickets[4], 29)
+        )) // only TTS-005
     }
 
     @Test
     fun tooLittleTimePass() {
         // Assemble
-        // Act
-        loader.onAttach()
-        loader.loadTickets()
-        testScheduler.advanceTimeBy(100, TimeUnit.MILLISECONDS)
-        reset(listener)
+        val publishSubject = PublishSubject.create<String>()
 
-        loader.changeFilterStream(inputFilter = "TTS-005")
+        // Act
+        loader.changeFilterStream(publishSubject)
+        testScheduler.triggerActions()
+        publishSubject.onNext("TTS-005")
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS - 200, TimeUnit.MILLISECONDS)
+        verifyZeroInteractions(listener)
+
+        // Act
+        testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verifyZeroInteractions(listener)
+        verify(listener).onFoundTickets(any())
     }
 
 }

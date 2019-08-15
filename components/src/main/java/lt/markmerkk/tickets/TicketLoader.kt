@@ -51,6 +51,7 @@ class TicketLoader(
         )
         if (isFreshEnough && !forceRefresh) {
             logger.info("Ignoring ticket search, as tickets are fresh enough")
+            loadTickets(inputFilter)
             return
         }
         logger.info("Refreshing tickets")
@@ -152,7 +153,7 @@ class TicketLoader(
             }
             val ticketDescriptions = inputTickets
                     .map { it.description }
-            return FuzzySearch.extractTop(searchInput, ticketDescriptions, 20) // todo increase this
+            return FuzzySearch.extractTop(searchInput, ticketDescriptions, 100)
                     .filter { it.score > FILTER_FUZZY_SCORE }
                     .map { TicketScore(inputTickets[it.index], it.score) }
         }
@@ -164,3 +165,5 @@ class TicketLoader(
     )
 
 }
+
+fun Ticket.withScore(score: Int): TicketLoader.TicketScore = TicketLoader.TicketScore(this, score)

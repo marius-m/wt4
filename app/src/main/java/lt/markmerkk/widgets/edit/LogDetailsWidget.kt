@@ -25,6 +25,7 @@ import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
@@ -170,10 +171,6 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             isLabelFloat = true
                             promptText = "Ticket ID"
                             unFocusColor = Color.BLACK
-                            textProperty().addListener { _, _, newValue ->
-                                ticketInfoLoader.changeInputCode(newValue)
-                                presenter.changeTicketCode(newValue)
-                            }
                         }
                         viewTextTicketDesc = label {
                             addClass(Styles.labelRegular)
@@ -312,6 +309,9 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()
         )
+        ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
+        JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
+                .subscribe { presenter.changeTicketCode(it) }
         viewTextTicketDesc.text = ""
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
                 viewButtonSubtractFrom,
@@ -390,7 +390,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
             viewDatePickerTo.isDisable = true
             viewTimePickerTo.isDisable = true
         }
-        ticketInfoLoader.changeInputCode(initTicket)
+        ticketInfoLoader.findTicket(initTicket)
     }
 
     override fun showDateTime(start: DateTime, end: DateTime) {

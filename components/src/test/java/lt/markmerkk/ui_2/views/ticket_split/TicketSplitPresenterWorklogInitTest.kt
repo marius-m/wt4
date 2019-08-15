@@ -1,9 +1,6 @@
 package lt.markmerkk.ui_2.views.ticket_split
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.utils.LogSplitter
@@ -11,10 +8,10 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import rx.Single
 
 class TicketSplitPresenterWorklogInitTest {
     @Mock lateinit var view: TicketSplitContract.View
-    @Mock lateinit var inputLog: SimpleLog
     @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var strings: Strings
     @Mock lateinit var ticketStorage: TicketStorage
@@ -24,6 +21,7 @@ class TicketSplitPresenterWorklogInitTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
+        val inputLog = Mocks.createLocalLog(timeProvider)
         presenter = TicketSplitPresenter(
                 inputLog,
                 timeProvider,
@@ -34,11 +32,14 @@ class TicketSplitPresenterWorklogInitTest {
                 SchedulerProviderImmediate()
         )
         doReturn("valid_string").whenever(strings).getString(any())
+        doReturn(Single.just(Mocks.createTicket())).whenever(ticketStorage).findTicketsByCode(any())
         presenter.onAttach(view)
+        reset(view)
     }
 
     @Test
     fun valid() {
+        // Assemble
         // Act
         presenter.handleWorklogInit(Mocks.createLocalLog(timeProvider))
 

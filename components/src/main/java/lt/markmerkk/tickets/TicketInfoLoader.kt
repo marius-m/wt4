@@ -5,6 +5,7 @@ import lt.markmerkk.TicketStorage
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import org.slf4j.LoggerFactory
+import rx.Observable
 import rx.Scheduler
 import rx.Subscription
 import rx.subjects.BehaviorSubject
@@ -21,27 +22,24 @@ class TicketInfoLoader(
         private val uiScheduler: Scheduler
 ) {
 
-    private val inputCodeSubject = BehaviorSubject.create<String>("")
     private var searchSubscription: Subscription? = null
     private var inputSubscription: Subscription? = null
 
-    fun onAttach() {
-        inputSubscription = inputCodeSubject
-                .throttleLast(INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
-                .subscribeOn(waitScheduler)
-                .observeOn(uiScheduler)
-                .subscribe {
-                    findTicket(it)
-                }
-    }
+    fun onAttach() { }
 
     fun onDetach() {
         searchSubscription?.unsubscribe()
         inputSubscription?.unsubscribe()
     }
 
-    fun changeInputCode(inputCode: String) {
-        inputCodeSubject.onNext(inputCode)
+    fun attachInputCodeAsStream(inputCode: Observable<String>) {
+        inputSubscription = inputCode
+                .throttleLast(INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
+                .subscribeOn(waitScheduler)
+                .observeOn(uiScheduler)
+                .subscribe {
+                    findTicket(it)
+                }
     }
 
     fun findTicket(inputCode: String) {

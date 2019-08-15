@@ -43,7 +43,7 @@ class TicketSplitPresenter(
     override fun onAttach(view: TicketSplitContract.View) {
         this.view = view
         changeSplitBalance(balancePercent = 50)
-        handleWorklogInit(input)
+        handleWorklogInit(simpleLog = input)
         ticketInfoLoader.onAttach()
         ticketInfoLoader.findTicket(input.task)
     }
