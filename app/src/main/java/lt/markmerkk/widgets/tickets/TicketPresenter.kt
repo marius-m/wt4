@@ -63,24 +63,13 @@ class TicketPresenter(
 
     override fun loadTickets(filter: String) {
         ticketsLoader.loadTickets(filter)
-        handleClearVisibility(filter)
     }
 
     override fun attachFilterStream(filterAsStream: Observable<String>) {
         ticketsLoader.changeFilterStream(filterAsStream)
     }
 
-    override fun changeFilter(filter: String) {
-        ticketsLoader.loadTickets(filter)
-        handleClearVisibility(filter)
-    }
-
-    override fun clearFilter() {
-        ticketsLoader.loadTickets()
-        handleClearVisibility("")
-    }
-
-    private fun handleClearVisibility(filter: String) {
+    override fun handleClearVisibility(filter: String) {
         if (filter.isNotEmpty()) {
             view?.showInputClear()
         } else {

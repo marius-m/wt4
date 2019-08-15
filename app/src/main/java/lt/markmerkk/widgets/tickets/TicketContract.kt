@@ -17,7 +17,6 @@ interface TicketContract {
         fun loadTickets(filter: String)
         fun stopFetch()
         fun attachFilterStream(filterAsStream: Observable<String>)
-        fun changeFilter(filter: String)
-        fun clearFilter()
+        fun handleClearVisibility(filter: String)
     }
 }
