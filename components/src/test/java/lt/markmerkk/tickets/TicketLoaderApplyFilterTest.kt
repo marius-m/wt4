@@ -44,11 +44,11 @@ class TicketLoaderApplyFilterTest {
         loader.loadTickets()
         reset(listener)
 
-        loader.applyFilter(inputFilter = "TTS-115")
+        loader.changeFilterStream(inputFilter = "TTS-115")
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verify(listener).onTicketsAvailable(listOf(MocksTickets.tickets[4])) // only TTS-005
+        verify(listener).onFoundTickets(listOf(MocksTickets.tickets[4])) // only TTS-005
     }
 
     @Test
@@ -60,7 +60,7 @@ class TicketLoaderApplyFilterTest {
         testScheduler.advanceTimeBy(100, TimeUnit.MILLISECONDS)
         reset(listener)
 
-        loader.applyFilter(inputFilter = "TTS-005")
+        loader.changeFilterStream(inputFilter = "TTS-005")
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS - 200, TimeUnit.MILLISECONDS)
 
         // Assert

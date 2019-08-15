@@ -14,6 +14,7 @@ import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxTextField
 import org.slf4j.LoggerFactory
+import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
@@ -56,7 +57,6 @@ class TicketWidget: View(), TicketContract.View {
                         focusColor = Styles.cActiveRed
                         isLabelFloat = true
                         promptText = "Search ticket by ID / Summary"
-                        textProperty().addListener { _, _, newValue -> presenter.changeFilter(newValue) }
                     }
                     viewButtonClear = jfxButton {
                         graphic = graphics.from(Glyph.CLEAR, Color.BLACK, 12.0)
@@ -69,7 +69,7 @@ class TicketWidget: View(), TicketContract.View {
                     }
                     viewProgress.viewButtonRefresh.setOnAction {
                         logger.debug("Trigger fetching ")
-                        presenter.fetchTickets(forceFetch = true)
+                        presenter.fetchTickets(forceFetch = true, filter = viewTextFieldTicketSearch.text)
                     }
                     add(viewProgress)
                 }
@@ -84,12 +84,16 @@ class TicketWidget: View(), TicketContract.View {
                         }
                     }
                     columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+                    readonlyColumn("Score", TicketViewModel::filterScoreAsDouble) {
+                        minWidth = 50.0
+                        maxWidth = 50.0
+                        useProgressBar()
+                    }
                     readonlyColumn("Code", TicketViewModel::code) {
                         minWidth = 100.0
                         maxWidth = 100.0
                     }
-                    readonlyColumn("Description", TicketViewModel::description) {
-                    }
+                    readonlyColumn("Description", TicketViewModel::description) { }
                 }
             }
         }
@@ -114,8 +118,9 @@ class TicketWidget: View(), TicketContract.View {
                 userSettings,
                 schedulerProvider
         )
+        presenter.attachFilterStream(JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty()))
         presenter.onAttach(this)
-        presenter.fetchTickets(forceFetch = false)
+        presenter.fetchTickets(forceFetch = false, filter = "")
         presenter.loadTickets(viewTextFieldTicketSearch.text)
         viewTextFieldTicketSearch.requestFocus()
         viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)

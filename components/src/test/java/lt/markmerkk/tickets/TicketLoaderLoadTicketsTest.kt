@@ -48,7 +48,7 @@ class TicketLoaderLoadTicketsTest {
         loader.loadTickets()
 
         // Assert
-        verify(listener).onTicketsAvailable(any())
+        verify(listener).onFoundTickets(any())
     }
 
     @Test
@@ -61,7 +61,7 @@ class TicketLoaderLoadTicketsTest {
         loader.loadTickets(inputFilter = "TTS-115")
 
         // Assert
-        verify(listener).onTicketsAvailable(listOf(MocksTickets.tickets[4]))
+        verify(listener).onFoundTickets(listOf(MocksTickets.tickets[4]))
     }
 
     @Test

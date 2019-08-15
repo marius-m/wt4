@@ -63,7 +63,7 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
         column("S", LogViewModel::color) {
             minWidth = 32.0
             maxWidth = 32.0
-            cellFragment(ListLogStatusIndicatorCell::class)
+            cellFragment(ListLogStatusIndicatorCell::class) // probably displays incorrect values when re-rendering
         }
         readonlyColumn("Ticket", LogViewModel::ticketCode) {
             minWidth = 100.0

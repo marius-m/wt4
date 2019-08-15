@@ -1,5 +1,7 @@
 package lt.markmerkk.widgets.tickets
 
+import rx.Observable
+
 interface TicketContract {
     interface View {
         fun showProgress()
@@ -11,9 +13,10 @@ interface TicketContract {
     interface Presenter {
         fun onAttach(view: View)
         fun onDetach()
-        fun fetchTickets(forceFetch: Boolean)
-        fun stopFetch()
+        fun fetchTickets(forceFetch: Boolean, filter: String)
         fun loadTickets(filter: String)
+        fun stopFetch()
+        fun attachFilterStream(filterAsStream: Observable<String>)
         fun changeFilter(filter: String)
         fun clearFilter()
     }

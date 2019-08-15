@@ -7,6 +7,7 @@ import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.tickets.TicketApi
+import rx.Observable
 
 class TicketPresenter(
         private val ticketStorage: TicketStorage,
@@ -25,9 +26,8 @@ class TicketPresenter(
                 override fun onLoadFinish() {
                     view?.hideProgress()
                 }
-                override fun onNewTickets(tickets: List<Ticket>) { }
-                override fun onTicketsAvailable(tickets: List<Ticket>) {
-                    val ticketViewModels = tickets.map { TicketViewModel(it) }
+                override fun onFoundTickets(tickets: List<TicketLoader.TicketScore>) {
+                    val ticketViewModels = tickets.map { TicketViewModel(it.ticket, it.filterScore) }
                     view?.onTicketUpdate(ticketViewModels)
                 }
                 override fun onNoTickets() {
@@ -53,8 +53,8 @@ class TicketPresenter(
         this.view = null
     }
 
-    override fun fetchTickets(forceFetch: Boolean) {
-        ticketsLoader.fetchTickets(forceFetch)
+    override fun fetchTickets(forceFetch: Boolean, filter: String) {
+        ticketsLoader.fetchTickets(forceFetch, filter)
     }
 
     override fun stopFetch() {
@@ -66,8 +66,12 @@ class TicketPresenter(
         handleClearVisibility(filter)
     }
 
+    override fun attachFilterStream(filterAsStream: Observable<String>) {
+        ticketsLoader.changeFilterStream(filterAsStream)
+    }
+
     override fun changeFilter(filter: String) {
-        ticketsLoader.applyFilter(filter)
+        ticketsLoader.loadTickets(filter)
         handleClearVisibility(filter)
     }
 

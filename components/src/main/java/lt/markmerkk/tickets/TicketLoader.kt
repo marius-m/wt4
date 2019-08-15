@@ -7,8 +7,8 @@ import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
+import rx.Single
 import rx.Subscription
-import rx.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 /**
@@ -24,21 +24,13 @@ class TicketLoader(
         private val uiScheduler: Scheduler
 ) {
 
-    private val inputFilterSubject = BehaviorSubject.create<String>("")
     private var inputFilterSubscription: Subscription? = null
     private var networkSubscription: Subscription? = null
     private var dbSubscription: Subscription? = null
 
-    private var tickets: List<Ticket> = emptyList()
     private var inputFilter: String = ""
 
-    fun onAttach() {
-        inputFilterSubscription = inputFilterSubject
-                .throttleLast(FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
-                .flatMap { Observable.just(filter(tickets, it)) }
-                .observeOn(uiScheduler)
-                .subscribe { listener.onTicketsAvailable(it) }
-    }
+    fun onAttach() { }
 
     fun onDetach() {
         dbSubscription?.unsubscribe()
@@ -47,7 +39,8 @@ class TicketLoader(
     }
 
     fun fetchTickets(
-            forceRefresh: Boolean = false
+            forceRefresh: Boolean = false,
+            inputFilter: String = ""
     ) {
         networkSubscription?.unsubscribe()
         val now = timeProvider.now()
@@ -66,11 +59,13 @@ class TicketLoader(
                 .observeOn(uiScheduler)
                 .doOnSubscribe { listener.onLoadStart() }
                 .doAfterTerminate { listener.onLoadFinish() }
+                .flatMap { loadTicketsAsStream(inputFilter) }
                 .subscribe({
                     userSettings.ticketLastUpdate = now.millis
                     if (it.isNotEmpty()) {
-                        listener.onNewTickets(it)
-                        loadTickets(inputFilter)
+                        listener.onFoundTickets(it)
+                    } else {
+                        listener.onNoTickets()
                     }
                 }, {
                     listener.onError(it)
@@ -91,28 +86,32 @@ class TicketLoader(
                 .observeOn(uiScheduler)
                 .subscribe({
                     if (it.isNotEmpty()) {
-                        listener.onTicketsAvailable(it)
-                        tickets = it
+                        listener.onFoundTickets(it)
                     } else {
                         listener.onNoTickets()
-                        tickets = emptyList()
                     }
                 }, {
                     listener.onError(it)
-                    tickets = emptyList()
                 })
     }
 
-    fun applyFilter(inputFilter: String) {
-        this.inputFilter = inputFilter
-        this.inputFilterSubject.onNext(inputFilter)
+    fun loadTicketsAsStream(inputFilter: String = ""): Single<List<TicketScore>> {
+        return ticketStorage.loadTickets()
+                .map { filter(it, searchInput = inputFilter) }
+    }
+
+    fun changeFilterStream(filterChange: Observable<String>) {
+        inputFilterSubscription = filterChange
+                .throttleLast(FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
+                .flatMapSingle { loadTicketsAsStream(it) }
+                .observeOn(uiScheduler)
+                .subscribe { listener.onFoundTickets(it) }
     }
 
     interface Listener {
         fun onLoadStart()
         fun onLoadFinish()
-        fun onNewTickets(tickets: List<Ticket>)
-        fun onTicketsAvailable(tickets: List<Ticket>)
+        fun onFoundTickets(tickets: List<TicketScore>)
         fun onNoTickets()
         fun onError(throwable: Throwable)
     }
@@ -121,7 +120,7 @@ class TicketLoader(
         private val logger = LoggerFactory.getLogger(Tags.TICKETS)
         const val TICKET_TIMEOUT_MINUTES = 30
         const val FILTER_MIN_INPUT = 1
-        const val FILTER_FUZZY_SCORE = 50
+        const val FILTER_FUZZY_SCORE = 20
         const val FILTER_INPUT_THROTTLE_MILLIS = 500L
 
         /**
@@ -147,18 +146,21 @@ class TicketLoader(
                     .isAfter(now)
         }
 
-        fun filter(inputTickets: List<Ticket>, searchInput: String): List<Ticket> {
+        fun filter(inputTickets: List<Ticket>, searchInput: String): List<TicketScore> {
             if (searchInput.length <= FILTER_MIN_INPUT) {
-                return inputTickets
+                return inputTickets.map { TicketScore(it, 0) }
             }
             val ticketDescriptions = inputTickets
-                    .map { "${it.code.code} ${it.description}" }
-            val topDescriptions = FuzzySearch.extractTop(searchInput, ticketDescriptions, 100)
+                    .map { it.description }
+            return FuzzySearch.extractTop(searchInput, ticketDescriptions, 20) // todo increase this
                     .filter { it.score > FILTER_FUZZY_SCORE }
-                    .map { it.string }
-            return inputTickets
-                    .filter { topDescriptions.contains("${it.code.code} ${it.description}") }
+                    .map { TicketScore(inputTickets[it.index], it.score) }
         }
     }
+
+    data class TicketScore(
+            val ticket: Ticket,
+            val filterScore: Int
+    )
 
 }
