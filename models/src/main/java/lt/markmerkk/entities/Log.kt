@@ -2,7 +2,6 @@ package lt.markmerkk.entities
 
 import lt.markmerkk.Const
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.utils.UriUtils
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.DurationFieldType
@@ -199,3 +198,14 @@ data class LogTime(
 
 }
 
+fun Log.markAsDeleted(timeProvider: TimeProvider): Log {
+    return Log.asRaw(
+            timeProvider = timeProvider,
+            id = this.id,
+            start = this.time.startAsRaw,
+            end = this.time.endAsRaw,
+            code = this.code.code,
+            comment = this.comment,
+            remoteData = this.remoteData.markAsDelete()
+    )
+}

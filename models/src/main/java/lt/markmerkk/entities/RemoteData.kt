@@ -82,3 +82,16 @@ fun RemoteData?.markAsError(errorMessage: String): RemoteData? {
             url = url
     )
 }
+
+fun RemoteData?.markAsDelete(): RemoteData? {
+    if (this == null) return null
+    return RemoteData(
+            remoteId = remoteId,
+            isDeleted = true,
+            isDirty = isDirty,
+            isError = isError,
+            errorMessage = errorMessage,
+            fetchTime = fetchTime,
+            url = url
+    )
+}

@@ -24,6 +24,49 @@ object Mocks {
         )
     }
 
+    fun createLog(
+            timeProvider: TimeProvider,
+            id: Long = 1L,
+            start: DateTime = timeProvider.now(),
+            end: DateTime = timeProvider.now().plusMinutes(10),
+            code: String = "DEV-123",
+            comment: String = "valid_comment",
+            remoteData: RemoteData? = null
+    ): Log {
+        val now = timeProvider.nowMillis()
+        return Log.testable(
+                timeProvider = timeProvider,
+                id = id,
+                start = start,
+                end = end,
+                code = code,
+                comment = comment,
+                remoteData = remoteData
+        )
+    }
+
+    fun createRemoteData(
+            timeProvider: TimeProvider,
+            remoteId: Long = 1L,
+            isDeleted: Boolean = false,
+            isDirty: Boolean = false,
+            isError: Boolean = false,
+            errorMessage: String = "",
+            fetchTime: Long = timeProvider.nowMillis(),
+            url: String = ""
+    ): RemoteData {
+        val now = timeProvider.nowMillis()
+        return RemoteData(
+                remoteId = remoteId,
+                isDeleted = isDeleted,
+                isDirty = isDirty,
+                isError = isError,
+                errorMessage = errorMessage,
+                fetchTime = fetchTime,
+                url = url
+        )
+    }
+
     fun createLocalLog(
             timeProvider: TimeProvider,
             start: DateTime = timeProvider.now().plusMinutes(1),

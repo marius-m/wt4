@@ -72,12 +72,10 @@ class Migration1To2(
             val statement = oldConnection.createStatement()
             val rs = statement.executeQuery(sql)
             while (rs.next()) {
-                val _id = rs.getLong("_id")
                 val start = rs.getLong("start")
                 val end = rs.getLong("end")
                 val task = rs.getString("task")
                 val comment = rs.getString("comment")
-                val id = rs.getLong("id")
                 val uri = rs.getString("uri")
                 val deleted = rs.getInt("deleted")
                 val dirty = rs.getInt("dirty")

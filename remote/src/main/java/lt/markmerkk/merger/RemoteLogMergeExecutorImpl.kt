@@ -6,6 +6,7 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.utils.UriUtils
 import net.rcarz.jiraclient.WorkLog
 
+@Deprecated("Rm this")
 class RemoteLogMergeExecutorImpl(
         private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider
@@ -44,7 +45,7 @@ class RemoteLogMergeExecutorImpl(
 //        )
         val newEntry = SimpleLogBuilder(oldLocalEntry.task, remoteEntry).build()
                 .toLog(timeProvider)
-        worklogStorage.reinsert(oldLocalEntry._id, newEntry)
+//        worklogStorage.reinsert(oldLocalEntry._id, newEntry) // todo probably incorrect
     }
 
     override fun markAsError(oldLocalEntry: SimpleLog, error: Throwable) {
