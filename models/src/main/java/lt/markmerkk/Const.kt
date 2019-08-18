@@ -1,7 +1,7 @@
 package lt.markmerkk
 
 object Const {
-    const val NO_ID = -1L
+    const val NO_ID = 0L
     const val TRUE = 1
     const val FALSE = 0
     const val DEFAULT_JQL_USER_ISSUES = "(status not in (closed, resolved, done))" +

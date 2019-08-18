@@ -24,19 +24,38 @@ class WorklogStorage(
     }
 
     fun insertOrUpdateSync(log: Log): Int {
-        val insertingRemoteLog = log.isRemote
-        val existAsLocal = dbInteractor.isWorklogExistLocally(localId = log.id)
-        val existAsRemote = dbInteractor.isWorklogExistRemotely(remoteId = log.remoteData?.remoteId ?: Const.NO_ID)
-        if (!insertingRemoteLog) { // insert local log
-            if (existAsLocal) {
-                return dbInteractor.update(log)
+        val insertRemoteLog = log.isRemote
+        val insertLocalLog = !log.isRemote
+        val localId = log.id
+        val remoteId = log.remoteData?.remoteId ?: Const.NO_ID
+        val existAsLocal = dbInteractor.existAsLocal(localId = localId)
+        val existAsRemote = dbInteractor.existAsRemote(remoteId = remoteId)
+
+        // insert local log
+        when {
+            insertLocalLog -> {
+                if (existAsLocal) {
+                    return dbInteractor.update(log)
+                }
+                dbInteractor.insert(log)
             }
-            dbInteractor.insert(log)
-        } else { // insert remote log
-            if (existAsLocal || existAsRemote) {
-                return dbInteractor.update(log)
+            insertRemoteLog -> {
+                if (!existAsLocal && !existAsRemote) {
+                    return dbInteractor.insert(log)
+                }
+                dbInteractor.deleteByLocalId(localId)
+                dbInteractor.deleteByRemoteId(remoteId)
+                return dbInteractor.insert(
+                        Log.newRaw(
+                                timeProvider,
+                                start = log.time.startAsRaw,
+                                end = log.time.endAsRaw,
+                                code = log.code.code,
+                                comment = log.comment,
+                                remoteData = log.remoteData
+                        )
+                )
             }
-            return dbInteractor.insert(log)
         }
         return Const.NO_ID.toInt()
     }
@@ -48,12 +67,52 @@ class WorklogStorage(
     }
 
     fun updateSync(log: Log): Int {
-        val worklogExist = dbInteractor.isWorklogExistLocally(log.id)
-        return if (worklogExist) {
-            dbInteractor.update(log)
-        } else {
-            Const.NO_ID.toInt()
+        val updateRemoteLog = log.isRemote
+        val updateLocalLog = !log.isRemote
+        val localId = log.id
+        val remoteId = log.remoteData?.remoteId ?: Const.NO_ID
+        val existAsLocal = dbInteractor.existAsLocal(localId = localId)
+        val existAsRemote = dbInteractor.existAsRemote(remoteId = remoteId)
+
+        if (!existAsLocal && !existAsRemote) {
+            return Const.NO_ID.toInt()
         }
+
+        // insert local log
+        when {
+            updateLocalLog -> {
+                if (existAsLocal && !existAsRemote) {
+                    return dbInteractor.update(log)
+                }
+                dbInteractor.deleteByLocalId(localId)
+                dbInteractor.deleteByRemoteId(remoteId)
+                return dbInteractor.insert(
+                        Log.newRaw(
+                                timeProvider,
+                                start = log.time.startAsRaw,
+                                end = log.time.endAsRaw,
+                                code = log.code.code,
+                                comment = log.comment,
+                                remoteData = null
+                        )
+                )
+            }
+            updateRemoteLog -> {
+                dbInteractor.deleteByLocalId(localId)
+                dbInteractor.deleteByRemoteId(remoteId)
+                return dbInteractor.insert(
+                        Log.newRaw(
+                                timeProvider,
+                                start = log.time.startAsRaw,
+                                end = log.time.endAsRaw,
+                                code = log.code.code,
+                                comment = log.comment,
+                                remoteData = null
+                        )
+                )
+            }
+        }
+        return Const.NO_ID.toInt()
     }
 
     fun update(log: Log): Single<Int> {
@@ -77,7 +136,7 @@ class WorklogStorage(
     }
 
     fun deleteSync(localId: Long): Int {
-        return dbInteractor.delete(localId)
+        return dbInteractor.deleteByLocalId(localId)
     }
 
     fun delete(localId: Long): Single<Int> {

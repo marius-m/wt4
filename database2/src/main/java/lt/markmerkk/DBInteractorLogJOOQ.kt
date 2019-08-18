@@ -57,31 +57,9 @@ class DBInteractorLogJOOQ(
     }
 
     /**
-     * Inserts a new log entry
+     * Inserts entry by it's [Log.id]
      */
     fun insert(log: Log): Int {
-        val remoteData: RemoteData = log.remoteData ?: RemoteData.asEmpty()
-        return connProvider.dsl.update(WORKLOG)
-                .set(WORKLOG.START, log.time.startAsRaw)
-                .set(WORKLOG.END, log.time.endAsRaw)
-                .set(WORKLOG.DURATION, log.time.durationAsRaw)
-                .set(WORKLOG.CODE, log.code.code)
-                .set(WORKLOG.COMMENT, log.comment)
-                .set(WORKLOG.REMOTE_ID, remoteData.remoteId)
-                .set(WORKLOG.IS_DELETED, remoteData.isDeleted.toByte())
-                .set(WORKLOG.IS_DIRTY, remoteData.isDirty.toByte())
-                .set(WORKLOG.IS_ERROR, remoteData.isError.toByte())
-                .set(WORKLOG.ERROR_MESSAGE, remoteData.errorMessage)
-                .set(WORKLOG.FETCHTIME, remoteData.fetchTime)
-                .set(WORKLOG.URL, remoteData.url)
-                .where(WORKLOG.ID.eq(log.id.toInt()))
-                .execute()
-    }
-
-    /**
-     * Updates log entry by it's [Log.id]
-     */
-    fun update(log: Log): Int {
         val remoteData: RemoteData = log.remoteData ?: RemoteData.asEmpty()
         return connProvider.dsl.insertInto(
                 WORKLOG,
@@ -114,11 +92,42 @@ class DBInteractorLogJOOQ(
     }
 
     /**
+     * Updates log entry where [Log.id]
+     */
+    fun update(log: Log): Int {
+        val remoteData: RemoteData = log.remoteData ?: RemoteData.asEmpty()
+        return connProvider.dsl.update(WORKLOG)
+                .set(WORKLOG.START, log.time.startAsRaw)
+                .set(WORKLOG.END, log.time.endAsRaw)
+                .set(WORKLOG.DURATION, log.time.durationAsRaw)
+                .set(WORKLOG.CODE, log.code.code)
+                .set(WORKLOG.COMMENT, log.comment)
+                .set(WORKLOG.REMOTE_ID, remoteData.remoteId)
+                .set(WORKLOG.IS_DELETED, remoteData.isDeleted.toByte())
+                .set(WORKLOG.IS_DIRTY, remoteData.isDirty.toByte())
+                .set(WORKLOG.IS_ERROR, remoteData.isError.toByte())
+                .set(WORKLOG.ERROR_MESSAGE, remoteData.errorMessage)
+                .set(WORKLOG.FETCHTIME, remoteData.fetchTime)
+                .set(WORKLOG.URL, remoteData.url)
+                .where(WORKLOG.ID.eq(log.id.toInt()))
+                .execute()
+    }
+
+    /**
      * Deletes a log entry by it's [Log.id]
      */
-    fun delete(localId: Long): Int {
+    fun deleteByLocalId(localId: Long): Int {
         return connProvider.dsl.delete(WORKLOG)
                 .where(WORKLOG.ID.eq(localId.toInt()))
+                .execute()
+    }
+
+    /**
+     * Deletes a log entry by it's [Log.remoteData.removeId]
+     */
+    fun deleteByRemoteId(remoteId: Long): Int {
+        return connProvider.dsl.delete(WORKLOG)
+                .where(WORKLOG.REMOTE_ID.eq(remoteId))
                 .execute()
     }
 
@@ -191,7 +200,7 @@ class DBInteractorLogJOOQ(
     /**
      * Checks if an entry exist with it's [Log.id]
      */
-    fun isWorklogExistLocally(localId: Long): Boolean {
+    fun existAsLocal(localId: Long): Boolean {
         if (localId == Const.NO_ID) {
             return false
         }
@@ -205,7 +214,7 @@ class DBInteractorLogJOOQ(
     /**
      * Checks if an entry exist with it's [Log.remoteData.remoteId]
      */
-    fun isWorklogExistRemotely(remoteId: Long): Boolean {
+    fun existAsRemote(remoteId: Long): Boolean {
         if (remoteId == Const.NO_ID) {
             return false
         }

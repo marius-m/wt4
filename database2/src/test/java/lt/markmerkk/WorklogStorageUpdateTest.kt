@@ -1,13 +1,12 @@
 package lt.markmerkk
 
 import com.nhaarman.mockitokotlin2.*
-import junit.framework.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
-class WorklogStorageInsertOrUpdateTest {
+class WorklogStorageUpdateTest {
 
     @Mock
     lateinit var dbInteractor: DBInteractorLogJOOQ
@@ -25,31 +24,31 @@ class WorklogStorageInsertOrUpdateTest {
     }
 
     @Test
-    fun insertLocalLog_noSuchLog() {
+    fun updateLocalLog_noSuchLog() {
         // Assemble
         val log = Mocks.createLog(timeProvider, id = 1)
         doReturn(false).whenever(dbInteractor).existAsLocal(any())
         doReturn(false).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
 
         // Assert
-        verify(dbInteractor).insert(log)
+        verify(dbInteractor, never()).insert(any())
         verify(dbInteractor, never()).update(any())
         verify(dbInteractor, never()).deleteByLocalId(any())
         verify(dbInteractor, never()).deleteByRemoteId(any())
     }
 
     @Test
-    fun insertLocalLog_existOnlyAsLocal() {
+    fun updateLocalLog_existOnlyAsLocal() {
         // Assemble
         val log = Mocks.createLog(timeProvider, id = 1)
         doReturn(true).whenever(dbInteractor).existAsLocal(any())
         doReturn(false).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
 
         // Assert
         verify(dbInteractor, never()).insert(any())
@@ -58,69 +57,78 @@ class WorklogStorageInsertOrUpdateTest {
         verify(dbInteractor, never()).deleteByRemoteId(any())
     }
 
-    @Test // should not be possible
-    fun insertLocalLog_existOnlyAsRemote() {
+    @Test // cannot be possible, can only update local entries. Also NO_ID would not cause exist of remote
+    fun updateLocalLog_existOnlyAsRemote() {
         // Assemble
         val log = Mocks.createLog(timeProvider, id = 1)
         doReturn(false).whenever(dbInteractor).existAsLocal(any())
         doReturn(true).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
 
         // Assert
-        verify(dbInteractor).insert(log)
+        verify(dbInteractor).insert(
+                Mocks.createLog(
+                        timeProvider,
+                        id = Const.NO_ID,
+                        remoteData = null
+                )
+        )
         verify(dbInteractor, never()).update(any())
-        verify(dbInteractor, never()).deleteByLocalId(any())
-        verify(dbInteractor, never()).deleteByRemoteId(any())
+        verify(dbInteractor).deleteByLocalId(eq(1))
+        verify(dbInteractor).deleteByRemoteId(eq(Const.NO_ID))
     }
 
-    @Test // should not be possible, as only local log being inserted
-    fun insertLocalLog_existLocal_existRemote() {
+    @Test
+    fun updateLocalLog_existAsLocal_existAsRemote() {
         // Assemble
-        val log = Mocks.createLog(
-                timeProvider,
-                id = 1
-        )
+        val log = Mocks.createLog(timeProvider, id = 1)
         doReturn(true).whenever(dbInteractor).existAsLocal(any())
         doReturn(true).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
+
+        // Assert
+        verify(dbInteractor).insert(
+                Mocks.createLog(
+                        timeProvider,
+                        id = Const.NO_ID,
+                        remoteData = null
+                )
+        )
+        verify(dbInteractor, never()).update(any())
+        verify(dbInteractor).deleteByLocalId(eq(1))
+        verify(dbInteractor).deleteByRemoteId(eq(Const.NO_ID))
+    }
+
+    @Test
+    fun updateRemoteLog_noSuchLog() {
+        // Assemble
+        val log = Mocks.createLog(
+                timeProvider,
+                id = 1,
+                remoteData = Mocks.createRemoteData(
+                        timeProvider,
+                        remoteId = 2
+                )
+        )
+        doReturn(false).whenever(dbInteractor).existAsLocal(any())
+        doReturn(false).whenever(dbInteractor).existAsRemote(any())
+
+        // Act
+        worklogStorage.updateSync(log)
 
         // Assert
         verify(dbInteractor, never()).insert(any())
-        verify(dbInteractor).update(log)
-        verify(dbInteractor, never()).deleteByLocalId(any())
-        verify(dbInteractor, never()).deleteByRemoteId(any())
-    }
-
-    @Test
-    fun insertRemote_noSuchLog() {
-        // Assemble
-        val log = Mocks.createLog(
-                timeProvider,
-                id = 1,
-                remoteData = Mocks.createRemoteData(
-                        timeProvider,
-                        remoteId = 2
-                )
-        )
-        doReturn(false).whenever(dbInteractor).existAsLocal(any())
-        doReturn(false).whenever(dbInteractor).existAsRemote(any())
-
-        // Act
-        worklogStorage.insertOrUpdateSync(log)
-
-        // Assert
-        verify(dbInteractor).insert(log)
         verify(dbInteractor, never()).update(any())
         verify(dbInteractor, never()).deleteByLocalId(any())
         verify(dbInteractor, never()).deleteByRemoteId(any())
     }
 
     @Test
-    fun insertRemote_onlyLocalExists() {
+    fun updateRemoteLog_existOnlyAsLocal() {
         // Assemble
         val log = Mocks.createLog(
                 timeProvider,
@@ -134,17 +142,18 @@ class WorklogStorageInsertOrUpdateTest {
         doReturn(false).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
 
         // Assert
         verify(dbInteractor).insert(
                 Mocks.createLog(
                         timeProvider,
                         id = Const.NO_ID,
-                        remoteData = Mocks.createRemoteData(
-                                timeProvider,
-                                remoteId = 2
-                        )
+                        start = log.time.start,
+                        end = log.time.end,
+                        code = log.code.code,
+                        comment = log.comment,
+                        remoteData = null
                 )
         )
         verify(dbInteractor, never()).update(any())
@@ -153,7 +162,7 @@ class WorklogStorageInsertOrUpdateTest {
     }
 
     @Test
-    fun insertRemote_onlyRemoteExists() {
+    fun updateRemoteLog_existOnlyAsRemote() {
         // Assemble
         val log = Mocks.createLog(
                 timeProvider,
@@ -167,17 +176,18 @@ class WorklogStorageInsertOrUpdateTest {
         doReturn(true).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
 
         // Assert
         verify(dbInteractor).insert(
                 Mocks.createLog(
                         timeProvider,
                         id = Const.NO_ID,
-                        remoteData = Mocks.createRemoteData(
-                                timeProvider,
-                                remoteId = 2
-                        )
+                        start = log.time.start,
+                        end = log.time.end,
+                        code = log.code.code,
+                        comment = log.comment,
+                        remoteData = null
                 )
         )
         verify(dbInteractor, never()).update(any())
@@ -186,7 +196,7 @@ class WorklogStorageInsertOrUpdateTest {
     }
 
     @Test
-    fun insertRemote_existLocally_existRemotely() {
+    fun updateRemoteLog_existAsBoth() {
         // Assemble
         val log = Mocks.createLog(
                 timeProvider,
@@ -200,22 +210,22 @@ class WorklogStorageInsertOrUpdateTest {
         doReturn(true).whenever(dbInteractor).existAsRemote(any())
 
         // Act
-        worklogStorage.insertOrUpdateSync(log)
+        worklogStorage.updateSync(log)
 
         // Assert
         verify(dbInteractor).insert(
                 Mocks.createLog(
                         timeProvider,
                         id = Const.NO_ID,
-                        remoteData = Mocks.createRemoteData(
-                                timeProvider,
-                                remoteId = 2
-                        )
+                        start = log.time.start,
+                        end = log.time.end,
+                        code = log.code.code,
+                        comment = log.comment,
+                        remoteData = null
                 )
         )
         verify(dbInteractor, never()).update(any())
         verify(dbInteractor).deleteByLocalId(eq(1))
         verify(dbInteractor).deleteByRemoteId(eq(2))
     }
-
 }
