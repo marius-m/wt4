@@ -1,6 +1,7 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.Log
+import lt.markmerkk.entities.markAsDeleted
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import rx.Single
@@ -66,6 +67,7 @@ class WorklogStorage(
         }
     }
 
+    // todo fix this as this needs tinkering, as whenever update log, remote logs should be marked for deletion
     fun updateSync(log: Log): Int {
         val updateRemoteLog = log.isRemote
         val updateLocalLog = !log.isRemote
@@ -135,13 +137,23 @@ class WorklogStorage(
         return dbInteractor.findByRemoteId(remoteId)
     }
 
-    fun deleteSync(localId: Long): Int {
-        return dbInteractor.deleteByLocalId(localId)
+    fun deleteSync(log: Log): Int {
+        val localId = log.id
+        val remoteId = log.remoteData?.remoteId ?: Const.NO_ID
+        val existAsLocal = dbInteractor.existAsLocal(localId = localId)
+        val existAsRemote = dbInteractor.existAsRemote(remoteId = remoteId)
+        if (existAsLocal && !existAsRemote) {
+            return dbInteractor.deleteByLocalId(log.id)
+        }
+        if (existAsRemote) {
+            return dbInteractor.update(log.markAsDeleted(timeProvider))
+        }
+        return Const.NO_ID.toInt()
     }
 
-    fun delete(localId: Long): Single<Int> {
+    fun delete(log: Log): Single<Int> {
         return Single.defer {
-            Single.just(deleteSync(localId))
+            Single.just(deleteSync(log))
         }
     }
 

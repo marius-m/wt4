@@ -47,7 +47,7 @@ class LogStorage(
 
     override fun delete(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogStorage.deleteSync(log.id)
+        worklogStorage.deleteSync(log)
         notifyDataChange()
     }
 

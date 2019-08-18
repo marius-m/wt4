@@ -60,7 +60,7 @@ class LogStorageAsync(
 
     override fun delete(dataEntity: SimpleLog) {
         val log = dataEntity.toLog(timeProvider)
-        worklogStorage.delete(log.id)
+        worklogStorage.delete(log)
                 .flatMap { activeWorklogs() }
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
