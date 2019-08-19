@@ -14,10 +14,9 @@ data class Log private constructor(
         val remoteData: RemoteData? = null
 ) {
 
-    val canEdit: Boolean = remoteData == null
     val isRemote: Boolean = remoteData != null
-    val isRemoteError: Boolean = remoteData?.isError ?: false
     val isDirty: Boolean = remoteData == null // kind of duplicate
+    val isMarkedForDeletion = remoteData?.isDeleted ?: false
 
     companion object {
 

@@ -164,10 +164,10 @@ class AppModule(
     @Provides
     @Singleton
     fun providesWorklogStorage(
-            dbProvider: DBConnProvider,
+            connProvider: DBConnProvider,
             timeProvider: TimeProvider
     ): WorklogStorage {
-        return WorklogStorage(dbProvider, timeProvider)
+        return WorklogStorage(timeProvider, DBInteractorLogJOOQ(connProvider, timeProvider))
     }
 
     @Provides
