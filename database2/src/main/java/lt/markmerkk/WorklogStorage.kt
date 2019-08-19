@@ -157,6 +157,16 @@ class WorklogStorage(
         }
     }
 
+    fun hardDeleteRemoteSync(remoteId: Long): Int {
+        return dbInteractor.deleteByRemoteId(remoteId)
+    }
+
+    fun hardDeleteRemote(remoteId: Long): Single<Int> {
+        return Single.defer {
+            Single.just(hardDeleteRemoteSync(remoteId))
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.DB)!!
     }

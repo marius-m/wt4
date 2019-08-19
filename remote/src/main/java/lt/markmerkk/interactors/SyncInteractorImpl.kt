@@ -95,7 +95,7 @@ class SyncInteractorImpl(
         val endDate = timeProvider.roundDateTime(dayProvider.endDay()).toLocalDate() // todo rm middle layer
         val now = timeProvider.now()
         val syncStart = System.currentTimeMillis()
-        subscription = worklogApi.uploadLogs(now, startDate, endDate)
+        subscription = worklogApi.deleteMarkedForDeleteLogs(startDate, endDate)
                 .andThen(worklogStorage.loadWorklogs(startDate, endDate))
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)

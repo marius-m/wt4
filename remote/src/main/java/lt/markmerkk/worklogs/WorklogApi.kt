@@ -43,6 +43,16 @@ class WorklogApi(
                 .toSingle()
     }
 
+    fun deleteMarkedForDeleteLogs(start: LocalDate, end: LocalDate): Completable {
+        return worklogStorage.loadWorklogs(start, end)
+                .flatMapObservable { Observable.from(it) }
+                .filter { it.isMarkedForDeletion }
+                .flatMapSingle { jiraWorklogInteractor.delete(it) }
+                .flatMapSingle { worklogStorage.hardDeleteRemote(it) }
+                .toList()
+                .toCompletable()
+    }
+
     fun uploadLogs(
             fetchTime: DateTime,
             start: LocalDate,

@@ -7,13 +7,16 @@ import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketCode
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
+import rx.Completable
 import rx.Emitter
 import rx.Observable
 import rx.Single
+import java.lang.IllegalArgumentException
 
 class JiraWorklogInteractor(
         private val jiraClientProvider: JiraClientProvider,
@@ -98,6 +101,25 @@ class JiraWorklogInteractor(
                     url = remoteWorklog.url
             )
             Single.just(logAsRemote)
+        }
+    }
+
+    /**
+     * Deletes worklog
+     * Will throw an exception in the stream if worklog not eligable for upload
+     * @throws JiraException whenever upload fails
+     * @throws IllegalArgumentException whenever worklog is not valid
+     */
+    // todo incomplete behaviour, test out before using
+    fun delete(
+        log: Log
+    ): Single<Long> {
+        return Single.defer {
+            val remoteId = log.remoteData?.remoteId ?: throw IllegalArgumentException("Cannot find worklog id")
+            val jiraClient = jiraClientProvider.clientFromCache()
+            val issue = jiraClient.getIssue(log.code.code)
+            issue.removeWorklog(remoteId.toString())
+            Single.just(remoteId)
         }
     }
 
