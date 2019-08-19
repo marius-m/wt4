@@ -1,35 +1,35 @@
 package lt.markmerkk.worklogs
 
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
-import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.WorkLog
-import net.rcarz.jiraclient.agile.Worklog
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import rx.Emitter
 import rx.Observable
+import rx.Single
 
-class JiraWorklogSearch(
+class JiraWorklogInteractor(
+        private val jiraClientProvider: JiraClientProvider,
         private val timeProvider: TimeProvider,
         private val userSettings: UserSettings
 ) {
 
     fun searchWorlogs(
-            now: DateTime,
-            jiraClient: JiraClient,
+            fetchTime: DateTime,
             jql: String,
             startDate: LocalDate,
             endDate: LocalDate
     ): Observable<Pair<Ticket, List<Log>>> {
         return Observable.create(
                 JiraWorklogEmitter(
-                        jiraClient = jiraClient,
+                        jiraClientProvider = jiraClientProvider,
                         jql = jql,
                         searchFields = "summary,project,created,updated,parent,issuetype",
                         start = startDate,
@@ -42,7 +42,7 @@ class JiraWorklogSearch(
                     code = issue.key,
                     description = issue.summary,
                     remoteData = RemoteData.fromRemote(
-                            fetchTime = now.millis,
+                            fetchTime = fetchTime.millis,
                             url = issue.url
                     )
             )
@@ -60,12 +60,44 @@ class JiraWorklogSearch(
                                 comment = it.comment,
                                 started = it.started,
                                 timeSpentSeconds = it.timeSpentSeconds,
-                                fetchTime = now,
+                                fetchTime = fetchTime,
                                 url = it.url
                         )
                     }
             logger.debug("Remapping ${ticket.code.code} JIRA worklogs to Log (${worklogs.size} / ${issueWorklogPair.worklogs.size})")
             ticket to worklogs
+        }
+    }
+
+    /**
+     * Uploads a worklog.
+     * Will throw an exception in the stream if worklog not eligable for upload
+     * @throws JiraException whenever upload fails
+     * @throws IllegalArgumentException whenever worklog is not valid
+     */
+    // todo incomplete behaviour, test out before using
+    fun uploadWorklog(
+            fetchTime: DateTime,
+            log: Log
+    ): Single<Log> {
+        return Single.defer {
+            val jiraClient = jiraClientProvider.clientFromCache()
+            val issue = jiraClient.getIssue(log.code.code)
+            val remoteWorklog = issue.addWorkLog(
+                    log.comment,
+                    log.time.start,
+                    log.time.duration.standardSeconds
+            )
+            val logAsRemote = Log.fromRemoteData(
+                    timeProvider,
+                    code = issue.key,
+                    started = remoteWorklog.started,
+                    comment = remoteWorklog.comment,
+                    timeSpentSeconds = remoteWorklog.timeSpentSeconds,
+                    fetchTime = fetchTime,
+                    url = remoteWorklog.url
+            )
+            Single.just(logAsRemote)
         }
     }
 

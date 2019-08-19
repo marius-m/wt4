@@ -5,15 +5,14 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import net.rcarz.jiraclient.User
 import net.rcarz.jiraclient.WorkLog
-import net.rcarz.jiraclient.agile.Worklog
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class JiraWorklogSearchIsCurrentUserLogTest {
+class JiraWorklogInteractorIsCurrentUserLogTest {
 
     @Test
     fun validDisplayName() {
-        val result = JiraWorklogSearch.isCurrentUserLog(
+        val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeUsername = "mariusm",
                 worklog = mockWorklog("marius@gmail.com", "mariusm")
         )
@@ -23,7 +22,7 @@ class JiraWorklogSearchIsCurrentUserLogTest {
 
     @Test
     fun validEmail() {
-        val result = JiraWorklogSearch.isCurrentUserLog(
+        val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeUsername = "mariusm@gmail.com",
                 worklog = mockWorklog("mariusm@gmail.com", "mariusm")
         )
@@ -33,7 +32,7 @@ class JiraWorklogSearchIsCurrentUserLogTest {
 
     @Test
     fun invalidName() {
-        val result = JiraWorklogSearch.isCurrentUserLog(
+        val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeUsername = "jonas",
                 worklog = mockWorklog("mariusm@gmail.com", "mariusm")
         )
@@ -43,7 +42,7 @@ class JiraWorklogSearchIsCurrentUserLogTest {
 
     @Test
     fun validDisplayName_diffCases() {
-        val result = JiraWorklogSearch.isCurrentUserLog(
+        val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeUsername = "MARIUSM",
                 worklog = mockWorklog("marius@gmail.com", "mariusm")
         )
@@ -53,7 +52,7 @@ class JiraWorklogSearchIsCurrentUserLogTest {
 
     @Test
     fun validEmail_diffCase() {
-        val result = JiraWorklogSearch.isCurrentUserLog(
+        val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeUsername = "MARIUSM@gmail.com",
                 worklog = mockWorklog("mariusm@gmail.com", "mariusm")
         )

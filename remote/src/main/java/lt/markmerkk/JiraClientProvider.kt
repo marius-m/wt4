@@ -11,8 +11,8 @@ class JiraClientProvider(
         private val userSettings: UserSettings
 ) {
 
-    var cacheCreds = JiraCreds()
-    var jiraClient: JiraClient? = null
+    private var cacheCreds = JiraCreds()
+    private var jiraClient: JiraClient? = null
 
     fun invalidateClient() {
         jiraClient = null
@@ -42,7 +42,13 @@ class JiraClientProvider(
         }
     }
 
-    private fun client(
+    @Throws(IllegalArgumentException::class)
+    fun clientFromCache(): JiraClient {
+        return client(userSettings.host, userSettings.username, userSettings.password)
+    }
+
+    @Throws(IllegalArgumentException::class)
+    fun client(
             hostname: String,
             username: String,
             password: String

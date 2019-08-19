@@ -15,8 +15,11 @@ data class Log private constructor(
 ) {
 
     val isRemote: Boolean = remoteData != null
-    val isDirty: Boolean = remoteData == null // kind of duplicate
     val isMarkedForDeletion = remoteData?.isDeleted ?: false
+    val canUpload = !comment.isEmpty()
+            && !code.isEmpty()
+            && time.duration.toStandardMinutes().minutes >= 1
+            && !isRemote
 
     companion object {
 

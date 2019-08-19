@@ -77,6 +77,7 @@ class LogStorage(
                     .toLocalDate()
         }
         data = worklogStorage.loadWorklogsSync(fromDate, toDate)
+                .filter { !it.isMarkedForDeletion }
                 .map { it.toLegacyLog(timeProvider) }
         listeners.forEach { it.onDataChange(data) }
     }

@@ -13,7 +13,6 @@ class WorklogStorage(
 
     fun loadWorklogsSync(from: LocalDate, to: LocalDate): List<Log> {
         return dbInteractor.loadWorklogs(from, to)
-                .filter { !it.isMarkedForDeletion }
     }
 
     fun loadWorklogs(

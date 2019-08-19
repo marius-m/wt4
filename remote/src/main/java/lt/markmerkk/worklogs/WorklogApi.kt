@@ -8,41 +8,53 @@ import lt.markmerkk.entities.Log
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
+import rx.Completable
+import rx.Observable
 import rx.Single
 
 class WorklogApi(
         private val jiraClientProvider: JiraClientProvider,
-        private val jiraWorklogSearch: JiraWorklogSearch,
+        private val jiraWorklogInteractor: JiraWorklogInteractor,
         private val ticketStorage: TicketStorage,
         private val worklogStorage: WorklogStorage,
         private val userSettings: UserSettings
 ) {
 
     fun fetchAndCacheLogs(
-            now: DateTime,
+            fetchTime: DateTime,
             start: LocalDate,
             end: LocalDate
     ): Single<List<Log>> {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
-        return jiraClientProvider.clientStream()
-                .flatMapObservable {
-                    jiraWorklogSearch.searchWorlogs(
-                            now = now,
-                            jiraClient = it,
-                            jql = jql,
-                            startDate = start,
-                            endDate = end
-                    )
-                }.doOnNext { (ticket, worklogs) ->
-                    ticketStorage.insertOrUpdateSync(ticket)
-                    worklogs.forEach {
-                        worklogStorage.insertOrUpdateSync(it)
-                    }
-                }.toList()
+        return jiraWorklogInteractor.searchWorlogs(
+                fetchTime = fetchTime,
+                jql = jql,
+                startDate = start,
+                endDate = end
+        ).doOnNext { (ticket, worklogs) ->
+            ticketStorage.insertOrUpdateSync(ticket)
+            worklogs.forEach {
+                worklogStorage.insertOrUpdateSync(it)
+            }
+        }.toList()
                 .flatMapSingle { worklogStorage.loadWorklogs(start, end) }
                 .toSingle()
+    }
+
+    fun uploadLogs(
+            fetchTime: DateTime,
+            start: LocalDate,
+            end: LocalDate
+    ): Completable {
+        return worklogStorage.loadWorklogs(start, end)
+                .flatMapObservable { Observable.from(it) }
+                .filter { it.canUpload }
+                .flatMapSingle { jiraWorklogInteractor.uploadWorklog(fetchTime, it) }
+                .flatMapSingle { worklogStorage.insertOrUpdate(it) }
+                .toList()
+                .toCompletable()
     }
 
 }

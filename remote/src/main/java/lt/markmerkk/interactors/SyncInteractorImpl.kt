@@ -95,12 +95,11 @@ class SyncInteractorImpl(
         val endDate = timeProvider.roundDateTime(dayProvider.endDay()).toLocalDate() // todo rm middle layer
         val now = timeProvider.now()
         val syncStart = System.currentTimeMillis()
-        subscription = worklogApi.fetchAndCacheLogs(now, startDate, endDate)
+        subscription = worklogApi.uploadLogs(now, startDate, endDate)
+                .andThen(worklogStorage.loadWorklogs(startDate, endDate))
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
-                .doOnSubscribe {
-                    changeLoadingState(true)
-                }
+                .doOnSubscribe { changeLoadingState(true) }
                 .doAfterTerminate {
                     changeLoadingState(false)
                     logStorage.notifyDataChange()
@@ -115,6 +114,26 @@ class SyncInteractorImpl(
                     logStorage.notifyDataChange()
                     autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })
+//        subscription = worklogApi.fetchAndCacheLogs(now, startDate, endDate)
+//                .subscribeOn(ioScheduler)
+//                .observeOn(uiScheduler)
+//                .doOnSubscribe {
+//                    changeLoadingState(true)
+//                }
+//                .doAfterTerminate {
+//                    changeLoadingState(false)
+//                    logStorage.notifyDataChange()
+//                    autoUpdateInteractor.notifyUpdateComplete(timeProvider.nowMillis())
+//                }
+//                .subscribe({
+//                    val syncEnd = System.currentTimeMillis()
+//                    logger.info("Log sync success in ${syncEnd - syncStart}ms!")
+//                }, {
+//                    logger.info("Log sync error: ${it.message}")
+//                    logger.error("Log sync error data: ", it)
+//                    logStorage.notifyDataChange()
+//                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
+//                })
     }
 
     //region Observables

@@ -22,7 +22,7 @@ import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
-import lt.markmerkk.worklogs.JiraWorklogSearch
+import lt.markmerkk.worklogs.JiraWorklogInteractor
 import lt.markmerkk.worklogs.WorklogApi
 import javax.inject.Singleton
 
@@ -181,7 +181,7 @@ class AppModule(
     ): WorklogApi {
         return WorklogApi(
                 jiraClientProvider,
-                JiraWorklogSearch(timeProvider, userSettings),
+                JiraWorklogInteractor(jiraClientProvider, timeProvider, userSettings),
                 ticketStorage,
                 worklogStorage,
                 userSettings

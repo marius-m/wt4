@@ -1,5 +1,6 @@
 package lt.markmerkk.worklogs
 
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Tags
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
@@ -12,7 +13,7 @@ import rx.Emitter
 import rx.functions.Action1
 
 internal class JiraWorklogEmitter(
-        private val jiraClient: JiraClient,
+        private val jiraClientProvider: JiraClientProvider,
         private val jql: String,
         private val searchFields: String,
         private val start: LocalDate,
@@ -21,6 +22,7 @@ internal class JiraWorklogEmitter(
 
     override fun call(emitter: Emitter<IssueWorklogPair>) {
         try {
+            val jiraClient = jiraClientProvider.clientFromCache()
             if (jql.isEmpty()) throw IllegalArgumentException("JQL is empty!")
             logger.info("Searching for worklogs from $start to $end: $jql")
             var startAt = 0
