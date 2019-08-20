@@ -146,6 +146,7 @@ class JiraWorklogInteractor(
         ): Boolean {
             return activeUsername.equals(worklog.author.displayName, ignoreCase = true)
                     || activeUsername.equals(worklog.author.email, ignoreCase = true)
+                    || activeUsername.equals(worklog.author.name, ignoreCase = true)
         }
     }
 

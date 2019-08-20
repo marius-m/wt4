@@ -13,8 +13,8 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     @Test
     fun validDisplayName() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
-                activeUsername = "mariusm",
-                worklog = mockWorklog("marius@gmail.com", "mariusm")
+                activeUsername = "Marius Merkevičius",
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
         )
 
         assertThat(result).isTrue()
@@ -23,8 +23,18 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     @Test
     fun validEmail() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
-                activeUsername = "mariusm@gmail.com",
-                worklog = mockWorklog("mariusm@gmail.com", "mariusm")
+                activeUsername = "marius@gmail.com",
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
+        )
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun validName() {
+        val result = JiraWorklogInteractor.isCurrentUserLog(
+                activeUsername = "mariusm",
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
         )
 
         assertThat(result).isTrue()
@@ -34,7 +44,7 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     fun invalidName() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeUsername = "jonas",
-                worklog = mockWorklog("mariusm@gmail.com", "mariusm")
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
         )
 
         assertThat(result).isFalse()
@@ -43,8 +53,8 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     @Test
     fun validDisplayName_diffCases() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
-                activeUsername = "MARIUSM",
-                worklog = mockWorklog("marius@gmail.com", "mariusm")
+                activeUsername = "MARIUS MERKEVIČIUS",
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
         )
 
         assertThat(result).isTrue()
@@ -53,8 +63,18 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     @Test
     fun validEmail_diffCase() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
-                activeUsername = "MARIUSM@gmail.com",
-                worklog = mockWorklog("mariusm@gmail.com", "mariusm")
+                activeUsername = "MARIUS@gmail.com",
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
+        )
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun validName_diffCase() {
+        val result = JiraWorklogInteractor.isCurrentUserLog(
+                activeUsername = "MARIUSM",
+                worklog = mockWorklog("marius@gmail.com", "Marius Merkevičius", "mariusm")
         )
 
         assertThat(result).isTrue()
@@ -62,11 +82,13 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
 
     private fun mockWorklog(
             email: String,
-            displayName: String
+            displayName: String,
+            name: String
     ): WorkLog {
         val author: User = mock()
         doReturn(email).whenever(author).email
         doReturn(displayName).whenever(author).displayName
+        doReturn(name).whenever(author).name
         val worklog: WorkLog = mock()
         doReturn(author).whenever(worklog).author
         return worklog
