@@ -1,16 +1,12 @@
 package lt.markmerkk.worklogs
 
-import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.TicketStorage
-import lt.markmerkk.UserSettings
-import lt.markmerkk.WorklogStorage
-import lt.markmerkk.entities.Log
+import lt.markmerkk.*
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
+import org.slf4j.LoggerFactory
 import rx.Completable
 import rx.Observable
-import rx.Single
 
 class WorklogApi(
         private val jiraClientProvider: JiraClientProvider,
@@ -27,18 +23,24 @@ class WorklogApi(
     ): Completable {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
+        logger.debug("Starting to fetch worklogs in range: $startFormat / $endFormat for current user")
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
         return jiraWorklogInteractor.searchWorlogs(
                 fetchTime = fetchTime,
                 jql = jql,
                 startDate = start,
-                endDate = end
-        ).doOnNext { (ticket, worklogs) ->
-            ticketStorage.insertOrUpdateSync(ticket)
-            worklogs.forEach {
-                worklogStorage.insertOrUpdateSync(it)
-            }
-        }.toList()
+                endDate = end)
+                .onErrorResumeNext { error ->
+                    logger.warn("Error fetching remote worklogs", error)
+                    Observable.empty()
+                }
+                .doOnNext { (ticket, worklogs) ->
+                    ticketStorage.insertOrUpdateSync(ticket)
+                    worklogs.forEach {
+                        worklogStorage.insertOrUpdateSync(it)
+                    }
+                }
+                .toList()
                 .toCompletable()
     }
 
@@ -65,5 +67,10 @@ class WorklogApi(
                 .toList()
                 .toCompletable()
     }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)
+    }
+
 
 }

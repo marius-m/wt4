@@ -6,6 +6,7 @@ import lt.markmerkk.entities.*
 import lt.markmerkk.merger.RemoteLogPull
 import lt.markmerkk.merger.RemoteLogPush
 import lt.markmerkk.merger.RemoteMergeToolsProvider
+import lt.markmerkk.worklogs.WorklogApi
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -19,6 +20,10 @@ class SyncInteractorImplUploadTest {
     val remoteMergeToolsProvider: RemoteMergeToolsProvider = mock()
     val logStorage: IDataStorage<SimpleLog> = mock()
     val autoUpdateInteractor: AutoUpdateInteractor = mock()
+    val worklogApi: WorklogApi = mock()
+    val worklogStorage: WorklogStorage = mock()
+
+    private val timeProvider = TimeProviderTest()
 
     val remoteLogPull: RemoteLogPull = mock()
     val fakeWork = JiraWork()
@@ -30,6 +35,9 @@ class SyncInteractorImplUploadTest {
             userSettings = settings,
             remoteMergeToolsProvider = remoteMergeToolsProvider,
             dayProvider = dayProvider,
+            worklogApi = worklogApi,
+            worklogStorage = worklogStorage,
+            timeProvider = timeProvider,
             uiScheduler = Schedulers.immediate(),
             ioScheduler = Schedulers.immediate(),
             autoUpdateInteractor = autoUpdateInteractor

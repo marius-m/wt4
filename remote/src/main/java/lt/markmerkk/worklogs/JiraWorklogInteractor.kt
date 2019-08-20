@@ -79,6 +79,7 @@ class JiraWorklogInteractor(
      * @throws IllegalArgumentException whenever worklog is not valid
      */
     // todo incomplete behaviour, test out before using
+    // Each worklog upload will create do multiple requests to jira. This can be optimized
     fun uploadWorklog(
             fetchTime: DateTime,
             log: Log

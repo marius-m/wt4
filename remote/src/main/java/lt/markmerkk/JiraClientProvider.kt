@@ -18,6 +18,7 @@ class JiraClientProvider(
         jiraClient = null
     }
 
+    @Deprecated("")
     fun clientStream(): Single<JiraClient> {
         return clientStream(
                 hostname = userSettings.host,
@@ -26,6 +27,7 @@ class JiraClientProvider(
         )
     }
 
+    @Deprecated("")
     fun clientStream(
             hostname: String,
             username: String,

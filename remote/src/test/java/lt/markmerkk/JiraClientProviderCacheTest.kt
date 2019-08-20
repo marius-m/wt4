@@ -1,9 +1,8 @@
 package lt.markmerkk
 
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.entities.JiraCreds
 import net.rcarz.jiraclient.JiraClient
-import org.junit.Assert.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -42,26 +41,22 @@ class JiraClientProviderCacheTest {
         // Arrange
         whenever(userSettings.host).thenReturn("valid_host")
         whenever(userSettings.username).thenReturn("valid_username")
-        whenever(userSettings.password).thenReturn("valid_pass")
-        jiraClientProvider.cacheCreds = JiraCreds(
+        whenever(userSettings.password).thenReturn("valid_password")
+        val initialClient = jiraClientProvider.client(
                 hostname = "valid_host",
                 username = "valid_username",
-                password = "valid_pass"
+                password = "valid_password"
         )
-        jiraClientProvider.jiraClient = jiraClient
 
         // Act
-        val result1 = jiraClientProvider.clientStream().test()
-        val result2 = jiraClientProvider.clientStream().test()
-        val result3 = jiraClientProvider.clientStream().test()
+        val result1 = jiraClientProvider.clientFromCache()
+        val result2 = jiraClientProvider.clientFromCache()
+        val result3 = jiraClientProvider.clientFromCache()
 
         // Assert
-        result1.assertNoErrors()
-        result1.assertValue(jiraClient)
-        result2.assertNoErrors()
-        result2.assertValue(jiraClient)
-        result3.assertNoErrors()
-        result3.assertValue(jiraClient)
+        assertThat(result1).isEqualTo(initialClient)
+        assertThat(result2).isEqualTo(initialClient)
+        assertThat(result3).isEqualTo(initialClient)
     }
 
     @Test
@@ -77,7 +72,7 @@ class JiraClientProviderCacheTest {
         val result2 = jiraClientProvider.clientStream().test()
 
         // Assert
-        assertNotEquals(result1.onNextEvents.first(), result2.onNextEvents.first())
+        assertThat(result1.onNextEvents.first()).isNotEqualTo(result2.onNextEvents.first())
     }
 
     @Test

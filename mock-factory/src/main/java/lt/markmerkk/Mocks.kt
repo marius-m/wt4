@@ -24,6 +24,33 @@ object Mocks {
         )
     }
 
+    fun createBasicLog(
+            timeProvider: TimeProvider,
+            localId: Long = 1L
+    ): Log {
+        val now = timeProvider.nowMillis()
+        return createLog(
+                timeProvider = timeProvider,
+                id = localId
+        )
+    }
+
+    fun createBasicLogRemote(
+            timeProvider: TimeProvider,
+            localId: Long = 1L,
+            remoteId: Long = 2L
+    ): Log {
+        val now = timeProvider.nowMillis()
+        return createLog(
+                timeProvider = timeProvider,
+                id = localId,
+                remoteData = createRemoteData(
+                        timeProvider,
+                        remoteId = remoteId
+                )
+        )
+    }
+
     fun createLog(
             timeProvider: TimeProvider,
             id: Long = 1L,

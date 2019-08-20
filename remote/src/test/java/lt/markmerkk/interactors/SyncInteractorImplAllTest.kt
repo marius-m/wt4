@@ -1,12 +1,10 @@
 package lt.markmerkk.interactors
 
 import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.DayProvider
-import lt.markmerkk.IDataStorage
-import lt.markmerkk.JiraInteractor
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.merger.RemoteMergeToolsProvider
+import lt.markmerkk.worklogs.WorklogApi
 import org.junit.Before
 import org.junit.Test
 import rx.Observable
@@ -20,6 +18,10 @@ class SyncInteractorImplAllTest {
     val remoteToolsProvider: RemoteMergeToolsProvider = mock()
     val dayProvider: DayProvider = mock()
     val autoUpdateInteractor: AutoUpdateInteractor = mock()
+    val worklogApi: WorklogApi = mock()
+    val worklogStorage: WorklogStorage = mock()
+
+    private val timeProvider = TimeProviderTest()
 
     val sync = SyncInteractorImpl(
             jiraInteractor = jiraInteractor,
@@ -27,9 +29,12 @@ class SyncInteractorImplAllTest {
             logStorage = logStorage,
             remoteMergeToolsProvider = remoteToolsProvider,
             dayProvider = dayProvider,
+            autoUpdateInteractor = autoUpdateInteractor,
+            worklogApi = worklogApi,
+            worklogStorage = worklogStorage,
+            timeProvider = timeProvider,
             uiScheduler = Schedulers.immediate(),
-            ioScheduler = Schedulers.immediate(),
-            autoUpdateInteractor = autoUpdateInteractor
+            ioScheduler = Schedulers.immediate()
     )
 
 

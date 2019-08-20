@@ -24,7 +24,7 @@ internal class JiraWorklogEmitter(
         try {
             val jiraClient = jiraClientProvider.clientFromCache()
             if (jql.isEmpty()) throw IllegalArgumentException("JQL is empty!")
-            logger.info("Searching for worklogs from $start to $end: $jql")
+            logger.info("Searching for worklogs using JQL: $jql")
             var startAt = 0
             val max = 50
             var total: Int
