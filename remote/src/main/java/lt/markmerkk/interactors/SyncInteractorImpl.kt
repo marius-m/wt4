@@ -98,6 +98,7 @@ class SyncInteractorImpl(
         val syncStart = System.currentTimeMillis()
         subscription = Completable.fromAction { logger.info("Starting synchronization") }
                 .andThen(worklogApi.deleteMarkedLogs(startDate, endDate))
+                .andThen(worklogApi.uploadLogs(now, startDate, endDate))
                 .andThen(worklogApi.fetchLogs(now, startDate, endDate))
                 .andThen(worklogStorage.loadWorklogs(startDate, endDate))
                 .subscribeOn(ioScheduler)

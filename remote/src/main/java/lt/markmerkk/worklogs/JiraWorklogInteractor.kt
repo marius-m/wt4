@@ -73,13 +73,12 @@ class JiraWorklogInteractor(
     }
 
     /**
-     * Uploads a worklog.
-     * Will throw an exception in the stream if worklog not eligable for upload
+     * Uploads a worklog. Returns [Log] with uploaded remote data
+     * Will throw an exception in the stream if worklog not eligible for upload
      * @throws JiraException whenever upload fails
      * @throws IllegalArgumentException whenever worklog is not valid
      */
-    // todo incomplete behaviour, test out before using
-    // Each worklog upload will create do multiple requests to jira. This can be optimized
+    // todo: Each worklog upload will create do multiple requests to jira. This can be optimized
     fun uploadWorklog(
             fetchTime: DateTime,
             log: Log

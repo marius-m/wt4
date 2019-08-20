@@ -1,6 +1,7 @@
 package lt.markmerkk.worklogs
 
 import lt.markmerkk.*
+import lt.markmerkk.entities.Log
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
@@ -70,18 +71,51 @@ class WorklogApi(
             start: LocalDate,
             end: LocalDate
     ): Completable {
-        return worklogStorage.loadWorklogs(start, end)
+        return Completable.fromAction { logger.info("Starting to upload worklogs") }
+                .andThen(worklogStorage.loadWorklogs(start, end))
                 .flatMapObservable { Observable.from(it) }
-                .filter { it.canUpload }
-                .flatMapSingle { jiraWorklogInteractor.uploadWorklog(fetchTime, it) }
-                .flatMapSingle { worklogStorage.insertOrUpdate(it) }
+                .flatMapSingle { uploadLog(fetchTime, it) }
+                .flatMap { uploadStatus ->
+                    when (uploadStatus) {
+                        is WorklogUploadSuccess -> {
+                            logger.info("Success uploading worklog (${uploadStatus.remoteLog.id})")
+                            worklogStorage
+                                    .insertOrUpdate(uploadStatus.remoteLog)
+                                    .toObservable()
+                        }
+                        is WorklogUploadError -> {
+                            logger.info("Error uploading ${uploadStatus.error}")
+                            Observable.empty()
+                        }
+                        is WorklogUploadValidationError -> {
+                            logger.info("Error validating worklog (${uploadStatus.localLog.id}) for upload due to: ${uploadStatus.worklogValidateError}")
+                            Observable.empty()
+                        }
+                    }
+                }
                 .toList()
                 .toCompletable()
+    }
+
+    fun uploadLog(
+            fetchTime: DateTime,
+            log: Log
+    ): Single<WorklogUploadState> {
+        return Single.just(log.isEligibleForUpload())
+                .flatMap { uploadValidatorState ->
+                    when (uploadValidatorState) {
+                        is WorklogValid -> {
+                            jiraWorklogInteractor.uploadWorklog(fetchTime, log)
+                                    .map<WorklogUploadState> { WorklogUploadSuccess(it) }
+                                    .onErrorResumeNext { error -> Single.just(WorklogUploadError(log, error)) }
+                        }
+                        else -> Single.just(WorklogUploadValidationError(log, uploadValidatorState))
+                    }
+                }
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.JIRA)
     }
-
 
 }
