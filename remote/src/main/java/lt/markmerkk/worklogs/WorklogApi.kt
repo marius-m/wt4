@@ -56,6 +56,7 @@ class WorklogApi(
      * Removes all unknown remote [Log]'s from database. 'Unknown' - exist in jira and does not exist in our
      * database as a remote log.
      */
+    // todo should be optimized together when fetching logs the first time
     fun deleteUnknownLogs(
             fetchTime: DateTime,
             start: LocalDate,
