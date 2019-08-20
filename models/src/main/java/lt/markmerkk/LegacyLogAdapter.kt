@@ -20,7 +20,7 @@ fun SimpleLog?.toLogOrNull(timeProvider: TimeProvider): Log? {
 fun SimpleLog.toLog(
         timeProvider: TimeProvider
 ): Log {
-    return Log.asRaw(
+    return Log.new(
             timeProvider = timeProvider,
             id = this._id,
             start = this.start,

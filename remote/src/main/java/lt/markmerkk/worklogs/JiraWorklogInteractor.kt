@@ -57,7 +57,7 @@ class JiraWorklogInteractor(
                         )
                     }
                     .map {
-                        Log.fromRemoteData(
+                        Log.createFromRemoteData(
                                 timeProvider = timeProvider,
                                 code = ticket.code.code,
                                 comment = it.comment,
@@ -91,7 +91,7 @@ class JiraWorklogInteractor(
                     log.time.start,
                     log.time.duration.standardSeconds
             )
-            val logAsRemote = Log.fromRemoteData(
+            val logAsRemote = log.appendRemoteData(
                     timeProvider,
                     code = issue.key,
                     started = remoteWorklog.started,

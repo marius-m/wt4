@@ -34,7 +34,7 @@ object Mocks {
             remoteData: RemoteData? = null
     ): Log {
         val now = timeProvider.nowMillis()
-        return Log.testable(
+        return Log.createAsTestable(
                 timeProvider = timeProvider,
                 id = id,
                 start = start,

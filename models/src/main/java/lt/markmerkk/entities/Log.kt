@@ -21,9 +21,49 @@ data class Log private constructor(
             && time.duration.toStandardMinutes().minutes >= 1
             && !isRemote
 
+    //region Factories
+
+    fun appendRemoteData(
+            timeProvider: TimeProvider,
+            code: String,
+            started: java.util.Date,
+            comment: String,
+            timeSpentSeconds: Int,
+            fetchTime: DateTime,
+            url: String
+    ): Log {
+        val start = timeProvider.roundDateTime(started.time)
+        val end = start.withFieldAdded(
+                DurationFieldType.seconds(),
+                timeSpentSeconds
+        )
+        return Log(
+                id = id,
+                time = LogTime.from(timeProvider, start, end),
+                code = TicketCode.new(code),
+                comment = comment,
+                remoteData = RemoteData.fromRemote(
+                        fetchTime = fetchTime.millis,
+                        url = url
+                )
+        )
+    }
+
+    fun markAsDeleted(): Log {
+        return Log(
+                id = id,
+                time = time,
+                code = code,
+                comment = comment,
+                remoteData = this.remoteData.markAsDelete()
+        )
+    }
+
+    //endregion
+
     companion object {
 
-        fun asEmpty(
+        fun createAsEmpty(
                 timeProvider: TimeProvider
         ): Log {
             val now = timeProvider.nowMillis()
@@ -37,38 +77,7 @@ data class Log private constructor(
 
         fun new(
                 timeProvider: TimeProvider,
-                start: DateTime,
-                end: DateTime,
-                code: String,
-                comment: String
-        ): Log {
-            return Log(
-                    time = LogTime.from(timeProvider, start, end),
-                    code = TicketCode.new(code),
-                    comment = comment,
-                    remoteData = null
-            )
-        }
-
-        fun newRaw(
-                timeProvider: TimeProvider,
-                start: Long,
-                end: Long,
-                code: String,
-                comment: String,
-                remoteData: RemoteData?
-        ): Log {
-            return Log(
-                    time = LogTime.fromRaw(timeProvider, start, end),
-                    code = TicketCode.new(code),
-                    comment = comment,
-                    remoteData = remoteData
-            )
-        }
-
-        fun fromDatabase(
-                timeProvider: TimeProvider,
-                id: Long,
+                id: Long = Const.NO_ID,
                 start: Long,
                 end: Long,
                 code: String,
@@ -84,25 +93,7 @@ data class Log private constructor(
             )
         }
 
-        fun asRaw(
-                timeProvider: TimeProvider,
-                id: Long,
-                start: Long,
-                end: Long,
-                code: String,
-                comment: String,
-                remoteData: RemoteData?
-        ): Log {
-            return Log(
-                    id = id,
-                    time = LogTime.fromRaw(timeProvider, start, end),
-                    code = TicketCode.new(code),
-                    comment = comment,
-                    remoteData = remoteData
-            )
-        }
-
-        fun fromRemoteData(
+        fun createFromRemoteData(
                 timeProvider: TimeProvider,
                 code: String,
                 started: java.util.Date,
@@ -112,9 +103,12 @@ data class Log private constructor(
                 url: String
         ): Log {
             val start = timeProvider.roundDateTime(started.time)
-            val end = start
-                    .withFieldAdded(DurationFieldType.seconds(), timeSpentSeconds)
+            val end = start.withFieldAdded(
+                    DurationFieldType.seconds(),
+                    timeSpentSeconds
+            )
             return Log(
+                    id = Const.NO_ID,
                     time = LogTime.from(timeProvider, start, end),
                     code = TicketCode.new(code),
                     comment = comment,
@@ -125,8 +119,26 @@ data class Log private constructor(
             )
         }
 
+        fun createFromDatabase(
+                timeProvider: TimeProvider,
+                id: Long,
+                start: Long,
+                end: Long,
+                code: String,
+                comment: String,
+                remoteData: RemoteData?
+        ): Log {
+            return Log(
+                    id = id,
+                    time = LogTime.fromRaw(timeProvider, start, end),
+                    code = TicketCode.new(code),
+                    comment = comment,
+                    remoteData = remoteData
+            )
+        }
+
         // Should only be used for testing
-        fun testable(
+        fun createAsTestable(
                 timeProvider: TimeProvider,
                 id: Long,
                 start: DateTime,
@@ -198,16 +210,4 @@ data class LogTime(
         }
     }
 
-}
-
-fun Log.markAsDeleted(timeProvider: TimeProvider): Log {
-    return Log.asRaw(
-            timeProvider = timeProvider,
-            id = this.id,
-            start = this.time.startAsRaw,
-            end = this.time.endAsRaw,
-            code = this.code.code,
-            comment = this.comment,
-            remoteData = this.remoteData.markAsDelete()
-    )
 }

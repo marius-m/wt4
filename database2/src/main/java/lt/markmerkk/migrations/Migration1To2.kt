@@ -81,7 +81,7 @@ class Migration1To2(
                 val dirty = rs.getInt("dirty")
                 val error = rs.getInt("error")
                 val errorMessage: String = rs.getString("errorMessage") ?: ""
-                val worklog = Log.newRaw(
+                val worklog = Log.new(
                         timeProvider = timeProvider,
                         start = start,
                         end = end,

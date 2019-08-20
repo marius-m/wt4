@@ -1,7 +1,6 @@
 package lt.markmerkk
 
 import lt.markmerkk.entities.Log
-import lt.markmerkk.entities.markAsDeleted
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import rx.Single
@@ -47,7 +46,7 @@ class WorklogStorage(
                 dbInteractor.deleteByLocalId(localId)
                 dbInteractor.deleteByRemoteId(remoteId)
                 return dbInteractor.insert(
-                        Log.newRaw(
+                        Log.new(
                                 timeProvider,
                                 start = log.time.startAsRaw,
                                 end = log.time.endAsRaw,
@@ -89,7 +88,7 @@ class WorklogStorage(
                 dbInteractor.deleteByLocalId(localId)
                 dbInteractor.deleteByRemoteId(remoteId)
                 return dbInteractor.insert(
-                        Log.newRaw(
+                        Log.new(
                                 timeProvider,
                                 start = log.time.startAsRaw,
                                 end = log.time.endAsRaw,
@@ -103,7 +102,7 @@ class WorklogStorage(
                 dbInteractor.deleteByLocalId(localId)
                 dbInteractor.deleteByRemoteId(remoteId)
                 return dbInteractor.insert(
-                        Log.newRaw(
+                        Log.new(
                                 timeProvider,
                                 start = log.time.startAsRaw,
                                 end = log.time.endAsRaw,
@@ -146,7 +145,7 @@ class WorklogStorage(
             return dbInteractor.deleteByLocalId(log.id)
         }
         if (existAsRemote) {
-            return dbInteractor.update(log.markAsDeleted(timeProvider))
+            return dbInteractor.update(log.markAsDeleted())
         }
         return Const.NO_ID.toInt()
     }

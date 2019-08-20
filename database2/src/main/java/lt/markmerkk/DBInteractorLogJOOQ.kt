@@ -36,7 +36,7 @@ class DBInteractorLogJOOQ(
                 .fetchInto(WORKLOG)
         val worklogs: List<Log> = dbResult
                 .map { worklog ->
-                    Log.fromDatabase(
+                    Log.createFromDatabase(
                             timeProvider = timeProvider,
                             id = worklog.id.toLong(),
                             start = worklog.start,
@@ -145,7 +145,7 @@ class DBInteractorLogJOOQ(
                 .fetchInto(WORKLOG)
         return dbResult
                 .map { worklog ->
-                    Log.fromDatabase(
+                    Log.createFromDatabase(
                             timeProvider = timeProvider,
                             id = worklog.id.toLong(),
                             start = worklog.start,
@@ -178,7 +178,7 @@ class DBInteractorLogJOOQ(
                 .fetchInto(WORKLOG)
         return dbResult
                 .map { worklog ->
-                    Log.fromDatabase(
+                    Log.createFromDatabase(
                             timeProvider = timeProvider,
                             id = worklog.id.toLong(),
                             start = worklog.start,

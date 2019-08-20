@@ -20,11 +20,11 @@ class WorklogApi(
         private val userSettings: UserSettings
 ) {
 
-    fun fetchAndCacheLogs(
+    fun fetchLogs(
             fetchTime: DateTime,
             start: LocalDate,
             end: LocalDate
-    ): Single<List<Log>> {
+    ): Completable {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
@@ -39,8 +39,7 @@ class WorklogApi(
                 worklogStorage.insertOrUpdateSync(it)
             }
         }.toList()
-                .flatMapSingle { worklogStorage.loadWorklogs(start, end) }
-                .toSingle()
+                .toCompletable()
     }
 
     fun deleteMarkedForDeleteLogs(start: LocalDate, end: LocalDate): Completable {
