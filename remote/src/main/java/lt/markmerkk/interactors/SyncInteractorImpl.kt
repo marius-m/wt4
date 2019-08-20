@@ -100,6 +100,7 @@ class SyncInteractorImpl(
                 .andThen(worklogApi.deleteMarkedLogs(startDate, endDate))
                 .andThen(worklogApi.uploadLogs(now, startDate, endDate))
                 .andThen(worklogApi.fetchLogs(now, startDate, endDate))
+                .andThen(worklogApi.deleteUnknownLogs(now, startDate, endDate))
                 .andThen(worklogStorage.loadWorklogs(startDate, endDate))
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)

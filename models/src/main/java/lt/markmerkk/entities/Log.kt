@@ -27,7 +27,7 @@ data class Log private constructor(
             timeProvider: TimeProvider,
             code: String,
             started: java.util.Date,
-            comment: String,
+            comment: String?,
             timeSpentSeconds: Int,
             fetchTime: DateTime,
             url: String
@@ -41,7 +41,7 @@ data class Log private constructor(
                 id = id,
                 time = LogTime.from(timeProvider, start, end),
                 code = TicketCode.new(code),
-                comment = comment,
+                comment = comment ?: "",
                 remoteData = RemoteData.fromRemote(
                         fetchTime = fetchTime.millis,
                         url = url
@@ -97,7 +97,7 @@ data class Log private constructor(
                 timeProvider: TimeProvider,
                 code: String,
                 started: java.util.Date,
-                comment: String,
+                comment: String?,
                 timeSpentSeconds: Int,
                 fetchTime: DateTime,
                 url: String
@@ -111,7 +111,7 @@ data class Log private constructor(
                     id = Const.NO_ID,
                     time = LogTime.from(timeProvider, start, end),
                     code = TicketCode.new(code),
-                    comment = comment,
+                    comment = comment ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,
                             url = url

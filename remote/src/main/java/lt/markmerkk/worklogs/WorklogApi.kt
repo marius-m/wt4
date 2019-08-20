@@ -18,6 +18,9 @@ class WorklogApi(
         private val userSettings: UserSettings
 ) {
 
+    /**
+     * Fetches and stores remote [Log] into database
+     */
     fun fetchLogs(
             fetchTime: DateTime,
             start: LocalDate,
@@ -39,7 +42,7 @@ class WorklogApi(
                     logger.warn("Error fetching remote worklogs", error)
                     Observable.empty()
                 }
-                .doOnNext { (ticket, worklogs) ->
+                .map { (ticket, worklogs) ->
                     ticketStorage.insertOrUpdateSync(ticket)
                     worklogs.forEach {
                         worklogStorage.insertOrUpdateSync(it)
@@ -49,6 +52,45 @@ class WorklogApi(
                 .toCompletable()
     }
 
+    /**
+     * Removes all unknown remote [Log]'s from database. 'Unknown' - exist in jira and does not exist in our
+     * database as a remote log.
+     */
+    fun deleteUnknownLogs(
+            fetchTime: DateTime,
+            start: LocalDate,
+            end: LocalDate
+    ): Completable {
+        val startFormat = LogFormatters.shortFormatDate.print(start)
+        val endFormat = LogFormatters.shortFormatDate.print(end)
+        val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
+        return Completable.fromAction { logger.info("Starting to remove unknown remote logs") }
+                .andThen(
+                        worklogStorage.loadWorklogs(start, end)
+                                .zipWith(
+                                        jiraWorklogInteractor.searchWorklogsAsList(fetchTime, jql, start, end),
+                                        { logsDb, logsApi -> Pair(logsDb, logsApi) }
+                                )
+                )
+                .map { (logsDb, logsApi) ->
+                    val dbRemoteIds = logsDb
+                            .filter { it.isRemote }
+                            .map { it.remoteData!!.remoteId }
+                    val apiRemoteIds = logsApi
+                            .map { it.remoteData!!.remoteId }
+                    dbRemoteIds
+                            .subtract(apiRemoteIds)
+                            .forEach {
+                                logger.info("Deleting worklog with remote ID $it as it is not found on remote anymore")
+                                worklogStorage.hardDeleteRemoteSync(it)
+                            }
+                }
+                .toCompletable()
+    }
+
+    /**
+     * Removes all [Log] when are marked for deletion [Log.remoteData.isDelete]
+     */
     fun deleteMarkedLogs(start: LocalDate, end: LocalDate): Completable {
         return Completable.fromAction { logger.info("Starting to delete worklogs from $start to $end") }
                 .andThen(worklogStorage.loadWorklogs(start, end))
@@ -66,6 +108,9 @@ class WorklogApi(
                 .toCompletable()
     }
 
+    /**
+     * Uploads all local logs for the provided time gap
+     */
     fun uploadLogs(
             fetchTime: DateTime,
             start: LocalDate,
@@ -97,6 +142,9 @@ class WorklogApi(
                 .toCompletable()
     }
 
+    /**
+     * Uploads provided [Log] if it's eligible for upload
+     */
     fun uploadLog(
             fetchTime: DateTime,
             log: Log

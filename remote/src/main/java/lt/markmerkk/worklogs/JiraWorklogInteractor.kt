@@ -1,5 +1,6 @@
 package lt.markmerkk.worklogs
 
+import com.sun.org.apache.xpath.internal.functions.Function2Args
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
@@ -16,6 +17,7 @@ import rx.Completable
 import rx.Emitter
 import rx.Observable
 import rx.Single
+import rx.functions.Func2
 import java.lang.IllegalArgumentException
 
 class JiraWorklogInteractor(
@@ -70,6 +72,19 @@ class JiraWorklogInteractor(
             logger.debug("Remapping ${ticket.code.code} JIRA worklogs to Log (${worklogs.size} / ${issueWorklogPair.worklogs.size})")
             ticket to worklogs
         }
+    }
+
+    fun searchWorklogsAsList(
+            fetchTime: DateTime,
+            jql: String,
+            startDate: LocalDate,
+            endDate: LocalDate
+    ): Single<List<Log>> {
+        return searchWorlogs(fetchTime, jql, startDate, endDate)
+                .flatMap { Observable.from(it.second) }
+                .toList()
+                .take(1)
+                .toSingle()
     }
 
     /**
