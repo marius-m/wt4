@@ -32,7 +32,7 @@ class WorklogApiFetchLogsTest {
         )
     }
 
-@Test
+    @Test
     fun validFetch() {
         // Assemble
         val now = timeProvider.now()

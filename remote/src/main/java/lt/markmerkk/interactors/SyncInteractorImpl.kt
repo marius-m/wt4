@@ -8,6 +8,7 @@ import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.worklogs.WorklogApi
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
+import rx.Completable
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
@@ -95,7 +96,9 @@ class SyncInteractorImpl(
         val endDate = timeProvider.roundDateTime(dayProvider.endDay()).toLocalDate() // todo rm middle layer
         val now = timeProvider.now()
         val syncStart = System.currentTimeMillis()
-        subscription = worklogApi.fetchLogs(now, startDate, endDate)
+        subscription = Completable.fromAction { logger.info("Starting synchronization") }
+                .andThen(worklogApi.deleteMarkedLogs(startDate, endDate))
+                .andThen(worklogApi.fetchLogs(now, startDate, endDate))
                 .andThen(worklogStorage.loadWorklogs(startDate, endDate))
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)

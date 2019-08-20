@@ -77,7 +77,6 @@ object Mocks {
             remoteId: Long = 1L,
             isDeleted: Boolean = false,
             isDirty: Boolean = false,
-            isError: Boolean = false,
             errorMessage: String = "",
             fetchTime: Long = timeProvider.nowMillis(),
             url: String = ""
@@ -87,7 +86,6 @@ object Mocks {
                 remoteId = remoteId,
                 isDeleted = isDeleted,
                 isDirty = isDirty,
-                isError = isError,
                 errorMessage = errorMessage,
                 fetchTime = fetchTime,
                 url = url

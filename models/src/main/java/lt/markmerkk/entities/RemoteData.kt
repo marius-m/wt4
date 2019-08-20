@@ -7,11 +7,13 @@ data class RemoteData(
         val remoteId: Long,
         val isDeleted: Boolean,
         val isDirty: Boolean,
-        val isError: Boolean,
         val errorMessage: String,
         val fetchTime: Long,
         val url: String
 ) {
+
+    val isError = errorMessage.isNotEmpty()
+
     companion object {
 
         fun asEmpty(): RemoteData {
@@ -19,7 +21,6 @@ data class RemoteData(
                     remoteId = Const.NO_ID,
                     isDeleted = false,
                     isDirty = true,
-                    isError = false,
                     errorMessage = "",
                     fetchTime = 0,
                     url = ""
@@ -42,7 +43,6 @@ data class RemoteData(
                     remoteId = remoteId,
                     isDeleted = isDeleted,
                     isDirty = isDirty,
-                    isError = isError,
                     errorMessage = errorMessage,
                     fetchTime = fetchTime,
                     url = url
@@ -61,7 +61,6 @@ data class RemoteData(
                     remoteId = remoteId,
                     isDeleted = false,
                     isDirty = false,
-                    isError = false,
                     errorMessage = "",
                     fetchTime = fetchTime,
                     url = url
@@ -76,7 +75,6 @@ fun RemoteData?.markAsError(errorMessage: String): RemoteData? {
             remoteId = remoteId,
             isDeleted = isDeleted,
             isDirty = isDirty,
-            isError = true,
             errorMessage = errorMessage,
             fetchTime = fetchTime,
             url = url
@@ -89,7 +87,6 @@ fun RemoteData?.markAsDelete(): RemoteData? {
             remoteId = remoteId,
             isDeleted = true,
             isDirty = isDirty,
-            isError = isError,
             errorMessage = errorMessage,
             fetchTime = fetchTime,
             url = url

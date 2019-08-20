@@ -7,6 +7,7 @@ import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import rx.Completable
 import rx.Observable
+import rx.Single
 
 class WorklogApi(
         private val jiraClientProvider: JiraClientProvider,
@@ -23,13 +24,16 @@ class WorklogApi(
     ): Completable {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
-        logger.debug("Starting to fetch worklogs in range: $startFormat / $endFormat for current user")
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
-        return jiraWorklogInteractor.searchWorlogs(
-                fetchTime = fetchTime,
-                jql = jql,
-                startDate = start,
-                endDate = end)
+        return Completable.fromAction { logger.info("Starting to fetch new logs from $start to $end") }
+                .andThen(
+                        jiraWorklogInteractor.searchWorlogs(
+                                fetchTime = fetchTime,
+                                jql = jql,
+                                startDate = start,
+                                endDate = end
+                        )
+                )
                 .onErrorResumeNext { error ->
                     logger.warn("Error fetching remote worklogs", error)
                     Observable.empty()
@@ -44,11 +48,18 @@ class WorklogApi(
                 .toCompletable()
     }
 
-    fun deleteMarkedForDeleteLogs(start: LocalDate, end: LocalDate): Completable {
-        return worklogStorage.loadWorklogs(start, end)
+    fun deleteMarkedLogs(start: LocalDate, end: LocalDate): Completable {
+        return Completable.fromAction { logger.info("Starting to delete worklogs from $start to $end") }
+                .andThen(worklogStorage.loadWorklogs(start, end))
                 .flatMapObservable { Observable.from(it) }
                 .filter { it.isMarkedForDeletion }
-                .flatMapSingle { jiraWorklogInteractor.delete(it) }
+                .flatMapSingle { worklog ->
+                    jiraWorklogInteractor.delete(worklog)
+                            .onErrorResumeNext { error ->
+                                logger.warn("Error trying to delete a worklog", error)
+                                Single.just(worklog.remoteData?.remoteId ?: Const.NO_ID)
+                            }
+                }
                 .flatMapSingle { worklogStorage.hardDeleteRemote(it) }
                 .toList()
                 .toCompletable()
