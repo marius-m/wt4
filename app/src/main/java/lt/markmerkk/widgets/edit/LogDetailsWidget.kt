@@ -309,9 +309,6 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()
         )
-        ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
-        JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
-                .subscribe { presenter.changeTicketCode(it) }
         viewTextTicketDesc.text = ""
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
                 viewButtonSubtractFrom,
@@ -345,6 +342,9 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
+        ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
+        JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
+                .subscribe { presenter.changeTicketCode(it) }
         viewTextComment.requestFocus()
         viewTextComment.positionCaret(viewTextComment.text.length)
     }
