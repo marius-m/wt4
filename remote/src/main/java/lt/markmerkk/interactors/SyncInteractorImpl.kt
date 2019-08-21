@@ -8,10 +8,7 @@ import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.worklogs.WorklogApi
 import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
-import rx.Completable
-import rx.Observable
-import rx.Scheduler
-import rx.Subscription
+import rx.*
 import rx.util.async.Async
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -100,7 +97,7 @@ class SyncInteractorImpl(
                 .andThen(worklogApi.deleteMarkedLogs(startDate, endDate))
                 .andThen(worklogApi.uploadLogs(now, startDate, endDate))
                 .andThen(worklogApi.fetchLogs(now, startDate, endDate))
-                .andThen(worklogApi.deleteUnknownLogs(now, startDate, endDate))
+                .flatMapCompletable { worklogApi.deleteUnknownLogs(Single.just(it), startDate, endDate) }
                 .andThen(worklogStorage.loadWorklogs(startDate, endDate))
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)

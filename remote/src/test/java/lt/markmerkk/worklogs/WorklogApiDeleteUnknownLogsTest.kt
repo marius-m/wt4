@@ -47,14 +47,13 @@ class WorklogApiDeleteUnknownLogsTest {
                         remoteId = 2L
                 )
         )
-        doReturn(Single.just(apiWorklogs))
-                .whenever(jiraWorklogInteractor).searchWorklogsAsList(any(), any(), any(), any())
+        val apiWorlogsAsStream = Single.just(apiWorklogs)
         doReturn(Single.just(localWorklogs))
                 .whenever(worklogStorage).loadWorklogs(any(), any())
 
         // Act
         val fetchResult = worklogApi.deleteUnknownLogs(
-                fetchTime = now,
+                apiWorklogsAsStream = apiWorlogsAsStream,
                 start = now.toLocalDate(),
                 end = now.plusDays(1).toLocalDate()
         ).test()
@@ -93,14 +92,13 @@ class WorklogApiDeleteUnknownLogsTest {
                         remoteId = 4L
                 )
         )
-        doReturn(Single.just(apiWorklogs))
-                .whenever(jiraWorklogInteractor).searchWorklogsAsList(any(), any(), any(), any())
+        val apiWorlogsAsStream = Single.just(apiWorklogs)
         doReturn(Single.just(localWorklogs))
                 .whenever(worklogStorage).loadWorklogs(any(), any())
 
         // Act
         val fetchResult = worklogApi.deleteUnknownLogs(
-                fetchTime = now,
+                apiWorklogsAsStream = apiWorlogsAsStream,
                 start = now.toLocalDate(),
                 end = now.plusDays(1).toLocalDate()
         ).test()
@@ -131,14 +129,13 @@ class WorklogApiDeleteUnknownLogsTest {
                         remoteId = 2L
                 )
         )
-        doReturn(Single.just(apiWorklogs))
-                .whenever(jiraWorklogInteractor).searchWorklogsAsList(any(), any(), any(), any())
+        val apiWorlogsAsStream = Single.just(apiWorklogs)
         doReturn(Single.just(localWorklogs))
                 .whenever(worklogStorage).loadWorklogs(any(), any())
 
         // Act
         val fetchResult = worklogApi.deleteUnknownLogs(
-                fetchTime = now,
+                apiWorklogsAsStream = apiWorlogsAsStream,
                 start = now.toLocalDate(),
                 end = now.plusDays(1).toLocalDate()
         ).test()
@@ -177,14 +174,13 @@ class WorklogApiDeleteUnknownLogsTest {
                         localId = 4L
                 )
         )
-        doReturn(Single.just(apiWorklogs))
-                .whenever(jiraWorklogInteractor).searchWorklogsAsList(any(), any(), any(), any())
+        val apiWorlogsAsStream = Single.just(apiWorklogs)
         doReturn(Single.just(localWorklogs))
                 .whenever(worklogStorage).loadWorklogs(any(), any())
 
         // Act
         val fetchResult = worklogApi.deleteUnknownLogs(
-                fetchTime = now,
+                apiWorklogsAsStream = apiWorlogsAsStream,
                 start = now.toLocalDate(),
                 end = now.plusDays(1).toLocalDate()
         ).test()

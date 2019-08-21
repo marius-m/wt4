@@ -125,7 +125,6 @@ class JiraWorklogInteractor(
      * @throws JiraException whenever upload fails
      * @throws IllegalArgumentException whenever worklog is not valid
      */
-    // todo incomplete behaviour, test out before using
     fun delete(
         log: Log
     ): Single<Long> {

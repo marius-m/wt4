@@ -20,12 +20,13 @@ class WorklogApi(
 
     /**
      * Fetches and stores remote [Log] into database
+     * Returns all the fresh worklogs from the network
      */
     fun fetchLogs(
             fetchTime: DateTime,
             start: LocalDate,
             end: LocalDate
-    ): Completable {
+    ): Single<List<Log>> {
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
@@ -47,9 +48,12 @@ class WorklogApi(
                     worklogs.forEach {
                         worklogStorage.insertOrUpdateSync(it)
                     }
+                    worklogs
                 }
+                .flatMap { Observable.from(it) }
                 .toList()
-                .toCompletable()
+                .take(1)
+                .toSingle()
     }
 
     /**
@@ -58,18 +62,15 @@ class WorklogApi(
      */
     // todo should be optimized together when fetching logs the first time
     fun deleteUnknownLogs(
-            fetchTime: DateTime,
+            apiWorklogsAsStream: Single<List<Log>>,
             start: LocalDate,
             end: LocalDate
     ): Completable {
-        val startFormat = LogFormatters.shortFormatDate.print(start)
-        val endFormat = LogFormatters.shortFormatDate.print(end)
-        val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
         return Completable.fromAction { logger.info("Starting to remove unknown remote logs") }
                 .andThen(
                         worklogStorage.loadWorklogs(start, end)
                                 .zipWith(
-                                        jiraWorklogInteractor.searchWorklogsAsList(fetchTime, jql, start, end),
+                                        apiWorklogsAsStream,
                                         { logsDb, logsApi -> Pair(logsDb, logsApi) }
                                 )
                 )
