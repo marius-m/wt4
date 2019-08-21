@@ -2,6 +2,7 @@ package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.schema1.tables.Ticket
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import org.assertj.core.api.Assertions.assertThat
@@ -36,10 +37,10 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
     @Test
     fun validSearch() {
         // Assemble
-        val remoteIssues = listOf(
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue()
+        val apiTickets = listOf(
+                Mocks.createTicket(id = 1),
+                Mocks.createTicket(id = 2),
+                Mocks.createTicket(id = 3)
         )
         val dbTickets = listOf(
                 Mocks.createTicket(),
@@ -47,7 +48,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
                 Mocks.createTicket()
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
+        doReturn(Observable.from(apiTickets)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
 
@@ -62,42 +63,6 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         assertThat(resultItems.size).isEqualTo(3)
 
         verify(ticketsDatabaseRepo, times(3)).insertOrUpdate(any())
-        verify(ticketsDatabaseRepo).loadTickets()
-    }
-
-    @Test
-    fun validSearch_multiplePages() {
-        // Assemble
-        val remoteIssuesPage1 = listOf(
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue()
-        )
-        val remoteIssuesPage2 = listOf(
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue()
-        )
-        val dbTickets = listOf(
-                Mocks.createTicket(),
-                Mocks.createTicket(),
-                Mocks.createTicket()
-        )
-        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.from(listOf(remoteIssuesPage1, remoteIssuesPage2)))
-                .whenever(jiraTicketSearch).searchIssues(any(), any(), any())
-        doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
-        doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
-
-        // Act
-        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
-                .test()
-
-        // Assert
-        result.assertNoErrors()
-        result.assertValueCount(1)
-
-        verify(ticketsDatabaseRepo, times(6)).insertOrUpdate(any())
         verify(ticketsDatabaseRepo).loadTickets()
     }
 
@@ -118,14 +83,14 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
     @Test
     fun noTickets() {
         // Assemble
-        val remoteIssues = emptyList<Issue>()
+        val remoteIssues = emptyList<Ticket>()
         val dbTickets = listOf(
                 Mocks.createTicket(),
                 Mocks.createTicket(),
                 Mocks.createTicket()
         )
         doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
+        doReturn(Observable.from(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act

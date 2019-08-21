@@ -1,25 +1,18 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.*
-import lt.markmerkk.entities.JiraWork
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.interfaces.IRemoteLoadListener
-import lt.markmerkk.merger.RemoteMergeToolsProvider
 import lt.markmerkk.worklogs.WorklogApi
-import net.rcarz.jiraclient.WorkLog
 import org.slf4j.LoggerFactory
 import rx.*
-import rx.util.async.Async
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
  */
 class SyncInteractorImpl(
-        private val jiraInteractor: JiraInteractor,
-        private val userSettings: UserSettings,
         private val logStorage: IDataStorage<SimpleLog>,
-        private val remoteMergeToolsProvider: RemoteMergeToolsProvider,
         private val dayProvider: DayProvider,
         private val autoUpdateInteractor: AutoUpdateInteractor,
         private val worklogApi: WorklogApi,

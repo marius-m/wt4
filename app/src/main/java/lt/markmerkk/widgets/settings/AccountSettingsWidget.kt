@@ -3,7 +3,6 @@ package lt.markmerkk.widgets.settings
 import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -15,7 +14,6 @@ import lt.markmerkk.*
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.interactors.AuthServiceImpl
-import lt.markmerkk.interactors.LogLoaderImpl
 import lt.markmerkk.ui_2.views.*
 import tornadofx.*
 import java.io.File

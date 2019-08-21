@@ -1,8 +1,5 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.interactors.AuthService
-import lt.markmerkk.interactors.AuthServiceImpl
-import lt.markmerkk.interactors.LogLoader
 import org.junit.Before
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -13,7 +10,6 @@ abstract class AbsAuthServiceImplTest {
 
     @Mock lateinit var view: AuthService.View
     @Mock lateinit var authInteractor: AuthService.AuthInteractor
-    @Mock lateinit var logLoader: LogLoader
     lateinit var service: AuthServiceImpl
     lateinit var serviceWithTestSchedulers: AuthServiceImpl
 
