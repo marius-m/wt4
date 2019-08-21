@@ -258,6 +258,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         block = false,
                         resizable = true
                 )
+                find<TicketWidget>().primaryStage.toFront()
             }
             DialogType.TICKET_SPLIT -> {
                 find<TicketSplitWidget>().openModal(
