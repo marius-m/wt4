@@ -29,6 +29,7 @@ class SyncInteractorImpl(
         private val ioScheduler: Scheduler
 ) : SyncInteractor {
 
+    // todo replace this with event bus
     val remoteLoadListeners = mutableListOf<IRemoteLoadListener>()
     var subscription: Subscription? = null
 
@@ -50,40 +51,9 @@ class SyncInteractorImpl(
         subscription?.unsubscribe()
     }
 
-    override fun syncAll() {
-//        if (loading.get()) {
-//            logger.info("Sync in progress")
-//            return
-//        }
-//        val syncStart = System.currentTimeMillis()
-//        val uploadValidator = JiraFilterSimpleLog()
-//        val downloadValidator = JiraFilterWorklog(
-//                userSettings.username,
-//                dayProvider.startDay(),
-//                dayProvider.endDay()
-//        )
-//        subscription = uploadObservable(uploadValidator)
-//                .flatMap { downloadObservable(downloadValidator) }
-//                .subscribeOn(ioScheduler)
-//                .observeOn(uiScheduler)
-//                .doOnSubscribe { changeLoadingState(true) }
-//                .doOnTerminate { changeLoadingState(false) }
-//                .subscribe({
-//                    val syncEnd = System.currentTimeMillis()
-//                    logger.info("Sync all success in ${syncEnd - syncStart}ms!")
-//                }, {
-//                    logger.info("Sync all error: ${it.message} / ${it.cause?.message?.substring(0, 40)}...")
-//                    logger.error("Sync all error data: ", it)
-//                    val errorMsg = it.message
-//                    remoteLoadListeners.forEach { it.onError(errorMsg) }
-//                    logStorage.notifyDataChange()
-//                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
-//                }, {
-//                    logStorage.notifyDataChange()
-//                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
-//                })
-    }
+    override fun syncAll() { }
 
+    // todo will trigger multiple actions even if jiraclient fails. Handle this before release
     override fun syncLogs() {
         if (loading.get()) {
             logger.info("Sync in progress")
@@ -116,59 +86,7 @@ class SyncInteractorImpl(
                     logStorage.notifyDataChange()
                     autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })
-//        subscription = worklogApi.fetchLogs(now, startDate, endDate)
-//                .subscribeOn(ioScheduler)
-//                .observeOn(uiScheduler)
-//                .doOnSubscribe {
-//                    changeLoadingState(true)
-//                }
-//                .doAfterTerminate {
-//                    changeLoadingState(false)
-//                    logStorage.notifyDataChange()
-//                    autoUpdateInteractor.notifyUpdateComplete(timeProvider.nowMillis())
-//                }
-//                .subscribe({
-//                    val syncEnd = System.currentTimeMillis()
-//                    logger.info("Log sync success in ${syncEnd - syncStart}ms!")
-//                }, {
-//                    logger.info("Log sync error: ${it.message}")
-//                    logger.error("Log sync error data: ", it)
-//                    logStorage.notifyDataChange()
-//                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
-//                })
     }
-
-    //region Observables
-
-    @Deprecated("")
-    fun uploadObservable(filter: JiraFilter<SimpleLog>): Observable<List<SimpleLog>> {
-        return jiraInteractor.jiraLocalWorks()
-                .flatMap { Observable.from(it) }
-                .flatMap {
-                    val pushMerger = remoteMergeToolsProvider.logPushMerger(
-                            localLog = it,
-                            filter = filter
-                    )
-                    Async.fromCallable(pushMerger, ioScheduler)
-                }
-                .toList()
-    }
-
-    @Deprecated("")
-    fun downloadObservable(filter: JiraFilter<WorkLog>): Observable<List<JiraWork>> {
-        return jiraInteractor.jiraRemoteWorks(dayProvider.startDay(), dayProvider.endDay())
-                .flatMap { Observable.from(it) }
-                .flatMap {
-                    val pullMerger = remoteMergeToolsProvider.logPullMerger(
-                            it,
-                            filter
-                    )
-                    Async.fromCallable(pullMerger, ioScheduler)
-                }
-                .toList()
-    }
-
-    //endregion
 
     override fun addLoadingListener(listener: IRemoteLoadListener) {
         remoteLoadListeners.add(listener)
