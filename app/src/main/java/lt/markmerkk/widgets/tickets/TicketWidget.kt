@@ -62,6 +62,7 @@ class TicketWidget: View(), TicketContract.View {
                         graphic = graphics.from(Glyph.CLEAR, Color.BLACK, 12.0)
                         setOnAction {
                             viewTextFieldTicketSearch.text = ""
+                            viewTextFieldTicketSearch.requestFocus()
                         }
                     }
                     viewProgress = find<TicketProgressWidget>()
@@ -120,9 +121,10 @@ class TicketWidget: View(), TicketContract.View {
                 userSettings,
                 schedulerProvider
         )
+        viewTextFieldTicketSearch.text = ""
         presenter.onAttach(this)
         presenter.fetchTickets(forceFetch = false, filter = "")
-        presenter.loadTickets(viewTextFieldTicketSearch.text)
+        presenter.loadTickets(filter = "")
         presenter.attachFilterStream(JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty())
                 .subscribe { presenter.handleClearVisibility(it) }
