@@ -260,22 +260,13 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
         val isActiveClock = resultDispatcher.consumeBoolean(RESULT_DISPATCH_KEY_ACTIVE_CLOCK, false)
         val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
         presenter = if (entity != null) {
-            when  {
-                entity.canEdit() -> LogDetailsPresenterUpdate(
-                        entity,
-                        logStorage,
-                        eventBus,
-                        graphics,
-                        timeProvider
-                )
-                else -> LogDetailsPresenterReadOnly(
-                        entity,
-                        logStorage,
-                        eventBus,
-                        graphics,
-                        timeProvider
-                )
-            }
+            LogDetailsPresenterUpdate(
+                    entity,
+                    logStorage,
+                    eventBus,
+                    graphics,
+                    timeProvider
+            )
         } else {
             when  {
                 isActiveClock -> LogDetailsPresenterUpdateActiveClock(

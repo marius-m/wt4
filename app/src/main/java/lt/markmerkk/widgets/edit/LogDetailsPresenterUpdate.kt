@@ -49,21 +49,13 @@ class LogDetailsPresenterUpdate(
                     view?.showHint1(errorMessage)
                 }
 
-                override fun onEnableInput() {
-                    view?.enableInput()
-                }
+                override fun onEnableInput() { }
 
-                override fun onDisableInput() {
-                    view?.disableInput()
-                }
+                override fun onDisableInput() { }
 
-                override fun onEnableSaving() {
-                    view?.enableSaving()
-                }
+                override fun onEnableSaving() { }
 
-                override fun onDisableSaving() {
-                    view?.disableSaving()
-                }
+                override fun onDisableSaving() { }
             }
     )
 

@@ -5,6 +5,10 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.joda.time.DateTime
 
+/**
+ * Responsible for handling time change and input disable / enable
+ * todo would benefit from refurbish, as remote logs can be updated, much of logic can be dropped
+ */
 class LogEditServiceImpl(
         private val logEditInteractor: LogEditInteractor,
         private val timeProvider: TimeProvider,
@@ -68,8 +72,6 @@ class LogEditServiceImpl(
         updateDateTime(start, end)
         printNotificationIfNeeded(entityInEdit)
     }
-
-    override fun canEdit(): Boolean = entityInEdit.canEdit() || !entityInEdit.isError
 
     /**
      * Generates a generic type of notification for the user

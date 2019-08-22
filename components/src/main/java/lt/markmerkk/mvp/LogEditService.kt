@@ -35,11 +35,6 @@ interface LogEditService {
             comment: String
     )
 
-    /**
-     * Determined if entity can be edited
-     */
-    fun canEdit(): Boolean
-
     interface Listener {
         /**
          * Refresh views with new log data
