@@ -13,7 +13,6 @@ class LogChangeValidator(
      * @return true whenever log is valid for editing
      */
     fun canEditSimpleLog(simpleLogId: Long): Boolean {
-        val simpleLog = logStorage.findByIdOrNull(simpleLogId) ?: return false
-        return !simpleLog.isRemote // cannot edit remote id
+        return logStorage.findByIdOrNull(simpleLogId) != null
     }
 }

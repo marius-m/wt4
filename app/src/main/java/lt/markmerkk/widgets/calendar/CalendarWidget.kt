@@ -76,20 +76,18 @@ class CalendarWidget: View() {
             if (event.eventType == CalendarEvent.ENTRY_INTERVAL_CHANGED) {
                 val calendarEntryStart = event.entry.startMillis
                 val calendarEntryEnd = event.entry.endMillis
-                val oldLog = event.entry.userObject as SimpleLog
-                logStorage.delete(oldLog)
-                logStorage.insert(
-                        SimpleLogBuilder(oldLog)
-                                .setStart(calendarEntryStart)
-                                .setEnd(calendarEntryEnd)
-                                .build()
-                )
+                val oldLogEntry = event.entry.userObject as SimpleLog
+                val newLogEntry = SimpleLogBuilder(oldLogEntry)
+                        .setStart(calendarEntryStart)
+                        .setEnd(calendarEntryEnd)
+                        .build()
+                logStorage.update(newLogEntry)
             }
         }
     }
     private val calendarInSync = Calendar().apply {
         setStyle(Calendar.Style.STYLE1)
-        isReadOnly = true
+        isReadOnly = false
         addEventHandler(calendarChangeEventHandler)
     }
     private val calendarWaitingForSync = Calendar().apply {
