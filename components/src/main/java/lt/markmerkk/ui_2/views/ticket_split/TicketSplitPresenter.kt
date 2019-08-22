@@ -60,11 +60,7 @@ class TicketSplitPresenter(
                 originalComment = simpleLog.comment,
                 isSplitEnabled = !simpleLog.isRemote
         )
-        if (simpleLog.isRemote) {
-            view?.showError(strings.getString("ticket_split_error_remote_log"))
-        } else {
-            view?.hideError()
-        }
+        view?.hideError()
     }
 
     override fun changeSplitBalance(balancePercent: Int) {

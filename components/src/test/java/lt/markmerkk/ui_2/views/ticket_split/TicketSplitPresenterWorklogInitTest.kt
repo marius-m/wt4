@@ -85,6 +85,6 @@ class TicketSplitPresenterWorklogInitTest {
                 originalComment = "valid_comment",
                 isSplitEnabled = false
         )
-        verify(view).showError(any())
+        verify(view).hideError()
     }
 }
