@@ -61,7 +61,7 @@ class DBInteractorLogJOOQ(
      */
     fun insert(log: Log): Int {
         val remoteData: RemoteData = log.remoteData ?: RemoteData.asEmpty()
-        return connProvider.dsl.insertInto(
+        val resultInsert: Int? = connProvider.dsl.insertInto(
                 WORKLOG,
                 WORKLOG.START,
                 WORKLOG.END,
@@ -88,7 +88,10 @@ class DBInteractorLogJOOQ(
                 remoteData.errorMessage,
                 remoteData.fetchTime,
                 remoteData.url
-        ).execute()
+        ).returning(WORKLOG.ID)
+                .fetchOne()
+                ?.getValue(WORKLOG.ID)
+        return resultInsert ?: Const.NO_ID.toInt()
     }
 
     /**
@@ -96,7 +99,7 @@ class DBInteractorLogJOOQ(
      */
     fun update(log: Log): Int {
         val remoteData: RemoteData = log.remoteData ?: RemoteData.asEmpty()
-        return connProvider.dsl.update(WORKLOG)
+        connProvider.dsl.update(WORKLOG)
                 .set(WORKLOG.START, log.time.startAsRaw)
                 .set(WORKLOG.END, log.time.endAsRaw)
                 .set(WORKLOG.DURATION, log.time.durationAsRaw)
@@ -111,24 +114,31 @@ class DBInteractorLogJOOQ(
                 .set(WORKLOG.URL, remoteData.url)
                 .where(WORKLOG.ID.eq(log.id.toInt()))
                 .execute()
+        return log.id.toInt()
     }
 
     /**
      * Deletes a log entry by it's [Log.id]
      */
     fun deleteByLocalId(localId: Long): Int {
-        return connProvider.dsl.delete(WORKLOG)
+        val resultDelete: Int? = connProvider.dsl.delete(WORKLOG)
                 .where(WORKLOG.ID.eq(localId.toInt()))
-                .execute()
+                .returning(WORKLOG.ID)
+                .fetchOne()
+                ?.getValue(WORKLOG.ID)
+        return resultDelete ?: Const.NO_ID.toInt()
     }
 
     /**
      * Deletes a log entry by it's [Log.remoteData.removeId]
      */
     fun deleteByRemoteId(remoteId: Long): Int {
-        return connProvider.dsl.delete(WORKLOG)
+        val resultDelete: Int? = connProvider.dsl.delete(WORKLOG)
                 .where(WORKLOG.REMOTE_ID.eq(remoteId))
-                .execute()
+                .returning(WORKLOG.ID)
+                .fetchOne()
+                ?.getValue(WORKLOG.ID)
+        return resultDelete ?: Const.NO_ID.toInt()
     }
 
     /**

@@ -99,9 +99,10 @@ class WorklogApi(
                 .flatMapObservable { Observable.from(it) }
                 .filter { it.isMarkedForDeletion }
                 .flatMapSingle { worklog ->
+                    logger.warn("Deleting worklog ${worklog.id}")
                     jiraWorklogInteractor.delete(worklog)
                             .onErrorResumeNext { error ->
-                                logger.warn("Error trying to delete a worklog", error)
+                                logger.warn("Error trying to delete a worklog (${worklog.id})", error)
                                 Single.just(worklog.remoteData?.remoteId ?: Const.NO_ID)
                             }
                 }

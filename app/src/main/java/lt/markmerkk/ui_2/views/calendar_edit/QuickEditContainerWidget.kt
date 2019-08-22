@@ -42,6 +42,13 @@ class QuickEditContainerWidget(
             heightActionIconFaster = 10.0
     )
 
+
+    private val selectEntryProvider = object : QuickEditContract.SelectEntryProvider {
+        override fun suggestNewEntry(newEntryId: Long) {
+            selectedLogId = newEntryId
+        }
+        override fun entryId(): Long = selectedLogId
+    }
     private val widgetMap = mapOf<QuickEditAction, View>(
             QuickEditAction.MOVE to QuickEditWidgetMove(
                     quickEditActions = quickEditActions,
@@ -52,7 +59,8 @@ class QuickEditContainerWidget(
                             logStorage,
                             timeChangeValidator,
                             timeProvider,
-                            logChangeValidator
+                            logChangeValidator,
+                            selectEntryProvider
                     )
             ),
             QuickEditAction.SCALE to QuickEditWidgetScale(
@@ -65,7 +73,8 @@ class QuickEditContainerWidget(
                             logStorage,
                             timeChangeValidator,
                             timeProvider,
-                            logChangeValidator
+                            logChangeValidator,
+                            selectEntryProvider
                     )
             ),
             QuickEditAction.SCALE10x to QuickEditWidgetScale(
@@ -78,7 +87,8 @@ class QuickEditContainerWidget(
                             logStorage,
                             timeChangeValidator,
                             timeProvider,
-                            logChangeValidator
+                            logChangeValidator,
+                            selectEntryProvider
                     )
             )
     )
@@ -118,17 +128,11 @@ class QuickEditContainerWidget(
 
     override fun changeLogSelection(selectId: Long) {
         this.selectedLogId = selectId
-        widgetMap.values
-                .filterIsInstance<SelectableView>()
-                .forEach { it.onSelectLog(selectId) }
         changeVisibility(logChangeValidator.canEditSimpleLog(selectId))
     }
 
     override fun changeToNoSelection() {
         this.selectedLogId = Const.NO_ID
-        widgetMap.values
-                .filterIsInstance<SelectableView>()
-                .forEach { it.onSelectLog(Const.NO_ID) }
         changeVisibility(isVisible = false)
     }
 

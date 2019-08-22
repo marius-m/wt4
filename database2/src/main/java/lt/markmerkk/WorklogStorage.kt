@@ -85,22 +85,15 @@ class WorklogStorage(
                 if (existAsLocal && !existAsRemote) {
                     return dbInteractor.update(log)
                 }
-                dbInteractor.deleteByLocalId(localId)
-                dbInteractor.deleteByRemoteId(remoteId)
-                return dbInteractor.insert(
-                        Log.new(
-                                timeProvider,
-                                start = log.time.startAsRaw,
-                                end = log.time.endAsRaw,
-                                code = log.code.code,
-                                comment = log.comment,
-                                remoteData = null
-                        )
-                )
             }
             updateRemoteLog -> {
-                dbInteractor.deleteByLocalId(localId)
-                dbInteractor.deleteByRemoteId(remoteId)
+                if (existAsLocal && !existAsRemote) {
+                    dbInteractor.deleteByLocalId(localId)
+                    dbInteractor.deleteByRemoteId(remoteId)
+                }
+                if (existAsRemote) {
+                    dbInteractor.update(log.markAsDeleted())
+                }
                 return dbInteractor.insert(
                         Log.new(
                                 timeProvider,

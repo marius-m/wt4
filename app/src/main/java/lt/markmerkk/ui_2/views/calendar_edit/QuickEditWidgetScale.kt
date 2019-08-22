@@ -28,11 +28,9 @@ class QuickEditWidgetScale(
 ): View(),
         QuickEditChangableAction,
         QuickEditContract.ScaleView,
-        SelectableView,
         LifecycleView,
         VisibilityChangeableView
 {
-
     private val quickEditActionsAsString = quickEditActions.map { it.name }
     private val jfxComboBox: JFXComboBox<String>
     override val root = HBox()
@@ -103,10 +101,6 @@ class QuickEditWidgetScale(
 
     override fun onDetach() {
         presenter.onDetach()
-    }
-
-    override fun onSelectLog(logId: Long) {
-        presenter.selectLogId(logId)
     }
 
     override fun changeActiveAction(quickEditAction: QuickEditAction) {

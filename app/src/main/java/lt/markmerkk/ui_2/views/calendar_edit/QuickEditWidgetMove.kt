@@ -22,7 +22,6 @@ class QuickEditWidgetMove(
 ) : View(),
         QuickEditChangableAction,
         QuickEditContract.MoveView,
-        SelectableView,
         LifecycleView,
         VisibilityChangeableView
 {
@@ -103,10 +102,6 @@ class QuickEditWidgetMove(
 
     override fun onDetach() {
         presenter.onDetach()
-    }
-
-    override fun onSelectLog(logId: Long) {
-        presenter.selectLogId(logId)
     }
 
     override fun changeVisibility(isVisible: Boolean) {

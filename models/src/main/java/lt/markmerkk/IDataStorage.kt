@@ -20,20 +20,23 @@ interface IDataStorage<T> {
     /**
      * Inserts a data entity
      * @param dataEntity provided data entity
+     * @return inserted new log id, otherwise [Const.NO_ID]
      */
-    fun insert(dataEntity: T)
+    fun insert(dataEntity: T): Int
 
     /**
      * Deletes a data entity
      * @param dataEntity provided data entity
+     * @return deleted entry id, or [Const.NO_ID]
      */
-    fun delete(dataEntity: T)
+    fun delete(dataEntity: T): Int
 
     /**
      * Updates a data entity
      * @param dataEntity provided data entity
+     * @return updated entry id or [Const.NO_ID]
      */
-    fun update(dataEntity: T)
+    fun update(dataEntity: T): Int
 
     /**
      * Notifies logs have changed and needs a refresh

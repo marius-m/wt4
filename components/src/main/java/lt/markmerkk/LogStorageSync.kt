@@ -39,22 +39,25 @@ class LogStorage(
         listeners.remove(listener)
     }
 
-    override fun insert(dataEntity: SimpleLog) {
+    override fun insert(dataEntity: SimpleLog): Int {
         val log = dataEntity.toLog(timeProvider)
-        worklogStorage.insertOrUpdateSync(log)
+        val newId = worklogStorage.insertOrUpdateSync(log)
         notifyDataChange()
+        return newId
     }
 
-    override fun delete(dataEntity: SimpleLog) {
+    override fun delete(dataEntity: SimpleLog): Int {
         val log = dataEntity.toLog(timeProvider)
-        worklogStorage.deleteSync(log)
+        val newId = worklogStorage.deleteSync(log)
         notifyDataChange()
+        return newId
     }
 
-    override fun update(dataEntity: SimpleLog) {
+    override fun update(dataEntity: SimpleLog): Int {
         val log = dataEntity.toLog(timeProvider)
-        worklogStorage.updateSync(log)
+        val newId = worklogStorage.updateSync(log)
         notifyDataChange()
+        return newId
     }
 
     override fun findByIdOrNull(id: Long): SimpleLog? {

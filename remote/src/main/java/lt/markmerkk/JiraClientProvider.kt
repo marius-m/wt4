@@ -60,7 +60,7 @@ class JiraClientProvider(
         if (password.isEmpty()) throw IllegalArgumentException("empty password")
 
         if (jiraClient == null || !creditsMatchCache(oldCreds = cacheCreds)) {
-            logger.info("[INFO] Creating a new JIRA client")
+            logger.info("Creating a new JIRA client")
             jiraClient = JiraClient(
                     hostname,
                     BasicCredentials(
@@ -68,8 +68,6 @@ class JiraClientProvider(
                             password
                     )
             )
-        } else {
-            logger.info("[INFO] Reusing old JIRA client")
         }
         cacheCreds = JiraCreds(
                 hostname,
