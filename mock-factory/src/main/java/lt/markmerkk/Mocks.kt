@@ -110,12 +110,13 @@ object Mocks {
 
     fun mockRemoteLog(
             timeProvider: TimeProvider,
-            task: String,
+            task: String = "DEV-123",
             start: DateTime = timeProvider.now(),
             end: DateTime = timeProvider.now().plusMinutes(10),
             comment: String = "valid_comment",
             remoteId: Long = 1,
-            localId: Long = 1
+            localId: Long = 1,
+            isError: Boolean = false
     ): SimpleLog {
         val log: SimpleLog = mock()
         doReturn(task).whenever(log).task
@@ -127,6 +128,7 @@ object Mocks {
         doReturn(true).whenever(log).isRemote
         doReturn(false).whenever(log).isDirty
         doReturn(false).whenever(log).isDeleted
+        doReturn(isError).whenever(log).isError
         return log
     }
 

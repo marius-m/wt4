@@ -77,7 +77,7 @@ class LogEditServiceImpl(
      * Generates a generic type of notification for the user
      */
     private fun printNotificationIfNeeded(entity: SimpleLog) {
-        if (!entity.canEdit()) {
+        if (entity.isRemote) {
             listener.onGenericNotification("Worklog is already in sync with JIRA")
             listener.onDisableInput()
             listener.onDisableSaving()

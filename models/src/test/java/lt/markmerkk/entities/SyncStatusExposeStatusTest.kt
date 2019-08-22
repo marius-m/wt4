@@ -1,18 +1,18 @@
 package lt.markmerkk.entities
 
+import lt.markmerkk.Mocks
+import lt.markmerkk.TimeProviderTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class SyncStatusExposeStatusTest {
 
+    private val timeProvider = TimeProviderTest()
+
     @Test
     fun waitingForSync() {
         // Assemble
-        val defaultLog = createSimpleLog(
-                remoteId = 0,
-                isDirty = true,
-                isError = false
-        )
+        val defaultLog = Mocks.createLocalLog(timeProvider)
 
         // Act
         val result = SyncStatus.exposeStatus(defaultLog)
@@ -24,10 +24,9 @@ class SyncStatusExposeStatusTest {
     @Test
     fun inSync() {
         // Assemble
-        val defaultLog = createSimpleLog(
-                remoteId = 1L,
-                isDirty = false,
-                isError = false
+        val defaultLog = Mocks.mockRemoteLog(
+                timeProvider,
+                remoteId = 1L
         )
 
         // Act
@@ -38,43 +37,11 @@ class SyncStatusExposeStatusTest {
     }
 
     @Test
-    fun inSyncAndDirty() {
-        // Assemble
-        val defaultLog = createSimpleLog(
-                remoteId = 1L,
-                isDirty = true,
-                isError = false
-        )
-
-        // Act
-        val result = SyncStatus.exposeStatus(defaultLog)
-
-        // Assert
-        assertThat(result).isEqualTo(SyncStatus.WAITING_FOR_SYNC)
-    }
-
-    @Test // this situation should not occur
-    fun invalid_inSyncAndError() {
-        // Assemble
-        val defaultLog = createSimpleLog(
-                remoteId = 1L,
-                isDirty = false,
-                isError = true
-        )
-
-        // Act
-        val result = SyncStatus.exposeStatus(defaultLog)
-
-        // Assert
-        assertThat(result).isEqualTo(SyncStatus.ERROR)
-    }
-
-    @Test
     fun isError() {
         // Assemble
-        val defaultLog = createSimpleLog(
+        val defaultLog = Mocks.mockRemoteLog(
+                timeProvider,
                 remoteId = 0L,
-                isDirty = false,
                 isError = true
         )
 
@@ -84,37 +51,5 @@ class SyncStatusExposeStatusTest {
         // Assert
         assertThat(result).isEqualTo(SyncStatus.ERROR)
     }
-
-    @Test
-    fun errorAndDirty() {
-        // Assemble
-        val defaultLog = createSimpleLog(
-                remoteId = 0L,
-                isDirty = true,
-                isError = true
-        )
-
-        // Act
-        val result = SyncStatus.exposeStatus(defaultLog)
-
-        // Assert
-        assertThat(result).isEqualTo(SyncStatus.WAITING_FOR_SYNC)
-    }
-
-    //region Mocks
-
-    fun createSimpleLog(
-            remoteId: Long,
-            isDirty: Boolean,
-            isError: Boolean
-    ): SimpleLog {
-        val simpleLog: SimpleLog = SimpleLogBuilder(1000L).build()
-        simpleLog.id = remoteId
-        simpleLog.dirty = isDirty
-        simpleLog.error = isError
-        return simpleLog
-    }
-
-    //endregion
 
 }

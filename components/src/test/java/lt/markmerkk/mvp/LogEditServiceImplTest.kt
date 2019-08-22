@@ -85,7 +85,7 @@ class LogEditServiceImplTest {
                 "valid_comment"
         )
         doReturn("30m.").whenever(simpleLog).prettyDuration
-        doReturn(false).whenever(simpleLog).canEdit()
+        doReturn(true).whenever(simpleLog).isRemote
         doReturn(simpleLog).whenever(logEditInteractor).updateDateTime(any(), any(), any())
 
         // Act

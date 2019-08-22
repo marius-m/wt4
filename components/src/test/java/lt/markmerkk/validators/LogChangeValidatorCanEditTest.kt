@@ -46,15 +46,4 @@ class LogChangeValidatorCanEditTest {
         assertThat(resultCanEdit).isFalse()
     }
 
-    @Test
-    fun logAlreadyUploaded() {
-        // Assemble
-        doReturn(MocksLogEditService.mockRemoteLog()).whenever(logStorage).findByIdOrNull(any())
-
-        // Act
-        val resultCanEdit = logChangeValidator.canEditSimpleLog(simpleLogId = 1L)
-
-        // Assert
-        assertThat(resultCanEdit).isFalse()
-    }
 }
