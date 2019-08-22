@@ -1,11 +1,15 @@
 package lt.markmerkk.entities
 
 import org.joda.time.DateTime
+import org.joda.time.Duration
 
 data class TimeGap private constructor(
         val start: DateTime,
         val end: DateTime
 ) {
+
+    val duration: Duration = Duration(start, end)
+
     companion object {
         /**
          * Ensures the time gap is a valid one

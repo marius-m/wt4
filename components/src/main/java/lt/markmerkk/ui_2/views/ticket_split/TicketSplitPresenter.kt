@@ -74,7 +74,9 @@ class TicketSplitPresenter(
         view?.onSplitTimeUpdate(
                 start = timeSplitPair.first.start,
                 end = timeSplitPair.second.end,
-                splitGap = timeSplitPair.first.end
+                splitGap = timeSplitPair.first.end,
+                durationStart = timeSplitPair.first.duration,
+                durationEnd = timeSplitPair.second.duration
         )
     }
 

@@ -1,6 +1,7 @@
 package lt.markmerkk.ui_2.views.ticket_split
 
 import org.joda.time.DateTime
+import org.joda.time.Duration
 
 interface TicketSplitContract {
     interface View {
@@ -14,7 +15,9 @@ interface TicketSplitContract {
         fun onSplitTimeUpdate(
                 start: DateTime,
                 end: DateTime,
-                splitGap: DateTime
+                splitGap: DateTime,
+                durationStart: Duration,
+                durationEnd: Duration
         )
         fun showError(error: String)
         fun hideError()

@@ -15,10 +15,14 @@ import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxSlider
+import lt.markmerkk.ui_2.views.jfxTextArea
+import lt.markmerkk.ui_2.views.jfxTextField
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogSplitter
 import org.joda.time.DateTime
+import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -259,10 +263,16 @@ class TicketSplitWidget : View(), TicketSplitContract.View {
     override fun onSplitTimeUpdate(
             start: DateTime,
             end: DateTime,
-            splitGap: DateTime
+            splitGap: DateTime,
+            durationStart: Duration,
+            durationEnd: Duration
     ) {
-        viewDateTimeFrom.text = LogFormatters.longFormat.print(start)
-        viewDateTimeTo.text = LogFormatters.longFormat.print(end)
+        val formatDateStart = LogFormatters.longFormat.print(start)
+        val formatDurationStart = LogFormatters.humanReadableDuration(durationStart)
+        val formatDateEnd = LogFormatters.longFormat.print(end)
+        val formatDurationEnd = LogFormatters.humanReadableDuration(durationEnd)
+        viewDateTimeFrom.text = "$formatDateStart ($formatDurationStart)"
+        viewDateTimeTo.text = "$formatDateEnd ($formatDurationEnd)"
         viewDateTimeMiddle.text = LogFormatters.shortFormat.print(splitGap)
     }
 
