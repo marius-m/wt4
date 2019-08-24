@@ -31,7 +31,7 @@ class DBInteractorLogJOOQ(
                 .from(WORKLOG)
                 .where(
                         WORKLOG.START.greaterOrEqual(fromAsMillis)
-                                .and(WORKLOG.END.lessOrEqual(toAsMillis))
+                                .and(WORKLOG.START.lessOrEqual(toAsMillis))
                 )
                 .fetchInto(WORKLOG)
         val worklogs: List<Log> = dbResult
