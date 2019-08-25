@@ -22,4 +22,9 @@ public interface IRemoteLoadListener {
    */
   void onError(String error);
 
+  /**
+   * Authorization error
+   */
+  void onAuthError();
+
 }

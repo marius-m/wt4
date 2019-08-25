@@ -44,6 +44,8 @@ class ProgressWidgetPresenter(
         override fun onError(error: String?) {
             view?.hideProgress()
         }
+
+        override fun onAuthError() { }
     }
 
     companion object {

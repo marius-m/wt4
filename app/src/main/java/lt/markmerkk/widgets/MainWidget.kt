@@ -7,6 +7,8 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
@@ -37,6 +39,7 @@ import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
+import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketWidget
@@ -57,6 +60,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var logChangeValidator: LogChangeValidator
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var connProvider: DBConnProvider
+    @Inject lateinit var userSettings: UserSettings
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -288,12 +292,35 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         )
     }
 
+    fun showErrorAuth() {
+        val buttonOpenSettings = ButtonType("Open 'Account settings'")
+        alert(
+                header = "Error",
+                content = "Cannot connect to '${userSettings.host}' with user '${userSettings.username}'.\n" +
+                        "Please check connection in 'Account settings'",
+                type = Alert.AlertType.ERROR,
+                title = "Error",
+                buttons = *arrayOf(buttonOpenSettings),
+                actionFn = {
+                    find<AccountSettingsWidget>().openModal(
+                            stageStyle = StageStyle.UTILITY,
+                            modality = Modality.APPLICATION_MODAL,
+                            block = false,
+                            resizable = true
+                    )
+                }
+        )
+    }
+
     //region Listeners
 
     private val syncInteractorListener = object : IRemoteLoadListener {
         override fun onLoadChange(loading: Boolean) {}
         override fun onError(error: String?) {
             showError(error ?: "")
+        }
+        override fun onAuthError() {
+            showErrorAuth()
         }
     }
 

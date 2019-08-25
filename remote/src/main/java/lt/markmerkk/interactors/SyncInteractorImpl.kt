@@ -78,7 +78,7 @@ class SyncInteractorImpl(
                     when (error) {
                         is AuthException -> {
                             remoteLoadListeners
-                                    .forEach { it.onError(error.message) }
+                                    .forEach { it.onAuthError() }
                         }
                         else -> {
                             remoteLoadListeners
