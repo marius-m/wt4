@@ -21,6 +21,7 @@ import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
+import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.*
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
@@ -167,6 +168,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
 
         // Init interactors
+        syncInteractor.addLoadingListener(syncInteractorListener)
         eventBus.register(this)
         widgetDateChange.onAttach()
         widgetProgress.onAttach()
@@ -178,6 +180,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         widgetProgress.onDetach()
         widgetDateChange.onDetach()
         eventBus.unregister(this)
+        syncInteractor.removeLoadingListener(syncInteractorListener)
         if (hourGlass.state == HourGlass.State.RUNNING) {
             hourGlass.stop()
         }
@@ -277,6 +280,24 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 content = message
         )
     }
+
+    fun showError(message: String) {
+        error(
+                header = "Error",
+                content = message
+        )
+    }
+
+    //region Listeners
+
+    private val syncInteractorListener = object : IRemoteLoadListener {
+        override fun onLoadChange(loading: Boolean) {}
+        override fun onError(error: String?) {
+            showError(error ?: "")
+        }
+    }
+
+    //endregion
 
     companion object {
         private val logger = LoggerFactory.getLogger(MainWidget::class.java)!!

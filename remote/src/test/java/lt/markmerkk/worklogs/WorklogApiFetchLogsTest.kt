@@ -2,6 +2,8 @@ package lt.markmerkk.worklogs
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.exceptions.AuthException
+import net.rcarz.jiraclient.RestException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -57,12 +59,11 @@ class WorklogApiFetchLogsTest {
     }
 
     @Test
-    fun errorFetch() {
+    fun error() {
         // Assemble
         val now = timeProvider.now()
         val ticket1 = Mocks.createTicket(id = 1)
         val worklog1 = Mocks.createBasicLogRemote(timeProvider)
-        val searchResultPair = ticket1 to listOf(worklog1)
         doReturn(Observable.error<Any>(RuntimeException()))
                 .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
 
@@ -76,6 +77,29 @@ class WorklogApiFetchLogsTest {
         // Assert
         fetchResult.assertNoErrors()
         fetchResult.assertCompleted()
+        verify(ticketStorage, never()).insertOrUpdateSync(ticket1)
+        verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
+    }
+
+    @Test
+    fun authError() {
+        // Assemble
+        val now = timeProvider.now()
+        val ticket1 = Mocks.createTicket(id = 1)
+        val worklog1 = Mocks.createBasicLogRemote(timeProvider)
+        val authException = JiraMocks.createAuthException()
+        doReturn(Observable.error<Any>(authException))
+                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+
+        // Act
+        val fetchResult = worklogApi.fetchLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertError(AuthException::class.java)
         verify(ticketStorage, never()).insertOrUpdateSync(ticket1)
         verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
     }

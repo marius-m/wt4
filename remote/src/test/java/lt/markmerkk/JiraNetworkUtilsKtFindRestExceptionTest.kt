@@ -4,7 +4,7 @@ import net.rcarz.jiraclient.RestException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class JiraNetworkUtilsKtTest {
+class JiraNetworkUtilsKtFindRestExceptionTest {
 
     @Test
     fun noException() {

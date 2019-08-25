@@ -2,6 +2,7 @@ package lt.markmerkk.interactors
 
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.worklogs.WorklogApi
 import org.slf4j.LoggerFactory
@@ -56,7 +57,7 @@ class SyncInteractorImpl(
         val endDate = timeProvider.roundDateTime(dayProvider.endDay()).toLocalDate() // todo rm middle layer
         val now = timeProvider.now()
         val syncStart = System.currentTimeMillis()
-        subscription = Completable.fromAction { logger.info("Starting synchronization") }
+        subscription = Completable.fromAction { logger.info("=== Sync ===") }
                 .andThen(worklogApi.deleteMarkedLogs(startDate, endDate))
                 .andThen(worklogApi.uploadLogs(now, startDate, endDate))
                 .andThen(worklogApi.fetchLogs(now, startDate, endDate))
@@ -72,10 +73,19 @@ class SyncInteractorImpl(
                 }
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
-                    logger.info("Log sync success in ${syncEnd - syncStart}ms!")
-                }, {
-                    logger.info("Log sync error: ${it.message}")
-                    logger.error("Log sync error data: ", it)
+                    logger.info("=== Sync success in ${syncEnd - syncStart}ms ===")
+                }, { error ->
+                    when (error) {
+                        is AuthException -> {
+                            remoteLoadListeners
+                                    .forEach { it.onError(error.message) }
+                        }
+                        else -> {
+                            remoteLoadListeners
+                                    .forEach { it.onError(error.message) }
+                        }
+                    }
+                    logger.error("=== Sync error ===")
                     logStorage.notifyDataChange()
                     autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })

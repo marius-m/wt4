@@ -2,6 +2,7 @@ package lt.markmerkk.worklogs
 
 import lt.markmerkk.*
 import lt.markmerkk.entities.Log
+import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
@@ -40,8 +41,15 @@ class WorklogApi(
                         )
                 )
                 .onErrorResumeNext { error ->
-                    logger.warn("Error fetching remote worklogs", error)
-                    Observable.empty()
+                    logger.warnWithJiraException(
+                            "Error fetching remote worklogs",
+                            error
+                    )
+                    if (error.isAuthException()) {
+                        Observable.error(AuthException(error))
+                    } else {
+                        Observable.empty()
+                    }
                 }
                 .map { (ticket, worklogs) ->
                     ticketStorage.insertOrUpdateSync(ticket)
