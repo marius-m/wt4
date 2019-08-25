@@ -64,6 +64,17 @@ data class Log private constructor(
         )
     }
 
+    fun appendSystemNote(systemNote: String): Log {
+        return Log(
+                id = id,
+                time = time,
+                code = code,
+                comment = comment,
+                systemNote = systemNote,
+                remoteData = remoteData
+        )
+    }
+
     fun markAsDeleted(): Log {
         return Log(
                 id = id,

@@ -69,6 +69,7 @@ class DBInteractorLogJOOQ(
                 WORKLOG.DURATION,
                 WORKLOG.CODE,
                 WORKLOG.COMMENT,
+                WORKLOG.SYSTEM_NOTE,
                 WORKLOG.REMOTE_ID,
                 WORKLOG.IS_DELETED,
                 WORKLOG.IS_DIRTY,
@@ -82,6 +83,7 @@ class DBInteractorLogJOOQ(
                 log.time.durationAsRaw,
                 log.code.code,
                 log.comment,
+                log.systemNote,
                 remoteData.remoteId,
                 remoteData.isDeleted.toByte(),
                 remoteData.isDirty.toByte(),
@@ -106,6 +108,7 @@ class DBInteractorLogJOOQ(
                 .set(WORKLOG.DURATION, log.time.durationAsRaw)
                 .set(WORKLOG.CODE, log.code.code)
                 .set(WORKLOG.COMMENT, log.comment)
+                .set(WORKLOG.SYSTEM_NOTE, log.systemNote)
                 .set(WORKLOG.REMOTE_ID, remoteData.remoteId)
                 .set(WORKLOG.IS_DELETED, remoteData.isDeleted.toByte())
                 .set(WORKLOG.IS_DIRTY, remoteData.isDirty.toByte())

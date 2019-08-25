@@ -9,20 +9,20 @@ object WorklogUploadValidator {}
 
 fun Log.isEligibleForUpload(): WorklogValidatorState {
     return when {
-        remoteData != null -> WorklogInvalidAlreadyRemote(this)
-        comment.isEmpty() -> WorklogInvalidNoComment(this)
-        code.isEmpty() -> WorklogInvalidNoTicketCode(this)
-        time.duration.standardMinutes <= 0 -> WorklogInvalidDurationTooLittle(this)
-        else -> WorklogValid(this)
+        remoteData != null -> WorklogInvalidAlreadyRemote()
+        comment.isEmpty() -> WorklogInvalidNoComment()
+        code.isEmpty() -> WorklogInvalidNoTicketCode()
+        time.duration.standardMinutes <= 0 -> WorklogInvalidDurationTooLittle()
+        else -> WorklogValid()
     }
 }
 
 sealed class WorklogValidatorState(val errorMessage: String)
-data class WorklogValid(val localLog: Log) : WorklogValidatorState("")
-data class WorklogInvalidNoTicketCode(val log: Log) : WorklogValidatorState("No ticket code")
-data class WorklogInvalidNoComment(val log: Log) : WorklogValidatorState("No comment")
-data class WorklogInvalidDurationTooLittle(val log: Log) : WorklogValidatorState("Duration must be at least 1 minute")
-data class WorklogInvalidAlreadyRemote(val log: Log) : WorklogValidatorState("Worklog already marked as remote")
+class WorklogValid : WorklogValidatorState("")
+class WorklogInvalidNoTicketCode : WorklogValidatorState("No ticket code")
+class WorklogInvalidNoComment : WorklogValidatorState("No comment")
+class WorklogInvalidDurationTooLittle : WorklogValidatorState("Duration must be at least 1 minute")
+class WorklogInvalidAlreadyRemote : WorklogValidatorState("Worklog already marked as remote")
 
 sealed class WorklogUploadState
 data class WorklogUploadSuccess(val remoteLog: Log) : WorklogUploadState()

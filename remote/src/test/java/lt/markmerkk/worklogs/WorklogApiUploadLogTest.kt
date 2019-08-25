@@ -10,6 +10,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Single
 import java.lang.RuntimeException
+import kotlin.math.log
 
 class WorklogApiUploadLogTest {
 
@@ -117,7 +118,98 @@ class WorklogApiUploadLogTest {
         // Assert
         resultUpload.assertNoErrors()
         resultUpload.assertCompleted()
-        resultUpload.assertValue(WorklogUploadValidationError(localLog, WorklogInvalidNoTicketCode(localLog)))
+
+        val localLogWithMessage = localLog.appendSystemNote("No ticket code")
+        val streamValue: WorklogUploadValidationError = resultUpload.onNextEvents.first() as WorklogUploadValidationError
+        assertThat(streamValue.worklogValidateError).isInstanceOf(WorklogInvalidNoTicketCode::class.java)
+        assertThat(streamValue.localLog).isEqualTo(localLogWithMessage)
+        verify(worklogStorage).updateSync(localLogWithMessage)
+    }
+
+    @Test
+    fun validationError_noComment() {
+        // Assemble
+        val now = timeProvider.now()
+        val localLog = Mocks.createLog(
+                timeProvider,
+                id = 1L,
+                start = now,
+                end = now.plusMinutes(5),
+                code = "WT-4",
+                comment = "", // no comment
+                remoteData = null
+        )
+
+        // Act
+        val resultUpload = worklogApi.uploadLog(now, localLog).test()
+
+        // Assert
+        resultUpload.assertNoErrors()
+        resultUpload.assertCompleted()
+
+        val localLogWithMessage = localLog.appendSystemNote("No comment")
+        val streamValue: WorklogUploadValidationError = resultUpload.onNextEvents.first() as WorklogUploadValidationError
+        assertThat(streamValue.worklogValidateError).isInstanceOf(WorklogInvalidNoComment::class.java)
+        assertThat(streamValue.localLog).isEqualTo(localLogWithMessage)
+        verify(worklogStorage).updateSync(localLogWithMessage)
+    }
+
+    @Test
+    fun validationError_durationTooLittle() {
+        // Assemble
+        val now = timeProvider.now()
+        val localLog = Mocks.createLog(
+                timeProvider,
+                id = 1L,
+                start = now,
+                end = now, // duration too little
+                code = "WT-4",
+                comment = "valid_comment",
+                remoteData = null
+        )
+
+        // Act
+        val resultUpload = worklogApi.uploadLog(now, localLog).test()
+
+        // Assert
+        resultUpload.assertNoErrors()
+        resultUpload.assertCompleted()
+
+        val localLogWithMessage = localLog.appendSystemNote("Duration must be at least 1 minute")
+        val streamValue: WorklogUploadValidationError = resultUpload.onNextEvents.first() as WorklogUploadValidationError
+        assertThat(streamValue.worklogValidateError).isInstanceOf(WorklogInvalidDurationTooLittle::class.java)
+        assertThat(streamValue.localLog).isEqualTo(localLogWithMessage)
+        verify(worklogStorage).updateSync(localLogWithMessage)
+    }
+
+    @Test
+    fun validationError_worklogAlreadyRemote() {
+        // Assemble
+        val now = timeProvider.now()
+        val localLog = Mocks.createLog(
+                timeProvider,
+                id = 1L,
+                start = now,
+                end = now.plusMinutes(5),
+                code = "WT-4",
+                comment = "valid_comment",
+                remoteData = Mocks.createRemoteData(
+                        timeProvider,
+                        remoteId = 2
+                )
+        )
+
+        // Act
+        val resultUpload = worklogApi.uploadLog(now, localLog).test()
+
+        // Assert
+        resultUpload.assertNoErrors()
+        resultUpload.assertCompleted()
+
+        val streamValue: WorklogUploadValidationError = resultUpload.onNextEvents.first() as WorklogUploadValidationError
+        assertThat(streamValue.worklogValidateError).isInstanceOf(WorklogInvalidAlreadyRemote::class.java)
+        assertThat(streamValue.localLog).isEqualTo(localLog)
+        verify(worklogStorage, never()).updateSync(any())
     }
 
     @Test

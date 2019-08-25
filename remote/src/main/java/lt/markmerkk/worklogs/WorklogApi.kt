@@ -189,7 +189,17 @@ class WorklogApi(
                                         }
                                     }
                         }
-                        else -> Single.just(WorklogUploadValidationError(log, uploadValidatorState))
+                        is WorklogInvalidNoTicketCode,
+                        is WorklogInvalidNoComment,
+                        is WorklogInvalidDurationTooLittle -> {
+                            val logWithErrorMessage = log.appendSystemNote(uploadValidatorState.errorMessage)
+                            val worklogUploadValidationError = WorklogUploadValidationError(logWithErrorMessage, uploadValidatorState)
+                            worklogStorage.updateSync(logWithErrorMessage)
+                            Single.just(worklogUploadValidationError)
+                        }
+                        is WorklogInvalidAlreadyRemote -> {
+                            Single.just(WorklogUploadValidationError(log, uploadValidatorState))
+                        }
                     }
                 }
     }
