@@ -42,7 +42,6 @@ class Migration0To1(
         } catch (e: SQLException) {
             logger.error("Error executing migration from $migrateVersionFrom to $migrateVersionTo", e)
         }
-
     }
 
     private fun moveFromOldDatabase() {
@@ -59,6 +58,7 @@ class Migration0To1(
             logger.warn("Error moving old database", e)
         } finally {
             oldConn.close()
+            newConn.close()
         }
     }
 

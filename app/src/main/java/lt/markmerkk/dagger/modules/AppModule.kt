@@ -142,6 +142,10 @@ class AppModule(
                                 databaseName = "wt4_1.db",
                                 databasePath = config.cfgPath
                         ),
+                        newDatabase = DBConnProvider(
+                                "wt4_2.db",
+                                config.cfgPath
+                        ),
                         timeProvider = timeProvider
                 ),
                 Migration2To3(

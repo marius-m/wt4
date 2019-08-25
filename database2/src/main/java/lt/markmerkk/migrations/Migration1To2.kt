@@ -1,14 +1,13 @@
 package lt.markmerkk.migrations
 
-import lt.markmerkk.*
-import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.Log
-import lt.markmerkk.schema1.tables.Worklog.WORKLOG
+import lt.markmerkk.DBConnProvider
+import lt.markmerkk.Tags
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.entities.LogTime
+import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.toBoolean
+import lt.markmerkk.utils.UriUtils
 import org.joda.time.DateTime
-import org.jooq.DSLContext
-import org.jooq.SQLDialect
-import org.jooq.exception.DataAccessException
-import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.SQLException
@@ -18,33 +17,42 @@ import java.sql.SQLException
  */
 class Migration1To2(
         private val oldDatabase: DBConnProvider,
+        private val newDatabase: DBConnProvider,
         private val timeProvider: TimeProvider
-): DBMigration {
+) : DBMigration {
 
     override val migrateVersionFrom: Int = 1
     override val migrateVersionTo: Int = 2
 
     override fun migrate(conn: Connection) {
-        val currentDsl = DSL.using(conn, SQLDialect.SQLITE)
-        currentDsl.createTableIfNotExists(WORKLOG)
-                .column(WORKLOG.ID)
-                .column(WORKLOG.START)
-                .column(WORKLOG.END)
-                .column(WORKLOG.DURATION)
-                .column(WORKLOG.CODE)
-                .column(WORKLOG.COMMENT)
-                .column(WORKLOG.REMOTE_ID)
-                .column(WORKLOG.IS_DELETED)
-                .column(WORKLOG.IS_DIRTY)
-                .column(WORKLOG.IS_ERROR)
-                .column(WORKLOG.ERROR_MESSAGE)
-                .column(WORKLOG.FETCHTIME)
-                .column(WORKLOG.URL)
-                .execute()
-        moveFromOldDatabase(currentDsl)
+        val sql = "" +
+                "CREATE TABLE `worklog` (\n" +
+                "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                "  `start` BIGINT NOT NULL DEFAULT 0,\n" +
+                "  `end` BIGINT NOT NULL DEFAULT 0,\n" +
+                "  `duration` BIGINT NOT NULL DEFAULT 0,\n" +
+                "  `code` VARCHAR(50) DEFAULT '' NOT NULL,\n" +
+                "  `comment` TEXT DEFAULT '' NOT NULL,\n" +
+                "  `remote_id` BIGINT NOT NULL DEFAULT -1,\n" +
+                "  `is_deleted` TINYINT NOT NULL DEFAULT 0,\n" +
+                "  `is_dirty` TINYINT NOT NULL DEFAULT 0,\n" +
+                "  `is_error` TINYINT NOT NULL DEFAULT 0,\n" +
+                "  `error_message` TEXT NOT NULL DEFAULT '',\n" +
+                "  `fetchTime` BIGINT NOT NULL DEFAULT 0,\n" +
+                "  `URL` VARCHAR(1000) NOT NULL DEFAULT ''\n" +
+                ");"
+        try {
+            val createTableStatement = conn.createStatement()
+            logger.debug("Creating new table: $sql")
+            createTableStatement.execute(sql)
+            logger.debug("Migrating data to new database")
+            moveFromOldDatabase()
+        } catch (e: SQLException) {
+            logger.error("Error executing migration from $migrateVersionFrom to $migrateVersionTo", e)
+        }
     }
 
-    private fun moveFromOldDatabase(currentDsl: DSLContext) {
+    private fun moveFromOldDatabase() {
         val now = DateTime.now().millis
         if (!oldDatabase.exist()) {
             logger.info("No old database")
@@ -52,22 +60,23 @@ class Migration1To2(
         }
         logger.info("Migrating old database")
         val oldConn = oldDatabase.connect()
+        val newConn = newDatabase.connect()
         try {
-            moveSingleLog(oldConn, currentDsl, now)
-        } catch (e: DataAccessException) {
+            moveSingleLog(oldConn, newConn)
+        } catch (e: SQLException) {
             logger.warn("Error moving old database", e)
         } finally {
             oldConn.close()
+            newConn.close()
         }
     }
 
     private fun moveSingleLog(
             oldConnection: Connection,
-            currentDsl: DSLContext,
-            now: Long
+            newConnection: Connection
     ) {
         val sql = "SELECT * FROM Log"
-        val oldWorklogs = mutableListOf<Log>()
+        val oldWorklogs: MutableList<LocalLogOld> = mutableListOf()
         try {
             val statement = oldConnection.createStatement()
             val rs = statement.executeQuery(sql)
@@ -81,62 +90,111 @@ class Migration1To2(
                 val dirty = rs.getInt("dirty")
                 val error = rs.getInt("error")
                 val errorMessage: String = rs.getString("errorMessage") ?: ""
-                val worklog = Log.new(
-                        timeProvider = timeProvider,
+                oldWorklogs.add(LocalLogOld(
                         start = start,
                         end = end,
-                        code = task,
-                        comment = comment,
-                        remoteData = RemoteData.new(
-                                isDeleted = deleted.toBoolean(),
-                                isDirty = dirty.toBoolean(),
-                                isError = error.toBoolean(),
-                                errorMessage = errorMessage,
-                                url = uri,
-                                fetchTime = now
-                        )
-                )
-                oldWorklogs.add(worklog)
+                        taskRaw = task,
+                        commentRaw = comment,
+                        uriRaw = uri,
+                        deleted = deleted.toBoolean(),
+                        dirty = dirty.toBoolean(),
+                        error = error.toBoolean(),
+                        errorMessageRaw = errorMessage
+                ))
             }
         } catch (e: SQLException) {
             logger.warn("Could not read old database", e)
         }
-        val logMigrationToNewDb = oldWorklogs.map { worklog ->
-            val remoteData: RemoteData = worklog.remoteData ?: RemoteData.asEmpty()
-            currentDsl
-                    .insertInto(WORKLOG)
-                    .columns(
-                            WORKLOG.START,
-                            WORKLOG.END,
-                            WORKLOG.DURATION,
-                            WORKLOG.CODE,
-                            WORKLOG.COMMENT,
-                            WORKLOG.REMOTE_ID,
-                            WORKLOG.IS_DELETED,
-                            WORKLOG.IS_DIRTY,
-                            WORKLOG.IS_ERROR,
-                            WORKLOG.ERROR_MESSAGE,
-                            WORKLOG.FETCHTIME,
-                            WORKLOG.URL
-                    )
-                    .values(
-                            timeProvider.roundMillis(worklog.time.start),
-                            timeProvider.roundMillis(worklog.time.end),
-                            worklog.time.duration.millis,
-                            worklog.code.code,
-                            worklog.comment,
-                            remoteData.remoteId,
-                            remoteData.isDeleted.toByte(),
-                            remoteData.isDirty.toByte(),
-                            remoteData.isError.toByte(),
-                            remoteData.errorMessage,
-                            remoteData.fetchTime,
-                            remoteData.url
-                    )
+        oldWorklogs.map {
+            val logTime = LogTime.fromRaw(
+                    timeProvider,
+                    it.start,
+                    it.end
+            )
+            val ticketCode = TicketCode.new(it.task)
+            val remoteId = UriUtils.parseUri(it.uri)
+            LocalLogNew(
+                    start = logTime.startAsRaw,
+                    end = logTime.endAsRaw,
+                    duration = logTime.durationAsRaw,
+                    code = ticketCode.code,
+                    comment = it.comment,
+                    remoteId = remoteId,
+                    isDeleted = it.deleted,
+                    isError = it.error,
+                    isDirty = it.dirty,
+                    errorMessage = it.errorMessage,
+                    fetchTime = 0,
+                    url = it.uri
+            )
+        }.forEach { newLog ->
+            try {
+                val preparedStatement = newConnection.prepareStatement(
+                        "INSERT INTO worklog(" +
+                                "start," +
+                                "end," +
+                                "duration," +
+                                "code," +
+                                "comment," +
+                                "remote_id," +
+                                "is_deleted," +
+                                "is_dirty," +
+                                "is_error," +
+                                "error_message," +
+                                "fetchTime," +
+                                "URL" +
+                                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+                )
+                preparedStatement.setLong(1, newLog.start)
+                preparedStatement.setLong(2, newLog.end)
+                preparedStatement.setLong(3, newLog.duration)
+                preparedStatement.setString(4, newLog.code)
+                preparedStatement.setString(5, newLog.comment)
+                preparedStatement.setLong(6, newLog.remoteId)
+                preparedStatement.setBoolean(7, newLog.isDeleted)
+                preparedStatement.setBoolean(8, newLog.isDirty)
+                preparedStatement.setBoolean(9, newLog.isError)
+                preparedStatement.setString(10, newLog.errorMessage)
+                preparedStatement.setLong(11, newLog.fetchTime)
+                preparedStatement.setString(12, newLog.url)
+                preparedStatement.execute()
+            } catch (e: SQLException) {
+                logger.warn("Error inserting value $newLog due to ${e.message}")
+            }
         }
-        currentDsl.batch(logMigrationToNewDb)
-                .execute()
     }
+
+    private data class LocalLogOld(
+            val start: Long,
+            val end: Long,
+            val taskRaw: String?,
+            val commentRaw: String?,
+            val uriRaw: String?,
+            val deleted: Boolean,
+            val dirty: Boolean,
+            val error: Boolean,
+            val errorMessageRaw: String?
+    ) {
+        val task = taskRaw?.replace("null", "") ?: ""
+        val comment = commentRaw?.replace("null", "") ?: ""
+        val uri = uriRaw?.replace("null", "") ?: ""
+        val errorMessage = errorMessageRaw?.replace("null", "") ?: ""
+    }
+
+    private data class LocalLogNew(
+            val start: Long,
+            val end: Long,
+            val duration: Long,
+            val code: String,
+            val comment: String,
+            val remoteId: Long,
+            val isDeleted: Boolean,
+            val isDirty: Boolean,
+            val isError: Boolean,
+            val errorMessage: String,
+            val fetchTime: Long,
+            val url: String
+    )
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.DB)!!
