@@ -297,7 +297,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         alert(
                 header = "Error",
                 content = "Cannot connect to '${userSettings.host}' with user '${userSettings.username}'.\n" +
-                        "Please check connection in 'Account settings'",
+                        "Please check connection in 'Account settings'.\n" +
+                        "Make sure you're able to connect by pressing 'TEST CONNECTION' to fix this issue",
                 type = Alert.AlertType.ERROR,
                 title = "Error",
                 buttons = *arrayOf(buttonOpenSettings),
