@@ -64,6 +64,7 @@ public class SimpleLogBuilder {
         .getMillis();
     this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
+    this.systemNote = "";
     this.uri = remoteLog.getSelf();
     this.id = parseUri(this.uri);
 
@@ -90,6 +91,7 @@ public class SimpleLogBuilder {
         .getMillis();
     this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
+    this.systemNote = simpleLog.systemNote;
 
     this.uri = remoteLog.getSelf();
     this.id = parseUri(this.uri);
@@ -109,7 +111,7 @@ public class SimpleLogBuilder {
     this.end = log.end;
     this.task = log.task;
     this.comment = log.comment;
-
+    this.systemNote = log.systemNote;
 
     this.uri = log.uri;
     this.id = log.id;
@@ -155,19 +157,6 @@ public class SimpleLogBuilder {
     } catch (NumberFormatException e) {
       return 0;
     }
-  }
-
-  /**
-   * Composes a new log normally with error message
-   * @param errorMessage error log
-   * @return
-   */
-  public SimpleLog buildWithError(String errorMessage) {
-    SimpleLog newSimpleLog = build();
-    newSimpleLog.dirty = false;
-    newSimpleLog.error = true;
-    newSimpleLog.errorMessage = errorMessage;
-    return newSimpleLog;
   }
 
   /**
@@ -233,6 +222,7 @@ public class SimpleLogBuilder {
     newSimpleLog.duration = this.duration;
     newSimpleLog.task = normalize(this.task);
     newSimpleLog.comment = normalize(this.comment);
+    newSimpleLog.systemNote = systemNote;
     newSimpleLog.uri = this.uri;
     newSimpleLog.id = this.id;
 

@@ -70,6 +70,7 @@ class LogEditServiceImpl(
         val end = timeProvider.roundDateTime(entityInEdit.end)
         listener.onDataChange(start, end)
         updateDateTime(start, end)
+        listener.onGenericNotification(entityInEdit.systemNote)
         printNotificationIfNeeded(entityInEdit)
     }
 
@@ -78,18 +79,15 @@ class LogEditServiceImpl(
      */
     private fun printNotificationIfNeeded(entity: SimpleLog) {
         if (entity.isRemote) {
-            listener.onGenericNotification("Worklog is already in sync with JIRA")
             listener.onDisableInput()
             listener.onDisableSaving()
             return
         }
-        if (entity.isError) {
-            listener.onGenericNotification(entity.errorMessage ?: "")
+        if (entity.systemNote.isNotEmpty()) {
             listener.onEnableInput()
             listener.onEnableSaving()
             return
         }
-        listener.onGenericNotification("")
         listener.onEnableInput()
         listener.onEnableSaving()
     }

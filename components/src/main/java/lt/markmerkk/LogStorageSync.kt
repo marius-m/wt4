@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 /**
  * Synchronous storage
  */
+@Deprecated("Should be replaced with WorklogStorage as it serves the same purpose")
 class LogStorage(
         private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider
