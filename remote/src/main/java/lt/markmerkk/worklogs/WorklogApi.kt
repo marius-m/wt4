@@ -192,7 +192,7 @@ class WorklogApi(
                         is WorklogInvalidNoTicketCode,
                         is WorklogInvalidNoComment,
                         is WorklogInvalidDurationTooLittle -> {
-                            val logWithErrorMessage = log.appendSystemNote(uploadValidatorState.errorMessage)
+                            val logWithErrorMessage = log.appendSystemNote("Cannot upload: ${uploadValidatorState.errorMessage}")
                             val worklogUploadValidationError = WorklogUploadValidationError(logWithErrorMessage, uploadValidatorState)
                             worklogStorage.updateSync(logWithErrorMessage)
                             Single.just(worklogUploadValidationError)
