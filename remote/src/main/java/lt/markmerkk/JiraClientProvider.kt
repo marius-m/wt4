@@ -1,85 +1,103 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.JiraCreds
+import lt.markmerkk.exceptions.AuthException
 import net.rcarz.jiraclient.BasicCredentials
 import net.rcarz.jiraclient.JiraClient
-import net.rcarz.jiraclient.TokenCredentials
 import org.slf4j.LoggerFactory
-import rx.Single
 
-@Deprecated("Replace with new JiraClientPovider")
 class JiraClientProvider(
         private val userSettings: UserSettings
 ) {
 
-    private var cacheCreds = JiraCreds()
-    private var jiraClient: JiraClient? = null
+    private var client: Client = Client.asEmpty()
 
-    fun invalidateClient() {
-        jiraClient = null
+    fun newClient(): JiraClient {
+        client = Client.asEmpty()
+        return client()
     }
 
-    @Deprecated("")
-    fun clientStream(): Single<JiraClient> {
-        return clientStream(
-                hostname = userSettings.host,
-                username = userSettings.username,
-                password = userSettings.password
-        )
+    fun markAsError() {
+        client.markHasError()
     }
 
-    @Deprecated("")
-    fun clientStream(
-            hostname: String,
-            username: String,
-            password: String
-    ): Single<JiraClient> {
-        return Single.defer {
-            Single.just(
-                    client(
-                            hostname = hostname,
-                            username = username,
-                            password = password
+    @Throws(AuthException::class)
+    fun client(): JiraClient {
+        if (client.hasError()) {
+            throw AuthException(
+                    IllegalArgumentException(
+                            "Client marked has error. " +
+                                    "Please create new client to resume using JiraClient"
                     )
             )
         }
-    }
-
-    @Throws(IllegalArgumentException::class)
-    fun clientFromCache(): JiraClient {
-        return client(userSettings.host, userSettings.username, userSettings.password)
-    }
-
-    @Throws(IllegalArgumentException::class)
-    fun client(
-            hostname: String,
-            username: String,
-            password: String
-    ): JiraClient {
-        if (hostname.isEmpty()) throw IllegalArgumentException("empty hostname")
-        if (username.isEmpty()) throw IllegalArgumentException("empty username")
-        if (password.isEmpty()) throw IllegalArgumentException("empty password")
-
-        if (jiraClient == null || !creditsMatchCache(oldCreds = cacheCreds)) {
-            logger.info("Creating a new JIRA client")
-            jiraClient = JiraClient(
-                    hostname,
-                    BasicCredentials(
-                            username,
-                            password
-                    )
-            )
-        }
-        cacheCreds = JiraCreds(
-                hostname,
-                username,
-                password
+        val newClient = Client.new(
+                userSettings.host,
+                userSettings.username,
+                userSettings.password
         )
-        return jiraClient!!
+        if (newClient.host.isEmpty()
+                || newClient.user.isEmpty()
+                || newClient.pass.isEmpty()) {
+            throw AuthException(IllegalStateException("Invalid credentials"))
+        }
+        val hasSameCredentials = client == newClient
+        return if (!hasSameCredentials) {
+            logger.debug("Creating new JIRA client for user ${newClient.user}")
+            this.client = newClient
+            return client.jiraClient()
+        } else {
+            this.client.jiraClient()
+        }
     }
 
-    fun creditsMatchCache(oldCreds: JiraCreds): Boolean {
-        return oldCreds == JiraCreds(userSettings.host, userSettings.username, userSettings.password)
+    private data class Client(
+            val host: String,
+            val user: String,
+            val pass: String
+    ) {
+
+        @Transient private var jiraClient: JiraClient? = null
+        @Transient private var isError: Boolean = false
+
+        fun markHasError() {
+            this.isError = true
+        }
+
+        fun hasError() = isError
+
+        fun jiraClient(): JiraClient {
+            if (jiraClient == null) {
+                jiraClient = JiraClient(
+                        host,
+                        BasicCredentials(
+                                user,
+                                pass
+                        )
+                )
+            }
+            return jiraClient!!
+        }
+
+        companion object {
+            fun new(
+                    host: String,
+                    user: String,
+                    pass: String
+            ): Client {
+                return Client(
+                        host = host,
+                        user = user,
+                        pass = pass
+                )
+            }
+            fun asEmpty(): Client {
+                return Client(
+                        host = "",
+                        user = "",
+                        pass = ""
+                )
+            }
+        }
     }
 
     companion object {

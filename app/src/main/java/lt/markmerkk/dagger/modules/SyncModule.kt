@@ -14,8 +14,8 @@ class SyncModule {
     @Singleton
     fun providesClientProvider(
             userSettings: UserSettings
-    ): JiraClientProvider2 {
-        return JiraClientProvider2(userSettings)
+    ): JiraClientProvider {
+        return JiraClientProvider(userSettings)
     }
 
     @Provides
@@ -54,7 +54,7 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesJiraAuthInteractor(
-            jiraClientProvider: JiraClientProvider2,
+            jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings
     ): AuthService.AuthInteractor {
         return AuthInteractorImpl(

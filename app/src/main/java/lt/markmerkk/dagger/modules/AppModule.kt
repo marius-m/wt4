@@ -173,7 +173,7 @@ class AppModule(
     @Provides
     @Singleton
     fun providesWorklogApi(
-            jiraClientProvider: JiraClientProvider2,
+            jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings,
             timeProvider: TimeProvider,
             ticketStorage: TicketStorage,
@@ -195,7 +195,7 @@ class AppModule(
     @Singleton
     fun providesTicketsNetworkRepo(
             ticketsDatabaseRepo: TicketStorage,
-            jiraClientProvider: JiraClientProvider2,
+            jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings
     ): TicketApi {
         return TicketApi(

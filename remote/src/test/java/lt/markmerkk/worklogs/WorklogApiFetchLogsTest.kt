@@ -3,7 +3,6 @@ package lt.markmerkk.worklogs
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.exceptions.AuthException
-import net.rcarz.jiraclient.RestException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -13,7 +12,7 @@ import java.lang.RuntimeException
 
 class WorklogApiFetchLogsTest {
 
-    @Mock lateinit var jiraClientProvider: JiraClientProvider2
+    @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraWorklogInteractor: JiraWorklogInteractor
     @Mock lateinit var ticketStorage: TicketStorage
     @Mock lateinit var worklogStorage: WorklogStorage

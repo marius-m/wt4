@@ -1,6 +1,6 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.JiraClientProvider2
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
@@ -11,7 +11,7 @@ import rx.Single
  * This probably should be renamed as 'Api' as it would be more explicit
  */
 class TicketApi(
-        private val jiraClientProvider: JiraClientProvider2,
+        private val jiraClientProvider: JiraClientProvider,
         private val jiraTicketSearch: JiraTicketSearch,
         private val ticketsDatabaseRepo: TicketStorage,
         private val userSettings: UserSettings

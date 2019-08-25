@@ -1,6 +1,6 @@
 package lt.markmerkk.worklogs
 
-import lt.markmerkk.JiraClientProvider2
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.exceptions.AuthException
 import net.rcarz.jiraclient.JiraException
@@ -10,7 +10,7 @@ import rx.Emitter
 import rx.functions.Action1
 
 internal class JiraWorklogEmitter(
-        private val jiraClientProvider: JiraClientProvider2,
+        private val jiraClientProvider: JiraClientProvider,
         private val jql: String,
         private val searchFields: String,
         private val start: LocalDate,

@@ -12,7 +12,7 @@ import rx.Observable
 import rx.Single
 
 class WorklogApi(
-        private val jiraClientProvider2: JiraClientProvider2,
+        private val jiraClientProvider: JiraClientProvider,
         private val jiraWorklogInteractor: JiraWorklogInteractor,
         private val ticketStorage: TicketStorage,
         private val worklogStorage: WorklogStorage
@@ -45,7 +45,7 @@ class WorklogApi(
                             error
                     )
                     if (error.isAuthException()) {
-                        jiraClientProvider2.markAsError()
+                        jiraClientProvider.markAsError()
                         Observable.error(AuthException(error))
                     } else {
                         Observable.empty()

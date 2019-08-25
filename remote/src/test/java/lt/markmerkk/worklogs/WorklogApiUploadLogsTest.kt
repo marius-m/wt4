@@ -6,13 +6,12 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import rx.Observable
 import rx.Single
 import java.lang.RuntimeException
 
 class WorklogApiUploadLogsTest {
 
-    @Mock lateinit var jiraClientProvider: JiraClientProvider2
+    @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraWorklogInteractor: JiraWorklogInteractor
     @Mock lateinit var ticketStorage: TicketStorage
     @Mock lateinit var worklogStorage: WorklogStorage

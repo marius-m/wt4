@@ -10,7 +10,7 @@ import rx.Single
 
 class WorklogApiDeleteUnknownLogsTest {
 
-    @Mock lateinit var jiraClientProvider: JiraClientProvider2
+    @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraWorklogInteractor: JiraWorklogInteractor
     @Mock lateinit var ticketStorage: TicketStorage
     @Mock lateinit var worklogStorage: WorklogStorage

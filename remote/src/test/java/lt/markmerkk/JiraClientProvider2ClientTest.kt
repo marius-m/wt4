@@ -1,7 +1,6 @@
 package lt.markmerkk
 
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.exceptions.AuthException
 import org.assertj.core.api.Assertions.assertThat
@@ -13,12 +12,12 @@ import org.mockito.MockitoAnnotations
 class JiraClientProvider2ClientTest {
 
     @Mock lateinit var userSettings: UserSettings
-    lateinit var jiraClientProvider: JiraClientProvider2
+    lateinit var jiraClientProvider: JiraClientProvider
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        jiraClientProvider = JiraClientProvider2(userSettings)
+        jiraClientProvider = JiraClientProvider(userSettings)
     }
 
     @Test

@@ -1,6 +1,6 @@
 package lt.markmerkk.worklogs
 
-import lt.markmerkk.JiraClientProvider2
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
@@ -16,7 +16,7 @@ import rx.Observable
 import rx.Single
 
 class JiraWorklogInteractor(
-        private val jiraClientProvider: JiraClientProvider2,
+        private val jiraClientProvider: JiraClientProvider,
         private val timeProvider: TimeProvider,
         private val userSettings: UserSettings
 ) {

@@ -12,12 +12,12 @@ class JiraClientProvider2NewClientTest {
 
     @Mock
     lateinit var userSettings: UserSettings
-    lateinit var jiraClientProvider: JiraClientProvider2
+    lateinit var jiraClientProvider: JiraClientProvider
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        jiraClientProvider = JiraClientProvider2(userSettings)
+        jiraClientProvider = JiraClientProvider(userSettings)
     }
 
     @Test

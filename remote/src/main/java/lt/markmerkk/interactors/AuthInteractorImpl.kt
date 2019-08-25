@@ -1,12 +1,12 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.JiraClientProvider2
+import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.UserSettings
 import rx.Observable
 import rx.Single
 
 class AuthInteractorImpl(
-        private val jiraClientProvider: JiraClientProvider2,
+        private val jiraClientProvider: JiraClientProvider,
         private val userSettings: UserSettings
 ) : AuthService.AuthInteractor {
     override fun jiraTestValidConnection(
