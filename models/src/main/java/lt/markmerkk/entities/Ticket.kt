@@ -12,7 +12,7 @@ data class Ticket(
         val remoteData: RemoteData? = null
 ) {
 
-    var parentTicket: Ticket? =null
+    var parentTicket: Ticket? = null
 
     companion object {
         fun new(

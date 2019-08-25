@@ -131,6 +131,10 @@ class AppModule(
                         oldDatabase = DBConnProvider(
                                 databaseName = "wt4_1.db",
                                 databasePath = config.cfgPath
+                        ),
+                        newDatabase = DBConnProvider(
+                                "wt4_2.db",
+                                config.cfgPath
                         )
                 ),
                 Migration1To2(
