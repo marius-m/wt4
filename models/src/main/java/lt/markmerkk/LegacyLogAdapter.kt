@@ -27,6 +27,7 @@ fun SimpleLog.toLog(
             end = this.end,
             code = this.task,
             comment = this.comment,
+            systemNote = this.systemNote,
             remoteData = RemoteData.new(
                     isDeleted = this.isDeleted,
                     isDirty = this.isDirty,
@@ -57,6 +58,7 @@ fun Log.toLegacyLog(
             this.time.durationAsRaw,
             this.code.code,
             this.comment,
+            this.systemNote,
             remoteData.remoteId,
             remoteData.isDeleted,
             remoteData.isDirty,

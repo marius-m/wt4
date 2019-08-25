@@ -52,6 +52,7 @@ class WorklogStorage(
                                 end = log.time.endAsRaw,
                                 code = log.code.code,
                                 comment = log.comment,
+                                systemNote = "",
                                 remoteData = log.remoteData
                         )
                 )
@@ -101,6 +102,7 @@ class WorklogStorage(
                                 end = log.time.endAsRaw,
                                 code = log.code.code,
                                 comment = log.comment,
+                                systemNote = "",
                                 remoteData = null
                         )
                 )

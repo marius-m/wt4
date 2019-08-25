@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import lt.markmerkk.utils.LogUtils;
 import net.rcarz.jiraclient.WorkLog;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
@@ -21,6 +22,7 @@ public class SimpleLogBuilder {
   private long end;
   private String task;
   private String comment;
+  @NotNull private String systemNote = "";
 
   private long duration;
 
@@ -181,6 +183,7 @@ public class SimpleLogBuilder {
           long duration,
           String task,
           String comment,
+          String systemNote,
           long remoteId,
           boolean isDeleted,
           boolean isDirty,
@@ -204,6 +207,7 @@ public class SimpleLogBuilder {
     legacyLog.errorMessage = errorMessage;
     legacyLog.download_millis = fetchTime;
     legacyLog.uri = url;
+    legacyLog.systemNote = systemNote;
     return legacyLog;
   }
 

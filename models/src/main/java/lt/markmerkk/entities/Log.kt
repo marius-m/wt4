@@ -12,6 +12,7 @@ data class Log private constructor(
         val time: LogTime,
         val code: TicketCode,
         val comment: String,
+        val systemNote: String,
         val remoteData: RemoteData? = null
 ) {
 
@@ -55,6 +56,7 @@ data class Log private constructor(
                 time = LogTime.from(timeProvider, start, end),
                 code = TicketCode.new(code),
                 comment = comment ?: "",
+                systemNote = systemNote,
                 remoteData = RemoteData.fromRemote(
                         fetchTime = fetchTime.millis,
                         url = url
@@ -68,6 +70,7 @@ data class Log private constructor(
                 time = time,
                 code = code,
                 comment = comment,
+                systemNote = systemNote,
                 remoteData = this.remoteData.markAsDelete()
         )
     }
@@ -84,6 +87,7 @@ data class Log private constructor(
                     time = LogTime.fromRaw(timeProvider, now, now),
                     code = TicketCode.new(""),
                     comment = "",
+                    systemNote = "",
                     remoteData = null
             )
         }
@@ -95,6 +99,7 @@ data class Log private constructor(
                 end: Long,
                 code: String,
                 comment: String,
+                systemNote: String,
                 remoteData: RemoteData?
         ): Log {
             return Log(
@@ -102,6 +107,7 @@ data class Log private constructor(
                     time = LogTime.fromRaw(timeProvider, start, end),
                     code = TicketCode.new(code),
                     comment = comment,
+                    systemNote = "",
                     remoteData = remoteData
             )
         }
@@ -125,6 +131,7 @@ data class Log private constructor(
                     time = LogTime.from(timeProvider, start, end),
                     code = TicketCode.new(code),
                     comment = comment ?: "",
+                    systemNote = "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,
                             url = url
@@ -139,6 +146,7 @@ data class Log private constructor(
                 end: Long,
                 code: String,
                 comment: String,
+                systemNote: String,
                 remoteData: RemoteData?
         ): Log {
             return Log(
@@ -146,6 +154,7 @@ data class Log private constructor(
                     time = LogTime.fromRaw(timeProvider, start, end),
                     code = TicketCode.new(code),
                     comment = comment,
+                    systemNote = systemNote,
                     remoteData = remoteData
             )
         }
@@ -158,6 +167,7 @@ data class Log private constructor(
                 end: DateTime,
                 code: String,
                 comment: String,
+                systemNote: String,
                 remoteData: RemoteData?
         ): Log {
             return Log(
@@ -165,6 +175,7 @@ data class Log private constructor(
                     time = LogTime.from(timeProvider, start, end),
                     code = TicketCode.new(code),
                     comment = comment,
+                    systemNote = systemNote,
                     remoteData = remoteData
             )
         }

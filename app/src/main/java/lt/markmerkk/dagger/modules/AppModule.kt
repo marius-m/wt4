@@ -12,6 +12,7 @@ import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.migrations.Migration1To2
 import lt.markmerkk.migrations.Migration2To3
+import lt.markmerkk.migrations.Migration3To4
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
@@ -149,8 +150,14 @@ class AppModule(
                         timeProvider = timeProvider
                 ),
                 Migration2To3(
-                        oldDatabase = DBConnProvider(
-                                databaseName = "wt4_1.db",
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration3To4(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
                                 databasePath = config.cfgPath
                         )
                 )

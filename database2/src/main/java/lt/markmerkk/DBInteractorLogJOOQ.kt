@@ -43,6 +43,7 @@ class DBInteractorLogJOOQ(
                             end = worklog.end,
                             code = worklog.code,
                             comment = worklog.comment,
+                            systemNote = worklog.systemNote,
                             remoteData = RemoteData.new(
                                     isDeleted = worklog.isDeleted.toBoolean(),
                                     isDirty = worklog.isDirty.toBoolean(),
@@ -162,6 +163,7 @@ class DBInteractorLogJOOQ(
                             end = worklog.end,
                             code = worklog.code,
                             comment = worklog.comment,
+                            systemNote = worklog.systemNote,
                             remoteData = RemoteData.new(
                                     isDeleted = worklog.isDeleted.toBoolean(),
                                     isDirty = worklog.isDirty.toBoolean(),
@@ -195,6 +197,7 @@ class DBInteractorLogJOOQ(
                             end = worklog.end,
                             code = worklog.code,
                             comment = worklog.comment,
+                            systemNote = worklog.systemNote,
                             remoteData = RemoteData.new(
                                     isDeleted = worklog.isDeleted.toBoolean(),
                                     isDirty = worklog.isDirty.toBoolean(),
