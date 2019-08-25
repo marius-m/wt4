@@ -100,5 +100,6 @@ class WorklogApiFetchLogsTest {
         fetchResult.assertError(AuthException::class.java)
         verify(ticketStorage, never()).insertOrUpdateSync(ticket1)
         verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
+        verify(jiraClientProvider).markAsError()
     }
 }

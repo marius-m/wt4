@@ -2,6 +2,7 @@ package lt.markmerkk.worklogs
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.exceptions.AuthException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -149,6 +150,35 @@ class WorklogApiUploadLogsTest {
         fetchResult.assertCompleted()
         verify(jiraWorklogInteractor).uploadWorklog(any(), eq(localLog))
         verify(worklogStorage, never()).insertOrUpdate(eq(outLog))
+    }
+
+    @Test
+    fun authError() {
+        // Assemble
+        val now = timeProvider.now()
+        val localLog = Mocks.createLog(
+                timeProvider,
+                id = 1L,
+                start = now,
+                end = now.plusMinutes(5),
+                code = "WT-4",
+                comment = "valid_comment",
+                remoteData = null
+        )
+        doReturn(Single.just(listOf(localLog)))
+                .whenever(worklogStorage).loadWorklogs(any(), any())
+        doReturn(Single.error<Any>(JiraMocks.createAuthException()))
+                .whenever(jiraWorklogInteractor).uploadWorklog(any(), any())
+
+        // Act
+        val fetchResult = worklogApi.uploadLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertError(AuthException::class.java)
     }
 
 }

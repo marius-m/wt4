@@ -2,6 +2,7 @@ package lt.markmerkk.worklogs
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.exceptions.AuthException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -117,6 +118,29 @@ class WorklogApiUploadLogTest {
         resultUpload.assertNoErrors()
         resultUpload.assertCompleted()
         resultUpload.assertValue(WorklogUploadValidationError(localLog, WorklogInvalidNoTicketCode(localLog)))
+    }
+
+    @Test
+    fun authError() {
+        // Assemble
+        val now = timeProvider.now()
+        val localLog = Mocks.createLog(
+                timeProvider,
+                id = 1L,
+                start = now,
+                end = now.plusMinutes(5),
+                code = "WT-4",
+                comment = "valid_comment",
+                remoteData = null
+        )
+        doReturn(Single.error<Any>(JiraMocks.createAuthException()))
+                .whenever(jiraWorklogInteractor).uploadWorklog(any(), any())
+
+        // Act
+        val resultUpload = worklogApi.uploadLog(now, localLog).test()
+
+        // Assert
+        resultUpload.assertError(AuthException::class.java)
     }
 
 }

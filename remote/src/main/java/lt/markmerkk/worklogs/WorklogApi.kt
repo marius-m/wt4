@@ -21,6 +21,7 @@ class WorklogApi(
     /**
      * Fetches and stores remote [Log] into database
      * Returns all the fresh worklogs from the network
+     * @throws AuthException whenever authorization fails (thrown in stream)
      */
     fun fetchLogs(
             fetchTime: DateTime,
@@ -101,6 +102,7 @@ class WorklogApi(
 
     /**
      * Removes all [Log] when are marked for deletion [Log.remoteData.isDelete]
+     * @throws AuthException when authorization fails (thrown in stream)
      */
     fun deleteMarkedLogs(start: LocalDate, end: LocalDate): Completable {
         return Completable.fromAction { logger.info("--- START: Deleting logs marked for deletion ($start to $end)... ---") }
@@ -128,6 +130,7 @@ class WorklogApi(
 
     /**
      * Uploads all local logs for the provided time gap
+     * @throws AuthException whenever authorization fails (thrown in stream)
      */
     fun uploadLogs(
             fetchTime: DateTime,
@@ -166,6 +169,7 @@ class WorklogApi(
 
     /**
      * Uploads provided [Log] if it's eligible for upload
+     * @throws AuthException whenever authorization fails (thrown in stream)
      */
     fun uploadLog(
             fetchTime: DateTime,
@@ -177,7 +181,13 @@ class WorklogApi(
                         is WorklogValid -> {
                             jiraWorklogInteractor.uploadWorklog(fetchTime, log)
                                     .map<WorklogUploadState> { WorklogUploadSuccess(it) }
-                                    .onErrorResumeNext { error -> Single.just(WorklogUploadError(log, error)) }
+                                    .onErrorResumeNext { error ->
+                                        if (error.isAuthException()) {
+                                            Single.error(AuthException(error))
+                                        } else {
+                                            Single.just(WorklogUploadError(log, error))
+                                        }
+                                    }
                         }
                         else -> Single.just(WorklogUploadValidationError(log, uploadValidatorState))
                     }
