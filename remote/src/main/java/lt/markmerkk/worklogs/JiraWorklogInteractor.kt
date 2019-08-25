@@ -122,7 +122,7 @@ class JiraWorklogInteractor(
     /**
      * Deletes worklog
      * Will throw an exception in the stream if worklog not eligable for upload
-     * @throws JiraException whenever upload fails
+     * @throws JiraException whenever worklog deletion fails
      * @throws IllegalArgumentException whenever worklog is not valid
      */
     fun delete(

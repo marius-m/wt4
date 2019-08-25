@@ -1,6 +1,7 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.Tags
+import lt.markmerkk.findRestException
 import net.rcarz.jiraclient.RestException
 import org.slf4j.LoggerFactory
 import rx.Observable
@@ -75,26 +76,5 @@ class AuthServiceImpl(
         }
     }
 
-}
-
-fun Throwable.findRestException(): RestException? {
-    val exceptions = mutableListOf<Throwable>()
-    var iterableThrowable: Throwable? = this
-    do {
-        if (iterableThrowable != null) {
-            exceptions.add(iterableThrowable)
-            iterableThrowable = iterableThrowable.cause
-        } else {
-            iterableThrowable = null
-        }
-    } while (iterableThrowable != null)
-    return exceptions
-            .mapNotNull {
-                if (it is RestException) {
-                    it
-                } else {
-                    null
-                }
-            }.firstOrNull()
 }
 

@@ -1,10 +1,10 @@
-package lt.markmerkk.interactors
+package lt.markmerkk
 
 import net.rcarz.jiraclient.RestException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class AuthServiceImplKtFindRestExceptionTest {
+class JiraNetworkUtilsKtTest {
 
     @Test
     fun noException() {

@@ -30,7 +30,7 @@ class WorklogApi(
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
-        return Completable.fromAction { logger.info("Starting to fetch new logs from $start to $end") }
+        return Completable.fromAction { logger.info("--- START: Fetching logs ($start / $end)... ---") }
                 .andThen(
                         jiraWorklogInteractor.searchWorlogs(
                                 fetchTime = fetchTime,
@@ -52,6 +52,7 @@ class WorklogApi(
                 }
                 .flatMap { Observable.from(it) }
                 .toList()
+                .doOnCompleted { logger.info("--- END ---") }
                 .take(1)
                 .toSingle()
     }
@@ -60,13 +61,12 @@ class WorklogApi(
      * Removes all unknown remote [Log]'s from database. 'Unknown' - exist in jira and does not exist in our
      * database as a remote log.
      */
-    // todo should be optimized together when fetching logs the first time
     fun deleteUnknownLogs(
             apiWorklogsAsStream: Single<List<Log>>,
             start: LocalDate,
             end: LocalDate
     ): Completable {
-        return Completable.fromAction { logger.info("Starting to remove unknown remote logs") }
+        return Completable.fromAction { logger.info("--- START: Deleting unknown logs... ---") }
                 .andThen(
                         worklogStorage.loadWorklogs(start, end)
                                 .zipWith(
@@ -88,27 +88,29 @@ class WorklogApi(
                             }
                 }
                 .toCompletable()
+                .doOnCompleted { logger.info("--- END ---") }
     }
 
     /**
      * Removes all [Log] when are marked for deletion [Log.remoteData.isDelete]
      */
     fun deleteMarkedLogs(start: LocalDate, end: LocalDate): Completable {
-        return Completable.fromAction { logger.info("Starting to delete worklogs from $start to $end") }
+        return Completable.fromAction { logger.info("--- START: Deleting logs marked for deletion ($start to $end)... ---") }
                 .andThen(worklogStorage.loadWorklogs(start, end))
                 .flatMapObservable { Observable.from(it) }
                 .filter { it.isMarkedForDeletion }
                 .flatMapSingle { worklog ->
-                    logger.warn("Deleting worklog ${worklog.id}")
+                    logger.warn("Trying to delete worklog (${worklog.id})")
                     jiraWorklogInteractor.delete(worklog)
                             .onErrorResumeNext { error ->
-                                logger.warn("Error trying to delete a worklog (${worklog.id})", error)
+                                logger.warnWithJiraException("Error trying to delete a worklog (${worklog.id})", error)
                                 Single.just(worklog.remoteData?.remoteId ?: Const.NO_ID)
                             }
                 }
                 .flatMapSingle { worklogStorage.hardDeleteRemote(it) }
                 .toList()
                 .toCompletable()
+                .doOnCompleted { logger.info("--- END ---") }
     }
 
     /**
@@ -119,7 +121,7 @@ class WorklogApi(
             start: LocalDate,
             end: LocalDate
     ): Completable {
-        return Completable.fromAction { logger.info("Starting to upload worklogs") }
+        return Completable.fromAction { logger.info("--- START: Uploading local worklogs... ---") }
                 .andThen(worklogStorage.loadWorklogs(start, end))
                 .flatMapObservable { Observable.from(it) }
                 .flatMapSingle { uploadLog(fetchTime, it) }
@@ -132,17 +134,18 @@ class WorklogApi(
                                     .toObservable()
                         }
                         is WorklogUploadError -> {
-                            logger.info("Error uploading ${uploadStatus.error}")
+                            logger.warnWithJiraException("Error uploading worklog (${uploadStatus.localLog.id})", uploadStatus.error)
                             Observable.empty()
                         }
                         is WorklogUploadValidationError -> {
-                            logger.info("Error validating worklog (${uploadStatus.localLog.id}) for upload due to: ${uploadStatus.worklogValidateError}")
+                            logger.info("Worklog (${uploadStatus.localLog.id}) not eligable for upload: ${uploadStatus.worklogValidateError.errorMessage}")
                             Observable.empty()
                         }
                     }
                 }
                 .toList()
                 .toCompletable()
+                .doOnCompleted { logger.info("--- END ---") }
     }
 
     /**
