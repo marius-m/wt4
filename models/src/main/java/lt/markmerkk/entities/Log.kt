@@ -2,6 +2,7 @@ package lt.markmerkk.entities
 
 import lt.markmerkk.Const
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.DurationFieldType
@@ -20,6 +21,18 @@ data class Log private constructor(
             && !code.isEmpty()
             && time.duration.toStandardMinutes().minutes >= 1
             && !isRemote
+
+    fun toStringShort(): String {
+        val shortFormatStart = LogFormatters.shortFormat.print(time.start)
+        val shortFormatEnd = LogFormatters.shortFormat.print(time.end)
+        val shortFormatDuration = LogFormatters.humanReadableDuration(time.duration)
+        val shortRemoteMessage = if (remoteData != null) {
+            "isRemote: $isRemote (remoteId=${remoteData.remoteId})"
+        } else {
+            "isRemote: $isRemote"
+        }
+        return "[WORKLOG(localId=$id) / $shortFormatStart + $shortFormatEnd = $shortFormatDuration / $shortRemoteMessage]"
+    }
 
     //region Factories
 

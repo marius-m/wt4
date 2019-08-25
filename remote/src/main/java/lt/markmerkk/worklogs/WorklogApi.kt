@@ -100,10 +100,10 @@ class WorklogApi(
                 .flatMapObservable { Observable.from(it) }
                 .filter { it.isMarkedForDeletion }
                 .flatMapSingle { worklog ->
-                    logger.warn("Trying to delete worklog (${worklog.id})")
+                    logger.warn("Trying to delete ${worklog.toStringShort()}")
                     jiraWorklogInteractor.delete(worklog)
                             .onErrorResumeNext { error ->
-                                logger.warnWithJiraException("Error trying to delete a worklog (${worklog.id})", error)
+                                logger.warnWithJiraException("Error trying to delete ${worklog.toStringShort()}", error)
                                 Single.just(worklog.remoteData?.remoteId ?: Const.NO_ID)
                             }
                 }
@@ -128,17 +128,20 @@ class WorklogApi(
                 .flatMap { uploadStatus ->
                     when (uploadStatus) {
                         is WorklogUploadSuccess -> {
-                            logger.info("Success uploading worklog (${uploadStatus.remoteLog.id})")
+                            logger.info("Success uploading ${uploadStatus.remoteLog.toStringShort()}")
                             worklogStorage
                                     .insertOrUpdate(uploadStatus.remoteLog)
                                     .toObservable()
                         }
                         is WorklogUploadError -> {
-                            logger.warnWithJiraException("Error uploading worklog (${uploadStatus.localLog.id})", uploadStatus.error)
+                            logger.warnWithJiraException(
+                                    "Error uploading ${uploadStatus.localLog.toStringShort()}",
+                                    uploadStatus.error
+                            )
                             Observable.empty()
                         }
                         is WorklogUploadValidationError -> {
-                            logger.info("Worklog (${uploadStatus.localLog.id}) not eligable for upload: ${uploadStatus.worklogValidateError.errorMessage}")
+                            logger.info("${uploadStatus.localLog.toStringShort()} not eligable for upload: ${uploadStatus.worklogValidateError.errorMessage}")
                             Observable.empty()
                         }
                     }
