@@ -1,28 +1,25 @@
 package lt.markmerkk.worklogs
 
-import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.JiraClientProvider2
 import lt.markmerkk.Tags
-import net.rcarz.jiraclient.Issue
-import net.rcarz.jiraclient.JiraClient
+import lt.markmerkk.exceptions.AuthException
 import net.rcarz.jiraclient.JiraException
-import net.rcarz.jiraclient.WorkLog
-import net.rcarz.jiraclient.agile.Worklog
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import rx.Emitter
 import rx.functions.Action1
 
 internal class JiraWorklogEmitter(
-        private val jiraClientProvider: JiraClientProvider,
+        private val jiraClientProvider: JiraClientProvider2,
         private val jql: String,
         private val searchFields: String,
         private val start: LocalDate,
         private val end: LocalDate
-): Action1<Emitter<IssueWorklogPair>> {
+) : Action1<Emitter<IssueWorklogPair>> {
 
     override fun call(emitter: Emitter<IssueWorklogPair>) {
         try {
-            val jiraClient = jiraClientProvider.clientFromCache()
+            val jiraClient = jiraClientProvider.client()
             if (jql.isEmpty()) throw IllegalArgumentException("JQL is empty!")
             logger.info("Searching for worklogs using JQL: $jql")
             var startAt = 0
@@ -48,6 +45,9 @@ internal class JiraWorklogEmitter(
             logger.error("Jira search error: ${e.message}")
             emitter.onError(e)
         } catch (e: JiraException) {
+            logger.error("Jira error: ${e.message}")
+            emitter.onError(e)
+        } catch (e: AuthException) {
             logger.error("Jira error: ${e.message}")
             emitter.onError(e)
         }

@@ -1,25 +1,23 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.JiraClientProvider
-import rx.Completable
+import lt.markmerkk.JiraClientProvider2
+import lt.markmerkk.UserSettings
 import rx.Observable
+import rx.Single
 
 class AuthInteractorImpl(
-        private val jiraClientProvider: JiraClientProvider
+        private val jiraClientProvider: JiraClientProvider2,
+        private val userSettings: UserSettings
 ) : AuthService.AuthInteractor {
     override fun jiraTestValidConnection(
             hostname: String,
             username: String,
             password: String
     ): Observable<Boolean> {
-        return Completable.fromAction { jiraClientProvider.invalidateClient() }
-                .andThen(
-                        jiraClientProvider.clientStream(
-                                hostname,
-                                username,
-                                password
-                        )
-                )
+        userSettings.host = hostname
+        userSettings.username = username
+        userSettings.password = password
+        return Single.defer { Single.just(jiraClientProvider.newClient()) }
                 .flatMapObservable { Observable.just(it.projects) }
                 .flatMap {
                     if (it != null) {

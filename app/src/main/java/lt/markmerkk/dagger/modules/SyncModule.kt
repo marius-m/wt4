@@ -3,10 +3,7 @@ package lt.markmerkk.dagger.modules
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.*
-import lt.markmerkk.UserSettings
-import lt.markmerkk.LogStorage
 import lt.markmerkk.interactors.*
-import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.worklogs.WorklogApi
 import javax.inject.Singleton
 
@@ -17,8 +14,8 @@ class SyncModule {
     @Singleton
     fun providesClientProvider(
             userSettings: UserSettings
-    ): JiraClientProvider {
-        return JiraClientProvider(userSettings)
+    ): JiraClientProvider2 {
+        return JiraClientProvider2(userSettings)
     }
 
     @Provides
@@ -57,10 +54,12 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesJiraAuthInteractor(
-            jiraClientProvider: JiraClientProvider
+            jiraClientProvider: JiraClientProvider2,
+            userSettings: UserSettings
     ): AuthService.AuthInteractor {
         return AuthInteractorImpl(
-                jiraClientProvider
+                jiraClientProvider,
+                userSettings
         )
     }
 

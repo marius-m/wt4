@@ -1,27 +1,22 @@
 package lt.markmerkk.worklogs
 
-import com.sun.org.apache.xpath.internal.functions.Function2Args
-import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.JiraClientProvider2
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.entities.TicketCode
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
-import rx.Completable
 import rx.Emitter
 import rx.Observable
 import rx.Single
-import rx.functions.Func2
-import java.lang.IllegalArgumentException
 
 class JiraWorklogInteractor(
-        private val jiraClientProvider: JiraClientProvider,
+        private val jiraClientProvider: JiraClientProvider2,
         private val timeProvider: TimeProvider,
         private val userSettings: UserSettings
 ) {
@@ -99,7 +94,7 @@ class JiraWorklogInteractor(
             log: Log
     ): Single<Log> {
         return Single.defer {
-            val jiraClient = jiraClientProvider.clientFromCache()
+            val jiraClient = jiraClientProvider.client()
             val issue = jiraClient.getIssue(log.code.code)
             val remoteWorklog = issue.addWorkLog(
                     log.comment,
@@ -126,11 +121,11 @@ class JiraWorklogInteractor(
      * @throws IllegalArgumentException whenever worklog is not valid
      */
     fun delete(
-        log: Log
+            log: Log
     ): Single<Long> {
         return Single.defer {
             val remoteId = log.remoteData?.remoteId ?: throw IllegalArgumentException("Cannot find worklog id")
-            val jiraClient = jiraClientProvider.clientFromCache()
+            val jiraClient = jiraClientProvider.client()
             val issue = jiraClient.getIssue(log.code.code)
             issue.removeWorklog(remoteId.toString())
             Single.just(remoteId)

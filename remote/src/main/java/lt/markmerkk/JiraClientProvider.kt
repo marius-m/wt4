@@ -7,6 +7,7 @@ import net.rcarz.jiraclient.TokenCredentials
 import org.slf4j.LoggerFactory
 import rx.Single
 
+@Deprecated("Replace with new JiraClientPovider")
 class JiraClientProvider(
         private val userSettings: UserSettings
 ) {

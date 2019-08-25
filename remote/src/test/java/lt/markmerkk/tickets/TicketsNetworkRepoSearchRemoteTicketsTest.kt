@@ -2,6 +2,7 @@ package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.schema1.tables.Ticket
 import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
@@ -12,10 +13,11 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Observable
 import rx.Single
+import java.lang.RuntimeException
 
 class TicketsNetworkRepoSearchRemoteTicketsTest {
 
-    @Mock lateinit var jiraClientProvider: JiraClientProvider
+    @Mock lateinit var jiraClientProvider: JiraClientProvider2
     @Mock lateinit var jiraTicketSearch: JiraTicketSearch
     @Mock lateinit var ticketsDatabaseRepo: TicketStorage
     @Mock lateinit var jiraClient: JiraClient
@@ -47,7 +49,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
                 Mocks.createTicket(),
                 Mocks.createTicket()
         )
-        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
+        doReturn(jiraClient).whenever(jiraClientProvider).client()
         doReturn(Observable.from(apiTickets)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
@@ -69,7 +71,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
     @Test
     fun clientError() {
         // Assemble
-        doReturn(Single.error<Any>(IllegalArgumentException())).whenever(jiraClientProvider).clientStream()
+        doThrow(AuthException(RuntimeException())).whenever(jiraClientProvider).client()
 
         // Act
         val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
@@ -89,7 +91,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
                 Mocks.createTicket(),
                 Mocks.createTicket()
         )
-        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
+        doReturn(jiraClient).whenever(jiraClientProvider).client()
         doReturn(Observable.from(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
 

@@ -173,7 +173,7 @@ class AppModule(
     @Provides
     @Singleton
     fun providesWorklogApi(
-            jiraClientProvider: JiraClientProvider,
+            jiraClientProvider: JiraClientProvider2,
             userSettings: UserSettings,
             timeProvider: TimeProvider,
             ticketStorage: TicketStorage,
@@ -181,10 +181,13 @@ class AppModule(
     ): WorklogApi {
         return WorklogApi(
                 jiraClientProvider,
-                JiraWorklogInteractor(jiraClientProvider, timeProvider, userSettings),
+                JiraWorklogInteractor(
+                        jiraClientProvider,
+                        timeProvider,
+                        userSettings
+                ),
                 ticketStorage,
-                worklogStorage,
-                userSettings
+                worklogStorage
         )
     }
 
@@ -192,7 +195,7 @@ class AppModule(
     @Singleton
     fun providesTicketsNetworkRepo(
             ticketsDatabaseRepo: TicketStorage,
-            jiraClientProvider: JiraClientProvider,
+            jiraClientProvider: JiraClientProvider2,
             userSettings: UserSettings
     ): TicketApi {
         return TicketApi(

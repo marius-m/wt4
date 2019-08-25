@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import lt.markmerkk.exceptions.AuthException
 import net.rcarz.jiraclient.RestException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -31,9 +32,26 @@ class JiraNetworkUtilsKtIsAuthExceptionTest {
     }
 
     @Test
-    fun authException() {
+    fun restAuthException() {
         val result = RuntimeException(
                 RestException("auth_error", 401, "", emptyArray())
+        ).isAuthException()
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun authException() {
+        val result = AuthException(RuntimeException())
+                .isAuthException()
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun deeperAuthException() {
+        val result = RuntimeException(
+                AuthException(RuntimeException())
         ).isAuthException()
 
         assertThat(result).isTrue()

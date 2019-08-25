@@ -1,13 +1,12 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.Tags
-import lt.markmerkk.findRestException
+import lt.markmerkk.findException
 import net.rcarz.jiraclient.RestException
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import java.lang.Exception
 
 class AuthServiceImpl(
         private val view: AuthService.View,
@@ -54,7 +53,7 @@ class AuthServiceImpl(
                 logger.warn(error.message.toString())
                 return AuthService.AuthResult.ERROR_EMPTY_FIELDS
             }
-            val restException = error.findRestException()
+            val restException = error.findException<RestException>()
             if (restException == null) {
                 logger.warn("Undefined error: $error")
                 return AuthService.AuthResult.ERROR_UNDEFINED

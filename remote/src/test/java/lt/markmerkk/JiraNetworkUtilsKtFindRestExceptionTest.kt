@@ -9,14 +9,14 @@ class JiraNetworkUtilsKtFindRestExceptionTest {
     @Test
     fun noException() {
         val resultException: RestException? = RuntimeException()
-                .findRestException()
+                .findException()
         assertThat(resultException).isNull()
     }
 
     @Test
     fun valid() {
         val resultException: RestException? = RestException("message", 200, "", emptyArray())
-                .findRestException()
+                .findException()
 
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RestException::class.java)
@@ -26,7 +26,7 @@ class JiraNetworkUtilsKtFindRestExceptionTest {
     fun oneLevel() {
         val resultException: RestException? = RuntimeException(
                 RestException("message", 200, "", emptyArray())
-        ).findRestException()
+        ).findException()
 
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RestException::class.java)
@@ -38,7 +38,7 @@ class JiraNetworkUtilsKtFindRestExceptionTest {
                 RuntimeException(
                         RestException("message", 200, "", emptyArray())
                 )
-        ).findRestException()
+        ).findException()
 
         assertThat(resultException).isNotNull()
         assertThat(resultException).isInstanceOf(RestException::class.java)

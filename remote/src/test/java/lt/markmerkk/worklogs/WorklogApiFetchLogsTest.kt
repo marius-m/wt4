@@ -13,7 +13,7 @@ import java.lang.RuntimeException
 
 class WorklogApiFetchLogsTest {
 
-    @Mock lateinit var jiraClientProvider: JiraClientProvider
+    @Mock lateinit var jiraClientProvider: JiraClientProvider2
     @Mock lateinit var jiraWorklogInteractor: JiraWorklogInteractor
     @Mock lateinit var ticketStorage: TicketStorage
     @Mock lateinit var worklogStorage: WorklogStorage
@@ -29,8 +29,7 @@ class WorklogApiFetchLogsTest {
                 jiraClientProvider,
                 jiraWorklogInteractor,
                 ticketStorage,
-                worklogStorage,
-                userSettings
+                worklogStorage
         )
     }
 

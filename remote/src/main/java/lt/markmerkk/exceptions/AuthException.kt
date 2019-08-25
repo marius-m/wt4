@@ -1,6 +1,6 @@
 package lt.markmerkk.exceptions
 
-import lt.markmerkk.findRestException
+import lt.markmerkk.findException
 import net.rcarz.jiraclient.RestException
 
 /**
@@ -11,7 +11,7 @@ class AuthException(
         throwable: Throwable
 ): RuntimeException("Authorization failure", throwable) {
 
-    private val restException: RestException? = throwable.findRestException()
+    private val restException: RestException? = throwable.findException()
     override val message: String? = when {
         restException != null -> "Authorization failure (${restException.httpStatusCode})!"
         else -> super.message

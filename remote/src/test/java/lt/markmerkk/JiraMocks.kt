@@ -4,10 +4,16 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import net.rcarz.jiraclient.Issue
+import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestException
 
 object JiraMocks {
+
+    fun mockJiraClient(): JiraClient {
+        val jiraClient: JiraClient = mock()
+        return jiraClient
+    }
 
     fun mockJiraIssue(
             key: String = "TT2-123",
