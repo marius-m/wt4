@@ -112,10 +112,15 @@ class WorklogApi(
                     jiraWorklogInteractor.delete(worklog)
                             .onErrorResumeNext { error ->
                                 logger.warnWithJiraException("Error trying to delete ${worklog.toStringShort()}", error)
-                                Single.just(worklog.remoteData?.remoteId ?: Const.NO_ID)
-                            }
+                                if (error.isAuthException()) {
+                                    jiraClientProvider.markAsError()
+                                    Single.error(AuthException(error))
+                                } else {
+                                    val remoteId = worklog.remoteData?.remoteId ?: Const.NO_ID
+                                    Single.just(remoteId)
+                                }
+                            }.doOnSuccess { worklogStorage.hardDeleteRemoteSync(it) }
                 }
-                .flatMapSingle { worklogStorage.hardDeleteRemote(it) }
                 .toList()
                 .toCompletable()
                 .doOnCompleted { logger.info("--- END ---") }

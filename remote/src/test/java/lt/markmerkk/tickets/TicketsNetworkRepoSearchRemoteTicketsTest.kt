@@ -77,7 +77,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
                 .test()
 
         // Assert
-        result.assertError(java.lang.IllegalArgumentException::class.java)
+        result.assertError(AuthException::class.java)
         verifyZeroInteractions(ticketsDatabaseRepo)
     }
 

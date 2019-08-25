@@ -2,6 +2,7 @@ package lt.markmerkk.worklogs
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.exceptions.AuthException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

@@ -2,6 +2,7 @@ package lt.markmerkk.worklogs
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
+import lt.markmerkk.exceptions.AuthException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -49,8 +50,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.just(remoteId))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(Single.just(2))
-                .whenever(worklogStorage).hardDeleteRemote(any())
+        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(
@@ -62,7 +62,7 @@ class WorklogApiDeleteMarkedLogsTest {
         fetchResult.assertNoErrors()
         fetchResult.assertCompleted()
         verify(jiraWorklogInteractor).delete(any())
-        verify(worklogStorage).hardDeleteRemote(eq(remoteId))
+        verify(worklogStorage).hardDeleteRemoteSync(remoteId)
     }
 
     @Test
@@ -87,7 +87,7 @@ class WorklogApiDeleteMarkedLogsTest {
         fetchResult.assertNoErrors()
         fetchResult.assertCompleted()
         verify(jiraWorklogInteractor, never()).delete(any())
-        verify(worklogStorage, never()).hardDeleteRemote(eq(remoteId))
+        verify(worklogStorage, never()).hardDeleteRemoteSync(eq(remoteId))
     }
 
     @Test
@@ -108,8 +108,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.just(remoteId))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(Single.just(2))
-                .whenever(worklogStorage).hardDeleteRemote(any())
+        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(
@@ -121,7 +120,7 @@ class WorklogApiDeleteMarkedLogsTest {
         fetchResult.assertNoErrors()
         fetchResult.assertCompleted()
         verify(jiraWorklogInteractor, never()).delete(any())
-        verify(worklogStorage, never()).hardDeleteRemote(eq(remoteId))
+        verify(worklogStorage, never()).hardDeleteRemoteSync(eq(remoteId))
     }
 
     @Test
@@ -142,8 +141,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.error<Any>(RuntimeException("Error trying to delete worklog")))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(Single.just(2))
-                .whenever(worklogStorage).hardDeleteRemote(any())
+        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(
@@ -155,7 +153,39 @@ class WorklogApiDeleteMarkedLogsTest {
         fetchResult.assertNoErrors()
         fetchResult.assertCompleted()
         verify(jiraWorklogInteractor).delete(any())
-        verify(worklogStorage).hardDeleteRemote(eq(remoteId))
+        verify(worklogStorage).hardDeleteRemoteSync(eq(remoteId))
+    }
+
+    @Test
+    fun authError() {
+        // Assemble
+        val remoteId: Long = 2
+        val now = timeProvider.now()
+        val worklog1 = Mocks.createLog(
+                timeProvider,
+                id = 1,
+                remoteData = Mocks.createRemoteData(
+                        timeProvider,
+                        remoteId = 2,
+                        isDeleted = true
+                )
+        )
+        doReturn(Single.just(listOf(worklog1)))
+                .whenever(worklogStorage).loadWorklogs(any(), any())
+        doReturn(Single.error<Any>(JiraMocks.createAuthException()))
+                .whenever(jiraWorklogInteractor).delete(any())
+        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
+
+        // Act
+        val fetchResult = worklogApi.deleteMarkedLogs(
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertError(AuthException::class.java)
+        verify(jiraClientProvider).markAsError()
+        verify(worklogStorage, never()).hardDeleteRemoteSync(any())
     }
 
 }
