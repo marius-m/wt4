@@ -4,6 +4,8 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.Log
 import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.utils.LogFormatters
+import net.rcarz.jiraclient.JiraException
+import net.rcarz.jiraclient.RestException
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
@@ -183,9 +185,26 @@ class WorklogApi(
                                     .map<WorklogUploadState> { WorklogUploadSuccess(it) }
                                     .onErrorResumeNext { error ->
                                         if (error.isAuthException()) {
+                                            val logWithErrorMessage = log.appendSystemNote("Cannot upload: " +
+                                                    "Authorization error. " +
+                                                    "Check your connection with JIRA")
+                                            worklogStorage.updateSync(logWithErrorMessage)
                                             Single.error(AuthException(error))
                                         } else {
-                                            Single.just(WorklogUploadError(log, error))
+                                            val errorAsRestException = error.findException<RestException>()
+                                            val errorAsJiraException = error.findException<JiraException>()
+                                            val logWithErrorMessage = when {
+                                                errorAsRestException != null -> {
+                                                    log.appendSystemNote("Cannot upload: JIRA Error (${errorAsRestException.httpStatusCode}) ${errorAsRestException.httpResult}")
+                                                }
+                                                errorAsJiraException != null -> {
+                                                    val errorAsJira = error as JiraException
+                                                    log.appendSystemNote("Cannot upload: '${errorAsJira.message}'")
+                                                }
+                                                else -> log.appendSystemNote("Cannot upload: Unrecognized error, check 'Account settings' for more info")
+                                            }
+                                            worklogStorage.updateSync(logWithErrorMessage)
+                                            Single.just(WorklogUploadError(logWithErrorMessage, error))
                                         }
                                     }
                         }
