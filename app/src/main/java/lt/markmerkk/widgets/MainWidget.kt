@@ -92,6 +92,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                     resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
                     eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
                 }
+                (keyEvent.code == KeyCode.R && keyEvent.isMetaDown)
+                        || (keyEvent.code == KeyCode.R && keyEvent.isControlDown) -> {
+                    syncInteractor.syncLogs()
+                }
             }
         }
         borderpane {
