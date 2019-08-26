@@ -11,6 +11,7 @@ import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
@@ -23,6 +24,7 @@ import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.widgets.tickets.TicketWidget
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
@@ -190,7 +192,10 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
                             setOnAction {
-                                presenter.openFindTickets()
+                                find<TicketWidget>().openModal(
+                                        block = true,
+                                        stageStyle = StageStyle.UTILITY
+                                )
                             }
                         }
                     }
