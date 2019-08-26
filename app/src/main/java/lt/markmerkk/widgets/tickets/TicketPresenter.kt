@@ -20,6 +20,10 @@ class TicketPresenter(
     private var view: TicketContract.View? = null
     private val ticketsLoader = TicketLoader(
             listener = object : TicketLoader.Listener {
+                override fun onProjectCodes(projectCodes: List<TicketLoader.ProjectCode>) {
+                    view?.onProjectCodes(projectCodes = projectCodes.map { it.name })
+                }
+
                 override fun onLoadStart() {
                     view?.showProgress()
                 }
@@ -67,6 +71,15 @@ class TicketPresenter(
 
     override fun attachFilterStream(filterAsStream: Observable<String>) {
         ticketsLoader.changeFilterStream(filterAsStream)
+    }
+
+    override fun loadProjectCodes() {
+        ticketsLoader.loadProjectCodes()
+    }
+
+    override fun defaultProjectCodes(): List<String> {
+        return ticketsLoader.defaultProjectCodes()
+                .map { it.name }
     }
 
     override fun handleClearVisibility(filter: String) {

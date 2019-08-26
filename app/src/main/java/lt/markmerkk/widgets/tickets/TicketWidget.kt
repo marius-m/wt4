@@ -1,8 +1,10 @@
 package lt.markmerkk.widgets.tickets
 
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.TableView
@@ -11,7 +13,9 @@ import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.tickets.TicketApi
+import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxCombobox
 import lt.markmerkk.ui_2.views.jfxTextField
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
@@ -32,6 +36,7 @@ class TicketWidget: View(), TicketContract.View {
         Main.component().inject(this)
     }
 
+    private lateinit var viewComboProjectCodes: JFXComboBox<String>
     private lateinit var viewTextFieldTicketSearch: JFXTextField
     private lateinit var viewProgress: TicketProgressWidget
     private lateinit var viewTable: TableView<TicketViewModel>
@@ -39,6 +44,8 @@ class TicketWidget: View(), TicketContract.View {
 
     private lateinit var presenter: TicketContract.Presenter
     private val ticketViewModels = mutableListOf<TicketViewModel>()
+            .observable()
+    private val projectCodes = mutableListOf<String>()
             .observable()
 
     override val root: Parent = borderpane {
@@ -50,7 +57,9 @@ class TicketWidget: View(), TicketContract.View {
         }
         center {
             vbox(spacing = 4) {
+                minWidth = 600.0
                 hbox(spacing = 4) {
+                    viewComboProjectCodes = jfxCombobox(SimpleStringProperty(""), projectCodes) {  }
                     viewTextFieldTicketSearch = jfxTextField {
                         hgrow = Priority.ALWAYS
                         addClass(Styles.inputTextField)
@@ -125,11 +134,14 @@ class TicketWidget: View(), TicketContract.View {
         presenter.onAttach(this)
         presenter.fetchTickets(forceFetch = false, filter = "")
         presenter.loadTickets(filter = "")
+        presenter.loadProjectCodes()
         presenter.attachFilterStream(JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty())
                 .subscribe { presenter.handleClearVisibility(it) }
         viewTextFieldTicketSearch.requestFocus()
         viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
+        viewComboProjectCodes.items.clear()
+        viewComboProjectCodes.items.addAll(presenter.defaultProjectCodes())
     }
 
     override fun onUndock() {
@@ -156,6 +168,11 @@ class TicketWidget: View(), TicketContract.View {
 
     override fun hideInputClear() {
         viewButtonClear.hide()
+    }
+
+    override fun onProjectCodes(projectCodes: List<String>) {
+        this.projectCodes.clear()
+        this.projectCodes.addAll(projectCodes)
     }
 
     companion object {

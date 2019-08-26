@@ -27,12 +27,14 @@ class TicketLoader(
     private var inputFilterSubscription: Subscription? = null
     private var networkSubscription: Subscription? = null
     private var dbSubscription: Subscription? = null
+    private var dbSubsCodes: Subscription? = null
 
     private var inputFilter: String = ""
 
     fun onAttach() { }
 
     fun onDetach() {
+        dbSubsCodes?.unsubscribe()
         dbSubscription?.unsubscribe()
         networkSubscription?.unsubscribe()
         inputFilterSubscription?.unsubscribe()
@@ -77,6 +79,26 @@ class TicketLoader(
         networkSubscription?.unsubscribe()
     }
 
+    fun defaultProjectCodes(): List<ProjectCode> = listOf(ProjectCode.asEmpty())
+
+    fun loadProjectCodes() {
+        dbSubscription?.unsubscribe()
+        dbSubscription = ticketStorage.loadTickets()
+                .map { tickets ->
+                    tickets.map { ProjectCode(it.code.codeProject) }
+                            .toSet()
+                }
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .subscribe({
+                    val projectCodes = listOf(ProjectCode.asEmpty())
+                            .plus(it.toList())
+                    listener.onProjectCodes(projectCodes)
+                }, {
+                    listener.onProjectCodes(listOf(ProjectCode.asEmpty()))
+                })
+    }
+
     fun loadTickets(inputFilter: String = "") {
         logger.info("Loading tickets from database with filter: $inputFilter")
         this.inputFilter = inputFilter
@@ -112,6 +134,7 @@ class TicketLoader(
     interface Listener {
         fun onLoadStart()
         fun onLoadFinish()
+        fun onProjectCodes(projectCodes: List<ProjectCode>)
         fun onFoundTickets(tickets: List<TicketScore>)
         fun onNoTickets()
         fun onError(throwable: Throwable)
@@ -163,6 +186,17 @@ class TicketLoader(
             val ticket: Ticket,
             val filterScore: Int
     )
+
+    data class ProjectCode(
+            val name: String
+    ) {
+        val isEmpty: Boolean = name.isEmpty()
+
+        companion object {
+            fun asEmpty(): ProjectCode = ProjectCode("")
+        }
+
+    }
 
 }
 
