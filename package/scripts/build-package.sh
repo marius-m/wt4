@@ -16,7 +16,7 @@ $JAVA_HOME/bin/javapackager \
   -srcdir ${INPUT} \
   -srcfiles ${JAR} \
   -outdir ${OUTPUT} \
-  -outfile "pdf-map" \
+  -outfile "wt4" \
   -appclass "lt.markmerkk.MainAsJava" \
   -native ${INSTALLER_TYPE} \
   -name "WT4" \

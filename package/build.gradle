@@ -16,8 +16,7 @@ ext {
         extraBundlerArguments = []
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         packageType = 'deb'
-        appIcon = file('icons/App1024.png')
-        sessionIcon = file('icons/Doc1024.png')
+        appIcon = file('icons/mac/App1024.png')
     } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         packageType = 'exe'
         appIcon = file('icons/windows/AppIcon.ico')
