@@ -17,8 +17,8 @@ interface TicketContract {
         fun onDetach()
         fun defaultProjectCodes(): List<String>
         fun loadProjectCodes()
-        fun fetchTickets(forceFetch: Boolean, filter: String)
-        fun loadTickets(filter: String)
+        fun fetchTickets(forceFetch: Boolean, filter: String, projectCode: String)
+        fun loadTickets(filter: String, projectCode: String)
         fun stopFetch()
         fun attachFilterStream(filterAsStream: Observable<String>)
         fun handleClearVisibility(filter: String)

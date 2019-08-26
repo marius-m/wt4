@@ -29,7 +29,7 @@ class TicketLoader(
     private var dbSubscription: Subscription? = null
     private var dbSubsCodes: Subscription? = null
 
-    private var inputFilter: String = ""
+    private var projectCode: ProjectCode = ProjectCode.asEmpty()
 
     fun onAttach() { }
 
@@ -42,8 +42,10 @@ class TicketLoader(
 
     fun fetchTickets(
             forceRefresh: Boolean = false,
-            inputFilter: String = ""
+            inputFilter: String = "",
+            projectCode: ProjectCode = ProjectCode.asEmpty()
     ) {
+        this.projectCode = projectCode
         networkSubscription?.unsubscribe()
         val now = timeProvider.now()
         val isFreshEnough = isTicketFreshEnough(
@@ -53,7 +55,7 @@ class TicketLoader(
         )
         if (isFreshEnough && !forceRefresh) {
             logger.info("Ignoring ticket search, as tickets are fresh enough")
-            loadTickets(inputFilter)
+            loadTickets(inputFilter, projectCode)
             return
         }
         logger.info("Refreshing tickets")
@@ -62,7 +64,7 @@ class TicketLoader(
                 .observeOn(uiScheduler)
                 .doOnSubscribe { listener.onLoadStart() }
                 .doAfterTerminate { listener.onLoadFinish() }
-                .flatMap { loadTicketsAsStream(inputFilter) }
+                .flatMap { loadTicketsAsStream(inputFilter, projectCode) }
                 .subscribe({
                     userSettings.ticketLastUpdate = now.millis
                     if (it.isNotEmpty()) {
@@ -99,12 +101,14 @@ class TicketLoader(
                 })
     }
 
-    fun loadTickets(inputFilter: String = "") {
+    fun loadTickets(
+            inputFilter: String = "",
+            projectCode: ProjectCode = ProjectCode.asEmpty()
+    ) {
+        this.projectCode = projectCode
         logger.info("Loading tickets from database with filter: $inputFilter")
-        this.inputFilter = inputFilter
         dbSubscription?.unsubscribe()
-        dbSubscription = ticketStorage.loadTickets()
-                .map { filter(it, searchInput = inputFilter) }
+        dbSubscription = loadTicketsAsStream(inputFilter, projectCode)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({
@@ -118,15 +122,25 @@ class TicketLoader(
                 })
     }
 
-    fun loadTicketsAsStream(inputFilter: String = ""): Single<List<TicketScore>> {
+    fun loadTicketsAsStream(
+            inputFilter: String,
+            projectCode: ProjectCode
+    ): Single<List<TicketScore>> {
         return ticketStorage.loadTickets()
+                .map { tickets ->
+                    if (projectCode.isEmpty) {
+                        tickets
+                    } else {
+                        tickets.filter { it.code.codeProject == projectCode.name }
+                    }
+                }
                 .map { filter(it, searchInput = inputFilter) }
     }
 
     fun changeFilterStream(filterChange: Observable<String>) {
         inputFilterSubscription = filterChange
                 .throttleLast(FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
-                .flatMapSingle { loadTicketsAsStream(it) }
+                .flatMapSingle { loadTicketsAsStream(it, projectCode) }
                 .observeOn(uiScheduler)
                 .subscribe { listener.onFoundTickets(it) }
     }

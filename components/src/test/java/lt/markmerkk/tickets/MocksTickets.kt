@@ -17,4 +17,10 @@ object MocksTickets {
     ).mapIndexed { index: Int, description: String ->
         Mocks.createTicket(code = "TTS-11${index + 1}", description = description)
     }
+
+    val ticketMix = listOf(
+            Mocks.createTicket(code = "WT-4"),
+            Mocks.createTicket(code = "TTS-2"),
+            Mocks.createTicket(code = "TV-3")
+    )
 }

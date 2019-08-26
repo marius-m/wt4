@@ -59,7 +59,18 @@ class TicketWidget: View(), TicketContract.View {
             vbox(spacing = 4) {
                 minWidth = 600.0
                 hbox(spacing = 4) {
-                    viewComboProjectCodes = jfxCombobox(SimpleStringProperty(""), projectCodes) {  }
+                    viewComboProjectCodes = jfxCombobox(SimpleStringProperty(""), projectCodes) {
+                        setOnAction {
+                            val selectItem = (it.source as JFXComboBox<String>)
+                                    .selectionModel
+                                    .selectedItem ?: ""
+                            logger.debug("Making selecting in ${selectItem}")
+                            presenter.loadTickets(
+                                    filter = viewTextFieldTicketSearch.text,
+                                    projectCode = selectItem
+                            )
+                        }
+                    }
                     viewTextFieldTicketSearch = jfxTextField {
                         hgrow = Priority.ALWAYS
                         addClass(Styles.inputTextField)
@@ -81,7 +92,11 @@ class TicketWidget: View(), TicketContract.View {
                     }
                     viewProgress.viewButtonRefresh.setOnAction {
                         logger.debug("Trigger fetching ")
-                        presenter.fetchTickets(forceFetch = true, filter = viewTextFieldTicketSearch.text)
+                        presenter.fetchTickets(
+                                forceFetch = true,
+                                filter = viewTextFieldTicketSearch.text,
+                                projectCode = viewComboProjectCodes.selectionModel.selectedItem
+                        )
                     }
                     add(viewProgress)
                 }
@@ -132,16 +147,15 @@ class TicketWidget: View(), TicketContract.View {
         )
         viewTextFieldTicketSearch.text = ""
         presenter.onAttach(this)
-        presenter.fetchTickets(forceFetch = false, filter = "")
-        presenter.loadTickets(filter = "")
-        presenter.loadProjectCodes()
+        presenter.fetchTickets(forceFetch = false, filter = "", projectCode = "")
+        presenter.loadTickets(filter = "", projectCode = "")
         presenter.attachFilterStream(JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty())
                 .subscribe { presenter.handleClearVisibility(it) }
         viewTextFieldTicketSearch.requestFocus()
         viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
-        viewComboProjectCodes.items.clear()
-        viewComboProjectCodes.items.addAll(presenter.defaultProjectCodes())
+        viewComboProjectCodes.selectionModel.select("")
+        presenter.loadProjectCodes()
     }
 
     override fun onUndock() {

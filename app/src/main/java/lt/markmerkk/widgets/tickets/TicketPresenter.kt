@@ -57,16 +57,16 @@ class TicketPresenter(
         this.view = null
     }
 
-    override fun fetchTickets(forceFetch: Boolean, filter: String) {
-        ticketsLoader.fetchTickets(forceFetch, filter)
+    override fun fetchTickets(forceFetch: Boolean, filter: String, projectCode: String) {
+        ticketsLoader.fetchTickets(forceFetch, filter, TicketLoader.ProjectCode(projectCode))
     }
 
     override fun stopFetch() {
         ticketsLoader.stopFetch()
     }
 
-    override fun loadTickets(filter: String) {
-        ticketsLoader.loadTickets(filter)
+    override fun loadTickets(filter: String, projectCode: String) {
+        ticketsLoader.loadTickets(filter, TicketLoader.ProjectCode(projectCode))
     }
 
     override fun attachFilterStream(filterAsStream: Observable<String>) {

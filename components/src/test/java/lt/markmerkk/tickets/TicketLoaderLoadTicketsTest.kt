@@ -52,6 +52,22 @@ class TicketLoaderLoadTicketsTest {
     }
 
     @Test
+    fun valid_filterProjectCode() {
+        // Assemble
+        doReturn(Single.just(MocksTickets.ticketMix))
+                .whenever(ticketStorage).loadTickets()
+
+        // Act
+        loader.loadTickets(projectCode = TicketLoader.ProjectCode("WT"))
+
+        // Assert
+        val expectTicketResult = MocksTickets.ticketMix
+                .map { TicketLoader.TicketScore(it, 0) }
+                .first()
+        verify(listener).onFoundTickets(listOf(expectTicketResult))
+    }
+
+    @Test
     fun valid_withFilter() {
         // Assemble
         doReturn(Single.just(MocksTickets.tickets))
