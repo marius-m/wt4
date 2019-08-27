@@ -45,9 +45,6 @@ class SyncInteractorImpl(
         subscription?.unsubscribe()
     }
 
-    override fun syncAll() { }
-
-    // todo will trigger multiple actions even if jiraclient fails. Handle this before release
     override fun syncLogs() {
         if (loading.get()) {
             logger.info("Sync in progress")

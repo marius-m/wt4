@@ -79,7 +79,7 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
 
     override fun update() {
         if (autoUpdateInteractor.isAutoUpdateTimeoutHit(System.currentTimeMillis())) {
-            syncInteractor.syncAll()
+            syncInteractor.syncLogs()
         }
     }
 
