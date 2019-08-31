@@ -1,5 +1,7 @@
 package lt.markmerkk
 
+import java.net.URI
+
 interface UserSettings {
     fun onAttach()
     fun onDetach()
@@ -12,4 +14,20 @@ interface UserSettings {
     var autoUpdateMinutes: Int
     var lastUpdate: Long
     var ticketLastUpdate: Long
+
+    val jiraOAuthPreset: JiraOAuthPreset
+    val jiraOAuthCreds: JiraOAuthCreds
+
+    fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
+    fun changeOAuthCreds(tokenSecret: String, accessKey: String)
 }
+
+data class JiraOAuthPreset(
+        val host: String,
+        val privateKey: String,
+        val consumerKey: String
+) {
+    val hostAsUri: URI = URI.create(host)
+}
+
+data class JiraOAuthCreds(val tokenSecret: String, val accessKey: String)

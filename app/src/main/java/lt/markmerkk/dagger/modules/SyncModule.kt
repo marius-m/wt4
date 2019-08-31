@@ -15,7 +15,7 @@ class SyncModule {
     fun providesClientProvider(
             userSettings: UserSettings
     ): JiraClientProvider {
-        return JiraClientProvider(userSettings)
+        return JiraClientProviderBasic(userSettings)
     }
 
     @Provides
