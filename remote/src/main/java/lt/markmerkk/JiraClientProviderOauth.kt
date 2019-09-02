@@ -31,12 +31,14 @@ class JiraClientProviderOauth(
                     )
             )
         }
+        val oauthPreset = userSettings.jiraOAuthPreset()
+        val oauthCreds = userSettings.jiraOAuthCreds()
         val newClient = Client.new(
-                userSettings.jiraOAuthPreset.host,
-                userSettings.jiraOAuthPreset.privateKey,
-                userSettings.jiraOAuthPreset.consumerKey,
-                userSettings.jiraOAuthCreds.tokenSecret,
-                userSettings.jiraOAuthCreds.accessKey
+                oauthPreset.host,
+                oauthPreset.privateKey,
+                oauthPreset.consumerKey,
+                oauthCreds.tokenSecret,
+                oauthCreds.accessKey
         )
         // todo Missing valid client check
 //        if (newClient.host.isEmpty()

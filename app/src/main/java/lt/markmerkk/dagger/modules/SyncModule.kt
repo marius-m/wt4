@@ -37,7 +37,9 @@ class SyncModule {
             schedulerProvider: SchedulerProvider,
             timeProvider: TimeProvider,
             worklogStorage: WorklogStorage,
-            worklogApi: WorklogApi
+            worklogApi: WorklogApi,
+            jiraClientProvider: JiraClientProvider,
+            userSettings: UserSettings
     ): SyncInteractor {
         return SyncInteractorImpl(
                 logStorage = logStorage,
@@ -46,8 +48,10 @@ class SyncModule {
                 uiScheduler = schedulerProvider.ui(),
                 autoUpdateInteractor = autoUpdateInteractor,
                 timeProvider = timeProvider,
+                jiraClientProvider = jiraClientProvider,
                 worklogStorage = worklogStorage,
-                worklogApi = worklogApi
+                worklogApi = worklogApi,
+                userSettings = userSettings
         )
     }
 

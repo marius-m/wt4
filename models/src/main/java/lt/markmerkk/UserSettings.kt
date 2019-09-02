@@ -15,11 +15,12 @@ interface UserSettings {
     var lastUpdate: Long
     var ticketLastUpdate: Long
 
-    val jiraOAuthPreset: JiraOAuthPreset
-    val jiraOAuthCreds: JiraOAuthCreds
+    fun jiraOAuthPreset(): JiraOAuthPreset
+    fun jiraOAuthCreds(): JiraOAuthCreds
 
     fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
     fun changeOAuthCreds(tokenSecret: String, accessKey: String)
+    fun changeOAuthUserCreds(name: String, email: String, displayName: String)
 }
 
 data class JiraOAuthPreset(

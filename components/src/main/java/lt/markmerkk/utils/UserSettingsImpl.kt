@@ -27,6 +27,9 @@ class UserSettingsImpl(
     private var oauthConsumerKey: String = ""
     private var oauthTokenSecret: String = ""
     private var oauthAccessKey: String = ""
+    private var oauthUserName: String = ""
+    private var oauthUserEmail: String = ""
+    private var oauthUserDisplayName: String = ""
 
     override fun onAttach() {
         settings.load()
@@ -43,6 +46,9 @@ class UserSettingsImpl(
         oauthConsumerKey = settings.get(OAUTH_CONSUMER_KEY, "")
         oauthTokenSecret = settings.get(OAUTH_TOKEN_SECRET, "")
         oauthAccessKey = settings.get(OAUTH_ACCESS_KEY, "")
+        oauthUserName = settings.get(OAUTH_USER_NAME, "")
+        oauthUserEmail = settings.get(OAUTH_USER_EMAIL, "")
+        oauthUserDisplayName = settings.get(OAUTH_USER_DISPLAY_NAME, "")
     }
 
     override fun onDetach() {
@@ -59,13 +65,14 @@ class UserSettingsImpl(
         settings.set(OAUTH_CONSUMER_KEY, oauthConsumerKey)
         settings.set(OAUTH_TOKEN_SECRET, oauthTokenSecret)
         settings.set(OAUTH_ACCESS_KEY, oauthAccessKey)
+        settings.set(OAUTH_USER_NAME, oauthUserName)
+        settings.set(OAUTH_USER_EMAIL, oauthUserEmail)
+        settings.set(OAUTH_USER_DISPLAY_NAME, oauthUserDisplayName)
         settings.save()
     }
 
-    override val jiraOAuthPreset: JiraOAuthPreset
-        get() = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
-    override val jiraOAuthCreds: JiraOAuthCreds
-        get() = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
+    override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
+    override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
 
     override fun changeOAuthPreset(
             host: String,
@@ -82,6 +89,12 @@ class UserSettingsImpl(
         this.oauthAccessKey = accessKey
     }
 
+    override fun changeOAuthUserCreds(name: String, email: String, displayName: String) {
+        this.oauthUserName = name
+        this.oauthUserEmail = email
+        this.oauthUserDisplayName = displayName
+    }
+
     companion object {
         const val HOST = "HOST"
         const val USER = "USER"
@@ -96,5 +109,8 @@ class UserSettingsImpl(
         const val OAUTH_CONSUMER_KEY = "OAUTH_CONSUMER_KEY"
         const val OAUTH_TOKEN_SECRET = "OAUTH_TOKEN_SECRET"
         const val OAUTH_ACCESS_KEY = "OAUTH_ACCESS_KEY"
+        const val OAUTH_USER_NAME = "OAUTH_USER_NAME"
+        const val OAUTH_USER_EMAIL = "OAUTH_USER_EMAIL"
+        const val OAUTH_USER_DISPLAY_NAME = "OAUTH_USER_DISPLAY_NAME"
     }
 }
