@@ -17,7 +17,7 @@ class JiraClientProvider2ClientTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        jiraClientProvider = JiraClientProvider(userSettings)
+        jiraClientProvider = JiraClientProviderBasic(userSettings)
     }
 
     @Test

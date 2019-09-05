@@ -40,12 +40,14 @@ class JiraClientProviderOauth(
                 oauthCreds.tokenSecret,
                 oauthCreds.accessKey
         )
-        // todo Missing valid client check
-//        if (newClient.host.isEmpty()
-//                || newClient.user.isEmpty()
-//                || newClient.pass.isEmpty()) {
-//            throw AuthException(IllegalStateException("Invalid credentials"))
-//        }
+        if (newClient.uri.isEmpty()
+                || newClient.privateKey.isEmpty()
+                || newClient.consumerKey.isEmpty()) {
+            throw AuthException(IllegalStateException("Invalid oauth preset"))
+        }
+        if (newClient.tokenSecret.isEmpty() || newClient.accessKey.isEmpty()) {
+            throw AuthException(IllegalStateException("Invalid oauth credentials"))
+        }
         val hasSameCredentials = client == newClient
         return if (!hasSameCredentials) {
             logger.debug("Creating new JIRA client for ${newClient.uri}")
