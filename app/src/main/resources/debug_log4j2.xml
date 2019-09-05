@@ -5,7 +5,7 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
         <RollingFile name="FileAllLogs"
-                     fileName="logs/out.log"
+                     fileName="${sys:user.home}/.wt4_debug/logs/out.log"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz"
                      immediateFlush="true"
                      append="true">
@@ -16,7 +16,7 @@
             </Policies>
         </RollingFile>
         <RollingFile name="FileAllErrors"
-                     fileName="logs/errors.log"
+                     fileName="${sys:user.home}/.wt4_debug/logs/errors.log"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz"
                      immediateFlush="true"
                      append="true">
@@ -27,7 +27,7 @@
             </Policies>
         </RollingFile>
         <RollingFile name="FileAllJira"
-                     fileName="logs/jira.log"
+                     fileName="${sys:user.home}/.wt4_debug/logs/jira.log"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz"
                      immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
@@ -37,7 +37,7 @@
             </Policies>
         </RollingFile>
         <RollingFile name="FileAllDb"
-                     fileName="logs/db.log"
+                     fileName="${sys:user.home}/.wt4_debug/logs/db.log"
                      immediateFlush="true"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
                      append="true">
@@ -48,7 +48,7 @@
             </Policies>
         </RollingFile>
         <RollingFile name="FileTmp"
-                     fileName="logs/tmp.log"
+                     fileName="${sys:user.home}/.wt4_debug/logs/tmp.log"
                      immediateFlush="true"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
                      append="true">
