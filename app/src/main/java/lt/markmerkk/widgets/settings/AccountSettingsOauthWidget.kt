@@ -1,6 +1,7 @@
 package lt.markmerkk.widgets.settings
 
 import com.google.common.eventbus.EventBus
+import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.controls.JFXTextArea
 import com.jfoenix.svg.SVGGlyph
@@ -10,10 +11,12 @@ import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.scene.web.WebView
 import lt.markmerkk.*
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.AuthService
+import lt.markmerkk.interactors.JiraBasicApi
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSpinner
 import lt.markmerkk.ui_2.views.jfxTextArea
@@ -34,8 +37,11 @@ class AccountSettingsOauthWidget : View() {
     @Inject lateinit var strings: Strings
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var jiraClientProvider: JiraClientProvider
+    @Inject lateinit var appConfig: Config
 
     private lateinit var viewWebview: WebView
+    private lateinit var viewButtonStatus: JFXButton
+    private lateinit var viewButtonSetupConnection: JFXButton
     private lateinit var viewLabelStatus: Label
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewTextOutput: JFXTextArea
@@ -77,8 +83,19 @@ class AccountSettingsOauthWidget : View() {
                 center {
                     stackpane {
                         viewContainerStatusBasic = vbox(spacing = 4, alignment = Pos.CENTER) {
-                            viewWebview = webview {  }
+                            viewButtonStatus = jfxButton {
+                                graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
+                                setOnAction {
+                                    authorizator.checkAuth()
+                                }
+                            }
                             viewLabelStatus = label {  }
+                            viewButtonSetupConnection = jfxButton("Set-up connection") {
+                                setOnAction {
+                                    authorizator.setupAuthStep1()
+                                }
+                            }
+                            viewWebview = webview { hide() }
                         }
                         viewContainerStatusAdvanced = borderpane {
                             center {
@@ -104,11 +121,6 @@ class AccountSettingsOauthWidget : View() {
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
-                jfxButton("Set-up account".toUpperCase()) {
-                    setOnAction {
-                        authorizator.setupAuthStep1()
-                    }
-                }
                 jfxButton("Save".toUpperCase()) {
                     setOnAction {
                         eventBus.post(EventSnackBarMessage("Settings saved!"))
@@ -133,12 +145,44 @@ class AccountSettingsOauthWidget : View() {
                     }
                 },
                 view = object : OAuthAuthorizator.View {
+                    override fun showNeutralState() {
+                        viewButtonStatus.show()
+                        viewLabelStatus.show()
+                        viewButtonSetupConnection.hide()
+                        viewWebview.hide()
+
+                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
+                        viewLabelStatus.text = "Press to test connection"
+                    }
+
                     override fun showAuthSuccess() {
-                        // incomplete behaviour
+                        viewButtonStatus.show()
+                        viewLabelStatus.show()
+                        viewButtonSetupConnection.hide()
+                        viewWebview.hide()
+
+                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
+                        viewLabelStatus.text = "Success connecting to JIRA!"
                     }
 
                     override fun showAuthFailure() {
-                        // incomplete behaviour
+                        viewButtonStatus.show()
+                        viewLabelStatus.show()
+                        viewButtonSetupConnection.show()
+                        viewWebview.hide()
+
+                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
+                        viewLabelStatus.text = "Error trying to connect. Check 'Show logs' for more info."
+                    }
+
+                    override fun showAuthView() {
+                        viewButtonStatus.hide()
+                        viewLabelStatus.hide()
+                        viewButtonSetupConnection.hide()
+                        viewWebview.show()
+
+                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
+                        viewLabelStatus.text = ""
                     }
 
                     override fun showProgress() {
@@ -150,11 +194,18 @@ class AccountSettingsOauthWidget : View() {
                     }
 
                     override fun onError(throwable: Throwable) {
-                        error(header = "Error", content = "Unexpected error when trying to authorize")
+                        viewButtonStatus.show()
+                        viewLabelStatus.show()
+                        viewButtonSetupConnection.show()
+                        viewWebview.hide()
+
+                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
+                        viewLabelStatus.text = "Error trying to connect. Check 'Show logs' for more info."
                     }
                 },
                 oAuthInteractor = OAuthInteractor(userSettings),
                 jiraClientProvider = jiraClientProvider,
+                jiraApi = JiraBasicApi(jiraClientProvider),
                 userSettings = userSettings,
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()
@@ -166,7 +217,13 @@ class AccountSettingsOauthWidget : View() {
                     }
 
                     override fun onAuthFailure() {
-                        error(header = "Error", content = "Failure setting up authorization")
+                        viewButtonStatus.show()
+                        viewLabelStatus.show()
+                        viewButtonSetupConnection.show()
+                        viewWebview.hide()
+
+                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
+                        viewLabelStatus.text = "Error trying to connect. Check 'Show logs' for more info."
                     }
 
                     override fun showProgress() {
@@ -218,7 +275,7 @@ class AccountSettingsOauthWidget : View() {
         } else {
             viewContainerStatusAdvanced.show()
             viewContainerStatusBasic.hide()
-            logTailer.tail(File("logs/jira.log"))
+            logTailer.tail(File("${appConfig.generateRelativePath()}logs/jira.log"))
         }
     }
 

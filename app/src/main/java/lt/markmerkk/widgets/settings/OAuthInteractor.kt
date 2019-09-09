@@ -1,5 +1,6 @@
 package lt.markmerkk.widgets.settings
 
+import lt.markmerkk.Tags
 import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.JiraApi
 import org.scribe.builder.ServiceBuilder
@@ -7,6 +8,7 @@ import org.scribe.model.SignatureType
 import org.scribe.model.Token
 import org.scribe.model.Verifier
 import org.scribe.oauth.OAuthService
+import org.slf4j.LoggerFactory
 import rx.Single
 
 // todo incomplete behaviour
@@ -23,6 +25,7 @@ class OAuthInteractor(
      */
     fun generateAuthUrl(): Single<String> {
         return Single.defer {
+            logger.debug("Generating new token for authorization")
             val oauthPreset = userSettings.jiraOAuthPreset()
             jiraApi = JiraApi(oauthPreset.host, oauthPreset.privateKey)
             service = ServiceBuilder()
@@ -32,6 +35,7 @@ class OAuthInteractor(
                     .signatureType(SignatureType.Header)
                     .build()
             requestToken = service.requestToken
+            logger.debug("Creating new authorization URL")
             Single.just(service.getAuthorizationUrl(requestToken))
         }
     }
@@ -45,6 +49,8 @@ class OAuthInteractor(
     }
 
     companion object {
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
+
         // test data
         const val URL = "http://localhost:2990/jira"
         const val CONSUMER_KEY = "dpf43f3p2l4k3l03"

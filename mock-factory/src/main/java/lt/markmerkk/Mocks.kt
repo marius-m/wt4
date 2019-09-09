@@ -8,6 +8,18 @@ import org.joda.time.DateTime
 
 object Mocks {
 
+    fun createUser(
+            name: String = "valid_name",
+            displayName: String = "valid_display_name",
+            email: String = "valid_email"
+    ): JiraUser {
+        return JiraUser(
+                name = name,
+                displayName = displayName,
+                email = email
+        )
+    }
+
     fun createTicket(
             id: Long = Const.NO_ID,
             code: String = "TTS-123",

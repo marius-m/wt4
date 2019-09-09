@@ -3,7 +3,10 @@ package lt.markmerkk.widgets.settings
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Tags
 import lt.markmerkk.UserSettings
+import lt.markmerkk.interactors.JiraBasicApi
+import net.rcarz.jiraclient.JiraApi
 import org.slf4j.LoggerFactory
+import rx.Completable
 import rx.Scheduler
 import rx.Single
 import rx.Subscription
@@ -13,35 +16,62 @@ class OAuthAuthorizator(
         private val view: View,
         private val oAuthInteractor: OAuthInteractor,
         private val jiraClientProvider: JiraClientProvider,
+        private val jiraApi: JiraBasicApi,
         private val userSettings: UserSettings,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
 
+    private var subsCheckConnection: Subscription? = null
     private var subsAuth1: Subscription? = null
     private var subsAuth2: Subscription? = null
 
-    fun onAttach() {}
+    fun onAttach() {
+        view.showNeutralState()
+    }
+
     fun onDetach() {
+        subsCheckConnection?.unsubscribe()
         subsAuth1?.unsubscribe()
         subsAuth2?.unsubscribe()
     }
 
-    fun setupAuthStep1() {
-        subsAuth1 = oAuthInteractor.generateAuthUrl()
+    fun checkAuth() {
+        subsCheckConnection?.unsubscribe()
+        subsCheckConnection = jiraApi.jiraUser()
                 .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .doOnSubscribe { view.showProgress() }
+                .doAfterTerminate { view.hideProgress() }
+                .subscribe({
+                    view.showAuthSuccess()
+                }, {
+                    view.showAuthFailure()
+                })
+    }
+
+    fun setupAuthStep1() {
+        logger.debug("Authorization STEP 1")
+        subsAuth1?.unsubscribe()
+        userSettings.resetUserData()
+        subsAuth1 = oAuthInteractor.generateAuthUrl()
+                .subscribeOn(uiScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doOnSuccess { view.hideProgress() }
                 .doOnError { view.hideProgress() }
                 .subscribe({
+                    logger.debug("Loading authorization URL")
+                    view.showAuthView()
                     webview.loadAuth(it)
                 }, {
+                    logger.debug("Error trying to generate token for authorization", it)
                     view.onError(it)
                 })
     }
 
     fun setupAuthStep2(accessTokenKey: String) {
+        subsAuth2?.unsubscribe()
         logger.debug("Success finding '$accessTokenKey'")
         subsAuth2 = oAuthInteractor.generateToken(accessTokenKey)
                 .flatMap {
@@ -68,8 +98,10 @@ class OAuthAuthorizator(
     }
 
     interface View {
+        fun showNeutralState()
         fun showAuthSuccess()
         fun showAuthFailure()
+        fun showAuthView()
         fun showProgress()
         fun hideProgress()
         fun onError(throwable: Throwable)

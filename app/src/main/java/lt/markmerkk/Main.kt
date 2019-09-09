@@ -8,9 +8,14 @@ import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.MainWidget
+import lt.markmerkk.widgets.settings.OAuthInteractor
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.core.LoggerContext
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import java.io.File
 import javax.inject.Inject
+
 
 class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener {
 
@@ -23,6 +28,7 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var schedulersProvider: SchedulerProvider
+    @Inject lateinit var userSettings: UserSettings
 
     private lateinit var keepAliveGASession: KeepAliveGASession
     private lateinit var appComponent: AppComponent
@@ -61,6 +67,13 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
         )
         keepAliveGASession.onAttach()
         stageProperties.onAttach()
+        userSettings.changeOAuthPreset(
+                host = OAuthInteractor.URL,
+                privateKey = OAuthInteractor.PRIVATE_KEY,
+                consumerKey = OAuthInteractor.CONSUMER_KEY
+        )
+    }
+
     private fun setupLogger(isDebug: Boolean) {
         val configFilePath = if (isDebug) {
             "debug_log4j2.xml"

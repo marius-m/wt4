@@ -17,10 +17,12 @@ interface UserSettings {
 
     fun jiraOAuthPreset(): JiraOAuthPreset
     fun jiraOAuthCreds(): JiraOAuthCreds
+    fun jiraUser(): JiraUser
 
     fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
     fun changeOAuthCreds(tokenSecret: String, accessKey: String)
-    fun changeOAuthUserCreds(name: String, email: String, displayName: String)
+    fun changeJiraUser(name: String, email: String, displayName: String)
+    fun resetUserData()
 }
 
 data class JiraOAuthPreset(
@@ -32,3 +34,8 @@ data class JiraOAuthPreset(
 }
 
 data class JiraOAuthCreds(val tokenSecret: String, val accessKey: String)
+data class JiraUser(
+        val name: String,
+        val displayName: String,
+        val email: String
+)

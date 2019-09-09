@@ -1,10 +1,6 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.Const
-import lt.markmerkk.JiraOAuthCreds
-import lt.markmerkk.JiraOAuthPreset
-import lt.markmerkk.UserSettings
-import org.slf4j.LoggerFactory
+import lt.markmerkk.*
 
 /**
  * Controller for holding persistent data
@@ -27,9 +23,9 @@ class UserSettingsImpl(
     private var oauthConsumerKey: String = ""
     private var oauthTokenSecret: String = ""
     private var oauthAccessKey: String = ""
-    private var oauthUserName: String = ""
-    private var oauthUserEmail: String = ""
-    private var oauthUserDisplayName: String = ""
+    private var jiraUserName: String = ""
+    private var jiraUserEmail: String = ""
+    private var jiraUserDisplayName: String = ""
 
     override fun onAttach() {
         settings.load()
@@ -46,9 +42,9 @@ class UserSettingsImpl(
         oauthConsumerKey = settings.get(OAUTH_CONSUMER_KEY, "")
         oauthTokenSecret = settings.get(OAUTH_TOKEN_SECRET, "")
         oauthAccessKey = settings.get(OAUTH_ACCESS_KEY, "")
-        oauthUserName = settings.get(OAUTH_USER_NAME, "")
-        oauthUserEmail = settings.get(OAUTH_USER_EMAIL, "")
-        oauthUserDisplayName = settings.get(OAUTH_USER_DISPLAY_NAME, "")
+        jiraUserName = settings.get(JIRA_USER_NAME, "")
+        jiraUserEmail = settings.get(JIRA_USER_EMAIL, "")
+        jiraUserDisplayName = settings.get(JIRA_USER_DISPLAY_NAME, "")
     }
 
     override fun onDetach() {
@@ -65,14 +61,15 @@ class UserSettingsImpl(
         settings.set(OAUTH_CONSUMER_KEY, oauthConsumerKey)
         settings.set(OAUTH_TOKEN_SECRET, oauthTokenSecret)
         settings.set(OAUTH_ACCESS_KEY, oauthAccessKey)
-        settings.set(OAUTH_USER_NAME, oauthUserName)
-        settings.set(OAUTH_USER_EMAIL, oauthUserEmail)
-        settings.set(OAUTH_USER_DISPLAY_NAME, oauthUserDisplayName)
+        settings.set(JIRA_USER_NAME, jiraUserName)
+        settings.set(JIRA_USER_EMAIL, jiraUserEmail)
+        settings.set(JIRA_USER_DISPLAY_NAME, jiraUserDisplayName)
         settings.save()
     }
 
     override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
     override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
+    override fun jiraUser(): JiraUser = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail)
 
     override fun changeOAuthPreset(
             host: String,
@@ -89,10 +86,18 @@ class UserSettingsImpl(
         this.oauthAccessKey = accessKey
     }
 
-    override fun changeOAuthUserCreds(name: String, email: String, displayName: String) {
-        this.oauthUserName = name
-        this.oauthUserEmail = email
-        this.oauthUserDisplayName = displayName
+    override fun changeJiraUser(name: String, email: String, displayName: String) {
+        this.jiraUserName = name
+        this.jiraUserEmail = email
+        this.jiraUserDisplayName = displayName
+    }
+
+    override fun resetUserData() {
+        this.oauthTokenSecret = ""
+        this.oauthAccessKey = ""
+        this.jiraUserName = ""
+        this.jiraUserDisplayName = ""
+        this.jiraUserEmail = ""
     }
 
     companion object {
@@ -109,8 +114,8 @@ class UserSettingsImpl(
         const val OAUTH_CONSUMER_KEY = "OAUTH_CONSUMER_KEY"
         const val OAUTH_TOKEN_SECRET = "OAUTH_TOKEN_SECRET"
         const val OAUTH_ACCESS_KEY = "OAUTH_ACCESS_KEY"
-        const val OAUTH_USER_NAME = "OAUTH_USER_NAME"
-        const val OAUTH_USER_EMAIL = "OAUTH_USER_EMAIL"
-        const val OAUTH_USER_DISPLAY_NAME = "OAUTH_USER_DISPLAY_NAME"
+        const val JIRA_USER_NAME = "JIRA_USER_NAME"
+        const val JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
+        const val JIRA_USER_DISPLAY_NAME = "JIRA_USER_DISPLAY_NAME"
     }
 }

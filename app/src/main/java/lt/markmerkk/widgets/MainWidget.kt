@@ -21,11 +21,14 @@ import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.*
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventEditLog
+import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.ExternalSourceNode
-import lt.markmerkk.ui_2.*
+import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget

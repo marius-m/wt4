@@ -5,7 +5,7 @@ buildscript {
 
     ext.versionName = "1.4.6"
     ext.versionCode = "44"
-    ext.debug = false
+    ext.debug = true
     ext.gaKey = "test"
 
     // Release properties
