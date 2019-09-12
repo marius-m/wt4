@@ -1,14 +1,19 @@
 package lt.markmerkk.widgets.settings
 
-// todo incomplete behaviour display
+/**
+ * Responsible for parsing auth auth token from webview
+ */
 class AuthResultParser {
 
     private val regexToken = "Your verification code is '([0-9A-Za-z]+)'\\."
             .toRegex()
 
-    // todo incomplete behaviour
     fun findAccessToken(inputResponse: String): String {
-        return regexToken.find(inputResponse)?.groupValues!![1] ?: ""
+        val matchResult = regexToken.find(inputResponse) ?: return ""
+        if (matchResult.groupValues.size < 2) {
+            return ""
+        }
+        return matchResult.groupValues[1]
     }
 
 }

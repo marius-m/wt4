@@ -24,4 +24,13 @@ class AuthResultParserFindAccessTokenTest {
         // Assert
         assertThat(resultToken).isEqualTo("HXuar0")
     }
+
+    @Test
+    fun noContent() {
+        // Act
+        val resultToken = parser.findAccessToken("")
+
+        // Assert
+        assertThat(resultToken).isEqualTo("")
+    }
 }
