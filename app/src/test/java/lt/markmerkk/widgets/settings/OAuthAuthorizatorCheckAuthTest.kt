@@ -53,8 +53,6 @@ class OAuthAuthorizatorCheckAuthTest {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "Successfully connected to JIRA with user 'valid_display_name'! Press 'Set-up' to setup a new connection!"
         ))
         verify(userSettings).changeJiraUser(any(), any(), any())
@@ -75,8 +73,6 @@ class OAuthAuthorizatorCheckAuthTest {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "Error connecting to JIRA. Press 'Set-up' to establish new connection"
         ))
         verify(userSettings).resetUserData()

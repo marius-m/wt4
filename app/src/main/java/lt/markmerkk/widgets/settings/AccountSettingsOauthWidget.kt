@@ -91,9 +91,6 @@ class AccountSettingsOauthWidget : View() {
                                 alignment = Pos.CENTER
                                 wrappingWidth = 400.0
                             }
-                            viewButtonSetupConnection = jfxButton("Set-up connection") {
-                                setOnAction { authorizator.setupAuthStep1() }
-                            }
                             viewWebview = webview { hide() }
                         }
                         viewContainerStatusAdvanced = borderpane {
@@ -120,6 +117,9 @@ class AccountSettingsOauthWidget : View() {
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
+                viewButtonSetupConnection = jfxButton("Set-up".toUpperCase()) {
+                    setOnAction { authorizator.setupAuthStep1() }
+                }
                 jfxButton("Save".toUpperCase()) {
                     setOnAction {
                         eventBus.post(EventSnackBarMessage("Settings saved!"))
@@ -144,21 +144,14 @@ class AccountSettingsOauthWidget : View() {
                         if (authViewModel.showContainerStatus) {
                             viewButtonStatus.show()
                             viewLabelStatus.show()
-                            viewButtonSetupConnection.show()
                         } else {
                             viewButtonStatus.hide()
                             viewLabelStatus.hide()
-                            viewButtonSetupConnection.hide()
                         }
                         if (authViewModel.showContainerWebview) {
                             viewWebview.show()
                         } else {
                             viewWebview.hide()
-                        }
-                        if (authViewModel.showButtonSetUp) {
-                            viewButtonSetupConnection.show()
-                        } else {
-                            viewButtonSetupConnection.hide()
                         }
                         viewButtonStatus.graphic = when (authViewModel.showStatusEmoticon) {
                             AuthViewModel.StatusEmoticon.HAPPY -> graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
@@ -194,18 +187,8 @@ class AccountSettingsOauthWidget : View() {
         )
         authWebviewPresenter = AuthWebviewPresenter(
                 view = object : AuthWebviewPresenter.View {
-                    override fun onAuthSuccess(authToken: String) {
-                        authorizator.setupAuthStep2(authToken)
-                    }
-
-                    override fun onAuthFailure() {
-                        viewButtonStatus.show()
-                        viewLabelStatus.show()
-                        viewButtonSetupConnection.show()
-                        viewWebview.hide()
-
-                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
-                        viewLabelStatus.text = "Error trying to connect. Check 'Show logs' for more info."
+                    override fun onAccessToken(accessTokenKey: String) {
+                        authorizator.setupAuthStep2(accessTokenKey)
                     }
 
                     override fun showProgress() {

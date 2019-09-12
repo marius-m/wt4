@@ -7,9 +7,7 @@ data class AuthViewModel(
         val showContainerWebview: Boolean,
         val showContainerStatus: Boolean,
         val showStatusEmoticon: StatusEmoticon,
-        val showButtonSetUp: Boolean,
-        val textStatus: String,
-        val textHeader: String
+        val textStatus: String
 ) {
 
     enum class StatusEmoticon {

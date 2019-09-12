@@ -1,6 +1,8 @@
 package lt.markmerkk.widgets.settings
 
 import lt.markmerkk.GraphicsGlyph.Companion.logger
+import lt.markmerkk.Tags
+import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Subscription
 import java.util.concurrent.atomic.AtomicBoolean
@@ -41,22 +43,30 @@ class AuthWebviewPresenter(
 
     fun attachDocumentProperty(documentAsStream: Observable<DocumentContent>) {
         subscDocument = documentAsStream
-                .subscribe { (documentUri, documentContent) ->
-                    val isLastStep = documentUri?.endsWith("/jira/plugins/servlet/oauth/authorize") ?: false
+                .subscribe({ (documentUri, documentContent) ->
+                    logger.debug("Loading uri: $documentUri")
+                    val isLastStep = documentUri.endsWith("/jira/plugins/servlet/oauth/authorize")
                     if (isLastStep) {
-                        val accessToken = authResultParser.findAccessToken(documentContent ?: "")
-                        view.onAuthSuccess(accessToken)
+                        val accessToken = authResultParser.findAccessToken(documentContent)
+                        view.onAccessToken(accessToken)
                     }
-                }
+                }, {
+                    logger.warn("Error trying to resolve access code", it)
+                    view.onAccessToken("")
+                })
     }
 
     data class DocumentContent(val documentUri: String, val documentContent: String)
 
     interface View {
-        fun onAuthSuccess(authToken: String)
-        fun onAuthFailure()
+        fun onAccessToken(accessTokenKey: String)
         fun showProgress()
         fun hideProgress()
+    }
+
+    companion object {
+        const val AUTH_URI = "/jira/plugins/servlet/oauth/authorize"
+        private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 
 }

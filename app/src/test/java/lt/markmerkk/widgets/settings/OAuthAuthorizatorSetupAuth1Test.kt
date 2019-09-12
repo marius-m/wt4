@@ -54,8 +54,6 @@ class OAuthAuthorizatorSetupAuth1Test {
                 showContainerWebview = true,
                 showContainerStatus = false,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                showButtonSetUp = false,
-                textHeader = "",
                 textStatus = ""
         ))
         verify(view).loadAuthWeb("auth_url")
@@ -74,8 +72,6 @@ class OAuthAuthorizatorSetupAuth1Test {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
         ))
         verify(view, never()).loadAuthWeb("auth_url")

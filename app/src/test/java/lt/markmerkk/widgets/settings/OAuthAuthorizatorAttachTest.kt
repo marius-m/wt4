@@ -51,8 +51,6 @@ class OAuthAuthorizatorAttachTest {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "No user connected! Press 'Set-up' to setup your connection!"
         ))
     }
@@ -73,8 +71,6 @@ class OAuthAuthorizatorAttachTest {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "No user connected! Press 'Set-up' to setup your connection!"
         ))
     }
@@ -95,8 +91,6 @@ class OAuthAuthorizatorAttachTest {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "User 'username' connected! Press on face to check connection status or 'Set-up' for establishing new connection"
         ))
     }

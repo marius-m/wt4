@@ -57,9 +57,23 @@ class OAuthAuthorizatorSetupAuth2Test {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "Success setting up new user 'display_name'!"
+        ))
+    }
+
+    @Test
+    fun noToken() {
+        // Assemble
+        // Act
+        authorizator.setupAuthStep2("")
+
+        // Assert
+        verify(userSettings).resetUserData()
+        verify(view).renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
+                textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
         ))
     }
 
@@ -80,8 +94,6 @@ class OAuthAuthorizatorSetupAuth2Test {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
         ))
     }
@@ -104,8 +116,6 @@ class OAuthAuthorizatorSetupAuth2Test {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                showButtonSetUp = true,
-                textHeader = "",
                 textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
         ))
     }
