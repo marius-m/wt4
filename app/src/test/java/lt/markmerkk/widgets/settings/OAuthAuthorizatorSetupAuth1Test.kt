@@ -19,7 +19,6 @@ import java.lang.RuntimeException
 
 class OAuthAuthorizatorSetupAuth1Test {
 
-    @Mock lateinit var webview: OAuthAuthorizator.AuthWebView
     @Mock lateinit var view: OAuthAuthorizator.View
     @Mock lateinit var oauthInteractor: OAuthInteractor
     @Mock lateinit var jiraClientProvider: JiraClientProvider
@@ -31,7 +30,6 @@ class OAuthAuthorizatorSetupAuth1Test {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         authorizator = OAuthAuthorizator(
-                webview,
                 view,
                 oauthInteractor,
                 jiraClientProvider,
@@ -60,7 +58,7 @@ class OAuthAuthorizatorSetupAuth1Test {
                 textHeader = "",
                 textStatus = ""
         ))
-        verify(view).loadAuth("auth_url")
+        verify(view).loadAuthWeb("auth_url")
     }
 
     @Test
@@ -80,6 +78,6 @@ class OAuthAuthorizatorSetupAuth1Test {
                 textHeader = "",
                 textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
         ))
-        verify(view, never()).loadAuth("auth_url")
+        verify(view, never()).loadAuthWeb("auth_url")
     }
 }

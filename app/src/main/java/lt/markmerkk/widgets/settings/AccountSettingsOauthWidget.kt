@@ -138,15 +138,6 @@ class AccountSettingsOauthWidget : View() {
     override fun onDock() {
         super.onDock()
         authorizator = OAuthAuthorizator(
-                webview = object : OAuthAuthorizator.AuthWebView {
-                    override fun reset() {
-                        viewWebview.engine.loadContent("<html></html>")
-                    }
-
-                    override fun loadAuth(url: String) {
-                        viewWebview.engine.load(url)
-                    }
-                },
                 view = object : OAuthAuthorizator.View {
 
                     override fun renderView(authViewModel: AuthViewModel) {
@@ -177,48 +168,12 @@ class AccountSettingsOauthWidget : View() {
                         viewLabelStatus.text = authViewModel.textStatus
                     }
 
-                    override fun loadAuth(url: String) {
+                    override fun loadAuthWeb(url: String) {
                         viewWebview.engine.load(url)
                     }
 
-                    override fun showNeutralState() {
-                        viewButtonStatus.show()
-                        viewLabelStatus.show()
-                        viewButtonSetupConnection.show()
-                        viewWebview.hide()
-
-                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
-                        viewLabelStatus.text = "Press to test connection"
-                    }
-
-                    override fun showAuthSuccess() {
-                        viewButtonStatus.show()
-                        viewLabelStatus.show()
-                        viewButtonSetupConnection.show()
-                        viewWebview.hide()
-
-                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
-                        viewLabelStatus.text = "Success connecting to JIRA!"
-                    }
-
-                    override fun showAuthFailure() {
-                        viewButtonStatus.show()
-                        viewLabelStatus.show()
-                        viewButtonSetupConnection.show()
-                        viewWebview.hide()
-
-                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
-                        viewLabelStatus.text = "Error trying to connect. Check 'Show logs' for more info."
-                    }
-
-                    override fun showAuthView() {
-                        viewButtonStatus.hide()
-                        viewLabelStatus.hide()
-                        viewButtonSetupConnection.hide()
-                        viewWebview.show()
-
-                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
-                        viewLabelStatus.text = ""
+                    override fun resetWeb() {
+                        viewWebview.engine.loadContent("<html></html>")
                     }
 
                     override fun showProgress() {
@@ -229,15 +184,6 @@ class AccountSettingsOauthWidget : View() {
                         viewProgress.hide()
                     }
 
-                    override fun onError(throwable: Throwable) {
-                        viewButtonStatus.show()
-                        viewLabelStatus.show()
-                        viewButtonSetupConnection.show()
-                        viewWebview.hide()
-
-                        viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
-                        viewLabelStatus.text = "Error trying to connect. Check 'Show logs' for more info."
-                    }
                 },
                 oAuthInteractor = OAuthInteractor(userSettings),
                 jiraClientProvider = jiraClientProvider,

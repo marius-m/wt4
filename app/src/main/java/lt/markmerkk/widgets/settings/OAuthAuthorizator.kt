@@ -12,7 +12,6 @@ import rx.Single
 import rx.Subscription
 
 class OAuthAuthorizator(
-        private val webview: AuthWebView,
         private val view: View,
         private val oAuthInteractor: OAuthInteractor,
         private val jiraClientProvider: JiraClientProvider,
@@ -27,7 +26,6 @@ class OAuthAuthorizator(
     private var subsAuth2: Subscription? = null
 
     fun onAttach() {
-        webview.reset()
         if (userSettings.jiraUser().isEmpty()
                 || userSettings.jiraOAuthCreds().isEmpty()) {
             view.renderView(AuthViewModel(
@@ -48,13 +46,14 @@ class OAuthAuthorizator(
                     textHeader = ""
             ))
         }
+        view.resetWeb()
     }
 
     fun onDetach() {
         subsCheckConnection?.unsubscribe()
         subsAuth1?.unsubscribe()
         subsAuth2?.unsubscribe()
-        webview.reset()
+        view.resetWeb()
     }
 
     fun checkAuth() {
@@ -108,7 +107,7 @@ class OAuthAuthorizator(
                             textStatus = "",
                             textHeader = ""
                     ))
-                    view.loadAuth(it)
+                    view.loadAuthWeb(it)
                 }, {
                     logger.debug("Error trying to generate token for authorization", it)
                     view.renderView(AuthViewModel(
@@ -162,21 +161,12 @@ class OAuthAuthorizator(
                 })
     }
 
-    interface AuthWebView {
-        fun loadAuth(url: String)
-        fun reset()
-    }
-
     interface View {
         fun renderView(authViewModel: AuthViewModel)
-        fun showNeutralState()
-        fun showAuthSuccess()
-        fun showAuthFailure()
-        fun showAuthView()
-        fun loadAuth(url: String)
         fun showProgress()
         fun hideProgress()
-        fun onError(throwable: Throwable)
+        fun loadAuthWeb(url: String)
+        fun resetWeb()
     }
 
     companion object {

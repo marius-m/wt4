@@ -17,7 +17,6 @@ import java.lang.RuntimeException
 
 class OAuthAuthorizatorSetupAuth2Test {
 
-    @Mock lateinit var webview: OAuthAuthorizator.AuthWebView
     @Mock lateinit var view: OAuthAuthorizator.View
     @Mock lateinit var oauthInteractor: OAuthInteractor
     @Mock lateinit var jiraClientProvider: JiraClientProvider
@@ -29,7 +28,6 @@ class OAuthAuthorizatorSetupAuth2Test {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         authorizator = OAuthAuthorizator(
-                webview,
                 view,
                 oauthInteractor,
                 jiraClientProvider,

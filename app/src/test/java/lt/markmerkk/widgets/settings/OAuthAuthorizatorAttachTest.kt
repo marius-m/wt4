@@ -14,7 +14,6 @@ import rx.schedulers.Schedulers
 
 class OAuthAuthorizatorAttachTest {
 
-    @Mock lateinit var webview: OAuthAuthorizator.AuthWebView
     @Mock lateinit var view: OAuthAuthorizator.View
     @Mock lateinit var oauthInteractor: OAuthInteractor
     @Mock lateinit var jiraClientProvider: JiraClientProvider
@@ -26,7 +25,6 @@ class OAuthAuthorizatorAttachTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         authorizator = OAuthAuthorizator(
-                webview,
                 view,
                 oauthInteractor,
                 jiraClientProvider,
