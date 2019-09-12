@@ -27,26 +27,64 @@ class OAuthAuthorizator(
     private var subsAuth2: Subscription? = null
 
     fun onAttach() {
-        view.showNeutralState()
+        webview.reset()
+        if (userSettings.jiraUser().isEmpty()
+                || userSettings.jiraOAuthCreds().isEmpty()) {
+            view.renderView(AuthViewModel(
+                    showContainerWebview = false,
+                    showContainerStatus = true,
+                    showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
+                    showButtonSetUp = true,
+                    textStatus = "No user connected! Press 'Set-up' to setup your connection!",
+                    textHeader = ""
+            ))
+        } else {
+            view.renderView(AuthViewModel(
+                    showContainerWebview = false,
+                    showContainerStatus = true,
+                    showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
+                    showButtonSetUp = true,
+                    textStatus = "User 'username' connected! Press on face to check connection status or 'Set-up' for establishing new connection",
+                    textHeader = ""
+            ))
+        }
     }
 
     fun onDetach() {
         subsCheckConnection?.unsubscribe()
         subsAuth1?.unsubscribe()
         subsAuth2?.unsubscribe()
+        webview.reset()
     }
 
     fun checkAuth() {
         subsCheckConnection?.unsubscribe()
         subsCheckConnection = jiraApi.jiraUser()
+                .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName) }
+                .doOnError { userSettings.resetUserData() }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doAfterTerminate { view.hideProgress() }
                 .subscribe({
-                    view.showAuthSuccess()
+                    view.renderView(AuthViewModel(
+                            showContainerWebview = false,
+                            showContainerStatus = true,
+                            showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
+                            showButtonSetUp = true,
+                            textStatus = "Successfully connected to JIRA with user '${it.displayName}'! Press 'Set-up' to setup a new connection!",
+                            textHeader = ""
+                    ))
                 }, {
-                    view.showAuthFailure()
+                    logger.warn("Error trying to establish connection!", it)
+                    view.renderView(AuthViewModel(
+                            showContainerWebview = false,
+                            showContainerStatus = true,
+                            showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
+                            showButtonSetUp = true,
+                            textStatus = "Error connecting to JIRA. Press 'Set-up' to establish new connection",
+                            textHeader = ""
+                    ))
                 })
     }
 
@@ -95,9 +133,11 @@ class OAuthAuthorizator(
 
     interface AuthWebView {
         fun loadAuth(url: String)
+        fun reset()
     }
 
     interface View {
+        fun renderView(authViewModel: AuthViewModel)
         fun showNeutralState()
         fun showAuthSuccess()
         fun showAuthFailure()

@@ -1,5 +1,6 @@
 package lt.markmerkk.widgets.settings
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -50,7 +51,15 @@ class OAuthAuthorizatorCheckAuthTest {
         authorizator.checkAuth()
 
         // Assert
-        verify(view).showAuthSuccess()
+        verify(view).renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
+                showButtonSetUp = true,
+                textHeader = "",
+                textStatus = "Successfully connected to JIRA with user 'valid_display_name'! Press 'Set-up' to setup a new connection!"
+        ))
+        verify(userSettings).changeJiraUser(any(), any(), any())
         verify(view).showProgress()
         verify(view).hideProgress()
     }
@@ -64,6 +73,14 @@ class OAuthAuthorizatorCheckAuthTest {
         authorizator.checkAuth()
 
         // Assert
-        verify(view).showAuthFailure()
+        verify(view).renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
+                showButtonSetUp = true,
+                textHeader = "",
+                textStatus = "Error connecting to JIRA. Press 'Set-up' to establish new connection"
+        ))
+        verify(userSettings).resetUserData()
     }
 }

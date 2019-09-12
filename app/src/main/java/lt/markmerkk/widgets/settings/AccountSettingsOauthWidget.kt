@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.text.Text
 import javafx.scene.web.WebView
 import lt.markmerkk.*
 import lt.markmerkk.events.EventSnackBarMessage
@@ -42,7 +43,7 @@ class AccountSettingsOauthWidget : View() {
     private lateinit var viewWebview: WebView
     private lateinit var viewButtonStatus: JFXButton
     private lateinit var viewButtonSetupConnection: JFXButton
-    private lateinit var viewLabelStatus: Label
+    private lateinit var viewLabelStatus: Text
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewTextOutput: JFXTextArea
     private lateinit var viewContainerStatusAdvanced: BorderPane
@@ -84,16 +85,14 @@ class AccountSettingsOauthWidget : View() {
                     stackpane {
                         viewContainerStatusBasic = vbox(spacing = 4, alignment = Pos.CENTER) {
                             viewButtonStatus = jfxButton {
-                                graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
-                                setOnAction {
-                                    authorizator.checkAuth()
-                                }
+                                setOnAction { authorizator.checkAuth() }
                             }
-                            viewLabelStatus = label {  }
+                            viewLabelStatus = text {
+                                alignment = Pos.CENTER
+                                wrappingWidth = 400.0
+                            }
                             viewButtonSetupConnection = jfxButton("Set-up connection") {
-                                setOnAction {
-                                    authorizator.setupAuthStep1()
-                                }
+                                setOnAction { authorizator.setupAuthStep1() }
                             }
                             viewWebview = webview { hide() }
                         }
@@ -140,15 +139,47 @@ class AccountSettingsOauthWidget : View() {
         super.onDock()
         authorizator = OAuthAuthorizator(
                 webview = object : OAuthAuthorizator.AuthWebView {
+                    override fun reset() {
+                        viewWebview.engine.loadContent("<html></html>")
+                    }
+
                     override fun loadAuth(url: String) {
                         viewWebview.engine.load(url)
                     }
                 },
                 view = object : OAuthAuthorizator.View {
+                    override fun renderView(authViewModel: AuthViewModel) {
+                        if (authViewModel.showContainerStatus) {
+                            viewButtonStatus.show()
+                            viewLabelStatus.show()
+                            viewButtonSetupConnection.show()
+                        } else {
+                            viewButtonStatus.hide()
+                            viewLabelStatus.hide()
+                            viewButtonSetupConnection.hide()
+                        }
+                        if (authViewModel.showContainerWebview) {
+                            viewWebview.show()
+                        } else {
+                            viewWebview.hide()
+                        }
+                        if (authViewModel.showButtonSetUp) {
+                            viewButtonSetupConnection.show()
+                        } else {
+                            viewButtonSetupConnection.hide()
+                        }
+                        viewButtonStatus.graphic = when (authViewModel.showStatusEmoticon) {
+                            AuthViewModel.StatusEmoticon.HAPPY -> graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
+                            AuthViewModel.StatusEmoticon.NEUTRAL -> graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
+                            AuthViewModel.StatusEmoticon.SAD -> graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
+                        }
+                        viewLabelStatus.text = authViewModel.textStatus
+                    }
+
                     override fun showNeutralState() {
                         viewButtonStatus.show()
                         viewLabelStatus.show()
-                        viewButtonSetupConnection.hide()
+                        viewButtonSetupConnection.show()
                         viewWebview.hide()
 
                         viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
@@ -158,7 +189,7 @@ class AccountSettingsOauthWidget : View() {
                     override fun showAuthSuccess() {
                         viewButtonStatus.show()
                         viewLabelStatus.show()
-                        viewButtonSetupConnection.hide()
+                        viewButtonSetupConnection.show()
                         viewWebview.hide()
 
                         viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
@@ -251,7 +282,8 @@ class AccountSettingsOauthWidget : View() {
         val wvDocumentProperty = JavaFxObservable.valuesOf(viewWebview.engine.documentProperty())
                 .flatMap {
                     if (it != null) {
-                        Observable.just(AuthWebviewPresenter.DocumentContent(it.documentURI, it.documentElement.textContent))
+                        val documentUri: String = it.documentURI ?: ""
+                        Observable.just(AuthWebviewPresenter.DocumentContent(documentUri, it.documentElement.textContent))
                     } else {
                         Observable.empty()
                     }

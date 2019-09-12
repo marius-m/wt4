@@ -33,9 +33,13 @@ data class JiraOAuthPreset(
     val hostAsUri: URI = URI.create(host)
 }
 
-data class JiraOAuthCreds(val tokenSecret: String, val accessKey: String)
+data class JiraOAuthCreds(val tokenSecret: String, val accessKey: String) {
+    fun isEmpty(): Boolean = tokenSecret.isEmpty() || accessKey.isEmpty()
+}
 data class JiraUser(
         val name: String,
         val displayName: String,
         val email: String
-)
+) {
+    fun isEmpty(): Boolean = name.isEmpty() || displayName.isEmpty() || email.isEmpty()
+}
