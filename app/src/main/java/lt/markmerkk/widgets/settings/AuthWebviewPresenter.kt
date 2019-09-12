@@ -45,7 +45,7 @@ class AuthWebviewPresenter(
         subscDocument = documentAsStream
                 .subscribe({ (documentUri, documentContent) ->
                     logger.debug("Loading uri: $documentUri")
-                    val isLastStep = documentUri.endsWith("/jira/plugins/servlet/oauth/authorize")
+                    val isLastStep = documentUri.endsWith(AUTH_URI)
                     if (isLastStep) {
                         val accessToken = authResultParser.findAccessToken(documentContent)
                         view.onAccessToken(accessToken)
@@ -65,7 +65,7 @@ class AuthWebviewPresenter(
     }
 
     companion object {
-        const val AUTH_URI = "/jira/plugins/servlet/oauth/authorize"
+        const val AUTH_URI = "plugins/servlet/oauth/authorize"
         private val logger = LoggerFactory.getLogger(Tags.JIRA)!!
     }
 

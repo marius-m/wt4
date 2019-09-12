@@ -19,6 +19,8 @@ class SyncInteractorImpl(
         private val worklogApi: WorklogApi,
         private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider,
+        private val jiraClientProvider: JiraClientProvider,
+        private val userSettings: UserSettings,
         private val uiScheduler: Scheduler,
         private val ioScheduler: Scheduler
 ) : SyncInteractor {

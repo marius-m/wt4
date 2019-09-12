@@ -84,7 +84,7 @@ class OAuthAuthorizator(
         subsAuth1?.unsubscribe()
         userSettings.resetUserData()
         subsAuth1 = oAuthInteractor.generateAuthUrl()
-                .subscribeOn(uiScheduler)
+                .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doOnSuccess { view.hideProgress() }
