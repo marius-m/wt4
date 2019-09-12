@@ -40,13 +40,14 @@ class OAuthInteractor(
         }
     }
 
-    fun generateToken(accessTokenKey: String): Single<UserSettings> {
+    fun generateToken(accessTokenKey: String): Single<OAuthToken> {
         return Single.defer {
             val accessToken = service.getAccessToken(requestToken, Verifier(accessTokenKey))
-            userSettings.changeOAuthCreds(requestToken.token, accessToken.token)
-            Single.just(userSettings)
+            Single.just(OAuthToken(requestToken.token, accessToken.token))
         }
     }
+
+    data class OAuthToken(val tokenSecret: String, val accessKey: String)
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.JIRA)!!

@@ -100,11 +100,25 @@ class OAuthAuthorizator(
                 .doOnError { view.hideProgress() }
                 .subscribe({
                     logger.debug("Loading authorization URL")
-                    view.showAuthView()
-                    webview.loadAuth(it)
+                    view.renderView(AuthViewModel(
+                            showContainerWebview = true,
+                            showContainerStatus = false,
+                            showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
+                            showButtonSetUp = false,
+                            textStatus = "",
+                            textHeader = ""
+                    ))
+                    view.loadAuth(it)
                 }, {
                     logger.debug("Error trying to generate token for authorization", it)
-                    view.onError(it)
+                    view.renderView(AuthViewModel(
+                            showContainerWebview = false,
+                            showContainerStatus = true,
+                            showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
+                            showButtonSetUp = true,
+                            textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info",
+                            textHeader = ""
+                    ))
                 })
     }
 
@@ -113,21 +127,38 @@ class OAuthAuthorizator(
         logger.debug("Success finding '$accessTokenKey'")
         subsAuth2 = oAuthInteractor.generateToken(accessTokenKey)
                 .flatMap {
-                    val jiraClient = jiraClientProvider.newClient()
-//                    val userCreds = jiraClient.currentUser()
-//                    userSettings.changeOAuthUserCreds(
-//                            name = userCreds.name,
-//                            email = userCreds.email,
-//                            displayName = userCreds.displayName
-//                    )
-                    Single.just(jiraClient.projects)
+                    userSettings.changeOAuthCreds(
+                            tokenSecret = it.tokenSecret,
+                            accessKey = it.accessKey
+                    )
+                    jiraApi.jiraUser()
                 }
+                .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName) }
+                .doOnError { userSettings.resetUserData() }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
                 .doAfterTerminate { view.hideProgress() }
                 .subscribe({
                     logger.debug("Success running authorization, found projects: $it")
+                    view.renderView(AuthViewModel(
+                            showContainerWebview = false,
+                            showContainerStatus = true,
+                            showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
+                            showButtonSetUp = true,
+                            textStatus = "Success setting up new user '${it.displayName}'!",
+                            textHeader = ""
+                    ))
+                }, {
+                    logger.warn("Error finalizing JIRA token export!", it)
+                    view.renderView(AuthViewModel(
+                            showContainerWebview = false,
+                            showContainerStatus = true,
+                            showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
+                            showButtonSetUp = true,
+                            textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info",
+                            textHeader = ""
+                    ))
                 })
     }
 
@@ -142,6 +173,7 @@ class OAuthAuthorizator(
         fun showAuthSuccess()
         fun showAuthFailure()
         fun showAuthView()
+        fun loadAuth(url: String)
         fun showProgress()
         fun hideProgress()
         fun onError(throwable: Throwable)

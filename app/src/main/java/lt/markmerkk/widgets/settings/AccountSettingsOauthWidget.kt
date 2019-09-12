@@ -148,6 +148,7 @@ class AccountSettingsOauthWidget : View() {
                     }
                 },
                 view = object : OAuthAuthorizator.View {
+
                     override fun renderView(authViewModel: AuthViewModel) {
                         if (authViewModel.showContainerStatus) {
                             viewButtonStatus.show()
@@ -174,6 +175,10 @@ class AccountSettingsOauthWidget : View() {
                             AuthViewModel.StatusEmoticon.SAD -> graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 64.0)
                         }
                         viewLabelStatus.text = authViewModel.textStatus
+                    }
+
+                    override fun loadAuth(url: String) {
+                        viewWebview.engine.load(url)
                     }
 
                     override fun showNeutralState() {
