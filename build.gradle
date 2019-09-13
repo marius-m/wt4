@@ -3,9 +3,9 @@ buildscript {
     ext.kotlin_test_version = '1.4.0'
 
 
-    ext.versionName = "1.4.6"
-    ext.versionCode = "44"
-    ext.debug = true
+    ext.versionName = "1.5.0"
+    ext.versionCode = "45"
+    ext.debug = false
     ext.gaKey = "test"
     ext.ito_oauth = true
 
