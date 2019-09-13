@@ -7,6 +7,7 @@ buildscript {
     ext.versionCode = "44"
     ext.debug = true
     ext.gaKey = "test"
+    ext.ito_oauth = true
 
     // Release properties
 //    def deployPropertyFile = new File("${rootDir}","deploy.properties")

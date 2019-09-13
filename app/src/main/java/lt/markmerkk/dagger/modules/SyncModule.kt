@@ -15,6 +15,9 @@ class SyncModule {
     fun providesClientProvider(
             userSettings: UserSettings
     ): JiraClientProvider {
+        if (BuildConfig.ito_oauth) {
+            return JiraClientProviderOauth(userSettings)
+        }
         return JiraClientProviderBasic(userSettings)
     }
 

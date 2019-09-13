@@ -5,10 +5,12 @@ import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.StageStyle
+import lt.markmerkk.BuildConfig
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
+import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
 import tornadofx.*
@@ -25,12 +27,21 @@ class PopUpSettings(
                                 title = "Account settings",
                                 graphic = graphics.from(Glyph.ACCOUNT, Color.BLACK, 12.0),
                                 action = {
-                                    find<AccountSettingsWidget>().openModal(
-                                            stageStyle = StageStyle.UTILITY,
-                                            modality = Modality.APPLICATION_MODAL,
-                                            block = false,
-                                            resizable = true
-                                    )
+                                    if (BuildConfig.ito_oauth) {
+                                        find<AccountSettingsOauthWidget>().openModal(
+                                                stageStyle = StageStyle.UTILITY,
+                                                modality = Modality.APPLICATION_MODAL,
+                                                block = false,
+                                                resizable = true
+                                        )
+                                    } else {
+                                        find<AccountSettingsWidget>().openModal(
+                                                stageStyle = StageStyle.UTILITY,
+                                                modality = Modality.APPLICATION_MODAL,
+                                                block = false,
+                                                resizable = true
+                                        )
+                                    }
                                 }
                         ),
                         PopUpAction(

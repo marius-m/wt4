@@ -92,6 +92,7 @@ buildConfig {
     buildConfigField("int", "versionCode", project.versionCode)
     buildConfigField("boolean", "debug", project.debug.toString())
     buildConfigField("String", "gaKey", project.gaKey)
+    buildConfigField("boolean", "ito_oauth", project.ito_oauth.toString())
 
 //    versionCode = project.versionCode
 //    debug = false
