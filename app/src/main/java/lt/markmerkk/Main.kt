@@ -75,14 +75,12 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
     }
 
     private fun setupLogger(isDebug: Boolean) {
-        val configFilePath = if (isDebug) {
-            "debug_log4j2.xml"
-        } else {
-            "prod_log4j2.xml"
+        if (isDebug) {
+            logger.info("Reloading logger config")
+            val context = LogManager.getContext(false) as LoggerContext
+            val file = File(javaClass.classLoader.getResource("debug_log4j2.xml").file)
+            context.configLocation = file.toURI()
         }
-        val context = LogManager.getContext(false) as LoggerContext
-        val file = File(javaClass.classLoader.getResource(configFilePath).file)
-        context.configLocation = file.toURI()
     }
 
     override fun stop() {
