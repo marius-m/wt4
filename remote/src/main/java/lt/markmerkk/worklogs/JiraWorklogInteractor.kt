@@ -49,7 +49,7 @@ class JiraWorklogInteractor(
             val worklogs = issueWorklogPair.worklogs
                     .filter {
                         isCurrentUserLog(
-                                activeUsername = userSettings.username,
+                                activeUsername = userSettings.jiraUser().name, // todo: optimize this, also on basic auth will not work any more
                                 worklog = it
                         )
                     }
