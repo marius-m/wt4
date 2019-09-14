@@ -6,20 +6,25 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
-import lt.markmerkk.entities.database.interfaces.IExecutor
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.interactors.KeepAliveInteractor
 import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
+import lt.markmerkk.migrations.Migration1To2
+import lt.markmerkk.migrations.Migration2To3
+import lt.markmerkk.migrations.Migration3To4
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.JiraTicketSearch
-import lt.markmerkk.tickets.TicketsNetworkRepo
+import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
+import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.worklogs.JiraWorklogInteractor
+import lt.markmerkk.worklogs.WorklogApi
 import javax.inject.Singleton
 
 /**
@@ -118,38 +123,97 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun providesDbExecutor(
+    fun providesDatabaseProvider(
             config: Config,
-            userSettings: UserSettings
-    ): IExecutor {
-//        if (config.debug) {
-//            return DBTestExecutor()
-//        }
-        // App path will be different for debug anyway
-        return DBProdExecutor(
-                config = config,
-                settings = userSettings
+            timeProvider: TimeProvider
+    ): DBConnProvider {
+        val migrations = listOf(
+                Migration0To1(
+                        oldDatabase = DBConnProvider(
+                                databaseName = "wt4_1.db",
+                                databasePath = config.cfgPath
+                        ),
+                        newDatabase = DBConnProvider(
+                                "wt4_2.db",
+                                config.cfgPath
+                        )
+                ),
+                Migration1To2(
+                        oldDatabase = DBConnProvider(
+                                databaseName = "wt4_1.db",
+                                databasePath = config.cfgPath
+                        ),
+                        newDatabase = DBConnProvider(
+                                "wt4_2.db",
+                                config.cfgPath
+                        ),
+                        timeProvider = timeProvider
+                ),
+                Migration2To3(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration3To4(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                )
         )
+        val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
+        MigrationsRunner(dbConnProvider)
+                .run(migrations)
+        return dbConnProvider
     }
 
     @Provides
     @Singleton
-    fun providesDatabaseRepo(): TicketsDatabaseRepo {
-        val migrations = listOf(
-                Migration0To1(oldDatabase = DBConnProvider("wt4_1.db"))
+    fun providesDatabaseRepo(
+            databaseProvider: DBConnProvider
+    ): TicketStorage {
+        return TicketStorage(databaseProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun providesWorklogStorage(
+            connProvider: DBConnProvider,
+            timeProvider: TimeProvider
+    ): WorklogStorage {
+        return WorklogStorage(timeProvider, DBInteractorLogJOOQ(connProvider, timeProvider))
+    }
+
+    @Provides
+    @Singleton
+    fun providesWorklogApi(
+            jiraClientProvider: JiraClientProvider,
+            userSettings: UserSettings,
+            timeProvider: TimeProvider,
+            ticketStorage: TicketStorage,
+            worklogStorage: WorklogStorage
+    ): WorklogApi {
+        return WorklogApi(
+                jiraClientProvider,
+                JiraWorklogInteractor(
+                        jiraClientProvider,
+                        timeProvider,
+                        userSettings
+                ),
+                ticketStorage,
+                worklogStorage
         )
-        val database = DBConnProvider("wt4_2.db")
-        return TicketsDatabaseRepo(database, migrations)
     }
 
     @Provides
     @Singleton
     fun providesTicketsNetworkRepo(
-            ticketsDatabaseRepo: TicketsDatabaseRepo,
+            ticketsDatabaseRepo: TicketStorage,
             jiraClientProvider: JiraClientProvider,
             userSettings: UserSettings
-    ): TicketsNetworkRepo {
-        return TicketsNetworkRepo(
+    ): TicketApi {
+        return TicketApi(
                 jiraClientProvider,
                 JiraTicketSearch(),
                 ticketsDatabaseRepo,
@@ -160,13 +224,18 @@ class AppModule(
     @Provides
     @Singleton
     fun providesTimeProvider(): TimeProvider {
-        return TimeProvider()
+        return TimeProviderJfx()
     }
 
     @Provides
     @Singleton
-    fun provideBasicLogStorage(dbExecutor: IExecutor): LogStorage { // todo : temp solution
-        return LogStorage(dbExecutor)
+    fun provideBasicLogStorage(
+            worklogRepo: WorklogStorage,
+            timeProvider: TimeProvider,
+            schedulerProvider: SchedulerProvider
+    ): LogStorage {
+//        return LogStorageLegacy(dbExecutor, worklogRepo, timeProvider) // rename to restore old usage
+        return LogStorage(worklogRepo, timeProvider)
     }
 
     @Provides
@@ -216,6 +285,14 @@ class AppModule(
     @Singleton
     fun provideResultDispatcher(): ResultDispatcher {
         return ResultDispatcher()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogChangeValidator(
+            logStorage: LogStorage
+    ): LogChangeValidator {
+        return LogChangeValidator(logStorage)
     }
 
 }

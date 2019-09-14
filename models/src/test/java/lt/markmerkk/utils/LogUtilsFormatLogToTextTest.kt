@@ -30,7 +30,7 @@ class LogUtilsFormatLogToTextTest {
         val result = LogUtils.formatLogToText(log)
 
         // Assert
-        assertThat(result).isEqualTo("DEV-123 (5m) valid_comment")
+        assertThat(result).isEqualTo("DEV-123 (03:00 - 03:05 = 5m) valid_comment")
     }
 
     @Test
@@ -46,7 +46,7 @@ class LogUtilsFormatLogToTextTest {
         val result = LogUtils.formatLogToText(log)
 
         // Assert
-        assertThat(result).isEqualTo("(5m) valid_comment")
+        assertThat(result).isEqualTo("(03:00 - 03:05 = 5m) valid_comment")
     }
 
     @Test
@@ -62,7 +62,7 @@ class LogUtilsFormatLogToTextTest {
         val result = LogUtils.formatLogToText(log)
 
         // Assert
-        assertThat(result).isEqualTo("DEV-123 (5m)")
+        assertThat(result).isEqualTo("DEV-123 (03:00 - 03:05 = 5m)")
     }
 
     @Test
@@ -77,7 +77,7 @@ class LogUtilsFormatLogToTextTest {
         val result = LogUtils.formatLogToText(log)
 
         // Assert
-        assertThat(result).isEqualTo("(5m)")
+        assertThat(result).isEqualTo("(03:00 - 03:05 = 5m)")
     }
 
 }

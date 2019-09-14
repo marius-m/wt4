@@ -1,55 +1,41 @@
 package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.Mocks
-import lt.markmerkk.TicketsDatabaseRepo
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
-import lt.markmerkk.entities.Ticket
+import lt.markmerkk.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import rx.Observable
 import rx.Single
 import rx.schedulers.TestScheduler
+import rx.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class TicketLoaderApplyFilterTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
     @Mock lateinit var timeProvider: TimeProvider
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
-    @Mock lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    @Mock lateinit var ticketStorage: TicketStorage
+    @Mock lateinit var ticketApi: TicketApi
     @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
 
     private val testScheduler = TestScheduler()
-    private val tickets: List<Ticket> = listOf(
-            "google",           // TTS-001
-            "bing",             // TTS-002
-            "facebook",         // TTS-003
-            "linkedin",         // TTS-004
-            "twitter",          // TTS-005
-            "googleplus",       // TTS-006
-            "bingnews",         // TTS-007
-            "plexoogl"          // TTS-008
-    ).mapIndexed { index: Int, description: String ->
-        Mocks.createTicket(code = "TTS-00${index + 1}", description = description)
-    }
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         loader = TicketLoader(
                 listener,
-                ticketsDatabaseRepo,
-                ticketsNetworkRepo,
+                ticketStorage,
+                ticketApi,
                 timeProvider,
                 userSettings,
                 testScheduler,
                 testScheduler
         )
-        doReturn(Single.just(tickets)).whenever(ticketsDatabaseRepo).loadTickets()
+        doReturn(Single.just(MocksTickets.tickets)).whenever(ticketStorage).loadTickets()
     }
 
     @Test
@@ -60,27 +46,32 @@ class TicketLoaderApplyFilterTest {
         loader.loadTickets()
         reset(listener)
 
-        loader.applyFilter(inputFilter = "TTS-005")
+        loader.changeFilterStream(Observable.just("TTS-115"))
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verify(listener).onTicketsAvailable(listOf(tickets[4])) // only TTS-005
+        verify(listener).onFoundTickets(listOf(
+                TicketLoader.TicketScore(MocksTickets.tickets[4], 29)
+        )) // only TTS-005
     }
 
     @Test
     fun tooLittleTimePass() {
         // Assemble
-        // Act
-        loader.onAttach()
-        loader.loadTickets()
-        testScheduler.advanceTimeBy(100, TimeUnit.MILLISECONDS)
-        reset(listener)
+        val publishSubject = PublishSubject.create<String>()
 
-        loader.applyFilter(inputFilter = "TTS-005")
+        // Act
+        loader.changeFilterStream(publishSubject)
+        testScheduler.triggerActions()
+        publishSubject.onNext("TTS-005")
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS - 200, TimeUnit.MILLISECONDS)
+        verifyZeroInteractions(listener)
+
+        // Act
+        testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verifyZeroInteractions(listener)
+        verify(listener).onFoundTickets(any())
     }
 
 }

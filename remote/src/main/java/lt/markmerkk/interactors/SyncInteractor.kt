@@ -9,7 +9,6 @@ interface SyncInteractor {
     fun onDetach()
 
     fun stop()
-    fun syncAll()
     fun syncLogs()
     fun addLoadingListener(listener: IRemoteLoadListener)
     fun removeLoadingListener(listener: IRemoteLoadListener)

@@ -1,5 +1,7 @@
 package lt.markmerkk.entities
 
+import javafx.scene.paint.Color
+
 /**
  * Defines sync status for the entries
  */
@@ -25,21 +27,26 @@ enum class SyncStatus {
     WAITING_FOR_SYNC,
     ;
 
+    fun toColor(): Color {
+        return when (this) {
+            INVALID -> Color.TRANSPARENT
+            IN_SYNC -> Color.GREEN
+            ERROR -> Color.RED
+            WAITING_FOR_SYNC -> Color.ORANGE
+        }
+    }
+
     companion object {
         /**
          * Exposes [SyncStatus] from [SimpleLog]
          */
         @JvmStatic fun exposeStatus(simpleLog: SimpleLog): SyncStatus {
-            if (simpleLog.isDirty) {
-                return WAITING_FOR_SYNC
+            return when {
+                simpleLog.isError -> ERROR
+                simpleLog.isRemote -> IN_SYNC
+                !simpleLog.isRemote -> WAITING_FOR_SYNC
+                else -> INVALID
             }
-            if (simpleLog.isError) {
-                return ERROR
-            }
-            if (!simpleLog.canEdit()) {
-                return IN_SYNC
-            }
-            return INVALID
         }
 
         /**

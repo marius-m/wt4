@@ -1,13 +1,17 @@
 package lt.markmerkk.mvp
 
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.interactors.ActiveLogPersistence
 import org.joda.time.DateTime
-import java.time.*
 
+/**
+ * Responsible for handling time change and input disable / enable
+ * todo would benefit from refurbish, as remote logs can be updated, much of logic can be dropped
+ */
 class LogEditServiceImpl(
         private val logEditInteractor: LogEditInteractor,
+        private val timeProvider: TimeProvider,
         private val listener: LogEditService.Listener
 ) : LogEditService {
 
@@ -20,15 +24,11 @@ class LogEditServiceImpl(
             .build()
 
     override fun updateDateTime(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime
+            start: DateTime,
+            end: DateTime
     ) {
-        val startInDateTime = LocalDateTime.of(startDate, startTime)
-        val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
-            entityInEdit = logEditInteractor.updateDateTime(entityInEdit, startInDateTime, endInDateTime)
+            entityInEdit = logEditInteractor.updateDateTime(entityInEdit, start, end)
             listener.onDurationChange(entityInEdit.prettyDuration)
             listener.onEnableSaving()
         } catch(e: IllegalArgumentException) {
@@ -38,20 +38,16 @@ class LogEditServiceImpl(
     }
 
     override fun saveEntity(
-            startDate: LocalDate,
-            startTime: LocalTime,
-            endDate: LocalDate,
-            endTime: LocalTime,
+            start: DateTime,
+            end: DateTime,
             task: String,
             comment: String
     ) {
-        val startInDateTime = LocalDateTime.of(startDate, startTime)
-        val endInDateTime = LocalDateTime.of(endDate, endTime)
         try {
             entityInEdit = logEditInteractor.updateTimeConvenience(
                     entityInEdit,
-                    startInDateTime,
-                    endInDateTime,
+                    start,
+                    end,
                     task,
                     comment
             )
@@ -70,20 +66,11 @@ class LogEditServiceImpl(
      * Triggers according functions to show on screen
      */
     override fun redraw() {
-        val start = Instant.ofEpochMilli(entityInEdit.start).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        val end = Instant.ofEpochMilli(entityInEdit.end).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        listener.onDataChange(
-                start,
-                end,
-                entityInEdit.task ?: "",
-                entityInEdit.comment ?: ""
-        )
-        updateDateTime(
-                start.toLocalDate(),
-                start.toLocalTime(),
-                end.toLocalDate(),
-                end.toLocalTime()
-        )
+        val start = timeProvider.roundDateTime(entityInEdit.start)
+        val end = timeProvider.roundDateTime(entityInEdit.end)
+        listener.onDataChange(start, end)
+        updateDateTime(start, end)
+        listener.onGenericNotification(entityInEdit.systemNote)
         printNotificationIfNeeded(entityInEdit)
     }
 
@@ -91,19 +78,16 @@ class LogEditServiceImpl(
      * Generates a generic type of notification for the user
      */
     private fun printNotificationIfNeeded(entity: SimpleLog) {
-        if (!entity.canEdit()) {
-            listener.onGenericNotification("Worklog is already in sync with JIRA")
+        if (entity.isRemote) {
             listener.onDisableInput()
             listener.onDisableSaving()
             return
         }
-        if (entity.isError) {
-            listener.onGenericNotification(entity.errorMessage ?: "")
+        if (entity.systemNote.isNotEmpty()) {
             listener.onEnableInput()
             listener.onEnableSaving()
             return
         }
-        listener.onGenericNotification("")
         listener.onEnableInput()
         listener.onEnableSaving()
     }

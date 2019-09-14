@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import lt.markmerkk.utils.LogUtils;
 import net.rcarz.jiraclient.WorkLog;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
@@ -12,6 +13,7 @@ import org.joda.time.DurationFieldType;
  * Created by mariusmerkevicius on 11/22/15.
  * A helper class to validate and build {@link SimpleLog} object
  */
+@Deprecated // should be replaced with 'Log' eventually
 public class SimpleLogBuilder {
   private long _id = -1;
   private long now;
@@ -20,6 +22,7 @@ public class SimpleLogBuilder {
   private long end;
   private String task;
   private String comment;
+  @NotNull private String systemNote = "";
 
   private long duration;
 
@@ -61,6 +64,7 @@ public class SimpleLogBuilder {
         .getMillis();
     this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
+    this.systemNote = "";
     this.uri = remoteLog.getSelf();
     this.id = parseUri(this.uri);
 
@@ -87,6 +91,7 @@ public class SimpleLogBuilder {
         .getMillis();
     this.task = LogUtils.INSTANCE.validateTaskTitle(task);
     this.comment = remoteLog.getComment();
+    this.systemNote = simpleLog.systemNote;
 
     this.uri = remoteLog.getSelf();
     this.id = parseUri(this.uri);
@@ -106,7 +111,7 @@ public class SimpleLogBuilder {
     this.end = log.end;
     this.task = log.task;
     this.comment = log.comment;
-
+    this.systemNote = log.systemNote;
 
     this.uri = log.uri;
     this.id = log.id;
@@ -155,16 +160,44 @@ public class SimpleLogBuilder {
   }
 
   /**
-   * Composes a new log normally with error message
-   * @param errorMessage error log
+   * Builds {@link SimpleLog} with legacy params
+   * Temporary measure to handle migration
    * @return
    */
-  public SimpleLog buildWithError(String errorMessage) {
-    SimpleLog newSimpleLog = build();
-    newSimpleLog.dirty = false;
-    newSimpleLog.error = true;
-    newSimpleLog.errorMessage = errorMessage;
-    return newSimpleLog;
+  public SimpleLog buildLegacy(
+          long now,
+          long localId,
+          long start,
+          long end,
+          long duration,
+          String task,
+          String comment,
+          String systemNote,
+          long remoteId,
+          boolean isDeleted,
+          boolean isDirty,
+          boolean isError,
+          String errorMessage,
+          long fetchTime,
+          String url
+  ) {
+    SimpleLog legacyLog = new SimpleLogBuilder(now)
+            .build();
+    legacyLog._id = localId;
+    legacyLog.start = start;
+    legacyLog.end = end;
+    legacyLog.duration = duration;
+    legacyLog.task = task;
+    legacyLog.comment = comment;
+    legacyLog.id = remoteId;
+    legacyLog.deleted = isDeleted;
+    legacyLog.dirty = isDirty;
+    legacyLog.error = isError;
+    legacyLog.errorMessage = errorMessage;
+    legacyLog.download_millis = fetchTime;
+    legacyLog.uri = url;
+    legacyLog.systemNote = systemNote;
+    return legacyLog;
   }
 
   /**
@@ -189,6 +222,7 @@ public class SimpleLogBuilder {
     newSimpleLog.duration = this.duration;
     newSimpleLog.task = normalize(this.task);
     newSimpleLog.comment = normalize(this.comment);
+    newSimpleLog.systemNote = systemNote;
     newSimpleLog.uri = this.uri;
     newSimpleLog.id = this.id;
 

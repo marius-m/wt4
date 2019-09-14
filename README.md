@@ -13,6 +13,13 @@ Sandbox app for tracking work on JIRA
 * Profiles for multiple JIRA accounts
 * Every major platform
 
+## Download EAP
+There are some builds that are not stable enough to use it as it's in development stage, but you can certainly try to run it thought:
+* Mac
+  - [DMG installer](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.3.0.dmg)
+* Winows
+  - [Exe installer](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.3.0.exe)
+
 ## Download
 
 * MacOSX: 

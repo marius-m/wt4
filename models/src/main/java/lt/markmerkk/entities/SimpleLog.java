@@ -3,17 +3,17 @@ package lt.markmerkk.entities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import lt.markmerkk.entities.database.annotations.Column;
-import lt.markmerkk.entities.database.annotations.FieldType;
-import lt.markmerkk.entities.database.annotations.Table;
 import lt.markmerkk.utils.LogFormatters;
 import lt.markmerkk.utils.LogUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 /**
  * Created by mariusmerkevicius on 11/20/15.
  * Represents a worklog entity
  */
-@Table(name = "Log")
+@Deprecated // Should be replaced with 'Log' eventually
+//@Table(name = "Log")
 public class SimpleLog extends RemoteEntity {
   //public final static DateTimeFormatter shortFormat = DateTimeFormat.forPattern("HH:mm");
   //public final static DateTimeFormatter longFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
@@ -25,16 +25,17 @@ public class SimpleLog extends RemoteEntity {
   private static final String KEY_TASK = "task";
   private static final String KEY_COMMENT = "comment";
 
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long start;
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long end;
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long duration;
-  @Column(value = FieldType.TEXT)
+//  @Column(value = FieldType.TEXT)
   String task;
-  @Column(value = FieldType.TEXT)
+//  @Column(value = FieldType.TEXT)
   String comment;
+  String systemNote;
 
   //region Getters / Setters
 
@@ -78,12 +79,20 @@ public class SimpleLog extends RemoteEntity {
     return duration;
   }
 
+  public String getSystemNote() {
+    return systemNote;
+  }
+
   /**
    * Defines if entity can be edited
    * @return
    */
   public boolean canEdit() {
-    return id <= 0;
+    return !isRemote();
+  }
+
+  public boolean isRemote() {
+    return id > 0;
   }
 
   //endregion
@@ -111,11 +120,26 @@ public class SimpleLog extends RemoteEntity {
 
   //endregion
 
-  @Override public String toString() {
-    return task + " : " +
-        LogFormatters.INSTANCE.getLongFormat().print(start) +
-        " + " + LogFormatters.INSTANCE.getLongFormat().print(end) +
-        " = " + LogUtils.INSTANCE.formatShortDuration(duration) +
-        " / \"" + comment + "\"";
+
+  @Override
+  public String toString() {
+    final DateTime dateTimeStart = new DateTime(start);
+    final DateTime dateTimeEnd = new DateTime(end);
+    final Duration durationObj = new Duration(duration);
+    return "SimpleLog{" +
+            "start=" + LogFormatters.INSTANCE.getLongFormat().print(dateTimeStart) +
+            ", end=" + LogFormatters.INSTANCE.getLongFormat().print(dateTimeEnd) +
+            ", duration=" + durationObj.toString() +
+            ", task='" + task + '\'' +
+            ", comment='" + comment + '\'' +
+            ", id=" + id +
+            ", uri='" + uri + '\'' +
+            ", deleted=" + deleted +
+            ", dirty=" + dirty +
+            ", error=" + error +
+            ", errorMessage='" + errorMessage + '\'' +
+            ", download_millis=" + download_millis +
+            ", _id=" + _id +
+            '}';
   }
 }

@@ -5,12 +5,20 @@ apply plugin: "org.jetbrains.kotlin.kapt"
 apply plugin: "idea"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "de.fuerstenau.buildconfig"
-apply from: "deploy.gradle"
 
-mainClassName = "lt.markmerkk.Main2"
+application {
+    mainClassName = "lt.markmerkk.MainAsJava"
 
-group = "lt.markmerkk"
-version = versionName
+    group = "lt.markmerkk"
+    version = versionName
+}
+
+run {
+    println("Running app as DEBUG: $project.debug")
+    def logConfig = (project.debug) ? "debug_log4j2.xml" : "prod_log4j2.xml"
+    println("Using logging config: $logConfig")
+    jvmArgs = ["-Dlog4j.configurationFile=$logConfig"]
+}
 
 sourceSets {
     main {
@@ -32,6 +40,10 @@ sourceSets {
     main.java.srcDirs += "src/main/kotlin"
 }
 
+compileKotlin {
+    kotlinOptions.jvmTarget= "1.8"
+}
+
 kapt {
     generateStubs = true
 }
@@ -47,32 +59,31 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
     implementation project(":components")
-    implementation project(":database")
     implementation project(":database2")
     implementation project(":remote")
     implementation project(":jira-client")
     implementation project(":models")
     implementation project(":mock-factory")
 
+    implementation 'no.tornado:tornadofx:1.7.17'
     implementation "com.brsanthu:google-analytics-java:1.1.2"
-    implementation "io.reactivex:rxjavafx:0.0.2"
+    implementation "io.reactivex:rxjavafx:1.1.0"
     implementation "com.google.guava:guava:21.0"
     implementation "com.jfoenix:jfoenix:8.0.8"
     implementation "io.reactivex:rxjava:${versions.rxJava}"
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
     implementation "org.bouncycastle:bcprov-jdk15on:1.51"
     implementation "com.google.protobuf:protobuf-java:3.7.0"
+    implementation "org.scribe:scribe:1.3.7"
 
     implementation("com.google.dagger:dagger:${versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${versions.dagger}")
 
     implementation "joda-time:joda-time:${versions.jodaTime}"
-    implementation "com.airhacks:afterburner.fx:1.7.0"
-    implementation "org.jfxtras:jfxtras-agenda:8.0-r5"
-    implementation "com.calendarfx:view:8.4.2"
+    implementation "com.calendarfx:view:8.5.0"
 
     implementation "org.slf4j:slf4j-api:${versions.slf4j}"
-    implementation "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j}"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.kotlinTest}"
@@ -89,15 +100,12 @@ buildConfig {
     buildConfigField("int", "versionCode", project.versionCode)
     buildConfigField("boolean", "debug", project.debug.toString())
     buildConfigField("String", "gaKey", project.gaKey)
+    buildConfigField("boolean", "oauth", project.oauth.toString())
+    buildConfigField("String", "oauthKeyConsumer", project.oauth_key_consumer)
+    buildConfigField("String", "oauthKeyPrivate", project.oauth_key_private)
+    buildConfigField("String", "oauthHost", project.oauth_host)
 
-//    versionCode = project.versionCode
-//    debug = false
-//    gaKey = "test"
-
-    clsName = 'BuildConfig'
     packageName = project.group
     charset = 'UTF-8'
 }
 
-//shadowJar.dependsOn assemble
-//jfxNative.dependsOn processJar

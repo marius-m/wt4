@@ -1,22 +1,23 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.IDataStorage
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
-import java.time.LocalDateTime
-import java.time.ZoneId
+import org.joda.time.DateTime
 
 class LogEditInteractorImpl(
-        private val dataStorage: IDataStorage<SimpleLog>
+        private val dataStorage: IDataStorage<SimpleLog>,
+        private val timeProvider: TimeProvider
 ) : LogEditInteractor {
 
     override fun updateDateTime(
             currentEntity: SimpleLog,
-            startInDateTime: LocalDateTime,
-            endInDateTime: LocalDateTime
+            startInDateTime: DateTime,
+            endInDateTime: DateTime
     ): SimpleLog {
-        val startInMillis = startInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val endInMillis = endInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val startInMillis = timeProvider.roundMillis(startInDateTime)
+        val endInMillis = timeProvider.roundMillis(endInDateTime)
         return updateCurrentEntity(
                 currentEntity,
                 startInMillis,
@@ -28,13 +29,13 @@ class LogEditInteractorImpl(
 
     override fun updateTimeConvenience(
             currentEntity: SimpleLog,
-            startInDateTime: LocalDateTime,
-            endInDateTime: LocalDateTime,
+            startInDateTime: DateTime,
+            endInDateTime: DateTime,
             task: String,
             comment: String
     ): SimpleLog {
-        val startInMillis = startInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val endInMillis = endInDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val startInMillis = timeProvider.roundMillis(startInDateTime)
+        val endInMillis = timeProvider.roundMillis(endInDateTime)
         return updateCurrentEntity(
                 currentEntity,
                 startInMillis,

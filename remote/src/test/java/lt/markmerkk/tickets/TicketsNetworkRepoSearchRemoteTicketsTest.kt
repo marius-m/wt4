@@ -2,7 +2,8 @@ package lt.markmerkk.tickets
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
-import net.rcarz.jiraclient.Issue
+import lt.markmerkk.exceptions.AuthException
+import lt.markmerkk.schema1.tables.Ticket
 import net.rcarz.jiraclient.JiraClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -11,20 +12,21 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Observable
 import rx.Single
+import java.lang.RuntimeException
 
 class TicketsNetworkRepoSearchRemoteTicketsTest {
 
     @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraTicketSearch: JiraTicketSearch
-    @Mock lateinit var ticketsDatabaseRepo: TicketsDatabaseRepo
+    @Mock lateinit var ticketsDatabaseRepo: TicketStorage
     @Mock lateinit var jiraClient: JiraClient
     @Mock lateinit var userSettings: UserSettings
-    lateinit var ticketsNetworkRepo: TicketsNetworkRepo
+    lateinit var ticketApi: TicketApi
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        ticketsNetworkRepo = TicketsNetworkRepo(
+        ticketApi = TicketApi(
                 jiraClientProvider,
                 jiraTicketSearch,
                 ticketsDatabaseRepo,
@@ -36,23 +38,23 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
     @Test
     fun validSearch() {
         // Assemble
-        val remoteIssues = listOf(
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue()
+        val apiTickets = listOf(
+                Mocks.createTicket(id = 1),
+                Mocks.createTicket(id = 2),
+                Mocks.createTicket(id = 3)
         )
         val dbTickets = listOf(
                 Mocks.createTicket(),
                 Mocks.createTicket(),
                 Mocks.createTicket()
         )
-        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any())
+        doReturn(jiraClient).whenever(jiraClientProvider).client()
+        doReturn(Observable.from(apiTickets)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
         doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
@@ -66,70 +68,34 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
     }
 
     @Test
-    fun validSearch_multiplePages() {
-        // Assemble
-        val remoteIssuesPage1 = listOf(
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue()
-        )
-        val remoteIssuesPage2 = listOf(
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue(),
-                JiraMocks.mockJiraIssue()
-        )
-        val dbTickets = listOf(
-                Mocks.createTicket(),
-                Mocks.createTicket(),
-                Mocks.createTicket()
-        )
-        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.from(listOf(remoteIssuesPage1, remoteIssuesPage2)))
-                .whenever(jiraTicketSearch).searchIssues(any(), any())
-        doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
-        doReturn(Single.just(1)).whenever(ticketsDatabaseRepo).insertOrUpdate(any())
-
-        // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
-                .test()
-
-        // Assert
-        result.assertNoErrors()
-        result.assertValueCount(1)
-
-        verify(ticketsDatabaseRepo, times(6)).insertOrUpdate(any())
-        verify(ticketsDatabaseRepo).loadTickets()
-    }
-
-    @Test
     fun clientError() {
         // Assemble
-        doReturn(Single.error<Any>(IllegalArgumentException())).whenever(jiraClientProvider).clientStream()
+        doThrow(AuthException(RuntimeException())).whenever(jiraClientProvider).client()
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert
-        result.assertError(java.lang.IllegalArgumentException::class.java)
+        result.assertError(AuthException::class.java)
         verifyZeroInteractions(ticketsDatabaseRepo)
     }
 
     @Test
     fun noTickets() {
         // Assemble
-        val remoteIssues = emptyList<Issue>()
+        val remoteIssues = emptyList<Ticket>()
         val dbTickets = listOf(
                 Mocks.createTicket(),
                 Mocks.createTicket(),
                 Mocks.createTicket()
         )
-        doReturn(Single.just(jiraClient)).whenever(jiraClientProvider).clientStream()
-        doReturn(Observable.just(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any())
+        doReturn(jiraClient).whenever(jiraClientProvider).client()
+        doReturn(Observable.from(remoteIssues)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
         doReturn(Single.just(dbTickets)).whenever(ticketsDatabaseRepo).loadTickets()
 
         // Act
-        val result = ticketsNetworkRepo.searchRemoteTicketsAndCache(now = TimeMachine.now())
+        val result = ticketApi.searchRemoteTicketsAndCache(now = TimeMachine.now())
                 .test()
 
         // Assert

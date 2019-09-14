@@ -2,15 +2,12 @@ package lt.markmerkk.utils
 
 import com.calendarfx.model.Entry
 import com.calendarfx.model.Interval
+import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SyncStatus
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-
 
 /**
  * Loads data for the day view
@@ -18,6 +15,7 @@ import java.time.ZoneId
  */
 class CalendarFxLogLoader(
         private val view: View,
+        private val timeProvider: TimeProvider,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
@@ -32,17 +30,12 @@ class CalendarFxLogLoader(
 
     fun load(logs: List<SimpleLog>) {
         subscription?.unsubscribe()
-        subscription = Observable.just(logs)
+        subscription = Observable.defer { Observable.just(logs) }
                 .subscribeOn(ioScheduler)
-                .map {
-                    it.map {
-                        val zoneId = ZoneId.systemDefault()
-                        val startDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.start), zoneId)
-                                .withSecond(0)
-                                .withNano(0)
-                        val endDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.end), zoneId)
-                                .withSecond(0)
-                                .withNano(0)
+                .map { logEntry ->
+                    logEntry.map {
+                        val startDateTime = timeProvider.roundDateTimeJava8(it.start)
+                        val endDateTime = timeProvider.roundDateTimeJava8(it.end)
                         val entry = Entry<SimpleLog>(
                                 LogUtils.formatLogToText(it),
                                 Interval(
@@ -50,7 +43,7 @@ class CalendarFxLogLoader(
                                         startDateTime.toLocalTime(),
                                         endDateTime.toLocalDate(),
                                         endDateTime.toLocalTime(),
-                                        zoneId
+                                        timeProvider.zoneId
                                 )
                         )
                         entry.userObject = it
@@ -58,7 +51,7 @@ class CalendarFxLogLoader(
                     }
                 }
                 .observeOn(uiScheduler)
-                .subscribe({
+                .subscribe {
                     if (it.isEmpty()) {
                         view.onCalendarNoEntries()
                     } else {
@@ -69,7 +62,7 @@ class CalendarFxLogLoader(
                                 entriesInError = it.filter { SyncStatus.exposeStatus(it.userObject) == SyncStatus.ERROR }
                         )
                     }
-                })
+                }
     }
 
     //region Classes

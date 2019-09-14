@@ -1,7 +1,7 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
-import java.time.LocalDateTime
+import org.joda.time.DateTime
 
 /**
  * Responsible for updating log data
@@ -14,8 +14,8 @@ interface LogEditInteractor {
     @Throws(IllegalArgumentException::class)
     fun updateDateTime(
             currentEntity: SimpleLog,
-            startInDateTime: LocalDateTime,
-            endInDateTime: LocalDateTime
+            startInDateTime: DateTime,
+            endInDateTime: DateTime
     ): SimpleLog
 
     /**
@@ -24,8 +24,8 @@ interface LogEditInteractor {
     @Throws(IllegalArgumentException::class)
     fun updateTimeConvenience(
             currentEntity: SimpleLog,
-            startInDateTime: LocalDateTime,
-            endInDateTime: LocalDateTime,
+            startInDateTime: DateTime,
+            endInDateTime: DateTime,
             task: String,
             comment: String
     ): SimpleLog

@@ -1,9 +1,6 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.Tags
-import lt.markmerkk.TicketsDatabaseRepo
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.joda.time.DateTime
@@ -12,7 +9,6 @@ import rx.Observable
 import rx.Scheduler
 import rx.Single
 import rx.Subscription
-import rx.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 /**
@@ -20,39 +16,36 @@ import java.util.concurrent.TimeUnit
  */
 class TicketLoader(
         private val listener: Listener,
-        private val ticketsDatabaseRepo: TicketsDatabaseRepo,
-        private val ticketsNetworkRepo: TicketsNetworkRepo,
+        private val ticketStorage: TicketStorage,
+        private val ticketApi: TicketApi,
         private val timeProvider: TimeProvider,
         private val userSettings: UserSettings,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
 
-    private val inputFilterSubject = BehaviorSubject.create<String>("")
     private var inputFilterSubscription: Subscription? = null
     private var networkSubscription: Subscription? = null
     private var dbSubscription: Subscription? = null
+    private var dbSubsCodes: Subscription? = null
 
-    private var tickets: List<Ticket> = emptyList()
-    private var inputFilter: String = ""
+    private var projectCode: ProjectCode = ProjectCode.asEmpty()
 
-    fun onAttach() {
-        inputFilterSubscription = inputFilterSubject
-                .throttleLast(FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
-                .flatMap { Observable.just(filter(tickets, it)) }
-                .observeOn(uiScheduler)
-                .subscribe { listener.onTicketsAvailable(it) }
-    }
+    fun onAttach() { }
 
     fun onDetach() {
+        dbSubsCodes?.unsubscribe()
         dbSubscription?.unsubscribe()
         networkSubscription?.unsubscribe()
         inputFilterSubscription?.unsubscribe()
     }
 
     fun fetchTickets(
-            forceRefresh: Boolean = false
+            forceRefresh: Boolean = false,
+            inputFilter: String = "",
+            projectCode: ProjectCode = ProjectCode.asEmpty()
     ) {
+        this.projectCode = projectCode
         networkSubscription?.unsubscribe()
         val now = timeProvider.now()
         val isFreshEnough = isTicketFreshEnough(
@@ -62,19 +55,22 @@ class TicketLoader(
         )
         if (isFreshEnough && !forceRefresh) {
             logger.info("Ignoring ticket search, as tickets are fresh enough")
+            loadTickets(inputFilter, projectCode)
             return
         }
         logger.info("Refreshing tickets")
-        networkSubscription = ticketsNetworkRepo.searchRemoteTicketsAndCache(timeProvider.now())
+        networkSubscription = ticketApi.searchRemoteTicketsAndCache(timeProvider.now())
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { listener.onLoadStart() }
                 .doAfterTerminate { listener.onLoadFinish() }
+                .flatMap { loadTicketsAsStream(inputFilter, projectCode) }
                 .subscribe({
                     userSettings.ticketLastUpdate = now.millis
                     if (it.isNotEmpty()) {
-                        listener.onNewTickets(it)
-                        loadTickets(inputFilter)
+                        listener.onFoundTickets(it)
+                    } else {
+                        listener.onNoTickets()
                     }
                 }, {
                     listener.onError(it)
@@ -85,38 +81,75 @@ class TicketLoader(
         networkSubscription?.unsubscribe()
     }
 
-    fun loadTickets(inputFilter: String = "") {
-        logger.info("Loading tickets from database with filter: $inputFilter")
-        this.inputFilter = inputFilter
+    fun defaultProjectCodes(): List<ProjectCode> = listOf(ProjectCode.asEmpty())
+
+    fun loadProjectCodes() {
         dbSubscription?.unsubscribe()
-        dbSubscription = ticketsDatabaseRepo.loadTickets()
-                .map { filter(it, searchInput = inputFilter) }
+        dbSubscription = ticketStorage.loadTickets()
+                .map { tickets ->
+                    tickets.map { ProjectCode(it.code.codeProject) }
+                            .toSet()
+                }
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .subscribe({
+                    val projectCodes = listOf(ProjectCode.asEmpty())
+                            .plus(it.toList())
+                    listener.onProjectCodes(projectCodes)
+                }, {
+                    listener.onProjectCodes(listOf(ProjectCode.asEmpty()))
+                })
+    }
+
+    fun loadTickets(
+            inputFilter: String = "",
+            projectCode: ProjectCode = ProjectCode.asEmpty()
+    ) {
+        this.projectCode = projectCode
+        logger.info("Loading tickets from database with filter: $inputFilter")
+        dbSubscription?.unsubscribe()
+        dbSubscription = loadTicketsAsStream(inputFilter, projectCode)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({
                     if (it.isNotEmpty()) {
-                        listener.onTicketsAvailable(it)
-                        tickets = it
+                        listener.onFoundTickets(it)
                     } else {
                         listener.onNoTickets()
-                        tickets = emptyList()
                     }
                 }, {
                     listener.onError(it)
-                    tickets = emptyList()
                 })
     }
 
-    fun applyFilter(inputFilter: String) {
-        this.inputFilter = inputFilter
-        this.inputFilterSubject.onNext(inputFilter)
+    fun loadTicketsAsStream(
+            inputFilter: String,
+            projectCode: ProjectCode
+    ): Single<List<TicketScore>> {
+        return ticketStorage.loadTickets()
+                .map { tickets ->
+                    if (projectCode.isEmpty) {
+                        tickets
+                    } else {
+                        tickets.filter { it.code.codeProject == projectCode.name }
+                    }
+                }
+                .map { filter(it, searchInput = inputFilter) }
+    }
+
+    fun changeFilterStream(filterChange: Observable<String>) {
+        inputFilterSubscription = filterChange
+                .throttleLast(FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
+                .flatMapSingle { loadTicketsAsStream(it, projectCode) }
+                .observeOn(uiScheduler)
+                .subscribe { listener.onFoundTickets(it) }
     }
 
     interface Listener {
         fun onLoadStart()
         fun onLoadFinish()
-        fun onNewTickets(tickets: List<Ticket>)
-        fun onTicketsAvailable(tickets: List<Ticket>)
+        fun onProjectCodes(projectCodes: List<ProjectCode>)
+        fun onFoundTickets(tickets: List<TicketScore>)
         fun onNoTickets()
         fun onError(throwable: Throwable)
     }
@@ -125,8 +158,18 @@ class TicketLoader(
         private val logger = LoggerFactory.getLogger(Tags.TICKETS)
         const val TICKET_TIMEOUT_MINUTES = 30
         const val FILTER_MIN_INPUT = 1
-        const val FILTER_FUZZY_SCORE = 50
+        const val FILTER_FUZZY_SCORE = 20
         const val FILTER_INPUT_THROTTLE_MILLIS = 500L
+
+        /**
+         * @return unique project codes in tickets
+         */
+        fun filterProjectCodes(tickets: List<Ticket>): List<String> {
+            return tickets
+                    .map { it.code.codeProject }
+                    .toSet()
+                    .toList()
+        }
 
         /**
          * Checks if timeout has expired to fetch new tickets from
@@ -141,25 +184,34 @@ class TicketLoader(
                     .isAfter(now)
         }
 
-        fun filter(inputTickets: List<Ticket>, searchInput: String): List<Ticket> {
+        fun filter(inputTickets: List<Ticket>, searchInput: String): List<TicketScore> {
             if (searchInput.length <= FILTER_MIN_INPUT) {
-                return inputTickets
+                return inputTickets.map { TicketScore(it, 0) }
             }
-            val ticketDescriptions = inputTickets.map { it.description }
-            val topDescriptions = FuzzySearch.extractTop(searchInput, ticketDescriptions, 100)
+            val ticketDescriptions = inputTickets
+                    .map { it.description }
+            return FuzzySearch.extractTop(searchInput, ticketDescriptions, 100)
                     .filter { it.score > FILTER_FUZZY_SCORE }
-                    .map { it.string }
-            val ticketsWithSimilarCode = inputTickets
-                    .filter {
-                        it.code.codeProject.contains(searchInput, ignoreCase = true)
-                                || it.code.codeNumber.contains(searchInput)
-                                || it.code.code.contains(searchInput, ignoreCase = true)
-                    }
-            val ticketsWithFilterOnDescriptions = inputTickets.filter { topDescriptions.contains(it.description) }
-            val ticketResult = ticketsWithSimilarCode
-                    .plus(ticketsWithFilterOnDescriptions)
-            return ticketResult.distinct()
+                    .map { TicketScore(inputTickets[it.index], it.score) }
         }
     }
 
+    data class TicketScore(
+            val ticket: Ticket,
+            val filterScore: Int
+    )
+
+    data class ProjectCode(
+            val name: String
+    ) {
+        val isEmpty: Boolean = name.isEmpty()
+
+        companion object {
+            fun asEmpty(): ProjectCode = ProjectCode("")
+        }
+
+    }
+
 }
+
+fun Ticket.withScore(score: Int): TicketLoader.TicketScore = TicketLoader.TicketScore(this, score)

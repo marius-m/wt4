@@ -25,10 +25,8 @@ object UriUtils {
             val idString = segments[segments.size - 1]
             return java.lang.Long.parseLong(idString)
         } catch (e: URISyntaxException) {
-            logger.warn("Error parsing ID of remote", e)
             return Const.NO_ID
         } catch (e: NumberFormatException) {
-            logger.warn("Error parsing ID of remote", e)
             return Const.NO_ID
         }
     }

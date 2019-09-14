@@ -96,11 +96,19 @@ object LogUtils {
         return builder.toString()
     }
 
+    fun firstLine(input: String): String {
+        return input.split("\n")
+                .first()
+    }
+
     /**
      * Formats log as a pretty text
      */
     @JvmStatic fun formatLogToText(simpleLog: SimpleLog): String {
-        return "${simpleLog.task} (${formatShortDuration(simpleLog.duration)}) ${simpleLog.comment}"
+        val timeFrom = LogFormatters.shortFormat.print(simpleLog.start)
+        val timeTo = LogFormatters.shortFormat.print(simpleLog.end)
+        val duration = formatShortDuration(simpleLog.duration)
+        return "${simpleLog.task} ($timeFrom - $timeTo = $duration) ${firstLine(simpleLog.comment)}"
                 .trim()
     }
 

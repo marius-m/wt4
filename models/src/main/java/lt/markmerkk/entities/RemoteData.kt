@@ -7,19 +7,20 @@ data class RemoteData(
         val remoteId: Long,
         val isDeleted: Boolean,
         val isDirty: Boolean,
-        val isError: Boolean,
         val errorMessage: String,
         val fetchTime: Long,
         val url: String
 ) {
+
+    val isError = errorMessage.isNotEmpty()
+
     companion object {
 
         fun asEmpty(): RemoteData {
             return RemoteData(
                     remoteId = Const.NO_ID,
                     isDeleted = false,
-                    isDirty = false,
-                    isError = false,
+                    isDirty = true,
                     errorMessage = "",
                     fetchTime = 0,
                     url = ""
@@ -27,14 +28,14 @@ data class RemoteData(
         }
 
         fun new(
-                remoteId: Long,
                 isDeleted: Boolean = false,
-                isDirty: Boolean = false,
+                isDirty: Boolean = true,
                 isError: Boolean = false,
                 errorMessage: String = "",
                 fetchTime: Long,
                 url: String
         ): RemoteData? {
+            val remoteId = UriUtils.parseUri(url)
             if (remoteId == Const.NO_ID) {
                 return null
             }
@@ -42,7 +43,6 @@ data class RemoteData(
                     remoteId = remoteId,
                     isDeleted = isDeleted,
                     isDirty = isDirty,
-                    isError = isError,
                     errorMessage = errorMessage,
                     fetchTime = fetchTime,
                     url = url
@@ -50,11 +50,10 @@ data class RemoteData(
         }
 
         fun fromRemote(
-                remoteIdUrl: String,
                 fetchTime: Long,
                 url: String
         ): RemoteData? {
-            val remoteId = UriUtils.parseUri(remoteIdUrl)
+            val remoteId = UriUtils.parseUri(url)
             if (remoteId == Const.NO_ID) {
                 return null
             }
@@ -62,7 +61,6 @@ data class RemoteData(
                     remoteId = remoteId,
                     isDeleted = false,
                     isDirty = false,
-                    isError = false,
                     errorMessage = "",
                     fetchTime = fetchTime,
                     url = url
@@ -77,7 +75,18 @@ fun RemoteData?.markAsError(errorMessage: String): RemoteData? {
             remoteId = remoteId,
             isDeleted = isDeleted,
             isDirty = isDirty,
-            isError = true,
+            errorMessage = errorMessage,
+            fetchTime = fetchTime,
+            url = url
+    )
+}
+
+fun RemoteData?.markAsDelete(): RemoteData? {
+    if (this == null) return null
+    return RemoteData(
+            remoteId = remoteId,
+            isDeleted = true,
+            isDirty = isDirty,
             errorMessage = errorMessage,
             fetchTime = fetchTime,
             url = url

@@ -20,11 +20,11 @@ class HostServicesInteractorImpl(
         return "${userSettings.host}/browse/$issue"
     }
 
-    private val hostServices = HostServicesDelegate.getInstance(application)
+//    private val hostServices = HostServicesDelegate.getInstance(application)
 
     override fun openExternalIssue(issue: String) {
         if (userSettings.host.isEmpty()) return
-        hostServices?.showDocument(generateLink(issue))
+//        hostServices?.showDocument(generateLink(issue))
     }
 
     override fun copyLinkToClipboard(issue: String) {
@@ -35,7 +35,7 @@ class HostServicesInteractorImpl(
     }
 
     override fun openExternalLink(rawLink: String) {
-        hostServices?.showDocument(rawLink)
+//        hostServices?.showDocument(rawLink)
     }
 
 }

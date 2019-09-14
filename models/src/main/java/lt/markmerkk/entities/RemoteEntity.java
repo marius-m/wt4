@@ -3,15 +3,13 @@ package lt.markmerkk.entities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import lt.markmerkk.entities.database.annotations.Column;
-import lt.markmerkk.entities.database.annotations.FieldType;
-import lt.markmerkk.entities.database.annotations.Table;
 
 /**
  * Created by mariusmerkevicius on 11/20/15.
  * Represents basic entity that could be used remotely
  */
-@Table
+@Deprecated
+//@Table
 public abstract class RemoteEntity extends BaseDBEntity {
   public static final String KEY_DOWNLOAD_MILLIS = "download_millis";
 
@@ -24,28 +22,28 @@ public abstract class RemoteEntity extends BaseDBEntity {
   public static final String KEY_ERROR_MESSAGE = "errorMessage";
 
   // Server id
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long id;
   // Server uri
-  @Column(value = FieldType.TEXT)
+//  @Column(value = FieldType.TEXT)
   String uri;
 
   // Upload states
 
   // Delete
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   boolean deleted;
   // Needs update with the server
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   boolean dirty = true; // By default entity is always dirty
   // Error uploading
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   boolean error;
   // Error message
-  @Column(value = FieldType.TEXT)
+//  @Column(value = FieldType.TEXT)
   String errorMessage;
   // Downloaded time in millis
-  @Column(value = FieldType.INTEGER)
+//  @Column(value = FieldType.INTEGER)
   long download_millis; // Reflects when did this issue was downloaded
 
   public String getUri() {

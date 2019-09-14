@@ -12,7 +12,7 @@ data class Ticket(
         val remoteData: RemoteData? = null
 ) {
 
-    var parentTicket: Ticket? =null
+    var parentTicket: Ticket? = null
 
     companion object {
         fun new(
@@ -53,7 +53,6 @@ fun Ticket.bindRemoteData(
             code = TicketCode.new(remoteProjectKey),
             description = remoteDescription,
             remoteData = RemoteData.new(
-                    remoteId = UriUtils.parseUri(remoteIdUrl),
                     isDeleted = false,
                     isDirty = false,
                     isError = false,

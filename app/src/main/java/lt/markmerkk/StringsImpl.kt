@@ -27,11 +27,14 @@ class StringsImpl : Strings {
     }
 
     override fun getString(stringKey: String): String {
+        if (!strings.containsKey(stringKey)) {
+            logger.warn("Cannot find translation key `$stringKey`!")
+        }
         return strings.getOrDefault(stringKey, stringKey)
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(Translation::class.java)!!
+        val logger = LoggerFactory.getLogger(Tags.TRANSLATE)!!
     }
 
 }

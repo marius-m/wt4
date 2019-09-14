@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+        <RollingFile name="FileAllLogs"
+                     fileName="${sys:user.home}/.wt4/logs/out.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz"
+                     immediateFlush="true"
+                     append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="1 MB"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="FileAllErrors"
+                     fileName="${sys:user.home}/.wt4/logs/errors.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz"
+                     immediateFlush="true"
+                     append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 KB"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="FileAllJira"
+                     fileName="${sys:user.home}/.wt4/logs/jira.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz"
+                     immediateFlush="true" append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 KB"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="FileAllDb"
+                     fileName="${sys:user.home}/${sys:user.home}/.wt4/logs/db.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
+                     immediateFlush="true"
+                     append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 KB"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="FileTmp"
+                     fileName="${sys:user.home}/.wt4/logs/tmp.log"
+                     immediateFlush="true"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
+                     append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 KB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="ERROR">
+            <AppenderRef ref="FileAllErrors"/>
+        </Root>
+        <Logger name="lt.markmerkk" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileAllLogs"/>
+        </Logger>
+        <Logger name="DB" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileAllDb"/>
+        </Logger>
+        <Logger name="INTERNAL" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="JIRA" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileAllJira"/>
+        </Logger>
+        <Logger name="MAIN" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="CALENDAR" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TICKETS" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TICKET_SPLIT" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TICKET_MERGE" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="TRANSLATE" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="lt.markmerkk.widgets.MainContentWidget" level="TRACE" additivity="false">
+            <AppenderRef ref="FileTmp" />
+        </Logger>
+    </Loggers>
+</Configuration>
