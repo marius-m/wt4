@@ -11,6 +11,7 @@ import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
@@ -194,7 +195,8 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             setOnAction {
                                 find<TicketWidget>().openModal(
                                         block = true,
-                                        stageStyle = StageStyle.UTILITY
+                                        stageStyle = StageStyle.UTILITY,
+                                        modality = Modality.WINDOW_MODAL
                                 )
                             }
                         }
