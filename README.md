@@ -1,107 +1,49 @@
 # WT4
 
-Work tracker for JIRA
+Dedicated worklog management for JIRA
 
-Sandbox app for tracking work on JIRA
-
-* Single purpose to track time for work
 * Works offline
-* Synchronizes logs back to JIRA tickets
-* Cool calendar type view
-* Day / week view
-* Edit mode for quickly edit logs
-* Profiles for multiple JIRA accounts
-* Every major platform
+* Synchronization with JIRA
+* Dynamic log editing
+* Works on Windows, Linux and Mac
+* Supports Basic authorizatiuon (username / pass) and OAuth2
 
-## Download EAP
-There are some builds that are not stable enough to use it as it's in development stage, but you can certainly try to run it thought:
-* Mac
-  - [DMG installer](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.3.0.dmg)
-* Winows
-  - [Exe installer](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.3.0.exe)
+## Downloads
 
-## Download
+Builds for `1.5.2`
 
-* MacOSX: 
-  - [DMG](http://738649.s.dedikuoti.lt/public/wt4/WT4_mac.dmg)
-* Windows:
-	  - No more windows package :(
-* Linux:
-  - [Deb package](http://738649.s.dedikuoti.lt/public/wt4/wt4-4.0.deb)
+* [MacOS]()
+* [Windows]()
+* [Deb package]()
   
-* Linux troubleshooting:
-  - Cannot install dpkg. Paste in terminal: `sudo dpkg -i wt4-4.0.deb`. Will install the app to `/opt/WT4`. After it should work properly.
-  - To uninstall: Paste in terminal: `sudo dpkg -r wt4`.
+## Downloads iTo
+Some of our guys my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
+
+Builds for `1.5.2`
+
+- [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.2.dmg)
+- [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.2.exe)
+- [Linux](http://738649.s.dedikuoti.lt/public/wt4/ito/wt4-1.5.2.deb)
  
-App will automatically update to newest version
-
-## Features
-
-- Time tracking is as simple as pushin a button
-- Whenever logged something, edit any way you want, as far as ticket is not in sync with JIRA (still pending feature)
-
-![Tracking](img/wt4_tracking.gif)
-
-- Even more editing options for easier management
-- Drag and drop ticket (in edit mode)
-- Expand / subtract ticket
-
-![Fast edit](img/wt4_fast_edit.gif)
-
-- To sync tickets with JIRA, check if the user authenticated first!
-
-![Auth](img/wt4_auth.gif)
-
-- Multiple ways to track your work
-  - Week view
-  - Day view
-  - List
-
-![View types](img/wt4_view_types.gif)
-
-- Use profiles to switch users when you're using more than one JIRA (like working at home, and at work)
-
-![Profiles](img/wt4_profiles.gif)
-
-- If you were using old style and feel a bit retro it is still supported (tho' will be dropped soon)
-
-![Old app](img/wt4_old.gif)
-
 ## Issues
 
 Track issues / feature requests [here](https://github.com/marius-m/wt4/issues)
 
 ## Attributions
 
-This app serves me as a sandbox for trying out various java stuff that I find interesting. 
-As a side effect app was born that is being used for easier time tracking. 
+This app serves me as a sandbox for trying out various java stuff that I find interesting. As a side effect app was born that is being used for easier time tracking. 
 Feel free copying / contributing / using code for your own pleasure. 
-
-Tricks that were being tackled in this project: 
 
 * [CalendarFX](https://github.com/dlemmermann/CalendarFX) - Most amazing calendar that lets display logs and modify them. Very very cool.  
 * [JFoenix](http://www.jfoenix.com/) - Material designs for JavaFX! Amazing!
 * [Kotlin](https://kotlinlang.org/) - Most of the app is converted to kotlin, once got used to it, never want to look back. 
 * [RXJava](https://github.com/ReactiveX/RxJava) Very cool programming [paradigm](http://reactivex.io/)
 * [Dagger2](https://github.com/google/dagger) - Essential for making object graph. Loved it every bit.
-* [Getdown](https://github.com/threerings/getdown) - Automatic updater for java. The one that really bahaved as intended, love it so much. 
-* [JavaFX-Gradle-Plugin](https://github.com/FibreFoX/javafx-gradle-plugin) - A bit more advanced version of java bundling for platforms.
 * [JavaFX](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm) - Great components and quite easy to assemble with after burner.
-* [Afterburner](https://github.com/AdamBien/afterburner.fx) - When got into it, cant imagine JavaFx without it.
 * [Google material design](https://design.google.com/icons/) - Icons for easier use and clear purpose!
-* [JFXTras](https://github.com/JFXtras/jfxtras) - neat components for easier use
-  - Agenda view
-* [FXExperiende](http://fxexperience.com/) - Advanced components for the jfx
-  - Auto completion text view
-* [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
 * [jOOQ](https://www.jooq.org/)
-
-## FAQ
-
-* Q: Why does it weight so much ?
-* A: It is bundled with Java8, so for most part its java that weights so much. It is done, so you don't have to download it separately. 
-* Q: I have problems synchronizing with the remote server!
-* A: Try checking settings window, as most of the stuff that is done in the background are printed out. That might give you an idea when might not be working.
+* [TornadoFX]() - Lightweight UI framework for JavaFX
+* [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
 
 ## Changelog
 
