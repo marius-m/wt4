@@ -1,23 +1,42 @@
 package lt.markmerkk.interactors
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.JiraMocks
+import lt.markmerkk.UserSettings
 import net.rcarz.jiraclient.RestException
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
-import rx.Observable
-import java.util.concurrent.TimeUnit
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import rx.Single
+import rx.schedulers.Schedulers
+import rx.schedulers.TestScheduler
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2017-09-16
- */
-class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
+class AuthServiceImplTestLoginTest {
+
+    @Mock lateinit var view: AuthService.View
+    @Mock lateinit var authInteractor: AuthService.AuthInteractor
+    @Mock lateinit var userSettings: UserSettings
+    lateinit var service: AuthServiceImpl
+
+    @Before
+    fun setUp() {
+        MockitoAnnotations.initMocks(this)
+        service = AuthServiceImpl(
+                view,
+                Schedulers.immediate(),
+                Schedulers.immediate(),
+                authInteractor,
+                userSettings
+        )
+    }
 
     @Test
     fun showProgressWhenLoading() {
         // Assemble
-        doReturn(Observable.just(true)).whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
+        doReturn(Single.just(JiraMocks.createJiraUser()))
+                .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
         service.testLogin(
@@ -34,7 +53,8 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
     @Test
     fun validLogin() {
         // Assemble
-        doReturn(Observable.just(true)).whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
+        doReturn(Single.just(JiraMocks.createJiraUser()))
+                .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
         service.testLogin(
@@ -47,39 +67,13 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.SUCCESS, resultCaptor.firstValue)
-    }
-
-    @Test
-    fun valid_multipleCalls() {
-        // Assemble
-        doReturn(Observable.just(true)).whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
-
-        // Act
-        serviceWithTestSchedulers.testLogin(
-                "valid_host",
-                "valid_username",
-                "valid_password"
-        )
-        serviceWithTestSchedulers.testLogin(
-                "valid_host",
-                "valid_username",
-                "valid_password"
-        )
-        serviceWithTestSchedulers.testLogin(
-                "valid_host",
-                "valid_username",
-                "valid_password"
-        )
-        testScheduler.advanceTimeBy(100L, TimeUnit.MILLISECONDS) // trigger only once
-
-        // Assert
-        verify(authInteractor).jiraTestValidConnection(any(), any(), any())
+        verify(userSettings).changeJiraUser(any(), any(), any())
     }
 
     @Test
     fun noInputValues() {
         // Assemble
-        doReturn(Observable.error<Any>(IllegalArgumentException("empty hostname")))
+        doReturn(Single.error<Any>(IllegalArgumentException("empty hostname")))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
@@ -93,6 +87,7 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.ERROR_EMPTY_FIELDS, resultCaptor.firstValue)
+        verify(userSettings).resetUserData()
     }
 
     @Test
@@ -104,7 +99,7 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
                 "hostname_not_found",
                 emptyArray()
         )
-        doReturn(Observable.error<Any>(RuntimeException(restException)))
+        doReturn(Single.error<Any>(RuntimeException(restException)))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
@@ -118,6 +113,7 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.ERROR_UNAUTHORISED, resultCaptor.firstValue)
+        verify(userSettings).resetUserData()
     }
 
     @Test
@@ -129,7 +125,7 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
                 "hostname_not_found",
                 emptyArray()
         )
-        doReturn(Observable.error<Any>(RuntimeException(restException)))
+        doReturn(Single.error<Any>(RuntimeException(restException)))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
@@ -143,12 +139,13 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.ERROR_INVALID_HOSTNAME, resultCaptor.firstValue)
+        verify(userSettings).resetUserData()
     }
 
     @Test
     fun validInvalidUndefined() {
         // Assemble
-        doReturn(Observable.error<Any>(RuntimeException()))
+        doReturn(Single.error<Any>(RuntimeException()))
                 .whenever(authInteractor).jiraTestValidConnection(any(), any(), any())
 
         // Act
@@ -162,5 +159,6 @@ class AuthServiceImplTestLoginTest : AbsAuthServiceImplTest() {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.ERROR_UNDEFINED, resultCaptor.firstValue)
+        verify(userSettings).resetUserData()
     }
 }

@@ -27,6 +27,7 @@ class AccountSettingsWidget : View() {
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var strings: Strings
     @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var appConfig: Config
 
     private lateinit var viewInputHostname: JFXTextField
     private lateinit var viewInputUsername: JFXTextField
@@ -185,7 +186,8 @@ class AccountSettingsWidget : View() {
                 authServiceView,
                 schedulerProvider.io(),
                 schedulerProvider.ui(),
-                jiraAuthInteractor
+                jiraAuthInteractor,
+                userSettings
         )
         logTailer = LogTailer(
                 logTailerLister,
@@ -211,7 +213,7 @@ class AccountSettingsWidget : View() {
         } else {
             viewContainerStatusAdvanced.show()
             viewContainerStatusBasic.hide()
-            logTailer.tail(File("logs/jira.log"))
+            logTailer.tail(File("${appConfig.generateRelativePath()}logs/jira.log"))
         }
     }
 

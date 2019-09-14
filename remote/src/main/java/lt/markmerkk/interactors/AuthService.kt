@@ -1,6 +1,8 @@
 package lt.markmerkk.interactors
 
+import lt.markmerkk.JiraUser
 import rx.Observable
+import rx.Single
 
 /**
  * Responsible for checking and debugging the login for JIRA auth
@@ -41,7 +43,7 @@ interface AuthService {
                 hostname: String,
                 username: String,
                 password: String
-        ): Observable<Boolean>
+        ): Single<JiraUser>
     }
 
     /**

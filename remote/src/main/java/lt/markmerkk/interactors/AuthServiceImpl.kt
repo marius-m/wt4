@@ -1,18 +1,21 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.Tags
+import lt.markmerkk.UserSettings
 import lt.markmerkk.findException
 import net.rcarz.jiraclient.RestException
 import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
+import rx.Single
 import rx.Subscription
 
 class AuthServiceImpl(
         private val view: AuthService.View,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler,
-        private val authInteractor: AuthService.AuthInteractor
+        private val authInteractor: AuthService.AuthInteractor,
+        private val userSettings: UserSettings
 ) : AuthService {
 
     private var testConnectionSubscription: Subscription? = null
@@ -29,16 +32,18 @@ class AuthServiceImpl(
             password: String
     ) {
         testConnectionSubscription?.unsubscribe()
-        testConnectionSubscription = Observable.defer { authInteractor.jiraTestValidConnection(hostname, username, password) }
+        testConnectionSubscription = authInteractor.jiraTestValidConnection(hostname, username, password)
                 .flatMap {
+                    userSettings.changeJiraUser(it.name, it.email, it.displayName)
                     logger.info("Success logging in!")
-                    Observable.just(AuthService.AuthResult.SUCCESS)
+                    Single.just(AuthService.AuthResult.SUCCESS)
                 }
-                .onErrorResumeNext { Observable.just(handleError(it)) }
+                .doOnError { userSettings.resetUserData() }
+                .onErrorResumeNext { Single.just(handleError(it)) }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { view.showProgress() }
-                .doOnTerminate { view.hideProgress() }
+                .doAfterTerminate { view.hideProgress() }
                 .subscribe({
                     view.showAuthResult(it)
                 }, {

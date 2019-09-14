@@ -39,6 +39,7 @@ class AccountSettingsOauthWidget : View() {
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var jiraClientProvider: JiraClientProvider
     @Inject lateinit var appConfig: Config
+    @Inject lateinit var jiraBasicApi: JiraBasicApi
 
     private lateinit var viewWebview: WebView
     private lateinit var viewButtonStatus: JFXButton
@@ -174,7 +175,7 @@ class AccountSettingsOauthWidget : View() {
                 },
                 oAuthInteractor = OAuthInteractor(userSettings),
                 jiraClientProvider = jiraClientProvider,
-                jiraApi = JiraBasicApi(jiraClientProvider),
+                jiraApi = jiraBasicApi,
                 userSettings = userSettings,
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()

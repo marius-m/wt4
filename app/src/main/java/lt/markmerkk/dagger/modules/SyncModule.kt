@@ -61,12 +61,22 @@ class SyncModule {
 
     @Provides
     @Singleton
+    fun providesJiraBasicApi(
+            jiraClientProvider: JiraClientProvider
+    ): JiraBasicApi {
+        return JiraBasicApi(jiraClientProvider)
+    }
+
+    @Provides
+    @Singleton
     fun providesJiraAuthInteractor(
             jiraClientProvider: JiraClientProvider,
+            jiraBasicApi: JiraBasicApi,
             userSettings: UserSettings
     ): AuthService.AuthInteractor {
         return AuthInteractorImpl(
                 jiraClientProvider,
+                jiraBasicApi,
                 userSettings
         )
     }

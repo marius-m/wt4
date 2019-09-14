@@ -10,6 +10,22 @@ import net.rcarz.jiraclient.RestException
 
 object JiraMocks {
 
+    fun createJiraUserEmpty(): JiraUser {
+        return createJiraUser(name = "", displayName = "", email = "")
+    }
+
+    fun createJiraUser(
+            name: String = "name",
+            displayName: String = "display_name",
+            email: String = "email"
+    ): JiraUser {
+        return JiraUser(
+                name = name,
+                displayName = displayName,
+                email = email
+        )
+    }
+
     fun mockJiraClient(): JiraClient {
         val jiraClient: JiraClient = mock()
         return jiraClient
