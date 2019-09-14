@@ -5,7 +5,6 @@ apply plugin: "org.jetbrains.kotlin.kapt"
 apply plugin: "idea"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "de.fuerstenau.buildconfig"
-apply from: "deploy.gradle"
 
 mainClassName = "lt.markmerkk.MainAsJava"
 
@@ -97,13 +96,7 @@ buildConfig {
     buildConfigField("String", "oauthKeyPrivate", project.oauth_key_private)
     buildConfigField("String", "oauthHost", project.oauth_host)
 
-//    versionCode = project.versionCode
-//    debug = false
-//    gaKey = "test"
-
     packageName = project.group
     charset = 'UTF-8'
 }
 
-//shadowJar.dependsOn assemble
-//jfxNative.dependsOn processJar
