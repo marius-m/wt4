@@ -6,10 +6,19 @@ apply plugin: "idea"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "de.fuerstenau.buildconfig"
 
-mainClassName = "lt.markmerkk.MainAsJava"
+application {
+    mainClassName = "lt.markmerkk.MainAsJava"
 
-group = "lt.markmerkk"
-version = versionName
+    group = "lt.markmerkk"
+    version = versionName
+}
+
+run {
+    println("Running app as DEBUG: $project.debug")
+    def logConfig = (project.debug) ? "debug_log4j2.xml" : "prod_log4j2.xml"
+    println("Using logging config: $logConfig")
+    jvmArgs = ["-Dlog4j.configurationFile=$logConfig"]
+}
 
 sourceSets {
     main {

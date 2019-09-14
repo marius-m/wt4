@@ -34,7 +34,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
     private lateinit var appComponent: AppComponent
 
     override fun start(stage: Stage) {
-        setupLogger(BuildConfig.debug)
         appComponent = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this, StageProperties(stage)))
@@ -72,15 +71,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
                 privateKey = BuildConfig.oauthKeyPrivate,
                 consumerKey = BuildConfig.oauthKeyConsumer
         )
-    }
-
-    private fun setupLogger(isDebug: Boolean) {
-        if (isDebug) {
-            logger.info("Reloading logger config")
-            val context = LogManager.getContext(false) as LoggerContext
-            val file = File(javaClass.classLoader.getResource("debug_log4j2.xml").file)
-            context.configLocation = file.toURI()
-        }
     }
 
     override fun stop() {
