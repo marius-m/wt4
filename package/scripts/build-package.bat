@@ -18,6 +18,8 @@ call "%JAVA_HOME%\bin\javapackager.exe" ^
     -title "WT4" ^
     -v ^
     -nosign ^
-    -BjvmOptions=-Xmx600m -BjvmOptions=-Xms128m ^
+    -BjvmOptions=-Xmx600m ^
+    -BjvmOptions=-Xms128m ^
+    -BjvmOptions=-Dlog4j.configurationFile=prod_log4j2.xml ^
     -Bicon="%APP_ICON%" ^
     -BappVersion="%VERSION%"
