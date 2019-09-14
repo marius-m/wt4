@@ -43,7 +43,7 @@ class AccountSettingsOauthWidget : View() {
     private lateinit var viewWebview: WebView
     private lateinit var viewButtonStatus: JFXButton
     private lateinit var viewButtonSetupConnection: JFXButton
-    private lateinit var viewLabelStatus: Text
+    private lateinit var viewLabelStatus: Label
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewTextOutput: JFXTextArea
     private lateinit var viewContainerStatusAdvanced: BorderPane
@@ -79,17 +79,17 @@ class AccountSettingsOauthWidget : View() {
         }
         center {
             borderpane {
-                minWidth = 300.0
-                minHeight = 300.0
+                minWidth = 650.0
+                minHeight = 450.0
                 center {
                     stackpane {
                         viewContainerStatusBasic = vbox(spacing = 4, alignment = Pos.CENTER) {
                             viewButtonStatus = jfxButton {
                                 setOnAction { authorizator.checkAuth() }
                             }
-                            viewLabelStatus = text {
+                            viewLabelStatus = label {
                                 alignment = Pos.CENTER
-                                wrappingWidth = 400.0
+                                isWrapText = true
                             }
                             viewWebview = webview { hide() }
                         }
@@ -119,12 +119,6 @@ class AccountSettingsOauthWidget : View() {
                 }
                 viewButtonSetupConnection = jfxButton("Set-up".toUpperCase()) {
                     setOnAction { authorizator.setupAuthStep1() }
-                }
-                jfxButton("Save".toUpperCase()) {
-                    setOnAction {
-                        eventBus.post(EventSnackBarMessage("Settings saved!"))
-                        close()
-                    }
                 }
                 jfxButton("Dismiss".toUpperCase()) {
                     setOnAction {
