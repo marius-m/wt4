@@ -64,3 +64,4 @@ models/out
 remote/out
 wt4_2.db
 app/logs/
+keys/

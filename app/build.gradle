@@ -92,13 +92,15 @@ buildConfig {
     buildConfigField("int", "versionCode", project.versionCode)
     buildConfigField("boolean", "debug", project.debug.toString())
     buildConfigField("String", "gaKey", project.gaKey)
-    buildConfigField("boolean", "ito_oauth", project.ito_oauth.toString())
+    buildConfigField("boolean", "oauth", project.oauth.toString())
+    buildConfigField("String", "oauthKeyConsumer", project.oauth_key_consumer)
+    buildConfigField("String", "oauthKeyPrivate", project.oauth_key_private)
+    buildConfigField("String", "oauthHost", project.oauth_host)
 
 //    versionCode = project.versionCode
 //    debug = false
 //    gaKey = "test"
 
-    clsName = 'BuildConfig'
     packageName = project.group
     charset = 'UTF-8'
 }

@@ -68,9 +68,9 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
         keepAliveGASession.onAttach()
         stageProperties.onAttach()
         userSettings.changeOAuthPreset(
-                host = OAuthInteractor.URL,
-                privateKey = OAuthInteractor.PRIVATE_KEY,
-                consumerKey = OAuthInteractor.CONSUMER_KEY
+                host = BuildConfig.oauthHost,
+                privateKey = BuildConfig.oauthKeyPrivate,
+                consumerKey = BuildConfig.oauthKeyConsumer
         )
     }
 

@@ -27,7 +27,7 @@ class PopUpSettings(
                                 title = "Account settings",
                                 graphic = graphics.from(Glyph.ACCOUNT, Color.BLACK, 12.0),
                                 action = {
-                                    if (BuildConfig.ito_oauth) {
+                                    if (BuildConfig.oauth) {
                                         find<AccountSettingsOauthWidget>().openModal(
                                                 stageStyle = StageStyle.UTILITY,
                                                 modality = Modality.APPLICATION_MODAL,

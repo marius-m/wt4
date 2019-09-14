@@ -3,19 +3,48 @@ buildscript {
     ext.kotlin_test_version = '1.4.0'
 
 
+    // Version
     ext.versionName = "1.5.1"
     ext.versionCode = "46"
-    ext.debug = false
-    ext.gaKey = "test"
-    ext.ito_oauth = true
 
-    // Release properties
+    //region Debug oauth properties
+    // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
+    def keysPropertyFile = new File("${rootDir}/keys_debug", "private.properties")
+    assert keysPropertyFile.exists()
+    Properties keysProperties = new Properties()
+    keysProperties.load(new FileInputStream(keysPropertyFile.getAbsolutePath()))
+
+    ext.debug = true
+    ext.gaKey = "test"
+    ext.oauth = true
+    ext.oauth_key_consumer = keysProperties.getProperty("key_consumer")
+    ext.oauth_key_private = keysProperties.getProperty("key_private")
+    ext.oauth_host = keysProperties.getProperty("host")
+    //endregion
+
+    //region Debug basic properties
+//    ext.debug = true
+//    ext.gaKey = "test"
+//    ext.oauth = false
+    //endregion
+
+    //region Release properties
+//    def keysPropertyFile = new File("${rootDir}/keys", "private.properties")
+//    assert keysPropertyFile.exists()
+//    Properties keysProperties = new Properties()
+//    keysProperties.load(new FileInputStream(keysPropertyFile.getAbsolutePath()))
+
 //    def deployPropertyFile = new File("${rootDir}","deploy.properties")
 //    assert deployPropertyFile.exists()
 //    Properties deployProps = new Properties()
 //    deployProps.load(new FileInputStream(deployPropertyFile.getAbsolutePath()))
 //    ext.debug = false
 //    ext.gaKey = deployProps.getProperty("ga")
+//    ext.oauth = true
+//    ext.oauth_key_consumer = keysProperties.getProperty("key_consumer")
+//    ext.oauth_key_private = keysProperties.getProperty("key_private")
+//    ext.oauth_host = keysProperties.getProperty("host")
+    //endregion
 
     repositories {
         mavenLocal()
