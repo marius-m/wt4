@@ -111,6 +111,13 @@ class OAuthAuthorizator(
 
     fun setupAuthStep2(accessTokenKey: String) {
         subsAuth2?.unsubscribe()
+        view.resetWeb()
+        view.renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
+                textStatus = "Finishing up authorization..."
+        ))
         if (accessTokenKey.isEmpty()) {
             userSettings.resetUserData()
             logger.debug("Error getting access token key")

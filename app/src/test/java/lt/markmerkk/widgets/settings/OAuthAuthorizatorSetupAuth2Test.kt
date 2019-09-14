@@ -56,6 +56,12 @@ class OAuthAuthorizatorSetupAuth2Test {
         verify(view).renderView(AuthViewModel(
                 showContainerWebview = false,
                 showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
+                textStatus = "Finishing up authorization..."
+        ))
+        verify(view).renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
                 textStatus = "Success setting up new user 'display_name'!"
         ))
@@ -68,6 +74,7 @@ class OAuthAuthorizatorSetupAuth2Test {
         authorizator.setupAuthStep2("")
 
         // Assert
+        verify(view).resetWeb()
         verify(userSettings).resetUserData()
         verify(view).renderView(AuthViewModel(
                 showContainerWebview = false,
@@ -90,6 +97,13 @@ class OAuthAuthorizatorSetupAuth2Test {
         authorizator.setupAuthStep2("valid_token")
 
         // Assert
+        verify(view).resetWeb()
+        verify(view).renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
+                textStatus = "Finishing up authorization..."
+        ))
         verify(view).renderView(AuthViewModel(
                 showContainerWebview = false,
                 showContainerStatus = true,
@@ -111,7 +125,14 @@ class OAuthAuthorizatorSetupAuth2Test {
         authorizator.setupAuthStep2("valid_token")
 
         // Assert
+        verify(view).resetWeb()
         verify(userSettings).resetUserData()
+        verify(view).renderView(AuthViewModel(
+                showContainerWebview = false,
+                showContainerStatus = true,
+                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
+                textStatus = "Finishing up authorization..."
+        ))
         verify(view).renderView(AuthViewModel(
                 showContainerWebview = false,
                 showContainerStatus = true,
