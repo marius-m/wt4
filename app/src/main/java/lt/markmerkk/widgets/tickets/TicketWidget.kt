@@ -146,6 +146,9 @@ class TicketWidget: View(), TicketContract.View {
                     }
                     readonlyColumn("Description", TicketViewModel::description) { }
                 }
+                label("For more options - press secondary button on the ticket") {
+                    addClass(Styles.labelMini)
+                }
             }
         }
         bottom {
