@@ -111,9 +111,10 @@ class AutoSyncWatcher2(
             is AutoSyncTriggerLongChange,
             is AutoSyncTriggerShortChange -> {
                 logger.debug("Triggering update (${rule.javaClass})")
-                lastSync = now
-                nextSync = now
-                val newDuration = Duration(lastSync, now)
+                val newNow = timeProvider.now()
+                lastSync = newNow
+                nextSync = newNow
+                val newDuration = Duration(lastSync, newNow)
                 eventBus.post(EventAutoSync())
                 eventBus.post(EventAutoSyncLastUpdate(newDuration))
             }
