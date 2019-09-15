@@ -21,10 +21,7 @@ import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventEditLog
-import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.events.EventSnackBarMessage
+import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.ExternalSourceNode
@@ -47,6 +44,8 @@ import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketWidget
 import org.slf4j.LoggerFactory
+import rx.Subscription
+import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
@@ -74,6 +73,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
     lateinit var widgetLogQuickEdit: QuickEditContainerWidget
+
+    private var subsFocusChange: Subscription? = null
 
     init {
         Main.component().inject(this)
@@ -177,6 +178,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
+        subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
+                .subscribe { eventBus.post(EventFocusChange(it)) }
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
@@ -187,6 +190,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     override fun onUndock() {
+        subsFocusChange?.unsubscribe()
         widgetLogQuickEdit.onDetach()
         widgetProgress.onDetach()
         widgetDateChange.onDetach()
@@ -198,6 +202,13 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     //region Events
+
+    @Subscribe
+    fun onFocusChange(event: EventFocusChange) {
+        if (!event.isInFocus) {
+            find<CalendarWidget>().changeEditMode(false)
+        }
+    }
 
     @Subscribe
     fun onSnackBarMessage(event: EventSnackBarMessage) {

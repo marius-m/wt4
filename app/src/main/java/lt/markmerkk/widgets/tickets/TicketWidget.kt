@@ -8,15 +8,18 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.TableView
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
+import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.events.EventSuggestTicket
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
-import lt.markmerkk.tickets.TicketLoader
-import lt.markmerkk.ui_2.views.jfxButton
-import lt.markmerkk.ui_2.views.jfxCombobox
-import lt.markmerkk.ui_2.views.jfxTextField
+import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.utils.JiraLinkGenerator
+import lt.markmerkk.utils.JiraLinkGeneratorBasic
+import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -31,6 +34,7 @@ class TicketWidget: View(), TicketContract.View {
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var hostServicesInteractor: HostServicesInteractor
 
     init {
         Main.component().inject(this)
@@ -47,8 +51,23 @@ class TicketWidget: View(), TicketContract.View {
             .observable()
     private val projectCodes = mutableListOf<String>()
             .observable()
+    private val contextMenuTicketSelect: ContextMenuTicketSelect = ContextMenuTicketSelect(
+            graphics = graphics,
+            eventBus = eventBus,
+            userSettings = userSettings,
+            hostServicesInteractor = hostServicesInteractor
+    )
 
     override val root: Parent = borderpane {
+        setOnKeyReleased { keyEvent ->
+            if (keyEvent.code == KeyCode.ENTER) {
+                val selectTicket = viewTable.selectionModel.selectedItems.firstOrNull()?.ticket
+                if (selectTicket != null) {
+                    eventBus.post(EventSuggestTicket(selectTicket))
+                    close()
+                }
+            }
+        }
         addClass(Styles.dialogContainer)
         top {
             label("Tickets") {
@@ -70,13 +89,14 @@ class TicketWidget: View(), TicketContract.View {
                                     projectCode = selectItem
                             )
                         }
+                        isFocusTraversable = false
                     }
                     viewTextFieldTicketSearch = jfxTextField {
                         hgrow = Priority.ALWAYS
                         addClass(Styles.inputTextField)
                         focusColor = Styles.cActiveRed
                         isLabelFloat = true
-                        promptText = "Search ticket by ID / Summary"
+                        promptText = "Search by ticket description"
                     }
                     viewButtonClear = jfxButton {
                         graphic = graphics.from(Glyph.CLEAR, Color.BLACK, 12.0)
@@ -84,23 +104,27 @@ class TicketWidget: View(), TicketContract.View {
                             viewTextFieldTicketSearch.text = ""
                             viewTextFieldTicketSearch.requestFocus()
                         }
+                        isFocusTraversable = false
                     }
-                    viewProgress = find<TicketProgressWidget>()
+                    viewProgress = find<TicketProgressWidget>() {}
                     viewProgress.viewButtonStop.setOnAction {
                         logger.debug("Trigger stop fetch")
                         presenter.stopFetch()
                     }
+                    viewProgress.viewButtonStop.isFocusTraversable = false
                     viewProgress.viewButtonRefresh.setOnAction {
                         logger.debug("Trigger fetching ")
                         presenter.fetchTickets(
                                 forceFetch = true,
                                 filter = viewTextFieldTicketSearch.text,
-                                projectCode = viewComboProjectCodes.selectionModel.selectedItem
+                                projectCode = viewComboProjectCodes.selectionModel.selectedItem ?: ""
                         )
                     }
+                    viewProgress.viewButtonRefresh.isFocusTraversable = false
                     add(viewProgress)
                 }
                 viewTable = tableview(ticketViewModels) {
+                    contextMenu = contextMenuTicketSelect.root
                     hgrow = Priority.ALWAYS
                     vgrow = Priority.ALWAYS
                     setOnMouseClicked { mouseEvent ->
@@ -121,6 +145,9 @@ class TicketWidget: View(), TicketContract.View {
                         maxWidth = 100.0
                     }
                     readonlyColumn("Description", TicketViewModel::description) { }
+                }
+                label("For more options - press secondary button on the ticket") {
+                    addClass(Styles.labelMini)
                 }
             }
         }
@@ -156,9 +183,13 @@ class TicketWidget: View(), TicketContract.View {
         viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
         viewComboProjectCodes.selectionModel.select("")
         presenter.loadProjectCodes()
+        contextMenuTicketSelect.onAttach()
+        contextMenuTicketSelect.attachTicketSelection(
+                JavaFxObservable.valuesOf(viewTable.selectionModel.selectedItemProperty()))
     }
 
     override fun onUndock() {
+        contextMenuTicketSelect.onDetach()
         presenter.onDetach()
         super.onUndock()
     }

@@ -49,7 +49,7 @@ class TicketInfoLoader(
             return
         }
         searchSubscription?.unsubscribe()
-        searchSubscription = ticketStorage.findTicketsByCode(inputCode)
+        searchSubscription = ticketStorage.findTicketsByCode(ticketCode.code)
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({ tickets ->
