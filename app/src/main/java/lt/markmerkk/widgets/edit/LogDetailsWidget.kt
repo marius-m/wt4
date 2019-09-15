@@ -48,6 +48,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
     @Inject lateinit var userSettings: UserSettings
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXDatePicker
@@ -361,9 +362,11 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
         jiraLinkGenerator.onAttach()
         jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
+        autoSyncWatcher.changeUpdateLock(isInLock = true, lockProcessName = "LogDetails")
     }
 
     override fun onUndock() {
+        autoSyncWatcher.changeUpdateLock(isInLock = false, lockProcessName = "")
         jiraLinkGenerator.onDetach()
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
