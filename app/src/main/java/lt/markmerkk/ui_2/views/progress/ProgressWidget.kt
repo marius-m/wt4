@@ -83,4 +83,8 @@ class ProgressWidget(
         viewLabel.text = syncData
     }
 
+    fun checkSyncDuration() {
+        presenter.checkSyncDuration()
+    }
+
 }

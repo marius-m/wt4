@@ -14,6 +14,7 @@ interface ProgressContract {
         fun onAttach(view: View)
         fun onDetach()
         fun onClickSync()
+        fun checkSyncDuration()
     }
 
 }

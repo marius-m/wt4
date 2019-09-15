@@ -209,6 +209,11 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     //region Events
 
     @Subscribe
+    fun onAutoSync(event: EventAutoSyncLastUpdate) {
+        widgetProgress.checkSyncDuration()
+    }
+
+    @Subscribe
     fun onAutoSync(event: EventAutoSync) {
         syncInteractor.syncLogs()
     }

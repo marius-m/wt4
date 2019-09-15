@@ -30,6 +30,10 @@ class ProgressWidgetPresenter(
         autoSyncWatcher.reset()
     }
 
+    override fun checkSyncDuration() {
+        handleSyncChange(syncInteractor.isLoading())
+    }
+
     private fun handleSyncChange(isLoading: Boolean) {
         if (isLoading) {
             view?.showProgress()
