@@ -91,7 +91,9 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
                     )
                 }
                 (keyEvent.code == KeyCode.SLASH && keyEvent.isMetaDown)
-                        || (keyEvent.code == KeyCode.SLASH && keyEvent.isControlDown) -> {
+                        || (keyEvent.code == KeyCode.SLASH && keyEvent.isControlDown)
+                        || (keyEvent.code == KeyCode.F && keyEvent.isMetaDown)
+                        || (keyEvent.code == KeyCode.F && keyEvent.isControlDown) -> {
                     presenter.openFindTickets()
                 }
             }
