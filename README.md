@@ -6,28 +6,28 @@ Dedicated worklog management for JIRA
 * Synchronization with JIRA
 * Dynamic log editing
 * Works on Windows, Linux and Mac
-* Supports Basic authorizatiuon (username / pass) and OAuth2
+* Supports Basic authorizatiuon (username / pass) + OAuth2
 
 ## Downloads
 
-Builds for `1.5.2`
+Builds for `1.5.3`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.2.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.2.exe)
-* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.5.2.deb)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.3.dmg)
+* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.3.exe)
+* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.5.3.deb)
   
 ## Downloads iTo
 Some of our guys my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.5.2`
+Builds for `1.5.3`
 
-- [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.2.dmg)
-- [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.2.exe)
-- [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/ito/wt4-1.5.2.deb)
+- [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.3.dmg)
+- [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.3.exe)
+- Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
  
 ## Issues
 
-Track issues / feature requests [here](https://github.com/marius-m/wt4/issues)
+Track issues / feature requests - https://github.com/marius-m/wt4/issues
 
 ## Attributions
 
@@ -45,3 +45,6 @@ Feel free copying / contributing / using code for your own pleasure.
 * [TornadoFX]() - Lightweight UI framework for JavaFX
 * [Java8](http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
 
+## Changelog
+
+Version changelog can be found here - https://github.com/marius-m/wt4/blob/master/CHANGELOG.md

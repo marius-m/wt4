@@ -1,7 +1,12 @@
 # Changelog
 
-## 1.5.0 - 1.5.2
+## 1.5.0 - 1.5.3
 - Introduce OAuth authorization support
+- Fix ticket link generate
+- More support for ticket link copy (additional rules apply)
+- Ticket link generate to clipboard in ticket screen
+- Add shortcut to cmd+f to search for tickets
+- Fix bug on windows / linux whenever alt + tab out of app (was holding quick edit action)
 
 ## 1.4.0 - 1.4.6
 - Rework synchronization mechansim to JIRA (introduce two way synchronization)
