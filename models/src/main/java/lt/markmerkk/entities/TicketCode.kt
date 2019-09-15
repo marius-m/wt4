@@ -2,7 +2,7 @@ package lt.markmerkk.entities
 
 import lt.markmerkk.utils.LogUtils
 
-data class TicketCode(
+data class TicketCode private constructor(
         val codeProject: String,
         val codeNumber: String
 ) {
