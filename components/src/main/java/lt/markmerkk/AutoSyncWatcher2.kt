@@ -22,13 +22,12 @@ class AutoSyncWatcher2(
         private val uiScheduler: Scheduler
 ) {
 
-    // Some action may want the auto sync to be triggered faster
-    private val isShortUpdateCycle = AtomicBoolean()
     // Some other process may block auto update
     private val isInLock = AtomicBoolean()
     private var lockProcessName: String = ""
-
     private var lastSync: DateTime = timeProvider.now()
+    private var nextSync: DateTime = timeProvider.now()
+
     private var subsTick: Subscription? = null
 
     fun onAttach() {}
@@ -49,28 +48,46 @@ class AutoSyncWatcher2(
                 .observeOn(uiScheduler)
                 .subscribe({
                     val now = timeProvider.now()
-                    val rule = applyTimeChangeRule(now = timeProvider.now(), lastSync = lastSync)
+                    val rule = applyTimeChangeRule(
+                            now = timeProvider.now(),
+                            lastSync = lastSync,
+                            nextSync = nextSync
+                    )
                     handleRuleChanges(now, rule)
                 }, {
                     logger.error("Auto update result in error", it)
                 })
     }
 
+    /**
+     * Figures out action needed to be taken with time changes
+     * Note: When [lastSync] >= [nextSync], short schedule does not apply
+     * @param now current date time
+     * @param lastSync date time of last synchronization trigger
+     * @param nextSync next scheduled synchronization
+     */
     fun applyTimeChangeRule(
             now: DateTime,
-            lastSync: DateTime
+            lastSync: DateTime,
+            nextSync: DateTime
     ): AutoSyncRule {
+        val isNextSyncScheduled = nextSync.isAfter(lastSync)
         if (isInLock.get()) {
             return AutoSyncOtherProcessInProgress(now, lastSync, lockProcessName)
         }
         val currentDuration = Duration(lastSync, now)
-        if (isShortUpdateCycle.get() && currentDuration.standardMinutes >= 2) {
-            return AutoSyncTriggerShortChange(now, lastSync)
+        val scheduledSyncTriggered = now.isAfter(nextSync) || now.isEqual(nextSync)
+        if (isNextSyncScheduled) {
+            if (scheduledSyncTriggered) {
+                return AutoSyncTriggerShortChange(now, lastSync)
+            }
+            return AutoSyncNoChangesWaitingForScheduled(now, lastSync, nextSync)
+        } else {
+            if (currentDuration.standardHours >= 1) {
+                return AutoSyncTriggerLongChange(now, lastSync)
+            }
+            return AutoSyncNoChanges(now, lastSync)
         }
-        if (currentDuration.standardHours >= 1) {
-            return AutoSyncTriggerLongChange(now, lastSync)
-        }
-        return AutoSyncNoChanges(now, lastSync)
     }
 
     fun handleRuleChanges(
@@ -83,6 +100,10 @@ class AutoSyncWatcher2(
                 logger.debug("Skip update as last update was in $currentDuration")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
             }
+            is AutoSyncNoChangesWaitingForScheduled -> {
+                logger.debug("Skip update as last update was in $currentDuration. Waiting for scheduled time ${rule.nextSync}")
+                eventBus.post(EventAutoSyncLastUpdate(currentDuration))
+            }
             is AutoSyncOtherProcessInProgress -> {
                 logger.debug("Skip update as some other process is blocking update: ${rule.lockProcessName}")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
@@ -91,12 +112,12 @@ class AutoSyncWatcher2(
             is AutoSyncTriggerShortChange -> {
                 logger.debug("Triggering update (${rule.javaClass})")
                 lastSync = now
+                nextSync = now
                 val newDuration = Duration(lastSync, now)
-                isShortUpdateCycle.set(false)
                 eventBus.post(EventAutoSync())
                 eventBus.post(EventAutoSyncLastUpdate(newDuration))
             }
-        }
+        }.javaClass
     }
 
     /**
@@ -104,7 +125,7 @@ class AutoSyncWatcher2(
      */
     fun markForShortCycleUpdate() {
         logger.debug("Marking auto sync for shorter update cycle")
-        isShortUpdateCycle.set(true)
+        nextSync = timeProvider.now().plusMinutes(2)
     }
 
     fun changeUpdateLock(
@@ -117,9 +138,10 @@ class AutoSyncWatcher2(
     }
 
     fun reset() {
+        val now = timeProvider.now()
         logger.debug("Resetting watcher")
-        isShortUpdateCycle.set(false)
-        lastSync = timeProvider.now()
+        lastSync = now
+        nextSync = now
     }
 
     companion object {
@@ -132,7 +154,19 @@ sealed class AutoSyncRule
 /**
  * Indicates not ready for edit
  */
-data class AutoSyncNoChanges(val now: DateTime, val lastSync: DateTime): AutoSyncRule()
+data class AutoSyncNoChanges(
+        val now: DateTime,
+        val lastSync: DateTime
+): AutoSyncRule()
+
+/**
+ * Indicates not ready for edit, waiting for scheduled change
+ */
+data class AutoSyncNoChangesWaitingForScheduled(
+        val now: DateTime,
+        val lastSync: DateTime,
+        val nextSync: DateTime
+): AutoSyncRule()
 
 /**
  * Indicates that other process is currently blocking the synchronization trigger
@@ -146,9 +180,15 @@ data class AutoSyncOtherProcessInProgress(
 /**
  * Indicates a notification to synchronize after recent update
  */
-data class AutoSyncTriggerShortChange(val now: DateTime, val lastSync: DateTime): AutoSyncRule()
+data class AutoSyncTriggerShortChange(
+        val now: DateTime,
+        val lastSync: DateTime
+): AutoSyncRule()
 
 /**
  * Indicates a notification to synchronize after a periodic update
  */
-data class AutoSyncTriggerLongChange(val now: DateTime, val lastSync: DateTime): AutoSyncRule()
+data class AutoSyncTriggerLongChange(
+        val now: DateTime,
+        val lastSync: DateTime
+): AutoSyncRule()
