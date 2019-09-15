@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory
 @Deprecated("Should be replaced with WorklogStorage as it serves the same purpose")
 class LogStorage(
         private val worklogStorage: WorklogStorage,
-        private val timeProvider: TimeProvider
+        private val timeProvider: TimeProvider,
+        private val autoSyncWatcher: AutoSyncWatcher2
 ) : IDataStorage<SimpleLog> {
 
     override var data = emptyList<SimpleLog>()
@@ -43,6 +44,7 @@ class LogStorage(
     override fun insert(dataEntity: SimpleLog): Int {
         val log = dataEntity.toLog(timeProvider)
         val newId = worklogStorage.insertOrUpdateSync(log)
+        autoSyncWatcher.markForShortCycleUpdate()
         notifyDataChange()
         return newId
     }
@@ -50,6 +52,7 @@ class LogStorage(
     override fun delete(dataEntity: SimpleLog): Int {
         val log = dataEntity.toLog(timeProvider)
         val newId = worklogStorage.deleteSync(log)
+        autoSyncWatcher.markForShortCycleUpdate()
         notifyDataChange()
         return newId
     }
@@ -57,6 +60,7 @@ class LogStorage(
     override fun update(dataEntity: SimpleLog): Int {
         val log = dataEntity.toLog(timeProvider)
         val newId = worklogStorage.updateSync(log)
+        autoSyncWatcher.markForShortCycleUpdate()
         notifyDataChange()
         return newId
     }

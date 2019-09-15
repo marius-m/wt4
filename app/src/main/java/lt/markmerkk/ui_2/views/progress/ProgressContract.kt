@@ -7,6 +7,7 @@ interface ProgressContract {
         fun onDetach()
         fun showProgress()
         fun hideProgress()
+        fun changeLabel(syncData: String)
     }
 
     interface Presenter {

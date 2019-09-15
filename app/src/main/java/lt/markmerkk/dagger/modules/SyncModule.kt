@@ -24,20 +24,9 @@ class SyncModule {
 
     @Provides
     @Singleton
-    fun providesAutoUpdateInteractor(
-            userSettings: UserSettings
-    ): AutoUpdateInteractor {
-        return AutoUpdateInteractorImpl(
-                userSettings = userSettings
-        )
-    }
-
-    @Provides
-    @Singleton
     fun providesSyncInteractor(
             dayProvider: DayProvider,
             logStorage: LogStorage,
-            autoUpdateInteractor: AutoUpdateInteractor,
             schedulerProvider: SchedulerProvider,
             timeProvider: TimeProvider,
             worklogStorage: WorklogStorage,
@@ -50,7 +39,6 @@ class SyncModule {
                 dayProvider = dayProvider,
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui(),
-                autoUpdateInteractor = autoUpdateInteractor,
                 timeProvider = timeProvider,
                 jiraClientProvider = jiraClientProvider,
                 worklogStorage = worklogStorage,

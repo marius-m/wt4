@@ -63,6 +63,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var connProvider: DBConnProvider
     @Inject lateinit var userSettings: UserSettings
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -99,6 +100,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 (keyEvent.code == KeyCode.R && keyEvent.isMetaDown)
                         || (keyEvent.code == KeyCode.R && keyEvent.isControlDown) -> {
                     syncInteractor.syncLogs()
+                    autoSyncWatcher.reset()
                 }
             }
         }
@@ -164,7 +166,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 )
         )
         widgetProgress = ProgressWidget(
-                presenter = ProgressWidgetPresenter(syncInteractor),
+                presenter = ProgressWidgetPresenter(
+                        syncInteractor = syncInteractor,
+                        autoSyncWatcher = autoSyncWatcher
+                ),
                 graphics = graphics
         )
         widgetLogQuickEdit = QuickEditContainerWidget(
@@ -202,6 +207,11 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     //region Events
+
+    @Subscribe
+    fun onAutoSync(event: EventAutoSync) {
+        syncInteractor.syncLogs()
+    }
 
     @Subscribe
     fun onFocusChange(event: EventFocusChange) {

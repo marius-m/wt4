@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 class SyncInteractorImpl(
         private val logStorage: IDataStorage<SimpleLog>,
         private val dayProvider: DayProvider,
-        private val autoUpdateInteractor: AutoUpdateInteractor,
         private val worklogApi: WorklogApi,
         private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider,
@@ -68,7 +67,6 @@ class SyncInteractorImpl(
                 .doAfterTerminate {
                     changeLoadingState(false)
                     logStorage.notifyDataChange()
-                    autoUpdateInteractor.notifyUpdateComplete(timeProvider.nowMillis())
                 }
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
@@ -86,7 +84,6 @@ class SyncInteractorImpl(
                     }
                     logger.error("=== Sync error ===")
                     logStorage.notifyDataChange()
-                    autoUpdateInteractor.notifyUpdateComplete(System.currentTimeMillis())
                 })
     }
 

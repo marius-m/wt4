@@ -7,8 +7,6 @@ import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.interactors.ActiveLogPersistence
-import lt.markmerkk.interactors.KeepAliveInteractor
-import lt.markmerkk.interactors.KeepAliveInteractorImpl
 import lt.markmerkk.migrations.Migration0To1
 import lt.markmerkk.migrations.Migration1To2
 import lt.markmerkk.migrations.Migration2To3
@@ -60,6 +58,11 @@ class AppModule(
         return EventBus()
     }
 
+    @Provides
+    @Singleton
+    fun providesEventBusWrapper(eventBus: EventBus): WTEventBus {
+        return WTEventBusImpl(eventBus)
+    }
 
     @Provides
     @Singleton
@@ -232,27 +235,17 @@ class AppModule(
     fun provideBasicLogStorage(
             worklogRepo: WorklogStorage,
             timeProvider: TimeProvider,
-            schedulerProvider: SchedulerProvider
+            schedulerProvider: SchedulerProvider,
+            autoSyncWatcher: AutoSyncWatcher2
     ): LogStorage {
 //        return LogStorageLegacy(dbExecutor, worklogRepo, timeProvider) // rename to restore old usage
-        return LogStorage(worklogRepo, timeProvider)
+        return LogStorage(worklogRepo, timeProvider, autoSyncWatcher)
     }
 
     @Provides
     @Singleton
     fun provideHourGlass(): HourGlass {
         return HourGlass()
-    }
-
-    @Provides
-    @Singleton
-    fun provideKeepAliveInteractor(
-            schedulerProvider: SchedulerProvider
-    ): KeepAliveInteractor {
-        return KeepAliveInteractorImpl(
-                uiSCheduler = schedulerProvider.ui(),
-                waitScheduler = schedulerProvider.waitScheduler()
-        )
     }
 
     @Provides
@@ -293,6 +286,21 @@ class AppModule(
             logStorage: LogStorage
     ): LogChangeValidator {
         return LogChangeValidator(logStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAutoSyncWatcher(
+            eventBus: WTEventBus,
+            timeProvider: TimeProvider,
+            schedulerProvider: SchedulerProvider
+    ): AutoSyncWatcher2 {
+        return AutoSyncWatcher2(
+                timeProvider = timeProvider,
+                eventBus = eventBus,
+                ioScheduler = schedulerProvider.waitScheduler(),
+                uiScheduler = schedulerProvider.ui()
+        )
     }
 
 }
