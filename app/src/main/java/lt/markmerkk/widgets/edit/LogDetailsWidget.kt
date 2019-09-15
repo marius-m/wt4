@@ -16,7 +16,7 @@ import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.events.EventSnackBarMessage
+import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -24,6 +24,9 @@ import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.utils.JiraLinkGenerator
+import lt.markmerkk.utils.JiraLinkGeneratorBasic
+import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.widgets.tickets.TicketWidget
 import org.joda.time.DateTime
@@ -32,7 +35,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsWidget : View(), LogDetailsContract.View {
+class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
@@ -44,6 +47,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
+    @Inject lateinit var userSettings: UserSettings
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXDatePicker
@@ -68,6 +72,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
     private lateinit var presenter: LogDetailsContract.Presenter
     private lateinit var ticketInfoLoader: TicketInfoLoader
+    private lateinit var jiraLinkGenerator: JiraLinkGenerator
 
     init {
         Main.component().inject(this)
@@ -182,12 +187,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.LINK, Color.BLACK, 16.0, 20.0)
                             tooltip = Tooltip("Copy issue link to clipboard")
-                            setOnAction {
-                                val issue = viewTextFieldTicket.text.toString()
-                                val issueLink = hostServicesInteractor.generateLink(issue)
-                                eventBus.post(EventSnackBarMessage("Copied $issueLink to clipboard"))
-                                hostServicesInteractor.copyLinkToClipboard(issue)
-                            }
+                            isDisable = true
                         }
                         viewButtonSearch = jfxButton {
                             isFocusTraversable = false
@@ -307,6 +307,17 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()
         )
+        jiraLinkGenerator = if (BuildConfig.oauth) {
+            JiraLinkGeneratorOAuth(
+                    view = this,
+                    userSettings = userSettings
+            )
+        } else {
+            JiraLinkGeneratorBasic(
+                    view = this,
+                    userSettings = userSettings
+            )
+        }
         viewTextTicketDesc.text = ""
         uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
                 viewButtonSubtractFrom,
@@ -345,9 +356,13 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
                 .subscribe { presenter.changeTicketCode(it) }
         viewTextComment.requestFocus()
         viewTextComment.positionCaret(viewTextComment.text.length)
+        jiraLinkGenerator.onAttach()
+        jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
+        jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
     }
 
     override fun onUndock() {
+        jiraLinkGenerator.onDetach()
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
         uiBridgeDateTimeHandler.onDetach()
@@ -431,6 +446,18 @@ class LogDetailsWidget : View(), LogDetailsContract.View {
 
     override fun disableSaving() {
         viewButtonSave.isDisable = true
+    }
+
+    override fun showCopyLink(ticketCode: TicketCode, webLink: String) {
+        viewButtonTicketLink.isDisable = false
+        viewButtonTicketLink.setOnAction {
+            hostServicesInteractor.ticketWebLinkToClipboard(webLink)
+        }
+    }
+
+    override fun hideCopyLink() {
+        viewButtonTicketLink.isDisable = true
+        viewButtonTicketLink.setOnAction { }
     }
 
     @Subscribe
