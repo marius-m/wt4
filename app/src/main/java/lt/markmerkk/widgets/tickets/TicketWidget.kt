@@ -76,7 +76,7 @@ class TicketWidget: View(), TicketContract.View {
                         addClass(Styles.inputTextField)
                         focusColor = Styles.cActiveRed
                         isLabelFloat = true
-                        promptText = "Search ticket by ID / Summary"
+                        promptText = "Search by ticket description"
                     }
                     viewButtonClear = jfxButton {
                         graphic = graphics.from(Glyph.CLEAR, Color.BLACK, 12.0)
