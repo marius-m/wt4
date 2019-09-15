@@ -49,7 +49,7 @@ buildscript {
 //    ext.oauth_host = keysProperties.getProperty("host")
     //endregion
 
-    //region Debug basic properties
+    //region Release basic properties
 //    def deployPropertyFile = new File("${rootDir}","deploy.properties")
 //    assert deployPropertyFile.exists()
 //    Properties deployProps = new Properties()
