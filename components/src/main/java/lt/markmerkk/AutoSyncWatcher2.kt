@@ -124,8 +124,8 @@ class AutoSyncWatcher2(
      * Marks watcher for short update cycle (ex.: 2 min instead of 1 hour)
      */
     fun markForShortCycleUpdate() {
-        logger.debug("Marking auto sync for shorter update cycle")
         nextSync = timeProvider.now().plusMinutes(2)
+        logger.debug("Marking auto sync for shorter update cycle. Next should trigger at $nextSync")
     }
 
     fun changeUpdateLock(
