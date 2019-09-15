@@ -7,6 +7,7 @@ interface JiraLinkGenerator {
     fun onAttach()
     fun onDetach()
     fun attachTicketCodeInput(inputTicketCodeAsStream: Observable<String>)
+    fun webLinkFromInput(ticketCodeAsString: String): String
     fun handleTicketInput(ticketCodeAsString: String)
 
     interface View {

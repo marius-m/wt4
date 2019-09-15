@@ -9,7 +9,7 @@ import rx.Subscription
  * Responsible for handling jira link to ticket generation
  */
 class JiraLinkGeneratorOAuth(
-        private val view: JiraLinkGenerator.View,
+        private val view: JiraLinkGenerator.View?,
         private val userSettings: UserSettings
 ): JiraLinkGenerator {
 
@@ -25,25 +25,28 @@ class JiraLinkGeneratorOAuth(
                 .subscribe { handleTicketInput(it) }
     }
 
-    /**
-     * Generates a link to ticket code
-     */
-    override fun handleTicketInput(ticketCodeAsString: String) {
+    override fun webLinkFromInput(ticketCodeAsString: String): String {
         if (userSettings.jiraUser().isEmpty()
                 || userSettings.jiraOAuthCreds().isEmpty()
                 || userSettings.jiraOAuthPreset().isEmpty()) {
-            view.hideCopyLink()
-            return
+            return ""
         }
         val ticketCode = TicketCode.new(ticketCodeAsString)
         if (!ticketCode.isEmpty()) {
-            val webLink = JiraLinkGenerator.webLinkFromCode(
+            return JiraLinkGenerator.webLinkFromCode(
                     userSettings.jiraOAuthPreset().host,
                     ticketCode
             )
-            view.showCopyLink(ticketCode, webLink)
+        }
+        return ""
+    }
+
+    override fun handleTicketInput(ticketCodeAsString: String) {
+        val webLink = webLinkFromInput(ticketCodeAsString)
+        if (webLink.isNotEmpty()) {
+            view?.showCopyLink(TicketCode.new(ticketCodeAsString), webLink)
         } else {
-            view.hideCopyLink()
+            view?.hideCopyLink()
         }
     }
 
