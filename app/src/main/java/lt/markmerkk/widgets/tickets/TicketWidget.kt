@@ -95,7 +95,7 @@ class TicketWidget: View(), TicketContract.View {
                         presenter.fetchTickets(
                                 forceFetch = true,
                                 filter = viewTextFieldTicketSearch.text,
-                                projectCode = viewComboProjectCodes.selectionModel.selectedItem
+                                projectCode = viewComboProjectCodes.selectionModel.selectedItem ?: ""
                         )
                     }
                     add(viewProgress)
