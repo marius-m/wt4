@@ -6,7 +6,7 @@
         </Console>
         <RollingFile name="FileAllLogs"
                      fileName="${sys:user.home}/.wt4_debug/logs/out.log"
-                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz"
+                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz"
                      immediateFlush="true"
                      append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
@@ -17,7 +17,7 @@
         </RollingFile>
         <RollingFile name="FileAllErrors"
                      fileName="${sys:user.home}/.wt4_debug/logs/errors.log"
-                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz"
+                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz"
                      immediateFlush="true"
                      append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
@@ -28,7 +28,7 @@
         </RollingFile>
         <RollingFile name="FileAllJira"
                      fileName="${sys:user.home}/.wt4_debug/logs/jira.log"
-                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz"
+                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz"
                      immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
@@ -39,7 +39,7 @@
         <RollingFile name="FileAllDb"
                      fileName="${sys:user.home}/.wt4_debug/logs/db.log"
                      immediateFlush="true"
-                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
+                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
                      append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
@@ -50,7 +50,7 @@
         <RollingFile name="FileTmp"
                      fileName="${sys:user.home}/.wt4_debug/logs/tmp.log"
                      immediateFlush="true"
-                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
+                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
                      append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
