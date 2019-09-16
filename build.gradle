@@ -4,8 +4,8 @@ buildscript {
 
 
     // Version
-    ext.versionName = "1.5.3"
-    ext.versionCode = "48"
+    ext.versionName = "1.5.4"
+    ext.versionCode = "49"
 
     //region Debug oauth properties
     // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
