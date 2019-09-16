@@ -6,7 +6,7 @@ Dedicated worklog management for JIRA
 * Synchronization with JIRA
 * Dynamic log editing
 * Works on Windows, Linux and Mac
-* Supports Basic authorizatiuon (username / pass) + OAuth2
+* Supports Basic authorization (username / pass) + OAuth2
 
 ## Downloads
 
@@ -15,15 +15,19 @@ Builds for `1.5.3`
 * [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.3.dmg)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.3.exe)
 * [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.5.3.deb)
+
+- Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
   
 ## Downloads iTo
-Some of our guys my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
+Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.5.3`
+Builds for `1.5.4`
 
-- [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.3.dmg)
-- [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.3.exe)
+- [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.4.dmg)
+- [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.4.exe)
 - Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
+
+- Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
  
 ## Issues
 
