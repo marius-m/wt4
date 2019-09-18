@@ -290,14 +290,29 @@ class AppModule(
 
     @Provides
     @Singleton
+    fun provideAccountAvailability(
+            userSettings: UserSettings,
+            jiraClientProvider: JiraClientProvider
+    ): AccountAvailablility {
+        if (BuildConfig.oauth) {
+            return AccountAvailabilityOAuth(userSettings, jiraClientProvider)
+        } else {
+            return AccountAvailabilityBasic(userSettings, jiraClientProvider)
+        }
+    }
+
+    @Provides
+    @Singleton
     fun provideAutoSyncWatcher(
             eventBus: WTEventBus,
             timeProvider: TimeProvider,
-            schedulerProvider: SchedulerProvider
+            schedulerProvider: SchedulerProvider,
+            accountAvailablility: AccountAvailablility
     ): AutoSyncWatcher2 {
         return AutoSyncWatcher2(
                 timeProvider = timeProvider,
                 eventBus = eventBus,
+                accountAvailablility = accountAvailablility,
                 ioScheduler = schedulerProvider.waitScheduler(),
                 uiScheduler = schedulerProvider.ui()
         )
