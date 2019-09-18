@@ -8,6 +8,7 @@ import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.mvp.HostServicesInteractor
+import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
@@ -19,14 +20,14 @@ import rx.Subscription
 class ContextMenuTicketSelect(
         private val graphics: Graphics<SVGGlyph>,
         private val eventBus: EventBus,
-        private val userSettings: UserSettings,
-        private val hostServicesInteractor: HostServicesInteractor
+        private val hostServicesInteractor: HostServicesInteractor,
+        private val accountAvailablility: AccountAvailablility
 ) {
 
     private val jiraLinkGenerator = if (BuildConfig.oauth) {
-        JiraLinkGeneratorOAuth(view = null, userSettings = userSettings)
+        JiraLinkGeneratorOAuth(view = null, accountAvailability = accountAvailablility)
     } else {
-        JiraLinkGeneratorBasic(view = null, userSettings = userSettings)
+        JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
     }
 
     private var subsTicketSelect: Subscription? = null

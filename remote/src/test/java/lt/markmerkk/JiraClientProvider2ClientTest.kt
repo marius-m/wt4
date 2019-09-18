@@ -23,9 +23,7 @@ class JiraClientProvider2ClientTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraClientProvider.client()
@@ -37,9 +35,7 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun hasError() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraClientProvider.client()
@@ -55,9 +51,7 @@ class JiraClientProvider2ClientTest {
     @Test
     fun sameClient() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result1 = jiraClientProvider.client()
@@ -76,9 +70,7 @@ class JiraClientProvider2ClientTest {
     @Test
     fun differentCredentials() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result1 = jiraClientProvider.client()
@@ -87,9 +79,8 @@ class JiraClientProvider2ClientTest {
         assertThat(result1).isNotNull()
 
         // Assemble
-        doReturn("host2").whenever(userSettings).host
-        doReturn("user2").whenever(userSettings).username
-        doReturn("pass2").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds("host2", "user2", "pass2"))
+                .whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result2 = jiraClientProvider.client()
@@ -102,9 +93,11 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun invalidHost() {
         // Assemble
-        doReturn("").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds(
+                hostname = "",
+                username = "user2",
+                password = "pass2"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         // Assert
@@ -114,9 +107,11 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun invalidUsername() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds(
+                hostname = "host2",
+                username = "",
+                password = "pass2"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         // Assert
@@ -126,9 +121,11 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun invalidPass() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("").whenever(userSettings).password
+        doReturn(Mocks.createJiraBasicCreds(
+                hostname = "host2",
+                username = "user2",
+                password = ""
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         // Assert
