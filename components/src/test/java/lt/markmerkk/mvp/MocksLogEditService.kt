@@ -35,7 +35,8 @@ object MocksLogEditService {
             fakeStart: DateTime,
             fakeEnd: DateTime,
             task: String,
-            comment: String
+            comment: String,
+            systemNote: String
     ): SimpleLog {
         val simpleLog: SimpleLog = mock()
         val startMillis = fakeStart.millis
@@ -44,6 +45,7 @@ object MocksLogEditService {
         doReturn(endMillis).whenever(simpleLog).end
         doReturn(task).whenever(simpleLog).task
         doReturn(comment).whenever(simpleLog).comment
+        doReturn(systemNote).whenever(simpleLog).systemNote
         return simpleLog
     }
 

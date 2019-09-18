@@ -146,4 +146,55 @@ object Mocks {
         return log
     }
 
+    fun createJiraBasicCreds(
+            hostname: String = "valid_host",
+            username: String = "valid_user",
+            password: String = "valid_pass"
+    ): JiraBasicCreds {
+        return JiraBasicCreds(
+                host = hostname,
+                username = username,
+                password = password
+        )
+    }
+
+    fun createJiraOAuthPreset(
+            host: String = "hostname",
+            privateKey: String = "private_key",
+            consumerKey: String = "consumer_key"
+    ): JiraOAuthPreset {
+        return JiraOAuthPreset(
+                host = host,
+                privateKey = privateKey,
+                consumerKey = consumerKey
+
+        )
+    }
+
+    fun createJiraOAuthCreds(
+            tokenSecret: String = "token_secret",
+            accessKey: String = "access_key"
+    ): JiraOAuthCreds {
+        return JiraOAuthCreds(
+                tokenSecret = tokenSecret,
+                accessKey = accessKey
+        )
+    }
+
+    fun createJiraUserEmpty(): JiraUser {
+        return createJiraUser(name = "", displayName = "", email = "")
+    }
+
+    fun createJiraUser(
+            name: String = "name",
+            displayName: String = "display_name",
+            email: String = "email"
+    ): JiraUser {
+        return JiraUser(
+                name = name,
+                displayName = displayName,
+                email = email
+        )
+    }
+
 }

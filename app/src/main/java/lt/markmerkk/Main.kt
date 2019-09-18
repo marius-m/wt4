@@ -8,27 +8,22 @@ import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.MainWidget
-import lt.markmerkk.widgets.settings.OAuthInteractor
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.LoggerContext
 import org.slf4j.LoggerFactory
 import tornadofx.*
-import java.io.File
 import javax.inject.Inject
 
 
-class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener {
+class Main : App(MainWidget::class, Styles::class) {
 
     @Inject lateinit var settings: UserSettings
     @Inject lateinit var logStorage: LogStorage
-    @Inject lateinit var keepAliveInteractor: KeepAliveInteractor
     @Inject lateinit var syncInteractor: SyncInteractor
-    @Inject lateinit var autoUpdateInteractor: AutoUpdateInteractor
     @Inject lateinit var appConfig: Config
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var schedulersProvider: SchedulerProvider
     @Inject lateinit var userSettings: UserSettings
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
 
     private lateinit var keepAliveGASession: KeepAliveGASession
     private lateinit var appComponent: AppComponent
@@ -46,8 +41,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
 
         logger.info("Running in " + config)
         settings.onAttach()
-        keepAliveInteractor.onAttach()
-        keepAliveInteractor.register(this)
         syncInteractor.onAttach()
 
         stage.width = SCENE_WIDTH.toDouble()
@@ -66,6 +59,8 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
         )
         keepAliveGASession.onAttach()
         stageProperties.onAttach()
+        autoSyncWatcher.onAttach()
+        autoSyncWatcher.subscribeWatch()
         userSettings.changeOAuthPreset(
                 host = BuildConfig.oauthHost,
                 privateKey = BuildConfig.oauthKeyPrivate,
@@ -74,11 +69,10 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
     }
 
     override fun stop() {
+        autoSyncWatcher.onDetach()
         stageProperties.onDetach()
         keepAliveGASession.onDetach()
         syncInteractor.onDetach()
-        keepAliveInteractor.unregister(this)
-        keepAliveInteractor.onDetach()
         settings.onDetach()
         tracker.stop()
         super.stop()
@@ -86,12 +80,6 @@ class Main : App(MainWidget::class, Styles::class), KeepAliveInteractor.Listener
 
     fun restart() {
         find<MainWidget>().showInfo("Restart app to take effect")
-    }
-
-    override fun update() {
-        if (autoUpdateInteractor.isAutoUpdateTimeoutHit(System.currentTimeMillis())) {
-            syncInteractor.syncLogs()
-        }
     }
 
     companion object {

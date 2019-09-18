@@ -9,9 +9,9 @@ class UserSettingsImpl(
         private val settings: HashSettings
 ) : UserSettings {
 
-    override var host: String = ""
-    override var username: String = ""
-    override var password: String = ""
+    private var host: String = ""
+    private var username: String = ""
+    private var password: String = ""
     override var issueJql: String = Const.DEFAULT_JQL_USER_ISSUES
     override var version = -1
     override var autoUpdateMinutes: Int = -1
@@ -70,6 +70,7 @@ class UserSettingsImpl(
     override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
     override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
     override fun jiraUser(): JiraUser = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail)
+    override fun jiraBasicCreds(): JiraBasicCreds = JiraBasicCreds(host, username, password)
 
     override fun changeOAuthPreset(
             host: String,
@@ -90,6 +91,12 @@ class UserSettingsImpl(
         this.jiraUserName = name
         this.jiraUserEmail = email
         this.jiraUserDisplayName = displayName
+    }
+
+    override fun changeBasicCreds(hostname: String, username: String, password: String) {
+        this.host = hostname
+        this.username = username
+        this.password = password
     }
 
     override fun resetUserData() {

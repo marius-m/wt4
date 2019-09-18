@@ -16,9 +16,7 @@ class AuthInteractorImpl(
             username: String,
             password: String
     ): Single<JiraUser> {
-        userSettings.host = hostname
-        userSettings.username = username
-        userSettings.password = password
+        userSettings.changeBasicCreds(hostname, username, password)
         return Single.defer { Single.just(jiraClientProvider.newClient()) }
                 .flatMap { jiraBasicApi.jiraUser() }
     }

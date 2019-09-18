@@ -17,6 +17,7 @@ import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
@@ -35,6 +36,7 @@ class TicketWidget: View(), TicketContract.View {
     @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
+    @Inject lateinit var accountAvailablility: AccountAvailablility
 
     init {
         Main.component().inject(this)
@@ -54,8 +56,8 @@ class TicketWidget: View(), TicketContract.View {
     private val contextMenuTicketSelect: ContextMenuTicketSelect = ContextMenuTicketSelect(
             graphics = graphics,
             eventBus = eventBus,
-            userSettings = userSettings,
-            hostServicesInteractor = hostServicesInteractor
+            hostServicesInteractor = hostServicesInteractor,
+            accountAvailablility = accountAvailablility
     )
 
     override val root: Parent = borderpane {

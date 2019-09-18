@@ -33,10 +33,11 @@ class JiraClientProviderBasic(
                     )
             )
         }
+        val jiraBasicCreds = userSettings.jiraBasicCreds()
         val newClient = Client.new(
-                userSettings.host,
-                userSettings.username,
-                userSettings.password
+                jiraBasicCreds.host,
+                jiraBasicCreds.username,
+                jiraBasicCreds.password
         )
         if (newClient.host.isEmpty()
                 || newClient.user.isEmpty()
@@ -51,6 +52,18 @@ class JiraClientProviderBasic(
         } else {
             this.client.jiraClient()
         }
+    }
+
+    override fun hasError(): Boolean {
+        return this.client.hasError()
+    }
+
+    override fun hostname(): String {
+        return userSettings.jiraBasicCreds().host
+    }
+
+    override fun username(): String {
+        return userSettings.jiraBasicCreds().username
     }
 
     private data class Client(

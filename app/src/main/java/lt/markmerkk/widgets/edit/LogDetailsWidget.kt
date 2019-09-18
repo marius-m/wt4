@@ -24,6 +24,7 @@ import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
@@ -48,6 +49,8 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
     @Inject lateinit var userSettings: UserSettings
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
+    @Inject lateinit var accountAvailablility: AccountAvailablility
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXDatePicker
@@ -312,12 +315,12 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
         jiraLinkGenerator = if (BuildConfig.oauth) {
             JiraLinkGeneratorOAuth(
                     view = this,
-                    userSettings = userSettings
+                    accountAvailability = accountAvailablility
             )
         } else {
             JiraLinkGeneratorBasic(
                     view = this,
-                    userSettings = userSettings
+                    accountAvailablility = accountAvailablility
             )
         }
         viewTextTicketDesc.text = ""
@@ -361,9 +364,11 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
         jiraLinkGenerator.onAttach()
         jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
+        autoSyncWatcher.changeUpdateLock(isInLock = true, lockProcessName = "LogDetails")
     }
 
     override fun onUndock() {
+        autoSyncWatcher.changeUpdateLock(isInLock = false, lockProcessName = "")
         jiraLinkGenerator.onDetach()
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)

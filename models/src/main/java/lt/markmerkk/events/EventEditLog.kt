@@ -6,4 +6,4 @@ import lt.markmerkk.entities.SimpleLog
 class EventEditLog(
         val editType: LogEditType,
         val logs: List<SimpleLog>
-)
+): EventsBusEvent
