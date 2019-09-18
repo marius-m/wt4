@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.5.0 - 1.5.3
+## 1.5.5
+- Add auto-sync mechanism
+  - Automatically triggers sync in 1hr
+  - Automatically triggers sync in 2 mins whenever some action is taken
+
+## 1.5.0 - 1.5.4
 - Introduce OAuth authorization support
 - Fix ticket link generate
 - More support for ticket link copy (additional rules apply)
