@@ -1,33 +1,28 @@
 package lt.markmerkk
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.utils.ConfigSetSettings
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-11-07
- */
 class ConfigCfgPathTest {
 
-    val pathProvider: ConfigPathProvider = mock()
-    val configSetSettings: ConfigSetSettings = mock()
+    @Mock lateinit var pathProvider: ConfigPathProvider
+    @Mock lateinit var configSetSettings: ConfigSetSettings
 
     @Before
     fun setUp() {
-        whenever(pathProvider.userHome())
-                .thenReturn("home_dir")
+        MockitoAnnotations.initMocks(this)
     }
 
     @Test
     fun releasePath_returnDefault() {
         // Arrange
+        doReturn("home_dir").whenever(pathProvider).userHome()
         whenever(pathProvider.configDefault())
                 .thenReturn("wt4")
         whenever(configSetSettings.configSetName)
@@ -51,6 +46,7 @@ class ConfigCfgPathTest {
     @Test
     fun debugPath_returnDefault() {
         // Arrange
+        doReturn("home_dir").whenever(pathProvider).userHome()
         whenever(pathProvider.configDefault())
                 .thenReturn("wt4_debug")
         whenever(configSetSettings.configSetName)
@@ -74,6 +70,7 @@ class ConfigCfgPathTest {
     @Test
     fun withExtension_returnExtension() {
         // Arrange
+        doReturn("home_dir").whenever(pathProvider).userHome()
         whenever(pathProvider.configDefault())
                 .thenReturn("wt4_debug")
         whenever(configSetSettings.configSetName)
@@ -95,12 +92,11 @@ class ConfigCfgPathTest {
     }
 
     @Test
-    fun validPath_triggerAbsolutePath() {
+    fun validPath() {
         // Arrange
-        whenever(pathProvider.configDefault())
-                .thenReturn("wt4")
-        whenever(configSetSettings.configSetName)
-                .thenReturn("test_extension")
+        doReturn("home_dir").whenever(pathProvider).userHome()
+        doReturn("wt4").whenever(pathProvider).configDefault()
+        doReturn("text_extension").whenever(configSetSettings).configSetName
         val config = Config(
                 debug = false,
                 versionName = "test_version",

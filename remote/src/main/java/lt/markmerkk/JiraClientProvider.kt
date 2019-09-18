@@ -13,4 +13,9 @@ interface JiraClientProvider {
 
     @Throws(AuthException::class)
     fun client(): JiraClient
+
+    fun hostname(): String
+
+    fun username(): String
+
 }

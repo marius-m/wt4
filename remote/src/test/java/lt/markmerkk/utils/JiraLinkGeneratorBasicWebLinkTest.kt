@@ -1,6 +1,7 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.JiraMocks
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +28,11 @@ class JiraLinkGeneratorBasicWebLinkTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn("valid_host").whenever(userSettings).host
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "valid_host",
+                username = "valid_user",
+                password = "valid_pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraLinkGenerator.webLinkFromInput("DEV-123")
@@ -39,7 +44,11 @@ class JiraLinkGeneratorBasicWebLinkTest {
     @Test
     fun invalidCode() {
         // Assemble
-        doReturn("valid_host").whenever(userSettings).host
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraLinkGenerator.webLinkFromInput("invalid")
@@ -51,7 +60,11 @@ class JiraLinkGeneratorBasicWebLinkTest {
     @Test
     fun noHost() {
         // Assemble
-        doReturn("").whenever(userSettings).host
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraLinkGenerator.webLinkFromInput("DEV-123")

@@ -26,12 +26,13 @@ class JiraLinkGeneratorBasic(
     }
 
     override fun webLinkFromInput(ticketCodeAsString: String): String {
-        if (userSettings.host.isEmpty()) {
+        val jiraBasicCreds = userSettings.jiraBasicCreds()
+        if (jiraBasicCreds.host.isEmpty()) {
             return ""
         }
         val ticketCode = TicketCode.new(ticketCodeAsString)
         if (!ticketCode.isEmpty()) {
-            return JiraLinkGenerator.webLinkFromCode(userSettings.host, ticketCode)
+            return JiraLinkGenerator.webLinkFromCode(jiraBasicCreds.host, ticketCode)
         }
         return ""
     }

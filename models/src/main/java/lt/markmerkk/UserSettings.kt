@@ -7,9 +7,6 @@ interface UserSettings {
     fun onDetach()
 
     var issueJql: String
-    var host: String
-    var username: String
-    var password: String
     var version: Int
     var autoUpdateMinutes: Int
     var lastUpdate: Long
@@ -18,10 +15,12 @@ interface UserSettings {
     fun jiraOAuthPreset(): JiraOAuthPreset
     fun jiraOAuthCreds(): JiraOAuthCreds
     fun jiraUser(): JiraUser
+    fun jiraBasicCreds(): JiraBasicCreds
 
     fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
     fun changeOAuthCreds(tokenSecret: String, accessKey: String)
     fun changeJiraUser(name: String, email: String, displayName: String)
+    fun changeBasicCreds(hostname: String, username: String, password: String)
     fun resetUserData()
 }
 
@@ -43,4 +42,8 @@ data class JiraUser(
         val email: String
 ) {
     fun isEmpty(): Boolean = name.isEmpty() || displayName.isEmpty() || email.isEmpty()
+}
+
+data class JiraBasicCreds(val host: String, val username: String, val password: String) {
+    fun isEmpty(): Boolean = host.isEmpty() || username.isEmpty() || password.isEmpty()
 }

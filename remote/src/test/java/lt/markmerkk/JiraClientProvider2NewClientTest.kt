@@ -23,9 +23,11 @@ class JiraClientProvider2NewClientTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraClientProvider.newClient()
@@ -37,9 +39,11 @@ class JiraClientProvider2NewClientTest {
     @Test
     fun sameClient() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result1 = jiraClientProvider.newClient()
@@ -58,9 +62,11 @@ class JiraClientProvider2NewClientTest {
     @Test
     fun markAsError() {
         // Assemble
-        doReturn("host").whenever(userSettings).host
-        doReturn("user").whenever(userSettings).username
-        doReturn("pass").whenever(userSettings).password
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result1 = jiraClientProvider.newClient()

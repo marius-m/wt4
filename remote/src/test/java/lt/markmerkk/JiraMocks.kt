@@ -10,6 +10,18 @@ import net.rcarz.jiraclient.RestException
 
 object JiraMocks {
 
+    fun createJiraBasicCreds(
+            hostname: String = "valid_host",
+            username: String = "valid_user",
+            password: String = "valid_pass"
+    ): JiraBasicCreds {
+        return JiraBasicCreds(
+                host = hostname,
+                username = username,
+                password = password
+        )
+    }
+
     fun createJiraUserEmpty(): JiraUser {
         return createJiraUser(name = "", displayName = "", email = "")
     }

@@ -54,7 +54,8 @@ class LogEditServiceImplTest {
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
-                "valid_comment"
+                "valid_comment",
+                ""
         )
         doReturn("30m.").whenever(simpleLog).prettyDuration
         doReturn(true).whenever(simpleLog).canEdit()
@@ -68,7 +69,7 @@ class LogEditServiceImplTest {
 
         // Assert
         verify(listener).onDurationChange(eq("30m."))
-        verify(listener).onGenericNotification(eq("valid_error_message"))
+        verify(listener).onGenericNotification(eq(""))
         verify(listener).onEnableInput()
         verify(listener, atLeastOnce()).onEnableSaving() // update time triggers it further
     }
@@ -82,7 +83,8 @@ class LogEditServiceImplTest {
                 fakeStart,
                 fakeEnd,
                 "valid_ticket",
-                "valid_comment"
+                "valid_comment",
+                ""
         )
         doReturn("30m.").whenever(simpleLog).prettyDuration
         doReturn(true).whenever(simpleLog).isRemote
@@ -94,7 +96,7 @@ class LogEditServiceImplTest {
 
         // Assert
         verify(listener).onDurationChange(eq("30m."))
-        verify(listener).onGenericNotification(eq("Worklog is already in sync with JIRA"))
+        verify(listener).onGenericNotification(eq(""))
         verify(listener).onDisableInput()
         verify(listener).onDisableSaving()
     }

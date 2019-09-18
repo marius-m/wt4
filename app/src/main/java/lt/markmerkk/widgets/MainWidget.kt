@@ -64,6 +64,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var connProvider: DBConnProvider
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
+    @Inject lateinit var jiraClientProvider: JiraClientProvider
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -329,7 +330,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         val buttonOpenSettings = ButtonType("Open 'Account settings'")
         alert(
                 header = "Error",
-                content = "Cannot connect to '${userSettings.host}' with user '${userSettings.username}'.\n" +
+                content = "Cannot connect to '${jiraClientProvider.hostname()}' with user '${jiraClientProvider.username()}'.\n" +
                         "Please check connection in 'Account settings'.\n" +
                         "Make sure you're able to connect by pressing 'TEST CONNECTION' to fix this issue",
                 type = Alert.AlertType.ERROR,

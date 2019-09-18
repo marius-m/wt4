@@ -58,6 +58,14 @@ class JiraClientProviderOauth(
         }
     }
 
+    override fun hostname(): String {
+        return userSettings.jiraOAuthPreset().host
+    }
+
+    override fun username(): String {
+        return userSettings.jiraUser().displayName
+    }
+
     private data class Client(
             val uri: String,
             val privateKey: String,

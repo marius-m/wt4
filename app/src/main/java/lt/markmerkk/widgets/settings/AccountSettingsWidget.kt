@@ -158,9 +158,11 @@ class AccountSettingsWidget : View() {
                 }
                 jfxButton("Save".toUpperCase()) {
                     setOnAction {
-                        userSettings.host = viewInputHostname.text
-                        userSettings.username = viewInputUsername.text
-                        userSettings.password = viewInputPassword.text
+                        userSettings.changeBasicCreds(
+                                hostname = viewInputHostname.text,
+                                username = viewInputUsername.text,
+                                password = viewInputPassword.text
+                        )
                         eventBus.post(EventSnackBarMessage("Settings saved!"))
                         close()
                     }
@@ -178,9 +180,10 @@ class AccountSettingsWidget : View() {
         super.onDock()
         viewContainerStatusBasic.show()
         viewContainerStatusAdvanced.hide()
-        viewInputHostname.text = userSettings.host
-        viewInputUsername.text = userSettings.username
-        viewInputPassword.text = userSettings.password
+        val jiraBasicCreds = userSettings.jiraBasicCreds()
+        viewInputHostname.text = jiraBasicCreds.host
+        viewInputUsername.text = jiraBasicCreds.username
+        viewInputPassword.text = jiraBasicCreds.password
 
         authService = AuthServiceImpl(
                 authServiceView,

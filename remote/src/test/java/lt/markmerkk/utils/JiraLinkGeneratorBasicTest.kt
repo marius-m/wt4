@@ -1,6 +1,7 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.JiraMocks
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import org.junit.Before
@@ -26,7 +27,11 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn("valid_host").whenever(userSettings).host
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")
@@ -38,7 +43,11 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun invalidCode() {
         // Assemble
-        doReturn("valid_host").whenever(userSettings).host
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         jiraLinkGenerator.handleTicketInput("invalid")
@@ -50,7 +59,11 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun noHost() {
         // Assemble
-        doReturn("").whenever(userSettings).host
+        doReturn(JiraMocks.createJiraBasicCreds(
+                hostname = "",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")
