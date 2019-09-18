@@ -23,7 +23,7 @@ class JiraClientProvider2NewClientTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
+        doReturn(Mocks.createJiraBasicCreds(
                 hostname = "host",
                 username = "user",
                 password = "pass"
@@ -39,7 +39,7 @@ class JiraClientProvider2NewClientTest {
     @Test
     fun sameClient() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
+        doReturn(Mocks.createJiraBasicCreds(
                 hostname = "host",
                 username = "user",
                 password = "pass"
@@ -62,7 +62,7 @@ class JiraClientProvider2NewClientTest {
     @Test
     fun markAsError() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
+        doReturn(Mocks.createJiraBasicCreds(
                 hostname = "host",
                 username = "user",
                 password = "pass"

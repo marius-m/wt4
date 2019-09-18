@@ -14,7 +14,8 @@ import org.mockito.MockitoAnnotations
 class JiraLinkGeneratorOAuthTest {
 
     @Mock lateinit var view: JiraLinkGenerator.View
-    @Mock lateinit var userSettings: UserSettings
+    @Mock lateinit var accountAvailablilityInteractor: AccountAvailablilityInteractor
+
     lateinit var jiraLinkGenerator: JiraLinkGeneratorOAuth
 
     @Before
@@ -22,19 +23,15 @@ class JiraLinkGeneratorOAuthTest {
         MockitoAnnotations.initMocks(this)
         jiraLinkGenerator = JiraLinkGeneratorOAuth(
                 view = view,
-                userSettings = userSettings
+                accountAvailabilityInteractor = accountAvailablilityInteractor
         )
     }
 
     @Test
     fun valid() {
         // Assemble
-        doReturn(JiraOAuthPreset("valid", "valid", "valid")).whenever(userSettings)
-                .jiraOAuthPreset()
-        doReturn(JiraOAuthCreds("valid", "valid")).whenever(userSettings)
-                .jiraOAuthCreds()
-        doReturn(JiraMocks.createJiraUser()).whenever(userSettings)
-                .jiraUser()
+        doReturn("host").whenever(accountAvailablilityInteractor).host()
+        doReturn(true).whenever(accountAvailablilityInteractor).isAccountReadyForSync()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")
@@ -46,12 +43,8 @@ class JiraLinkGeneratorOAuthTest {
     @Test
     fun invalidCode() {
         // Assemble
-        doReturn(JiraOAuthPreset("valid", "valid", "valid")).whenever(userSettings)
-                .jiraOAuthPreset()
-        doReturn(JiraOAuthCreds("valid", "valid")).whenever(userSettings)
-                .jiraOAuthCreds()
-        doReturn(JiraMocks.createJiraUser()).whenever(userSettings)
-                .jiraUser()
+        doReturn("host").whenever(accountAvailablilityInteractor).host()
+        doReturn(true).whenever(accountAvailablilityInteractor).isAccountReadyForSync()
 
         // Act
         jiraLinkGenerator.handleTicketInput("invalid")
@@ -61,48 +54,10 @@ class JiraLinkGeneratorOAuthTest {
     }
 
     @Test
-    fun noUser() {
+    fun accountNotAvailable() {
         // Assemble
-        doReturn(JiraOAuthPreset("valid", "valid", "valid")).whenever(userSettings)
-                .jiraOAuthPreset()
-        doReturn(JiraOAuthCreds("valid", "valid")).whenever(userSettings)
-                .jiraOAuthCreds()
-        doReturn(JiraMocks.createJiraUserEmpty()).whenever(userSettings) // empty user
-                .jiraUser()
-
-        // Act
-        jiraLinkGenerator.handleTicketInput("DEV-123")
-
-        // Assert
-        verify(view).hideCopyLink()
-    }
-
-    @Test
-    fun noCreds() {
-        // Assemble
-        doReturn(JiraOAuthPreset("valid", "valid", "valid")).whenever(userSettings)
-                .jiraOAuthPreset()
-        doReturn(JiraOAuthCreds("", "")).whenever(userSettings)
-                .jiraOAuthCreds()
-        doReturn(JiraMocks.createJiraUser()).whenever(userSettings)
-                .jiraUser()
-
-        // Act
-        jiraLinkGenerator.handleTicketInput("DEV-123")
-
-        // Assert
-        verify(view).hideCopyLink()
-    }
-
-    @Test
-    fun noPreset() { // not sure possible
-        // Assemble
-        doReturn(JiraOAuthPreset("", "", "")).whenever(userSettings)
-                .jiraOAuthPreset()
-        doReturn(JiraOAuthCreds("valid", "valid")).whenever(userSettings)
-                .jiraOAuthCreds()
-        doReturn(JiraMocks.createJiraUser()).whenever(userSettings)
-                .jiraUser()
+        doReturn("host").whenever(accountAvailablilityInteractor).host()
+        doReturn(false).whenever(accountAvailablilityInteractor).isAccountReadyForSync()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")

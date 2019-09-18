@@ -1,6 +1,5 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import rx.Observable
 import rx.Subscription
@@ -10,12 +9,12 @@ import rx.Subscription
  */
 class JiraLinkGeneratorOAuth(
         private val view: JiraLinkGenerator.View?,
-        private val userSettings: UserSettings
-): JiraLinkGenerator {
+        private val accountAvailabilityInteractor: AccountAvailablilityInteractor
+) : JiraLinkGenerator {
 
     private var subsInputTicketCode: Subscription? = null
 
-    override fun onAttach() { }
+    override fun onAttach() {}
     override fun onDetach() {
         subsInputTicketCode?.unsubscribe()
     }
@@ -26,15 +25,13 @@ class JiraLinkGeneratorOAuth(
     }
 
     override fun webLinkFromInput(ticketCodeAsString: String): String {
-        if (userSettings.jiraUser().isEmpty()
-                || userSettings.jiraOAuthCreds().isEmpty()
-                || userSettings.jiraOAuthPreset().isEmpty()) {
+        if (!accountAvailabilityInteractor.isAccountReadyForSync()) {
             return ""
         }
         val ticketCode = TicketCode.new(ticketCodeAsString)
         if (!ticketCode.isEmpty()) {
             return JiraLinkGenerator.webLinkFromCode(
-                    userSettings.jiraOAuthPreset().host,
+                    accountAvailabilityInteractor.host(),
                     ticketCode
             )
         }

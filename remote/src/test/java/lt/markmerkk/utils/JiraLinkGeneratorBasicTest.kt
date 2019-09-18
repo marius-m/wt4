@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.JiraMocks
+import lt.markmerkk.Mocks
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import org.junit.Before
@@ -12,7 +13,7 @@ import org.mockito.MockitoAnnotations
 class JiraLinkGeneratorBasicTest {
 
     @Mock lateinit var view: JiraLinkGenerator.View
-    @Mock lateinit var userSettings: UserSettings
+    @Mock lateinit var accountAvailablilityInteractor: AccountAvailablilityInteractor
     lateinit var jiraLinkGenerator: JiraLinkGeneratorBasic
 
     @Before
@@ -20,18 +21,14 @@ class JiraLinkGeneratorBasicTest {
         MockitoAnnotations.initMocks(this)
         jiraLinkGenerator = JiraLinkGeneratorBasic(
                 view = view,
-                userSettings = userSettings
+                accountAvailablilityInteractor = accountAvailablilityInteractor
         )
     }
 
     @Test
     fun valid() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
-                hostname = "host",
-                username = "user",
-                password = "pass"
-        )).whenever(userSettings).jiraBasicCreds()
+        doReturn("host").whenever(accountAvailablilityInteractor).host()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")
@@ -43,11 +40,7 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun invalidCode() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
-                hostname = "host",
-                username = "user",
-                password = "pass"
-        )).whenever(userSettings).jiraBasicCreds()
+        doReturn("host").whenever(accountAvailablilityInteractor).host()
 
         // Act
         jiraLinkGenerator.handleTicketInput("invalid")
@@ -59,11 +52,7 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun noHost() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
-                hostname = "",
-                username = "user",
-                password = "pass"
-        )).whenever(userSettings).jiraBasicCreds()
+        doReturn("").whenever(accountAvailablilityInteractor).host()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")

@@ -23,7 +23,7 @@ class JiraClientProvider2ClientTest {
     @Test
     fun valid() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraClientProvider.client()
@@ -35,7 +35,7 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun hasError() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result = jiraClientProvider.client()
@@ -51,7 +51,7 @@ class JiraClientProvider2ClientTest {
     @Test
     fun sameClient() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result1 = jiraClientProvider.client()
@@ -70,7 +70,7 @@ class JiraClientProvider2ClientTest {
     @Test
     fun differentCredentials() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
+        doReturn(Mocks.createJiraBasicCreds()).whenever(userSettings).jiraBasicCreds()
 
         // Act
         val result1 = jiraClientProvider.client()
@@ -79,7 +79,7 @@ class JiraClientProvider2ClientTest {
         assertThat(result1).isNotNull()
 
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds("host2", "user2", "pass2"))
+        doReturn(Mocks.createJiraBasicCreds("host2", "user2", "pass2"))
                 .whenever(userSettings).jiraBasicCreds()
 
         // Act
@@ -93,7 +93,7 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun invalidHost() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
+        doReturn(Mocks.createJiraBasicCreds(
                 hostname = "",
                 username = "user2",
                 password = "pass2"
@@ -107,7 +107,7 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun invalidUsername() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
+        doReturn(Mocks.createJiraBasicCreds(
                 hostname = "host2",
                 username = "",
                 password = "pass2"
@@ -121,7 +121,7 @@ class JiraClientProvider2ClientTest {
     @Test(expected = AuthException::class)
     fun invalidPass() {
         // Assemble
-        doReturn(JiraMocks.createJiraBasicCreds(
+        doReturn(Mocks.createJiraBasicCreds(
                 hostname = "host2",
                 username = "user2",
                 password = ""

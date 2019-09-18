@@ -10,7 +10,7 @@ import rx.Subscription
  */
 class JiraLinkGeneratorBasic(
         private val view: JiraLinkGenerator.View?,
-        private val userSettings: UserSettings
+        private val accountAvailablilityInteractor: AccountAvailablilityInteractor
 ): JiraLinkGenerator {
 
     private var subsInputTicketCode: Subscription? = null
@@ -26,13 +26,13 @@ class JiraLinkGeneratorBasic(
     }
 
     override fun webLinkFromInput(ticketCodeAsString: String): String {
-        val jiraBasicCreds = userSettings.jiraBasicCreds()
-        if (jiraBasicCreds.host.isEmpty()) {
+        val host = accountAvailablilityInteractor.host()
+        if (host.isEmpty()) {
             return ""
         }
         val ticketCode = TicketCode.new(ticketCodeAsString)
         if (!ticketCode.isEmpty()) {
-            return JiraLinkGenerator.webLinkFromCode(jiraBasicCreds.host, ticketCode)
+            return JiraLinkGenerator.webLinkFromCode(host, ticketCode)
         }
         return ""
     }
