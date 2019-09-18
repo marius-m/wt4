@@ -1,9 +1,6 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.JiraMocks
-import lt.markmerkk.Mocks
-import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import org.junit.Before
 import org.junit.Test
@@ -13,7 +10,7 @@ import org.mockito.MockitoAnnotations
 class JiraLinkGeneratorBasicTest {
 
     @Mock lateinit var view: JiraLinkGenerator.View
-    @Mock lateinit var accountAvailablilityInteractor: AccountAvailablilityInteractor
+    @Mock lateinit var accountAvailablility: AccountAvailablility
     lateinit var jiraLinkGenerator: JiraLinkGeneratorBasic
 
     @Before
@@ -21,14 +18,14 @@ class JiraLinkGeneratorBasicTest {
         MockitoAnnotations.initMocks(this)
         jiraLinkGenerator = JiraLinkGeneratorBasic(
                 view = view,
-                accountAvailablilityInteractor = accountAvailablilityInteractor
+                accountAvailablility = accountAvailablility
         )
     }
 
     @Test
     fun valid() {
         // Assemble
-        doReturn("host").whenever(accountAvailablilityInteractor).host()
+        doReturn("host").whenever(accountAvailablility).host()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")
@@ -40,7 +37,7 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun invalidCode() {
         // Assemble
-        doReturn("host").whenever(accountAvailablilityInteractor).host()
+        doReturn("host").whenever(accountAvailablility).host()
 
         // Act
         jiraLinkGenerator.handleTicketInput("invalid")
@@ -52,7 +49,7 @@ class JiraLinkGeneratorBasicTest {
     @Test
     fun noHost() {
         // Assemble
-        doReturn("").whenever(accountAvailablilityInteractor).host()
+        doReturn("").whenever(accountAvailablility).host()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")

@@ -54,6 +54,10 @@ class JiraClientProviderBasic(
         }
     }
 
+    override fun hasError(): Boolean {
+        return this.client.hasError()
+    }
+
     override fun hostname(): String {
         return userSettings.jiraBasicCreds().host
     }

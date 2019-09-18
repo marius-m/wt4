@@ -1,10 +1,6 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.JiraMocks
-import lt.markmerkk.JiraOAuthCreds
-import lt.markmerkk.JiraOAuthPreset
-import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import org.junit.Before
 import org.junit.Test
@@ -14,7 +10,7 @@ import org.mockito.MockitoAnnotations
 class JiraLinkGeneratorOAuthTest {
 
     @Mock lateinit var view: JiraLinkGenerator.View
-    @Mock lateinit var accountAvailablilityInteractor: AccountAvailablilityInteractor
+    @Mock lateinit var accountAvailablility: AccountAvailablility
 
     lateinit var jiraLinkGenerator: JiraLinkGeneratorOAuth
 
@@ -23,15 +19,15 @@ class JiraLinkGeneratorOAuthTest {
         MockitoAnnotations.initMocks(this)
         jiraLinkGenerator = JiraLinkGeneratorOAuth(
                 view = view,
-                accountAvailabilityInteractor = accountAvailablilityInteractor
+                accountAvailability = accountAvailablility
         )
     }
 
     @Test
     fun valid() {
         // Assemble
-        doReturn("host").whenever(accountAvailablilityInteractor).host()
-        doReturn(true).whenever(accountAvailablilityInteractor).isAccountReadyForSync()
+        doReturn("host").whenever(accountAvailablility).host()
+        doReturn(true).whenever(accountAvailablility).isAccountReadyForSync()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")
@@ -43,8 +39,8 @@ class JiraLinkGeneratorOAuthTest {
     @Test
     fun invalidCode() {
         // Assemble
-        doReturn("host").whenever(accountAvailablilityInteractor).host()
-        doReturn(true).whenever(accountAvailablilityInteractor).isAccountReadyForSync()
+        doReturn("host").whenever(accountAvailablility).host()
+        doReturn(true).whenever(accountAvailablility).isAccountReadyForSync()
 
         // Act
         jiraLinkGenerator.handleTicketInput("invalid")
@@ -56,8 +52,8 @@ class JiraLinkGeneratorOAuthTest {
     @Test
     fun accountNotAvailable() {
         // Assemble
-        doReturn("host").whenever(accountAvailablilityInteractor).host()
-        doReturn(false).whenever(accountAvailablilityInteractor).isAccountReadyForSync()
+        doReturn("host").whenever(accountAvailablility).host()
+        doReturn(false).whenever(accountAvailablility).isAccountReadyForSync()
 
         // Act
         jiraLinkGenerator.handleTicketInput("DEV-123")

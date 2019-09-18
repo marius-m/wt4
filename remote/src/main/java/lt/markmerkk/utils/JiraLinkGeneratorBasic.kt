@@ -1,6 +1,5 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketCode
 import rx.Observable
 import rx.Subscription
@@ -10,7 +9,7 @@ import rx.Subscription
  */
 class JiraLinkGeneratorBasic(
         private val view: JiraLinkGenerator.View?,
-        private val accountAvailablilityInteractor: AccountAvailablilityInteractor
+        private val accountAvailablility: AccountAvailablility
 ): JiraLinkGenerator {
 
     private var subsInputTicketCode: Subscription? = null
@@ -26,7 +25,7 @@ class JiraLinkGeneratorBasic(
     }
 
     override fun webLinkFromInput(ticketCodeAsString: String): String {
-        val host = accountAvailablilityInteractor.host()
+        val host = accountAvailablility.host()
         if (host.isEmpty()) {
             return ""
         }

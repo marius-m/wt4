@@ -2,6 +2,7 @@ package lt.markmerkk
 
 import lt.markmerkk.events.EventAutoSync
 import lt.markmerkk.events.EventAutoSyncLastUpdate
+import lt.markmerkk.utils.AccountAvailablility
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.slf4j.LoggerFactory
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class AutoSyncWatcher2(
         private val timeProvider: TimeProvider,
         private val eventBus: WTEventBus,
+        private val accountAvailablility: AccountAvailablility,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
@@ -71,10 +73,13 @@ class AutoSyncWatcher2(
             lastSync: DateTime,
             nextSync: DateTime
     ): AutoSyncRule {
-        val isNextSyncScheduled = nextSync.isAfter(lastSync)
         if (isInLock.get()) {
             return AutoSyncOtherProcessInProgress(now, lastSync, lockProcessName)
         }
+        if (!accountAvailablility.isAccountReadyForSync()) {
+            return AutoSyncAccountNotReady(now, lastSync, nextSync)
+        }
+        val isNextSyncScheduled = nextSync.isAfter(lastSync)
         val currentDuration = Duration(lastSync, now)
         val scheduledSyncTriggered = now.isAfter(nextSync) || now.isEqual(nextSync)
         if (isNextSyncScheduled) {
@@ -106,6 +111,10 @@ class AutoSyncWatcher2(
             }
             is AutoSyncOtherProcessInProgress -> {
                 logger.debug("Skip update as some other process is blocking update: ${rule.lockProcessName}")
+                eventBus.post(EventAutoSyncLastUpdate(currentDuration))
+            }
+            is AutoSyncAccountNotReady -> {
+                logger.debug("Skip update as account is not ready for sync")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
             }
             is AutoSyncTriggerLongChange,
@@ -164,6 +173,15 @@ data class AutoSyncNoChanges(
  * Indicates not ready for edit, waiting for scheduled change
  */
 data class AutoSyncNoChangesWaitingForScheduled(
+        val now: DateTime,
+        val lastSync: DateTime,
+        val nextSync: DateTime
+): AutoSyncRule()
+
+/**
+ * Indicates account not ready for changes
+ */
+data class AutoSyncAccountNotReady(
         val now: DateTime,
         val lastSync: DateTime,
         val nextSync: DateTime

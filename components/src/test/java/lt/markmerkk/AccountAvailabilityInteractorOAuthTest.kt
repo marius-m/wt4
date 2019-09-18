@@ -2,7 +2,7 @@ package lt.markmerkk
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.utils.AccountAvailablilityInteractor
+import lt.markmerkk.utils.AccountAvailablility
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -12,12 +12,13 @@ import org.mockito.MockitoAnnotations
 class AccountAvailabilityInteractorOAuthTest {
 
     @Mock lateinit var userSettings: UserSettings
-    lateinit var accountAvailablilityInteractor: AccountAvailablilityInteractor
+    @Mock lateinit var jiraClientProvider: JiraClientProvider
+    lateinit var accountAvailablility: AccountAvailablility
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        accountAvailablilityInteractor = AccountAvailabilityInteractorOAuth(userSettings)
+        accountAvailablility = AccountAvailabilityOAuth(userSettings, jiraClientProvider)
     }
 
     @Test
@@ -34,7 +35,7 @@ class AccountAvailabilityInteractorOAuthTest {
         )).whenever(userSettings).jiraOAuthCreds()
         doReturn(Mocks.createJiraUser()).whenever(userSettings).jiraUser()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isTrue()
     }
@@ -53,7 +54,7 @@ class AccountAvailabilityInteractorOAuthTest {
         )).whenever(userSettings).jiraOAuthCreds()
         doReturn(Mocks.createJiraUser()).whenever(userSettings).jiraUser()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isFalse()
     }
@@ -72,7 +73,7 @@ class AccountAvailabilityInteractorOAuthTest {
         )).whenever(userSettings).jiraOAuthCreds()
         doReturn(Mocks.createJiraUser()).whenever(userSettings).jiraUser()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isFalse()
     }
@@ -91,7 +92,27 @@ class AccountAvailabilityInteractorOAuthTest {
         )).whenever(userSettings).jiraOAuthCreds()
         doReturn(Mocks.createJiraUserEmpty()).whenever(userSettings).jiraUser()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
+
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun clientError() {
+        // Assemble
+        doReturn(Mocks.createJiraOAuthPreset(
+                host = "hostname",
+                privateKey = "private_key",
+                consumerKey = "consumer_key"
+        )).whenever(userSettings).jiraOAuthPreset()
+        doReturn(Mocks.createJiraOAuthCreds(
+                tokenSecret = "tokey_secret",
+                accessKey = "access_key"
+        )).whenever(userSettings).jiraOAuthCreds()
+        doReturn(Mocks.createJiraUser()).whenever(userSettings).jiraUser()
+        doReturn(true).whenever(jiraClientProvider).hasError()
+
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isFalse()
     }

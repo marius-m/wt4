@@ -2,7 +2,7 @@ package lt.markmerkk
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.utils.AccountAvailablilityInteractor
+import lt.markmerkk.utils.AccountAvailablility
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -12,12 +12,13 @@ import org.mockito.MockitoAnnotations
 class AccountAvailabilityInteractorBasicTest {
 
     @Mock lateinit var userSettings: UserSettings
-    lateinit var accountAvailablilityInteractor: AccountAvailablilityInteractor
+    @Mock lateinit var jiraClientProvider: JiraClientProvider
+    lateinit var accountAvailablility: AccountAvailablility
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        accountAvailablilityInteractor = AccountAvailabilityInteractorBasic(userSettings)
+        accountAvailablility = AccountAvailabilityBasic(userSettings, jiraClientProvider)
     }
 
     @Test
@@ -29,7 +30,7 @@ class AccountAvailabilityInteractorBasicTest {
                 password = "pass"
         )).whenever(userSettings).jiraBasicCreds()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isTrue()
     }
@@ -43,7 +44,7 @@ class AccountAvailabilityInteractorBasicTest {
                 password = "pass"
         )).whenever(userSettings).jiraBasicCreds()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isFalse()
     }
@@ -57,7 +58,7 @@ class AccountAvailabilityInteractorBasicTest {
                 password = "pass"
         )).whenever(userSettings).jiraBasicCreds()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isFalse()
     }
@@ -71,7 +72,22 @@ class AccountAvailabilityInteractorBasicTest {
                 password = ""
         )).whenever(userSettings).jiraBasicCreds()
 
-        val result = accountAvailablilityInteractor.isAccountReadyForSync()
+        val result = accountAvailablility.isAccountReadyForSync()
+
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun isError() {
+        // Assemble
+        doReturn(Mocks.createJiraBasicCreds(
+                hostname = "host",
+                username = "user",
+                password = "pass"
+        )).whenever(userSettings).jiraBasicCreds()
+        doReturn(true).whenever(jiraClientProvider).hasError()
+
+        val result = accountAvailablility.isAccountReadyForSync()
 
         assertThat(result).isFalse()
     }
