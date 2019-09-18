@@ -1,4 +1,0 @@
-/** Size the combo-box drop down list. */
-.combo-box-popup > .list-view {
-    -fx-pref-height: 300;
-}
