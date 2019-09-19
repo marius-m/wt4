@@ -7,6 +7,7 @@ import net.rcarz.jiraclient.Issue
 import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestException
+import java.lang.RuntimeException
 
 object JiraMocks {
 
@@ -66,6 +67,10 @@ object JiraMocks {
                 emptyArray()
         )
         return JiraException(restException.message, restException)
+    }
+
+    fun createJiraException(): JiraException {
+        return JiraException("jira_exception", RuntimeException())
     }
 
 }

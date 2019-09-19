@@ -7,6 +7,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.worklogs.WorklogApi
 import org.slf4j.LoggerFactory
 import rx.*
+import java.net.UnknownHostException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -73,6 +74,10 @@ class SyncInteractorImpl(
                     logger.info("=== Sync success in ${syncEnd - syncStart}ms ===")
                 }, { error ->
                     when (error) {
+                        is UnknownHostException -> {
+                            remoteLoadListeners
+                                    .forEach { it.onError("No network connection!") }
+                        }
                         is AuthException -> {
                             remoteLoadListeners
                                     .forEach { it.onAuthError() }
