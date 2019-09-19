@@ -29,8 +29,8 @@ class AutoSyncWatcher2(
     private var lockProcessName: String = ""
     // Last auto-sync time
     private var lastSync: DateTime = timeProvider.now()
-    // Last scheduled sync. If this only long periodic sync occurs, this does not change
-    private var lastScheduledSync: DateTime = timeProvider.now()
+    // Last time app used. If this does not change, app is in sleep mode
+    private var lastAppUsage: DateTime = timeProvider.now()
     // Scheduled next auto-sync. Triggered whenever some action is taken on app
     private var nextSync: DateTime = timeProvider.now()
 
@@ -57,7 +57,7 @@ class AutoSyncWatcher2(
                     val rule = applyTimeChangeRule(
                             now = timeProvider.now(),
                             lastSync = lastSync,
-                            lastScheduledSync = lastScheduledSync,
+                            lastAppUsage = lastAppUsage,
                             nextSync = nextSync
                     )
                     handleRuleChanges(now, rule)
@@ -71,18 +71,18 @@ class AutoSyncWatcher2(
      * Note: When [lastSync] >= [nextSync], short schedule does not apply
      * @param now current date time
      * @param lastSync date time of last synchronization trigger
-     * @param lastScheduledSync date time of last schedules sync. Indicates if sync was triggered from app
+     * @param lastAppUsage date time of last time something changed in app
      * @param nextSync next scheduled synchronization
      */
     fun applyTimeChangeRule(
             now: DateTime,
             lastSync: DateTime,
-            lastScheduledSync: DateTime,
+            lastAppUsage: DateTime,
             nextSync: DateTime
     ): AutoSyncRule {
         val isNextSyncScheduled = nextSync.isAfter(lastSync)
-        val durationLastScheduled = Duration(lastScheduledSync, now)
-        if (!isNextSyncScheduled && durationLastScheduled.standardHours >= 2) {
+        val durationLastScheduled = Duration(lastAppUsage, now)
+        if (!isNextSyncScheduled && durationLastScheduled.standardHours >= 3) {
             return AutoSyncAppInSleepMode(now, lastSync, nextSync)
         }
         if (isInLock.get()) {
@@ -149,8 +149,9 @@ class AutoSyncWatcher2(
      * Marks watcher for short update cycle (ex.: 2 min instead of 1 hour)
      */
     fun markForShortCycleUpdate() {
+        lastAppUsage = timeProvider.now()
         nextSync = timeProvider.now().plusMinutes(2)
-        lastScheduledSync = nextSync
+        lastAppUsage = nextSync
         logger.debug("Marking auto sync for shorter update cycle. Next should trigger at $nextSync")
     }
 
@@ -158,6 +159,7 @@ class AutoSyncWatcher2(
             isInLock: Boolean,
             lockProcessName: String
     ) {
+        lastAppUsage = timeProvider.now()
         logger.debug("Applying lock to auto sync watcher: $isInLock ($lockProcessName)")
         this.isInLock.set(isInLock)
         this.lockProcessName = lockProcessName
@@ -165,10 +167,10 @@ class AutoSyncWatcher2(
 
     fun reset() {
         val now = timeProvider.now()
+        lastAppUsage = now
         logger.debug("Resetting watcher")
         lastSync = now
         nextSync = now
-        lastScheduledSync = now
     }
 
     companion object {
