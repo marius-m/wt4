@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.6
+- Update auto-sync mechanism to see if app should go into sleeping mod
+
 ## 1.5.5
 - Add auto-sync mechanism
   - Automatically triggers sync in 1hr
