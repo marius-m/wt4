@@ -337,12 +337,21 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 title = "Error",
                 buttons = *arrayOf(buttonOpenSettings),
                 actionFn = {
-                    find<AccountSettingsWidget>().openModal(
-                            stageStyle = StageStyle.UTILITY,
-                            modality = Modality.APPLICATION_MODAL,
-                            block = false,
-                            resizable = true
-                    )
+                    if (BuildConfig.oauth) {
+                        find<AccountSettingsOauthWidget>().openModal(
+                                stageStyle = StageStyle.UTILITY,
+                                modality = Modality.APPLICATION_MODAL,
+                                block = false,
+                                resizable = true
+                        )
+                    } else {
+                        find<AccountSettingsWidget>().openModal(
+                                stageStyle = StageStyle.UTILITY,
+                                modality = Modality.APPLICATION_MODAL,
+                                block = false,
+                                resizable = true
+                        )
+                    }
                 }
         )
     }
