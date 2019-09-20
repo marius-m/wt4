@@ -17,6 +17,7 @@ Builds for `1.5.7`
 * [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.5.7.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
+- How to set-up: https://github.com/marius-m/wt4/wiki#wt4
 
 *Note*: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
 - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
@@ -31,6 +32,7 @@ Builds for `1.5.7`
 - Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
+- How to set-up: https://github.com/marius-m/wt4/wiki#wt4
  
 ## Issues
 
