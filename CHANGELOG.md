@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.7
+- Small bugfixes
+
 ## 1.5.6
 - Update auto-sync mechanism to see if app should go into sleeping mod
 
