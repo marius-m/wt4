@@ -3,12 +3,14 @@ package lt.markmerkk.worklogs
 import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.exceptions.AuthException
+import net.rcarz.jiraclient.JiraException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import rx.Observable
 import java.lang.RuntimeException
+import java.net.UnknownHostException
 
 class WorklogApiFetchLogsTest {
 
@@ -77,6 +79,53 @@ class WorklogApiFetchLogsTest {
         fetchResult.assertCompleted()
         verify(ticketStorage, never()).insertOrUpdateSync(ticket1)
         verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
+    }
+
+    @Test
+    fun noNetwork() {
+        // Assemble
+        val now = timeProvider.now()
+        val ticket1 = Mocks.createTicket(id = 1)
+        val worklog1 = Mocks.createBasicLogRemote(timeProvider)
+        val noNetworkException = JiraException("no-network", UnknownHostException())
+        doReturn(Observable.error<Any>(noNetworkException))
+                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+
+        // Act
+        val fetchResult = worklogApi.fetchLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertError(UnknownHostException::class.java)
+        verify(ticketStorage, never()).insertOrUpdateSync(ticket1)
+        verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
+        verify(jiraClientProvider, never()).markAsError()
+    }
+
+    @Test
+    fun jiraException() {
+        // Assemble
+        val now = timeProvider.now()
+        val ticket1 = Mocks.createTicket(id = 1)
+        val worklog1 = Mocks.createBasicLogRemote(timeProvider)
+        doReturn(Observable.error<Any>(JiraMocks.createJiraException()))
+                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+
+        // Act
+        val fetchResult = worklogApi.fetchLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertError(JiraException::class.java)
+        verify(ticketStorage, never()).insertOrUpdateSync(ticket1)
+        verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
+        verify(jiraClientProvider, never()).markAsError()
     }
 
     @Test

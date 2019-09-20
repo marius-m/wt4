@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import rx.Completable
 import rx.Observable
 import rx.Single
+import java.net.UnknownHostException
 
 class WorklogApi(
         private val jiraClientProvider: JiraClientProvider,
@@ -47,11 +48,21 @@ class WorklogApi(
                             "Error fetching remote worklogs",
                             error
                     )
-                    if (error.isAuthException()) {
-                        jiraClientProvider.markAsError()
-                        Observable.error(AuthException(error))
-                    } else {
-                        Observable.empty()
+                    val isAuthException = error.isAuthException()
+                    val noNetworkException = error.findException<UnknownHostException>()
+                    val jiraException = error.findException<JiraException>()
+                    when {
+                        noNetworkException != null -> {
+                            Observable.error(noNetworkException)
+                        }
+                        isAuthException -> {
+                            jiraClientProvider.markAsError()
+                            Observable.error(AuthException(error))
+                        }
+                        jiraException != null -> {
+                            Observable.error(jiraException)
+                        }
+                        else -> Observable.empty()
                     }
                 }
                 .map { (ticket, worklogs) ->
