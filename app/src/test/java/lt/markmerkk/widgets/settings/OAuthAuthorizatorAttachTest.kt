@@ -1,10 +1,12 @@
 package lt.markmerkk.widgets.settings
 
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.*
 import lt.markmerkk.interactors.JiraBasicApi
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -47,12 +49,13 @@ class OAuthAuthorizatorAttachTest {
         authorizator.onAttach()
 
         // Assert
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "No user connected! Press 'Set-up' to setup your connection!"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isFalse()
+        assertThat(viewModel.showContainerStatus).isTrue()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel.textStatus).isNotEmpty()
     }
 
     @Test
@@ -67,12 +70,13 @@ class OAuthAuthorizatorAttachTest {
         authorizator.onAttach()
 
         // Assert
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "No user connected! Press 'Set-up' to setup your connection!"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isFalse()
+        assertThat(viewModel.showContainerStatus).isTrue()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel.textStatus).isEqualTo("No user connected!")
     }
 
     @Test
@@ -87,12 +91,13 @@ class OAuthAuthorizatorAttachTest {
         authorizator.onAttach()
 
         // Assert
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                textStatus = "User 'username' connected! Press on face to check connection status or 'Set-up' for establishing new connection"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isFalse()
+        assertThat(viewModel.showContainerStatus).isTrue()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
+        assertThat(viewModel.textStatus).isEqualTo("Welcome 'user'!")
     }
 
 }

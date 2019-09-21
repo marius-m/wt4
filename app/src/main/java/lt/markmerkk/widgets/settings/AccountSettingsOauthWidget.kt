@@ -47,8 +47,10 @@ class AccountSettingsOauthWidget : View() {
     private lateinit var viewLabelStatus: Label
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewTextOutput: JFXTextArea
-    private lateinit var viewContainerStatusAdvanced: BorderPane
-    private lateinit var viewContainerStatusBasic: VBox
+    private lateinit var viewContainerLogs: BorderPane
+    private lateinit var viewContainerSetup: VBox
+    private lateinit var viewContainerSetupStatus: VBox
+    private lateinit var viewContainerSetupWebview: VBox
 
     init {
         Main.component().inject(this)
@@ -84,17 +86,24 @@ class AccountSettingsOauthWidget : View() {
                 minHeight = 450.0
                 center {
                     stackpane {
-                        viewContainerStatusBasic = vbox(spacing = 4, alignment = Pos.CENTER) {
-                            viewButtonStatus = jfxButton {
-                                setOnAction { authorizator.checkAuth() }
+                        viewContainerSetup = vbox(spacing = 4, alignment = Pos.CENTER) {
+                            viewContainerSetupStatus = vbox(spacing = 4, alignment = Pos.CENTER) {
+                                viewButtonStatus = jfxButton {
+                                    setOnAction { authorizator.checkAuth() }
+                                }
+                                viewLabelStatus = label {
+                                    alignment = Pos.CENTER
+                                    isWrapText = true
+                                }
+                                viewButtonSetupConnection = jfxButton("Set-up new connection".toUpperCase()) {
+                                    setOnAction { authorizator.setupAuthStep1() }
+                                }
                             }
-                            viewLabelStatus = label {
-                                alignment = Pos.CENTER
-                                isWrapText = true
+                            viewContainerSetupWebview = vbox {
+                                viewWebview = webview { }
                             }
-                            viewWebview = webview { hide() }
                         }
-                        viewContainerStatusAdvanced = borderpane {
+                        viewContainerLogs = borderpane {
                             center {
                                 viewTextOutput = jfxTextArea {
                                     style {
@@ -118,9 +127,6 @@ class AccountSettingsOauthWidget : View() {
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
-                viewButtonSetupConnection = jfxButton("Set-up".toUpperCase()) {
-                    setOnAction { authorizator.setupAuthStep1() }
-                }
                 jfxButton("Dismiss".toUpperCase()) {
                     setOnAction {
                         close()
@@ -136,18 +142,8 @@ class AccountSettingsOauthWidget : View() {
                 view = object : OAuthAuthorizator.View {
 
                     override fun renderView(authViewModel: AuthViewModel) {
-                        if (authViewModel.showContainerStatus) {
-                            viewButtonStatus.show()
-                            viewLabelStatus.show()
-                        } else {
-                            viewButtonStatus.hide()
-                            viewLabelStatus.hide()
-                        }
-                        if (authViewModel.showContainerWebview) {
-                            viewWebview.show()
-                        } else {
-                            viewWebview.hide()
-                        }
+                        viewContainerSetupStatus.showIf(authViewModel.showContainerStatus)
+                        viewContainerSetupWebview.showIf(authViewModel.showContainerWebview)
                         viewButtonStatus.graphic = when (authViewModel.showStatusEmoticon) {
                             AuthViewModel.StatusEmoticon.HAPPY -> graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
                             AuthViewModel.StatusEmoticon.NEUTRAL -> graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)
@@ -196,8 +192,8 @@ class AccountSettingsOauthWidget : View() {
                 },
                 authResultParser = AuthResultParser()
         )
-        viewContainerStatusBasic.show()
-        viewContainerStatusAdvanced.hide()
+        viewContainerSetup.show()
+        viewContainerLogs.hide()
 
         logTailer = LogTailer(
                 logTailerLister,
@@ -229,13 +225,13 @@ class AccountSettingsOauthWidget : View() {
     }
 
     private fun toggleAdvanced() {
-        if (viewContainerStatusAdvanced.isVisible) {
-            viewContainerStatusAdvanced.hide()
-            viewContainerStatusBasic.show()
+        if (viewContainerLogs.isVisible) {
+            viewContainerLogs.hide()
+            viewContainerSetup.show()
             logTailer.clear()
         } else {
-            viewContainerStatusAdvanced.show()
-            viewContainerStatusBasic.hide()
+            viewContainerSetup.show()
+            viewContainerSetup.hide()
             logTailer.tail(File("${appConfig.generateRelativePath()}logs/jira.log"))
         }
     }

@@ -7,6 +7,8 @@ import lt.markmerkk.JiraUser
 import lt.markmerkk.UserSettings
 import lt.markmerkk.interactors.JiraBasicApi
 import net.rcarz.jiraclient.JiraClient
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -53,18 +55,20 @@ class OAuthAuthorizatorSetupAuth2Test {
         // Assert
         verify(userSettings).changeOAuthCreds(tokenSecret = "token", accessKey = "key")
         verify(userSettings).changeJiraUser(name = "name", email = "email", displayName = "display_name")
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                textStatus = "Finishing up authorization..."
-        ))
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
-                textStatus = "Success setting up new user 'display_name'!"
-        ))
+
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view, times(2)).renderView(viewModelCapture.capture())
+        val viewModel1 = viewModelCapture.firstValue
+        assertThat(viewModel1.showContainerWebview).isFalse()
+        assertThat(viewModel1.showContainerStatus).isTrue()
+        assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
+        assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+
+        val viewModel2 = viewModelCapture.allValues[1]
+        assertThat(viewModel2.showContainerWebview).isFalse()
+        assertThat(viewModel2.showContainerStatus).isTrue()
+        assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.HAPPY)
+        assertThat(viewModel2.textStatus).isEqualTo("Welcome 'display_name'!")
     }
 
     @Test
@@ -76,12 +80,21 @@ class OAuthAuthorizatorSetupAuth2Test {
         // Assert
         verify(view).resetWeb()
         verify(userSettings).resetUserData()
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
-        ))
+
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view, times(2)).renderView(viewModelCapture.capture())
+
+        val viewModel1 = viewModelCapture.firstValue
+        assertThat(viewModel1.showContainerWebview).isFalse()
+        assertThat(viewModel1.showContainerStatus).isTrue()
+        assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
+        assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+
+        val viewModel2 = viewModelCapture.allValues[1]
+        assertThat(viewModel2.showContainerWebview).isFalse()
+        assertThat(viewModel2.showContainerStatus).isTrue()
+        assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
     }
 
     @Test
@@ -108,7 +121,7 @@ class OAuthAuthorizatorSetupAuth2Test {
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
+                textStatus = "Error generating JIRA token. Press 'Show logs' for more info"
         ))
     }
 
@@ -127,18 +140,20 @@ class OAuthAuthorizatorSetupAuth2Test {
         // Assert
         verify(view).resetWeb()
         verify(userSettings).resetUserData()
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                textStatus = "Finishing up authorization..."
-        ))
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
-        ))
+
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view, times(2)).renderView(viewModelCapture.capture())
+        val viewModel1 = viewModelCapture.firstValue
+        assertThat(viewModel1.showContainerWebview).isFalse()
+        assertThat(viewModel1.showContainerStatus).isTrue()
+        assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
+        assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+
+        val viewModel2 = viewModelCapture.allValues[1]
+        assertThat(viewModel2.showContainerWebview).isFalse()
+        assertThat(viewModel2.showContainerStatus).isTrue()
+        assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
     }
 
     //region Mocks
