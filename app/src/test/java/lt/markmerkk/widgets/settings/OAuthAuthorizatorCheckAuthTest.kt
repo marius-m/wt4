@@ -1,13 +1,12 @@
 package lt.markmerkk.widgets.settings
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.Mocks
 import lt.markmerkk.UserSettings
 import lt.markmerkk.interactors.JiraBasicApi
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -49,12 +48,14 @@ class OAuthAuthorizatorCheckAuthTest {
         authorizator.checkAuth()
 
         // Assert
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
-                textStatus = "Successfully connected to JIRA with user 'valid_display_name'! Press 'Set-up' to setup a new connection!"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isFalse()
+        assertThat(viewModel.showContainerStatus).isTrue()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.HAPPY)
+        assertThat(viewModel.textStatus).isEqualTo("Welcome 'valid_display_name'!")
+
         verify(userSettings).changeJiraUser(any(), any(), any())
         verify(view).showProgress()
         verify(view).hideProgress()
@@ -69,12 +70,14 @@ class OAuthAuthorizatorCheckAuthTest {
         authorizator.checkAuth()
 
         // Assert
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "Error connecting to JIRA. Press 'Set-up' to establish new connection"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isFalse()
+        assertThat(viewModel.showContainerStatus).isTrue()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel.textStatus).isEqualTo("Error connecting to JIRA. Press 'Show logs' for more details!")
+
         verify(userSettings).resetUserData()
     }
 }

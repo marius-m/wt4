@@ -1,14 +1,13 @@
 package lt.markmerkk.widgets.settings
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.JiraOAuthCreds
 import lt.markmerkk.JiraUser
 import lt.markmerkk.UserSettings
 import lt.markmerkk.interactors.JiraBasicApi
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -49,13 +48,15 @@ class OAuthAuthorizatorSetupAuth1Test {
         authorizator.setupAuthStep1()
 
         // Assert
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isTrue()
+        assertThat(viewModel.showContainerStatus).isFalse()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
+        assertThat(viewModel.textStatus).isEqualTo("")
+
         verify(userSettings).resetUserData()
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = true,
-                showContainerStatus = false,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                textStatus = ""
-        ))
         verify(view).loadAuthWeb("auth_url")
     }
 
@@ -68,12 +69,14 @@ class OAuthAuthorizatorSetupAuth1Test {
         authorizator.setupAuthStep1()
 
         // Assert
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "Error generating JIRA token. Try again later or press 'Show logs' for more info"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view).renderView(viewModelCapture.capture())
+        val viewModel = viewModelCapture.firstValue
+        assertThat(viewModel.showContainerWebview).isFalse()
+        assertThat(viewModel.showContainerStatus).isTrue()
+        assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info!")
+
         verify(view, never()).loadAuthWeb("auth_url")
     }
 }
