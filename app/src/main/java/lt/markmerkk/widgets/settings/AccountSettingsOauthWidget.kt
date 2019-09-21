@@ -230,7 +230,7 @@ class AccountSettingsOauthWidget : View() {
             viewContainerSetup.show()
             logTailer.clear()
         } else {
-            viewContainerSetup.show()
+            viewContainerLogs.show()
             viewContainerSetup.hide()
             logTailer.tail(File("${appConfig.generateRelativePath()}logs/jira.log"))
         }
