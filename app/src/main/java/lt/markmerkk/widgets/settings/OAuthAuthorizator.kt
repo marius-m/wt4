@@ -136,8 +136,8 @@ class OAuthAuthorizator(
                             tokenSecret = it.tokenSecret,
                             accessKey = it.accessKey
                     )
-                    jiraApi.jiraUser()
-                }
+                    Single.just(jiraClientProvider.newClient())
+                }.flatMap { jiraApi.jiraUser() }
                 .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName) }
                 .doOnError { userSettings.resetUserData() }
                 .subscribeOn(ioScheduler)
