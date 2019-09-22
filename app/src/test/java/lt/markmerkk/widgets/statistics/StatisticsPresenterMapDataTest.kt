@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Mocks
 import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.utils.hourglass.HourGlass
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.Before
@@ -18,6 +19,7 @@ class StatisticsPresenterMapDataTest {
 
     @Mock lateinit var view: StatisticsContract.View
     @Mock lateinit var logStorage: LogStorage
+    @Mock lateinit var hourGlass: HourGlass
     lateinit var presenter: StatisticsPresenter
 
     private val timeProvider = TimeProviderTest()
@@ -25,7 +27,7 @@ class StatisticsPresenterMapDataTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = StatisticsPresenter(logStorage)
+        presenter = StatisticsPresenter(logStorage, hourGlass)
         presenter.onAttach(view)
     }
 
