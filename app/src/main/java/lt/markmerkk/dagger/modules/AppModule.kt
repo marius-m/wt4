@@ -199,6 +199,7 @@ class AppModule(
             worklogStorage: WorklogStorage
     ): WorklogApi {
         return WorklogApi(
+                timeProvider,
                 jiraClientProvider,
                 JiraWorklogInteractor(
                         jiraClientProvider,

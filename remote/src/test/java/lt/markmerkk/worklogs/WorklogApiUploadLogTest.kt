@@ -28,6 +28,7 @@ class WorklogApiUploadLogTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         worklogApi = WorklogApi(
+                timeProvider,
                 jiraClientProvider,
                 jiraWorklogInteractor,
                 ticketStorage,

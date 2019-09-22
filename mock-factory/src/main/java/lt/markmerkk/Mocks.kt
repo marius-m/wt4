@@ -50,12 +50,16 @@ object Mocks {
     fun createBasicLogRemote(
             timeProvider: TimeProvider,
             localId: Long = 1L,
-            remoteId: Long = 2L
+            remoteId: Long = 2L,
+            start: DateTime = timeProvider.now(),
+            end: DateTime = timeProvider.now()
     ): Log {
         val now = timeProvider.nowMillis()
         return createLog(
                 timeProvider = timeProvider,
                 id = localId,
+                start = start,
+                end = end,
                 remoteData = createRemoteData(
                         timeProvider,
                         remoteId = remoteId

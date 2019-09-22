@@ -21,6 +21,10 @@ class JiraWorklogInteractor(
         private val userSettings: UserSettings
 ) {
 
+    /**
+     * Fetches worklogs for time gap. The worklogs returned will exceed [startDate] and [endDate]
+     * as it'll bind 1:1 worklogs with their related issues
+     */
     fun searchWorlogs(
             fetchTime: DateTime,
             jql: String,
@@ -49,7 +53,7 @@ class JiraWorklogInteractor(
             val worklogs = issueWorklogPair.worklogs
                     .filter {
                         isCurrentUserLog(
-                                activeUsername = userSettings.jiraUser().name, // todo: optimize this, also on basic auth will not work any more
+                                activeUsername = userSettings.jiraUser().name,
                                 worklog = it
                         )
                     }

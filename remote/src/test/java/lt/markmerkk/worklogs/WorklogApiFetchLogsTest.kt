@@ -27,6 +27,7 @@ class WorklogApiFetchLogsTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         worklogApi = WorklogApi(
+                timeProvider,
                 jiraClientProvider,
                 jiraWorklogInteractor,
                 ticketStorage,
@@ -56,6 +57,84 @@ class WorklogApiFetchLogsTest {
         fetchResult.assertCompleted()
         verify(ticketStorage).insertOrUpdateSync(ticket1)
         verify(worklogStorage).insertOrUpdateSync(worklog1)
+    }
+
+    @Test
+    fun valid_worklogStartSameNow() {
+        // Assemble
+        val now = timeProvider.now()
+        val ticket1 = Mocks.createTicket(id = 1)
+        val worklog1 = Mocks.createBasicLogRemote(
+                timeProvider,
+                start = now
+        )
+        val searchResultPair = ticket1 to listOf(worklog1)
+        doReturn(Observable.just(searchResultPair))
+                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+
+        // Act
+        val fetchResult = worklogApi.fetchLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertNoErrors()
+        fetchResult.assertCompleted()
+        verify(worklogStorage).insertOrUpdateSync(worklog1)
+    }
+
+    @Test
+    fun valid_worklogStartFromBeforeTime() {
+        // Assemble
+        val now = timeProvider.now()
+        val ticket1 = Mocks.createTicket(id = 1)
+        val worklog1 = Mocks.createBasicLogRemote(
+                timeProvider,
+                start = now.minusDays(1)
+        )
+        val searchResultPair = ticket1 to listOf(worklog1)
+        doReturn(Observable.just(searchResultPair))
+                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+
+        // Act
+        val fetchResult = worklogApi.fetchLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertNoErrors()
+        fetchResult.assertCompleted()
+        verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
+    }
+
+    @Test
+    fun valid_worklogStartAfterEnd() {
+        // Assemble
+        val now = timeProvider.now()
+        val ticket1 = Mocks.createTicket(id = 1)
+        val worklog1 = Mocks.createBasicLogRemote(
+                timeProvider,
+                start = now.plusDays(1)
+        )
+        val searchResultPair = ticket1 to listOf(worklog1)
+        doReturn(Observable.just(searchResultPair))
+                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+
+        // Act
+        val fetchResult = worklogApi.fetchLogs(
+                fetchTime = now,
+                start = now.toLocalDate(),
+                end = now.plusDays(1).toLocalDate()
+        ).test()
+
+        // Assert
+        fetchResult.assertNoErrors()
+        fetchResult.assertCompleted()
+        verify(worklogStorage, never()).insertOrUpdateSync(worklog1)
     }
 
     @Test

@@ -15,6 +15,7 @@ import rx.Single
 import java.net.UnknownHostException
 
 class WorklogApi(
+        private val timeProvider: TimeProvider,
         private val jiraClientProvider: JiraClientProvider,
         private val jiraWorklogInteractor: JiraWorklogInteractor,
         private val ticketStorage: TicketStorage,
@@ -34,6 +35,8 @@ class WorklogApi(
         val startFormat = LogFormatters.shortFormatDate.print(start)
         val endFormat = LogFormatters.shortFormatDate.print(end)
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
+        val startAsDateTime = start.toDateTimeAtStartOfDay(timeProvider.dateTimeZone)
+        val endAsDateTime = end.toDateTimeAtStartOfDay(timeProvider.dateTimeZone)
         return Completable.fromAction { logger.info("--- START: Fetching logs ($start / $end)... ---") }
                 .andThen(
                         jiraWorklogInteractor.searchWorlogs(
@@ -41,7 +44,14 @@ class WorklogApi(
                                 jql = jql,
                                 startDate = start,
                                 endDate = end
-                        )
+                        ).map { (ticket, worklogs) ->
+                            val worklogsInDateRange = worklogs
+                                    .filter {
+                                        (it.time.start.isEqual(startAsDateTime) || it.time.start.isAfter(startAsDateTime))
+                                                && it.time.start.isBefore(endAsDateTime)
+                                    }
+                            Pair(ticket, worklogsInDateRange)
+                        }
                 )
                 .onErrorResumeNext { error ->
                     logger.warnWithJiraException(
