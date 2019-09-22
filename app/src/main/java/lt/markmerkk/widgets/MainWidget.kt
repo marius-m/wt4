@@ -36,6 +36,9 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.versioner.Changelog
+import lt.markmerkk.versioner.ChangelogLoader
+import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
@@ -66,6 +69,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
     @Inject lateinit var jiraClientProvider: JiraClientProvider
+    @Inject lateinit var versionProvider: VersionProvider
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -76,6 +81,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
     lateinit var widgetLogQuickEdit: QuickEditContainerWidget
+    lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
 
@@ -181,6 +187,17 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 graphics = graphics,
                 logChangeValidator = logChangeValidator
         )
+        changelogLoader = ChangelogLoader(
+                listener = object : ChangelogLoader.Listener {
+                    override fun onNewVersion(changelog: Changelog) {
+                        logger.debug("Found new version: ${changelog.contentAsString}")
+                    }
+                },
+                versionProvider = versionProvider,
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
+
+        )
         snackBar = JFXSnackbar(root as StackPane)
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
@@ -194,9 +211,12 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         widgetDateChange.onAttach()
         widgetProgress.onAttach()
         widgetLogQuickEdit.onAttach()
+        changelogLoader.onAttach()
+        changelogLoader.check()
     }
 
     override fun onUndock() {
+        changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
         widgetLogQuickEdit.onDetach()
         widgetProgress.onDetach()
