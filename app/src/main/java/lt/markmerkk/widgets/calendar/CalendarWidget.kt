@@ -41,6 +41,7 @@ import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.MainContainerNavigator
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
+import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*

@@ -13,6 +13,10 @@ data class Changelog(
             val minor: Int = 0,
             val patch: Int = 0
     ) {
+        override fun toString(): String {
+            return "$major.$minor.$patch"
+        }
+
         companion object {
             fun asEmpty(versionAsString: String): Version {
                 return Version(versionAsString, 0, 0, 0)

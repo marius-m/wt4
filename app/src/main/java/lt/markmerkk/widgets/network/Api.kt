@@ -5,6 +5,6 @@ import retrofit2.http.*
 import rx.Single
 
 interface Api {
-    @GET("master/CHANGELOG.mdasdf")
+    @GET("master/CHANGELOG.md")
     fun changelog(): Single<ResponseBody>
 }

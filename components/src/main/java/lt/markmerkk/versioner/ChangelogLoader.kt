@@ -30,7 +30,7 @@ class ChangelogLoader(
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({
-                    logger.info("Found changelog: $it")
+                    logger.info("Found remote changelog")
                     listener.onNewVersion(it)
                 }, {
                     logger.error("Changelog fetch failure", it)

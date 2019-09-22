@@ -11,11 +11,8 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
-import javafx.scene.layout.StackPane
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
@@ -47,6 +44,7 @@ import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketWidget
+import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.Subscription
 import rx.observables.JavaFxObservable
@@ -190,7 +188,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {
                     override fun onNewVersion(changelog: Changelog) {
-                        logger.debug("Found new version: ${changelog.contentAsString}")
+                        logger.debug("Showing changelog")
+                        eventBus.post(EventNewVersion(changelog))
                     }
                 },
                 versionProvider = versionProvider,
@@ -199,6 +198,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
 
         )
         snackBar = JFXSnackbar(root as StackPane)
+                .apply { toFront() }
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
@@ -251,14 +251,56 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     fun onSnackBarMessage(event: EventSnackBarMessage) {
         val label = Label(event.message)
                 .apply {
+                    background = Background(BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY))
                     val paddingHorizontal = 10.0
                     val paddingVertical = 8.0
                     padding = Insets(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal)
-                    textFill = Paint.valueOf("white")
+                    textFill = Color.WHITE
                     maxWidth = stageProperties.width
                 }
         val hBox = HBox(10.0, label)
         snackBar.enqueue(JFXSnackbar.SnackbarEvent(hBox))
+    }
+
+    @Subscribe
+    fun onNewVersion(event: EventNewVersion) {
+        val viewMessage = hbox(spacing = 2) {
+            background = Background(
+                    BackgroundFill(
+                            Color.BLACK,
+                            CornerRadii(10.0, 10.0, 0.0, 0.0, false),
+                            Insets.EMPTY
+                    )
+            )
+            label("New version available!") {
+                style {
+                    padding = box(
+                            vertical = 6.px,
+                            horizontal = 10.px
+                    )
+                }
+                textFill = Color.WHITE
+                maxWidth = stageProperties.width
+            }
+            jfxButton("Info".toUpperCase()) {
+                textFill = Color.WHITE
+                action {
+                    val widgetChangelog = find<ChangelogWidget>()
+                    widgetChangelog.render(event.changelog)
+                    widgetChangelog.openModal(
+                            stageStyle = StageStyle.UTILITY,
+                            modality = Modality.APPLICATION_MODAL,
+                            block = false,
+                            resizable = true
+                    )
+                }
+            }
+            jfxButton("Dismiss".toUpperCase()) {
+                textFill = Color.WHITE
+                action { snackBar.close() }
+            }
+        }
+        snackBar.enqueue(JFXSnackbar.SnackbarEvent(viewMessage, javafx.util.Duration(10000.0), null))
     }
 
     @Subscribe
