@@ -1,5 +1,7 @@
 # Changelog
 
+Current: 1.5.7
+
 ## 1.5.7
 - Small bugfixes
 
