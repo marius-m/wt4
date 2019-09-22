@@ -3,9 +3,11 @@ package lt.markmerkk.widgets.statistics
 import lt.markmerkk.LogStorage
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
+import lt.markmerkk.utils.hourglass.HourGlass
 
 class StatisticsPresenter(
-        private val logStorage: LogStorage
+        private val logStorage: LogStorage,
+        private val hourGlass: HourGlass
 ): StatisticsContract.Presenter {
 
     private var view: StatisticsContract.View? = null
@@ -39,7 +41,18 @@ class StatisticsPresenter(
     }
 
     override fun totalAsString(): String {
-        return LogUtils.formatDuration(logStorage.total().toLong())
+        if (hourGlass.state == HourGlass.State.RUNNING) {
+            val totalLogged = logStorage.total().toLong()
+            val formatTotalLogged = LogUtils.formatShortDuration(totalLogged)
+            val totalRunning = hourGlass.duration
+            val formatTotalRunning = LogUtils.formatShortDuration(totalRunning)
+            val formatTotal = LogUtils.formatShortDuration((totalLogged + totalRunning))
+            return "Logged ($formatTotalLogged) + Running ($formatTotalRunning) = $formatTotal"
+        } else {
+            val totalLogged = logStorage.total().toLong()
+            val formatTotalLogged = LogUtils.formatShortDuration(totalLogged)
+            return "Logged ($formatTotalLogged)"
+        }
     }
 
 }

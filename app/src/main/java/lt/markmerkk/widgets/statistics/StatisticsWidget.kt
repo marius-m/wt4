@@ -11,6 +11,7 @@ import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogUtils
+import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -20,6 +21,7 @@ class StatisticsWidget: View(), StatisticsContract.View {
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var hourGlass: HourGlass
 
     init {
         Main.component().inject(this)
@@ -73,7 +75,7 @@ class StatisticsWidget: View(), StatisticsContract.View {
 
     override fun onDock() {
         super.onDock()
-        presenter = StatisticsPresenter(logStorage)
+        presenter = StatisticsPresenter(logStorage, hourGlass)
         ticketInfoLoader = TicketInfoLoader(
                 listener = ticketInfoLoaderListener,
                 ticketStorage = ticketStorage,
