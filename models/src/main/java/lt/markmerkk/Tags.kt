@@ -5,6 +5,7 @@ object Tags {
     const val INTERNAL = "INTERNAL"
     const val JIRA = "JIRA"
     const val TRANSLATE = "TRANSLATE"
+    const val NETWORK = "NETWORK"
 
     // Screens
     const val MAIN = "MAIN"

@@ -22,6 +22,9 @@ import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.network.Api
+import lt.markmerkk.widgets.versioner.VersionProviderImpl
 import lt.markmerkk.worklogs.JiraWorklogInteractor
 import lt.markmerkk.worklogs.WorklogApi
 import javax.inject.Singleton
@@ -324,6 +327,14 @@ class AppModule(
     @Singleton
     fun provideCreditsRepository(): CreditsRepository {
         return CreditsRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideVersionProvider(
+            api: Api
+    ): VersionProvider {
+        return VersionProviderImpl(api)
     }
 
 }

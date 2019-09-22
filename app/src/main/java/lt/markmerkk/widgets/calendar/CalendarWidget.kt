@@ -41,6 +41,7 @@ import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.MainContainerNavigator
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
+import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -156,7 +157,7 @@ class CalendarWidget: View() {
                 )
             }
             isPickOnBounds = true
-            maxWidth = 200.0
+            maxWidth = 160.0
             maxHeight = 16.0
             jfxButton {
                 graphic = graphics.from(Glyph.ZOOM_OUT, Color.BLACK, 12.0)
@@ -175,17 +176,6 @@ class CalendarWidget: View() {
                 action {
                     val currentValue = viewZoomSlider.value
                     viewZoomSlider.value = currentValue + 20.0
-                }
-            }
-            jfxButton {
-                graphic = graphics.from(Glyph.HELP, Color.BLACK, 16.0)
-                action {
-                    find<HelpWidget>().openModal(
-                            stageStyle = StageStyle.UTILITY,
-                            modality = Modality.APPLICATION_MODAL,
-                            block = false,
-                            resizable = true
-                    )
                 }
             }
         }

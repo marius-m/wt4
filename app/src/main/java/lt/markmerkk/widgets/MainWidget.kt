@@ -11,11 +11,8 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
-import javafx.scene.layout.StackPane
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
@@ -36,6 +33,9 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
+import lt.markmerkk.versioner.Changelog
+import lt.markmerkk.versioner.ChangelogLoader
+import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
@@ -44,6 +44,7 @@ import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketWidget
+import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.Subscription
 import rx.observables.JavaFxObservable
@@ -66,6 +67,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
     @Inject lateinit var jiraClientProvider: JiraClientProvider
+    @Inject lateinit var versionProvider: VersionProvider
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -76,6 +79,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
     lateinit var widgetLogQuickEdit: QuickEditContainerWidget
+    lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
 
@@ -181,7 +185,20 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 graphics = graphics,
                 logChangeValidator = logChangeValidator
         )
+        changelogLoader = ChangelogLoader(
+                listener = object : ChangelogLoader.Listener {
+                    override fun onNewVersion(changelog: Changelog) {
+                        logger.debug("Showing changelog")
+                        eventBus.post(EventNewVersion(changelog))
+                    }
+                },
+                versionProvider = versionProvider,
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
+
+        )
         snackBar = JFXSnackbar(root as StackPane)
+                .apply { toFront() }
         jfxContainerContentRight.children.add(widgetProgress.root)
         jfxContainerContentLeft.children.add(widgetDateChange.root)
         jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
@@ -194,9 +211,12 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         widgetDateChange.onAttach()
         widgetProgress.onAttach()
         widgetLogQuickEdit.onAttach()
+        changelogLoader.onAttach()
+        changelogLoader.check()
     }
 
     override fun onUndock() {
+        changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
         widgetLogQuickEdit.onDetach()
         widgetProgress.onDetach()
@@ -231,14 +251,52 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     fun onSnackBarMessage(event: EventSnackBarMessage) {
         val label = Label(event.message)
                 .apply {
+                    background = Background(BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY))
                     val paddingHorizontal = 10.0
                     val paddingVertical = 8.0
                     padding = Insets(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal)
-                    textFill = Paint.valueOf("white")
+                    textFill = Color.WHITE
                     maxWidth = stageProperties.width
                 }
         val hBox = HBox(10.0, label)
         snackBar.enqueue(JFXSnackbar.SnackbarEvent(hBox))
+    }
+
+    @Subscribe
+    fun onNewVersion(event: EventNewVersion) {
+        val viewMessage = hbox(spacing = 2) {
+            background = Background(
+                    BackgroundFill(
+                            Color.BLACK,
+                            CornerRadii(10.0, 10.0, 0.0, 0.0, false),
+                            Insets.EMPTY
+                    )
+            )
+            label("New version available!") {
+                style {
+                    padding = box(
+                            vertical = 6.px,
+                            horizontal = 10.px
+                    )
+                }
+                textFill = Color.WHITE
+                maxWidth = stageProperties.width
+            }
+            jfxButton("Info".toUpperCase()) {
+                textFill = Color.WHITE
+                action {
+                    val widgetChangelog = find<ChangelogWidget>()
+                    widgetChangelog.render(event.changelog)
+                    widgetChangelog.openModal(
+                            stageStyle = StageStyle.UTILITY,
+                            modality = Modality.APPLICATION_MODAL,
+                            block = false,
+                            resizable = true
+                    )
+                }
+            }
+        }
+        snackBar.enqueue(JFXSnackbar.SnackbarEvent(viewMessage, javafx.util.Duration(5000.0), null))
     }
 
     @Subscribe
