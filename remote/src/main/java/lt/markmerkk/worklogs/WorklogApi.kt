@@ -157,7 +157,7 @@ class WorklogApi(
                 .flatMap { uploadStatus ->
                     when (uploadStatus) {
                         is WorklogUploadSuccess -> {
-                            logger.info("Success uploading ${uploadStatus.remoteLog.toStringShort()}")
+                            logger.info("Success uploading ${uploadStatus.remoteLog.toStringLonger()}")
                             worklogStorage
                                     .insertOrUpdate(uploadStatus.remoteLog)
                                     .toObservable()

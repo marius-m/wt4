@@ -32,7 +32,19 @@ data class Log private constructor(
         } else {
             "isRemote: $isRemote"
         }
-        return "[WORKLOG(localId=$id) / $shortFormatStart + $shortFormatEnd = $shortFormatDuration / $shortRemoteMessage]"
+        return "[WORKLOG(localId=$id) / ${code.code} / $shortFormatStart + $shortFormatEnd = $shortFormatDuration / $shortRemoteMessage]"
+    }
+
+    fun toStringLonger(): String {
+        val shortFormatStart = LogFormatters.shortFormat.print(time.start)
+        val shortFormatEnd = LogFormatters.shortFormat.print(time.end)
+        val shortFormatDuration = LogFormatters.humanReadableDuration(time.duration)
+        val shortRemoteMessage = if (remoteData != null) {
+            "isRemote: $isRemote (remoteId=${remoteData.remoteId})"
+        } else {
+            "isRemote: $isRemote"
+        }
+        return "[WORKLOG(localId=$id) / ${code.code} / $shortFormatStart + $shortFormatEnd = $shortFormatDuration / $shortRemoteMessage / $comment]"
     }
 
     //region Factories
