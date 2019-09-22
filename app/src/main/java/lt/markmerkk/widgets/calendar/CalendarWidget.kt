@@ -118,6 +118,17 @@ class CalendarWidget: View() {
         viewContainer = borderpane {
             center { }
         }
+        label("(i) Hold 'ALT' to update logs") {
+            style {
+                padding = box(
+                        vertical = 4.px,
+                        horizontal = 0.px
+                )
+            }
+            StackPane.setAlignment(this, Pos.BOTTOM_CENTER)
+            isMouseTransparent = true
+            addClass(Styles.labelMini)
+        }
         viewDragIndicator = vbox(alignment = Pos.BOTTOM_CENTER) {
             isMouseTransparent = true
             label("Drag worklog to move or scale") {
