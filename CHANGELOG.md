@@ -1,6 +1,17 @@
 # Changelog
 
-Current: 1.5.7
+Current: 1.6.0
+
+## 1.6.0
+- Bugfix on OAuth connection lock
+- Add version check whenever launching app
+- Add help widget to display tips and tricks how to use the app
+- Bugfix to only to download worklogs that are in the range of the fetched dates
+- More info in debug logs
+- Add credits screen
+- Clean cookies on webview reset
+- Move zoom calendar controler to the main screen
+- Simplify and less branching out whenever authorizing through OAuth
 
 ## 1.5.7
 - Small bugfixes
