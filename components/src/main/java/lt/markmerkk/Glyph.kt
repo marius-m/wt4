@@ -39,5 +39,7 @@ enum class Glyph {
     DISPLAY_WEEK,
     DISPLAY_LIST,
     PAGE,
+    ZOOM_IN,
+    ZOOM_OUT,
     ;
 }

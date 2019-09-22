@@ -8,6 +8,7 @@ import com.calendarfx.view.DateControl
 import com.calendarfx.view.DayViewBase
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
+import com.jfoenix.controls.JFXSlider
 import com.jfoenix.svg.SVGGlyph
 import javafx.collections.SetChangeListener
 import javafx.event.ActionEvent
@@ -17,6 +18,7 @@ import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.util.Callback
@@ -27,6 +29,8 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.events.EventLogSelection
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
@@ -34,6 +38,7 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.MainContainerNavigator
 import org.slf4j.LoggerFactory
+import rx.observables.JavaFxObservable
 import tornadofx.*
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -55,6 +60,8 @@ class CalendarWidget: View() {
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
     private lateinit var viewDragIndicator: VBox
+    private lateinit var viewZoomIndicator: VBox
+    private lateinit var viewZoomSlider: JFXSlider
 
     private lateinit var logLoader: CalendarFxLogLoader
     private lateinit var calendarUpdater: CalendarFxUpdater
@@ -123,6 +130,39 @@ class CalendarWidget: View() {
             }
             hide()
         }
+        hbox(spacing = 4, alignment = Pos.CENTER) {
+            StackPane.setAlignment(this, Pos.BOTTOM_RIGHT)
+            style {
+                padding = box(
+                        top = 0.px,
+                        left = 0.px,
+                        bottom = 6.px,
+                        right = 16.px
+                )
+            }
+            isPickOnBounds = true
+            maxWidth = 180.0
+            maxHeight = 16.0
+            jfxButton {
+                graphic = graphics.from(Glyph.ZOOM_OUT, Color.BLACK, 12.0)
+                action {
+                    val currentValue = viewZoomSlider.value
+                    viewZoomSlider.value = currentValue - 20.0
+                }
+            }
+            viewZoomSlider = jfxSlider {
+                min = 40.0
+                max = 200.0
+                value = 50.0
+            }
+            jfxButton {
+                graphic = graphics.from(Glyph.ZOOM_IN, Color.BLACK, 16.0)
+                action {
+                    val currentValue = viewZoomSlider.value
+                    viewZoomSlider.value = currentValue + 20.0
+                }
+            }
+        }
     }
 
     override fun onDock() {
@@ -132,6 +172,10 @@ class CalendarWidget: View() {
             DisplayTypeLength.WEEK -> DetailedWeekView()
         }
         viewContainer.center = viewCalendar
+        viewCalendar.hoursLayoutStrategy = DayViewBase.HoursLayoutStrategy.FIXED_HOUR_HEIGHT
+        JavaFxObservable.valuesOf(viewZoomSlider.valueProperty())
+                .subscribe { viewCalendar.hourHeight = it.toDouble() }
+        viewZoomSlider.value = 50.0
         contextMenu = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         logStorage.register(storageListener)
@@ -218,12 +262,6 @@ class CalendarWidget: View() {
         override fun call(param: DateControl.ContextMenuParameter): ContextMenu {
             val contextMenu = ContextMenu()
             contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemNewItem(param.zonedDateTime, strings, logStorage))
-            if (viewCalendar is DetailedDayView) {
-                contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemScale(viewCalendar as DetailedDayView, strings))
-            }
-            if (viewCalendar is DetailedWeekView) {
-                contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemScale(viewCalendar as DetailedWeekView, strings))
-            }
             contextMenu.onAction = object : EventHandler<ActionEvent> {
                 override fun handle(event: ActionEvent) {
                     contextMenu.hide()
