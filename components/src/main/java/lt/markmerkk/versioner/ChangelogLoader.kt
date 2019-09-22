@@ -31,7 +31,11 @@ class ChangelogLoader(
                 .observeOn(uiScheduler)
                 .subscribe({
                     logger.info("Found remote changelog")
-                    listener.onNewVersion(it)
+                    val remoteVersion = it.version
+                    val currentVersion = versionProvider.currentVersion()
+                    if (remoteVersion > currentVersion) {
+                        listener.onNewVersion(it)
+                    }
                 }, {
                     logger.error("Changelog fetch failure", it)
                 })

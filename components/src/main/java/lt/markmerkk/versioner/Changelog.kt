@@ -12,7 +12,28 @@ data class Changelog(
             val major: Int = 0,
             val minor: Int = 0,
             val patch: Int = 0
-    ) {
+    ): Comparable<Version> {
+
+        override fun compareTo(other: Version): Int {
+            return when {
+                major > other.major -> 1
+                major < other.major -> -1
+                else -> {
+                    when {
+                        minor > other.minor -> 1
+                        minor < other.minor -> -1
+                        else -> {
+                            when {
+                                patch > other.patch -> 1
+                                patch < other.patch -> -1
+                                else -> 0
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         override fun toString(): String {
             return "$major.$minor.$patch"
         }

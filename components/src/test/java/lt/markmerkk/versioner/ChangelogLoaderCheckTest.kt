@@ -1,9 +1,6 @@
 package lt.markmerkk.versioner
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -30,19 +27,48 @@ class ChangelogLoaderCheckTest {
     }
 
     @Test
-    fun valid() {
+    fun valid_versionAvailable() {
         // Assemble
-        doReturn(Single.just("valid_changelog"))
+        doReturn(Single.just("valid_changelog\nCurrent: 1.5.7"))
                 .whenever(versionProvider).changelogAsString()
+        doReturn(Changelog.versionFrom("1.5.6"))
+                .whenever(versionProvider).currentVersion()
 
         // Act
         changelogLoader.check()
 
         // Assert
-        verify(listener).onNewVersion(Changelog(
-                version = Changelog.Version("", 0, 0, 0),
-                contentAsString = "valid_changelog"
-        ))
+        verify(listener).onNewVersion(any())
+    }
+
+    @Test
+    fun newestVersion() {
+        // Assemble
+        doReturn(Single.just("valid_changelog\nCurrent: 1.5.6"))
+                .whenever(versionProvider).changelogAsString()
+        doReturn(Changelog.versionFrom("1.5.6"))
+                .whenever(versionProvider).currentVersion()
+
+        // Act
+        changelogLoader.check()
+
+        // Assert
+        verify(listener, never()).onNewVersion(any())
+    }
+
+    @Test
+    fun wayLowerVersion() {
+        // Assemble
+        doReturn(Single.just("valid_changelog\nCurrent: 1.5.7"))
+                .whenever(versionProvider).changelogAsString()
+        doReturn(Changelog.versionFrom("1.0.0"))
+                .whenever(versionProvider).currentVersion()
+
+        // Act
+        changelogLoader.check()
+
+        // Assert
+        verify(listener).onNewVersion(any())
     }
 
     @Test

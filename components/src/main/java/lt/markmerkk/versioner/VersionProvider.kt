@@ -7,4 +7,5 @@ interface VersionProvider {
      * @return Changelog promise as string
      */
     fun changelogAsString(): Single<String>
+    fun currentVersion(): Changelog.Version
 }
