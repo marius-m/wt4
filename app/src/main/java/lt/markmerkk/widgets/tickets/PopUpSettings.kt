@@ -8,6 +8,7 @@ import javafx.stage.StageStyle
 import lt.markmerkk.BuildConfig
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
+import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
 import lt.markmerkk.widgets.credits.CreditsWidget
@@ -74,6 +75,18 @@ class PopUpSettings(
                                 graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                                 action = {
                                     find<CreditsWidget>().openModal(
+                                            stageStyle = StageStyle.UTILITY,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
+                        ),
+                        PopUpAction(
+                                title = "Help",
+                                graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
+                                action = {
+                                    find<HelpWidget>().openModal(
                                             stageStyle = StageStyle.UTILITY,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,

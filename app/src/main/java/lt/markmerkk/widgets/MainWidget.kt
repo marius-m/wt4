@@ -295,12 +295,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                     )
                 }
             }
-            jfxButton("Dismiss".toUpperCase()) {
-                textFill = Color.WHITE
-                action { snackBar.close() }
-            }
         }
-        snackBar.enqueue(JFXSnackbar.SnackbarEvent(viewMessage, javafx.util.Duration(10000.0), null))
+        snackBar.enqueue(JFXSnackbar.SnackbarEvent(viewMessage, javafx.util.Duration(5000.0), null))
     }
 
     @Subscribe
