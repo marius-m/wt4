@@ -12,10 +12,8 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.scene.web.WebView
 import lt.markmerkk.*
-import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.interactors.JiraBasicApi
 import lt.markmerkk.ui_2.views.jfxButton
@@ -162,7 +160,9 @@ class AccountSettingsOauthWidget : View() {
                     }
 
                     override fun resetWeb() {
-                        java.net.CookieHandler.setDefault(java.net.CookieManager())
+                        // Cookie reset does not work, as it scrambles the login flow
+                        // Source: https://stackoverflow.com/questions/23409138/clear-the-session-cache-cookie-in-the-javafx-webview
+//                        java.net.CookieHandler.setDefault(java.net.CookieManager())
                         viewWebview.engine.loadContent("<html></html>")
                     }
 

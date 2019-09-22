@@ -45,7 +45,6 @@ class OAuthAuthorizator(
                     showButtonSetupNew = true
             ))
         }
-        view.resetWeb()
     }
 
     fun onDetach() {
@@ -119,7 +118,6 @@ class OAuthAuthorizator(
 
     fun setupAuthStep2(accessTokenKey: String) {
         subsAuth2?.unsubscribe()
-        view.resetWeb()
         view.renderView(AuthViewModel(
                 showContainerWebview = false,
                 showContainerStatus = true,
