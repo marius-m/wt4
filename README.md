@@ -24,7 +24,7 @@ Builds for `1.6.0`
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.5.7`
+Builds for `1.6.0`
 
 * [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.dmg)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.exe)
