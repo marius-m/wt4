@@ -60,6 +60,7 @@ class OAuthAuthorizatorCheckAuthTest {
         verify(userSettings).changeJiraUser(any(), any(), any())
         verify(view).showProgress()
         verify(view).hideProgress()
+        verify(view).accountReady()
     }
 
     @Test
@@ -81,5 +82,6 @@ class OAuthAuthorizatorCheckAuthTest {
         assertThat(viewModel.showButtonSetupNew).isTrue()
 
         verify(userSettings).resetUserData()
+        verify(view, never()).accountReady()
     }
 }

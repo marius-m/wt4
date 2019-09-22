@@ -72,6 +72,7 @@ class OAuthAuthorizator(
                             textStatus = "Welcome '${it.displayName}'!",
                             showButtonSetupNew = false
                     ))
+                    view.accountReady()
                 }, {
                     logger.warn("Error trying to establish connection!", it)
                     view.renderView(AuthViewModel(
@@ -162,6 +163,7 @@ class OAuthAuthorizator(
                             textStatus = "Welcome '${it.displayName}'!",
                             showButtonSetupNew = false
                     ))
+                    view.accountReady()
                 }, {
                     logger.warn("Error finalizing JIRA token export!", it)
                     view.renderView(AuthViewModel(
@@ -175,6 +177,7 @@ class OAuthAuthorizator(
     }
 
     interface View {
+        fun accountReady()
         fun renderView(authViewModel: AuthViewModel)
         fun showProgress()
         fun hideProgress()

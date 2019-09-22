@@ -71,6 +71,8 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.HAPPY)
         assertThat(viewModel2.textStatus).isEqualTo("Welcome 'display_name'!")
         assertThat(viewModel2.showButtonSetupNew).isFalse()
+
+        verify(view).accountReady()
     }
 
     @Test
@@ -99,6 +101,8 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
         assertThat(viewModel2.showButtonSetupNew).isTrue()
+
+        verify(view, never()).accountReady()
     }
 
     @Test
@@ -131,6 +135,8 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
         assertThat(viewModel2.showButtonSetupNew).isTrue()
+
+        verify(view, never()).accountReady()
     }
 
     @Test
@@ -164,6 +170,8 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
         assertThat(viewModel2.showButtonSetupNew).isTrue()
+
+        verify(view, never()).accountReady()
     }
 
     //region Mocks

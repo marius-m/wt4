@@ -28,6 +28,7 @@ class AccountSettingsWidget : View() {
     @Inject lateinit var strings: Strings
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var appConfig: Config
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
 
     private lateinit var viewInputHostname: JFXTextField
     private lateinit var viewInputUsername: JFXTextField
@@ -199,9 +200,11 @@ class AccountSettingsWidget : View() {
         )
         authService.onAttach()
         logTailer.onAttach()
+        autoSyncWatcher.changeUpdateLock(isInLock = true, lockProcessName = "AccountSettingsWidget")
     }
 
     override fun onUndock() {
+        autoSyncWatcher.changeUpdateLock(isInLock = false, lockProcessName = "")
         authService.onDetach()
         logTailer.onDetach()
         viewTextOutput.clear()
@@ -239,7 +242,7 @@ class AccountSettingsWidget : View() {
                 AuthService.AuthResult.SUCCESS -> {
                     viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 60.0)
                     viewLabelStatus.text = strings.getString("settings_state_success")
-//                    saveUserSettings()
+                    autoSyncWatcher.markForShortCycleUpdate()
                 }
                 AuthService.AuthResult.ERROR_EMPTY_FIELDS -> {
                     viewButtonStatus.graphic = graphics.from(Glyph.EMOTICON_DEAD, Color.BLACK, 60.0)

@@ -40,6 +40,7 @@ class AccountSettingsOauthWidget : View() {
     @Inject lateinit var jiraClientProvider: JiraClientProvider
     @Inject lateinit var appConfig: Config
     @Inject lateinit var jiraBasicApi: JiraBasicApi
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
 
     private lateinit var viewWebview: WebView
     private lateinit var viewButtonStatus: JFXButton
@@ -140,6 +141,9 @@ class AccountSettingsOauthWidget : View() {
         super.onDock()
         authorizator = OAuthAuthorizator(
                 view = object : OAuthAuthorizator.View {
+                    override fun accountReady() {
+                        autoSyncWatcher.markForShortCycleUpdate()
+                    }
 
                     override fun renderView(authViewModel: AuthViewModel) {
                         viewContainerSetupStatus.showIf(authViewModel.showContainerStatus)
@@ -216,9 +220,11 @@ class AccountSettingsOauthWidget : View() {
                     }
                 }
         authWebviewPresenter.attachDocumentProperty(wvDocumentProperty)
+        autoSyncWatcher.changeUpdateLock(isInLock = true, lockProcessName = "AccountSettingsOauthWidget")
     }
 
     override fun onUndock() {
+        autoSyncWatcher.changeUpdateLock(isInLock = false, lockProcessName = "")
         authWebviewPresenter.onDetach()
         authorizator.onDetach()
         logTailer.onDetach()
