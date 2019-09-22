@@ -144,6 +144,7 @@ class AccountSettingsOauthWidget : View() {
                     override fun renderView(authViewModel: AuthViewModel) {
                         viewContainerSetupStatus.showIf(authViewModel.showContainerStatus)
                         viewContainerSetupWebview.showIf(authViewModel.showContainerWebview)
+                        viewButtonSetupConnection.showIf(authViewModel.showButtonSetupNew)
                         viewButtonStatus.graphic = when (authViewModel.showStatusEmoticon) {
                             AuthViewModel.StatusEmoticon.HAPPY -> graphics.from(Glyph.EMOTICON_COOL, Color.BLACK, 64.0)
                             AuthViewModel.StatusEmoticon.NEUTRAL -> graphics.from(Glyph.EMOTICON_NEUTRAL, Color.BLACK, 64.0)

@@ -33,14 +33,16 @@ class OAuthAuthorizator(
                     showContainerWebview = false,
                     showContainerStatus = true,
                     showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                    textStatus = "No user connected!"
+                    textStatus = "No user connected!",
+                    showButtonSetupNew = true
             ))
         } else {
             view.renderView(AuthViewModel(
                     showContainerWebview = false,
                     showContainerStatus = true,
                     showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                    textStatus = "Welcome '${jiraUser.displayName}'!"
+                    textStatus = "Welcome '${jiraUser.displayName}'!",
+                    showButtonSetupNew = true
             ))
         }
         view.resetWeb()
@@ -67,7 +69,8 @@ class OAuthAuthorizator(
                             showContainerWebview = false,
                             showContainerStatus = true,
                             showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
-                            textStatus = "Welcome '${it.displayName}'!"
+                            textStatus = "Welcome '${it.displayName}'!",
+                            showButtonSetupNew = false
                     ))
                 }, {
                     logger.warn("Error trying to establish connection!", it)
@@ -75,7 +78,8 @@ class OAuthAuthorizator(
                             showContainerWebview = false,
                             showContainerStatus = true,
                             showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                            textStatus = "Error connecting to JIRA. Press 'Show logs' for more details!"
+                            textStatus = "Error connecting to JIRA. Press 'Show logs' for more details!",
+                            showButtonSetupNew = true
                     ))
                 })
     }
@@ -96,7 +100,8 @@ class OAuthAuthorizator(
                             showContainerWebview = true,
                             showContainerStatus = false,
                             showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                            textStatus = ""
+                            textStatus = "",
+                            showButtonSetupNew = false
                     ))
                     view.loadAuthWeb(it)
                 }, {
@@ -105,7 +110,8 @@ class OAuthAuthorizator(
                             showContainerWebview = false,
                             showContainerStatus = true,
                             showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                            textStatus = "Error generating JIRA token. Press 'Show logs' for more info!"
+                            textStatus = "Error generating JIRA token. Press 'Show logs' for more info!",
+                            showButtonSetupNew = true
                     ))
                 })
     }
@@ -117,7 +123,8 @@ class OAuthAuthorizator(
                 showContainerWebview = false,
                 showContainerStatus = true,
                 showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                textStatus = "Finishing up authorization..."
+                textStatus = "Finishing up authorization...",
+                showButtonSetupNew = false
         ))
         if (accessTokenKey.isEmpty()) {
             userSettings.resetUserData()
@@ -126,7 +133,8 @@ class OAuthAuthorizator(
                     showContainerWebview = false,
                     showContainerStatus = true,
                     showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                    textStatus = "Error generating JIRA token. Press 'Show logs' for more info"
+                    textStatus = "Error generating JIRA token. Press 'Show logs' for more info",
+                    showButtonSetupNew = true
             ))
             return
         }
@@ -151,7 +159,8 @@ class OAuthAuthorizator(
                             showContainerWebview = false,
                             showContainerStatus = true,
                             showStatusEmoticon = AuthViewModel.StatusEmoticon.HAPPY,
-                            textStatus = "Welcome '${it.displayName}'!"
+                            textStatus = "Welcome '${it.displayName}'!",
+                            showButtonSetupNew = false
                     ))
                 }, {
                     logger.warn("Error finalizing JIRA token export!", it)
@@ -159,7 +168,8 @@ class OAuthAuthorizator(
                             showContainerWebview = false,
                             showContainerStatus = true,
                             showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                            textStatus = "Error generating JIRA token. Press 'Show logs' for more info"
+                            textStatus = "Error generating JIRA token. Press 'Show logs' for more info",
+                            showButtonSetupNew = true
                     ))
                 })
     }

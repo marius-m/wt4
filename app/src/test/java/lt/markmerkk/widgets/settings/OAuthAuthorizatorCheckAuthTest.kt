@@ -55,6 +55,7 @@ class OAuthAuthorizatorCheckAuthTest {
         assertThat(viewModel.showContainerStatus).isTrue()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.HAPPY)
         assertThat(viewModel.textStatus).isEqualTo("Welcome 'valid_display_name'!")
+        assertThat(viewModel.showButtonSetupNew).isFalse()
 
         verify(userSettings).changeJiraUser(any(), any(), any())
         verify(view).showProgress()
@@ -77,6 +78,7 @@ class OAuthAuthorizatorCheckAuthTest {
         assertThat(viewModel.showContainerStatus).isTrue()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel.textStatus).isEqualTo("Error connecting to JIRA. Press 'Show logs' for more details!")
+        assertThat(viewModel.showButtonSetupNew).isTrue()
 
         verify(userSettings).resetUserData()
     }

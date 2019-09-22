@@ -63,12 +63,14 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel1.showContainerStatus).isTrue()
         assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
         assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+        assertThat(viewModel1.showButtonSetupNew).isFalse()
 
         val viewModel2 = viewModelCapture.allValues[1]
         assertThat(viewModel2.showContainerWebview).isFalse()
         assertThat(viewModel2.showContainerStatus).isTrue()
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.HAPPY)
         assertThat(viewModel2.textStatus).isEqualTo("Welcome 'display_name'!")
+        assertThat(viewModel2.showButtonSetupNew).isFalse()
     }
 
     @Test
@@ -89,12 +91,14 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel1.showContainerStatus).isTrue()
         assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
         assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+        assertThat(viewModel1.showButtonSetupNew).isFalse()
 
         val viewModel2 = viewModelCapture.allValues[1]
         assertThat(viewModel2.showContainerWebview).isFalse()
         assertThat(viewModel2.showContainerStatus).isTrue()
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
+        assertThat(viewModel2.showButtonSetupNew).isTrue()
     }
 
     @Test
@@ -111,18 +115,22 @@ class OAuthAuthorizatorSetupAuth2Test {
 
         // Assert
         verify(view).resetWeb()
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.NEUTRAL,
-                textStatus = "Finishing up authorization..."
-        ))
-        verify(view).renderView(AuthViewModel(
-                showContainerWebview = false,
-                showContainerStatus = true,
-                showStatusEmoticon = AuthViewModel.StatusEmoticon.SAD,
-                textStatus = "Error generating JIRA token. Press 'Show logs' for more info"
-        ))
+        val viewModelCapture = argumentCaptor<AuthViewModel>()
+        verify(view, times(2)).renderView(viewModelCapture.capture())
+
+        val viewModel1 = viewModelCapture.firstValue
+        assertThat(viewModel1.showContainerWebview).isFalse()
+        assertThat(viewModel1.showContainerStatus).isTrue()
+        assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
+        assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+        assertThat(viewModel1.showButtonSetupNew).isFalse()
+
+        val viewModel2 = viewModelCapture.allValues[1]
+        assertThat(viewModel2.showContainerWebview).isFalse()
+        assertThat(viewModel2.showContainerStatus).isTrue()
+        assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
+        assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
+        assertThat(viewModel2.showButtonSetupNew).isTrue()
     }
 
     @Test
@@ -148,12 +156,14 @@ class OAuthAuthorizatorSetupAuth2Test {
         assertThat(viewModel1.showContainerStatus).isTrue()
         assertThat(viewModel1.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
         assertThat(viewModel1.textStatus).isEqualTo("Finishing up authorization...")
+        assertThat(viewModel1.showButtonSetupNew).isFalse()
 
         val viewModel2 = viewModelCapture.allValues[1]
         assertThat(viewModel2.showContainerWebview).isFalse()
         assertThat(viewModel2.showContainerStatus).isTrue()
         assertThat(viewModel2.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel2.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info")
+        assertThat(viewModel2.showButtonSetupNew).isTrue()
     }
 
     //region Mocks

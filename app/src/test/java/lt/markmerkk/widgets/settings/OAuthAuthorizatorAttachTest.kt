@@ -56,6 +56,7 @@ class OAuthAuthorizatorAttachTest {
         assertThat(viewModel.showContainerStatus).isTrue()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel.textStatus).isNotEmpty()
+        assertThat(viewModel.showButtonSetupNew).isTrue()
     }
 
     @Test
@@ -77,6 +78,7 @@ class OAuthAuthorizatorAttachTest {
         assertThat(viewModel.showContainerStatus).isTrue()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel.textStatus).isEqualTo("No user connected!")
+        assertThat(viewModel.showButtonSetupNew).isTrue()
     }
 
     @Test
@@ -98,6 +100,7 @@ class OAuthAuthorizatorAttachTest {
         assertThat(viewModel.showContainerStatus).isTrue()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
         assertThat(viewModel.textStatus).isEqualTo("Welcome 'user'!")
+        assertThat(viewModel.showButtonSetupNew).isTrue()
     }
 
 }

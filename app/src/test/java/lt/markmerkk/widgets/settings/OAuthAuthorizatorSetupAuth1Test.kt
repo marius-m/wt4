@@ -55,6 +55,7 @@ class OAuthAuthorizatorSetupAuth1Test {
         assertThat(viewModel.showContainerStatus).isFalse()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.NEUTRAL)
         assertThat(viewModel.textStatus).isEqualTo("")
+        assertThat(viewModel.showButtonSetupNew).isFalse()
 
         verify(userSettings).resetUserData()
         verify(view).loadAuthWeb("auth_url")
@@ -76,6 +77,7 @@ class OAuthAuthorizatorSetupAuth1Test {
         assertThat(viewModel.showContainerStatus).isTrue()
         assertThat(viewModel.showStatusEmoticon).isEqualTo(AuthViewModel.StatusEmoticon.SAD)
         assertThat(viewModel.textStatus).isEqualTo("Error generating JIRA token. Press 'Show logs' for more info!")
+        assertThat(viewModel.showButtonSetupNew).isTrue()
 
         verify(view, never()).loadAuthWeb("auth_url")
     }
