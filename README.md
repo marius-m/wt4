@@ -10,13 +10,13 @@ Dedicated worklog management for JIRA
 
 ## Downloads
 
-Builds for `1.5.7`
+Builds for `1.6.0`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.7.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.5.7.exe)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.6.0.dmg)
+* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.6.0.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
-* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.5.7.deb)
+* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.6.0.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
 - How to set-up: https://github.com/marius-m/wt4/wiki#wt4
@@ -26,8 +26,8 @@ Some people from my company [iTo](https://www.ito.lt/) are using this tool as we
 
 Builds for `1.5.7`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.7.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.5.7.exe)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.dmg)
+* [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
 * Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
