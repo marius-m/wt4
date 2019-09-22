@@ -64,12 +64,13 @@ dependencies {
     implementation project(":jira-client")
     implementation project(":models")
     implementation project(":mock-factory")
+    implementation project(":credits")
 
-    implementation 'no.tornado:tornadofx:1.7.17'
+    implementation 'no.tornado:tornadofx:1.7.19'
     implementation "com.brsanthu:google-analytics-java:1.1.2"
-    implementation "io.reactivex:rxjavafx:1.1.0"
     implementation "com.google.guava:guava:21.0"
     implementation "com.jfoenix:jfoenix:8.0.8"
+    implementation "io.reactivex:rxjavafx:1.1.0"
     implementation "io.reactivex:rxjava:${versions.rxJava}"
     implementation "io.reactivex:rxjava-async-util:${versions.rxJavaAsync}"
     implementation "org.bouncycastle:bcprov-jdk15on:1.51"

@@ -10,6 +10,7 @@ import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
+import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
@@ -61,6 +62,18 @@ class PopUpSettings(
                                 graphic = graphics.from(Glyph.PAGE, Color.BLACK, 10.0, 12.0),
                                 action = {
                                     find<TicketWidget>().openModal(
+                                            stageStyle = StageStyle.UTILITY,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
+                        ),
+                        PopUpAction(
+                                title = "Credits",
+                                graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
+                                action = {
+                                    find<CreditsWidget>().openModal(
                                             stageStyle = StageStyle.UTILITY,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,

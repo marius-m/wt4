@@ -9,6 +9,7 @@ import lt.markmerkk.widgets.DatePickerWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
+import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
@@ -39,4 +40,5 @@ interface AppComponent {
     fun inject(ticketSplitWidget: TicketSplitWidget)
     fun inject(statisticsWidget: StatisticsWidget)
     fun inject(accountSettingsOauthWidget: AccountSettingsOauthWidget)
+    fun inject(creditsWidget: CreditsWidget)
 }

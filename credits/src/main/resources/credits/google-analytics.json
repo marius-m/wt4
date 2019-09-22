@@ -1,0 +1,8 @@
+{
+  "title": "google-analytics-java",
+  "description": "Java API for Google Analytics Measurement Protocol (part of Universal Analytics). This library is released under liberal Apache Open source License 2.0\n\nGoogle Analytics Measurement Protocol is new tracking protocol, which will replace the legacy Tracking protocol. This protocol is documented at https://developers.google.com/analytics/devguides/collection/protocol/v1/",
+  "link": "https://github.com/brsanthu/google-analytics-java",
+  "license": "Apache 2.0",
+  "license_link": "https://github.com/brsanthu/google-analytics-java",
+  "license_full": ""
+}

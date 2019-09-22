@@ -12,6 +12,7 @@ import lt.markmerkk.migrations.Migration1To2
 import lt.markmerkk.migrations.Migration2To3
 import lt.markmerkk.migrations.Migration3To4
 import lt.markmerkk.mvp.HostServicesInteractor
+import lt.markmerkk.repositories.CreditsRepository
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
@@ -316,6 +317,12 @@ class AppModule(
                 ioScheduler = schedulerProvider.waitScheduler(),
                 uiScheduler = schedulerProvider.ui()
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideCreditsRepository(): CreditsRepository {
+        return CreditsRepository()
     }
 
 }

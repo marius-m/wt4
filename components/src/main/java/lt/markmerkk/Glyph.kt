@@ -41,5 +41,6 @@ enum class Glyph {
     PAGE,
     ZOOM_IN,
     ZOOM_OUT,
+    HELP,
     ;
 }
