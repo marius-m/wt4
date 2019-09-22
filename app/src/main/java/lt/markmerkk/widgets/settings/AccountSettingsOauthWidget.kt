@@ -157,6 +157,7 @@ class AccountSettingsOauthWidget : View() {
                     }
 
                     override fun resetWeb() {
+                        java.net.CookieHandler.setDefault(java.net.CookieManager())
                         viewWebview.engine.loadContent("<html></html>")
                     }
 
