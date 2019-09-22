@@ -37,11 +37,11 @@ class ProgressWidgetPresenter(
     private fun handleSyncChange(isLoading: Boolean) {
         if (isLoading) {
             view?.showProgress()
-            view?.changeLabel("Synchronizing with JIRA...")
+            view?.changeLabel("Syncing JIRA...")
         } else {
             view?.hideProgress()
             val prettyDuration = LogFormatters.humanReadableDuration(autoSyncWatcher.lastSyncDuration())
-            view?.changeLabel("Last update: $prettyDuration")
+            view?.changeLabel("Sync $prettyDuration ago")
         }
     }
 
