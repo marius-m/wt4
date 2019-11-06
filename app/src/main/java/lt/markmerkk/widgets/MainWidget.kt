@@ -288,7 +288,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                     val widgetChangelog = find<ChangelogWidget>()
                     widgetChangelog.render(event.changelog)
                     widgetChangelog.openModal(
-                            stageStyle = StageStyle.UTILITY,
+                            stageStyle = StageStyle.DECORATED,
                             modality = Modality.APPLICATION_MODAL,
                             block = false,
                             resizable = true
@@ -337,7 +337,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         when (event.type) {
             DialogType.ACTIVE_CLOCK -> {
                 find<LogDetailsWidget>().openModal(
-                        stageStyle = StageStyle.UTILITY,
+                        stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
                         resizable = true
@@ -345,7 +345,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
             }
             DialogType.LOG_EDIT -> {
                 find<LogDetailsWidget>().openModal(
-                        stageStyle = StageStyle.UTILITY,
+                        stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
                         resizable = true
@@ -353,7 +353,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
             }
             DialogType.TICKET_SEARCH -> {
                 find<TicketWidget>().openModal(
-                        stageStyle = StageStyle.UTILITY,
+                        stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
                         resizable = true
@@ -362,7 +362,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
             }
             DialogType.TICKET_SPLIT -> {
                 find<TicketSplitWidget>().openModal(
-                        stageStyle = StageStyle.UTILITY,
+                        stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
                         resizable = true
@@ -398,14 +398,14 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 actionFn = {
                     if (BuildConfig.oauth) {
                         find<AccountSettingsOauthWidget>().openModal(
-                                stageStyle = StageStyle.UTILITY,
+                                stageStyle = StageStyle.DECORATED,
                                 modality = Modality.APPLICATION_MODAL,
                                 block = false,
                                 resizable = true
                         )
                     } else {
                         find<AccountSettingsWidget>().openModal(
-                                stageStyle = StageStyle.UTILITY,
+                                stageStyle = StageStyle.DECORATED,
                                 modality = Modality.APPLICATION_MODAL,
                                 block = false,
                                 resizable = true

@@ -46,7 +46,7 @@ class QuickDateChangeWidgetPresenterDefault(
 
     override fun onClickDate() {
         find<DatePickerWidget>().openModal(
-                stageStyle = StageStyle.UTILITY,
+                stageStyle = StageStyle.DECORATED,
                 block = true,
                 resizable = false
         )

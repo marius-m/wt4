@@ -200,7 +200,7 @@ class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View
                             setOnAction {
                                 find<TicketWidget>().openModal(
                                         block = true,
-                                        stageStyle = StageStyle.UTILITY,
+                                        stageStyle = StageStyle.DECORATED,
                                         modality = Modality.WINDOW_MODAL
                                 )
                             }
