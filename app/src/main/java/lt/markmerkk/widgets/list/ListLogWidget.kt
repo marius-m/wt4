@@ -19,7 +19,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class ListLogWidget: View(), IDataListener<SimpleLog> {
+class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var strings: Strings

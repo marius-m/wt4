@@ -36,7 +36,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View {
+class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor

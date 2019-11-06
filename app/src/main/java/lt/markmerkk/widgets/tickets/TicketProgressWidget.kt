@@ -13,7 +13,7 @@ import lt.markmerkk.ui_2.views.jfxSpinner
 import tornadofx.*
 import javax.inject.Inject
 
-class TicketProgressWidget: View() {
+class TicketProgressWidget: Fragment() {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
 

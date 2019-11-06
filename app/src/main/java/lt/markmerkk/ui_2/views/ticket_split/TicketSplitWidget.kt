@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class TicketSplitWidget : View(), TicketSplitContract.View {
+class TicketSplitWidget : Fragment(), TicketSplitContract.View {
 
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>

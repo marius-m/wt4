@@ -19,7 +19,7 @@ import tornadofx.*
 class ProgressWidget(
         private val presenter: ProgressContract.Presenter,
         private val graphics: Graphics<SVGGlyph>
-): View(), ProgressContract.View {
+): Fragment(), ProgressContract.View {
 
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewStart: JFXButton

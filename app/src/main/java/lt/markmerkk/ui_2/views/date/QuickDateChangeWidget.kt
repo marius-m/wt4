@@ -13,7 +13,7 @@ import tornadofx.*
 class QuickDateChangeWidget(
         private val graphics: Graphics<SVGGlyph>,
         private val presenter: DateChangeContract.Presenter
-) : View(), DateChangeContract.View {
+) : Fragment(), DateChangeContract.View {
 
     private lateinit var viewArrowLeft: JFXButton
     private lateinit var viewArrowRight: JFXButton

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class StatisticsWidget: View(), StatisticsContract.View {
+class StatisticsWidget: Fragment(), StatisticsContract.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var ticketStorage: TicketStorage

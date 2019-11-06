@@ -18,7 +18,7 @@ class QuickEditContainerWidget(
         private val timeProvider: TimeProvider,
         private val graphics: Graphics<SVGGlyph>,
         private val logChangeValidator: LogChangeValidator
-) : View(),
+) : Fragment(),
         QuickEditContract.ContainerView,
         QuickEditActionChangeListener,
         LifecycleView,

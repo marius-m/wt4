@@ -27,7 +27,7 @@ import java.io.File
 import javax.inject.Inject
 
 // todo incomplete display of behaviour
-class AccountSettingsOauthWidget : View() {
+class AccountSettingsOauthWidget : Fragment() {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider

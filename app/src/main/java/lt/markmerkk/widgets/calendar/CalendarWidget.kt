@@ -51,7 +51,7 @@ import java.time.LocalTime
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
-class CalendarWidget: View() {
+class CalendarWidget: Fragment() {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var tracker: ITracker

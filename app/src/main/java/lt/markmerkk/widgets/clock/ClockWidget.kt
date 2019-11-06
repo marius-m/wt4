@@ -17,7 +17,7 @@ import lt.markmerkk.widgets.edit.LogDetailsWidget
 import tornadofx.*
 import javax.inject.Inject
 
-class ClockWidget: View(), ClockContract.View {
+class ClockWidget: Fragment(), ClockContract.View {
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage

@@ -26,7 +26,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class TicketWidget: View(), TicketContract.View {
+class TicketWidget: Fragment(), TicketContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var ticketApi: TicketApi

@@ -11,7 +11,7 @@ import rx.Subscription
 import rx.observables.JavaFxObservable
 import tornadofx.*
 
-class HelpWidget: View() {
+class HelpWidget: Fragment() {
 
     private lateinit var viewWebview: WebView
     private lateinit var viewProgress: JFXSpinner

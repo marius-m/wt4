@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import tornadofx.*
 
-class CreditsWidget(): View(), CreditsContract.View {
+class CreditsWidget(): Fragment(), CreditsContract.View {
 
     @Inject lateinit var creditsRepository: CreditsRepository
     @Inject lateinit var schedulerProvider: SchedulerProvider

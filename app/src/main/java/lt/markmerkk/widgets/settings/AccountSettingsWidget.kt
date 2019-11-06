@@ -19,7 +19,7 @@ import tornadofx.*
 import java.io.File
 import javax.inject.Inject
 
-class AccountSettingsWidget : View() {
+class AccountSettingsWidget : Fragment() {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider
