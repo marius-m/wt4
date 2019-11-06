@@ -8,6 +8,7 @@ import com.calendarfx.view.DateControl
 import com.calendarfx.view.DayViewBase
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXSlider
 import com.jfoenix.svg.SVGGlyph
 import javafx.collections.SetChangeListener
@@ -28,7 +29,9 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.events.EventAutoSyncLastUpdate
 import lt.markmerkk.events.EventEditLog
+import lt.markmerkk.events.EventEditMode
 import lt.markmerkk.events.EventLogSelection
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
@@ -60,7 +63,7 @@ class CalendarWidget: Fragment() {
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var logChangeValidator: LogChangeValidator
-    @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
+    @Inject lateinit var eventBus: WTEventBus
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
@@ -70,7 +73,6 @@ class CalendarWidget: Fragment() {
 
     private lateinit var logLoader: CalendarFxLogLoader
     private lateinit var calendarUpdater: CalendarFxUpdater
-
 
     init {
         Main.component().inject(this)
@@ -228,9 +230,11 @@ class CalendarWidget: Fragment() {
         logLoader.load(logStorage.data)
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
+        eventBus.register(this)
     }
 
     override fun onUndock() {
+        eventBus.unregister(this)
         mainContainerNavigator.onDetach()
         viewCalendar.selections.removeListener(jfxCalSelectionListener)
         calendarUpdater.onDetach()
@@ -239,14 +243,19 @@ class CalendarWidget: Fragment() {
         super.onUndock()
     }
 
-    fun changeEditMode(inEditMode: Boolean) {
-        this.inEditMode = inEditMode
+    //region Events
+
+    @Subscribe
+    fun onEditModeChange(event: EventEditMode) {
+        this.inEditMode = event.isInEdit
         if (inEditMode) {
             viewDragIndicator.show()
         } else {
             viewDragIndicator.hide()
         }
     }
+
+    //endregion
 
     //region Calendar listeners
 

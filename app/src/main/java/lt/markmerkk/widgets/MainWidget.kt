@@ -90,12 +90,12 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     override val root: Parent = stackpane {
         setOnKeyReleased { keyEvent ->
             if (keyEvent.code == KeyCode.ALT) {
-                find<CalendarWidget>().changeEditMode(false)
+                eventBus.post(EventEditMode(isInEdit = false))
             }
         }
         setOnKeyPressed { keyEvent ->
             if (keyEvent.code == KeyCode.ALT) {
-                find<CalendarWidget>().changeEditMode(true)
+                eventBus.post(EventEditMode(isInEdit = true))
             }
             when {
                 (keyEvent.code == KeyCode.S && keyEvent.isMetaDown)
@@ -243,7 +243,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Subscribe
     fun onFocusChange(event: EventFocusChange) {
         if (!event.isInFocus) {
-            find<CalendarWidget>().changeEditMode(false)
+            eventBus.post(EventEditMode(isInEdit = false))
         }
     }
 

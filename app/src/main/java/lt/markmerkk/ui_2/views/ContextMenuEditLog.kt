@@ -18,7 +18,7 @@ class ContextMenuEditLog(
         private val strings: Strings,
         private val graphics: Graphics<SVGGlyph>,
         private val logStorage: LogStorage,
-        private val eventBus: EventBus
+        private val eventBus: WTEventBus
 ) {
     val root: ContextMenu = ContextMenu()
             .apply {

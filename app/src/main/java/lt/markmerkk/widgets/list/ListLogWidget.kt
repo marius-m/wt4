@@ -24,7 +24,7 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
 
     init {
         Main.component().inject(this)
