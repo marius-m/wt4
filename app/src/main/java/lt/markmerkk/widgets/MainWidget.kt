@@ -336,7 +336,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     fun eventInflateDialog(event: EventInflateDialog) {
         when (event.type) {
             DialogType.ACTIVE_CLOCK -> {
-                find<LogDetailsWidget>().openModal(
+                find<LogDetailsWidget>().openWindow(
                         stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
@@ -344,7 +344,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 )
             }
             DialogType.LOG_EDIT -> {
-                find<LogDetailsWidget>().openModal(
+                find<LogDetailsWidget>().openWindow(
                         stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
@@ -352,7 +352,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 )
             }
             DialogType.TICKET_SEARCH -> {
-                find<TicketWidget>().openModal(
+                find<TicketWidget>().openWindow(
                         stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,
@@ -361,7 +361,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 find<TicketWidget>().primaryStage.toFront()
             }
             DialogType.TICKET_SPLIT -> {
-                find<TicketSplitWidget>().openModal(
+                find<TicketSplitWidget>().openWindow(
                         stageStyle = StageStyle.DECORATED,
                         modality = Modality.APPLICATION_MODAL,
                         block = false,

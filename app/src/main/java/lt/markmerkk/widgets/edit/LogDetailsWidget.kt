@@ -198,7 +198,7 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
                             setOnAction {
-                                find<TicketWidget>().openModal(
+                                find<TicketWidget>().openWindow(
                                         block = true,
                                         stageStyle = StageStyle.DECORATED,
                                         modality = Modality.WINDOW_MODAL
