@@ -5,8 +5,10 @@ import com.jfoenix.controls.*
 import javafx.beans.property.Property
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
+import javafx.geometry.Side
 import javafx.scene.Node
 import javafx.scene.control.Button
+import org.controlsfx.control.MasterDetailPane
 import tornadofx.*
 
 /**
@@ -83,3 +85,9 @@ fun EventTarget.calendarFxDetailedDay(op: DetailedDayView.() -> Unit = {}) = Det
 // DateTime
 fun EventTarget.jfxDatePicker(op: JFXDatePicker.() -> Unit = {}) = JFXDatePicker().attachTo(this, op)
 fun EventTarget.jfxTimePicker(op: JFXTimePicker.() -> Unit = {}) = JFXTimePicker().attachTo(this, op)
+
+// ControlFx
+fun EventTarget.jfxMasterDetailPane(
+        side: Side,
+        op: MasterDetailPane.() -> Unit = {}
+) = MasterDetailPane(side).attachTo(this, op)

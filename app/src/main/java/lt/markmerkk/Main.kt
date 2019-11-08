@@ -85,8 +85,8 @@ class Main : App(MainWidget::class, Styles::class) {
     companion object {
         var DEBUG = false
 
-        var SCENE_WIDTH = 700
-        var SCENE_HEIGHT = 550
+        var SCENE_WIDTH = 800
+        var SCENE_HEIGHT = 600
 
         @JvmStatic fun mainInstance(): Main = (FX.application as Main)
         @JvmStatic fun component(): AppComponent = (FX.application as Main).appComponent

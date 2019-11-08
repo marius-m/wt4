@@ -8,6 +8,7 @@ class Styles: Stylesheet() {
 
     companion object {
         val dialogHeader by cssclass()
+        val sidePanelHeader by cssclass()
         val dialogContainer by cssclass()
         val dialogContainerActionsButtons by cssclass()
         val buttonMenu by cssclass()
@@ -52,9 +53,18 @@ class Styles: Stylesheet() {
                     bottom = 0.px
             )
         }
-
         dialogHeader {
             fontSize = 24.pt
+            fontFamily = "Verdana"
+            padding = box(
+                    top = 0.px,
+                    left = 0.px,
+                    right = 0.px,
+                    bottom = 20.px
+            )
+        }
+        sidePanelHeader {
+            fontSize = 16.pt
             fontFamily = "Verdana"
             padding = box(
                     top = 0.px,
