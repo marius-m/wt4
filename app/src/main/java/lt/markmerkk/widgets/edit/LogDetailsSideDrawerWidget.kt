@@ -8,6 +8,7 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.stage.Modality
@@ -16,6 +17,8 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.events.EventMainToggleLogDetails
+import lt.markmerkk.events.EventMainToggleTickets
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -35,11 +38,11 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
+class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher
@@ -210,12 +213,10 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
                             setOnAction {
-                                find<TicketWidget>().openWindow(
-                                        block = true,
-                                        stageStyle = StageStyle.DECORATED,
-                                        modality = Modality.WINDOW_MODAL
-                                )
+                                eventBus.post(EventMainToggleTickets())
                             }
+                            shortcut(KeyCombination.valueOf("Ctrl+f"))
+                            shortcut(KeyCombination.valueOf("Meta+f"))
                         }
                     }
                     hbox {
@@ -262,11 +263,12 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                                     task = viewTextFieldTicket.text,
                                     comment = viewTextComment.text
                             )
+                            eventBus.post(EventMainToggleLogDetails())
                         }
                     }
                     viewButtonDismiss = jfxButton("Dismiss".toUpperCase()) {
                         setOnAction {
-                            close()
+                            eventBus.post(EventMainToggleLogDetails())
                         }
                     }
                 }

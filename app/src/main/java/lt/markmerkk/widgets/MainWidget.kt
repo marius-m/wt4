@@ -12,6 +12,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Modality
@@ -44,6 +45,7 @@ import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
+import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import lt.markmerkk.widgets.tickets.TicketWidget
@@ -77,7 +79,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var jfxButtonSettings: JFXButton
     lateinit var jfxContainerContentLeft: HBox
     lateinit var jfxContainerContentRight: HBox
-//    lateinit var viewMasterDetailPane: MasterDetailPane
     lateinit var viewSideDrawerLogDetails: JFXDrawer
     lateinit var viewSideDrawerTickets: JFXDrawer
 
@@ -103,19 +104,19 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
             if (keyEvent.code == KeyCode.ALT) {
                 eventBus.post(EventEditMode(isInEdit = true))
             }
-            when {
-                (keyEvent.code == KeyCode.S && keyEvent.isMetaDown)
-                        || (keyEvent.code == KeyCode.S && keyEvent.isControlDown) -> {
-                    resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
-                    eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
-                }
-                (keyEvent.code == KeyCode.R && keyEvent.isMetaDown)
-                        || (keyEvent.code == KeyCode.R && keyEvent.isControlDown) -> {
-                    syncInteractor.syncLogs()
-                    autoSyncWatcher.reset()
-                }
-            }
         }
+        val actionRefresh = {
+            syncInteractor.syncLogs()
+            autoSyncWatcher.reset()
+        }
+        shortcut(KeyCombination.valueOf("Meta+R"), actionRefresh)
+        shortcut(KeyCombination.valueOf("Ctrl+R"), actionRefresh)
+        val actionSaveLog = {
+            resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
+            eventBus.post(EventMainToggleLogDetails())
+        }
+        shortcut(KeyCombination.valueOf("Meta+S"), actionSaveLog)
+        shortcut(KeyCombination.valueOf("Ctrl+S"), actionSaveLog)
         borderpane {
             left {
                 vbox(spacing = 4) {
@@ -130,19 +131,16 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                             addClass(Styles.buttonMenu)
                             graphic = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
                             setOnAction {
-//                                PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
-//                                        .show()
-//                                viewMasterDetailPane.isShowDetailNode = !viewMasterDetailPane.isShowDetailNode
-                                viewSideDrawerLogDetails.toggle()
+                                PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
+                                        .show()
                             }
                         }
                         jfxButtonSettings = jfxButton {
                             addClass(Styles.buttonMenu)
                             graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
                             setOnAction {
-//                                PopUpSettings(graphics, jfxButtonSettings)
-//                                        .show()
-                                viewSideDrawerTickets.toggle()
+                                PopUpSettings(graphics, jfxButtonSettings)
+                                        .show()
                             }
                         }
                     }
@@ -253,6 +251,16 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     }
 
     //region Events
+
+    @Subscribe
+    fun onToggleLogDetails(event: EventMainToggleLogDetails) {
+        viewSideDrawerLogDetails.toggle()
+    }
+
+    @Subscribe
+    fun onToggleTicketsWidget(event: EventMainToggleTickets) {
+        viewSideDrawerTickets.toggle()
+    }
 
     @Subscribe
     fun onAutoSync(event: EventAutoSyncLastUpdate) {

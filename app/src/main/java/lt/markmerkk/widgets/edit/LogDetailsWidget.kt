@@ -40,7 +40,7 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher

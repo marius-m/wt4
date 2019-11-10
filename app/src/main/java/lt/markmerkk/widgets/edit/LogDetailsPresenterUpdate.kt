@@ -15,7 +15,7 @@ import org.joda.time.DateTime
 class LogDetailsPresenterUpdate(
         private val entityInEdit: SimpleLog,
         private val logStorage: LogStorage,
-        private val eventBus: EventBus,
+        private val eventBus: WTEventBus,
         private val graphics: Graphics<SVGGlyph>,
         private val timeProvider: TimeProvider
 ): LogDetailsContract.Presenter {

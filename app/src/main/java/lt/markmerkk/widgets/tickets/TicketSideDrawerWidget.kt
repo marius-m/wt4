@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
+import lt.markmerkk.events.EventMainToggleTickets
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
@@ -22,7 +23,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class TicketSideDrawerWidget: Fragment(), TicketContract.View {
+class TicketSideDrawerWidget: View(), TicketContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var ticketApi: TicketApi
@@ -62,14 +63,14 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                 val selectTicket = viewTable.selectionModel.selectedItems.firstOrNull()?.ticket
                 if (selectTicket != null) {
                     eventBus.post(EventSuggestTicket(selectTicket))
-                    close()
+                    eventBus.post(EventMainToggleTickets())
                 }
             }
         }
         addClass(Styles.dialogContainer)
         top {
             label("Tickets") {
-                addClass(Styles.dialogHeader)
+                addClass(Styles.sidePanelHeader)
             }
         }
         center {
@@ -128,7 +129,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                         val selectTicket = viewTable.selectionModel.selectedItems.firstOrNull()?.ticket
                         if (mouseEvent.clickCount >= 2 && selectTicket != null) {
                             eventBus.post(EventSuggestTicket(selectTicket))
-                            close()
+                            eventBus.post(EventMainToggleTickets())
                         }
                     }
                     columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
@@ -153,7 +154,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                 addClass(Styles.dialogContainerActionsButtons)
                 jfxButton("Dismiss".toUpperCase()) {
                     setOnAction {
-                        close()
+                        eventBus.post(EventMainToggleTickets())
                     }
                 }
             }

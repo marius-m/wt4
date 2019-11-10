@@ -17,7 +17,7 @@ import org.joda.time.DateTime
 
 class LogDetailsPresenterUpdateActiveClock(
         private val logStorage: LogStorage,
-        private val eventBus: EventBus,
+        private val eventBus: WTEventBus,
         private val graphics: Graphics<SVGGlyph>,
         private val timeProvider: TimeProvider,
         private val hourGlass: HourGlass,
