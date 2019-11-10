@@ -2,15 +2,17 @@ package lt.markmerkk.widgets.clock
 
 import lt.markmerkk.LogStorage
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.events.EventLogDetailsInitActiveClock
+import lt.markmerkk.events.EventMainToggleLogDetails
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import org.joda.time.DateTime
 
 class ClockPresenter(
         private val hourGlass: HourGlass,
         private val logStorage: LogStorage,
-        private val timeProvider: TimeProvider
+        private val timeProvider: TimeProvider,
+        private val eventBus: WTEventBus
 ): ClockContract.Presenter {
 
     private var isRunning = false
@@ -27,12 +29,25 @@ class ClockPresenter(
     }
 
     override fun toggleClock() {
-        this.isRunning = !isRunning
-        if (isRunning) {
+        if (!isRunning) {
+            isRunning = true
             hourGlass.start()
         } else {
-            hourGlass.stop()
+            suggestSavingLog()
         }
+    }
+
+    override fun cancelClock() {
+        if (this.isRunning) {
+            this.isRunning = false
+            hourGlass.stop()
+            view?.showInactive()
+        }
+    }
+
+    private fun suggestSavingLog() {
+        eventBus.post(EventLogDetailsInitActiveClock())
+        eventBus.post(EventMainToggleLogDetails())
     }
 
     private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {

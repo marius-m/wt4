@@ -35,14 +35,14 @@ class ClockWidget: Fragment(), ClockContract.View {
         Main.component().inject(this)
     }
 
-    private val presenter: ClockContract.Presenter = ClockPresenter(hourGlass, logStorage, timeProvider)
-    private val glyphClock = graphics.from(Glyph.CLOCK, Color.WHITE, 20.0)
+    private val presenter: ClockContract.Presenter = ClockPresenter(hourGlass, logStorage, timeProvider, eventBus)
+    private val glyphClock = graphics.from(Glyph.PLAY, Color.WHITE, 14.0)
 
     override val root: Parent = stackpane {
         jfxButtonClock = jfxButton {
-            addClass(Styles.buttonMenu)
             graphic = glyphClock
-            setOnAction {
+            addClass(Styles.buttonMenu)
+            action {
                 presenter.toggleClock()
             }
         }
@@ -50,10 +50,9 @@ class ClockWidget: Fragment(), ClockContract.View {
             isPickOnBounds = false
             jfxButtonClockSettings = jfxButton {
                 addClass(Styles.buttonMenuMini)
-                graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
+                graphic = graphics.from(Glyph.STOP, Color.WHITE, 8.0)
                 action {
-                    eventBus.post(EventLogDetailsInitActiveClock())
-                    eventBus.post(EventMainToggleLogDetails())
+                    presenter.cancelClock()
                 }
             }
         }

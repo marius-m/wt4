@@ -42,5 +42,7 @@ enum class Glyph {
     ZOOM_IN,
     ZOOM_OUT,
     HELP,
+    STOP,
+    PLAY,
     ;
 }
