@@ -83,7 +83,6 @@ object LogUtils {
             return "0m"
         val builder = StringBuilder()
         val type = PeriodType.forFields(arrayOf(DurationFieldType.hours(), DurationFieldType.minutes()))
-
         val period = Period(durationMillis, type)
         if (period.days != 0)
             builder.append(period.days).append("d").append(" ")

@@ -11,25 +11,24 @@ import com.calendarfx.view.DetailedWeekView
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXSlider
 import com.jfoenix.svg.SVGGlyph
+import com.vdurmont.emoji.EmojiParser
 import javafx.collections.SetChangeListener
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
+import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.stage.Modality
-import javafx.stage.StageStyle
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.EventAutoSyncLastUpdate
 import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.events.EventEditMode
 import lt.markmerkk.events.EventLogSelection
@@ -41,10 +40,7 @@ import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
-import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.MainContainerNavigator
-import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
-import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -70,14 +66,17 @@ class CalendarWidget: Fragment() {
     private lateinit var viewDragIndicator: VBox
     private lateinit var viewZoomIndicator: VBox
     private lateinit var viewZoomSlider: JFXSlider
+    private lateinit var viewInfoLabel: Label
 
     private lateinit var logLoader: CalendarFxLogLoader
     private lateinit var calendarUpdater: CalendarFxUpdater
+
 
     init {
         Main.component().inject(this)
     }
 
+    private val totalWorkGenerator = TotalWorkGenerator(logStorage)
     private val mainContainerNavigator = MainContainerNavigator(
             logStorage,
             eventBus,
@@ -125,16 +124,18 @@ class CalendarWidget: Fragment() {
         viewContainer = borderpane {
             center { }
         }
-        label("(i) Hold 'ALT' to update logs") {
+        viewInfoLabel = label {
+            addClass(Styles.emojiText)
+            addClass(Styles.labelMini)
             style {
+                fontSize = 12.0.px
                 padding = box(
                         vertical = 4.px,
-                        horizontal = 0.px
+                        horizontal = 8.px
                 )
             }
-            StackPane.setAlignment(this, Pos.BOTTOM_CENTER)
+            StackPane.setAlignment(this, Pos.BOTTOM_LEFT)
             isMouseTransparent = true
-            addClass(Styles.labelMini)
         }
         viewDragIndicator = vbox(alignment = Pos.BOTTOM_CENTER) {
             isMouseTransparent = true
@@ -231,6 +232,7 @@ class CalendarWidget: Fragment() {
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
         eventBus.register(this)
+        viewInfoLabel.text = totalWorkGenerator.generateTotalMessage()
     }
 
     override fun onUndock() {
@@ -330,12 +332,12 @@ class CalendarWidget: Fragment() {
 
     //region Listeners
 
-
     private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
         override fun onDataChange(data: List<SimpleLog>) {
             logLoader.load(data)
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
+            viewInfoLabel.text = totalWorkGenerator.generateTotalMessage()
         }
     }
 

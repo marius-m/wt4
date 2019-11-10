@@ -2,9 +2,13 @@ package lt.markmerkk
 
 import javafx.scene.control.OverrunStyle
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
 import tornadofx.*
 
 class Styles: Stylesheet() {
+
+    private val fontEmoji = Styles::class.java.getResourceAsStream("/fonts/OpenSansEmoji.ttf")
+            .use { Font.loadFont(it, 24.0) }
 
     companion object {
         val dialogHeader by cssclass()
@@ -18,6 +22,7 @@ class Styles: Stylesheet() {
         val labelMini by cssclass()
         val labelRegular by cssclass()
         val popUpLabel by cssclass()
+        val emojiText by cssclass()
 
         val cLightest = c("#E8EAF6")
         val cLight = c("#7986CB")
@@ -121,6 +126,10 @@ class Styles: Stylesheet() {
         }
         popUpLabel {
             fontSize = 10.pt
+        }
+        emojiText {
+            font = fontEmoji
+            fontFamily = "OpenSansEmoji"
         }
     }
 
