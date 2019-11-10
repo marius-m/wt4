@@ -86,6 +86,9 @@ fun EventTarget.calendarFxDetailedDay(op: DetailedDayView.() -> Unit = {}) = Det
 fun EventTarget.jfxDatePicker(op: JFXDatePicker.() -> Unit = {}) = JFXDatePicker().attachTo(this, op)
 fun EventTarget.jfxTimePicker(op: JFXTimePicker.() -> Unit = {}) = JFXTimePicker().attachTo(this, op)
 
+// Drawer
+fun EventTarget.jfxDrawer(op: JFXDrawer.() -> Unit = {}) = JFXDrawer().attachTo(this, op)
+
 // ControlFx
 fun EventTarget.jfxMasterDetailPane(
         side: Side,

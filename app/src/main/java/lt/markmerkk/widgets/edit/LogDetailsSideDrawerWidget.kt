@@ -4,12 +4,10 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
-import impl.org.controlsfx.skin.MasterDetailPaneSkin
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
-import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.stage.Modality
@@ -37,7 +35,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsWidget2 : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
+class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
@@ -102,10 +100,8 @@ class LogDetailsWidget2 : Fragment(), LogDetailsContract.View, JiraLinkGenerator
 //                }
 //            }
 //        }
+
         borderpane {
-            maxWidth = 300.0
-            prefWidth = 300.0
-            minWidth = 300.0
             top {
                 viewLabelHeader = label("Log details") {
                     addClass(Styles.sidePanelHeader)
@@ -113,6 +109,14 @@ class LogDetailsWidget2 : Fragment(), LogDetailsContract.View, JiraLinkGenerator
             }
             center {
                 vbox {
+                    style {
+                        padding = box(
+                                top = 10.px,
+                                left = 10.px,
+                                right = 10.px,
+                                bottom = 10.px
+                        )
+                    }
                     label("From") {
                         addClass(Styles.labelMini)
                         style {
@@ -478,7 +482,7 @@ class LogDetailsWidget2 : Fragment(), LogDetailsContract.View, JiraLinkGenerator
     companion object {
         const val RESULT_DISPATCH_KEY_ENTITY = "732b4810-2a44-4aee-b63d-da8252e1f1a0"
         const val RESULT_DISPATCH_KEY_ACTIVE_CLOCK = "78c9df52-c092-4e87-aaad-67c9b3b43977"
-        private val logger = LoggerFactory.getLogger(LogDetailsWidget2::class.java)!!
+        private val logger = LoggerFactory.getLogger(LogDetailsSideDrawerWidget::class.java)!!
     }
 
 }

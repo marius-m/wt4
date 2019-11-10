@@ -12,12 +12,13 @@ import lt.markmerkk.widgets.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
-import lt.markmerkk.widgets.edit.LogDetailsWidget2
+import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
 import lt.markmerkk.widgets.tickets.TicketProgressWidget
+import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import lt.markmerkk.widgets.tickets.TicketWidget
 import javax.inject.Singleton
 
@@ -33,8 +34,9 @@ interface AppComponent {
     fun inject(application: Main)
     fun inject(mainWidget: MainWidget)
     fun inject(ticketWidget: TicketWidget)
+    fun inject(ticketSideDrawerWidget: TicketSideDrawerWidget)
     fun inject(logDetailsWidget: LogDetailsWidget)
-    fun inject(logDetailsWidget2: LogDetailsWidget2)
+    fun inject(logDetailsSideDrawerWidget: LogDetailsSideDrawerWidget)
     fun inject(clockWidget: ClockWidget)
     fun inject(ticketProgressWidget: TicketProgressWidget)
     fun inject(accountSettings: AccountSettingsWidget)

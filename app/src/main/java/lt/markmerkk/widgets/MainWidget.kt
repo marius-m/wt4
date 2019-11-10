@@ -2,13 +2,11 @@ package lt.markmerkk.widgets
 
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDrawer
 import com.jfoenix.controls.JFXSnackbar
 import com.jfoenix.svg.SVGGlyph
-import impl.org.controlsfx.skin.MasterDetailPaneSkin
 import javafx.geometry.Insets
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import javafx.geometry.Side
 import javafx.scene.Parent
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
@@ -31,7 +29,7 @@ import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidgetPresenterDefault
 import lt.markmerkk.ui_2.views.jfxButton
-import lt.markmerkk.ui_2.views.jfxMasterDetailPane
+import lt.markmerkk.ui_2.views.jfxDrawer
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
@@ -43,14 +41,13 @@ import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsWidget
-import lt.markmerkk.widgets.edit.LogDetailsWidget2
-import lt.markmerkk.widgets.edit.MasterDetailPaneSkinWT4
+import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpSettings
+import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import lt.markmerkk.widgets.tickets.TicketWidget
 import lt.markmerkk.widgets.versioner.ChangelogWidget
-import org.controlsfx.control.MasterDetailPane
 import org.slf4j.LoggerFactory
 import rx.Subscription
 import rx.observables.JavaFxObservable
@@ -80,7 +77,9 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var jfxButtonSettings: JFXButton
     lateinit var jfxContainerContentLeft: HBox
     lateinit var jfxContainerContentRight: HBox
-    lateinit var viewMasterDetailPane: MasterDetailPane
+//    lateinit var viewMasterDetailPane: MasterDetailPane
+    lateinit var viewSideDrawerLogDetails: JFXDrawer
+    lateinit var viewSideDrawerTickets: JFXDrawer
 
     lateinit var snackBar: JFXSnackbar
     lateinit var widgetDateChange: QuickDateChangeWidget
@@ -133,15 +132,17 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                             setOnAction {
 //                                PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
 //                                        .show()
-                                viewMasterDetailPane.isShowDetailNode = !viewMasterDetailPane.isShowDetailNode
+//                                viewMasterDetailPane.isShowDetailNode = !viewMasterDetailPane.isShowDetailNode
+                                viewSideDrawerLogDetails.toggle()
                             }
                         }
                         jfxButtonSettings = jfxButton {
                             addClass(Styles.buttonMenu)
                             graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
                             setOnAction {
-                                PopUpSettings(graphics, jfxButtonSettings)
-                                        .show()
+//                                PopUpSettings(graphics, jfxButtonSettings)
+//                                        .show()
+                                viewSideDrawerTickets.toggle()
                             }
                         }
                     }
@@ -160,23 +161,23 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         }
                     }
                     center {
-                        viewMasterDetailPane = jfxMasterDetailPane(side = Side.RIGHT) {
-                            dividerPosition = 0.56
-                            isShowDetailNode = false
-                            masterNode = find<CalendarWidget>().root
-                            detailNode = find<LogDetailsWidget2>().root
+                        viewSideDrawerLogDetails = jfxDrawer {
+                            setSidePane(find<LogDetailsSideDrawerWidget>().root)
+                            setContent(find<CalendarWidget>().root)
+                            direction = JFXDrawer.DrawerDirection.RIGHT
+                            isOverLayVisible = true
+                            isResizableOnDrag = false
+                            defaultDrawerSize = 340.0
+                        }
+                        viewSideDrawerTickets = jfxDrawer {
+                            setSidePane(find<TicketSideDrawerWidget>().root)
+                            setContent(viewSideDrawerLogDetails)
+                            direction = JFXDrawer.DrawerDirection.RIGHT
+                            isOverLayVisible = true
+                            isResizableOnDrag = true
+                            defaultDrawerSize = 500.0
                         }
                     }
-//                    right {
-//                        jfxDrawer = drawer {
-//                            item {
-//                                textfield("test") {  }
-//                            }
-//                            item {
-//                                textfield("test2")
-//                            }
-//                        }
-//                    }
                 }
             }
         }
