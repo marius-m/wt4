@@ -36,7 +36,7 @@ class ClockWidget: Fragment(), ClockContract.View {
     }
 
     private val presenter: ClockContract.Presenter = ClockPresenter(hourGlass, logStorage, timeProvider, eventBus)
-    private val glyphClock = graphics.from(Glyph.PLAY, Color.WHITE, 14.0)
+    private val glyphClock = graphics.from(Glyph.PLAY, Color.WHITE, 14.0, 16.0)
 
     override val root: Parent = stackpane {
         jfxButtonClock = jfxButton {
