@@ -59,18 +59,6 @@ class PopUpSettings(
                                 }
                         ),
                         PopUpAction(
-                                title = "Tickets",
-                                graphic = graphics.from(Glyph.PAGE, Color.BLACK, 10.0, 12.0),
-                                action = {
-                                    find<TicketWidget>().openModal(
-                                            stageStyle = StageStyle.DECORATED,
-                                            modality = Modality.APPLICATION_MODAL,
-                                            block = false,
-                                            resizable = true
-                                    )
-                                }
-                        ),
-                        PopUpAction(
                                 title = "Credits",
                                 graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                                 action = {
