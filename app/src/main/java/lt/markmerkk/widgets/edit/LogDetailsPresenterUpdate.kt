@@ -42,7 +42,7 @@ class LogDetailsPresenterUpdate(
                 }
 
                 override fun onEntitySaveComplete() {
-                    view?.close()
+                    view?.closeDetails()
                 }
 
                 override fun onEntitySaveFail(error: Throwable) {

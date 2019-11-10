@@ -10,6 +10,7 @@ import javafx.scene.text.Font
 import lt.markmerkk.*
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventLogDetailsInitActiveClock
 import lt.markmerkk.events.EventMainToggleLogDetails
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
@@ -51,7 +52,7 @@ class ClockWidget: Fragment(), ClockContract.View {
                 addClass(Styles.buttonMenuMini)
                 graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
                 action {
-                    resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
+                    eventBus.post(EventLogDetailsInitActiveClock())
                     eventBus.post(EventMainToggleLogDetails())
                 }
             }

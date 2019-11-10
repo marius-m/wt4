@@ -52,7 +52,7 @@ class LogDetailsPresenterUpdateActiveClock(
                 override fun onEntitySaveComplete() {
                     hourGlass.restart()
                     activeLogPersistence.reset()
-                    view?.close()
+                    view?.closeDetails()
                 }
 
                 override fun onEntitySaveFail(error: Throwable) {

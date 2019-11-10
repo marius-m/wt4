@@ -468,6 +468,10 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
         viewButtonTicketLink.setOnAction { }
     }
 
+    override fun closeDetails() {
+        close()
+    }
+
     @Subscribe
     fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
         viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code

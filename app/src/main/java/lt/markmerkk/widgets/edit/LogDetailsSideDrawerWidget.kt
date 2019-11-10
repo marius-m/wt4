@@ -1,6 +1,5 @@
 package lt.markmerkk.widgets.edit
 
-import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
@@ -11,15 +10,10 @@ import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
-import javafx.stage.Modality
-import javafx.stage.StageStyle
 import lt.markmerkk.*
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
-import lt.markmerkk.events.EventMainToggleLogDetails
-import lt.markmerkk.events.EventMainToggleTickets
-import lt.markmerkk.events.EventSuggestTicket
+import lt.markmerkk.events.*
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketInfoLoader
@@ -31,7 +25,6 @@ import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.hourglass.HourGlass
-import lt.markmerkk.widgets.tickets.TicketWidget
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
@@ -278,34 +271,12 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
 
     override fun onDock() {
         super.onDock()
-        val isActiveClock = resultDispatcher.consumeBoolean(RESULT_DISPATCH_KEY_ACTIVE_CLOCK, false)
-        val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
-        presenter = if (entity != null) {
-            LogDetailsPresenterUpdate(
-                    entity,
-                    logStorage,
-                    eventBus,
-                    graphics,
-                    timeProvider
-            )
-        } else {
-            when  {
-                isActiveClock -> LogDetailsPresenterUpdateActiveClock(
-                        logStorage,
-                        eventBus,
-                        graphics,
-                        timeProvider,
-                        hourGlass,
-                        activeLogPersistence
-                )
-                else -> LogDetailsPresenterCreate(
-                        logStorage,
-                        eventBus,
-                        graphics,
-                        timeProvider
-                )
-            }
-        }
+        presenter = LogDetailsPresenterCreate(
+                logStorage,
+                eventBus,
+                graphics,
+                timeProvider
+        )
         ticketInfoLoader = TicketInfoLoader(
                 listener = object : TicketInfoLoader.Listener {
                     override fun onTicketFound(ticket: Ticket) {
@@ -368,16 +339,12 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
                 .subscribe { presenter.changeTicketCode(it) }
-        viewTextComment.requestFocus()
-        viewTextComment.positionCaret(viewTextComment.text.length)
         jiraLinkGenerator.onAttach()
         jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
-        autoSyncWatcher.changeUpdateLock(isInLock = true, lockProcessName = "LogDetails")
     }
 
     override fun onUndock() {
-        autoSyncWatcher.changeUpdateLock(isInLock = false, lockProcessName = "")
         jiraLinkGenerator.onDetach()
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
@@ -421,6 +388,49 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         }
         ticketInfoLoader.findTicket(initTicket)
     }
+
+    //register Events
+
+    @Subscribe
+    fun onInitLog(event: EventLogDetailsInitUpdate) {
+        presenter.onDetach()
+        presenter = LogDetailsPresenterUpdate(
+                event.log,
+                logStorage,
+                eventBus,
+                graphics,
+                timeProvider
+        )
+        presenter.onAttach(this)
+    }
+
+    @Subscribe
+    fun onInitLog(event: EventLogDetailsInitCreate) {
+        presenter.onDetach()
+        presenter = LogDetailsPresenterCreate(
+                logStorage,
+                eventBus,
+                graphics,
+                timeProvider
+        )
+        presenter.onAttach(this)
+    }
+
+    @Subscribe
+    fun onInitLog(event: EventLogDetailsInitActiveClock) {
+        presenter.onDetach()
+        presenter = LogDetailsPresenterUpdateActiveClock(
+                logStorage,
+                eventBus,
+                graphics,
+                timeProvider,
+                hourGlass,
+                activeLogPersistence
+        )
+        presenter.onAttach(this)
+    }
+
+    //endregion
 
     override fun showDateTime(start: DateTime, end: DateTime) {
         uiBridgeDateTimeHandler.changeDate(start, end)
@@ -476,14 +486,14 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         viewButtonTicketLink.setOnAction { }
     }
 
+    override fun closeDetails() { }
+
     @Subscribe
     fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
         viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
     }
 
     companion object {
-        const val RESULT_DISPATCH_KEY_ENTITY = "732b4810-2a44-4aee-b63d-da8252e1f1a0"
-        const val RESULT_DISPATCH_KEY_ACTIVE_CLOCK = "78c9df52-c092-4e87-aaad-67c9b3b43977"
         private val logger = LoggerFactory.getLogger(LogDetailsSideDrawerWidget::class.java)!!
     }
 

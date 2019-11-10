@@ -111,11 +111,19 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         shortcut(KeyCombination.valueOf("Meta+R"), actionRefresh)
         shortcut(KeyCombination.valueOf("Ctrl+R"), actionRefresh)
         val actionSaveLog = {
-            resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
+            eventBus.post(EventLogDetailsInitActiveClock())
             eventBus.post(EventMainToggleLogDetails())
         }
         shortcut(KeyCombination.valueOf("Meta+S"), actionSaveLog)
         shortcut(KeyCombination.valueOf("Ctrl+S"), actionSaveLog)
+        shortcut(KeyCombination.keyCombination("Esc")) {
+            when {
+                viewSideDrawerTickets.isOpened
+                        || viewSideDrawerTickets.isOpening -> viewSideDrawerTickets.toggle()
+                viewSideDrawerLogDetails.isOpened
+                        || viewSideDrawerLogDetails.isOpening -> viewSideDrawerLogDetails.toggle()
+            }
+        }
         borderpane {
             left {
                 vbox(spacing = 4) {
@@ -338,7 +346,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         }
         when (event.editType) {
             LogEditType.UPDATE -> {
-                resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
+                eventBus.post(EventLogDetailsInitUpdate(event.logs.first()))
                 eventBus.post(EventMainToggleLogDetails())
             }
             LogEditType.DELETE -> logStorage.delete(event.logs.first())
@@ -356,7 +364,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 resultDispatcher.publish(TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
             }
-        }.javaClass
+        }
     }
 
     //endregion

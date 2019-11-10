@@ -177,8 +177,6 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
         presenter.attachFilterStream(JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty())
                 .subscribe { presenter.handleClearVisibility(it) }
-        viewTextFieldTicketSearch.requestFocus()
-        viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
         viewComboProjectCodes.selectionModel.select("")
         presenter.loadProjectCodes()
         contextMenuTicketSelect.onAttach()

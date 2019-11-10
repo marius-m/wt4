@@ -16,7 +16,7 @@ interface LogDetailsContract {
                 enableFindTickets: Boolean,
                 enableDateTimeChange: Boolean
         )
-        fun close()
+        fun closeDetails()
         fun showDateTime(start: DateTime, end: DateTime)
         fun showTicketCode(ticket: String)
         fun showComment(comment: String)
