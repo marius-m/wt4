@@ -7,6 +7,7 @@ import javafx.scene.control.MenuItem
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
@@ -63,8 +64,10 @@ class ContextMenuTicketSelect(
                     if (!ticketCode.isEmpty()) {
                         when (selectType) {
                             SelectType.WEB_LINK -> {
+                                val webLinkToTicket = jiraLinkGenerator.webLinkFromInput(ticketCode.code)
+                                eventBus.post(EventSnackBarMessage("Copy $webLinkToTicket"))
                                 hostServicesInteractor.ticketWebLinkToClipboard(
-                                        jiraLinkGenerator.webLinkFromInput(ticketCode.code)
+                                        webLinkToTicket
                                 )
                             }
                         }

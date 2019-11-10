@@ -472,6 +472,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     override fun showCopyLink(ticketCode: TicketCode, webLink: String) {
         viewButtonTicketLink.isDisable = false
         viewButtonTicketLink.setOnAction {
+            eventBus.post(EventSnackBarMessage("Copy $webLink"))
             hostServicesInteractor.ticketWebLinkToClipboard(webLink)
         }
     }

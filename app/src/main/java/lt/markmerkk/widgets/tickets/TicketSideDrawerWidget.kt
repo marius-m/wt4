@@ -47,9 +47,9 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
 
     private lateinit var presenter: TicketContract.Presenter
     private val ticketViewModels = mutableListOf<TicketViewModel>()
-            .observable()
+            .asObservable()
     private val projectCodes = mutableListOf<String>()
-            .observable()
+            .asObservable()
     private val contextMenuTicketSelect: ContextMenuTicketSelect = ContextMenuTicketSelect(
             graphics = graphics,
             eventBus = eventBus,
