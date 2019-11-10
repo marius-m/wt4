@@ -342,6 +342,8 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         jiraLinkGenerator.onAttach()
         jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
+        JavaFxObservable.valuesOf(viewTextComment.textProperty())
+                .subscribe { presenter.changeComment(it) }
     }
 
     override fun onUndock() {
