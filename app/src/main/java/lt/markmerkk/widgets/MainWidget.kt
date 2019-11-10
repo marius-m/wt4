@@ -42,7 +42,6 @@ import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
-import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
@@ -110,13 +109,13 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         }
         shortcut(KeyCombination.valueOf("Meta+R"), actionRefresh)
         shortcut(KeyCombination.valueOf("Ctrl+R"), actionRefresh)
-        val actionSaveLog = {
+        val actionLogDetails = {
             eventBus.post(EventLogDetailsInitActiveClock())
             eventBus.post(EventMainToggleLogDetails())
         }
-        shortcut(KeyCombination.valueOf("Meta+S"), actionSaveLog)
-        shortcut(KeyCombination.valueOf("Ctrl+S"), actionSaveLog)
-        shortcut(KeyCombination.keyCombination("Esc")) {
+        shortcut(KeyCombination.valueOf("Meta+S"), actionLogDetails)
+        shortcut(KeyCombination.valueOf("Ctrl+S"), actionLogDetails)
+        shortcut(KeyCombination.valueOf("Esc")) {
             when {
                 viewSideDrawerTickets.isOpened
                         || viewSideDrawerTickets.isOpening -> viewSideDrawerTickets.toggle()
@@ -124,6 +123,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         || viewSideDrawerLogDetails.isOpening -> viewSideDrawerLogDetails.toggle()
             }
         }
+        val actionSaveLog = {
+            if (viewSideDrawerLogDetails.isOpened
+                    || viewSideDrawerLogDetails.isOpening
+                    && !viewSideDrawerTickets.isOpened) {
+                eventBus.post(EventLogDetailsSave())
+            }
+        }
+        shortcut(KeyCombination.valueOf("Meta+Enter"), actionSaveLog)
+        shortcut(KeyCombination.valueOf("Ctrl+Enter"), actionSaveLog)
         borderpane {
             left {
                 vbox(spacing = 4) {

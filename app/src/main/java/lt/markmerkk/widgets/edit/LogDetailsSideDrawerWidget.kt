@@ -229,7 +229,6 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                                     task = viewTextFieldTicket.text,
                                     comment = viewTextComment.text
                             )
-                            eventBus.post(EventMainToggleLogDetails())
                         }
                     }
                     viewButtonDismiss = jfxButton("Dismiss".toUpperCase()) {
@@ -377,6 +376,8 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 timeProvider
         )
         presenter.onAttach(this)
+        viewTextComment.requestFocus()
+        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     @Subscribe
@@ -389,6 +390,8 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 timeProvider
         )
         presenter.onAttach(this)
+        viewTextComment.requestFocus()
+        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     @Subscribe
@@ -403,6 +406,23 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 activeLogPersistence
         )
         presenter.onAttach(this)
+        viewTextComment.requestFocus()
+        viewTextComment.positionCaret(viewTextComment.text.length)
+    }
+
+    @Subscribe
+    fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
+        viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+    }
+
+    @Subscribe
+    fun eventSave(event: EventLogDetailsSave) {
+        presenter.save(
+                start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+                end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+                task = viewTextFieldTicket.text,
+                comment = viewTextComment.text
+        )
     }
 
     //endregion
@@ -461,11 +481,8 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         viewButtonTicketLink.setOnAction { }
     }
 
-    override fun closeDetails() { }
-
-    @Subscribe
-    fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
-        viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+    override fun closeDetails() {
+        eventBus.post(EventMainToggleLogDetails())
     }
 
     companion object {
