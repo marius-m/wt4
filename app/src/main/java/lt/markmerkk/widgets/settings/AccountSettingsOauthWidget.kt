@@ -126,7 +126,7 @@ class AccountSettingsOauthWidget : Fragment() {
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
-                jfxButton("Dismiss".toUpperCase()) {
+                jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         close()
                     }

@@ -168,7 +168,7 @@ class AccountSettingsWidget : Fragment() {
                         close()
                     }
                 }
-                jfxButton("Dismiss".toUpperCase()) {
+                jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         close()
                     }

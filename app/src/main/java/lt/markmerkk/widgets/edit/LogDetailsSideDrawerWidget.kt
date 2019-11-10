@@ -62,7 +62,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     private lateinit var viewButtonSearch: JFXButton
     private lateinit var viewTextComment: JFXTextArea
     private lateinit var viewButtonSave: JFXButton
-    private lateinit var viewButtonDismiss: JFXButton
+    private lateinit var viewButtonClose: JFXButton
     private lateinit var viewLabelHint: Label
     private lateinit var viewLabelHint2: Label
 
@@ -231,7 +231,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                             )
                         }
                     }
-                    viewButtonDismiss = jfxButton("Dismiss".toUpperCase()) {
+                    viewButtonClose = jfxButton("Close".toUpperCase()) {
                         setOnAction {
                             eventBus.post(EventMainToggleLogDetails())
                         }

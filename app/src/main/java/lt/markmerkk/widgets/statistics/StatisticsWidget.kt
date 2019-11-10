@@ -64,7 +64,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton("Dismiss".toUpperCase()) {
+                jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         close()
                     }

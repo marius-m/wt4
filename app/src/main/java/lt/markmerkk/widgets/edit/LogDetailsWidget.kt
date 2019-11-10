@@ -1,6 +1,5 @@
 package lt.markmerkk.widgets.edit
 
-import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
@@ -68,7 +67,7 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
     private lateinit var viewButtonSearch: JFXButton
     private lateinit var viewTextComment: JFXTextArea
     private lateinit var viewButtonSave: JFXButton
-    private lateinit var viewButtonDismiss: JFXButton
+    private lateinit var viewButtonClose: JFXButton
     private lateinit var viewLabelHint: Label
     private lateinit var viewLabelHint2: Label
 
@@ -258,7 +257,7 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
                             )
                         }
                     }
-                    viewButtonDismiss = jfxButton("Dismiss".toUpperCase()) {
+                    viewButtonClose = jfxButton("Close".toUpperCase()) {
                         setOnAction {
                             close()
                         }

@@ -74,7 +74,7 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
 
     val actions: List<Parent> = listOf(
             actionSplit,
-            jfxButton(strings.getString("general_dismiss").toUpperCase()) {
+            jfxButton("Close".toUpperCase()) {
                 action { close() }
             }
     )
@@ -209,7 +209,7 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
                             close()
                         }
                     }
-                    jfxButton("Dismiss".toUpperCase()) {
+                    jfxButton("Close".toUpperCase()) {
                         setOnAction {
                             close()
                         }
