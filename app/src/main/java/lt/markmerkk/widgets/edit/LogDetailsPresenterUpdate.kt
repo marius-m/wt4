@@ -11,6 +11,7 @@ import lt.markmerkk.events.EventMainToggleTickets
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
+import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 
 class LogDetailsPresenterUpdate(
@@ -64,12 +65,16 @@ class LogDetailsPresenterUpdate(
         this.view = view
         logEditService.entityInEdit = entityInEdit
         logEditService.serviceType = LogEditService.ServiceType.UPDATE
+        val logStart = timeProvider.roundDateTime(entityInEdit.start)
+        val logStartFormatted = logStart.toString(LogFormatters.shortFormat)
+        val logEnd = timeProvider.roundDateTime(entityInEdit.end)
+        val logEndFormatted = logEnd.toString(LogFormatters.shortFormat)
         view.initView(
-                labelHeader = "Log details (Update)",
+                labelHeader = "Update log $logStartFormatted - $logEndFormatted",
                 labelButtonSave = "Update",
                 glyphButtonSave = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0),
-                initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
-                initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
+                initDateTimeStart = logStart,
+                initDateTimeEnd = logEnd,
                 initTicket = entityInEdit.task,
                 initComment = entityInEdit.comment,
                 enableFindTickets = true,

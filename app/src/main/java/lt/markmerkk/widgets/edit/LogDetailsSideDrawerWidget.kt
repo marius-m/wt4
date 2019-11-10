@@ -77,26 +77,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     }
 
     override val root: Parent = stackpane {
-//        setOnKeyPressed { keyEvent ->
-//            when {
-//                (keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
-//                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown) -> {
-//                    presenter.save(
-//                            start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-//                            end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-//                            task = viewTextFieldTicket.text,
-//                            comment = viewTextComment.text
-//                    )
-//                }
-//                (keyEvent.code == KeyCode.SLASH && keyEvent.isMetaDown)
-//                        || (keyEvent.code == KeyCode.SLASH && keyEvent.isControlDown)
-//                        || (keyEvent.code == KeyCode.F && keyEvent.isMetaDown)
-//                        || (keyEvent.code == KeyCode.F && keyEvent.isControlDown) -> {
-//                    presenter.openFindTickets()
-//                }
-//            }
-//        }
-
+        addClass(Styles.sidePanelContainer)
         borderpane {
             top {
                 viewLabelHeader = label("Log details") {
@@ -105,14 +86,6 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
             }
             center {
                 vbox {
-                    style {
-                        padding = box(
-                                top = 10.px,
-                                left = 10.px,
-                                right = 10.px,
-                                bottom = 10.px
-                        )
-                    }
                     label("From") {
                         addClass(Styles.labelMini)
                         style {

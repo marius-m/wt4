@@ -67,7 +67,7 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
                 }
             }
         }
-        addClass(Styles.dialogContainer)
+        addClass(Styles.sidePanelContainer)
         top {
             label("Tickets") {
                 addClass(Styles.sidePanelHeader)

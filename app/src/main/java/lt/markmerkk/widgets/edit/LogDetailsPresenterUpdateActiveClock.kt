@@ -90,7 +90,7 @@ class LogDetailsPresenterUpdateActiveClock(
         logEditService.serviceType = LogEditService.ServiceType.CREATE
         logEditService.entityInEdit = entityInEdit
         view.initView(
-                labelHeader = "Log details (Running clock)",
+                labelHeader = "Active clock",
                 labelButtonSave = "Create",
                 glyphButtonSave = graphics.from(Glyph.NEW, Color.BLACK, 12.0),
                 initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),

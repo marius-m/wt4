@@ -78,7 +78,7 @@ class LogDetailsPresenterCreate(
             .build()
         logEditService.serviceType = LogEditService.ServiceType.CREATE
         view.initView(
-                labelHeader = "Log details (Create)",
+                labelHeader = "Create new log",
                 labelButtonSave = "Create",
                 glyphButtonSave = graphics.from(Glyph.NEW, Color.BLACK, 12.0),
                 initDateTimeStart = now,

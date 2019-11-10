@@ -9,6 +9,7 @@ class Styles: Stylesheet() {
     companion object {
         val dialogHeader by cssclass()
         val sidePanelHeader by cssclass()
+        val sidePanelContainer by cssclass()
         val dialogContainer by cssclass()
         val dialogContainerActionsButtons by cssclass()
         val buttonMenu by cssclass()
@@ -36,6 +37,14 @@ class Styles: Stylesheet() {
     }
 
     init {
+        sidePanelContainer {
+            padding = box(
+                    top = 10.px,
+                    left = 20.px,
+                    right = 20.px,
+                    bottom = 10.px
+            )
+        }
         dialogContainer {
             minWidth = 400.px
             padding = box(
