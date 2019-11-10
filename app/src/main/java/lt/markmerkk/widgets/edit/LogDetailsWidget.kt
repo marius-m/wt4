@@ -36,6 +36,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
+@Deprecated("Replaced with LogDetailsSideDrawerWidget")
 class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
 
     @Inject lateinit var logStorage: LogStorage

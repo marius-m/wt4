@@ -26,6 +26,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
+@Deprecated("Replaced with TicketSideDrawerWidget")
 class TicketWidget: Fragment(), TicketContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
