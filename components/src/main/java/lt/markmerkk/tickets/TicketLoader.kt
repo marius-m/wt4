@@ -92,9 +92,10 @@ class TicketLoader(
                 }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
-                .subscribe({
+                .subscribe({ storedProjectCodes ->
                     val projectCodes = listOf(ProjectCode.asEmpty())
-                            .plus(it.toList())
+                            .plus(storedProjectCodes.toList())
+                            .sortedBy { it.name }
                     listener.onProjectCodes(projectCodes)
                 }, {
                     listener.onProjectCodes(listOf(ProjectCode.asEmpty()))
