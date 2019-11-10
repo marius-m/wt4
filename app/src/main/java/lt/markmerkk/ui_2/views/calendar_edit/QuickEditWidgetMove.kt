@@ -19,10 +19,9 @@ class QuickEditWidgetMove(
         private val quickEditActions: Set<QuickEditAction>,
         private val graphics: Graphics<SVGGlyph>,
         private val quickEditActionChangeListener: QuickEditActionChangeListener
-) : View(),
+) : Fragment(),
         QuickEditChangableAction,
         QuickEditContract.MoveView,
-        LifecycleView,
         VisibilityChangeableView
 {
 
@@ -96,12 +95,14 @@ class QuickEditWidgetMove(
         root.hgrow = Priority.NEVER
     }
 
-    override fun onAttach() {
+    override fun onDock() {
+        super.onDock()
         presenter.onAttach(this)
     }
 
-    override fun onDetach() {
+    override fun onUndock() {
         presenter.onDetach()
+        super.onUndock()
     }
 
     override fun changeVisibility(isVisible: Boolean) {

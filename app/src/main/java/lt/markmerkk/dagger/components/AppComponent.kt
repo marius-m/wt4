@@ -5,6 +5,8 @@ import lt.markmerkk.Main
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.NetworkModule
 import lt.markmerkk.dagger.modules.SyncModule
+import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
+import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.widgets.DatePickerWidget
 import lt.markmerkk.widgets.clock.ClockWidget
@@ -47,4 +49,6 @@ interface AppComponent {
     fun inject(statisticsWidget: StatisticsWidget)
     fun inject(accountSettingsOauthWidget: AccountSettingsOauthWidget)
     fun inject(creditsWidget: CreditsWidget)
+    fun inject(quickDateChangeWidget: QuickDateChangeWidget)
+    fun inject(quickEditContainerWidget: QuickEditContainerWidget)
 }

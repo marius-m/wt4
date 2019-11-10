@@ -81,9 +81,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var viewSideDrawerTickets: JFXDrawer
 
     lateinit var snackBar: JFXSnackbar
-    lateinit var widgetDateChange: QuickDateChangeWidget
     lateinit var widgetProgress: ProgressWidget
-    lateinit var widgetLogQuickEdit: QuickEditContainerWidget
     lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
@@ -135,6 +133,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         borderpane {
             left {
                 vbox(spacing = 4) {
+                    isFocusTraversable = false
                     style {
                         backgroundColor.add(Styles.cBackgroundPrimary)
                         padding = box(vertical = 4.px, horizontal = 10.px)
@@ -164,9 +163,13 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
             center {
                 borderpane {
                     top {
+                        isFocusTraversable = false
                         borderpane {
                             left {
-                                jfxContainerContentLeft = hbox { }
+                                jfxContainerContentLeft = hbox {
+                                    add(find<QuickDateChangeWidget>().root)
+                                    add(find<QuickEditContainerWidget>().root)
+                                }
                             }
                             right {
                                 jfxContainerContentRight = hbox { }
@@ -174,6 +177,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         }
                     }
                     center {
+                        isFocusTraversable = false
                         viewSideDrawerLogDetails = jfxDrawer {
                             setSidePane(find<LogDetailsSideDrawerWidget>().root)
                             setContent(find<CalendarWidget>().root)
@@ -201,26 +205,12 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
         title = "WT4 - ${BuildConfig.VERSION} $titleSuffix"
         // Init ui elements
-        widgetDateChange = QuickDateChangeWidget(
-                graphics,
-                QuickDateChangeWidgetPresenterDefault(
-                        this,
-                        logStorage
-                )
-        )
         widgetProgress = ProgressWidget(
                 presenter = ProgressWidgetPresenter(
                         syncInteractor = syncInteractor,
                         autoSyncWatcher = autoSyncWatcher
                 ),
                 graphics = graphics
-        )
-        widgetLogQuickEdit = QuickEditContainerWidget(
-                presenter = QuickEditContainerPresenter(eventBus),
-                logStorage = logStorage,
-                timeProvider = timeProvider,
-                graphics = graphics,
-                logChangeValidator = logChangeValidator
         )
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {
@@ -237,17 +227,13 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         snackBar = JFXSnackbar(root as StackPane)
                 .apply { toFront() }
         jfxContainerContentRight.children.add(widgetProgress.root)
-        jfxContainerContentLeft.children.add(widgetDateChange.root)
-        jfxContainerContentLeft.children.add(widgetLogQuickEdit.root)
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
                 .subscribe { eventBus.post(EventFocusChange(it)) }
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
         eventBus.register(this)
-        widgetDateChange.onAttach()
         widgetProgress.onAttach()
-        widgetLogQuickEdit.onAttach()
         changelogLoader.onAttach()
         changelogLoader.check()
     }
@@ -255,9 +241,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     override fun onUndock() {
         changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
-        widgetLogQuickEdit.onDetach()
         widgetProgress.onDetach()
-        widgetDateChange.onDetach()
         eventBus.unregister(this)
         syncInteractor.removeLoadingListener(syncInteractorListener)
         if (hourGlass.state == HourGlass.State.RUNNING) {

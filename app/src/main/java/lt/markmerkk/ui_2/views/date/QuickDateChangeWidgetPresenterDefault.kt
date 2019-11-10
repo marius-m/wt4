@@ -13,7 +13,6 @@ import lt.markmerkk.widgets.DatePickerWidget
 import tornadofx.*
 
 class QuickDateChangeWidgetPresenterDefault(
-        private val externalSourceNode: ExternalSourceNode<StackPane>,
         private val logStorage: LogStorage
 ) : DateChangeContract.Presenter {
 

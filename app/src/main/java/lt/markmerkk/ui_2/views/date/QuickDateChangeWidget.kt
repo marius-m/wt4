@@ -9,11 +9,18 @@ import lt.markmerkk.*
 import lt.markmerkk.ui_2.views.jfxButton
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import javax.inject.Inject
 
-class QuickDateChangeWidget(
-        private val graphics: Graphics<SVGGlyph>,
-        private val presenter: DateChangeContract.Presenter
-) : Fragment(), DateChangeContract.View {
+class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
+
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var logStorage: LogStorage
+
+    init {
+        Main.component().inject(this)
+    }
+
+    private lateinit var presenter: DateChangeContract.Presenter
 
     private lateinit var viewArrowLeft: JFXButton
     private lateinit var viewArrowRight: JFXButton
@@ -35,6 +42,17 @@ class QuickDateChangeWidget(
             graphic = graphics.from(Glyph.ARROW_RIGHT, Color.BLACK, 6.0, 8.0)
             setOnAction { presenter.onClickNext() }
         }
+    }
+
+    override fun onDock() {
+        super.onDock()
+        presenter = QuickDateChangeWidgetPresenterDefault(logStorage)
+        presenter.onAttach(this)
+    }
+
+    override fun onUndock() {
+        presenter.onDetach()
+        super.onUndock()
     }
 
     override fun onAttach() {
