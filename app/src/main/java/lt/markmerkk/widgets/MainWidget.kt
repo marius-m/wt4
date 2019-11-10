@@ -25,14 +25,11 @@ import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.StageProperties
-import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerPresenter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
-import lt.markmerkk.ui_2.views.date.QuickDateChangeWidgetPresenterDefault
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxDrawer
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
-import lt.markmerkk.ui_2.views.progress.ProgressWidgetPresenter
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
@@ -75,13 +72,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
-    lateinit var jfxContainerContentLeft: HBox
-    lateinit var jfxContainerContentRight: HBox
     lateinit var viewSideDrawerLogDetails: JFXDrawer
     lateinit var viewSideDrawerTickets: JFXDrawer
 
     lateinit var snackBar: JFXSnackbar
-    lateinit var widgetProgress: ProgressWidget
     lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
@@ -166,13 +160,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         isFocusTraversable = false
                         borderpane {
                             left {
-                                jfxContainerContentLeft = hbox {
+                                hbox {
                                     add(find<QuickDateChangeWidget>().root)
                                     add(find<QuickEditContainerWidget>().root)
                                 }
                             }
                             right {
-                                jfxContainerContentRight = hbox { }
+                                hbox {
+                                    add(find<ProgressWidget>().root)
+                                }
                             }
                         }
                     }
@@ -205,13 +201,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
         title = "WT4 - ${BuildConfig.VERSION} $titleSuffix"
         // Init ui elements
-        widgetProgress = ProgressWidget(
-                presenter = ProgressWidgetPresenter(
-                        syncInteractor = syncInteractor,
-                        autoSyncWatcher = autoSyncWatcher
-                ),
-                graphics = graphics
-        )
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {
                     override fun onNewVersion(changelog: Changelog) {
@@ -226,14 +215,12 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         )
         snackBar = JFXSnackbar(root as StackPane)
                 .apply { toFront() }
-        jfxContainerContentRight.children.add(widgetProgress.root)
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
                 .subscribe { eventBus.post(EventFocusChange(it)) }
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
         eventBus.register(this)
-        widgetProgress.onAttach()
         changelogLoader.onAttach()
         changelogLoader.check()
     }
@@ -241,7 +228,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     override fun onUndock() {
         changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
-        widgetProgress.onDetach()
         eventBus.unregister(this)
         syncInteractor.removeLoadingListener(syncInteractorListener)
         if (hourGlass.state == HourGlass.State.RUNNING) {
@@ -259,11 +245,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Subscribe
     fun onToggleTicketsWidget(event: EventMainToggleTickets) {
         viewSideDrawerTickets.toggle()
-    }
-
-    @Subscribe
-    fun onAutoSync(event: EventAutoSyncLastUpdate) {
-        widgetProgress.checkSyncDuration()
     }
 
     @Subscribe

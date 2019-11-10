@@ -5,8 +5,6 @@ import javafx.scene.Parent
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Paint
 import lt.markmerkk.*
-import lt.markmerkk.ui_2.views.LifecycleView
-import lt.markmerkk.ui_2.views.SelectableView
 import lt.markmerkk.ui_2.views.VisibilityChangeableView
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator

@@ -3,8 +3,6 @@ package lt.markmerkk.ui_2.views.progress
 interface ProgressContract {
 
     interface View {
-        fun onAttach()
-        fun onDetach()
         fun showProgress()
         fun hideProgress()
         fun changeLabel(syncData: String)
