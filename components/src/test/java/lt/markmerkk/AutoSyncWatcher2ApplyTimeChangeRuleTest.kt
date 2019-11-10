@@ -92,7 +92,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
         )
 
         // Assert
-        val rule = resultSyncRule as AutoSyncTriggerLongChange
+        val rule = resultSyncRule as AutoSyncNoChanges
         assertThat(rule.now).isEqualTo(now)
         assertThat(rule.lastSync).isEqualTo(lastSync)
     }
@@ -114,7 +114,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
         )
 
         // Assert
-        val rule1 = resultSyncRule1 as AutoSyncAppInSleepMode
+        val rule1 = resultSyncRule1 as AutoSyncNoChanges
         assertThat(rule1).isNotNull()
     }
 
