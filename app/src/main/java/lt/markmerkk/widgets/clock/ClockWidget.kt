@@ -10,6 +10,7 @@ import javafx.scene.text.Font
 import lt.markmerkk.*
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventMainToggleLogDetails
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -22,7 +23,7 @@ class ClockWidget: Fragment(), ClockContract.View {
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var resultDispatcher: ResultDispatcher
 
@@ -49,9 +50,9 @@ class ClockWidget: Fragment(), ClockContract.View {
             jfxButtonClockSettings = jfxButton {
                 addClass(Styles.buttonMenuMini)
                 graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
-                setOnAction {
+                action {
                     resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
-                    eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
+                    eventBus.post(EventMainToggleLogDetails())
                 }
             }
         }

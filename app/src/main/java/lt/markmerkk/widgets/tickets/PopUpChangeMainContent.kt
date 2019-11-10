@@ -6,13 +6,14 @@ import javafx.scene.paint.Color
 import lt.markmerkk.DisplayType
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
+import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
 
 class PopUpChangeMainContent(
         private val graphics: Graphics<SVGGlyph>,
-        private val eventBus: com.google.common.eventbus.EventBus,
+        private val eventBus: WTEventBus,
         private val attachTo: Node
 ) : PopUpDisplay {
 

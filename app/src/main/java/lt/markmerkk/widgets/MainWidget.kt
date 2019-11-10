@@ -41,14 +41,13 @@ import lt.markmerkk.versioner.ChangelogLoader
 import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
-import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
+import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
 import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
-import lt.markmerkk.widgets.tickets.TicketWidget
 import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.Subscription
@@ -62,7 +61,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Inject lateinit var strings: Strings
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
-    @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var stageProperties: StageProperties
     @Inject lateinit var timeProvider: TimeProvider
@@ -340,7 +339,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
         when (event.editType) {
             LogEditType.UPDATE -> {
                 resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
-                eventBus.post(EventInflateDialog(DialogType.LOG_EDIT))
+                eventBus.post(EventMainToggleLogDetails())
             }
             LogEditType.DELETE -> logStorage.delete(event.logs.first())
             LogEditType.CLONE -> {
@@ -367,31 +366,9 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
         when (event.type) {
-            DialogType.ACTIVE_CLOCK -> {
-                find<LogDetailsWidget>().openWindow(
-                        stageStyle = StageStyle.DECORATED,
-                        modality = Modality.APPLICATION_MODAL,
-                        block = false,
-                        resizable = true
-                )
-            }
-            DialogType.LOG_EDIT -> {
-                find<LogDetailsWidget>().openWindow(
-                        stageStyle = StageStyle.DECORATED,
-                        modality = Modality.APPLICATION_MODAL,
-                        block = false,
-                        resizable = true
-                )
-            }
-            DialogType.TICKET_SEARCH -> {
-                find<TicketWidget>().openWindow(
-                        stageStyle = StageStyle.DECORATED,
-                        modality = Modality.APPLICATION_MODAL,
-                        block = false,
-                        resizable = true
-                )
-                find<TicketWidget>().primaryStage.toFront()
-            }
+            DialogType.ACTIVE_CLOCK -> { logger.warn("LogDetailsWidget was moved to sidePanel (LogDetailsSideDrawerWidget)") }
+            DialogType.LOG_EDIT -> { logger.warn("LogDetailsWidget was moved to sidePanel (LogDetailsSideDrawerWidget)") }
+            DialogType.TICKET_SEARCH -> { logger.warn("TicketWidget was moved to sidePanel (TicketSideDrawerWidget)") }
             DialogType.TICKET_SPLIT -> {
                 find<TicketSplitWidget>().openWindow(
                         stageStyle = StageStyle.DECORATED,

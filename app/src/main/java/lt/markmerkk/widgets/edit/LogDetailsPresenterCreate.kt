@@ -7,6 +7,7 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventMainToggleTickets
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
@@ -104,7 +105,7 @@ class LogDetailsPresenterCreate(
     }
 
     override fun openFindTickets() {
-        eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
+        eventBus.post(EventMainToggleTickets())
     }
 
     override fun changeTicketCode(ticket: String) { }
