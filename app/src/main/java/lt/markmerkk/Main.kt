@@ -7,7 +7,7 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.tracker.ITracker
-import lt.markmerkk.widgets.MainWidget
+import lt.markmerkk.widgets.main.MainWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject

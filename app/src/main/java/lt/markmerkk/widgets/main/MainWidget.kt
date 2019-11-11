@@ -1,4 +1,4 @@
-package lt.markmerkk.widgets
+package lt.markmerkk.widgets.main
 
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
@@ -51,7 +51,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class MainWidget : View(), ExternalSourceNode<StackPane> {
+class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
@@ -79,6 +79,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
     lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
+
+    private lateinit var presenter: MainContract.Presenter
 
     init {
         Main.component().inject(this)
@@ -181,6 +183,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                             isOverLayVisible = true
                             isResizableOnDrag = false
                             defaultDrawerSize = 340.0
+                            setOnDrawerOpened { handleDrawerOpening() }
+                            setOnDrawerOpening { handleDrawerOpening() }
+                            setOnDrawerClosed { handleDrawerOpening() }
+                            setOnDrawerClosing { handleDrawerOpening() }
                         }
                         viewSideDrawerTickets = jfxDrawer {
                             setSidePane(find<TicketSideDrawerWidget>().root)
@@ -189,6 +195,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                             isOverLayVisible = true
                             isResizableOnDrag = true
                             defaultDrawerSize = 500.0
+                            setOnDrawerOpened { handleDrawerOpening() }
+                            setOnDrawerOpening { handleDrawerOpening() }
+                            setOnDrawerClosed { handleDrawerOpening() }
+                            setOnDrawerClosing { handleDrawerOpening() }
                         }
                     }
                 }
@@ -217,15 +227,18 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                 .apply { toFront() }
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
                 .subscribe { eventBus.post(EventFocusChange(it)) }
+        presenter = MainPresenter()
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
         eventBus.register(this)
         changelogLoader.onAttach()
         changelogLoader.check()
+        presenter.onAttach(this)
     }
 
     override fun onUndock() {
+        presenter.onDetach()
         changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
         eventBus.unregister(this)
@@ -344,6 +357,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
 
     override fun rootNode(): StackPane = root as StackPane
 
+    override fun onAutoSyncLockChange(isLocked: Boolean) {
+        autoSyncWatcher.changeUpdateLock(isInLock = isLocked, lockProcessName = "Drawer")
+    }
+
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
         when (event.type) {
@@ -402,6 +419,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane> {
                         )
                     }
                 }
+        )
+    }
+
+    private fun handleDrawerOpening() {
+        presenter.updateAutoSyncLock(
+                isOpenLogDetails = viewSideDrawerLogDetails.isOpened,
+                isOpeningLogDetails = viewSideDrawerLogDetails.isOpening,
+                isOpenTickets = viewSideDrawerTickets.isOpened,
+                isOpeningTickets = viewSideDrawerTickets.isOpening
         )
     }
 
