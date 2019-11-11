@@ -34,7 +34,11 @@ Builds for `1.6.0`
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
 - How to set-up: https://github.com/marius-m/wt4/wiki#wt4
- 
+
+## Early-access experimental builds
+There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-999.dmg)
+
 ## Issues
 
 Track issues / feature requests - https://github.com/marius-m/wt4/issues
