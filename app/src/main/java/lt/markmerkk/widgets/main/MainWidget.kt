@@ -176,29 +176,66 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                     }
                     center {
                         isFocusTraversable = false
+                        val widgetCalendar = find<CalendarWidget>()
                         viewSideDrawerLogDetails = jfxDrawer {
-                            setSidePane(find<LogDetailsSideDrawerWidget>().root)
-                            setContent(find<CalendarWidget>().root)
+                            val viewLogDetails = find<LogDetailsSideDrawerWidget>()
+                            setSidePane(viewLogDetails.root)
+                            setContent(widgetCalendar.root)
                             direction = JFXDrawer.DrawerDirection.RIGHT
                             isOverLayVisible = true
                             isResizableOnDrag = false
                             defaultDrawerSize = 340.0
-                            setOnDrawerOpened { handleDrawerOpening() }
-                            setOnDrawerOpening { handleDrawerOpening() }
-                            setOnDrawerClosed { handleDrawerOpening() }
-                            setOnDrawerClosing { handleDrawerOpening() }
+                            setOnDrawerOpened {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                    viewLogDetails.focusInput()
+                                }
+                            }
+                            setOnDrawerOpening {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                }
+                            }
+                            setOnDrawerClosed {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                }
+                            }
+                            setOnDrawerClosing {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                }
+                            }
                         }
                         viewSideDrawerTickets = jfxDrawer {
-                            setSidePane(find<TicketSideDrawerWidget>().root)
+                            val viewTicketDrawer = find<TicketSideDrawerWidget>()
+                            setSidePane(viewTicketDrawer.root)
                             setContent(viewSideDrawerLogDetails)
                             direction = JFXDrawer.DrawerDirection.RIGHT
                             isOverLayVisible = true
                             isResizableOnDrag = true
                             defaultDrawerSize = 500.0
-                            setOnDrawerOpened { handleDrawerOpening() }
-                            setOnDrawerOpening { handleDrawerOpening() }
-                            setOnDrawerClosed { handleDrawerOpening() }
-                            setOnDrawerClosing { handleDrawerOpening() }
+                            setOnDrawerOpened {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                    viewTicketDrawer.focusInput()
+                                }
+                            }
+                            setOnDrawerOpening {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                }
+                            }
+                            setOnDrawerClosed {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                }
+                            }
+                            setOnDrawerClosing {
+                                if (it.target == this) {
+                                    handleDrawerOpening()
+                                }
+                            }
                         }
                     }
                 }

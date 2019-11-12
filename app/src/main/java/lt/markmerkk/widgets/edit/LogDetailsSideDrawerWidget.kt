@@ -376,8 +376,6 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 timeProvider
         )
         presenter.onAttach(this)
-        viewTextComment.requestFocus()
-        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     @Subscribe
@@ -390,8 +388,6 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 timeProvider
         )
         presenter.onAttach(this)
-        viewTextComment.requestFocus()
-        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     @Subscribe
@@ -406,8 +402,6 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 activeLogPersistence
         )
         presenter.onAttach(this)
-        viewTextComment.requestFocus()
-        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     @Subscribe
@@ -484,6 +478,11 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
 
     override fun closeDetails() {
         eventBus.post(EventMainToggleLogDetails())
+    }
+
+    fun focusInput() {
+        viewTextComment.requestFocus()
+        viewTextComment.positionCaret(viewTextComment.text.length)
     }
 
     companion object {

@@ -87,7 +87,6 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
                                     projectCode = selectItem
                             )
                         }
-                        isFocusTraversable = false
                     }
                     viewTextFieldTicketSearch = jfxTextField {
                         hgrow = Priority.ALWAYS
@@ -214,6 +213,11 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
     override fun onProjectCodes(projectCodes: List<String>) {
         this.projectCodes.clear()
         this.projectCodes.addAll(projectCodes)
+    }
+
+    fun focusInput() {
+        viewTextFieldTicketSearch.requestFocus()
+        viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
     }
 
     companion object {
