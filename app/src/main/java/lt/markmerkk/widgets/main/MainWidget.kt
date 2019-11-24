@@ -126,121 +126,126 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         }
         shortcut(KeyCombination.valueOf("Meta+Enter"), actionSaveLog)
         shortcut(KeyCombination.valueOf("Ctrl+Enter"), actionSaveLog)
-        borderpane {
-            left {
-                vbox(spacing = 4) {
-                    isFocusTraversable = false
-                    style {
-                        backgroundColor.add(Styles.cBackgroundPrimary)
-                        padding = box(vertical = 4.px, horizontal = 10.px)
+        val viewContainerMenu = vbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
+            StackPane.setAlignment(this, Pos.CENTER_LEFT)
+            maxWidth = 60.0
+            isFocusTraversable = false
+            style {
+                backgroundColor.add(Styles.cBackgroundPrimary)
+                padding = box(vertical = 4.px, horizontal = 10.px)
+            }
+            add(find<ClockWidget>().root)
+            vbox(spacing = 4, alignment = Pos.BOTTOM_CENTER) {
+                vgrow = Priority.ALWAYS
+                jfxButtonDisplayView = jfxButton {
+                    addClass(Styles.buttonMenu)
+                    graphic = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
+                    setOnAction {
+                        PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
+                                .show()
                     }
-                    add(find<ClockWidget>().root)
-                    vbox(spacing = 4, alignment = Pos.BOTTOM_CENTER) {
-                        vgrow = Priority.ALWAYS
-                        jfxButtonDisplayView = jfxButton {
-                            addClass(Styles.buttonMenu)
-                            graphic = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
-                            setOnAction {
-                                PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
-                                        .show()
-                            }
+                }
+                jfxButtonSettings = jfxButton {
+                    addClass(Styles.buttonMenu)
+                    graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
+                    setOnAction {
+                        PopUpSettings(graphics, jfxButtonSettings)
+                                .show()
+                    }
+                }
+            }
+        }
+        borderpane {
+            top {
+                isFocusTraversable = false
+                borderpane {
+                    left {
+                        hbox {
+                            add(find<QuickDateChangeWidget>().root)
+                            add(find<QuickEditContainerWidget>().root)
                         }
-                        jfxButtonSettings = jfxButton {
-                            addClass(Styles.buttonMenu)
-                            graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
-                            setOnAction {
-                                PopUpSettings(graphics, jfxButtonSettings)
-                                        .show()
-                            }
+                    }
+                    right {
+                        hbox {
+                            add(find<ProgressWidget>().root)
                         }
                     }
                 }
             }
             center {
-                borderpane {
-                    top {
-                        isFocusTraversable = false
-                        borderpane {
-                            left {
-                                hbox {
-                                    add(find<QuickDateChangeWidget>().root)
-                                    add(find<QuickEditContainerWidget>().root)
-                                }
-                            }
-                            right {
-                                hbox {
-                                    add(find<ProgressWidget>().root)
-                                }
-                            }
+                style {
+                    padding = box(
+                            left = 60.0.px,
+                            top = 0.0.px,
+                            right = 0.0.px,
+                            bottom = 0.0.px
+                    )
+                }
+                isFocusTraversable = false
+                val widgetCalendar = find<CalendarWidget>()
+                viewSideDrawerLogDetails = jfxDrawer {
+                    val viewLogDetails = find<LogDetailsSideDrawerWidget>()
+                    setSidePane(viewLogDetails.root)
+                    setContent(widgetCalendar.root)
+                    direction = JFXDrawer.DrawerDirection.LEFT
+                    isOverLayVisible = true
+                    isResizableOnDrag = true
+                    defaultDrawerSize = 340.0
+                    setOnDrawerOpened {
+                        if (it.target == this) {
+                            handleDrawerOpening()
+                            viewLogDetails.focusInput()
                         }
                     }
-                    center {
-                        isFocusTraversable = false
-                        val widgetCalendar = find<CalendarWidget>()
-                        viewSideDrawerLogDetails = jfxDrawer {
-                            val viewLogDetails = find<LogDetailsSideDrawerWidget>()
-                            setSidePane(viewLogDetails.root)
-                            setContent(widgetCalendar.root)
-                            direction = JFXDrawer.DrawerDirection.RIGHT
-                            isOverLayVisible = true
-                            isResizableOnDrag = false
-                            defaultDrawerSize = 340.0
-                            setOnDrawerOpened {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                    viewLogDetails.focusInput()
-                                }
-                            }
-                            setOnDrawerOpening {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                }
-                            }
-                            setOnDrawerClosed {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                }
-                            }
-                            setOnDrawerClosing {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                }
-                            }
+                    setOnDrawerOpening {
+                        if (it.target == this) {
+                            handleDrawerOpening()
                         }
-                        viewSideDrawerTickets = jfxDrawer {
-                            val viewTicketDrawer = find<TicketSideDrawerWidget>()
-                            setSidePane(viewTicketDrawer.root)
-                            setContent(viewSideDrawerLogDetails)
-                            direction = JFXDrawer.DrawerDirection.RIGHT
-                            isOverLayVisible = true
-                            isResizableOnDrag = true
-                            defaultDrawerSize = 500.0
-                            setOnDrawerOpened {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                    viewTicketDrawer.focusInput()
-                                }
-                            }
-                            setOnDrawerOpening {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                }
-                            }
-                            setOnDrawerClosed {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                }
-                            }
-                            setOnDrawerClosing {
-                                if (it.target == this) {
-                                    handleDrawerOpening()
-                                }
-                            }
+                    }
+                    setOnDrawerClosed {
+                        if (it.target == this) {
+                            handleDrawerOpening()
+                        }
+                    }
+                    setOnDrawerClosing {
+                        if (it.target == this) {
+                            handleDrawerOpening()
+                        }
+                    }
+                }
+                viewSideDrawerTickets = jfxDrawer {
+                    val viewTicketDrawer = find<TicketSideDrawerWidget>()
+                    setSidePane(viewTicketDrawer.root)
+                    setContent(viewSideDrawerLogDetails)
+                    direction = JFXDrawer.DrawerDirection.LEFT
+                    isOverLayVisible = true
+                    isResizableOnDrag = true
+                    defaultDrawerSize = 500.0
+                    setOnDrawerOpened {
+                        if (it.target == this) {
+                            handleDrawerOpening()
+                            viewTicketDrawer.focusInput()
+                        }
+                    }
+                    setOnDrawerOpening {
+                        if (it.target == this) {
+                            handleDrawerOpening()
+                        }
+                    }
+                    setOnDrawerClosed {
+                        if (it.target == this) {
+                            handleDrawerOpening()
+                        }
+                    }
+                    setOnDrawerClosing {
+                        if (it.target == this) {
+                            handleDrawerOpening()
                         }
                     }
                 }
             }
         }
+        viewContainerMenu.toFront()
     }
 
     override fun onDock() {
