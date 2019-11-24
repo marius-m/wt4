@@ -128,14 +128,15 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         shortcut(KeyCombination.valueOf("Ctrl+Enter"), actionSaveLog)
         val viewContainerMenu = vbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
             StackPane.setAlignment(this, Pos.CENTER_LEFT)
-            maxWidth = 60.0
             isFocusTraversable = false
             style {
+                maxWidth = 60.0.px
                 backgroundColor.add(Styles.cBackgroundPrimary)
-                padding = box(vertical = 4.px, horizontal = 10.px)
+                padding = box(vertical = 4.px, horizontal = 4.px)
             }
             add(find<ClockWidget>().root)
             vbox(spacing = 4, alignment = Pos.BOTTOM_CENTER) {
+                hgrow = Priority.NEVER
                 vgrow = Priority.ALWAYS
                 jfxButtonDisplayView = jfxButton {
                     addClass(Styles.buttonMenu)
