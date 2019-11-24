@@ -156,7 +156,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                 }
             }
         }
-        borderpane {
+        val viewContainerMain = borderpane {
             top {
                 isFocusTraversable = false
                 borderpane {
@@ -174,75 +174,76 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                 }
             }
             center {
-                style {
-                    padding = box(
-                            left = 60.0.px,
-                            top = 0.0.px,
-                            right = 0.0.px,
-                            bottom = 0.0.px
-                    )
-                }
                 isFocusTraversable = false
                 val widgetCalendar = find<CalendarWidget>()
-                viewSideDrawerLogDetails = jfxDrawer {
-                    val viewLogDetails = find<LogDetailsSideDrawerWidget>()
-                    setSidePane(viewLogDetails.root)
-                    setContent(widgetCalendar.root)
-                    direction = JFXDrawer.DrawerDirection.LEFT
-                    isOverLayVisible = true
-                    isResizableOnDrag = true
-                    defaultDrawerSize = 340.0
-                    setOnDrawerOpened {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                            viewLogDetails.focusInput()
-                        }
-                    }
-                    setOnDrawerOpening {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                        }
-                    }
-                    setOnDrawerClosed {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                        }
-                    }
-                    setOnDrawerClosing {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                        }
-                    }
+                add(widgetCalendar)
+            }
+        }
+        viewSideDrawerLogDetails = jfxDrawer {
+            val viewLogDetails = find<LogDetailsSideDrawerWidget>()
+            setSidePane(viewLogDetails.root)
+            setContent(viewContainerMain)
+            direction = JFXDrawer.DrawerDirection.LEFT
+            isOverLayVisible = true
+            isResizableOnDrag = true
+            defaultDrawerSize = 340.0
+            setOnDrawerOpened {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                    viewLogDetails.focusInput()
                 }
-                viewSideDrawerTickets = jfxDrawer {
-                    val viewTicketDrawer = find<TicketSideDrawerWidget>()
-                    setSidePane(viewTicketDrawer.root)
-                    setContent(viewSideDrawerLogDetails)
-                    direction = JFXDrawer.DrawerDirection.LEFT
-                    isOverLayVisible = true
-                    isResizableOnDrag = true
-                    defaultDrawerSize = 500.0
-                    setOnDrawerOpened {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                            viewTicketDrawer.focusInput()
-                        }
-                    }
-                    setOnDrawerOpening {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                        }
-                    }
-                    setOnDrawerClosed {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                        }
-                    }
-                    setOnDrawerClosing {
-                        if (it.target == this) {
-                            handleDrawerOpening()
-                        }
-                    }
+            }
+            setOnDrawerOpening {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                }
+            }
+            setOnDrawerClosed {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                }
+            }
+            setOnDrawerClosing {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                }
+            }
+        }
+        viewSideDrawerTickets = jfxDrawer {
+            style {
+                padding = box(
+                        left = 60.0.px,
+                        top = 0.0.px,
+                        right = 0.0.px,
+                        bottom = 0.0.px
+                )
+            }
+            val viewTicketDrawer = find<TicketSideDrawerWidget>()
+            setSidePane(viewTicketDrawer.root)
+            setContent(viewSideDrawerLogDetails)
+            direction = JFXDrawer.DrawerDirection.LEFT
+            isOverLayVisible = true
+            isResizableOnDrag = true
+            defaultDrawerSize = 500.0
+            setOnDrawerOpened {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                    viewTicketDrawer.focusInput()
+                }
+            }
+            setOnDrawerOpening {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                }
+            }
+            setOnDrawerClosed {
+                if (it.target == this) {
+                    handleDrawerOpening()
+                }
+            }
+            setOnDrawerClosing {
+                if (it.target == this) {
+                    handleDrawerOpening()
                 }
             }
         }
