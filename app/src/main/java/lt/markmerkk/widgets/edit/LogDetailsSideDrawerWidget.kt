@@ -1,7 +1,10 @@
 package lt.markmerkk.widgets.edit
 
 import com.google.common.eventbus.Subscribe
-import com.jfoenix.controls.*
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDatePicker
+import com.jfoenix.controls.JFXTextField
+import com.jfoenix.controls.JFXTimePicker
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -19,12 +22,16 @@ import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
-import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxDatePicker
+import lt.markmerkk.ui_2.views.jfxTextField
+import lt.markmerkk.ui_2.views.jfxTimePicker
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.views.JFXScrollFreeTextArea
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
@@ -60,7 +67,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     private lateinit var viewTextTicketDesc: Label
     private lateinit var viewButtonTicketLink: JFXButton
     private lateinit var viewButtonSearch: JFXButton
-    private lateinit var viewTextComment: JFXTextArea
+    private lateinit var viewTextComment: JFXScrollFreeTextArea
     private lateinit var viewButtonSave: JFXButton
     private lateinit var viewButtonClose: JFXButton
     private lateinit var viewLabelHint: Label
@@ -195,13 +202,13 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                                     bottom = 0.px
                             )
                         }
-                        viewTextComment = jfxTextArea {
-                            focusColor = Styles.cActiveRed
-                            isLabelFloat = true
-                            promptText = "Comment"
-                            prefRowCount = 3
-                            isWrapText = true
-                        }
+                        viewTextComment = JFXScrollFreeTextArea()
+                                .apply {
+                                    textArea.focusColor = Styles.cActiveRed
+                                    textArea.isLabelFloat = true
+                                    textArea.promptText = "Comment"
+                                }
+                        add(viewTextComment)
                     }
                     hbox(alignment = Pos.CENTER) {
                         hgrow = Priority.ALWAYS
@@ -227,7 +234,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                                     start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
                                     end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
                                     task = viewTextFieldTicket.text,
-                                    comment = viewTextComment.text
+                                    comment = viewTextComment.textArea.text
                             )
                         }
                     }
@@ -314,7 +321,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         jiraLinkGenerator.onAttach()
         jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
-        JavaFxObservable.valuesOf(viewTextComment.textProperty())
+        JavaFxObservable.valuesOf(viewTextComment.textArea.textProperty())
                 .subscribe { presenter.changeComment(it) }
     }
 
@@ -342,7 +349,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
         viewButtonSave.text = labelButtonSave.toUpperCase()
         viewButtonSave.graphic = glyphButtonSave
         viewTextFieldTicket.text = initTicket
-        viewTextComment.text = initComment
+        viewTextComment.textArea.text = initComment
         uiBridgeDateTimeHandler.changeDate(initDateTimeStart, initDateTimeEnd)
         if (enableFindTickets) {
             viewButtonSearch.show()
@@ -415,7 +422,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
                 start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
                 end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
                 task = viewTextFieldTicket.text,
-                comment = viewTextComment.text
+                comment = viewTextComment.textArea.text
         )
     }
 
@@ -430,7 +437,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     }
 
     override fun showComment(comment: String) {
-        viewTextComment.text = comment
+        viewTextComment.textArea.text = comment
     }
 
     override fun showHint1(hint: String) {
@@ -443,14 +450,14 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
 
     override fun enableInput() {
         viewTextFieldTicket.isEditable = true
-        viewTextComment.isEditable = true
+        viewTextComment.textArea.isEditable = true
         uiBridgeDateTimeHandler.enable()
         uiBridgeTimeQuickEdit.enable()
     }
 
     override fun disableInput() {
         viewTextFieldTicket.isEditable = false
-        viewTextComment.isEditable = false
+        viewTextComment.textArea.isEditable = false
         uiBridgeDateTimeHandler.disable()
         uiBridgeTimeQuickEdit.disable()
     }
@@ -482,7 +489,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
 
     fun focusInput() {
         viewTextComment.requestFocus()
-        viewTextComment.positionCaret(viewTextComment.text.length)
+        viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
     }
 
     companion object {
