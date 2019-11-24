@@ -16,10 +16,14 @@ class JiraProjectStatusesEmitter(
 
     override fun call(emitter: Emitter<List<Status>>) {
         try {
-            val projectStatuses = jiraClient.projects
+            val projects = jiraClient.projects
+            logger.info("Found ${projects.size} projects.")
+            val projectStatuses = projects
                     .flatMap { jiraClient.getProjectStatuses(it.key) }
+                    .map { it.name to it } // status cannot be compared, so using map to filter
+                    .toMap()
             logger.info("Found ${projectStatuses.size} project statuses.")
-            emitter.onNext(projectStatuses)
+            emitter.onNext(projectStatuses.values.toList())
             emitter.onCompleted()
         } catch (e: IllegalStateException) {
             logger.info("Jira project statuses ${e.message}")
