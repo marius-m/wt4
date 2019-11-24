@@ -3,6 +3,7 @@ package lt.markmerkk.widgets.tickets
 import lt.markmerkk.SchedulerProvider
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.TicketStatus
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.tickets.TicketStatusesLoader
@@ -14,6 +15,7 @@ class TicketFilterSettingsPresenter(
         private val ticketApi: TicketApi,
         private val timeProvider: TimeProvider,
         private val ticketStorage: TicketStorage,
+        private val userSettings: UserSettings,
         private val schedulerProvider: SchedulerProvider
 ) : TicketFilterSettingsContract.Presenter {
 
@@ -42,9 +44,16 @@ class TicketFilterSettingsPresenter(
     override fun saveTicketStatuses(ticketStatusViewModels: List<TicketStatusViewModel>) {
         val newTicketStatuses = ticketStatusViewModels
                 .map { TicketStatus(it.nameProperty.get(), it.enableProperty.get()) }
+        val enabledTicketStatusNames = newTicketStatuses
+                .filter { it.enabled }
+                .map { it.name }
         subsUpdate = ticketStorage
                 .updateTicketStatuses(newTicketStatuses)
                 .subscribeOn(schedulerProvider.io())
+                .doOnSuccess {
+                    userSettings.issueJql = TicketJQLGenerator
+                            .generateJQL(enabledStatuses = enabledTicketStatusNames, onlyCurrentUser = true)
+                }
                 .observeOn(schedulerProvider.ui())
                 .doOnSubscribe { view.showProgress() }
                 .doAfterTerminate { view.hideProgress() }

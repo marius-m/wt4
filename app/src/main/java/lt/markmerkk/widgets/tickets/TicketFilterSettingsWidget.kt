@@ -93,6 +93,7 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
                 ticketApi,
                 timeProvider,
                 ticketStorage,
+                userSettings,
                 schedulerProvider
         )
         presenter.onAttach()
@@ -126,8 +127,8 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
     }
 
     override fun cleanUpAndExit() {
-        close()
         eventBus.post(EventTicketFilterChange())
+        close()
     }
 
 }
