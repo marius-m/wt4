@@ -20,7 +20,7 @@ import rx.Subscription
 
 class ContextMenuTicketSelect(
         private val graphics: Graphics<SVGGlyph>,
-        private val eventBus: EventBus,
+        private val eventBus: WTEventBus,
         private val hostServicesInteractor: HostServicesInteractor,
         private val accountAvailablility: AccountAvailablility
 ) {

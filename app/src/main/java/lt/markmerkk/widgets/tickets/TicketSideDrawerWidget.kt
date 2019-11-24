@@ -1,5 +1,6 @@
 package lt.markmerkk.widgets.tickets
 
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.controls.JFXTextField
@@ -14,6 +15,7 @@ import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.events.EventMainToggleTickets
 import lt.markmerkk.events.EventSuggestTicket
+import lt.markmerkk.events.EventTicketFilterChange
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.views.*
@@ -30,7 +32,7 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var userSettings: UserSettings
-    @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var accountAvailablility: AccountAvailablility
@@ -187,9 +189,11 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
         contextMenuTicketSelect.onAttach()
         contextMenuTicketSelect.attachTicketSelection(
                 JavaFxObservable.valuesOf(viewTable.selectionModel.selectedItemProperty()))
+        eventBus.register(this)
     }
 
     override fun onUndock() {
+        eventBus.unregister(this)
         contextMenuTicketSelect.onDetach()
         presenter.onDetach()
         super.onUndock()
@@ -225,6 +229,21 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
         viewTextFieldTicketSearch.requestFocus()
         viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
     }
+
+    //region events
+
+    @Subscribe
+    fun onTicketFilterChange(event: EventTicketFilterChange) {
+        val projectCodeItem = viewComboProjectCodes
+                .selectionModel
+                .selectedItem ?: ""
+        presenter.loadTickets(
+                filter = viewTextFieldTicketSearch.text,
+                projectCode = projectCodeItem
+        )
+    }
+
+    //endregion
 
     companion object {
         private val logger = LoggerFactory.getLogger(TicketSideDrawerWidget::class.java)!!

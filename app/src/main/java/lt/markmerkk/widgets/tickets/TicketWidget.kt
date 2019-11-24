@@ -34,7 +34,7 @@ class TicketWidget: Fragment(), TicketContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var userSettings: UserSettings
-    @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var accountAvailablility: AccountAvailablility

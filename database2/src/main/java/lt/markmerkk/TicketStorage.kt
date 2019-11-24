@@ -17,6 +17,42 @@ class TicketStorage(
         private val connProvider: DBConnProvider
 ) {
 
+    fun loadOnlyEnabledTickets(): Single<List<Ticket>> {
+        return Single.defer {
+            val enabledStatuses: List<String> = connProvider.dsl
+                    .select()
+                    .from(TICKET_STATUS)
+                    .fetchInto(TICKET_STATUS)
+                    .map { TicketStatus(it.name, it.enabled.toBoolean()) }
+                    .filter { it.enabled }
+                    .map { it.name }
+            val dbResult: Result<TicketRecord> = connProvider.dsl
+                    .select()
+                    .from(TICKET)
+                    .fetchInto(TICKET)
+            val tickets = dbResult
+                    .map { ticket ->
+                        Ticket(
+                                id = ticket.id.toLong(),
+                                code = TicketCode.new(ticket.code),
+                                description = ticket.description,
+                                parentId = ticket.parentId,
+                                status = ticket.status,
+                                parentCode = TicketCode.new(ticket.parentCode),
+                                remoteData = RemoteData.new(
+                                        isDeleted = ticket.isDeleted.toBoolean(),
+                                        isDirty = ticket.isDirty.toBoolean(),
+                                        isError = ticket.isError.toBoolean(),
+                                        errorMessage = ticket.errorMessage,
+                                        fetchTime = ticket.fetchtime,
+                                        url = ticket.url
+                                )
+                        )
+                    }.filter { enabledStatuses.contains(it.status) }
+            Single.just(tickets)
+        }
+    }
+
     fun loadTickets(): Single<List<Ticket>> {
         return Single.defer {
             val dbResult: Result<TicketRecord> = connProvider.dsl

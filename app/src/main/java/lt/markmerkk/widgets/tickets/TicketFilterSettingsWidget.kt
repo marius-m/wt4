@@ -7,6 +7,7 @@ import javafx.scene.Parent
 import javafx.scene.control.TableView
 import lt.markmerkk.*
 import lt.markmerkk.entities.TicketStatus
+import lt.markmerkk.events.EventTicketFilterChange
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.tickets.TicketStatusesLoader
@@ -126,6 +127,7 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
 
     override fun cleanUpAndExit() {
         close()
+        eventBus.post(EventTicketFilterChange())
     }
 
 }
