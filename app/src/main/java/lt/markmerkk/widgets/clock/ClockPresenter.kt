@@ -45,6 +45,15 @@ class ClockPresenter(
         }
     }
 
+    override fun renderClock() {
+        val duration = hourGlass.duration
+        if (isRunning) {
+            view?.showActive(LogUtils.formatShortDuration(duration))
+        } else {
+            view?.showInactive()
+        }
+    }
+
     private fun suggestSavingLog() {
         eventBus.post(EventLogDetailsInitActiveClock())
         eventBus.post(EventMainToggleLogDetails())
@@ -52,19 +61,19 @@ class ClockPresenter(
 
     private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {
         override fun onStart(start: Long, end: Long, duration: Long) {
-            view?.showActive(LogUtils.formatShortDuration(duration))
+            renderClock()
         }
 
         override fun onStop(start: Long, end: Long, duration: Long) {
-            view?.showInactive()
+            renderClock()
         }
 
         override fun onTick(start: Long, end: Long, duration: Long) {
-            view?.showActive(LogUtils.formatShortDuration(duration))
+            renderClock()
         }
 
         override fun onError(error: HourGlass.Error) {
-            view?.showActive("-")
+            renderClock()
         }
 
     }

@@ -46,38 +46,11 @@ object LogUtils {
     }
 
     /**
-     * Formats duration time into pretty string format
-     * @param durationMillis provided duration to format
-     * *
-     * @return formatted duration
-     */
-    fun formatDuration(durationMillis: Long): String {
-        if (durationMillis < 1000)
-            return "0s"
-        val builder = StringBuilder()
-        val type = PeriodType.forFields(arrayOf(DurationFieldType.hours(), DurationFieldType.minutes(), DurationFieldType.seconds()))
-
-        val period = Period(durationMillis, type)
-        if (period.days != 0)
-            builder.append(period.days).append("d").append(" ")
-        if (period.hours != 0)
-            builder.append(period.hours).append("h").append(" ")
-        if (period.minutes != 0)
-            builder.append(period.minutes).append("m").append(" ")
-        if (period.seconds != 0)
-            builder.append(period.seconds).append("s").append(" ")
-        if (builder.length > 0 && builder[builder.length - 1] == " "[0])
-            builder.deleteCharAt(builder.length - 1)
-        return builder.toString()
-    }
-
-    /**
      * Formats duration time into pretty and short string format
      * @param durationMillis provided duration to format
      * *
      * @return formatted duration
      */
-    // fixme : needs tests, as this code was copied from earlier project
     fun formatShortDuration(durationMillis: Long): String {
         if (durationMillis < 1000 * 60)
             return "0m"
@@ -90,7 +63,7 @@ object LogUtils {
             builder.append(period.hours).append("h").append(" ")
         if (period.minutes != 0)
             builder.append(period.minutes).append("m").append(" ")
-        if (builder.length > 0 && builder[builder.length - 1] == " "[0])
+        if (builder.isNotEmpty() && builder[builder.length - 1] == " "[0])
             builder.deleteCharAt(builder.length - 1)
         return builder.toString()
     }

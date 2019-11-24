@@ -10,5 +10,6 @@ interface ClockContract {
         fun onDetach()
         fun toggleClock()
         fun cancelClock()
+        fun renderClock()
     }
 }
