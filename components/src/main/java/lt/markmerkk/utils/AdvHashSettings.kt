@@ -1,5 +1,6 @@
 package lt.markmerkk.utils
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import lt.markmerkk.Config
 import java.util.*
 
@@ -29,6 +30,14 @@ class AdvHashSettings(
     override fun getInt(key: String, defaultValue: Int): Int {
         return try {
             get(key, defaultValue.toString()).toInt()
+        } catch (e: NumberFormatException) {
+            defaultValue
+        }
+    }
+
+    override fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return try {
+            get(key, defaultValue.toString()).toBoolean()
         } catch (e: NumberFormatException) {
             defaultValue
         }

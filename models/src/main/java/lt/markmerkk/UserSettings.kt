@@ -7,6 +7,7 @@ interface UserSettings {
     fun onDetach()
 
     var issueJql: String
+    var onlyCurrentUserIssues: Boolean
     var version: Int
     var autoUpdateMinutes: Int
     var lastUpdate: Long

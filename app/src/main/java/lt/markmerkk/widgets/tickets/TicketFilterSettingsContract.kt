@@ -12,7 +12,10 @@ interface TicketFilterSettingsContract {
         fun onAttach()
         fun onDetach()
         fun loadTicketStatuses()
-        fun saveTicketStatuses(ticketStatuses: List<TicketStatusViewModel>)
+        fun saveTicketStatuses(
+                ticketStatusViewModels: List<TicketStatusViewModel>,
+                useOnlyCurrentUser: Boolean
+        )
     }
 
 }

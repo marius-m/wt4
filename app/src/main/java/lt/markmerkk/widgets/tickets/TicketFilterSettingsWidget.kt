@@ -1,10 +1,13 @@
 package lt.markmerkk.widgets.tickets
 
+import com.jfoenix.controls.JFXCheckBox
 import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.CheckBox
 import javafx.scene.control.TableView
+import javafx.scene.layout.VBox
 import lt.markmerkk.*
 import lt.markmerkk.entities.TicketStatus
 import lt.markmerkk.events.EventTicketFilterChange
@@ -29,8 +32,10 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var accountAvailablility: AccountAvailablility
 
+    private lateinit var viewContainerMain: VBox
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewStatusList: TableView<TicketStatusViewModel>
+    private lateinit var viewOnlyCurrentUser: CheckBox
 
     private lateinit var presenter: TicketFilterSettingsContract.Presenter
 
@@ -52,13 +57,17 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
             }
         }
         center {
-            vbox {
-                viewStatusList = tableview(ticketStatusViewModels) {
-                    columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
-                    column("Status", TicketStatusViewModel::nameProperty) { }
-                    column("Enabled", TicketStatusViewModel::enableProperty)
-                            .useCheckbox()
-                    hide()
+            stackpane {
+                viewContainerMain = vbox(spacing = 4) {
+                    viewStatusList = tableview(ticketStatusViewModels) {
+                        columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+                        column("Status", TicketStatusViewModel::nameProperty) { }
+                        column("Enabled", TicketStatusViewModel::enableProperty)
+                                .useCheckbox()
+                    }
+//                    viewOnlyCurrentUser = checkbox("Only current user tickets") {
+//                        isSelected = userSettings.onlyCurrentUserIssues
+//                    }
                 }
                 viewProgress = jfxSpinner {
                     style {
@@ -79,7 +88,10 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
                 addClass(Styles.dialogContainerActionsButtons)
                 jfxButton("Save and exit".toUpperCase()) {
                     setOnAction {
-                        presenter.saveTicketStatuses(ticketStatusViewModels)
+                        presenter.saveTicketStatuses(
+                                ticketStatusViewModels = ticketStatusViewModels,
+                                useOnlyCurrentUser = true // todo disable user selection to display all tickets
+                        )
                     }
                 }
             }
@@ -106,12 +118,12 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
     }
 
     override fun showProgress() {
-        viewStatusList.hide()
+        viewContainerMain.hide()
         viewProgress.show()
     }
 
     override fun hideProgress() {
-        viewStatusList.show()
+        viewContainerMain.show()
         viewProgress.hide()
     }
 

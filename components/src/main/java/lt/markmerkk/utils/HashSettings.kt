@@ -7,4 +7,5 @@ interface HashSettings {
     fun get(key: String, defaultValue: String): String
     fun getLong(key: String, defaultValue: Long): Long
     fun getInt(key: String, defaultValue: Int): Int
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean
 }

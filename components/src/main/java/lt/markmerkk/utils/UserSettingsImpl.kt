@@ -18,6 +18,7 @@ class UserSettingsImpl(
     override var lastUpdate: Long = -1
     override var ticketLastUpdate: Long = -1
     override var ticketStatusUpdate: Long = -1
+    override var onlyCurrentUserIssues: Boolean = true
 
     private var oauthHost: String = ""
     private var oauthPrivateKey: String = ""
@@ -47,6 +48,7 @@ class UserSettingsImpl(
         jiraUserName = settings.get(JIRA_USER_NAME, "")
         jiraUserEmail = settings.get(JIRA_USER_EMAIL, "")
         jiraUserDisplayName = settings.get(JIRA_USER_DISPLAY_NAME, "")
+        onlyCurrentUserIssues = settings.getBoolean(ISSUE_ONLY_CURRENT_USER_ISSUES, true)
     }
 
     override fun onDetach() {
@@ -67,6 +69,7 @@ class UserSettingsImpl(
         settings.set(JIRA_USER_NAME, jiraUserName)
         settings.set(JIRA_USER_EMAIL, jiraUserEmail)
         settings.set(JIRA_USER_DISPLAY_NAME, jiraUserDisplayName)
+        settings.set(ISSUE_ONLY_CURRENT_USER_ISSUES, onlyCurrentUserIssues.toString())
         settings.save()
     }
 
@@ -116,6 +119,7 @@ class UserSettingsImpl(
         const val PASS = "PASS"
         const val VERSION = "VERSION"
         const val ISSUE_JQL = "ISSUE_JQL"
+        const val ISSUE_ONLY_CURRENT_USER_ISSUES = "ISSUE_ONLY_CURRENT_USER_ISSUES"
         const val AUTOUPDATE_TIMEOUT = "AUTOUPDATE_TIMEOUT"
         const val LAST_UPDATE = "LAST_UPDATE"
         const val TICKET_LAST_UPDATE = "TICKET_LAST_UPDATE"
