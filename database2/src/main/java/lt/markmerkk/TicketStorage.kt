@@ -29,6 +29,8 @@ class TicketStorage(
                                 code = TicketCode.new(ticket.code),
                                 description = ticket.description,
                                 parentId = ticket.parentId,
+                                status = ticket.status,
+                                parentCode = TicketCode.new(ticket.parentCode),
                                 remoteData = RemoteData.new(
                                         isDeleted = ticket.isDeleted.toBoolean(),
                                         isDirty = ticket.isDirty.toBoolean(),
@@ -84,6 +86,8 @@ class TicketStorage(
                         .set(TICKET.ERROR_MESSAGE, remoteData.errorMessage)
                         .set(TICKET.FETCHTIME, remoteData.fetchTime)
                         .set(TICKET.URL, remoteData.url)
+                        .set(TICKET.STATUS, ticket.status)
+                        .set(TICKET.PARENT_CODE, ticket.parentCode.code)
                         .where(TICKET.REMOTE_ID.eq(remoteData.remoteId))
                         .execute()
             } else {
@@ -100,7 +104,9 @@ class TicketStorage(
                         TICKET.IS_ERROR,
                         TICKET.ERROR_MESSAGE,
                         TICKET.FETCHTIME,
-                        TICKET.URL
+                        TICKET.URL,
+                        TICKET.STATUS,
+                        TICKET.PARENT_CODE
                 ).values(
                         ticket.code.code,
                         ticket.code.codeProject,
@@ -113,7 +119,9 @@ class TicketStorage(
                         remoteData.isError.toByte(),
                         remoteData.errorMessage,
                         remoteData.fetchTime,
-                        remoteData.url
+                        remoteData.url,
+                        ticket.status,
+                        ticket.parentCode.code
                 ).execute()
             }
             Single.just(result)
@@ -136,6 +144,8 @@ class TicketStorage(
                                 code = TicketCode.new(ticket.code),
                                 description = ticket.description,
                                 parentId = ticket.parentId,
+                                status = ticket.status,
+                                parentCode = TicketCode.new(ticket.parentCode),
                                 remoteData = RemoteData.new(
                                         isDeleted = ticket.isDeleted.toBoolean(),
                                         isDirty = ticket.isDirty.toBoolean(),

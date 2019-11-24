@@ -45,6 +45,8 @@ class JiraWorklogInteractor(
             val ticket = Ticket.fromRemoteData(
                     code = issue.key,
                     description = issue.summary,
+                    status = issue.status.name,
+                    parentCode = issue.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,
                             url = issue.url

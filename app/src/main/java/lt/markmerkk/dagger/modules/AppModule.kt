@@ -170,6 +170,12 @@ class AppModule(
                                 databaseName = "wt4_2.db",
                                 databasePath = config.cfgPath
                         )
+                ),
+                Migration5To6(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
                 )
         )
         val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
