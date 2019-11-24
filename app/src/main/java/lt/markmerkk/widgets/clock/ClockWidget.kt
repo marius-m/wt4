@@ -1,6 +1,6 @@
 package lt.markmerkk.widgets.clock
 
-import com.google.common.eventbus.EventBus
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
@@ -8,18 +8,16 @@ import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import lt.markmerkk.*
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.events.EventLogDetailsInitActiveClock
-import lt.markmerkk.events.EventMainToggleLogDetails
+import lt.markmerkk.events.EventFocusChange
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import lt.markmerkk.widgets.edit.LogDetailsWidget
+import lt.markmerkk.widgets.main.MainWidget
+import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class ClockWidget: Fragment(), ClockContract.View {
+class ClockWidget : Fragment(), ClockContract.View {
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
@@ -62,9 +60,11 @@ class ClockWidget: Fragment(), ClockContract.View {
         super.onDock()
         presenter.onAttach(this)
         jfxButtonClockSettings.hide()
+        eventBus.register(this)
     }
 
     override fun onUndock() {
+        eventBus.unregister(this)
         presenter.onDetach()
         super.onUndock()
     }
@@ -82,5 +82,19 @@ class ClockWidget: Fragment(), ClockContract.View {
         jfxButtonClockSettings.hide()
     }
 
+    //region Events
+
+    @Subscribe
+    fun eventFocusChange(eventFocusChange: EventFocusChange) {
+        if (eventFocusChange.isInFocus) {
+            presenter.renderClock()
+        }
+    }
+
+    //endregion
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ClockWidget::class.java)!!
+    }
 
 }
