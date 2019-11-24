@@ -31,6 +31,7 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.events.EventEditMode
+import lt.markmerkk.events.EventFocusChange
 import lt.markmerkk.events.EventLogSelection
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
@@ -254,6 +255,14 @@ class CalendarWidget: Fragment() {
             viewDragIndicator.show()
         } else {
             viewDragIndicator.hide()
+        }
+    }
+
+    @Subscribe
+    fun onFocusChange(event: EventFocusChange) {
+        if (event.isInFocus) {
+            viewCalendar.today = LocalDate.now()
+            viewCalendar.time = LocalTime.now()
         }
     }
 
