@@ -59,7 +59,8 @@ class TicketLoader(
             return
         }
         logger.info("Refreshing tickets")
-        networkSubscription = ticketApi.searchRemoteTicketsAndCache(timeProvider.now())
+        networkSubscription = ticketApi.fetchProjectStatusesAndCache(now)
+                .flatMap { ticketApi.searchRemoteTicketsAndCache(now) }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .doOnSubscribe { listener.onLoadStart() }

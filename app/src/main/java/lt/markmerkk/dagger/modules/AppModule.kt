@@ -7,10 +7,7 @@ import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.interactors.ActiveLogPersistence
-import lt.markmerkk.migrations.Migration0To1
-import lt.markmerkk.migrations.Migration1To2
-import lt.markmerkk.migrations.Migration2To3
-import lt.markmerkk.migrations.Migration3To4
+import lt.markmerkk.migrations.*
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.repositories.CreditsRepository
 import lt.markmerkk.tickets.JiraTicketSearch
@@ -163,6 +160,12 @@ class AppModule(
                         )
                 ),
                 Migration3To4(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration4To5(
                         database = DBConnProvider(
                                 databaseName = "wt4_2.db",
                                 databasePath = config.cfgPath

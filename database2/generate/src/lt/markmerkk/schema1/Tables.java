@@ -8,6 +8,7 @@ import javax.annotation.Generated;
 
 import lt.markmerkk.schema1.tables.SqliteSequence;
 import lt.markmerkk.schema1.tables.Ticket;
+import lt.markmerkk.schema1.tables.TicketStatus;
 import lt.markmerkk.schema1.tables.Worklog;
 
 
@@ -33,6 +34,11 @@ public class Tables {
      * The table <code>ticket</code>.
      */
     public static final Ticket TICKET = lt.markmerkk.schema1.tables.Ticket.TICKET;
+
+    /**
+     * The table <code>ticket_status</code>.
+     */
+    public static final TicketStatus TICKET_STATUS = lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS;
 
     /**
      * The table <code>worklog</code>.

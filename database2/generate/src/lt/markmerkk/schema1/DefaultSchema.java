@@ -12,6 +12,7 @@ import javax.annotation.Generated;
 
 import lt.markmerkk.schema1.tables.SqliteSequence;
 import lt.markmerkk.schema1.tables.Ticket;
+import lt.markmerkk.schema1.tables.TicketStatus;
 import lt.markmerkk.schema1.tables.Worklog;
 
 import org.jooq.Catalog;
@@ -32,7 +33,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultSchema extends SchemaImpl {
 
-    private static final long serialVersionUID = -235744202;
+    private static final long serialVersionUID = 2072645571;
 
     /**
      * The reference instance of <code></code>
@@ -48,6 +49,11 @@ public class DefaultSchema extends SchemaImpl {
      * The table <code>ticket</code>.
      */
     public final Ticket TICKET = lt.markmerkk.schema1.tables.Ticket.TICKET;
+
+    /**
+     * The table <code>ticket_status</code>.
+     */
+    public final TicketStatus TICKET_STATUS = lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS;
 
     /**
      * The table <code>worklog</code>.
@@ -81,6 +87,7 @@ public class DefaultSchema extends SchemaImpl {
         return Arrays.<Table<?>>asList(
             SqliteSequence.SQLITE_SEQUENCE,
             Ticket.TICKET,
+            TicketStatus.TICKET_STATUS,
             Worklog.WORKLOG);
     }
 }

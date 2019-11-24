@@ -3,7 +3,9 @@ package lt.markmerkk
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.entities.TicketStatus
 import lt.markmerkk.schema1.tables.Ticket.TICKET
+import lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS
 import lt.markmerkk.schema1.tables.records.TicketRecord
 import org.jooq.DSLContext
 import org.jooq.Result
@@ -39,6 +41,29 @@ class TicketStorage(
                     }
             Single.just(tickets)
         }
+    }
+
+    fun refreshTicketStatuses(ticketStatuses: List<TicketStatus>): Single<Int> {
+        return Single.defer {
+            val newRecordStep = ticketStatuses
+                    .map {
+                        connProvider.dsl.insertInto(
+                                TICKET_STATUS,
+                                TICKET_STATUS.NAME
+                        ).values(it.name)
+                    }
+            connProvider.dsl
+                    .deleteFrom(TICKET_STATUS)
+                    .execute()
+            connProvider.dsl
+                    .batch(newRecordStep)
+                    .execute()
+            Single.just(0)
+        }
+    }
+
+    fun refreshTicketStatusesSync(ticketStatuses: List<TicketStatus>): Int {
+        return refreshTicketStatuses(ticketStatuses).toBlocking().value()
     }
 
     fun insertOrUpdate(ticket: Ticket): Single<Int> {
