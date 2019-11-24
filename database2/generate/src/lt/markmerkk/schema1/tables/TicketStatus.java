@@ -39,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TicketStatus extends TableImpl<TicketStatusRecord> {
 
-    private static final long serialVersionUID = -968709220;
+    private static final long serialVersionUID = -1422156457;
 
     /**
      * The reference instance of <code>ticket_status</code>
@@ -63,6 +63,11 @@ public class TicketStatus extends TableImpl<TicketStatusRecord> {
      * The column <code>ticket_status.name</code>.
      */
     public final TableField<TicketStatusRecord, String> NAME = createField("name", org.jooq.impl.SQLDataType.VARCHAR(100).nullable(false).defaultValue(org.jooq.impl.DSL.field("''", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>ticket_status.enabled</code>.
+     */
+    public final TableField<TicketStatusRecord, Byte> ENABLED = createField("enabled", org.jooq.impl.SQLDataType.TINYINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("1", org.jooq.impl.SQLDataType.TINYINT)), this, "");
 
     /**
      * Create a <code>ticket_status</code> table reference

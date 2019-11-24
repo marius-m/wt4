@@ -1,6 +1,5 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.Const
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
@@ -17,12 +16,12 @@ class JiraTicketSearch {
     fun projectStatuses(
             now: DateTime,
             jiraClient: JiraClient
-    ): Single<List<TicketStatus>> {
+    ): Single<List<String>> {
         return Observable
                 .create(JiraProjectStatusesEmitter(jiraClient), Emitter.BackpressureMode.BUFFER)
                 .toSingle()
                 .map { statuses ->
-                    statuses.map { TicketStatus(it.name) }
+                    statuses.map { it.name }
                 }
     }
 

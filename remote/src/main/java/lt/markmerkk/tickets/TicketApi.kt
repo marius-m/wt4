@@ -24,6 +24,7 @@ class TicketApi(
         return Single.defer { Single.just(jiraClientProvider.client()) }
                 .flatMap { jiraTicketSearch.projectStatuses(now, it) }
                 .doOnSuccess { ticketsDatabaseRepo.refreshTicketStatuses(it).subscribe() }
+                .flatMap { ticketsDatabaseRepo.loadTicketStatuses() }
     }
 
     fun searchRemoteTicketsAndCache(

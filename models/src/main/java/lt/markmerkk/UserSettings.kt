@@ -11,6 +11,7 @@ interface UserSettings {
     var autoUpdateMinutes: Int
     var lastUpdate: Long
     var ticketLastUpdate: Long
+    var ticketStatusUpdate: Long
 
     fun jiraOAuthPreset(): JiraOAuthPreset
     fun jiraOAuthCreds(): JiraOAuthCreds

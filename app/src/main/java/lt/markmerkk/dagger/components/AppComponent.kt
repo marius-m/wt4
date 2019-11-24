@@ -20,6 +20,7 @@ import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
+import lt.markmerkk.widgets.tickets.TicketFilterSettingsWidget
 import lt.markmerkk.widgets.tickets.TicketProgressWidget
 import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import lt.markmerkk.widgets.tickets.TicketWidget
@@ -53,4 +54,5 @@ interface AppComponent {
     fun inject(quickDateChangeWidget: QuickDateChangeWidget)
     fun inject(quickEditContainerWidget: QuickEditContainerWidget)
     fun inject(progressWidget: ProgressWidget)
+    fun inject(ticketFilterWidget: TicketFilterSettingsWidget)
 }

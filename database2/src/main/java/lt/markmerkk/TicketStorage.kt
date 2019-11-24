@@ -7,6 +7,7 @@ import lt.markmerkk.entities.TicketStatus
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS
 import lt.markmerkk.schema1.tables.records.TicketRecord
+import lt.markmerkk.schema1.tables.records.TicketStatusRecord
 import org.jooq.DSLContext
 import org.jooq.Result
 import org.slf4j.LoggerFactory
@@ -45,26 +46,76 @@ class TicketStorage(
         }
     }
 
-    fun refreshTicketStatuses(ticketStatuses: List<TicketStatus>): Single<Int> {
+    fun loadTicketStatuses(): Single<List<TicketStatus>> {
         return Single.defer {
-            val newRecordStep = ticketStatuses
-                    .map {
-                        connProvider.dsl.insertInto(
-                                TICKET_STATUS,
-                                TICKET_STATUS.NAME
-                        ).values(it.name)
-                    }
+            val dbResult: Result<TicketStatusRecord> = connProvider.dsl
+                    .select()
+                    .from(TICKET_STATUS)
+                    .fetchInto(TICKET_STATUS)
+            val ticketStatuses = dbResult
+                    .map { TicketStatus(name = it.name, enabled = it.enabled.toBoolean()) }
+            Single.just(ticketStatuses)
+        }
+    }
+
+    fun refreshTicketStatuses(ticketStatusesNames: List<String>): Single<Int> {
+        return Single.defer {
+            val newStatusNamesWithValues = ticketStatusesNames
+                    .map { TicketStatus(it, isTicketStatusEnabled(it)) }
             connProvider.dsl
                     .deleteFrom(TICKET_STATUS)
                     .execute()
-            connProvider.dsl
-                    .batch(newRecordStep)
-                    .execute()
+            newStatusNamesWithValues
+                    .map { ticketStatus ->
+                        connProvider.dsl.insertInto(
+                                TICKET_STATUS,
+                                TICKET_STATUS.NAME,
+                                TICKET_STATUS.ENABLED
+                        ).values(
+                                ticketStatus.name,
+                                ticketStatus.enabled.toByte()
+                        )
+                    }.forEach { it.execute() }
             Single.just(0)
         }
     }
 
-    fun refreshTicketStatusesSync(ticketStatuses: List<TicketStatus>): Int {
+    fun updateTicketStatuses(ticketStatuses: List<TicketStatus>): Single<Int> {
+        return Single.defer {
+            ticketStatuses
+                    .filter {
+                        isTicketStatusExist(connProvider.dsl, it.name)
+                    }
+                    .forEach { ticketStatus ->
+                        connProvider.dsl.update(TICKET_STATUS)
+                                .set(TICKET_STATUS.NAME, ticketStatus.name)
+                                .set(TICKET_STATUS.ENABLED, ticketStatus.enabled.toByte())
+                                .where(TICKET_STATUS.NAME.eq(ticketStatus.name))
+                                .execute()
+                    }
+            Single.just(0)
+        }
+    }
+
+    private fun isTicketStatusExist(dslContext: DSLContext, ticketStatus: String): Boolean {
+        val ticketStatusCount = dslContext.selectCount()
+                .from(TICKET_STATUS)
+                .where(TICKET_STATUS.NAME.eq(ticketStatus))
+                .fetchOne(0, Integer::class.java)
+        return ticketStatusCount > 0
+    }
+
+    fun isTicketStatusEnabled(ticketStatus: String): Boolean {
+        return connProvider.dsl
+                .select()
+                .from(TICKET_STATUS)
+                .where(TICKET_STATUS.NAME.eq(ticketStatus))
+                .fetchInto(TICKET_STATUS)
+                .map { TicketStatus(it.name, it.enabled.toBoolean()) }
+                .firstOrNull { it.name == ticketStatus }?.enabled ?: true
+    }
+
+    fun refreshTicketStatusesSync(ticketStatuses: List<String>): Int {
         return refreshTicketStatuses(ticketStatuses).toBlocking().value()
     }
 

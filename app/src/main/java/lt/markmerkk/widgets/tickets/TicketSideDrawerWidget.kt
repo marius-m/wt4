@@ -151,6 +151,12 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
+                jfxButton("Filter".toUpperCase()) {
+                    setOnAction {
+                        find<TicketFilterSettingsWidget>()
+                                .openModal()
+                    }
+                }
                 jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         eventBus.post(EventMainToggleTickets())

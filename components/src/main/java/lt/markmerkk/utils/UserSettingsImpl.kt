@@ -17,6 +17,7 @@ class UserSettingsImpl(
     override var autoUpdateMinutes: Int = -1
     override var lastUpdate: Long = -1
     override var ticketLastUpdate: Long = -1
+    override var ticketStatusUpdate: Long = -1
 
     private var oauthHost: String = ""
     private var oauthPrivateKey: String = ""
@@ -37,6 +38,7 @@ class UserSettingsImpl(
         lastUpdate = settings.getLong(LAST_UPDATE, -1)
         issueJql = settings.get(ISSUE_JQL, Const.DEFAULT_JQL_USER_ISSUES)
         ticketLastUpdate = settings.getLong(TICKET_LAST_UPDATE, -1)
+        ticketStatusUpdate = settings.getLong(TICKET_STATUS_UPDATE, -1)
         oauthHost = settings.get(OAUTH_HOST, "")
         oauthPrivateKey = settings.get(OAUTH_PRIVATE_KEY, "")
         oauthConsumerKey = settings.get(OAUTH_CONSUMER_KEY, "")
@@ -56,6 +58,7 @@ class UserSettingsImpl(
         settings.set(AUTOUPDATE_TIMEOUT, autoUpdateMinutes.toString())
         settings.set(LAST_UPDATE, lastUpdate.toString())
         settings.set(TICKET_LAST_UPDATE, ticketLastUpdate.toString())
+        settings.set(TICKET_STATUS_UPDATE, ticketStatusUpdate.toString())
         settings.set(OAUTH_HOST, oauthHost)
         settings.set(OAUTH_PRIVATE_KEY, oauthPrivateKey)
         settings.set(OAUTH_CONSUMER_KEY, oauthConsumerKey)
@@ -116,6 +119,7 @@ class UserSettingsImpl(
         const val AUTOUPDATE_TIMEOUT = "AUTOUPDATE_TIMEOUT"
         const val LAST_UPDATE = "LAST_UPDATE"
         const val TICKET_LAST_UPDATE = "TICKET_LAST_UPDATE"
+        const val TICKET_STATUS_UPDATE = "TICKET_STATUS_UPDATE"
         const val OAUTH_HOST = "OAUTH_HOST"
         const val OAUTH_PRIVATE_KEY = "OAUTH_PRIVATE_KEY"
         const val OAUTH_CONSUMER_KEY = "OAUTH_CONSUMER_KEY"
