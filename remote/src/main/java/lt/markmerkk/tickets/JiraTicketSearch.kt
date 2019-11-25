@@ -43,7 +43,7 @@ class JiraTicketSearch {
             Ticket.fromRemoteData(
                     code = it.key,
                     description = it.summary,
-                    status = it.status.name,
+                    status = it?.status?.name ?: "",
                     parentCode = it?.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = now.millis,
