@@ -35,7 +35,7 @@ class JiraWorklogInteractor(
                 JiraWorklogEmitter(
                         jiraClientProvider = jiraClientProvider,
                         jql = jql,
-                        searchFields = "summary,project,created,updated,parent,issuetype",
+                        searchFields = "summary,project,created,updated,parent,issuetype,status",
                         start = startDate,
                         end = endDate
                 ),

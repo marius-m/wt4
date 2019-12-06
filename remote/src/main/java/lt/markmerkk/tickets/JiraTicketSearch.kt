@@ -3,7 +3,6 @@ package lt.markmerkk.tickets
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.entities.TicketStatus
 import net.rcarz.jiraclient.JiraClient
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
