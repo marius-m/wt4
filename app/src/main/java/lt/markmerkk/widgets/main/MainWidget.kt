@@ -25,6 +25,7 @@ import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.StageProperties
+import lt.markmerkk.ui_2.views.SideContainerLogDetails
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.jfxButton
@@ -104,7 +105,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         shortcut(KeyCombination.valueOf("Meta+R"), actionRefresh)
         shortcut(KeyCombination.valueOf("Ctrl+R"), actionRefresh)
         val actionLogDetails = {
-            eventBus.post(EventLogDetailsInitActiveClock())
+            resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
             eventBus.post(EventMainToggleLogDetails())
         }
         shortcut(KeyCombination.valueOf("Meta+S"), actionLogDetails)
@@ -180,33 +181,29 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
             }
         }
         viewSideDrawerLogDetails = jfxDrawer {
-            val viewLogDetails = find<LogDetailsSideDrawerWidget>()
-            setSidePane(viewLogDetails.root)
+            setSidePane(find<SideContainerLogDetails>().root)
             setContent(viewContainerMain)
             direction = JFXDrawer.DrawerDirection.LEFT
             isOverLayVisible = true
             isResizableOnDrag = true
             defaultDrawerSize = 340.0
             setOnDrawerOpened {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                    viewLogDetails.focusInput()
-                }
+                logger.debug("LogDetails:open")
+                handleDrawerOpening()
             }
             setOnDrawerOpening {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                }
+                logger.debug("LogDetails:opening")
+                handleDrawerOpening()
             }
             setOnDrawerClosed {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                }
+                logger.debug("LogDetails:closed")
+                find<SideContainerLogDetails>().detach()
+                handleDrawerOpening()
             }
             setOnDrawerClosing {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                }
+                logger.debug("LogDetails:closing")
+                find<SideContainerLogDetails>().detach()
+                handleDrawerOpening()
             }
         }
         viewSideDrawerTickets = jfxDrawer {
@@ -226,25 +223,21 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
             isResizableOnDrag = true
             defaultDrawerSize = 500.0
             setOnDrawerOpened {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                    viewTicketDrawer.focusInput()
-                }
+                logger.debug("Tickets:open")
+                handleDrawerOpening()
+                viewTicketDrawer.focusInput()
             }
             setOnDrawerOpening {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                }
+                logger.debug("Tickets:opening")
+                handleDrawerOpening()
             }
             setOnDrawerClosed {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                }
+                logger.debug("Tickets:closed")
+                handleDrawerOpening()
             }
             setOnDrawerClosing {
-                if (it.target == this) {
-                    handleDrawerOpening()
-                }
+                logger.debug("Tickets:closing")
+                handleDrawerOpening()
             }
         }
         viewContainerMenu.toFront()
@@ -296,7 +289,13 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Subscribe
     fun onToggleLogDetails(event: EventMainToggleLogDetails) {
-        viewSideDrawerLogDetails.toggle()
+        if (viewSideDrawerLogDetails.isOpened
+                || viewSideDrawerLogDetails.isOpening) {
+            viewSideDrawerLogDetails.close()
+        } else {
+            find<SideContainerLogDetails>().attach()
+            viewSideDrawerLogDetails.open()
+        }
     }
 
     @Subscribe
@@ -376,7 +375,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         }
         when (event.editType) {
             LogEditType.UPDATE -> {
-                eventBus.post(EventLogDetailsInitUpdate(event.logs.first()))
+                resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventMainToggleLogDetails())
             }
             LogEditType.DELETE -> logStorage.delete(event.logs.first())
@@ -482,6 +481,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         override fun onError(error: String?) {
             showError(error ?: "")
         }
+
         override fun onAuthError() {
             showErrorAuth()
         }

@@ -1,18 +1,20 @@
 package lt.markmerkk.widgets.clock
 
 import lt.markmerkk.LogStorage
+import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WTEventBus
-import lt.markmerkk.events.EventLogDetailsInitActiveClock
 import lt.markmerkk.events.EventMainToggleLogDetails
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 
 class ClockPresenter(
         private val hourGlass: HourGlass,
         private val logStorage: LogStorage,
         private val timeProvider: TimeProvider,
-        private val eventBus: WTEventBus
+        private val eventBus: WTEventBus,
+        private val resultDispatcher: ResultDispatcher
 ): ClockContract.Presenter {
 
     private var isRunning = false
@@ -55,7 +57,7 @@ class ClockPresenter(
     }
 
     private fun suggestSavingLog() {
-        eventBus.post(EventLogDetailsInitActiveClock())
+        resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
         eventBus.post(EventMainToggleLogDetails())
     }
 

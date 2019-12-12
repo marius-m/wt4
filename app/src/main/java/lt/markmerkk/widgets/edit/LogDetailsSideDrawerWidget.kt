@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
+import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.events.*
@@ -38,7 +39,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGenerator.View {
+class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
@@ -250,12 +251,35 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
 
     override fun onDock() {
         super.onDock()
-        presenter = LogDetailsPresenterCreate(
-                logStorage,
-                eventBus,
-                graphics,
-                timeProvider
-        )
+        logger.debug("LogDetails:onDock()")
+        val isActiveClock = resultDispatcher.consumeBoolean(RESULT_DISPATCH_KEY_ACTIVE_CLOCK, false)
+        val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
+        presenter = if (entity != null) {
+            LogDetailsPresenterUpdate(
+                    entity,
+                    logStorage,
+                    eventBus,
+                    graphics,
+                    timeProvider
+            )
+        } else {
+            when  {
+                isActiveClock -> LogDetailsPresenterUpdateActiveClock(
+                        logStorage,
+                        eventBus,
+                        graphics,
+                        timeProvider,
+                        hourGlass,
+                        activeLogPersistence
+                )
+                else -> LogDetailsPresenterCreate(
+                        logStorage,
+                        eventBus,
+                        graphics,
+                        timeProvider
+                )
+            }
+        }
         ticketInfoLoader = TicketInfoLoader(
                 listener = object : TicketInfoLoader.Listener {
                     override fun onTicketFound(ticket: Ticket) {
@@ -326,6 +350,7 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     }
 
     override fun onUndock() {
+        logger.debug("LogDetails:onUndock()")
         jiraLinkGenerator.onDetach()
         ticketInfoLoader.onDetach()
         eventBus.unregister(this)
@@ -371,45 +396,6 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     }
 
     //register Events
-
-    @Subscribe
-    fun onInitLog(event: EventLogDetailsInitUpdate) {
-        presenter.onDetach()
-        presenter = LogDetailsPresenterUpdate(
-                event.log,
-                logStorage,
-                eventBus,
-                graphics,
-                timeProvider
-        )
-        presenter.onAttach(this)
-    }
-
-    @Subscribe
-    fun onInitLog(event: EventLogDetailsInitCreate) {
-        presenter.onDetach()
-        presenter = LogDetailsPresenterCreate(
-                logStorage,
-                eventBus,
-                graphics,
-                timeProvider
-        )
-        presenter.onAttach(this)
-    }
-
-    @Subscribe
-    fun onInitLog(event: EventLogDetailsInitActiveClock) {
-        presenter.onDetach()
-        presenter = LogDetailsPresenterUpdateActiveClock(
-                logStorage,
-                eventBus,
-                graphics,
-                timeProvider,
-                hourGlass,
-                activeLogPersistence
-        )
-        presenter.onAttach(this)
-    }
 
     @Subscribe
     fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
@@ -488,12 +474,14 @@ class LogDetailsSideDrawerWidget : View(), LogDetailsContract.View, JiraLinkGene
     }
 
     fun focusInput() {
-        viewTextComment.requestFocus()
+        viewTextComment.textArea.requestFocus()
         viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(LogDetailsSideDrawerWidget::class.java)!!
+        const val RESULT_DISPATCH_KEY_ENTITY = "42344549-81f2-4c24-84cf-213e34b4932b"
+        const val RESULT_DISPATCH_KEY_ACTIVE_CLOCK = "455aa6ed-e914-4b94-ab58-1f2855f6db6e"
     }
 
 }
