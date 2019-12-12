@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.svg.SVGGlyph
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -191,6 +192,10 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         contextMenuTicketSelect.attachTicketSelection(
                 JavaFxObservable.valuesOf(viewTable.selectionModel.selectedItemProperty()))
         eventBus.register(this)
+        Platform.runLater {
+            // todo restore old search name
+            viewTextFieldTicketSearch.requestFocus()
+        }
     }
 
     override fun onUndock() {

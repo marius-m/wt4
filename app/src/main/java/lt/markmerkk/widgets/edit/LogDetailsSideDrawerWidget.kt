@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.controls.JFXTimePicker
 import com.jfoenix.svg.SVGGlyph
+import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -347,6 +348,11 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
         JavaFxObservable.valuesOf(viewTextComment.textArea.textProperty())
                 .subscribe { presenter.changeComment(it) }
+
+        Platform.runLater {
+            viewTextComment.textArea.requestFocus()
+            viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+        }
     }
 
     override fun onUndock() {
