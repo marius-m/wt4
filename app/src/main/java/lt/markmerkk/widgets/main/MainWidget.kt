@@ -26,6 +26,7 @@ import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.ui_2.views.SideContainerLogDetails
+import lt.markmerkk.ui_2.views.SideContainerTickets
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.jfxButton
@@ -188,21 +189,16 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
             isResizableOnDrag = true
             defaultDrawerSize = 340.0
             setOnDrawerOpened {
-                logger.debug("LogDetails:open")
                 handleDrawerOpening()
             }
             setOnDrawerOpening {
-                logger.debug("LogDetails:opening")
                 handleDrawerOpening()
             }
             setOnDrawerClosed {
-                logger.debug("LogDetails:closed")
                 find<SideContainerLogDetails>().detach()
                 handleDrawerOpening()
             }
             setOnDrawerClosing {
-                logger.debug("LogDetails:closing")
-                find<SideContainerLogDetails>().detach()
                 handleDrawerOpening()
             }
         }
@@ -215,28 +211,23 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                         bottom = 0.0.px
                 )
             }
-            val viewTicketDrawer = find<TicketSideDrawerWidget>()
-            setSidePane(viewTicketDrawer.root)
+            setSidePane(find<SideContainerTickets>().root)
             setContent(viewSideDrawerLogDetails)
             direction = JFXDrawer.DrawerDirection.LEFT
             isOverLayVisible = true
             isResizableOnDrag = true
             defaultDrawerSize = 500.0
             setOnDrawerOpened {
-                logger.debug("Tickets:open")
                 handleDrawerOpening()
-                viewTicketDrawer.focusInput()
             }
             setOnDrawerOpening {
-                logger.debug("Tickets:opening")
                 handleDrawerOpening()
             }
             setOnDrawerClosed {
-                logger.debug("Tickets:closed")
                 handleDrawerOpening()
+                find<SideContainerTickets>().detach()
             }
             setOnDrawerClosing {
-                logger.debug("Tickets:closing")
                 handleDrawerOpening()
             }
         }
@@ -300,7 +291,13 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Subscribe
     fun onToggleTicketsWidget(event: EventMainToggleTickets) {
-        viewSideDrawerTickets.toggle()
+        if (viewSideDrawerTickets.isOpened
+                || viewSideDrawerTickets.isOpening) {
+            viewSideDrawerTickets.close()
+        } else {
+            find<SideContainerTickets>().attach()
+            viewSideDrawerTickets.open()
+        }
     }
 
     @Subscribe

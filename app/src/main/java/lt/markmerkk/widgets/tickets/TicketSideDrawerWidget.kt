@@ -25,7 +25,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class TicketSideDrawerWidget: View(), TicketContract.View {
+class TicketSideDrawerWidget: Fragment(), TicketContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var ticketApi: TicketApi
@@ -170,6 +170,7 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
 
     override fun onDock() {
         super.onDock()
+        logger.debug("TicketDrawer:onDock()")
         presenter = TicketPresenter(
                 ticketStorage,
                 ticketApi,
@@ -193,9 +194,12 @@ class TicketSideDrawerWidget: View(), TicketContract.View {
     }
 
     override fun onUndock() {
+        logger.debug("TicketDrawer:onUndock()")
         eventBus.unregister(this)
         contextMenuTicketSelect.onDetach()
         presenter.onDetach()
+        ticketViewModels.clear()
+        projectCodes.clear()
         super.onUndock()
     }
 
