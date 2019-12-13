@@ -24,8 +24,8 @@ public class JFXScrollFreeTextArea extends StackPane {
     private Region content;
     private SimpleDoubleProperty contentHeight = new SimpleDoubleProperty();
 
-    private final double TOP_PADDING = 3D;
-    private final double BOTTOM_PADDING = 6D;
+    private static final double TOP_PADDING = 3D;
+    private static final double BOTTOM_PADDING = 6D;
 
     public JFXScrollFreeTextArea() {
         super();

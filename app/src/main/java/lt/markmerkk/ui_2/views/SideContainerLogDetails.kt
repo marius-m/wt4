@@ -10,9 +10,11 @@ class SideContainerLogDetails: View() {
 
     private lateinit var widgetActive: Fragment
 
-    override val root: Parent = vbox {
-        widgetActive = find<EmptyWidget>()
-        add(widgetActive)
+    override val root: Parent = borderpane {
+        center {
+            widgetActive = find<EmptyWidget>()
+            add(widgetActive)
+        }
     }
 
     override fun onDock() {

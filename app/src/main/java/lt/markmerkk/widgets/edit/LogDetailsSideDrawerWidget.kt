@@ -209,6 +209,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                                     textArea.focusColor = Styles.cActiveRed
                                     textArea.isLabelFloat = true
                                     textArea.promptText = "Comment"
+                                    hgrow = Priority.ALWAYS
                                 }
                         add(viewTextComment)
                     }

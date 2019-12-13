@@ -2,7 +2,6 @@ package lt.markmerkk.ui_2.views
 
 import javafx.scene.Parent
 import lt.markmerkk.ui_2.EmptyWidget
-import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -11,9 +10,11 @@ class SideContainerTickets: View() {
 
     private lateinit var widgetActive: Fragment
 
-    override val root: Parent = vbox {
-        widgetActive = find<EmptyWidget>()
-        add(widgetActive)
+    override val root: Parent = borderpane {
+        center {
+            widgetActive = find<EmptyWidget>()
+            add(widgetActive)
+        }
     }
 
     override fun onDock() {
