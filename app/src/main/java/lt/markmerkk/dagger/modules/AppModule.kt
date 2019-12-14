@@ -323,6 +323,18 @@ class AppModule(
 
     @Provides
     @Singleton
+    fun provideJiraLinkGenerator(
+            accountAvailablility: AccountAvailablility
+    ): JiraLinkGenerator {
+        if (BuildConfig.oauth) {
+            return JiraLinkGeneratorOAuth(view = null, accountAvailability = accountAvailablility)
+        } else {
+            return JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
+        }
+    }
+
+    @Provides
+    @Singleton
     fun provideAutoSyncWatcher(
             eventBus: WTEventBus,
             timeProvider: TimeProvider,

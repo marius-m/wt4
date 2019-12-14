@@ -8,5 +8,6 @@ enum class LogEditType {
     DELETE,
     CLONE,
     SPLIT,
+    WEBLINK,
     ;
 }

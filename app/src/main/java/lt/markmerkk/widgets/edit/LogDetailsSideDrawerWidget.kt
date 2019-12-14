@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.controls.JFXTimePicker
 import com.jfoenix.svg.SVGGlyph
+import com.vdurmont.emoji.EmojiParser
 import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -466,7 +467,8 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
     override fun showCopyLink(ticketCode: TicketCode, webLink: String) {
         viewButtonTicketLink.isDisable = false
         viewButtonTicketLink.setOnAction {
-            eventBus.post(EventSnackBarMessage("Copy $webLink"))
+            val message = EmojiParser.parseToUnicode("Copied $webLink :rocket:")
+            eventBus.post(EventSnackBarMessage(message))
             hostServicesInteractor.ticketWebLinkToClipboard(webLink)
         }
     }

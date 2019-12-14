@@ -38,7 +38,11 @@ class ContextMenuEditLog(
                         MenuItem(
                                 strings.getString("general_split"),
                                 graphics.from(Glyph.SPLIT, Color.BLACK, 16.0, 12.0)
-                        ).apply { id = LogEditType.SPLIT.name }
+                        ).apply { id = LogEditType.SPLIT.name },
+                        MenuItem(
+                                strings.getString("general_weblink"),
+                                graphics.from(Glyph.NEW, Color.BLACK, 14.0, 16.0)
+                        ).apply { id = LogEditType.WEBLINK.name }
                         // Disabled for incomplete feature
 //                        MenuItem(
 //                                strings.getString("general_merge"),

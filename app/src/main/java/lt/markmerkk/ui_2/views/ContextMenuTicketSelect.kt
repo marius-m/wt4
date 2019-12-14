@@ -2,6 +2,7 @@ package lt.markmerkk.ui_2.views
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
+import com.vdurmont.emoji.EmojiParser
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.paint.Color
@@ -54,7 +55,7 @@ class ContextMenuTicketSelect(
             .apply {
                 items.addAll(
                         MenuItem(
-                                "Web link",
+                                "Web-link",
                                 graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
                         ).apply { id = SelectType.WEB_LINK.name }
                 )
@@ -65,7 +66,8 @@ class ContextMenuTicketSelect(
                         when (selectType) {
                             SelectType.WEB_LINK -> {
                                 val webLinkToTicket = jiraLinkGenerator.webLinkFromInput(ticketCode.code)
-                                eventBus.post(EventSnackBarMessage("Copy $webLinkToTicket"))
+                                val message = EmojiParser.parseToUnicode("Copied $webLinkToTicket :rocket:")
+                                eventBus.post(EventSnackBarMessage(message))
                                 hostServicesInteractor.ticketWebLinkToClipboard(
                                         webLinkToTicket
                                 )

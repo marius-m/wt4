@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDrawer
 import com.jfoenix.controls.JFXSnackbar
 import com.jfoenix.svg.SVGGlyph
+import com.vdurmont.emoji.EmojiParser
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -23,6 +24,7 @@ import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.ui_2.views.SideContainerLogDetails
@@ -33,6 +35,7 @@ import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxDrawer
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
+import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.Changelog
@@ -71,6 +74,8 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     @Inject lateinit var jiraClientProvider: JiraClientProvider
     @Inject lateinit var versionProvider: VersionProvider
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var jiraLinkGenerator: JiraLinkGenerator
+    @Inject lateinit var hostServicesInteractor: HostServicesInteractor
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -316,6 +321,10 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     fun onSnackBarMessage(event: EventSnackBarMessage) {
         val label = Label(event.message)
                 .apply {
+                    addClass(Styles.emojiText)
+                    style {
+                        fontSize = 16.0.px
+                    }
                     background = Background(BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY))
                     val paddingHorizontal = 10.0
                     val paddingVertical = 8.0
@@ -390,7 +399,19 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                 resultDispatcher.publish(TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
             }
-        }
+            LogEditType.WEBLINK -> {
+                val activeLog = event.logs.first()
+                val webLink = jiraLinkGenerator.webLinkFromInput(activeLog.task)
+                if (webLink.isNotEmpty()) {
+                    val message = EmojiParser.parseToUnicode("Copied $webLink :rocket:")
+                    eventBus.post(EventSnackBarMessage(message))
+                    hostServicesInteractor.ticketWebLinkToClipboard(webLink)
+                } else {
+                    val message = EmojiParser.parseToUnicode("Can't generate web link :boom:")
+                    eventBus.post(EventSnackBarMessage(message))
+                }
+            }
+        }.javaClass
     }
 
     //endregion
