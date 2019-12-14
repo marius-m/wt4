@@ -21,6 +21,7 @@ import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.AccountAvailablility
+import org.controlsfx.control.PrefixSelectionComboBox
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -42,7 +43,8 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         Main.component().inject(this)
     }
 
-    private lateinit var viewComboProjectCodes: JFXComboBox<String>
+//    private lateinit var viewComboProjectCodes: JFXComboBox<String>
+    private lateinit var viewComboProjectCodes: PrefixSelectionComboBox<String>
     private lateinit var viewTextFieldTicketSearch: JFXTextField
     private lateinit var viewProgress: TicketProgressWidget
     private lateinit var viewTable: TableView<TicketViewModel>
@@ -79,17 +81,20 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         center {
             vbox(spacing = 4) {
                 hbox(spacing = 4) {
-                    viewComboProjectCodes = jfxCombobox(SimpleStringProperty(""), projectCodes) {
+                    viewComboProjectCodes = cfxPrefixSelectionComboBox(SimpleStringProperty(""), projectCodes) {
                         setOnAction {
-                            val selectItem = (it.source as JFXComboBox<String>)
+                            val selectItem = (it.source as PrefixSelectionComboBox<String>)
                                     .selectionModel
                                     .selectedItem ?: ""
-                            logger.debug("Making selecting in ${selectItem}")
+                            logger.debug("Making selecting in $selectItem")
                             presenter.loadTickets(
                                     filter = viewTextFieldTicketSearch.text,
                                     projectCode = selectItem
                             )
                         }
+                        isDisplayOnFocusedEnabled = true
+                        typingDelay = 1000
+                        isBackSpaceAllowed = true
                     }
                     viewTextFieldTicketSearch = jfxTextField {
                         hgrow = Priority.ALWAYS

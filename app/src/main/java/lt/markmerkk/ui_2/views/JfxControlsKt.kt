@@ -9,6 +9,7 @@ import javafx.geometry.Side
 import javafx.scene.Node
 import javafx.scene.control.Button
 import org.controlsfx.control.MasterDetailPane
+import org.controlsfx.control.PrefixSelectionComboBox
 import tornadofx.*
 
 /**
@@ -94,3 +95,12 @@ fun EventTarget.jfxMasterDetailPane(
         side: Side,
         op: MasterDetailPane.() -> Unit = {}
 ) = MasterDetailPane(side).attachTo(this, op)
+
+fun <T> EventTarget.cfxPrefixSelectionComboBox(
+        property: Property<T>? = null,
+        values: List<T>? = null,
+        op: PrefixSelectionComboBox<T>.() -> Unit = {}) = PrefixSelectionComboBox<T>().attachTo(this, op) {
+    if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
+    if (property != null) it.bind(property)
+    it.selectionModel.select(0)
+}

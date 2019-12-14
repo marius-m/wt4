@@ -82,6 +82,7 @@ dependencies {
     implementation "com.vladsch.flexmark:flexmark-all:0.50.40"
     implementation "commons-io:commons-io:2.6"
     implementation "com.vdurmont:emoji-java:5.1.1"
+    implementation "org.controlsfx:controlsfx:8.40.16"
 
     implementation("com.google.dagger:dagger:${versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${versions.dagger}")
