@@ -244,7 +244,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                     }
                     viewButtonClose = jfxButton("Close".toUpperCase()) {
                         setOnAction {
-                            eventBus.post(EventMainToggleLogDetails())
+                            eventBus.post(EventMainCloseLogDetails())
                         }
                     }
                 }
@@ -479,7 +479,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
     }
 
     override fun closeDetails() {
-        eventBus.post(EventMainToggleLogDetails())
+        eventBus.post(EventMainCloseLogDetails())
     }
 
     fun focusInput() {

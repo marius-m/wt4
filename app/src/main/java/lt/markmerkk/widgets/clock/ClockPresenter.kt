@@ -4,7 +4,7 @@ import lt.markmerkk.LogStorage
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WTEventBus
-import lt.markmerkk.events.EventMainToggleLogDetails
+import lt.markmerkk.events.EventMainOpenLogDetails
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
@@ -58,7 +58,7 @@ class ClockPresenter(
 
     private fun suggestSavingLog() {
         resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
-        eventBus.post(EventMainToggleLogDetails())
+        eventBus.post(EventMainOpenLogDetails())
     }
 
     private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {

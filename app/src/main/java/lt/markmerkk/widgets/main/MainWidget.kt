@@ -113,7 +113,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         shortcut(KeyCombination.valueOf("Ctrl+R"), actionRefresh)
         val actionLogDetails = {
             resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
-            eventBus.post(EventMainToggleLogDetails())
+            eventBus.post(EventMainOpenLogDetails())
         }
         shortcut(KeyCombination.valueOf("Meta+S"), actionLogDetails)
         shortcut(KeyCombination.valueOf("Ctrl+S"), actionLogDetails)
@@ -313,25 +313,41 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     //region Events
 
     @Subscribe
-    fun onToggleLogDetails(event: EventMainToggleLogDetails) {
-        if (viewSideDrawerLogDetails.isOpened
-                || viewSideDrawerLogDetails.isOpening) {
-            viewSideDrawerLogDetails.close()
-        } else {
-            find<SideContainerLogDetails>().attach()
-            viewSideDrawerLogDetails.open()
-        }
+    fun onOpenLogDetails(event: EventMainOpenLogDetails) {
+        when (sidePaneHandler.sidePanelState()) {
+            SidePaneHandler.PaneState.CLOSED -> {
+                find<SideContainerLogDetails>().attach()
+                viewSideDrawerLogDetails.open()
+            }
+            SidePaneHandler.PaneState.OPEN_ONLY_LOGS -> {}
+            SidePaneHandler.PaneState.OPEN_ALL -> {}
+        }.javaClass
+    }
+
+    @Subscribe
+    fun onCloseLogDetails(event: EventMainCloseLogDetails) {
+        when (sidePaneHandler.sidePanelState()) {
+            SidePaneHandler.PaneState.CLOSED -> {}
+            SidePaneHandler.PaneState.OPEN_ONLY_LOGS -> {
+                viewSideDrawerLogDetails.close()
+            }
+            SidePaneHandler.PaneState.OPEN_ALL -> {
+                viewSideDrawerLogDetails.close()
+                viewSideDrawerTickets.close()
+            }
+        }.javaClass
     }
 
     @Subscribe
     fun onToggleTicketsWidget(event: EventMainToggleTickets) {
-        if (viewSideDrawerTickets.isOpened
-                || viewSideDrawerTickets.isOpening) {
-            viewSideDrawerTickets.close()
-        } else {
-            find<SideContainerTickets>().attach()
-            viewSideDrawerTickets.open()
-        }
+        // todo temporarily disabled funct
+//        if (viewSideDrawerTickets.isOpened
+//                || viewSideDrawerTickets.isOpening) {
+//            viewSideDrawerTickets.close()
+//        } else {
+//            find<SideContainerTickets>().attach()
+//            viewSideDrawerTickets.open()
+//        }
     }
 
     @Subscribe
@@ -411,7 +427,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         when (event.editType) {
             LogEditType.UPDATE -> {
                 resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
-                eventBus.post(EventMainToggleLogDetails())
+                eventBus.post(EventMainOpenLogDetails())
             }
             LogEditType.DELETE -> logStorage.delete(event.logs.first())
             LogEditType.CLONE -> {
