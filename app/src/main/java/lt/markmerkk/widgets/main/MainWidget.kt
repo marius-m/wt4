@@ -48,7 +48,6 @@ import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
-import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.Subscription
@@ -339,15 +338,26 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     }
 
     @Subscribe
-    fun onToggleTicketsWidget(event: EventMainToggleTickets) {
-        // todo temporarily disabled funct
-//        if (viewSideDrawerTickets.isOpened
-//                || viewSideDrawerTickets.isOpening) {
-//            viewSideDrawerTickets.close()
-//        } else {
-//            find<SideContainerTickets>().attach()
-//            viewSideDrawerTickets.open()
-//        }
+    fun onOpenTickets(event: EventMainOpenTickets) {
+        when (sidePaneHandler.sidePanelState()) {
+            SidePaneHandler.PaneState.CLOSED -> {}
+            SidePaneHandler.PaneState.OPEN_ONLY_LOGS -> {
+                find<SideContainerTickets>().attach()
+                viewSideDrawerTickets.open()
+            }
+            SidePaneHandler.PaneState.OPEN_ALL -> { }
+        }.javaClass
+    }
+
+    @Subscribe
+    fun onCloseTickets(event: EventMainCloseTickets) {
+        when (sidePaneHandler.sidePanelState()) {
+            SidePaneHandler.PaneState.CLOSED -> {}
+            SidePaneHandler.PaneState.OPEN_ONLY_LOGS -> { }
+            SidePaneHandler.PaneState.OPEN_ALL -> {
+                viewSideDrawerTickets.close()
+            }
+        }.javaClass
     }
 
     @Subscribe

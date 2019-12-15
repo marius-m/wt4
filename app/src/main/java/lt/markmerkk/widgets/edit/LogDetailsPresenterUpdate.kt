@@ -1,13 +1,10 @@
 package lt.markmerkk.widgets.edit
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventInflateDialog
-import lt.markmerkk.events.EventMainToggleTickets
+import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
@@ -97,7 +94,7 @@ class LogDetailsPresenterUpdate(
     }
 
     override fun openFindTickets() {
-        eventBus.post(EventMainToggleTickets())
+        eventBus.post(EventMainOpenTickets())
     }
 
     override fun changeTicketCode(ticket: String) { }

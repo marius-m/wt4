@@ -189,7 +189,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                             isFocusTraversable = false
                             graphic = graphics.from(Glyph.SEARCH, Color.BLACK, 20.0)
                             setOnAction {
-                                eventBus.post(EventMainToggleTickets())
+                                eventBus.post(EventMainOpenTickets())
                             }
                             shortcut(KeyCombination.valueOf("Ctrl+f"))
                             shortcut(KeyCombination.valueOf("Meta+f"))

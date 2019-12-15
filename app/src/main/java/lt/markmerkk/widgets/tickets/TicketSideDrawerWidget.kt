@@ -2,7 +2,6 @@ package lt.markmerkk.widgets.tickets
 
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.svg.SVGGlyph
 import javafx.application.Platform
@@ -14,7 +13,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
-import lt.markmerkk.events.EventMainToggleTickets
+import lt.markmerkk.events.EventMainCloseTickets
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.events.EventTicketFilterChange
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -68,7 +67,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                 val selectTicket = viewTable.selectionModel.selectedItems.firstOrNull()?.ticket
                 if (selectTicket != null) {
                     eventBus.post(EventSuggestTicket(selectTicket))
-                    eventBus.post(EventMainToggleTickets())
+                    eventBus.post(EventMainCloseTickets())
                 }
             }
         }
@@ -136,7 +135,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                         val selectTicket = viewTable.selectionModel.selectedItems.firstOrNull()?.ticket
                         if (mouseEvent.clickCount >= 2 && selectTicket != null) {
                             eventBus.post(EventSuggestTicket(selectTicket))
-                            eventBus.post(EventMainToggleTickets())
+                            eventBus.post(EventMainCloseTickets())
                         }
                     }
                     columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
@@ -167,7 +166,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                 }
                 jfxButton("Close".toUpperCase()) {
                     setOnAction {
-                        eventBus.post(EventMainToggleTickets())
+                        eventBus.post(EventMainCloseTickets())
                     }
                 }
             }
