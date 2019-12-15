@@ -88,6 +88,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     private var subsFocusChange: Subscription? = null
 
     private lateinit var presenter: MainContract.Presenter
+    private lateinit var sidePaneHandler: SidePaneHandler
 
     init {
         Main.component().inject(this)
@@ -119,9 +120,9 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         shortcut(KeyCombination.valueOf("Esc")) {
             when {
                 viewSideDrawerTickets.isOpened
-                        || viewSideDrawerTickets.isOpening -> viewSideDrawerTickets.toggle()
+                        || viewSideDrawerTickets.isOpening -> viewSideDrawerTickets.close()
                 viewSideDrawerLogDetails.isOpened
-                        || viewSideDrawerLogDetails.isOpening -> viewSideDrawerLogDetails.toggle()
+                        || viewSideDrawerLogDetails.isOpening -> viewSideDrawerLogDetails.close()
             }
         }
         val actionSaveLog = {
@@ -194,17 +195,17 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
             isResizableOnDrag = true
             defaultDrawerSize = 340.0
             setOnDrawerOpened {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
             setOnDrawerOpening {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
             setOnDrawerClosed {
                 find<SideContainerLogDetails>().detach()
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
             setOnDrawerClosing {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
         }
         viewSideDrawerTickets = jfxDrawer {
@@ -223,17 +224,17 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
             isResizableOnDrag = true
             defaultDrawerSize = 500.0
             setOnDrawerOpened {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
             setOnDrawerOpening {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
             setOnDrawerClosed {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
                 find<SideContainerTickets>().detach()
             }
             setOnDrawerClosing {
-                handleDrawerOpening()
+                sidePaneHandler.notifyOnSidePaneChange()
             }
         }
         viewContainerMenu.toFront()
@@ -261,6 +262,24 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
                 .subscribe { eventBus.post(EventFocusChange(it)) }
         presenter = MainPresenter()
+        sidePaneHandler = SidePaneHandler(
+                listener = object : SidePaneHandler.Listener {
+                    override fun onAnySidePaneOpen() {
+                        autoSyncWatcher.changeUpdateLock(
+                                isInLock = true,
+                                lockProcessName = "Drawer"
+                        )
+                    }
+                    override fun onAllPanesClosed() {
+                        autoSyncWatcher.changeUpdateLock(
+                                isInLock = false,
+                                lockProcessName = "Drawer"
+                        )
+                    }
+                },
+                paneLogs = SidePaneStateProviderDrawer(viewSideDrawerLogDetails),
+                paneTickets = SidePaneStateProviderDrawer(viewSideDrawerTickets)
+        )
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
@@ -418,10 +437,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     override fun rootNode(): StackPane = root as StackPane
 
-    override fun onAutoSyncLockChange(isLocked: Boolean) {
-        autoSyncWatcher.changeUpdateLock(isInLock = isLocked, lockProcessName = "Drawer")
-    }
-
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
         when (event.type) {
@@ -480,15 +495,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                         )
                     }
                 }
-        )
-    }
-
-    private fun handleDrawerOpening() {
-        presenter.updateAutoSyncLock(
-                isOpenLogDetails = viewSideDrawerLogDetails.isOpened,
-                isOpeningLogDetails = viewSideDrawerLogDetails.isOpening,
-                isOpenTickets = viewSideDrawerTickets.isOpened,
-                isOpeningTickets = viewSideDrawerTickets.isOpening
         )
     }
 

@@ -12,18 +12,4 @@ class MainPresenter(): MainContract.Presenter {
         this.view = null
     }
 
-    override fun updateAutoSyncLock(
-            isOpenLogDetails: Boolean,
-            isOpeningLogDetails: Boolean,
-            isOpenTickets: Boolean,
-            isOpeningTickets: Boolean
-    ): Boolean {
-        val isLocked = isOpenLogDetails
-                || isOpeningLogDetails
-                || isOpenTickets
-                || isOpeningTickets
-        view?.onAutoSyncLockChange(isLocked = isLocked)
-        return isLocked
-    }
-
 }
