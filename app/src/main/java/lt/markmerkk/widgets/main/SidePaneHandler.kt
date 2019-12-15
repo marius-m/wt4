@@ -10,16 +10,28 @@ class SidePaneHandler(
 ) {
 
     fun notifyOnSidePaneChange() {
-        if (paneLogs.isOpen() || paneTickets.isOpen()) {
-            listener.onAnySidePaneOpen()
-            return
+        listener.onSidePanelStateChange(sidePanelState())
+    }
+
+    fun sidePanelState(): PaneState {
+        if (paneLogs.isOpen() && !paneTickets.isOpen()) {
+            return PaneState.OPEN_ONLY_LOGS
         }
-        listener.onAllPanesClosed()
+        if (paneLogs.isOpen() || paneTickets.isOpen()) {
+            return PaneState.OPEN_ALL
+        }
+        return PaneState.CLOSED
+    }
+
+    enum class PaneState {
+        CLOSED,
+        OPEN_ONLY_LOGS,
+        OPEN_ALL,
+        ;
     }
 
     interface Listener {
-        fun onAnySidePaneOpen()
-        fun onAllPanesClosed()
+        fun onSidePanelStateChange(state: PaneState)
     }
 
     interface SidePaneStateProvider {

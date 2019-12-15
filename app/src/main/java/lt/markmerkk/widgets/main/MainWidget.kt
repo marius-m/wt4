@@ -264,17 +264,27 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         presenter = MainPresenter()
         sidePaneHandler = SidePaneHandler(
                 listener = object : SidePaneHandler.Listener {
-                    override fun onAnySidePaneOpen() {
-                        autoSyncWatcher.changeUpdateLock(
-                                isInLock = true,
-                                lockProcessName = "Drawer"
-                        )
-                    }
-                    override fun onAllPanesClosed() {
-                        autoSyncWatcher.changeUpdateLock(
-                                isInLock = false,
-                                lockProcessName = "Drawer"
-                        )
+                    override fun onSidePanelStateChange(state: SidePaneHandler.PaneState) {
+                        when (state) {
+                            SidePaneHandler.PaneState.CLOSED -> {
+                                autoSyncWatcher.changeUpdateLock(
+                                        isInLock = false,
+                                        lockProcessName = "Drawer"
+                                )
+                            }
+                            SidePaneHandler.PaneState.OPEN_ONLY_LOGS -> {
+                                autoSyncWatcher.changeUpdateLock(
+                                        isInLock = true,
+                                        lockProcessName = "Drawer"
+                                )
+                            }
+                            SidePaneHandler.PaneState.OPEN_ALL -> {
+                                autoSyncWatcher.changeUpdateLock(
+                                        isInLock = true,
+                                        lockProcessName = "Drawer"
+                                )
+                            }
+                        }.javaClass
                     }
                 },
                 paneLogs = SidePaneStateProviderDrawer(viewSideDrawerLogDetails),
