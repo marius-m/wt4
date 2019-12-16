@@ -9,6 +9,7 @@ import javax.annotation.Generated;
 import lt.markmerkk.schema1.tables.SqliteSequence;
 import lt.markmerkk.schema1.tables.Ticket;
 import lt.markmerkk.schema1.tables.TicketStatus;
+import lt.markmerkk.schema1.tables.TicketUseHistory;
 import lt.markmerkk.schema1.tables.Worklog;
 
 
@@ -39,6 +40,11 @@ public class Tables {
      * The table <code>ticket_status</code>.
      */
     public static final TicketStatus TICKET_STATUS = lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS;
+
+    /**
+     * The table <code>ticket_use_history</code>.
+     */
+    public static final TicketUseHistory TICKET_USE_HISTORY = lt.markmerkk.schema1.tables.TicketUseHistory.TICKET_USE_HISTORY;
 
     /**
      * The table <code>worklog</code>.

@@ -19,13 +19,15 @@ class LogDetailsPresenterUpdateActiveClock(
         private val graphics: Graphics<SVGGlyph>,
         private val timeProvider: TimeProvider,
         private val hourGlass: HourGlass,
-        private val activeLogPersistence: ActiveLogPersistence
+        private val activeLogPersistence: ActiveLogPersistence,
+        private val ticketStorage: TicketStorage
 ): LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
     private val logEditService: LogEditService = LogEditServiceImpl(
             logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
             timeProvider = timeProvider,
+            ticketStorage = ticketStorage,
             listener = object : LogEditService.Listener {
                 override fun onDataChange(
                         start: DateTime,

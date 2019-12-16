@@ -4,17 +4,20 @@ import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketStatus
+import lt.markmerkk.schema1.Tables.TICKET_USE_HISTORY
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS
 import lt.markmerkk.schema1.tables.records.TicketRecord
 import lt.markmerkk.schema1.tables.records.TicketStatusRecord
+import org.joda.time.DateTime
 import org.jooq.DSLContext
 import org.jooq.Result
 import org.slf4j.LoggerFactory
 import rx.Single
 
 class TicketStorage(
-        private val connProvider: DBConnProvider
+        private val connProvider: DBConnProvider,
+        private val timeProvider: TimeProvider
 ) {
 
     fun enabledStatuses(): Single<List<String>> {
@@ -268,6 +271,36 @@ class TicketStorage(
                     }
             Single.just(tickets)
         }
+    }
+
+    fun saveTicketAsUsedSync(
+            now: DateTime,
+            ticketCode: TicketCode
+    ) {
+        if (!ticketCode.isEmpty()) {
+            rmHistoryWithCode(connProvider.dsl, ticketCode)
+            connProvider.dsl.insertInto(
+                    TICKET_USE_HISTORY,
+                    TICKET_USE_HISTORY.CODE,
+                    TICKET_USE_HISTORY.CODE_PROJECT,
+                    TICKET_USE_HISTORY.CODE_NUMBER,
+                    TICKET_USE_HISTORY.LASTUSED
+            ).values(
+                    ticketCode.code,
+                    ticketCode.codeProject,
+                    ticketCode.codeNumber,
+                    timeProvider.roundMillis(now)
+            ).execute()
+        }
+    }
+
+    private fun rmHistoryWithCode(dslContext: DSLContext, ticketCode: TicketCode): Int {
+        if (ticketCode.isEmpty()) {
+            return -1
+        }
+        return dslContext.deleteFrom(TICKET_USE_HISTORY)
+                .where(TICKET_USE_HISTORY.CODE.eq(ticketCode.code))
+                .execute()
     }
 
     private fun isTicketExist(dslContext: DSLContext, ticket: Ticket): Boolean {

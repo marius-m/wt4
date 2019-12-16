@@ -263,7 +263,8 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                     logStorage,
                     eventBus,
                     graphics,
-                    timeProvider
+                    timeProvider,
+                    ticketStorage
             )
         } else {
             when  {
@@ -273,13 +274,15 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                         graphics,
                         timeProvider,
                         hourGlass,
-                        activeLogPersistence
+                        activeLogPersistence,
+                        ticketStorage
                 )
                 else -> LogDetailsPresenterCreate(
                         logStorage,
                         eventBus,
                         graphics,
-                        timeProvider
+                        timeProvider,
+                        ticketStorage
                 )
             }
         }

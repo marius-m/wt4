@@ -16,13 +16,15 @@ class LogDetailsPresenterReadOnly(
         private val logStorage: LogStorage,
         private val eventBus: EventBus,
         private val graphics: Graphics<SVGGlyph>,
-        private val timeProvider: TimeProvider
+        private val timeProvider: TimeProvider,
+        private val ticketStorage: TicketStorage
 ): LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
     private val logEditService: LogEditService = LogEditServiceImpl(
             logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
             timeProvider = timeProvider,
+            ticketStorage = ticketStorage,
             listener = object : LogEditService.Listener {
                 override fun onDataChange(
                         start: DateTime,

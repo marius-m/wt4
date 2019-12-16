@@ -36,3 +36,10 @@ CREATE TABLE `ticket_status` (
   `name` VARCHAR(100) DEFAULT '' NOT NULL,
   `enabled` TINYINT NOT NULL DEFAULT 1
 );
+CREATE TABLE `ticket_use_history` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `code_project` VARCHAR(50) DEFAULT '' NOT NULL,
+  `code_number` VARCHAR(50) DEFAULT '' NOT NULL,
+  `code` VARCHAR(50) DEFAULT '' NOT NULL,
+  `lastUsed` BIGINT NOT NULL DEFAULT 0
+);

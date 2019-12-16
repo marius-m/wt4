@@ -277,7 +277,8 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
                     logStorage,
                     eventBus,
                     graphics,
-                    timeProvider
+                    timeProvider,
+                    ticketStorage
             )
         } else {
             when  {
@@ -287,13 +288,15 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
                         graphics,
                         timeProvider,
                         hourGlass,
-                        activeLogPersistence
+                        activeLogPersistence,
+                        ticketStorage
                 )
                 else -> LogDetailsPresenterCreate(
                         logStorage,
                         eventBus,
                         graphics,
-                        timeProvider
+                        timeProvider,
+                        ticketStorage
                 )
             }
         }

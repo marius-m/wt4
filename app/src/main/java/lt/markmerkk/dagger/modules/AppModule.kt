@@ -182,6 +182,12 @@ class AppModule(
                                 databaseName = "wt4_2.db",
                                 databasePath = config.cfgPath
                         )
+                ),
+                Migration7To8(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
                 )
         )
         val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
@@ -193,9 +199,10 @@ class AppModule(
     @Provides
     @Singleton
     fun providesDatabaseRepo(
-            databaseProvider: DBConnProvider
+            databaseProvider: DBConnProvider,
+            timeProvider: TimeProvider
     ): TicketStorage {
-        return TicketStorage(databaseProvider)
+        return TicketStorage(databaseProvider, timeProvider)
     }
 
     @Provides
