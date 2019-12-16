@@ -127,7 +127,7 @@ class TicketLoader(
             inputFilter: String,
             projectCode: ProjectCode
     ): Single<List<TicketScore>> {
-        return ticketStorage.loadOnlyEnabledTickets()
+        return ticketStorage.loadTicketsWithEnabledStatuses()
                 .map { tickets ->
                     if (projectCode.isEmpty) {
                         tickets

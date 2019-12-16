@@ -2,6 +2,7 @@ package lt.markmerkk.ui_2.views
 
 import javafx.scene.Parent
 import lt.markmerkk.ui_2.EmptyWidget
+import lt.markmerkk.widgets.tickets.TicketBasicSearchWidget
 import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -26,7 +27,9 @@ class SideContainerTickets: View() {
     }
 
     fun attach() {
+        // todo temporary replacement
         val newSidePanel = find<TicketSideDrawerWidget>()
+//        val newSidePanel = find<TicketBasicSearchWidget>() // todo experimental ticket search
         widgetActive
                 .replaceWith(newSidePanel)
         widgetActive = newSidePanel

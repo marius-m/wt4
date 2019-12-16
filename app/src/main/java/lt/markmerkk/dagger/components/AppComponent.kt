@@ -20,10 +20,7 @@ import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
-import lt.markmerkk.widgets.tickets.TicketFilterSettingsWidget
-import lt.markmerkk.widgets.tickets.TicketProgressWidget
-import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
-import lt.markmerkk.widgets.tickets.TicketWidget
+import lt.markmerkk.widgets.tickets.*
 import javax.inject.Singleton
 
 @Singleton
@@ -55,4 +52,5 @@ interface AppComponent {
     fun inject(quickEditContainerWidget: QuickEditContainerWidget)
     fun inject(progressWidget: ProgressWidget)
     fun inject(ticketFilterWidget: TicketFilterSettingsWidget)
+    fun inject(ticketBasicSearchWidget: TicketBasicSearchWidget)
 }

@@ -30,8 +30,38 @@ class TicketStorage(
         }
     }
 
-    fun loadTicketsWithEnabledStatus(likeProjectCode: String, likeDescription: String) {
-
+    fun loadTicketsWithEnabledStatus(
+            likeString: String
+    ): Single<List<Ticket>> {
+        return enabledStatuses()
+                .flatMap {
+                    val dbResult: Result<TicketRecord> = connProvider.dsl
+                            .select()
+                            .from(TICKET)
+                            .where(TICKET.CODE.like(likeString)
+                                    .or(TICKET.DESCRIPTION.like(likeString)))
+                            .fetchInto(TICKET)
+                    val tickets = dbResult
+                            .map { ticket ->
+                                Ticket(
+                                        id = ticket.id.toLong(),
+                                        code = TicketCode.new(ticket.code),
+                                        description = ticket.description,
+                                        parentId = ticket.parentId,
+                                        status = ticket.status,
+                                        parentCode = TicketCode.new(ticket.parentCode),
+                                        remoteData = RemoteData.new(
+                                                isDeleted = ticket.isDeleted.toBoolean(),
+                                                isDirty = ticket.isDirty.toBoolean(),
+                                                isError = ticket.isError.toBoolean(),
+                                                errorMessage = ticket.errorMessage,
+                                                fetchTime = ticket.fetchtime,
+                                                url = ticket.url
+                                        )
+                                )
+                            }
+                    Single.just(tickets)
+                }
     }
 
     fun loadTicketsWithEnabledStatuses(): Single<List<Ticket>> {
