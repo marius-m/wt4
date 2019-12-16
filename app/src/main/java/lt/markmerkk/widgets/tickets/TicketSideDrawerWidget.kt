@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
+import lt.markmerkk.events.EventFocusTicketWidget
 import lt.markmerkk.events.EventMainCloseTickets
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.events.EventTicketFilterChange
@@ -238,12 +239,13 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         this.projectCodes.addAll(projectCodes)
     }
 
-    fun focusInput() {
+    //region events
+
+    @Subscribe
+    fun onFocusTicketWidget(event: EventFocusTicketWidget) {
         viewTextFieldTicketSearch.requestFocus()
         viewTextFieldTicketSearch.positionCaret(viewTextFieldTicketSearch.text.length)
     }
-
-    //region events
 
     @Subscribe
     fun onTicketFilterChange(event: EventTicketFilterChange) {

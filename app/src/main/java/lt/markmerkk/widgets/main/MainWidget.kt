@@ -276,12 +276,14 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                                         isInLock = true,
                                         lockProcessName = "Drawer"
                                 )
+                                eventBus.post(EventFocusLogDetailsWidget())
                             }
                             SidePaneHandler.PaneState.OPEN_ALL -> {
                                 autoSyncWatcher.changeUpdateLock(
                                         isInLock = true,
                                         lockProcessName = "Drawer"
                                 )
+                                eventBus.post(EventFocusTicketWidget())
                             }
                         }.javaClass
                     }

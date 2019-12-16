@@ -406,6 +406,12 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
     //register Events
 
     @Subscribe
+    fun onFocusLogDetailsWidget(event: EventFocusLogDetailsWidget) {
+        viewTextComment.textArea.requestFocus()
+        viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+    }
+
+    @Subscribe
     fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
         viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
     }
