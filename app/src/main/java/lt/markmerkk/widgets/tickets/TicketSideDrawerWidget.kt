@@ -185,6 +185,10 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                         maxWidth = 100.0
                     }
                     readonlyColumn("Description", RecentTicketViewModel::description) { }
+                    readonlyColumn("Last used", RecentTicketViewModel::lastUsed) {
+                        minWidth = 100.0
+                        maxWidth = 100.0
+                    }
                 }
                 label("Search tickets") {
                     addClass(Styles.labelMini)

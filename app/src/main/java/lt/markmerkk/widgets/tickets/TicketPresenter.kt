@@ -51,7 +51,9 @@ class TicketPresenter(
     private val recentTicketLoader = RecentTicketLoader(
             listener = object : RecentTicketLoader.Listener {
                 override fun onRecentTickets(tickets: List<TicketUseHistory>) {
-                    val ticketsVm = tickets.map { RecentTicketViewModel(it) }
+                    val now = timeProvider.now()
+                    val ticketsVm = tickets
+                            .map { RecentTicketViewModel(now, it) }
                     view?.showRecentTickets(ticketsVm)
                 }
             },
