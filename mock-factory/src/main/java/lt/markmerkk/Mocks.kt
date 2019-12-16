@@ -205,4 +205,17 @@ object Mocks {
         )
     }
 
+    fun createTicketUseHistory(
+            timeProvider: TimeProvider,
+            code: String = "DEV-111",
+            description: String = "",
+            lastUsed: DateTime = timeProvider.now()
+    ): TicketUseHistory {
+        return TicketUseHistory(
+                TicketCode.new(code),
+                description,
+                lastUsed
+        )
+    }
+
 }

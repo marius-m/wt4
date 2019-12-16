@@ -13,13 +13,17 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
+import lt.markmerkk.entities.Ticket
 import lt.markmerkk.events.EventFocusTicketWidget
 import lt.markmerkk.events.EventMainCloseTickets
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.events.EventTicketFilterChange
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.TicketApi
-import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.ui_2.views.ContextMenuTicketSelect
+import lt.markmerkk.ui_2.views.cfxPrefixSelectionComboBox
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxTextField
 import lt.markmerkk.utils.AccountAvailablility
 import org.controlsfx.control.PrefixSelectionComboBox
 import org.slf4j.LoggerFactory
@@ -49,9 +53,12 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
     private lateinit var viewProgress: TicketProgressWidget
     private lateinit var viewTable: TableView<TicketViewModel>
     private lateinit var viewButtonClear: JFXButton
+    private lateinit var viewTableRecent: TableView<RecentTicketViewModel>
 
     private lateinit var presenter: TicketContract.Presenter
     private val ticketViewModels = mutableListOf<TicketViewModel>()
+            .asObservable()
+    private val recentTicketViewModels = mutableListOf<RecentTicketViewModel>()
             .asObservable()
     private val projectCodes = mutableListOf<String>()
             .asObservable()
@@ -65,10 +72,30 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
     override val root: Parent = borderpane {
         setOnKeyReleased { keyEvent ->
             if (keyEvent.code == KeyCode.ENTER) {
-                val selectTicket = viewTable.selectionModel.selectedItems.firstOrNull()?.ticket
-                if (selectTicket != null) {
-                    eventBus.post(EventSuggestTicket(selectTicket))
-                    eventBus.post(EventMainCloseTickets())
+                if (viewTable.isFocused) {
+                    val selectTicket = viewTable
+                            .selectionModel
+                            .selectedItems
+                            .firstOrNull()?.ticket
+                    if (selectTicket != null) {
+                        eventBus.post(EventSuggestTicket(selectTicket))
+                        eventBus.post(EventMainCloseTickets())
+                    }
+                }
+                if (viewTableRecent.isFocused) {
+                    val selectRecentTicket = viewTableRecent
+                            .selectionModel
+                            .selectedItems
+                            .firstOrNull()?.ticketUseHistory
+                    if (selectRecentTicket != null) {
+                        val ticket = Ticket.new(
+                                code = selectRecentTicket.code.code,
+                                description = selectRecentTicket.description,
+                                remoteData = null
+                        )
+                        eventBus.post(EventSuggestTicket(ticket))
+                        eventBus.post(EventMainCloseTickets())
+                    }
                 }
             }
         }
@@ -127,6 +154,40 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                     }
                     viewProgress.viewButtonRefresh.isFocusTraversable = false
                     add(viewProgress)
+                }
+                label("Recently used tickets") {
+                    addClass(Styles.labelMini)
+                }
+                viewTableRecent = tableview(recentTicketViewModels) {
+                    minHeight = 120.0
+                    prefHeight = 180.0
+                    maxHeight = 240.0
+                    columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+                    contextMenu = contextMenuTicketSelect.root
+                    hgrow = Priority.ALWAYS
+                    setOnMouseClicked { mouseEvent ->
+                        val selectRecentTicket = viewTableRecent
+                                .selectionModel
+                                .selectedItems
+                                .firstOrNull()?.ticketUseHistory
+                        if (mouseEvent.clickCount >= 2 && selectRecentTicket != null) {
+                            val ticket = Ticket.new(
+                                    code = selectRecentTicket.code.code,
+                                    description = selectRecentTicket.description,
+                                    remoteData = null
+                            )
+                            eventBus.post(EventSuggestTicket(ticket))
+                            eventBus.post(EventMainCloseTickets())
+                        }
+                    }
+                    readonlyColumn("Code", RecentTicketViewModel::code) {
+                        minWidth = 100.0
+                        maxWidth = 100.0
+                    }
+                    readonlyColumn("Description", RecentTicketViewModel::description) { }
+                }
+                label("Search tickets") {
+                    addClass(Styles.labelMini)
                 }
                 viewTable = tableview(ticketViewModels) {
                     contextMenu = contextMenuTicketSelect.root
@@ -237,6 +298,11 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
     override fun onProjectCodes(projectCodes: List<String>) {
         this.projectCodes.clear()
         this.projectCodes.addAll(projectCodes)
+    }
+
+    override fun showRecentTickets(tickets: List<RecentTicketViewModel>) {
+        this.recentTicketViewModels.clear()
+        this.recentTicketViewModels.addAll(tickets)
     }
 
     //region events

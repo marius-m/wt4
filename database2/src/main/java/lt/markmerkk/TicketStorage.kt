@@ -1,9 +1,6 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.Ticket
-import lt.markmerkk.entities.TicketCode
-import lt.markmerkk.entities.TicketStatus
+import lt.markmerkk.entities.*
 import lt.markmerkk.schema1.Tables.TICKET_USE_HISTORY
 import lt.markmerkk.schema1.tables.Ticket.TICKET
 import lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS
@@ -13,6 +10,7 @@ import org.joda.time.DateTime
 import org.jooq.DSLContext
 import org.jooq.Result
 import org.slf4j.LoggerFactory
+import rx.Observable
 import rx.Single
 
 class TicketStorage(
@@ -270,6 +268,24 @@ class TicketStorage(
                         )
                     }
             Single.just(tickets)
+        }
+    }
+
+    fun fetchRecentTickets(limit: Int): Single<List<TicketUseHistory>> {
+        return Single.defer {
+            val recentTickets = connProvider.dsl.select()
+                    .from(TICKET_USE_HISTORY)
+                    .orderBy(TICKET_USE_HISTORY.LASTUSED)
+                    .limit(limit)
+                    .fetchInto(TICKET_USE_HISTORY)
+                    .map { ticketRecord ->
+                        TicketUseHistory(
+                                code = TicketCode.new(ticketRecord.code),
+                                description = "",
+                                lastUsed = timeProvider.roundDateTime(ticketRecord.lastused)
+                        )
+                    }
+            Single.just(recentTickets)
         }
     }
 

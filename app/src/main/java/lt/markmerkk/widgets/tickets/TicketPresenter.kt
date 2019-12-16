@@ -4,7 +4,8 @@ import lt.markmerkk.SchedulerProvider
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
-import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketUseHistory
+import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.tickets.TicketApi
 import rx.Observable
@@ -47,12 +48,27 @@ class TicketPresenter(
             uiScheduler = schedulerProvider.ui()
     )
 
+    private val recentTicketLoader = RecentTicketLoader(
+            listener = object : RecentTicketLoader.Listener {
+                override fun onRecentTickets(tickets: List<TicketUseHistory>) {
+                    val ticketsVm = tickets.map { RecentTicketViewModel(it) }
+                    view?.showRecentTickets(ticketsVm)
+                }
+            },
+            ticketStorage = ticketStorage,
+            ioScheduler = schedulerProvider.io(),
+            uiScheduler = schedulerProvider.ui()
+    )
+
     override fun onAttach(view: TicketContract.View) {
         this.view = view
         ticketsLoader.onAttach()
+        recentTicketLoader.onAttach()
+        recentTicketLoader.fetch()
     }
 
     override fun onDetach() {
+        recentTicketLoader.onDetach()
         ticketsLoader.onDetach()
         this.view = null
     }

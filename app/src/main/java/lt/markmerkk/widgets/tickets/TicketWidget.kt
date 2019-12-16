@@ -223,6 +223,10 @@ class TicketWidget: Fragment(), TicketContract.View {
         this.projectCodes.addAll(projectCodes)
     }
 
+    override fun showRecentTickets(ticket: List<RecentTicketViewModel>) {
+        // no impl
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(TicketWidget::class.java)!!
     }
