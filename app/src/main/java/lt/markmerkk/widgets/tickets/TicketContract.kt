@@ -11,7 +11,6 @@ interface TicketContract {
         fun onProjectCodes(projectCodes: List<String>)
         fun showInputClear()
         fun hideInputClear()
-        fun showRecentTickets(ticket: List<RecentTicketViewModel>)
     }
     interface Presenter {
         fun onAttach(view: View)

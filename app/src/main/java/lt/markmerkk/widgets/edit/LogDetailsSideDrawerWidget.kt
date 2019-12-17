@@ -11,7 +11,9 @@ import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.control.TableView
 import javafx.scene.control.Tooltip
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
@@ -19,29 +21,32 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.entities.TicketUseHistory
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
+import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
-import lt.markmerkk.ui_2.views.jfxButton
-import lt.markmerkk.ui_2.views.jfxDatePicker
-import lt.markmerkk.ui_2.views.jfxTextField
-import lt.markmerkk.ui_2.views.jfxTimePicker
+import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
+import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.View {
+class LogDetailsSideDrawerWidget : Fragment(),
+        LogDetailsContract.View,
+        JiraLinkGenerator.View,
+        RecentTicketLoader.Listener {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
@@ -75,6 +80,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
     private lateinit var viewButtonClose: JFXButton
     private lateinit var viewLabelHint: Label
     private lateinit var viewLabelHint2: Label
+    private lateinit var viewTableRecent: TableView<RecentTicketViewModel>
 
     private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -82,11 +88,46 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
     private lateinit var ticketInfoLoader: TicketInfoLoader
     private lateinit var jiraLinkGenerator: JiraLinkGenerator
 
+    private val recentTicketViewModels = mutableListOf<RecentTicketViewModel>().asObservable()
+
     init {
         Main.component().inject(this)
     }
 
+    private val contextMenuTicketSelect: ContextMenuTicketSelect = ContextMenuTicketSelect(
+            graphics = graphics,
+            eventBus = eventBus,
+            hostServicesInteractor = hostServicesInteractor,
+            accountAvailablility = accountAvailablility
+    )
+    private val recentTicketLoader = RecentTicketLoader(
+            listener = this,
+            ticketStorage = ticketStorage,
+            ioScheduler = schedulerProvider.io(),
+            uiScheduler = schedulerProvider.ui()
+    )
+
     override val root: Parent = stackpane {
+        setOnKeyReleased { keyEvent ->
+            if (keyEvent.code == KeyCode.ENTER) {
+                if (viewTableRecent.isFocused) {
+                    val selectRecentTicket = viewTableRecent
+                            .selectionModel
+                            .selectedItems
+                            .firstOrNull()?.ticketUseHistory
+                    if (selectRecentTicket != null) {
+                        val ticket = Ticket.new(
+                                code = selectRecentTicket.code.code,
+                                description = selectRecentTicket.description,
+                                remoteData = null
+                        )
+                        eventBus.post(EventSuggestTicket(ticket))
+                        eventBus.post(EventMainCloseTickets())
+                        focusInput()
+                    }
+                }
+            }
+        }
         addClass(Styles.sidePanelContainer)
         borderpane {
             top {
@@ -194,6 +235,40 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                             shortcut(KeyCombination.valueOf("Ctrl+f"))
                             shortcut(KeyCombination.valueOf("Meta+f"))
                         }
+                    }
+                    viewTableRecent = tableview(recentTicketViewModels) {
+                        minHeight = 120.0
+                        prefHeight = 180.0
+                        maxHeight = 240.0
+                        columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+                        contextMenu = contextMenuTicketSelect.root
+                        hgrow = Priority.ALWAYS
+                        setOnMouseClicked { mouseEvent ->
+                            val selectRecentTicket = viewTableRecent
+                                    .selectionModel
+                                    .selectedItems
+                                    .firstOrNull()?.ticketUseHistory
+                            if (mouseEvent.clickCount >= 2 && selectRecentTicket != null) {
+                                val ticket = Ticket.new(
+                                        code = selectRecentTicket.code.code,
+                                        description = selectRecentTicket.description,
+                                        remoteData = null
+                                )
+                                eventBus.post(EventSuggestTicket(ticket))
+                                eventBus.post(EventMainCloseTickets())
+                                focusInput()
+                            }
+                        }
+                        readonlyColumn("Code", RecentTicketViewModel::code) {
+                            minWidth = 100.0
+                            maxWidth = 100.0
+                        }
+                        readonlyColumn("Description", RecentTicketViewModel::description) { }
+                        readonlyColumn("Last used", RecentTicketViewModel::lastUsed) {
+                            minWidth = 100.0
+                            maxWidth = 100.0
+                        }
+                        hide()
                     }
                     hbox {
                         hgrow = Priority.ALWAYS
@@ -341,6 +416,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
                     }
                 }
         )
+        recentTicketLoader.onAttach()
         presenter.onAttach(this)
         uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
@@ -353,7 +429,12 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
         JavaFxObservable.valuesOf(viewTextComment.textArea.textProperty())
                 .subscribe { presenter.changeComment(it) }
+        JavaFxObservable.valuesOf(viewTableRecent.focusedProperty())
+                .subscribe { handleRecentVisibility() }
+        JavaFxObservable.valuesOf(viewTextFieldTicket.focusedProperty())
+                .subscribe { handleRecentVisibility() }
 
+        recentTicketLoader.fetch()
         Platform.runLater {
             viewTextComment.textArea.requestFocus()
             viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
@@ -361,6 +442,7 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
     }
 
     override fun onUndock() {
+        recentTicketLoader.onDetach()
         logger.debug("LogDetails:onUndock()")
         jiraLinkGenerator.onDetach()
         ticketInfoLoader.onDetach()
@@ -489,6 +571,22 @@ class LogDetailsSideDrawerWidget : Fragment(), LogDetailsContract.View, JiraLink
 
     override fun closeDetails() {
         eventBus.post(EventMainCloseLogDetails())
+    }
+
+    override fun onRecentTickets(tickets: List<TicketUseHistory>) {
+        val now = timeProvider.now()
+        val ticketsVm = tickets
+                .map { RecentTicketViewModel(now, it) }
+        this.recentTicketViewModels.clear()
+        this.recentTicketViewModels.addAll(ticketsVm)
+    }
+
+    private fun handleRecentVisibility() {
+        if (viewTableRecent.isFocused || viewTextFieldTicket.isFocused) {
+            viewTableRecent.show()
+        } else {
+            viewTableRecent.hide()
+        }
     }
 
     fun focusInput() {
