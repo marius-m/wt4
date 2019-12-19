@@ -574,7 +574,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onRecentTickets(tickets: List<TicketUseHistory>) {
-        val now = timeProvider.now()
+        val now = timeProvider.preciseNow()
         val ticketsVm = tickets
                 .map { RecentTicketViewModel(now, it) }
         this.recentTicketViewModels.clear()

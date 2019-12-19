@@ -17,6 +17,13 @@ open class TimeProviderTest: TimeProvider {
         DateTimeUtils.setCurrentMillisFixed(1L)
     }
 
+    override fun preciseNow(): DateTime = DateTime
+            .now(dateTimeZone)
+
+    override fun preciseNowMillis(): Long = DateTime
+            .now(dateTimeZone)
+            .millis
+
     override fun now(): DateTime = DateTime.now(dateTimeZone)
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
@@ -31,8 +38,17 @@ open class TimeProviderTest: TimeProvider {
                 .withNano(0)
     }
 
+    override fun preciseDateTime(millis: Long): DateTime {
+        return DateTime(millis, dateTimeZone)
+    }
+
     override fun roundDateTime(millis: Long): DateTime {
         return DateTime(millis, dateTimeZone)
+    }
+
+    override fun preciseMillis(dateTime: DateTime): Long {
+        return dateTime.withZone(dateTimeZone)
+                .millis
     }
 
     override fun roundMillis(dateTime: DateTime): Long {

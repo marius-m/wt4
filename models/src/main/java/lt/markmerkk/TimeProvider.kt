@@ -8,6 +8,10 @@ interface TimeProvider {
     val dateTimeZone: DateTimeZone
     val zoneId: java.time.ZoneId
 
+    fun preciseNow(): DateTime
+
+    fun preciseNowMillis(): Long
+
     /**
      * @return instance of 'now' in joda datetime
      */
@@ -20,10 +24,14 @@ interface TimeProvider {
      */
     fun jNow(): java.time.LocalDateTime
 
+    fun preciseDateTime(millis: Long): DateTime
+
     /**
      * Converts millis to joda datetime
      */
     fun roundDateTime(millis: Long): DateTime
+
+    fun preciseMillis(dateTime: DateTime): Long
 
     /**
      * Converts joda date time without seconds

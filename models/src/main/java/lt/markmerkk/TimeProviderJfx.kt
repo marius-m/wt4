@@ -13,6 +13,13 @@ class TimeProviderJfx(
 
     override val zoneId: java.time.ZoneId = java.time.ZoneId.of(dateTimeZone.id)
 
+    override fun preciseNow(): DateTime = DateTime
+            .now(dateTimeZone)
+
+    override fun preciseNowMillis(): Long = DateTime
+            .now(dateTimeZone)
+            .millis
+
     override fun now(): DateTime = DateTime.now(dateTimeZone)
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
@@ -26,6 +33,10 @@ class TimeProviderJfx(
 
     //region Convenience
 
+    override fun preciseDateTime(millis: Long): DateTime {
+        return DateTime(millis, dateTimeZone)
+    }
+
     override fun roundDateTime(millis: Long): DateTime {
         return DateTime(millis, dateTimeZone)
                 .withSecondOfMinute(0)
@@ -38,6 +49,11 @@ class TimeProviderJfx(
                 zoneId
         ).withSecond(0)
                 .withNano(0)
+    }
+
+    override fun preciseMillis(dateTime: DateTime): Long {
+        return dateTime.withZone(dateTimeZone)
+                .millis
     }
 
     override fun roundMillis(dateTime: DateTime): Long {

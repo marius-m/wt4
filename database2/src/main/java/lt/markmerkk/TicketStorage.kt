@@ -275,14 +275,14 @@ class TicketStorage(
         return Single.defer {
             val recentTickets = connProvider.dsl.select()
                     .from(TICKET_USE_HISTORY)
-                    .orderBy(TICKET_USE_HISTORY.LASTUSED)
+                    .orderBy(TICKET_USE_HISTORY.LASTUSED.desc())
                     .limit(limit)
                     .fetchInto(TICKET_USE_HISTORY)
                     .map { ticketRecord ->
                         TicketUseHistory(
                                 code = TicketCode.new(ticketRecord.code),
                                 description = "",
-                                lastUsed = timeProvider.roundDateTime(ticketRecord.lastused)
+                                lastUsed = timeProvider.preciseDateTime(ticketRecord.lastused)
                         )
                     }
             Single.just(recentTickets)
@@ -305,7 +305,7 @@ class TicketStorage(
                     ticketCode.code,
                     ticketCode.codeProject,
                     ticketCode.codeNumber,
-                    timeProvider.roundMillis(now)
+                    timeProvider.preciseMillis(now)
             ).execute()
         }
     }
