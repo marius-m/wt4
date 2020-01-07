@@ -1,6 +1,5 @@
 package lt.markmerkk.widgets.list
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
@@ -37,7 +36,20 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
             eventBus,
             this
     )
-    private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
+    private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(
+            strings,
+            graphics,
+            logStorage,
+            eventBus,
+            listOf(
+                    LogEditType.NEW,
+                    LogEditType.UPDATE,
+                    LogEditType.CLONE,
+                    LogEditType.DELETE,
+                    LogEditType.SPLIT,
+                    LogEditType.WEBLINK
+            )
+    )
     private val logs = mutableListOf<LogViewModel>()
             .observable()
 

@@ -196,7 +196,19 @@ class CalendarWidget: Fragment() {
         JavaFxObservable.valuesOf(viewZoomSlider.valueProperty())
                 .subscribe { viewCalendar.hourHeight = it.toDouble() }
         viewZoomSlider.value = 50.0
-        contextMenu = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
+        contextMenu = ContextMenuEditLog(
+                strings,
+                graphics,
+                logStorage,
+                eventBus,
+                listOf(
+                        LogEditType.UPDATE,
+                        LogEditType.CLONE,
+                        LogEditType.DELETE,
+                        LogEditType.SPLIT,
+                        LogEditType.WEBLINK
+                )
+        )
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         logStorage.register(storageListener)
 

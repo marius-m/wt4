@@ -432,11 +432,18 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Subscribe
     fun onEventEditLog(event: EventEditLog) {
+        if (event.editType == LogEditType.NEW) {
+            eventBus.post(EventMainOpenLogDetails())
+            return
+        }
         if (event.logs.isEmpty()) {
             logger.warn("No items are selected. Have you bound selected items ?")
             return
         }
         when (event.editType) {
+            LogEditType.NEW -> {
+                // No edit funct
+            }
             LogEditType.UPDATE -> {
                 resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventMainOpenLogDetails())
