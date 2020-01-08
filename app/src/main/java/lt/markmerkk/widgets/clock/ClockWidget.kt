@@ -13,14 +13,14 @@ import lt.markmerkk.events.EventFocusChange
 import lt.markmerkk.events.EventTickTock
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
-import lt.markmerkk.utils.hourglass.HourGlass2
+import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
 class ClockWidget : Fragment(), ClockContract.View {
 
-    @Inject lateinit var hourGlass: HourGlass2
+    @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus

@@ -9,7 +9,7 @@ import org.joda.time.Duration
 /**
  * Responsible for calculating time
  */
-class HourGlass2(
+class HourGlass(
         private val eventBus: WTEventBus,
         private val timeProvider: TimeProvider
 ) {

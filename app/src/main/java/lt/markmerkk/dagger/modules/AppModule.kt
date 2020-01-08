@@ -14,7 +14,7 @@ import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
-import lt.markmerkk.utils.hourglass.HourGlass2
+import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
@@ -274,8 +274,8 @@ class AppModule(
     fun provideHourGlass2(
             timeProvider: TimeProvider,
             eventBus: WTEventBus
-    ): HourGlass2 {
-        return HourGlass2(eventBus, timeProvider)
+    ): HourGlass {
+        return HourGlass(eventBus, timeProvider)
     }
 
     @Provides

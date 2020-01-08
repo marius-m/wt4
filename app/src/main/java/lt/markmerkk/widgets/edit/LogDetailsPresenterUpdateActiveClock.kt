@@ -9,7 +9,7 @@ import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
-import lt.markmerkk.utils.hourglass.HourGlass2
+import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
 
 class LogDetailsPresenterUpdateActiveClock(
@@ -17,7 +17,7 @@ class LogDetailsPresenterUpdateActiveClock(
         private val eventBus: WTEventBus,
         private val graphics: Graphics<SVGGlyph>,
         private val timeProvider: TimeProvider,
-        private val hourGlass: HourGlass2,
+        private val hourGlass: HourGlass,
         private val activeLogPersistence: ActiveLogPersistence,
         private val ticketStorage: TicketStorage
 ): LogDetailsContract.Presenter {

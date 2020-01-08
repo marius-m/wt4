@@ -1,12 +1,8 @@
 package lt.markmerkk.utils.hourglass
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.TimeProvider
 import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.WTEventBus
 import org.assertj.core.api.Assertions.assertThat
-import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.junit.Before
 import org.junit.Test
@@ -16,7 +12,7 @@ import org.mockito.MockitoAnnotations
 class HourGlassChangeStart2Test {
 
     @Mock lateinit var eventBus: WTEventBus
-    private lateinit var hourGlass: HourGlass2
+    private lateinit var hourGlass: HourGlass
 
     private val timeProvider = TimeProviderTest()
 
@@ -24,7 +20,7 @@ class HourGlassChangeStart2Test {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        hourGlass = HourGlass2(eventBus, timeProvider)
+        hourGlass = HourGlass(eventBus, timeProvider)
     }
 
     @Test

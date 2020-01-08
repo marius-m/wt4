@@ -2,11 +2,11 @@ package lt.markmerkk.widgets.statistics
 
 import lt.markmerkk.LogStorage
 import lt.markmerkk.utils.LogUtils
-import lt.markmerkk.utils.hourglass.HourGlass2
+import lt.markmerkk.utils.hourglass.HourGlass
 
 class StatisticsPresenter(
         private val logStorage: LogStorage,
-        private val hourGlass: HourGlass2
+        private val hourGlass: HourGlass
 ): StatisticsContract.Presenter {
 
     private var view: StatisticsContract.View? = null
