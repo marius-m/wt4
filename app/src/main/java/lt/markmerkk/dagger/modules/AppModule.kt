@@ -15,6 +15,7 @@ import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
@@ -271,8 +272,11 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideHourGlass(): HourGlass {
-        return HourGlass()
+    fun provideHourGlass2(
+            timeProvider: TimeProvider,
+            eventBus: WTEventBus
+    ): HourGlass2 {
+        return HourGlass2(eventBus, timeProvider)
     }
 
     @Provides
@@ -369,6 +373,19 @@ class AppModule(
             api: Api
     ): VersionProvider {
         return VersionProviderImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTicker(
+            eventBus: WTEventBus,
+            schedulerProvider: SchedulerProvider
+    ): Ticker {
+        return Ticker(
+                eventBus,
+                schedulerProvider.waitScheduler(),
+                schedulerProvider.ui()
+        )
     }
 
 }

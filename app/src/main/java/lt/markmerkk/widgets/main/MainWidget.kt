@@ -36,7 +36,7 @@ import lt.markmerkk.ui_2.views.jfxDrawer
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.JiraLinkGenerator
-import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.Ticker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.Changelog
 import lt.markmerkk.versioner.ChangelogLoader
@@ -59,7 +59,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
-    @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var resultDispatcher: ResultDispatcher
@@ -75,6 +74,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var jiraLinkGenerator: JiraLinkGenerator
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
+    @Inject lateinit var ticker: Ticker
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -306,9 +306,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         subsFocusChange?.unsubscribe()
         eventBus.unregister(this)
         syncInteractor.removeLoadingListener(syncInteractorListener)
-        if (hourGlass.state == HourGlass.State.RUNNING) {
-            hourGlass.stop()
-        }
     }
 
     //region Events
@@ -369,6 +366,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Subscribe
     fun onFocusChange(event: EventFocusChange) {
+        ticker.changeFocus(event.isInFocus)
         if (!event.isInFocus) {
             eventBus.post(EventEditMode(isInEdit = false))
         }

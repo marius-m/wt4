@@ -11,7 +11,7 @@ import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogUtils
-import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlass2
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
-    @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var hourGlass: HourGlass2
 
     init {
         Main.component().inject(this)
@@ -98,7 +98,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
                 .forEach { data ->
                     data.node.addEventHandler(MouseEvent.MOUSE_CLICKED) {
                         ticketInfoLoader.findTicket(data.name)
-                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatShortDuration(data.pieValue.toLong())}"
+                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatShortDurationMillis(data.pieValue.toLong())}"
                     }
                 }
     }

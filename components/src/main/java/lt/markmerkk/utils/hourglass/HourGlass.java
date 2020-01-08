@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
  * Created by mariusm on 10/30/14.
  * Represents the logic and core functionality of the clock
  */
+@Deprecated // Use HourGlass2
 public class HourGlass {
   public static final Logger logger = LoggerFactory.getLogger(HourGlass.class);
 

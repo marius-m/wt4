@@ -28,6 +28,7 @@ import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.widgets.tickets.TicketWidget
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -46,7 +47,7 @@ class LogDetailsWidget : Fragment(), LogDetailsContract.View, JiraLinkGenerator.
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
-    @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var hourGlass: HourGlass2
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2

@@ -34,7 +34,7 @@ import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
-import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.views.JFXScrollFreeTextArea
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import org.joda.time.DateTime
@@ -56,7 +56,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
-    @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var hourGlass: HourGlass2
     @Inject lateinit var activeLogPersistence: ActiveLogPersistence
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2

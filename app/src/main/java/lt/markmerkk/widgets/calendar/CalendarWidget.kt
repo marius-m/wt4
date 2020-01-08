@@ -11,7 +11,6 @@ import com.calendarfx.view.DetailedWeekView
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXSlider
 import com.jfoenix.svg.SVGGlyph
-import com.vdurmont.emoji.EmojiParser
 import javafx.collections.SetChangeListener
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -29,15 +28,12 @@ import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.EventEditLog
-import lt.markmerkk.events.EventEditMode
-import lt.markmerkk.events.EventFocusChange
-import lt.markmerkk.events.EventLogSelection
+import lt.markmerkk.events.*
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.utils.CalendarFxLogLoader
-import lt.markmerkk.utils.CalendarFxUpdater
+import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.CalendarMenuItemProvider
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
@@ -70,8 +66,6 @@ class CalendarWidget: Fragment() {
     private lateinit var viewInfoLabel: Label
 
     private lateinit var logLoader: CalendarFxLogLoader
-    private lateinit var calendarUpdater: CalendarFxUpdater
-
 
     init {
         Main.component().inject(this)
@@ -234,13 +228,7 @@ class CalendarWidget: Fragment() {
                 schedulerProvider.io(),
                 schedulerProvider.ui()
         )
-        calendarUpdater = CalendarFxUpdater(
-                calendarUpdateListener,
-                schedulerProvider.waitScheduler(),
-                schedulerProvider.ui()
-        )
         logLoader.onAttach()
-        calendarUpdater.onAttach()
         logLoader.load(logStorage.data)
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
@@ -252,13 +240,18 @@ class CalendarWidget: Fragment() {
         eventBus.unregister(this)
         mainContainerNavigator.onDetach()
         viewCalendar.selections.removeListener(jfxCalSelectionListener)
-        calendarUpdater.onDetach()
         logLoader.onDetach()
         logStorage.unregister(storageListener)
         super.onUndock()
     }
 
     //region Events
+
+    @Subscribe
+    fun eventOnTick(event: EventTickTock) {
+        viewCalendar.today = LocalDate.now()
+        viewCalendar.time = LocalTime.now()
+    }
 
     @Subscribe
     fun onEditModeChange(event: EventEditMode) {
@@ -359,13 +352,6 @@ class CalendarWidget: Fragment() {
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
             viewInfoLabel.text = totalWorkGenerator.generateTotalMessage()
-        }
-    }
-
-    private val calendarUpdateListener: CalendarFxUpdater.Listener = object : CalendarFxUpdater.Listener {
-        override fun onCurrentTimeUpdate(currentTime: LocalTime) {
-            viewCalendar.today = LocalDate.now()
-            viewCalendar.time = LocalTime.now()
         }
     }
 

@@ -1,9 +1,8 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.entities.SimpleLog
-import org.joda.time.DurationFieldType
-import org.joda.time.Period
-import org.joda.time.PeriodType
+import org.joda.time.*
+import org.joda.time.format.PeriodFormatterBuilder
 import java.util.regex.Pattern
 
 object LogUtils {
@@ -47,25 +46,23 @@ object LogUtils {
 
     /**
      * Formats duration time into pretty and short string format
+     * @param duration provided duration to format
+     * *
+     * @return formatted duration
+     */
+    fun formatShortDuration(duration: Duration): String {
+        return LogFormatters.humanReadableDurationShort(duration)
+    }
+
+    /**
+     * Formats duration time into pretty and short string format
      * @param durationMillis provided duration to format
      * *
      * @return formatted duration
      */
-    fun formatShortDuration(durationMillis: Long): String {
-        if (durationMillis < 1000 * 60)
-            return "0m"
-        val builder = StringBuilder()
-        val type = PeriodType.forFields(arrayOf(DurationFieldType.hours(), DurationFieldType.minutes()))
-        val period = Period(durationMillis, type)
-        if (period.days != 0)
-            builder.append(period.days).append("d").append(" ")
-        if (period.hours != 0)
-            builder.append(period.hours).append("h").append(" ")
-        if (period.minutes != 0)
-            builder.append(period.minutes).append("m").append(" ")
-        if (builder.isNotEmpty() && builder[builder.length - 1] == " "[0])
-            builder.deleteCharAt(builder.length - 1)
-        return builder.toString()
+    fun formatShortDurationMillis(durationMillis: Long): String {
+        val duration = Duration(durationMillis)
+        return LogFormatters.humanReadableDurationShort(duration)
     }
 
     fun firstLine(input: String): String {
@@ -79,7 +76,7 @@ object LogUtils {
     @JvmStatic fun formatLogToText(simpleLog: SimpleLog): String {
         val timeFrom = LogFormatters.shortFormat.print(simpleLog.start)
         val timeTo = LogFormatters.shortFormat.print(simpleLog.end)
-        val duration = formatShortDuration(simpleLog.duration)
+        val duration = formatShortDurationMillis(simpleLog.duration)
         return "${simpleLog.task} ($timeFrom - $timeTo = $duration) ${firstLine(simpleLog.comment)}"
                 .trim()
     }

@@ -6,6 +6,7 @@ import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
+import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.main.MainWidget
 import org.slf4j.LoggerFactory
@@ -24,6 +25,7 @@ class Main : App(MainWidget::class, Styles::class) {
     @Inject lateinit var schedulersProvider: SchedulerProvider
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
+    @Inject lateinit var ticker: Ticker
 
     private lateinit var keepAliveGASession: KeepAliveGASession
     private lateinit var appComponent: AppComponent
@@ -66,9 +68,11 @@ class Main : App(MainWidget::class, Styles::class) {
                 privateKey = BuildConfig.oauthKeyPrivate,
                 consumerKey = BuildConfig.oauthKeyConsumer
         )
+        ticker.onAttach()
     }
 
     override fun stop() {
+        ticker.onDetach()
         autoSyncWatcher.onDetach()
         stageProperties.onDetach()
         keepAliveGASession.onDetach()

@@ -19,7 +19,7 @@ class TotalWorkGenerator(
         val total = logStorage.total().toLong()
         val type = PeriodType.forFields(arrayOf(DurationFieldType.hours(), DurationFieldType.minutes()))
         val period = Period(total, type)
-        val totalMessage = LogUtils.formatShortDuration(total)
+        val totalMessage = LogUtils.formatShortDurationMillis(total)
         return when (logStorage.displayType) {
             DisplayTypeLength.DAY -> {
                 if (period.hours > 8 || period.hours == 8) {
@@ -39,7 +39,7 @@ class TotalWorkGenerator(
     }
 
     private fun reportTotalNormal(total: Long): String {
-        val formatTotalLogged = LogUtils.formatShortDuration(total)
+        val formatTotalLogged = LogUtils.formatShortDurationMillis(total)
         return "Total: $formatTotalLogged"
     }
 

@@ -7,10 +7,11 @@ import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventMainOpenLogDetails
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 
 class ClockPresenter(
-        private val hourGlass: HourGlass,
+        private val hourGlass: HourGlass2,
         private val logStorage: LogStorage,
         private val timeProvider: TimeProvider,
         private val eventBus: WTEventBus,
@@ -22,11 +23,9 @@ class ClockPresenter(
 
     override fun onAttach(view: ClockContract.View) {
         this.view = view
-        this.hourGlass.setListener(hourglassListener)
     }
 
     override fun onDetach() {
-        this.hourGlass.setListener(null)
         this.view = null
     }
 
@@ -37,6 +36,7 @@ class ClockPresenter(
         } else {
             suggestSavingLog()
         }
+        renderClock()
     }
 
     override fun cancelClock() {
@@ -45,6 +45,7 @@ class ClockPresenter(
             hourGlass.stop()
             view?.showInactive()
         }
+        renderClock()
     }
 
     override fun renderClock() {
@@ -59,25 +60,6 @@ class ClockPresenter(
     private fun suggestSavingLog() {
         resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
         eventBus.post(EventMainOpenLogDetails())
-    }
-
-    private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {
-        override fun onStart(start: Long, end: Long, duration: Long) {
-            renderClock()
-        }
-
-        override fun onStop(start: Long, end: Long, duration: Long) {
-            renderClock()
-        }
-
-        override fun onTick(start: Long, end: Long, duration: Long) {
-            renderClock()
-        }
-
-        override fun onError(error: HourGlass.Error) {
-            renderClock()
-        }
-
     }
 
 }

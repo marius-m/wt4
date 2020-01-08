@@ -57,7 +57,10 @@ interface LogEditService {
         /**
          * Notifies when entity saved successfully
          */
-        fun onEntitySaveComplete()
+        fun onEntitySaveComplete(
+                start: DateTime,
+                end: DateTime
+        )
 
         /**
          * Notifies when entity save failed

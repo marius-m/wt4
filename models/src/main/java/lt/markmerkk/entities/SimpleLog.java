@@ -56,7 +56,7 @@ public class SimpleLog extends RemoteEntity {
   }
 
   public String getPrettyDuration() {
-    return LogUtils.INSTANCE.formatShortDuration(duration);
+    return LogUtils.INSTANCE.formatShortDurationMillis(duration);
   }
 
   public long getStart() {
