@@ -98,7 +98,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
                 .forEach { data ->
                     data.node.addEventHandler(MouseEvent.MOUSE_CLICKED) {
                         ticketInfoLoader.findTicket(data.name)
-                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatShortDuration(data.pieValue.toLong())}"
+                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatShortDurationMillis(data.pieValue.toLong())}"
                     }
                 }
     }

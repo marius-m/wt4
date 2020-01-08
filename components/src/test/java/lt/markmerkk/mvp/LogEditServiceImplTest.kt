@@ -170,7 +170,7 @@ class LogEditServiceImplTest {
 
         // Assert
         verify(logEditInteractor).update(any())
-        verify(listener).onEntitySaveComplete()
+        verify(listener).onEntitySaveComplete(any(), any())
     }
 
     @Test
@@ -199,7 +199,7 @@ class LogEditServiceImplTest {
 
         // Assert
         verify(logEditInteractor).create(any())
-        verify(listener).onEntitySaveComplete()
+        verify(listener).onEntitySaveComplete(any(), any())
     }
 
     @Test

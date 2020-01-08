@@ -9,7 +9,6 @@ import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
-import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
 
@@ -33,10 +32,7 @@ class LogDetailsPresenterUpdateActiveClock(
                         start: DateTime,
                         end: DateTime
                 ) {
-                    hourGlass.updateTimers(
-                            LogFormatters.longFormat.print(start),
-                            LogFormatters.longFormat.print(end)
-                    )
+                    hourGlass.changeStart(start)
                     view?.showDateTime(start, end)
                 }
 
@@ -48,8 +44,8 @@ class LogDetailsPresenterUpdateActiveClock(
                     view?.showHint2(notification)
                 }
 
-                override fun onEntitySaveComplete() {
-                    hourGlass.restart()
+                override fun onEntitySaveComplete(start: DateTime, end: DateTime) {
+                    hourGlass.startFrom(end)
                     activeLogPersistence.reset()
                     view?.closeDetails()
                 }
@@ -80,9 +76,11 @@ class LogDetailsPresenterUpdateActiveClock(
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
         val now = timeProvider.now()
+        val startMillis = timeProvider.roundMillis(hourGlass.start)
+        val endMillis = timeProvider.roundMillis(hourGlass.end)
         val entityInEdit = SimpleLogBuilder(now.millis)
-                .setStart(timeProvider.roundMillis(hourGlass.reportStart()))
-                .setEnd(timeProvider.roundMillis(hourGlass.reportEnd()))
+                .setStart(startMillis)
+                .setEnd(endMillis)
                 .setTask(activeLogPersistence.ticketCode.code)
                 .setComment(activeLogPersistence.comment)
                 .build()

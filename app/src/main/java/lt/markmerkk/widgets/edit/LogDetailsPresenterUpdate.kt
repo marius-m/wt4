@@ -41,7 +41,7 @@ class LogDetailsPresenterUpdate(
                     view?.showHint2(notification)
                 }
 
-                override fun onEntitySaveComplete() {
+                override fun onEntitySaveComplete(start: DateTime, end: DateTime) {
                     view?.closeDetails()
                 }
 

@@ -60,7 +60,7 @@ class LogEditServiceImpl(
                 logEditInteractor.create(entityInEdit)
             }
             ticketStorage.saveTicketAsUsedSync(timeProvider.preciseNow(), TicketCode.new(task))
-            listener.onEntitySaveComplete()
+            listener.onEntitySaveComplete(start, end)
         } catch(e: IllegalArgumentException) {
             listener.onEntitySaveFail(e)
         }

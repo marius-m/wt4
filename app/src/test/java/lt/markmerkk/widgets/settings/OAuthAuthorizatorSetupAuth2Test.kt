@@ -82,7 +82,6 @@ class OAuthAuthorizatorSetupAuth2Test {
         authorizator.setupAuthStep2("")
 
         // Assert
-        verify(view).resetWeb()
         verify(userSettings).resetUserData()
 
         val viewModelCapture = argumentCaptor<AuthViewModel>()
@@ -118,7 +117,6 @@ class OAuthAuthorizatorSetupAuth2Test {
         authorizator.setupAuthStep2("valid_token")
 
         // Assert
-        verify(view).resetWeb()
         val viewModelCapture = argumentCaptor<AuthViewModel>()
         verify(view, times(2)).renderView(viewModelCapture.capture())
 
@@ -152,7 +150,6 @@ class OAuthAuthorizatorSetupAuth2Test {
         authorizator.setupAuthStep2("valid_token")
 
         // Assert
-        verify(view).resetWeb()
         verify(userSettings).resetUserData()
 
         val viewModelCapture = argumentCaptor<AuthViewModel>()

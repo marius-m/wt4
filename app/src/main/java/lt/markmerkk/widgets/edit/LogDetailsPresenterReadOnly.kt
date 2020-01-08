@@ -41,7 +41,7 @@ class LogDetailsPresenterReadOnly(
                     view?.showHint2(notification)
                 }
 
-                override fun onEntitySaveComplete() { }
+                override fun onEntitySaveComplete(start: DateTime, end: DateTime) { }
 
                 override fun onEntitySaveFail(error: Throwable) {
                     val errorMessage = error.message ?: "Error saving entity!"

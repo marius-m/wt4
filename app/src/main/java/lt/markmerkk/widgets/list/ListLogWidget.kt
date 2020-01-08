@@ -118,7 +118,7 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
                 ticketCode = "TOTAL",
                 start = "",
                 end = "",
-                duration = LogUtils.formatShortDuration(logStorage.total().toLong()),
+                duration = LogUtils.formatShortDurationMillis(logStorage.total().toLong()),
                 comment = ""
         )
         val logViewModels = logStorage.data
@@ -130,7 +130,7 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
                             ticketCode = it.task,
                             start = LogFormatters.shortFormat.print(it.start),
                             end = LogFormatters.shortFormat.print(it.end),
-                            duration = LogUtils.formatShortDuration(it.duration),
+                            duration = LogUtils.formatShortDurationMillis(it.duration),
                             comment = it.comment
                     )
                 }

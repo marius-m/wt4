@@ -1,7 +1,6 @@
 package lt.markmerkk.widgets.statistics
 
 import lt.markmerkk.LogStorage
-import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
 
@@ -41,16 +40,16 @@ class StatisticsPresenter(
     }
 
     override fun totalAsString(): String {
-        if (hourGlass.state == HourGlass.State.RUNNING) {
-            val totalLogged = logStorage.total().toLong()
-            val formatTotalLogged = LogUtils.formatShortDuration(totalLogged)
-            val totalRunning = hourGlass.duration
-            val formatTotalRunning = LogUtils.formatShortDuration(totalRunning)
-            val formatTotal = LogUtils.formatShortDuration((totalLogged + totalRunning))
+        if (hourGlass.isRunning()) {
+            val totalLogged: Long = logStorage.total().toLong()
+            val formatTotalLogged = LogUtils.formatShortDurationMillis(totalLogged)
+            val totalRunning = hourGlass.duration.millis
+            val formatTotalRunning = LogUtils.formatShortDurationMillis(totalRunning)
+            val formatTotal = LogUtils.formatShortDurationMillis(totalLogged + totalRunning)
             return "Logged ($formatTotalLogged) + Running ($formatTotalRunning) = $formatTotal"
         } else {
             val totalLogged = logStorage.total().toLong()
-            val formatTotalLogged = LogUtils.formatShortDuration(totalLogged)
+            val formatTotalLogged = LogUtils.formatShortDurationMillis(totalLogged)
             return "Logged ($formatTotalLogged)"
         }
     }

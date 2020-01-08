@@ -271,8 +271,11 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideHourGlass(): HourGlass {
-        return HourGlass()
+    fun provideHourGlass2(
+            timeProvider: TimeProvider,
+            eventBus: WTEventBus
+    ): HourGlass {
+        return HourGlass(eventBus, timeProvider)
     }
 
     @Provides
@@ -369,6 +372,19 @@ class AppModule(
             api: Api
     ): VersionProvider {
         return VersionProviderImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTicker(
+            eventBus: WTEventBus,
+            schedulerProvider: SchedulerProvider
+    ): Ticker {
+        return Ticker(
+                eventBus,
+                schedulerProvider.waitScheduler(),
+                schedulerProvider.ui()
+        )
     }
 
 }

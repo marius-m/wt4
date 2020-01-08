@@ -1,8 +1,11 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.isA
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.events.EventTickTock
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -10,18 +13,18 @@ import org.mockito.MockitoAnnotations
 import rx.schedulers.TestScheduler
 import java.util.concurrent.TimeUnit
 
-class CalendarFxUpdaterTest {
+class TickerTest {
 
-    @Mock lateinit var listener: CalendarFxUpdater.Listener
-    lateinit var updater: CalendarFxUpdater
+    @Mock lateinit var eventBus: WTEventBus
+    lateinit var updater: Ticker
 
     val testScheduler = TestScheduler()
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        updater = CalendarFxUpdater(
-                listener,
+        updater = Ticker(
+                eventBus,
                 testScheduler,
                 testScheduler
         )
@@ -35,7 +38,7 @@ class CalendarFxUpdaterTest {
         testScheduler.advanceTimeBy(30, TimeUnit.SECONDS)
 
         // Assert
-        verify(listener).onCurrentTimeUpdate(any())
+        verify(eventBus).post(isA<EventTickTock>())
     }
 
     @Test
@@ -46,7 +49,7 @@ class CalendarFxUpdaterTest {
         testScheduler.advanceTimeBy(3, TimeUnit.MINUTES)
 
         // Assert
-        verify(listener, times(6)).onCurrentTimeUpdate(any())
+        verify(eventBus, times(6)).post(isA<EventTickTock>())
     }
 
     @Test
@@ -59,7 +62,7 @@ class CalendarFxUpdaterTest {
         testScheduler.advanceTimeBy(10L, TimeUnit.MINUTES)
 
         // Assert
-        verify(listener).onCurrentTimeUpdate(any())
+        verify(eventBus).post(isA<EventTickTock>())
     }
 
 }

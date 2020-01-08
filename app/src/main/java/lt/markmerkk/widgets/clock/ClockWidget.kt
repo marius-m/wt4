@@ -8,11 +8,12 @@ import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import lt.markmerkk.*
+import lt.markmerkk.events.EventClockChange
 import lt.markmerkk.events.EventFocusChange
+import lt.markmerkk.events.EventTickTock
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import lt.markmerkk.widgets.main.MainWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -89,6 +90,16 @@ class ClockWidget : Fragment(), ClockContract.View {
     }
 
     //region Events
+
+    @Subscribe
+    fun eventClockChange(event: EventClockChange) {
+        presenter.renderClock()
+    }
+
+    @Subscribe
+    fun eventTickTock(event: EventTickTock) {
+        presenter.renderClock()
+    }
 
     @Subscribe
     fun eventFocusChange(eventFocusChange: EventFocusChange) {

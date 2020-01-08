@@ -1,40 +1,41 @@
 package lt.markmerkk.utils
 
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.events.EventTickTock
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
-import java.time.LocalTime
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Auto updater that kicks in automatically (updates calendar views)
+ * Auto updater that kicks in automatically
  * Lifecycle: [onAttach], [onDetach]
  */
-class CalendarFxUpdater(
-        private val listener: Listener,
+class Ticker(
+        private val eventBus: WTEventBus,
         private val waitScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
 
     private var subscription: Subscription? = null
+    private var inFocus = AtomicBoolean(true)
 
     fun onAttach() {
+        eventBus.register(this)
         subscription = Observable.interval(30, 30, TimeUnit.SECONDS, waitScheduler)
+                .filter { inFocus.get() }
                 .observeOn(uiScheduler)
-                .subscribe({
-                    listener.onCurrentTimeUpdate(LocalTime.now())
-                })
+                .subscribe { eventBus.post(EventTickTock()) }
     }
+
     fun onDetach() {
+        eventBus.unregister(this)
         subscription?.unsubscribe()
     }
 
-    //region Classes
-
-    interface Listener {
-        fun onCurrentTimeUpdate(currentTime: LocalTime)
+    fun changeFocus(focused: Boolean) {
+        inFocus.set(focused)
     }
-
-    //endregion
 
 }

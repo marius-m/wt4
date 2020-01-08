@@ -22,11 +22,9 @@ class ClockPresenter(
 
     override fun onAttach(view: ClockContract.View) {
         this.view = view
-        this.hourGlass.setListener(hourglassListener)
     }
 
     override fun onDetach() {
-        this.hourGlass.setListener(null)
         this.view = null
     }
 
@@ -37,6 +35,7 @@ class ClockPresenter(
         } else {
             suggestSavingLog()
         }
+        renderClock()
     }
 
     override fun cancelClock() {
@@ -45,6 +44,7 @@ class ClockPresenter(
             hourGlass.stop()
             view?.showInactive()
         }
+        renderClock()
     }
 
     override fun renderClock() {
@@ -59,25 +59,6 @@ class ClockPresenter(
     private fun suggestSavingLog() {
         resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
         eventBus.post(EventMainOpenLogDetails())
-    }
-
-    private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {
-        override fun onStart(start: Long, end: Long, duration: Long) {
-            renderClock()
-        }
-
-        override fun onStop(start: Long, end: Long, duration: Long) {
-            renderClock()
-        }
-
-        override fun onTick(start: Long, end: Long, duration: Long) {
-            renderClock()
-        }
-
-        override fun onError(error: HourGlass.Error) {
-            renderClock()
-        }
-
     }
 
 }
