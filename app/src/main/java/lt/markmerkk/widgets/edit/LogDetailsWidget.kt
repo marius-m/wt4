@@ -27,7 +27,6 @@ import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
-import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.widgets.tickets.TicketWidget
 import org.joda.time.DateTime

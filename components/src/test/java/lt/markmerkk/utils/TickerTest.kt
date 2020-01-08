@@ -1,6 +1,7 @@
 package lt.markmerkk.utils
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.isA
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import lt.markmerkk.WTEventBus
@@ -37,7 +38,7 @@ class TickerTest {
         testScheduler.advanceTimeBy(30, TimeUnit.SECONDS)
 
         // Assert
-        verify(eventBus).post(EventTickTock())
+        verify(eventBus).post(isA<EventTickTock>())
     }
 
     @Test
@@ -48,7 +49,7 @@ class TickerTest {
         testScheduler.advanceTimeBy(3, TimeUnit.MINUTES)
 
         // Assert
-        verify(eventBus, times(6)).post(EventTickTock())
+        verify(eventBus, times(6)).post(isA<EventTickTock>())
     }
 
     @Test
@@ -61,7 +62,7 @@ class TickerTest {
         testScheduler.advanceTimeBy(10L, TimeUnit.MINUTES)
 
         // Assert
-        verify(eventBus).post(any())
+        verify(eventBus).post(isA<EventTickTock>())
     }
 
 }

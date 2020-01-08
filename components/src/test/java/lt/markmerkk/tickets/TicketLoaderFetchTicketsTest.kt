@@ -41,7 +41,7 @@ class TicketLoaderFetchTicketsTest {
         // Assemble
         val newTickets = listOf(Mocks.createTicket())
         doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTicketsWithEnabledStatuses()
 
         // Act
         loader.fetchTickets()
@@ -49,7 +49,7 @@ class TicketLoaderFetchTicketsTest {
         // Assert
         verify(userSettings).ticketLastUpdate = TimeMachine.now().plusHours(1).millis
         verify(ticketApi).searchRemoteTicketsAndCache(any())
-        verify(ticketStorage).loadTickets()
+        verify(ticketStorage).loadTicketsWithEnabledStatuses()
         verify(listener).onFoundTickets(any())
     }
 
@@ -58,7 +58,7 @@ class TicketLoaderFetchTicketsTest {
         // Assemble
         val newTickets = listOf(Mocks.createTicket())
         doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTicketsWithEnabledStatuses()
         doReturn(TimeMachine.now()).whenever(timeProvider).now()
 
         // Act
@@ -67,7 +67,7 @@ class TicketLoaderFetchTicketsTest {
         // Assert
         verify(userSettings, never()).ticketLastUpdate = any()
         verify(ticketApi, never()).searchRemoteTicketsAndCache(any())
-        verify(ticketStorage).loadTickets()
+        verify(ticketStorage).loadTicketsWithEnabledStatuses()
         verify(listener).onFoundTickets(any())
     }
 
@@ -76,7 +76,7 @@ class TicketLoaderFetchTicketsTest {
         // Assemble
         val newTickets = listOf(Mocks.createTicket())
         doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTicketsWithEnabledStatuses()
         doReturn(TimeMachine.now()).whenever(timeProvider).now()
 
         // Act
@@ -85,7 +85,7 @@ class TicketLoaderFetchTicketsTest {
         // Assert
         verify(userSettings).ticketLastUpdate = any()
         verify(ticketApi).searchRemoteTicketsAndCache(any())
-        verify(ticketStorage).loadTickets()
+        verify(ticketStorage).loadTicketsWithEnabledStatuses()
         verify(listener).onFoundTickets(any())
     }
 
@@ -94,7 +94,7 @@ class TicketLoaderFetchTicketsTest {
         // Assemble
         val newTickets = emptyList<Ticket>()
         doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
-        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTickets()
+        doReturn(Single.just(newTickets)).whenever(ticketStorage).loadTicketsWithEnabledStatuses()
 
         // Act
         loader.fetchTickets()

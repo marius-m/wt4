@@ -1,13 +1,11 @@
 package lt.markmerkk.widgets.statistics
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Mocks
 import lt.markmerkk.TimeProviderTest
-import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlass2
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.Before
@@ -19,7 +17,7 @@ class StatisticsPresenterMapDataTest {
 
     @Mock lateinit var view: StatisticsContract.View
     @Mock lateinit var logStorage: LogStorage
-    @Mock lateinit var hourGlass: HourGlass
+    @Mock lateinit var hourGlass: HourGlass2
     lateinit var presenter: StatisticsPresenter
 
     private val timeProvider = TimeProviderTest()

@@ -6,7 +6,6 @@ import lt.markmerkk.TimeProvider
 import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventMainOpenLogDetails
 import lt.markmerkk.utils.LogUtils
-import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 

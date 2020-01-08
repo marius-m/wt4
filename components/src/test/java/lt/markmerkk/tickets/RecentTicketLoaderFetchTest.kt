@@ -40,7 +40,7 @@ class RecentTicketLoaderFetchTest {
         val now = timeProvider.now()
         val ticketHistory = Mocks.createTicketUseHistory(timeProvider, code = "DEV-111", lastUsed = now)
         val ticket = Mocks.createTicket(code = "DEV-111", description = "description")
-        doReturn(Single.just(listOf(ticketHistory))).whenever(ticketStorage).fetchRecentTickets(10)
+        doReturn(Single.just(listOf(ticketHistory))).whenever(ticketStorage).fetchRecentTickets(any())
         doReturn(Single.just(listOf(ticket))).whenever(ticketStorage).findTicketsByCode(any())
 
         // Act
@@ -61,7 +61,7 @@ class RecentTicketLoaderFetchTest {
         // Assemble
         val now = timeProvider.now()
         val ticketHistory = Mocks.createTicketUseHistory(timeProvider, code = "DEV-111", lastUsed = now)
-        doReturn(Single.just(listOf(ticketHistory))).whenever(ticketStorage).fetchRecentTickets(10)
+        doReturn(Single.just(listOf(ticketHistory))).whenever(ticketStorage).fetchRecentTickets(any())
         doReturn(Single.just(emptyList<Ticket>())).whenever(ticketStorage).findTicketsByCode(any()) // no matching ticket
 
         // Act

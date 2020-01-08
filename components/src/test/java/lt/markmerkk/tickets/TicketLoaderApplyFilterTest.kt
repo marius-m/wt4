@@ -35,7 +35,7 @@ class TicketLoaderApplyFilterTest {
                 testScheduler,
                 testScheduler
         )
-        doReturn(Single.just(MocksTickets.tickets)).whenever(ticketStorage).loadTickets()
+        doReturn(Single.just(MocksTickets.tickets)).whenever(ticketStorage).loadTicketsWithEnabledStatuses()
     }
 
     @Test

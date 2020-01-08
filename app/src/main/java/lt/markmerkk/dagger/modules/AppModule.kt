@@ -14,7 +14,6 @@ import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.*
-import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.hourglass.HourGlass2
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
