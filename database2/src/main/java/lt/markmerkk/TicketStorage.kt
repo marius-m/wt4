@@ -50,6 +50,9 @@ class TicketStorage(
                                         description = ticket.description,
                                         parentId = ticket.parentId,
                                         status = ticket.status,
+                                        assigneeName = ticket.assignee,
+                                        reporterName = ticket.reporter,
+                                        isWatching = ticket.isWatching.toBoolean(),
                                         parentCode = TicketCode.new(ticket.parentCode),
                                         remoteData = RemoteData.new(
                                                 isDeleted = ticket.isDeleted.toBoolean(),
@@ -97,6 +100,9 @@ class TicketStorage(
                                 description = ticket.description,
                                 parentId = ticket.parentId,
                                 status = ticket.status,
+                                assigneeName = ticket.assignee,
+                                reporterName = ticket.reporter,
+                                isWatching = ticket.isWatching.toBoolean(),
                                 parentCode = TicketCode.new(ticket.parentCode),
                                 remoteData = RemoteData.new(
                                         isDeleted = ticket.isDeleted.toBoolean(),
@@ -204,6 +210,9 @@ class TicketStorage(
                         .set(TICKET.FETCHTIME, remoteData.fetchTime)
                         .set(TICKET.URL, remoteData.url)
                         .set(TICKET.STATUS, ticket.status)
+                        .set(TICKET.ASSIGNEE, ticket.assigneeName)
+                        .set(TICKET.REPORTER, ticket.reporterName)
+                        .set(TICKET.IS_WATCHING, ticket.isWatching.toByte())
                         .set(TICKET.PARENT_CODE, ticket.parentCode.code)
                         .where(TICKET.REMOTE_ID.eq(remoteData.remoteId))
                         .execute()
@@ -223,6 +232,9 @@ class TicketStorage(
                         TICKET.FETCHTIME,
                         TICKET.URL,
                         TICKET.STATUS,
+                        TICKET.ASSIGNEE,
+                        TICKET.REPORTER,
+                        TICKET.IS_WATCHING,
                         TICKET.PARENT_CODE
                 ).values(
                         ticket.code.code,
@@ -238,6 +250,9 @@ class TicketStorage(
                         remoteData.fetchTime,
                         remoteData.url,
                         ticket.status,
+                        ticket.assigneeName,
+                        ticket.reporterName,
+                        ticket.isWatching.toByte(),
                         ticket.parentCode.code
                 ).execute()
             }
@@ -262,6 +277,9 @@ class TicketStorage(
                                 description = ticket.description,
                                 parentId = ticket.parentId,
                                 status = ticket.status,
+                                assigneeName = ticket.assignee,
+                                reporterName = ticket.reporter,
+                                isWatching = ticket.isWatching.toBoolean(),
                                 parentCode = TicketCode.new(ticket.parentCode),
                                 remoteData = RemoteData.new(
                                         isDeleted = ticket.isDeleted.toBoolean(),

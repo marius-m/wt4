@@ -39,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Ticket extends TableImpl<TicketRecord> {
 
-    private static final long serialVersionUID = 1023512573;
+    private static final long serialVersionUID = 999845323;
 
     /**
      * The reference instance of <code>ticket</code>
@@ -128,6 +128,21 @@ public class Ticket extends TableImpl<TicketRecord> {
      * The column <code>ticket.status</code>.
      */
     public final TableField<TicketRecord, String> STATUS = createField("status", org.jooq.impl.SQLDataType.VARCHAR(100).nullable(false).defaultValue(org.jooq.impl.DSL.field("''", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>ticket.assignee</code>.
+     */
+    public final TableField<TicketRecord, String> ASSIGNEE = createField("assignee", org.jooq.impl.SQLDataType.VARCHAR(200).nullable(false).defaultValue(org.jooq.impl.DSL.field("''", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>ticket.reporter</code>.
+     */
+    public final TableField<TicketRecord, String> REPORTER = createField("reporter", org.jooq.impl.SQLDataType.VARCHAR(200).nullable(false).defaultValue(org.jooq.impl.DSL.field("''", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>ticket.is_watching</code>.
+     */
+    public final TableField<TicketRecord, Byte> IS_WATCHING = createField("is_watching", org.jooq.impl.SQLDataType.TINYINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.TINYINT)), this, "");
 
     /**
      * Create a <code>ticket</code> table reference

@@ -7,6 +7,8 @@ import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.tickets.JiraTicketSearch
+import lt.markmerkk.tickets.TicketApi
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
@@ -35,7 +37,8 @@ class JiraWorklogInteractor(
                 JiraWorklogEmitter(
                         jiraClientProvider = jiraClientProvider,
                         jql = jql,
-                        searchFields = "summary,project,created,updated,parent,issuetype,status",
+                        searchFields = JiraTicketSearch.TICKET_SEARCH_FIELDS
+                                .joinToString(separator = ","),
                         start = startDate,
                         end = endDate
                 ),
@@ -46,6 +49,9 @@ class JiraWorklogInteractor(
                     code = issue.key,
                     description = issue.summary,
                     status = issue?.status?.name ?: "",
+                    assigneeName = issue?.assignee?.name ?: "",
+                    reporterName = issue?.reporter?.name ?: "",
+                    isWatching = issue?.watches?.isWatching ?: false,
                     parentCode = issue.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,

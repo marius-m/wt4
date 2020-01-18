@@ -33,7 +33,7 @@ class JiraTicketSearch {
                 JiraTicketEmitter(
                         jiraClient = jiraClient,
                         jql = jql,
-                        searchFields = "summary,project,created,updated,parent,issuetype,status"
+                        searchFields = TICKET_SEARCH_FIELDS.joinToString(separator = ",")
                 ),
                 Emitter.BackpressureMode.BUFFER
         ).flatMap {
@@ -43,6 +43,9 @@ class JiraTicketSearch {
                     code = it.key,
                     description = it.summary,
                     status = it?.status?.name ?: "",
+                    assigneeName = it?.assignee?.name ?: "",
+                    reporterName = it?.reporter?.name ?: "",
+                    isWatching = it?.watches?.isWatching ?: false,
                     parentCode = it?.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = now.millis,
@@ -54,6 +57,18 @@ class JiraTicketSearch {
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.JIRA)
+        val TICKET_SEARCH_FIELDS = listOf(
+                "summary",
+                "project",
+                "created",
+                "updated",
+                "parent",
+                "issuetype",
+                "status",
+                "assignee",
+                "watches",
+                "reporter"
+        )
     }
 
 }

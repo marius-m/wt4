@@ -27,6 +27,9 @@ object Mocks {
             parentId: Long = -1,
             parentCode: String = "",
             status: String = "",
+            assigneeName: String = "",
+            reporterName: String = "",
+            isWatching: Boolean = false,
             remoteData: RemoteData? = null
     ): Ticket {
         return Ticket(
@@ -35,6 +38,9 @@ object Mocks {
                 description = description,
                 parentId = parentId,
                 status = status,
+                assigneeName = assigneeName,
+                reporterName = reporterName,
+                isWatching = isWatching,
                 parentCode = TicketCode.new(parentCode),
                 remoteData = remoteData
         )

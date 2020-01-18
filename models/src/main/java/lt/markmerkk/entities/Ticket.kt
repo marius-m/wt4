@@ -8,6 +8,9 @@ data class Ticket(
         val description: String = "",
         val parentId: Long = Const.NO_ID, // todo up of removal
         val status: String,
+        val assigneeName: String,
+        val reporterName: String,
+        val isWatching: Boolean,
         val parentCode: TicketCode,
         val remoteData: RemoteData? = null
 ) {
@@ -23,6 +26,9 @@ data class Ticket(
                     description = description,
                     status = "",
                     parentCode = TicketCode.asEmpty(),
+                    assigneeName = "",
+                    reporterName = "",
+                    isWatching = false,
                     remoteData = remoteData
             )
         }
@@ -31,6 +37,9 @@ data class Ticket(
                 code: String,
                 description: String,
                 status: String,
+                assigneeName: String,
+                reporterName: String,
+                isWatching: Boolean,
                 parentCode: String,
                 remoteData: RemoteData?
         ): Ticket {
@@ -38,6 +47,9 @@ data class Ticket(
                     code = TicketCode.new(code),
                     description = description,
                     status = status,
+                    assigneeName = assigneeName,
+                    reporterName = reporterName,
+                    isWatching = isWatching,
                     parentCode = TicketCode.new(parentCode),
                     remoteData = remoteData
             )
@@ -54,6 +66,9 @@ fun Ticket.markAsError(
             description = description,
             parentId = parentId,
             status = status,
+            assigneeName = assigneeName,
+            reporterName = reporterName,
+            isWatching = isWatching,
             parentCode = parentCode,
             remoteData = remoteData.markAsError(errorMessage)
     )
