@@ -4,35 +4,33 @@ import org.junit.Test
 
 import org.assertj.core.api.Assertions.assertThat
 
-/**
- * Created by mariusmerkevicius on 2/9/16.
- */
-class TimeSplitPickCommentTest {
+class TimedCommentModifierRemoveStampTest {
+
     @Test
-    fun inputValid_shouldPick() {
+    fun valid() {
         // Arrange
         // Act
-        val out = TimeSplit.removeStamp("15:20 >> comment")
+        val out = TimedCommentStamper.removeStamp("15:20 - 16:00 >> comment")
 
         // Assert
         assertThat(out).isEqualTo("comment")
     }
 
     @Test
-    fun inputValidInvalidSplit_shouldPick() {
+    fun invalidSplit() {
         // Arrange
         // Act
-        val out = TimeSplit.removeStamp("15:20 > comment")
+        val out = TimedCommentStamper.removeStamp("15:20 > comment")
 
         // Assert
         assertThat(out).isEqualTo("15:20 > comment")
     }
 
     @Test
-    fun inputValidNoSplit_shouldPick() {
+    fun noSplit() {
         // Arrange
         // Act
-        val out = TimeSplit.removeStamp(" comment")
+        val out = TimedCommentStamper.removeStamp(" comment")
 
         // Assert
         assertThat(out).isEqualTo("comment")
