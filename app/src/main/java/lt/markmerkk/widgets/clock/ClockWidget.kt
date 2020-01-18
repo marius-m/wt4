@@ -55,7 +55,7 @@ class ClockWidget : Fragment(), ClockContract.View {
             isPickOnBounds = false
             jfxButtonClockSettings = jfxButton {
                 addClass(Styles.buttonMenuMini)
-                graphic = graphics.from(Glyph.CANCEL2, Color.WHITE, 10.0)
+                graphic = graphics.from(Glyph.CANCEL2, Color.WHITE, 8.0)
                 action {
                     presenter.cancelClock()
                 }
