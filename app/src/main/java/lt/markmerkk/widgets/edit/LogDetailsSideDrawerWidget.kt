@@ -455,7 +455,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     override fun initView(
             labelHeader: String,
             labelButtonSave: String,
-            glyphButtonSave: SVGGlyph,
+            glyphButtonSave: SVGGlyph?,
             initDateTimeStart: DateTime,
             initDateTimeEnd: DateTime,
             initTicket: String,

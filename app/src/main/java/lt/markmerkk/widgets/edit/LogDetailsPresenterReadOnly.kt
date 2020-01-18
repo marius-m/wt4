@@ -72,8 +72,8 @@ class LogDetailsPresenterReadOnly(
         logEditService.serviceType = LogEditService.ServiceType.UPDATE
         view.initView(
                 labelHeader = "Log details (Read-only)",
-                labelButtonSave = "Update",
-                glyphButtonSave = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0),
+                labelButtonSave = "Save",
+                glyphButtonSave = null,
                 initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
                 initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
                 initTicket = entityInEdit.task,

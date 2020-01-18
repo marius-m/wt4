@@ -70,8 +70,8 @@ class LogDetailsPresenterUpdate(
         val logEndFormatted = logEnd.toString(LogFormatters.shortFormat)
         view.initView(
                 labelHeader = "Update log $logStartFormatted - $logEndFormatted",
-                labelButtonSave = "Update",
-                glyphButtonSave = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0),
+                labelButtonSave = "Save",
+                glyphButtonSave = null,
                 initDateTimeStart = logStart,
                 initDateTimeEnd = logEnd,
                 initTicket = entityInEdit.task,
