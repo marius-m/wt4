@@ -138,9 +138,6 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                     viewProgress.viewButtonRefresh.isFocusTraversable = false
                     add(viewProgress)
                 }
-                label("Recently used tickets") {
-                    addClass(Styles.labelMini)
-                }
                 label("Search tickets") {
                     addClass(Styles.labelMini)
                 }
