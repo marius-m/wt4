@@ -40,7 +40,7 @@ internal inline fun <T : Node> T.attachTo(
 fun EventTarget.jfxButton(
         text: String = "",
         graphic: Node? = null,
-        op: Button.() -> Unit = {}
+        op: JFXButton.() -> Unit = {}
 ) = JFXButton(text).attachTo(this, op) {
     if (graphic != null) it.graphic = graphic
 }

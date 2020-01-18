@@ -1,5 +1,6 @@
 package lt.markmerkk
 
+import com.jfoenix.controls.JFXButton
 import javafx.scene.control.OverrunStyle
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
@@ -11,11 +12,14 @@ class Styles: Stylesheet() {
             .use { Font.loadFont(it, 24.0) }
 
     companion object {
+        val jfxButtonType by cssproperty<JFXButton.ButtonType>("-jfx-button-type") { it.name }
+
         val dialogHeader by cssclass()
         val sidePanelHeader by cssclass()
         val sidePanelContainer by cssclass()
         val dialogContainer by cssclass()
         val dialogContainerActionsButtons by cssclass()
+        val dialogButtonAction by cssclass()
         val buttonMenu by cssclass()
         val buttonMenuMini by cssclass()
         val inputTextField by cssclass()
@@ -130,6 +134,11 @@ class Styles: Stylesheet() {
         emojiText {
             font = fontEmoji
             fontFamily = "OpenSansEmoji"
+        }
+        dialogButtonAction {
+            jfxButtonType.value = JFXButton.ButtonType.RAISED
+            backgroundColor.add(Color.WHITE)
+            backgroundRadius.add(box(4.px))
         }
     }
 
