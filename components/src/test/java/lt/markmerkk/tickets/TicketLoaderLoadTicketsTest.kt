@@ -42,7 +42,7 @@ class TicketLoaderLoadTicketsTest {
     fun valid() {
         // Assemble
         doReturn(Single.just(MocksTickets.tickets))
-                .whenever(ticketStorage).loadFilteredTickets()
+                .whenever(ticketStorage).loadFilteredTickets(any())
 
         // Act
         loader.loadTickets()
@@ -55,7 +55,7 @@ class TicketLoaderLoadTicketsTest {
     fun valid_filterProjectCode() {
         // Assemble
         doReturn(Single.just(MocksTickets.ticketMix))
-                .whenever(ticketStorage).loadFilteredTickets()
+                .whenever(ticketStorage).loadFilteredTickets(any())
 
         // Act
         loader.loadTickets(projectCode = TicketLoader.ProjectCode("WT"))
@@ -71,7 +71,7 @@ class TicketLoaderLoadTicketsTest {
     fun valid_withFilter() {
         // Assemble
         doReturn(Single.just(MocksTickets.tickets))
-                .whenever(ticketStorage).loadFilteredTickets()
+                .whenever(ticketStorage).loadFilteredTickets(any())
 
         // Act
         loader.loadTickets(inputFilter = "TTS-115")
@@ -89,7 +89,7 @@ class TicketLoaderLoadTicketsTest {
     fun noTickets() {
         // Assemble
         doReturn(Single.just(emptyList<List<Ticket>>()))
-                .whenever(ticketStorage).loadFilteredTickets()
+                .whenever(ticketStorage).loadFilteredTickets(any())
 
         // Act
         loader.loadTickets()
@@ -102,7 +102,7 @@ class TicketLoaderLoadTicketsTest {
     fun ticketFailure() {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
-                .whenever(ticketStorage).loadFilteredTickets()
+                .whenever(ticketStorage).loadFilteredTickets(any())
 
         // Act
         loader.loadTickets()

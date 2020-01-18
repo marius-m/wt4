@@ -355,12 +355,14 @@ class AppModule(
             eventBus: WTEventBus,
             timeProvider: TimeProvider,
             schedulerProvider: SchedulerProvider,
-            accountAvailablility: AccountAvailablility
+            accountAvailablility: AccountAvailablility,
+            userSettings: UserSettings
     ): AutoSyncWatcher2 {
         return AutoSyncWatcher2(
                 timeProvider = timeProvider,
                 eventBus = eventBus,
                 accountAvailablility = accountAvailablility,
+                userSettings = userSettings,
                 ioScheduler = schedulerProvider.waitScheduler(),
                 uiScheduler = schedulerProvider.ui()
         )

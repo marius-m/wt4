@@ -14,6 +14,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
 
     @Mock lateinit var eventBus: WTEventBus
     @Mock lateinit var accountAvailability: AccountAvailablility
+    @Mock lateinit var userSettings: UserSettings
     lateinit var watcher: AutoSyncWatcher2
 
     private val timeProvider = TimeProviderTest()
@@ -26,15 +27,37 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
                 timeProvider = timeProvider,
                 eventBus = eventBus,
                 accountAvailablility = accountAvailability,
+                userSettings = userSettings,
                 ioScheduler = testScheduler,
                 uiScheduler = testScheduler
         )
     }
 
     @Test
+    fun autoSyncDisabled() {
+        // Assemble
+        doReturn(false).whenever(userSettings).settingsAutoSync
+        val now = timeProvider.now()
+        val lastSync = timeProvider.now()
+        val nextSync = timeProvider.now()
+
+        // Act
+        val resultSyncRule = watcher.applyTimeChangeRule(
+                now = now,
+                lastSync = lastSync,
+                lastAppUsage = lastSync,
+                nextSync = nextSync
+        )
+
+        // Assert
+        val rule = resultSyncRule as AutoSyncDisabled
+    }
+
+    @Test
     fun noChange() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now()
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now()
@@ -57,6 +80,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun shortChange_unscheduled() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusMinutes(2)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now()
@@ -79,6 +103,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun longChange_unscheduled() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusHours(2)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now()
@@ -101,6 +126,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun tooLongOfUnscheduledSyncs() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusHours(3)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now()
@@ -122,6 +148,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun tooLongUnscheduled_triggerScheduledTime() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusHours(3)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now().plusHours(3)
@@ -143,6 +170,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun scheduleNextSync() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusMinutes(2)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now().plusMinutes(2)
@@ -165,6 +193,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun scheduled_longerThanPeriodicChange() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusMinutes(110)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now().plusMinutes(120)
@@ -187,6 +216,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun blockingUpdate() {
         // Assemble
         doReturn(true).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusHours(2)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now()
@@ -210,6 +240,7 @@ class AutoSyncWatcher2ApplyTimeChangeRuleTest {
     fun accountNotAvailable() {
         // Assemble
         doReturn(false).whenever(accountAvailability).isAccountReadyForSync()
+        doReturn(true).whenever(userSettings).settingsAutoSync
         val now = timeProvider.now().plusHours(2)
         val lastSync = timeProvider.now()
         val nextSync = timeProvider.now()

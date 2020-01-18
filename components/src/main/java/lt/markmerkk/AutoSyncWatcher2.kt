@@ -20,6 +20,7 @@ class AutoSyncWatcher2(
         private val timeProvider: TimeProvider,
         private val eventBus: WTEventBus,
         private val accountAvailablility: AccountAvailablility,
+        private val userSettings: UserSettings,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
@@ -80,6 +81,9 @@ class AutoSyncWatcher2(
             lastAppUsage: DateTime,
             nextSync: DateTime
     ): AutoSyncRule {
+        if (!userSettings.settingsAutoSync) {
+            return AutoSyncDisabled(now, lastSync)
+        }
         val isNextSyncScheduled = nextSync.isAfter(lastSync)
         if (isInLock.get()) {
             return AutoSyncOtherProcessInProgress(now, lastSync, lockProcessName)
@@ -104,6 +108,10 @@ class AutoSyncWatcher2(
     ) {
         val currentDuration = Duration(lastSync, now)
         when (rule) {
+            is AutoSyncDisabled -> {
+                logger.debug("Skip update auto-sync disabled")
+                eventBus.post(EventAutoSyncLastUpdate(currentDuration))
+            }
             is AutoSyncNoChanges -> {
                 logger.debug("Skip update as last update was in $currentDuration")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
@@ -167,6 +175,14 @@ class AutoSyncWatcher2(
 }
 
 sealed class AutoSyncRule
+/**
+ * Indicates auto-sync disabled
+ */
+data class AutoSyncDisabled(
+        val now: DateTime,
+        val lastSync: DateTime
+): AutoSyncRule()
+
 /**
  * Indicates not ready for edit
  */
