@@ -147,7 +147,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                 vgrow = Priority.ALWAYS
                 jfxButtonDisplayView = jfxButton {
                     addClass(Styles.buttonMenu)
-                    graphic = graphics.from(Glyph.VIEW, Color.WHITE, 20.0)
+                    graphic = graphics.from(Glyph.DISPLAY_DAY, Color.WHITE, 20.0)
                     setOnAction {
                         PopUpChangeMainContent(graphics, eventBus, jfxButtonDisplayView)
                                 .show()
@@ -309,6 +309,16 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     }
 
     //region Events
+
+    @Subscribe
+    fun onDisplayTypeChange(eventChangeDisplayType: EventChangeDisplayType) {
+        jfxButtonDisplayView.graphic = when (eventChangeDisplayType.displayType) {
+            DisplayType.TABLE_VIEW_DETAIL -> graphics.from(Glyph.DISPLAY_LIST, Color.WHITE, 20.0)
+            DisplayType.CALENDAR_VIEW_DAY -> graphics.from(Glyph.DISPLAY_DAY, Color.WHITE, 20.0)
+            DisplayType.CALENDAR_VIEW_WEEK -> graphics.from(Glyph.DISPLAY_WEEK, Color.WHITE, 20.0)
+            DisplayType.GRAPHS -> null
+        }
+    }
 
     @Subscribe
     fun onOpenLogDetails(event: EventMainOpenLogDetails) {
