@@ -26,7 +26,7 @@ class RecentTicketLoader(
 
     fun fetch() {
         fetchSub?.unsubscribe()
-        fetchSub = ticketStorage.fetchRecentTickets(6)
+        fetchSub = ticketStorage.fetchRecentTickets(20)
                 .flatMapObservable { Observable.from(it) }
                 .flatMapSingle { ticketUseHistory ->
                     ticketStorage.findTicketsByCode(ticketUseHistory.code.code)
