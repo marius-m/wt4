@@ -55,7 +55,7 @@ class ContextMenuTicketSelect(
             .apply {
                 items.addAll(
                         MenuItem(
-                                "Web-link",
+                                "Copy web-link",
                                 graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
                         ).apply { id = SelectType.WEB_LINK.name }
                 )
