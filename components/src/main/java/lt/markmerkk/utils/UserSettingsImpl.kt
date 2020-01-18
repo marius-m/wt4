@@ -19,6 +19,9 @@ class UserSettingsImpl(
     override var ticketLastUpdate: Long = -1
     override var ticketStatusUpdate: Long = -1
     override var onlyCurrentUserIssues: Boolean = true
+    override var ticketFilterIncludeAssignee: Boolean = true
+    override var ticketFilterIncludeReporter: Boolean = true
+    override var ticketFilterIncludeIsWatching: Boolean = true
 
     private var oauthHost: String = ""
     private var oauthPrivateKey: String = ""
@@ -40,6 +43,9 @@ class UserSettingsImpl(
         issueJql = settings.get(ISSUE_JQL, Const.DEFAULT_JQL_USER_ISSUES)
         ticketLastUpdate = settings.getLong(TICKET_LAST_UPDATE, -1)
         ticketStatusUpdate = settings.getLong(TICKET_STATUS_UPDATE, -1)
+        ticketFilterIncludeAssignee = settings.getBoolean(TICKET_FILTER_INCLUDE_ASSIGNEE, true)
+        ticketFilterIncludeReporter = settings.getBoolean(TICKET_FILTER_INCLUDE_REPORTER, true)
+        ticketFilterIncludeIsWatching = settings.getBoolean(TICKET_FILTER_INCLUDE_IS_WATCHING, true)
         oauthHost = settings.get(OAUTH_HOST, "")
         oauthPrivateKey = settings.get(OAUTH_PRIVATE_KEY, "")
         oauthConsumerKey = settings.get(OAUTH_CONSUMER_KEY, "")
@@ -61,6 +67,9 @@ class UserSettingsImpl(
         settings.set(LAST_UPDATE, lastUpdate.toString())
         settings.set(TICKET_LAST_UPDATE, ticketLastUpdate.toString())
         settings.set(TICKET_STATUS_UPDATE, ticketStatusUpdate.toString())
+        settings.set(TICKET_FILTER_INCLUDE_ASSIGNEE, ticketFilterIncludeAssignee.toString())
+        settings.set(TICKET_FILTER_INCLUDE_REPORTER, ticketFilterIncludeReporter.toString())
+        settings.set(TICKET_FILTER_INCLUDE_IS_WATCHING, ticketFilterIncludeIsWatching.toString())
         settings.set(OAUTH_HOST, oauthHost)
         settings.set(OAUTH_PRIVATE_KEY, oauthPrivateKey)
         settings.set(OAUTH_CONSUMER_KEY, oauthConsumerKey)
@@ -124,6 +133,9 @@ class UserSettingsImpl(
         const val LAST_UPDATE = "LAST_UPDATE"
         const val TICKET_LAST_UPDATE = "TICKET_LAST_UPDATE"
         const val TICKET_STATUS_UPDATE = "TICKET_STATUS_UPDATE"
+        const val TICKET_FILTER_INCLUDE_ASSIGNEE = "TICKET_FILTER_INCLUDE_ASSIGNEE"
+        const val TICKET_FILTER_INCLUDE_REPORTER = "TICKET_FILTER_INCLUDE_REPORTER"
+        const val TICKET_FILTER_INCLUDE_IS_WATCHING = "TICKET_FILTER_INCLUDE_IS_WATCHING"
         const val OAUTH_HOST = "OAUTH_HOST"
         const val OAUTH_PRIVATE_KEY = "OAUTH_PRIVATE_KEY"
         const val OAUTH_CONSUMER_KEY = "OAUTH_CONSUMER_KEY"

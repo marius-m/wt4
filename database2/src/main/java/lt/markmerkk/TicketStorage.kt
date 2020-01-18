@@ -31,57 +31,29 @@ class TicketStorage(
         }
     }
 
-    fun loadTicketsWithEnabledStatus(
-            likeString: String
-    ): Single<List<Ticket>> {
-        return enabledStatuses()
-                .flatMap {
-                    val dbResult: Result<TicketRecord> = connProvider.dsl
-                            .select()
-                            .from(TICKET)
-                            .where(TICKET.CODE.like(likeString)
-                                    .or(TICKET.DESCRIPTION.like(likeString)))
-                            .fetchInto(TICKET)
-                    val tickets = dbResult
-                            .map { ticket ->
-                                Ticket(
-                                        id = ticket.id.toLong(),
-                                        code = TicketCode.new(ticket.code),
-                                        description = ticket.description,
-                                        parentId = ticket.parentId,
-                                        status = ticket.status,
-                                        assigneeName = ticket.assignee,
-                                        reporterName = ticket.reporter,
-                                        isWatching = ticket.isWatching.toBoolean(),
-                                        parentCode = TicketCode.new(ticket.parentCode),
-                                        remoteData = RemoteData.new(
-                                                isDeleted = ticket.isDeleted.toBoolean(),
-                                                isDirty = ticket.isDirty.toBoolean(),
-                                                isError = ticket.isError.toBoolean(),
-                                                errorMessage = ticket.errorMessage,
-                                                fetchTime = ticket.fetchtime,
-                                                url = ticket.url
-                                        )
-                                )
-                            }
-                    Single.just(tickets)
-                }
-    }
-
     /**
-     * Loads tickets with enabled statuses
+     * Loads tickets with enabled filter
+     * Filter includes statuses + user settings
      * Note: If not statuses available, all tickets are loaded
      */
-    fun loadTicketsWithEnabledStatuses(): Single<List<Ticket>> {
+    fun loadFilteredTickets(
+            userSettings: UserSettings
+    ): Single<List<Ticket>> {
+        val userName = userSettings.jiraUser().name
         return enabledStatuses()
                 .flatMap { statuses ->
                     if (statuses.isEmpty()) {
                         loadTickets()
                     } else {
                         loadTickets()
-                                .map { tickets ->
-                                    tickets.filter { statuses.contains(it.status) }
-                                }
+                                .map { tickets -> tickets.filter { ticket -> statuses.contains(ticket.status) } }
+                    }
+                }
+                .map { tickets ->
+                    tickets.filter { ticket ->
+                        (userSettings.ticketFilterIncludeAssignee && ticket.assigneeName == userName)
+                                || (userSettings.ticketFilterIncludeReporter && ticket.reporterName == userName)
+                                || (userSettings.ticketFilterIncludeIsWatching && ticket.isWatching)
                     }
                 }
     }

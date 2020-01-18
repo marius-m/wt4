@@ -43,7 +43,10 @@ class TicketFilterSettingsPresenter(
 
     override fun saveTicketStatuses(
             ticketStatusViewModels: List<TicketStatusViewModel>,
-            useOnlyCurrentUser: Boolean
+            useOnlyCurrentUser: Boolean,
+            filterIncludeAssignee: Boolean,
+            filterIncludeReporter: Boolean,
+            filterIncludeIsWatching: Boolean
     ) {
         val newTicketStatuses = ticketStatusViewModels
                 .map { TicketStatus(it.nameProperty.get(), it.enableProperty.get()) }
@@ -57,6 +60,9 @@ class TicketFilterSettingsPresenter(
                     userSettings.issueJql = TicketJQLGenerator
                             .generateJQL(enabledStatuses = enabledTicketStatusNames, onlyCurrentUser = useOnlyCurrentUser)
                     userSettings.onlyCurrentUserIssues = useOnlyCurrentUser
+                    userSettings.ticketFilterIncludeAssignee = filterIncludeAssignee
+                    userSettings.ticketFilterIncludeReporter = filterIncludeReporter
+                    userSettings.ticketFilterIncludeIsWatching = filterIncludeIsWatching
                 }
                 .observeOn(schedulerProvider.ui())
                 .doOnSubscribe { view.showProgress() }

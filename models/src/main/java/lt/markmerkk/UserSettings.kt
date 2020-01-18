@@ -13,6 +13,9 @@ interface UserSettings {
     var lastUpdate: Long
     var ticketLastUpdate: Long
     var ticketStatusUpdate: Long
+    var ticketFilterIncludeAssignee: Boolean
+    var ticketFilterIncludeReporter: Boolean
+    var ticketFilterIncludeIsWatching: Boolean
 
     fun jiraOAuthPreset(): JiraOAuthPreset
     fun jiraOAuthCreds(): JiraOAuthCreds

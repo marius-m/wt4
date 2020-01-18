@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Uses basic search funct to fetch tickets
  */
+@Deprecated("Not used")
 class TicketLoaderBasic(
         private val listener: Listener,
         private val ticketStorage: TicketStorage,
@@ -59,8 +60,9 @@ class TicketLoaderBasic(
     fun loadTicketsAsStream(
             inputFilter: String
     ): Single<List<Ticket>> {
-        return ticketStorage
-                .loadTicketsWithEnabledStatus(inputFilter)
+//        return ticketStorage
+//                .loadTicketsWithEnabledStatus(inputFilter)
+        return Single.just(emptyList())
     }
 
     fun changeFilterStream(filterChange: Observable<String>) {

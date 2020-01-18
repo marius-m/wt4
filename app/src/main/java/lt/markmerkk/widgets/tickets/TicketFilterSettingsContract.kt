@@ -14,7 +14,10 @@ interface TicketFilterSettingsContract {
         fun loadTicketStatuses()
         fun saveTicketStatuses(
                 ticketStatusViewModels: List<TicketStatusViewModel>,
-                useOnlyCurrentUser: Boolean
+                useOnlyCurrentUser: Boolean,
+                filterIncludeAssignee: Boolean,
+                filterIncludeReporter: Boolean,
+                filterIncludeIsWatching: Boolean
         )
     }
 

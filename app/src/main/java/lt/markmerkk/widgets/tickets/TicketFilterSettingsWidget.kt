@@ -36,6 +36,9 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewStatusList: TableView<TicketStatusViewModel>
     private lateinit var viewOnlyCurrentUser: CheckBox
+    private lateinit var viewFilterIncludeAssignee: CheckBox
+    private lateinit var viewFilterIncludeReporter: CheckBox
+    private lateinit var viewFilterIncludeIsWatching: CheckBox
 
     private lateinit var presenter: TicketFilterSettingsContract.Presenter
 
@@ -59,6 +62,15 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
         center {
             stackpane {
                 viewContainerMain = vbox(spacing = 4) {
+                    viewFilterIncludeAssignee = checkbox("Include assigned tickets") {
+                        isSelected = userSettings.ticketFilterIncludeAssignee
+                    }
+                    viewFilterIncludeReporter = checkbox("Include reported tickets") {
+                        isSelected = userSettings.ticketFilterIncludeReporter
+                    }
+                    viewFilterIncludeIsWatching = checkbox("Include watching tickets") {
+                        isSelected = userSettings.ticketFilterIncludeIsWatching
+                    }
                     viewStatusList = tableview(ticketStatusViewModels) {
                         columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
                         column("Status", TicketStatusViewModel::nameProperty) { }
@@ -90,7 +102,10 @@ class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View 
                     setOnAction {
                         presenter.saveTicketStatuses(
                                 ticketStatusViewModels = ticketStatusViewModels,
-                                useOnlyCurrentUser = true // todo disable user selection to display all tickets
+                                useOnlyCurrentUser = true, // todo disable user selection to display all tickets
+                                filterIncludeAssignee = viewFilterIncludeAssignee.isSelected,
+                                filterIncludeReporter = viewFilterIncludeReporter.isSelected,
+                                filterIncludeIsWatching = viewFilterIncludeIsWatching.isSelected
                         )
                     }
                 }
