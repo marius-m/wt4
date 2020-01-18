@@ -22,6 +22,7 @@ enum class Glyph {
     ARROW_RIGHT,
     REFRESH2,
     CANCEL,
+    CANCEL2,
     ACCOUNT,
     INPUT,
     SEARCH,
