@@ -14,7 +14,6 @@ import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.main.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
-import lt.markmerkk.widgets.edit.LogDetailsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
@@ -34,9 +33,7 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(application: Main)
     fun inject(mainWidget: MainWidget)
-    fun inject(ticketWidget: TicketWidget)
     fun inject(ticketSideDrawerWidget: TicketSideDrawerWidget)
-    fun inject(logDetailsWidget: LogDetailsWidget)
     fun inject(logDetailsSideDrawerWidget: LogDetailsSideDrawerWidget)
     fun inject(clockWidget: ClockWidget)
     fun inject(ticketProgressWidget: TicketProgressWidget)
