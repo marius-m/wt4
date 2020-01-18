@@ -18,12 +18,13 @@ class TimedCommentStamperAddStampTest {
         var end = start
         val comment = "Simple comment"
         while (end.isBefore(limit)) {
-            val result = TimedCommentStamper.addStamp(start, end, comment)
+            val resultWithStamp = TimedCommentStamper.addStamp(start, end, comment)
+            assertThat(resultWithStamp).contains(">>")
 
-            // Assert
-            println(result)
-            assertThat(result).contains(">>")
-            assertThat(result).contains("Simple comment")
+            val resultNoStamp = TimedCommentStamper.removeStamp(resultWithStamp)
+            assertThat(resultNoStamp).doesNotContain(">>")
+            assertThat(resultNoStamp).isEqualTo("Simple comment")
+
             end = end.plusMinutes(1)
         }
     }

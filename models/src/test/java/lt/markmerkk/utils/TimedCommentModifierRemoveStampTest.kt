@@ -17,6 +17,16 @@ class TimedCommentModifierRemoveStampTest {
     }
 
     @Test
+    fun valid2() {
+        // Arrange
+        // Act
+        val out = TimedCommentStamper.removeStamp("19:00 - 21:57 >> Testing time gap application.")
+
+        // Assert
+        assertThat(out).isEqualTo("Testing time gap application.")
+    }
+
+    @Test
     fun invalidSplit() {
         // Arrange
         // Act

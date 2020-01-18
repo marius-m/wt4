@@ -7,7 +7,8 @@ import org.joda.time.DateTime
  */
 object TimedCommentStamper {
     private const val SEPERATOR = ">>"
-    private val regexTimeGap = "([0-1][0-9]:[0-5][0-9]) - ([0-1][0-9]:[0-5][0-9]) ($SEPERATOR)(.+)"
+    private val timeRegex = "[0-2][0-9]:[0-5][0-9]"
+    private val regexTimeGap = "($timeRegex) - ($timeRegex) ($SEPERATOR)(.+)"
             .toRegex()
 
     /**
@@ -36,7 +37,7 @@ object TimedCommentStamper {
      * *
      * @return category part
      */
-    fun removeStamp(message: String): String? {
+    fun removeStamp(message: String): String {
         if (message.isEmpty())
             return ""
         val matchResult: List<String> = regexTimeGap
