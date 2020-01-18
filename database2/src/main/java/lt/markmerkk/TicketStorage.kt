@@ -65,16 +65,22 @@ class TicketStorage(
                 }
     }
 
+    /**
+     * Loads tickets with enabled statuses
+     * Note: If not statuses available, all tickets are loaded
+     */
     fun loadTicketsWithEnabledStatuses(): Single<List<Ticket>> {
-        return Single.zip(
-                enabledStatuses(),
-                loadTickets(),
-                { statuses, tickets ->
-                    tickets.filter {
-                        statuses.contains(it.status)
+        return enabledStatuses()
+                .flatMap { statuses ->
+                    if (statuses.isEmpty()) {
+                        loadTickets()
+                    } else {
+                        loadTickets()
+                                .map { tickets ->
+                                    tickets.filter { statuses.contains(it.status) }
+                                }
                     }
                 }
-        )
     }
 
     fun loadTickets(): Single<List<Ticket>> {
