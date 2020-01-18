@@ -46,5 +46,6 @@ enum class Glyph {
     HELP,
     STOP,
     PLAY,
+    FILTER,
     ;
 }

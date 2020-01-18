@@ -54,6 +54,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
     private lateinit var viewProgress: TicketProgressWidget
     private lateinit var viewTable: TableView<TicketViewModel>
     private lateinit var viewButtonClear: JFXButton
+    private lateinit var viewButtonFilter: JFXButton
 
     private lateinit var presenter: TicketContract.Presenter
     private val ticketViewModels = mutableListOf<TicketViewModel>()
@@ -137,6 +138,13 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                     }
                     viewProgress.viewButtonRefresh.isFocusTraversable = false
                     add(viewProgress)
+                    viewButtonFilter = jfxButton {
+                        graphic = graphics.from(Glyph.FILTER, Color.BLACK, 14.0, 12.0)
+                        action {
+                            find<TicketFilterSettingsWidget>()
+                                    .openModal()
+                        }
+                    }
                 }
                 label("Search tickets") {
                     addClass(Styles.labelMini)
@@ -172,12 +180,6 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton("Filter".toUpperCase()) {
-                    setOnAction {
-                        find<TicketFilterSettingsWidget>()
-                                .openModal()
-                    }
-                }
                 jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         eventBus.post(EventMainCloseTickets())
