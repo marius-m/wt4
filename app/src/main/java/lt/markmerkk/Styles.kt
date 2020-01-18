@@ -27,6 +27,7 @@ class Styles: Stylesheet() {
         val labelRegular by cssclass()
         val popUpLabel by cssclass()
         val emojiText by cssclass()
+        val textMini by cssclass()
 
         val cLightest = c("#E8EAF6")
         val cLight = c("#7986CB")
@@ -139,6 +140,10 @@ class Styles: Stylesheet() {
             jfxButtonType.value = JFXButton.ButtonType.RAISED
             backgroundColor.add(Color.WHITE)
             backgroundRadius.add(box(4.px))
+        }
+        textMini {
+            textFill = Color.GRAY
+            fontSize = 8.pt
         }
     }
 

@@ -19,7 +19,8 @@ class LogDetailsPresenterUpdateActiveClock(
         private val timeProvider: TimeProvider,
         private val hourGlass: HourGlass,
         private val activeLogPersistence: ActiveLogPersistence,
-        private val ticketStorage: TicketStorage
+        private val ticketStorage: TicketStorage,
+        private val userSettings: UserSettings
 ): LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
@@ -45,7 +46,11 @@ class LogDetailsPresenterUpdateActiveClock(
                 }
 
                 override fun onEntitySaveComplete(start: DateTime, end: DateTime) {
-                    hourGlass.startFrom(end)
+                    if (userSettings.settingsAutoStartClock) {
+                        hourGlass.startFrom(end)
+                    } else {
+                        hourGlass.stop()
+                    }
                     activeLogPersistence.reset()
                     view?.closeDetails()
                 }

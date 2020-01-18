@@ -8,6 +8,7 @@ enum class Glyph {
     EMOTICON_NEUTRAL,
     DATE,
     SETTINGS,
+    SETTINGS2,
     INSERT,
     STATISTICS,
     REFRESH,

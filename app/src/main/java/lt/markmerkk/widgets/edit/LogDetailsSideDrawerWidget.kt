@@ -350,7 +350,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
                         timeProvider,
                         hourGlass,
                         activeLogPersistence,
-                        ticketStorage
+                        ticketStorage,
+                        userSettings
                 )
                 else -> LogDetailsPresenterCreate(
                         logStorage,

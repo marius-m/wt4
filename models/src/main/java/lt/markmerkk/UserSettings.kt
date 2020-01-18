@@ -16,6 +16,8 @@ interface UserSettings {
     var ticketFilterIncludeAssignee: Boolean
     var ticketFilterIncludeReporter: Boolean
     var ticketFilterIncludeIsWatching: Boolean
+    var settingsAutoStartClock: Boolean
+    var settingsAutoSync: Boolean
 
     fun jiraOAuthPreset(): JiraOAuthPreset
     fun jiraOAuthCreds(): JiraOAuthCreds

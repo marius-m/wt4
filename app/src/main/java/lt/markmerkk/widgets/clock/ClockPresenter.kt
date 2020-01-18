@@ -17,7 +17,6 @@ class ClockPresenter(
         private val resultDispatcher: ResultDispatcher
 ): ClockContract.Presenter {
 
-    private var isRunning = false
     private var view: ClockContract.View? = null
 
     override fun onAttach(view: ClockContract.View) {
@@ -29,8 +28,7 @@ class ClockPresenter(
     }
 
     override fun toggleClock() {
-        if (!isRunning) {
-            isRunning = true
+        if (!hourGlass.isRunning()) {
             hourGlass.start()
         } else {
             suggestSavingLog()
@@ -39,17 +37,15 @@ class ClockPresenter(
     }
 
     override fun cancelClock() {
-        if (this.isRunning) {
-            this.isRunning = false
+        if (hourGlass.isRunning()) {
             hourGlass.stop()
-            view?.showInactive()
         }
         renderClock()
     }
 
     override fun renderClock() {
         val duration = hourGlass.duration
-        if (isRunning) {
+        if (hourGlass.isRunning()) {
             view?.showActive(LogUtils.formatShortDuration(duration))
         } else {
             view?.showInactive()

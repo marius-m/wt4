@@ -22,6 +22,8 @@ class UserSettingsImpl(
     override var ticketFilterIncludeAssignee: Boolean = true
     override var ticketFilterIncludeReporter: Boolean = true
     override var ticketFilterIncludeIsWatching: Boolean = true
+    override var settingsAutoStartClock: Boolean = true
+    override var settingsAutoSync: Boolean = true
 
     private var oauthHost: String = ""
     private var oauthPrivateKey: String = ""
@@ -55,6 +57,8 @@ class UserSettingsImpl(
         jiraUserEmail = settings.get(JIRA_USER_EMAIL, "")
         jiraUserDisplayName = settings.get(JIRA_USER_DISPLAY_NAME, "")
         onlyCurrentUserIssues = settings.getBoolean(ISSUE_ONLY_CURRENT_USER_ISSUES, true)
+        settingsAutoStartClock = settings.getBoolean(SETTINGS_AUTO_START_CLOCK, true)
+        settingsAutoSync = settings.getBoolean(SETTINGS_AUTO_SYNC, true)
     }
 
     override fun onDetach() {
@@ -79,6 +83,8 @@ class UserSettingsImpl(
         settings.set(JIRA_USER_EMAIL, jiraUserEmail)
         settings.set(JIRA_USER_DISPLAY_NAME, jiraUserDisplayName)
         settings.set(ISSUE_ONLY_CURRENT_USER_ISSUES, onlyCurrentUserIssues.toString())
+        settings.set(SETTINGS_AUTO_START_CLOCK, settingsAutoStartClock.toString())
+        settings.set(SETTINGS_AUTO_SYNC, settingsAutoSync.toString())
         settings.save()
     }
 
@@ -144,5 +150,7 @@ class UserSettingsImpl(
         const val JIRA_USER_NAME = "JIRA_USER_NAME"
         const val JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
         const val JIRA_USER_DISPLAY_NAME = "JIRA_USER_DISPLAY_NAME"
+        const val SETTINGS_AUTO_START_CLOCK = "SETTINGS_AUTO_START_CLOCK"
+        const val SETTINGS_AUTO_SYNC = "SETTINGS_AUTO_SYNC"
     }
 }

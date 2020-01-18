@@ -11,6 +11,7 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
+import lt.markmerkk.widgets.app_settings.AppSettingsWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
@@ -44,6 +45,18 @@ class PopUpSettings(
                                                 resizable = true
                                         )
                                     }
+                                }
+                        ),
+                        PopUpAction(
+                                title = "App settings",
+                                graphic = graphics.from(Glyph.SETTINGS2, Color.BLACK, 12.0),
+                                action = {
+                                    find<AppSettingsWidget>().openModal(
+                                            stageStyle = StageStyle.DECORATED,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
                                 }
                         ),
                         PopUpAction(
