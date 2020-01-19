@@ -17,6 +17,7 @@ import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.list.ListLogWidget
+import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
@@ -52,4 +53,5 @@ interface AppComponent {
     fun inject(ticketFilterWidget: TicketFilterSettingsWidget)
     fun inject(ticketBasicSearchWidget: TicketBasicSearchWidget)
     fun inject(appSettingsWidget: AppSettingsWidget)
+    fun inject(logFreshnessWidget: LogFreshnessWidget)
 }

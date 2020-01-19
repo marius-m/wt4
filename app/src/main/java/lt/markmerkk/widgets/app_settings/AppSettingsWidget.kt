@@ -12,7 +12,8 @@ import javax.inject.Inject
 
 class AppSettingsWidget : Fragment() {
 
-    @Inject lateinit var userSettings: UserSettings
+    @Inject
+    lateinit var userSettings: UserSettings
 
     init {
         Main.component().inject(this)
@@ -55,24 +56,22 @@ class AppSettingsWidget : Fragment() {
                     }
                 }
             }
-
-            bottom {
-                hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
-                    addClass(Styles.dialogContainerActionsButtons)
-                    jfxButton("Save".toUpperCase()) {
-                        setOnAction {
-                            userSettings.settingsAutoStartClock = viewCheckAutoStartClock.isSelected
-                            userSettings.settingsAutoSync = viewCheckAutoSync.isSelected
-                            close()
-                        }
+        }
+        bottom {
+            hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
+                addClass(Styles.dialogContainerActionsButtons)
+                jfxButton("Save".toUpperCase()) {
+                    setOnAction {
+                        userSettings.settingsAutoStartClock = viewCheckAutoStartClock.isSelected
+                        userSettings.settingsAutoSync = viewCheckAutoSync.isSelected
+                        close()
                     }
-                    jfxButton("Close".toUpperCase()) {
-                        setOnAction { close() }
-                    }
+                }
+                jfxButton("Close".toUpperCase()) {
+                    setOnAction { close() }
                 }
             }
         }
-
     }
 
 }

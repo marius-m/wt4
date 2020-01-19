@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXDrawer
 import com.jfoenix.controls.JFXSnackbar
 import com.jfoenix.svg.SVGGlyph
 import com.vdurmont.emoji.EmojiParser
+import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -44,6 +45,8 @@ import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
+import lt.markmerkk.widgets.log_check.LogFreshnessChecker
+import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
@@ -75,6 +78,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     @Inject lateinit var jiraLinkGenerator: JiraLinkGenerator
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var ticker: Ticker
+    @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -105,7 +109,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
             }
         }
         val actionRefresh = {
-            syncInteractor.syncLogs()
+            syncInteractor.syncActiveTime()
             autoSyncWatcher.reset()
         }
         shortcut(KeyCombination.valueOf("Meta+R"), actionRefresh)
@@ -291,6 +295,20 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                 paneLogs = SidePaneStateProviderDrawer(viewSideDrawerLogDetails),
                 paneTickets = SidePaneStateProviderDrawer(viewSideDrawerTickets)
         )
+        primaryStage.setOnCloseRequest {
+            if (logFreshnessChecker.isUpToDate()) {
+                Platform.exit()
+            } else {
+                it.consume()
+                find<LogFreshnessWidget>()
+                        .openModal(
+                                stageStyle = StageStyle.DECORATED,
+                                modality = Modality.APPLICATION_MODAL,
+                                block = false,
+                                resizable = true
+                        )
+            }
+        }
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
@@ -371,7 +389,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Subscribe
     fun onAutoSync(event: EventAutoSync) {
-        syncInteractor.syncLogs()
+        syncInteractor.syncActiveTime()
     }
 
     @Subscribe

@@ -20,6 +20,7 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
 import lt.markmerkk.worklogs.JiraWorklogInteractor
@@ -392,6 +393,18 @@ class AppModule(
                 eventBus,
                 schedulerProvider.waitScheduler(),
                 schedulerProvider.ui()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogFreshnessChecker(
+            worklogStorage: WorklogStorage,
+            timeProvider: TimeProvider
+    ): LogFreshnessChecker {
+        return LogFreshnessChecker(
+                worklogStorage,
+                timeProvider
         )
     }
 
