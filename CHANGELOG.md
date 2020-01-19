@@ -2,6 +2,28 @@
 
 Current: 1.6.0
 
+## 1.7.0
+- Fix bug on older mac versions closing dialogs would crash the app (High sierra and below)
+- Fix SnackBar messages to display properly (Info messages at the bottom)
+- Fix short-cuts to sliding drawers
+- Various translations update
+- UI Change: Update 'Log details' and 'Ticket search' from pop-up to side drawer
+- UI Change: Clock start and save button behavior change ('Badge' on clock button will stop the clock)
+- UI Change: Display total in Calendar screen at bottom left corner
+- UI Change: (Almost working) Expanding text area for log comment
+- Update auto-sync timing (When synchronization to JIRA takes time)
+- Tickets can be filtered out by its status
+- Tickets can be filtered by other properties: Assignee, Reporter, is being watched
+- Tickets can be filtered by project, also handles short-cuts as well
+- Recently used ticket suggestions in 'Log details' screen
+- Generate Web-link for ticket on contextual menu
+- Re-worked clock calculation (Fixes various time related issues)
+- Time stamp is added to logs sent to JIRA
+- Additional controllable settings for the app
+    - Enable / Disable auto-start clock on log creation
+    - Enable / Disable auto-sync
+- On app close check if there are un-synced logs for current month
+
 ## 1.6.0
 - Bugfix on OAuth connection lock
 - Add version check whenever launching app
