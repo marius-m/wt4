@@ -37,7 +37,9 @@ Builds for `1.6.0`
 
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-999.dmg)
+
+- [MacOS - Basic](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.0.dmg)
+- [MacOS - iTo](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.0.dmg)
 
 ## Issues
 
