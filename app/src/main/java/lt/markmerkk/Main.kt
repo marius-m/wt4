@@ -31,6 +31,7 @@ class Main : App(MainWidget::class, Styles::class) {
     private lateinit var appComponent: AppComponent
 
     override fun start(stage: Stage) {
+        logger.info("Launching app")
         appComponent = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this, StageProperties(stage)))

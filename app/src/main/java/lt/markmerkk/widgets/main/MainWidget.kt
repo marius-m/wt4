@@ -161,7 +161,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                     addClass(Styles.buttonMenu)
                     graphic = graphics.from(Glyph.SETTINGS, Color.WHITE, 20.0)
                     setOnAction {
-                        PopUpSettings(graphics, jfxButtonSettings)
+                        PopUpSettings(graphics, jfxButtonSettings, hostServicesInteractor)
                                 .show()
                     }
                 }

@@ -2,6 +2,7 @@ package lt.markmerkk.dagger.modules
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
+import com.sun.javafx.application.HostServicesDelegate
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
@@ -101,7 +102,10 @@ class AppModule(
             application: Application,
             userSettings: UserSettings
     ): HostServicesInteractor {
-        return HostServicesInteractorImpl(application, userSettings)
+        return HostServicesInteractorImpl(
+                application,
+                userSettings
+        )
     }
 
     @Provides

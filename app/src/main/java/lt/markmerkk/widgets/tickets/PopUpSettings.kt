@@ -8,6 +8,7 @@ import javafx.stage.StageStyle
 import lt.markmerkk.BuildConfig
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
@@ -20,7 +21,8 @@ import tornadofx.*
 
 class PopUpSettings(
     private val graphics: Graphics<SVGGlyph>,
-    private val attachTo: Node
+    private val attachTo: Node,
+    private val hostServicesInteractor: HostServicesInteractor
 ): PopUpDisplay {
 
     override fun show() {
@@ -87,12 +89,7 @@ class PopUpSettings(
                                 title = "Help",
                                 graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                                 action = {
-                                    find<HelpWidget>().openModal(
-                                            stageStyle = StageStyle.DECORATED,
-                                            modality = Modality.APPLICATION_MODAL,
-                                            block = false,
-                                            resizable = true
-                                    )
+                                    hostServicesInteractor.openLink("https://github.com/marius-m/wt4/wiki")
                                 }
                         )
                 ),
