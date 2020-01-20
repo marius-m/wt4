@@ -72,6 +72,10 @@ class ContextMenuEditLog(
                             strings.getString("general_weblink"),
                             graphics.from(Glyph.LINK, Color.BLACK, 14.0, 16.0)
                     ).apply { id = LogEditType.WEBLINK.name }
+                    LogEditType.BROWSER -> MenuItem(
+                            strings.getString("general_browser"),
+                            graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
+                    ).apply { id = LogEditType.BROWSER.name }
                 }
             }
         }

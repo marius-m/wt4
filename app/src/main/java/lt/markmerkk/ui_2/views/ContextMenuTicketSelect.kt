@@ -56,8 +56,12 @@ class ContextMenuTicketSelect(
                 items.addAll(
                         MenuItem(
                                 "Copy web-link",
+                                graphics.from(Glyph.LINK, Color.BLACK, 14.0, 16.0)
+                        ).apply { id = SelectType.WEB_LINK.name },
+                        MenuItem(
+                                "Open in browser",
                                 graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
-                        ).apply { id = SelectType.WEB_LINK.name }
+                        ).apply { id = SelectType.BROWSER.name }
                 )
                 setOnAction { event ->
                     val selectType = SelectType.valueOf((event.target as MenuItem).id)
@@ -68,9 +72,11 @@ class ContextMenuTicketSelect(
                                 val webLinkToTicket = jiraLinkGenerator.webLinkFromInput(ticketCode.code)
                                 val message = EmojiParser.parseToUnicode("Copied $webLinkToTicket :rocket:")
                                 eventBus.post(EventSnackBarMessage(message))
-                                hostServicesInteractor.ticketWebLinkToClipboard(
-                                        webLinkToTicket
-                                )
+                                hostServicesInteractor.ticketWebLinkToClipboard(webLinkToTicket)
+                            }
+                            SelectType.BROWSER -> {
+                                val webLinkToTicket = jiraLinkGenerator.webLinkFromInput(ticketCode.code)
+                                hostServicesInteractor.openLink(webLinkToTicket)
                             }
                         }
                     }
@@ -84,6 +90,7 @@ class ContextMenuTicketSelect(
 
     private enum class SelectType {
         WEB_LINK,
+        BROWSER,
         ;
     }
 

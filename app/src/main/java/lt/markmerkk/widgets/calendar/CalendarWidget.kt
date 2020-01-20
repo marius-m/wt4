@@ -200,7 +200,8 @@ class CalendarWidget: Fragment() {
                         LogEditType.CLONE,
                         LogEditType.DELETE,
                         LogEditType.SPLIT,
-                        LogEditType.WEBLINK
+                        LogEditType.WEBLINK,
+                        LogEditType.BROWSER
                 )
         )
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)

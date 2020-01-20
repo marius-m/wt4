@@ -47,7 +47,8 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
                     LogEditType.CLONE,
                     LogEditType.DELETE,
                     LogEditType.SPLIT,
-                    LogEditType.WEBLINK
+                    LogEditType.WEBLINK,
+                    LogEditType.BROWSER
             )
     )
     private val logs = mutableListOf<LogViewModel>()

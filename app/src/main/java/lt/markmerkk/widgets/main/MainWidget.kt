@@ -501,6 +501,16 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                     eventBus.post(EventSnackBarMessage(message))
                 }
             }
+            LogEditType.BROWSER -> {
+                val activeLog = event.logs.first()
+                val webLink = jiraLinkGenerator.webLinkFromInput(activeLog.task)
+                if (webLink.isNotEmpty()) {
+                    hostServicesInteractor.openLink(webLink)
+                } else {
+                    val message = EmojiParser.parseToUnicode("Can't open link :boom:")
+                    eventBus.post(EventSnackBarMessage(message))
+                }
+            }
         }.javaClass
     }
 

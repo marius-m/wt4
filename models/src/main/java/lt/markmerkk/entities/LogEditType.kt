@@ -10,5 +10,6 @@ enum class LogEditType {
     CLONE,
     SPLIT,
     WEBLINK,
+    BROWSER,
     ;
 }
