@@ -23,6 +23,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
@@ -33,7 +34,6 @@ import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.utils.CalendarFxLogLoader
-import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.CalendarMenuItemProvider
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
@@ -123,6 +123,9 @@ class CalendarWidget: Fragment() {
             addClass(Styles.emojiText)
             addClass(Styles.labelMini)
             style {
+                backgroundColor.add(Color(1.0, 1.0, 1.0, 0.8))
+                backgroundRadius.add(box(6.pt))
+                backgroundInsets.add(box(2.px))
                 fontSize = 12.0.px
                 padding = box(
                         vertical = 4.px,
