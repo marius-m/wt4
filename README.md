@@ -40,6 +40,8 @@ There are experimental early access builds for testing. New upcoming things, tho
 
 - [MacOS - Basic](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.0.dmg)
 - [MacOS - iTo](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.0.dmg)
+- [Windows - Basic](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.0.exe)
+- [Windows - iTo](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.0.exe)
 
 ## Issues
 
