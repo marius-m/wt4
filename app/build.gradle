@@ -17,7 +17,7 @@ run {
     println("Running app as DEBUG: $project.debug")
     def logConfig = (project.debug) ? "debug_log4j2.xml" : "prod_log4j2.xml"
     println("Using logging config: $logConfig")
-    jvmArgs = ["-Dlog4j.configurationFile=$logConfig"]
+    jvmArgs = ["-Dlog4j.configurationFile=$logConfig", "-Xms128M", "-Xmx300M", "-XX:+UseG1GC"]
 }
 
 sourceSets {
