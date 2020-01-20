@@ -3,6 +3,7 @@ package lt.markmerkk
 import lt.markmerkk.entities.SimpleLog
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
+import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 
 /**
@@ -91,6 +92,8 @@ class LogStorage(
     }
 
     fun total() = data.sumBy { it.duration.toInt() }
+
+    fun totalAsDuration() = Duration(total().toLong())
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.DB)!!

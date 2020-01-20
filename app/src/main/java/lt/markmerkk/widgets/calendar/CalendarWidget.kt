@@ -23,18 +23,20 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
+import lt.markmerkk.total.TotalGenStringRes
+import lt.markmerkk.total.TotalWorkGenerator
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarMenuItemProvider
+import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.MainContainerNavigator
@@ -57,6 +59,8 @@ class CalendarWidget: Fragment() {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var logChangeValidator: LogChangeValidator
     @Inject lateinit var eventBus: WTEventBus
+    @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var dayProvider: DayProvider
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
@@ -71,7 +75,7 @@ class CalendarWidget: Fragment() {
         Main.component().inject(this)
     }
 
-    private val totalWorkGenerator = TotalWorkGenerator(logStorage)
+    private val totalWorkGenerator = TotalWorkGenerator(hourGlass, logStorage, TotalGenStringRes())
     private val mainContainerNavigator = MainContainerNavigator(
             logStorage,
             eventBus,
@@ -237,7 +241,8 @@ class CalendarWidget: Fragment() {
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
         eventBus.register(this)
-        viewInfoLabel.text = totalWorkGenerator.generateTotalMessage()
+        viewInfoLabel.text = totalWorkGenerator
+                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
     }
 
     override fun onUndock() {
@@ -250,6 +255,12 @@ class CalendarWidget: Fragment() {
     }
 
     //region Events
+
+    @Subscribe
+    fun eventClockChange(event: EventClockChange) {
+        viewInfoLabel.text = totalWorkGenerator
+                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+    }
 
     @Subscribe
     fun eventOnTick(event: EventTickTock) {
@@ -355,7 +366,8 @@ class CalendarWidget: Fragment() {
             logLoader.load(data)
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
-            viewInfoLabel.text = totalWorkGenerator.generateTotalMessage()
+            viewInfoLabel.text = totalWorkGenerator
+                    .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
         }
     }
 

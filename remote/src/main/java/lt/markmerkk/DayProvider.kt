@@ -1,11 +1,14 @@
 package lt.markmerkk
 
+import org.joda.time.LocalDate
+
 /**
- * @author mariusmerkevicius
- * @since 2016-08-07
  * Day gap time provider
  */
 interface DayProvider {
-    fun startDay(): Long
-    fun endDay(): Long
+    fun startAsDate(): LocalDate
+    fun endAsDate(): LocalDate
+
+    fun startMillis(): Long
+    fun endMillis(): Long
 }

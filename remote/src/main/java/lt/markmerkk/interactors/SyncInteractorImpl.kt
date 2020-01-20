@@ -49,8 +49,8 @@ class SyncInteractorImpl(
     }
 
     override fun syncActiveTime() {
-        val startDate = timeProvider.roundDateTime(dayProvider.startDay()).toLocalDate()
-        val endDate = timeProvider.roundDateTime(dayProvider.endDay()).toLocalDate()
+        val startDate = timeProvider.roundDateTime(dayProvider.startMillis()).toLocalDate()
+        val endDate = timeProvider.roundDateTime(dayProvider.endMillis()).toLocalDate()
         syncLogs(startDate, endDate)
     }
 
