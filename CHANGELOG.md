@@ -2,6 +2,12 @@
 
 Current: 1.6.0
 
+## 1.7.1
+- Add RAM limit whenever launching the app
+- Add context menu to launch tickets in external browser
+- Move help to launch in external browser
+- Total in calendar screen will display active clock as well
+
 ## 1.7.0
 - Fix bug on older mac versions closing dialogs would crash the app (High sierra and below)
 - Fix SnackBar messages to display properly (Info messages at the bottom)
