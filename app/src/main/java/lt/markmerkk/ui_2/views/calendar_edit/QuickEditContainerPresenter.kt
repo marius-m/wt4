@@ -2,10 +2,11 @@ package lt.markmerkk.ui_2.views.calendar_edit
 
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
+import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventLogSelection
 
 class QuickEditContainerPresenter(
-        private val eventBus: EventBus
+        private val eventBus: WTEventBus
 ): QuickEditContract.ContainerPresenter {
 
     private var view: QuickEditContract.ContainerView? = null

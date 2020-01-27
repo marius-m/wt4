@@ -20,6 +20,7 @@ class AutoSyncWatcher2(
         private val timeProvider: TimeProvider,
         private val eventBus: WTEventBus,
         private val accountAvailablility: AccountAvailablility,
+        private val userSettings: UserSettings,
         private val ioScheduler: Scheduler,
         private val uiScheduler: Scheduler
 ) {
@@ -80,18 +81,16 @@ class AutoSyncWatcher2(
             lastAppUsage: DateTime,
             nextSync: DateTime
     ): AutoSyncRule {
-        val isNextSyncScheduled = nextSync.isAfter(lastSync)
-        val durationLastScheduled = Duration(lastAppUsage, now)
-        if (!isNextSyncScheduled && durationLastScheduled.standardHours >= 3) {
-            return AutoSyncAppInSleepMode(now, lastSync, nextSync)
+        if (!userSettings.settingsAutoSync) {
+            return AutoSyncDisabled(now, lastSync)
         }
+        val isNextSyncScheduled = nextSync.isAfter(lastSync)
         if (isInLock.get()) {
             return AutoSyncOtherProcessInProgress(now, lastSync, lockProcessName)
         }
         if (!accountAvailablility.isAccountReadyForSync()) {
             return AutoSyncAccountNotReady(now, lastSync, nextSync)
         }
-        val currentDuration = Duration(lastSync, now)
         val scheduledSyncTriggered = now.isAfter(nextSync) || now.isEqual(nextSync)
         if (isNextSyncScheduled) {
             if (scheduledSyncTriggered) {
@@ -99,9 +98,6 @@ class AutoSyncWatcher2(
             }
             return AutoSyncNoChangesWaitingForScheduled(now, lastSync, nextSync)
         } else {
-            if (currentDuration.standardHours >= 1) {
-                return AutoSyncTriggerLongChange(now, lastSync)
-            }
             return AutoSyncNoChanges(now, lastSync)
         }
     }
@@ -112,12 +108,12 @@ class AutoSyncWatcher2(
     ) {
         val currentDuration = Duration(lastSync, now)
         when (rule) {
-            is AutoSyncNoChanges -> {
-                logger.debug("Skip update as last update was in $currentDuration")
+            is AutoSyncDisabled -> {
+                logger.debug("Skip update auto-sync disabled")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
             }
-            is AutoSyncAppInSleepMode -> {
-                logger.debug("Skip update as app is in sleep mode")
+            is AutoSyncNoChanges -> {
+                logger.debug("Skip update as last update was in $currentDuration")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
             }
             is AutoSyncNoChangesWaitingForScheduled -> {
@@ -132,7 +128,6 @@ class AutoSyncWatcher2(
                 logger.debug("Skip update as account is not ready for sync")
                 eventBus.post(EventAutoSyncLastUpdate(currentDuration))
             }
-            is AutoSyncTriggerLongChange,
             is AutoSyncTriggerShortChange -> {
                 logger.debug("Triggering update (${rule.javaClass})")
                 val newNow = timeProvider.now()
@@ -181,21 +176,19 @@ class AutoSyncWatcher2(
 
 sealed class AutoSyncRule
 /**
- * Indicates not ready for edit
+ * Indicates auto-sync disabled
  */
-data class AutoSyncNoChanges(
+data class AutoSyncDisabled(
         val now: DateTime,
         val lastSync: DateTime
 ): AutoSyncRule()
 
 /**
- * Indicates that no action as was taken on the app for too long,
- * and auto sync stops auto-sync
+ * Indicates not ready for edit
  */
-data class AutoSyncAppInSleepMode(
+data class AutoSyncNoChanges(
         val now: DateTime,
-        val lastSync: DateTime,
-        val nextSync: DateTime
+        val lastSync: DateTime
 ): AutoSyncRule()
 
 /**
@@ -233,10 +226,3 @@ data class AutoSyncTriggerShortChange(
         val lastSync: DateTime
 ): AutoSyncRule()
 
-/**
- * Indicates a notification to synchronize after a periodic update
- */
-data class AutoSyncTriggerLongChange(
-        val now: DateTime,
-        val lastSync: DateTime
-): AutoSyncRule()

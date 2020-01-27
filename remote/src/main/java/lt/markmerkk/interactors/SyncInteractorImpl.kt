@@ -5,6 +5,7 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.worklogs.WorklogApi
+import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import rx.*
 import java.net.UnknownHostException
@@ -47,13 +48,20 @@ class SyncInteractorImpl(
         subscription?.unsubscribe()
     }
 
-    override fun syncLogs() {
+    override fun syncActiveTime() {
+        val startDate = timeProvider.roundDateTime(dayProvider.startMillis()).toLocalDate()
+        val endDate = timeProvider.roundDateTime(dayProvider.endMillis()).toLocalDate()
+        syncLogs(startDate, endDate)
+    }
+
+    override fun syncLogs(
+            startDate: LocalDate,
+            endDate: LocalDate
+    ) {
         if (loading.get()) {
             logger.info("Sync in progress")
             return
         }
-        val startDate = timeProvider.roundDateTime(dayProvider.startDay()).toLocalDate() // todo rm middle layer
-        val endDate = timeProvider.roundDateTime(dayProvider.endDay()).toLocalDate() // todo rm middle layer
         val now = timeProvider.now()
         val syncStart = System.currentTimeMillis()
         subscription = Completable.fromAction { logger.info("=== Sync ===") }

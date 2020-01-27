@@ -8,6 +8,7 @@ enum class Glyph {
     EMOTICON_NEUTRAL,
     DATE,
     SETTINGS,
+    SETTINGS2,
     INSERT,
     STATISTICS,
     REFRESH,
@@ -22,6 +23,7 @@ enum class Glyph {
     ARROW_RIGHT,
     REFRESH2,
     CANCEL,
+    CANCEL2,
     ACCOUNT,
     INPUT,
     SEARCH,
@@ -42,5 +44,8 @@ enum class Glyph {
     ZOOM_IN,
     ZOOM_OUT,
     HELP,
+    STOP,
+    PLAY,
+    FILTER,
     ;
 }

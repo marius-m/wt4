@@ -4,7 +4,8 @@ import lt.markmerkk.SchedulerProvider
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.UserSettings
-import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketUseHistory
+import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.tickets.TicketApi
 import rx.Observable

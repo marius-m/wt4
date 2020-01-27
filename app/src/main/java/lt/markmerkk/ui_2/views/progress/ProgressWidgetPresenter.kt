@@ -26,7 +26,7 @@ class ProgressWidgetPresenter(
     }
 
     override fun onClickSync() {
-        syncInteractor.syncLogs()
+        syncInteractor.syncActiveTime()
         autoSyncWatcher.reset()
     }
 

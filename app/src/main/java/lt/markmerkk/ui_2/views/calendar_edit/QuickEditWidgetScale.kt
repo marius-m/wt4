@@ -13,10 +13,7 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.Tags
 import lt.markmerkk.ui_2.views.*
 import org.slf4j.LoggerFactory
-import tornadofx.View
-import tornadofx.hgrow
-import tornadofx.selectedItem
-import tornadofx.vgrow
+import tornadofx.*
 
 class QuickEditWidgetScale(
         private val presenter: QuickEditContract.ScalePresenter,
@@ -25,10 +22,9 @@ class QuickEditWidgetScale(
         private val graphics: Graphics<SVGGlyph>,
         private val scaleStepMinutes: Int,
         private val quickEditActionChangeListener: QuickEditActionChangeListener
-): View(),
+): Fragment(),
         QuickEditChangableAction,
         QuickEditContract.ScaleView,
-        LifecycleView,
         VisibilityChangeableView
 {
     private val quickEditActionsAsString = quickEditActions.map { it.name }
@@ -95,12 +91,14 @@ class QuickEditWidgetScale(
         root.hgrow = Priority.NEVER
     }
 
-    override fun onAttach() {
+    override fun onDock() {
+        super.onDock()
         presenter.onAttach(this)
     }
 
-    override fun onDetach() {
+    override fun onUndock() {
         presenter.onDetach()
+        super.onUndock()
     }
 
     override fun changeActiveAction(quickEditAction: QuickEditAction) {

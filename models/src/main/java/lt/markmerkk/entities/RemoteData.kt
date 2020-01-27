@@ -5,8 +5,8 @@ import lt.markmerkk.utils.UriUtils
 
 data class RemoteData(
         val remoteId: Long,
-        val isDeleted: Boolean,
-        val isDirty: Boolean,
+        val isDeleted: Boolean, // todo up for removal
+        val isDirty: Boolean, // todo up for removal
         val errorMessage: String,
         val fetchTime: Long,
         val url: String

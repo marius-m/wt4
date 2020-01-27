@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class StatisticsWidget: View(), StatisticsContract.View {
+class StatisticsWidget: Fragment(), StatisticsContract.View {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var ticketStorage: TicketStorage
@@ -64,7 +64,7 @@ class StatisticsWidget: View(), StatisticsContract.View {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton("Dismiss".toUpperCase()) {
+                jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         close()
                     }
@@ -98,7 +98,7 @@ class StatisticsWidget: View(), StatisticsContract.View {
                 .forEach { data ->
                     data.node.addEventHandler(MouseEvent.MOUSE_CLICKED) {
                         ticketInfoLoader.findTicket(data.name)
-                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatDuration(data.pieValue.toLong())}"
+                        viewLabelTicketDuration.text = "Ticket duration: ${LogUtils.formatShortDurationMillis(data.pieValue.toLong())}"
                     }
                 }
     }

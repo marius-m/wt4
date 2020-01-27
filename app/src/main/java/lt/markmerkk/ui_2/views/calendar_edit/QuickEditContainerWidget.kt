@@ -5,25 +5,29 @@ import javafx.scene.Parent
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Paint
 import lt.markmerkk.*
-import lt.markmerkk.ui_2.views.LifecycleView
-import lt.markmerkk.ui_2.views.SelectableView
 import lt.markmerkk.ui_2.views.VisibilityChangeableView
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
 import tornadofx.*
+import javax.inject.Inject
 
-class QuickEditContainerWidget(
-        private val presenter: QuickEditContract.ContainerPresenter,
-        private val logStorage: LogStorage,
-        private val timeProvider: TimeProvider,
-        private val graphics: Graphics<SVGGlyph>,
-        private val logChangeValidator: LogChangeValidator
-) : View(),
+class QuickEditContainerWidget: Fragment(),
         QuickEditContract.ContainerView,
         QuickEditActionChangeListener,
-        LifecycleView,
         VisibilityChangeableView
 {
+
+    @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var eventBus: WTEventBus
+    @Inject lateinit var logChangeValidator: LogChangeValidator
+
+    init {
+        Main.component().inject(this)
+    }
+
+    private lateinit var presenter: QuickEditContract.ContainerPresenter
 
     private val timeChangeValidator = TimeChangeValidator
     private val quickEditActions = setOf(
@@ -49,7 +53,7 @@ class QuickEditContainerWidget(
         }
         override fun entryId(): Long = selectedLogId
     }
-    private val widgetMap = mapOf<QuickEditAction, View>(
+    private val widgetMap = mapOf<QuickEditAction, Fragment>(
             QuickEditAction.MOVE to QuickEditWidgetMove(
                     quickEditActions = quickEditActions,
                     quickEditActionChangeListener = this,
@@ -107,23 +111,18 @@ class QuickEditContainerWidget(
 
     private var selectedLogId: Long = Const.NO_ID
 
-    init {
+    override fun onDock() {
+        super.onDock()
+        presenter = QuickEditContainerPresenter(eventBus)
+        presenter.onAttach(this)
+        changeToNoSelection()
+
         onActiveActionChange(QuickEditAction.MOVE)
     }
 
-    override fun onAttach() {
-        presenter.onAttach(this)
-        widgetMap.values
-                .filterIsInstance<LifecycleView>()
-                .forEach { it.onAttach() }
-        changeToNoSelection()
-    }
-
-    override fun onDetach() {
+    override fun onUndock() {
         presenter.onDetach()
-        widgetMap.values
-                .filterIsInstance<LifecycleView>()
-                .forEach { it.onDetach() }
+        super.onUndock()
     }
 
     override fun changeLogSelection(selectId: Long) {

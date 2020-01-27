@@ -11,7 +11,8 @@ import rx.Subscription
 import rx.observables.JavaFxObservable
 import tornadofx.*
 
-class HelpWidget: View() {
+@Deprecated("Webview is very costly, don't use it")
+class HelpWidget: Fragment() {
 
     private lateinit var viewWebview: WebView
     private lateinit var viewProgress: JFXSpinner

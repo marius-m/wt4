@@ -1,7 +1,7 @@
 package lt.markmerkk.ui_2.views.progress
 
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXProgressBar
 import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
@@ -9,17 +9,26 @@ import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
-import lt.markmerkk.Glyph
-import lt.markmerkk.Graphics
-import lt.markmerkk.MaterialColors
+import lt.markmerkk.*
+import lt.markmerkk.events.EventAutoSyncLastUpdate
+import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSpinner
 import tornadofx.*
+import javax.inject.Inject
 
-class ProgressWidget(
-        private val presenter: ProgressContract.Presenter,
-        private val graphics: Graphics<SVGGlyph>
-): View(), ProgressContract.View {
+class ProgressWidget: Fragment(), ProgressContract.View {
+
+    @Inject lateinit var graphics: Graphics<SVGGlyph>
+    @Inject lateinit var syncInteractor: SyncInteractor
+    @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
+    @Inject lateinit var eventBus: WTEventBus
+
+    init {
+        Main.component().inject(this)
+    }
+
+    private lateinit var presenter: ProgressContract.Presenter
 
     private lateinit var viewProgress: JFXSpinner
     private lateinit var viewStart: JFXButton
@@ -61,12 +70,20 @@ class ProgressWidget(
         }
     }
 
-    override fun onAttach() {
+    override fun onDock() {
+        super.onDock()
+        eventBus.register(this)
+        presenter = ProgressWidgetPresenter(
+                syncInteractor = syncInteractor,
+                autoSyncWatcher = autoSyncWatcher
+        )
         presenter.onAttach(this)
     }
 
-    override fun onDetach() {
+    override fun onUndock() {
+        eventBus.unregister(this)
         presenter.onDetach()
+        super.onUndock()
     }
 
     override fun showProgress() {
@@ -83,8 +100,13 @@ class ProgressWidget(
         viewLabel.text = syncData
     }
 
-    fun checkSyncDuration() {
+    //region Events
+
+    @Subscribe
+    fun onAutoSync(event: EventAutoSyncLastUpdate) {
         presenter.checkSyncDuration()
     }
+
+    //endregion
 
 }

@@ -5,8 +5,11 @@ import com.jfoenix.controls.*
 import javafx.beans.property.Property
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
+import javafx.geometry.Side
 import javafx.scene.Node
 import javafx.scene.control.Button
+import org.controlsfx.control.MasterDetailPane
+import org.controlsfx.control.PrefixSelectionComboBox
 import tornadofx.*
 
 /**
@@ -37,7 +40,7 @@ internal inline fun <T : Node> T.attachTo(
 fun EventTarget.jfxButton(
         text: String = "",
         graphic: Node? = null,
-        op: Button.() -> Unit = {}
+        op: JFXButton.() -> Unit = {}
 ) = JFXButton(text).attachTo(this, op) {
     if (graphic != null) it.graphic = graphic
 }
@@ -83,3 +86,21 @@ fun EventTarget.calendarFxDetailedDay(op: DetailedDayView.() -> Unit = {}) = Det
 // DateTime
 fun EventTarget.jfxDatePicker(op: JFXDatePicker.() -> Unit = {}) = JFXDatePicker().attachTo(this, op)
 fun EventTarget.jfxTimePicker(op: JFXTimePicker.() -> Unit = {}) = JFXTimePicker().attachTo(this, op)
+
+// Drawer
+fun EventTarget.jfxDrawer(op: JFXDrawer.() -> Unit = {}) = JFXDrawer().attachTo(this, op)
+
+// ControlFx
+fun EventTarget.jfxMasterDetailPane(
+        side: Side,
+        op: MasterDetailPane.() -> Unit = {}
+) = MasterDetailPane(side).attachTo(this, op)
+
+fun <T> EventTarget.cfxPrefixSelectionComboBox(
+        property: Property<T>? = null,
+        values: List<T>? = null,
+        op: PrefixSelectionComboBox<T>.() -> Unit = {}) = PrefixSelectionComboBox<T>().attachTo(this, op) {
+    if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
+    if (property != null) it.bind(property)
+    it.selectionModel.select(0)
+}

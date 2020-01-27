@@ -8,6 +8,7 @@ import com.calendarfx.view.DateControl
 import com.calendarfx.view.DayViewBase
 import com.calendarfx.view.DetailedDayView
 import com.calendarfx.view.DetailedWeekView
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXSlider
 import com.jfoenix.svg.SVGGlyph
 import javafx.collections.SetChangeListener
@@ -16,32 +17,29 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
+import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.stage.Modality
-import javafx.stage.StageStyle
 import javafx.util.Callback
 import lt.markmerkk.*
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.EventEditLog
-import lt.markmerkk.events.EventLogSelection
+import lt.markmerkk.events.*
+import lt.markmerkk.total.TotalGenStringRes
+import lt.markmerkk.total.TotalWorkGenerator
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.utils.CalendarFxLogLoader
-import lt.markmerkk.utils.CalendarFxUpdater
 import lt.markmerkk.utils.CalendarMenuItemProvider
+import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
-import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.MainContainerNavigator
-import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
-import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -51,7 +49,7 @@ import java.time.LocalTime
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
-class CalendarWidget: View() {
+class CalendarWidget: Fragment() {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var tracker: ITracker
@@ -60,22 +58,24 @@ class CalendarWidget: View() {
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var logChangeValidator: LogChangeValidator
-    @Inject lateinit var eventBus: com.google.common.eventbus.EventBus
+    @Inject lateinit var eventBus: WTEventBus
+    @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var dayProvider: DayProvider
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
     private lateinit var viewDragIndicator: VBox
     private lateinit var viewZoomIndicator: VBox
     private lateinit var viewZoomSlider: JFXSlider
+    private lateinit var viewInfoLabel: Label
 
     private lateinit var logLoader: CalendarFxLogLoader
-    private lateinit var calendarUpdater: CalendarFxUpdater
-
 
     init {
         Main.component().inject(this)
     }
 
+    private val totalWorkGenerator = TotalWorkGenerator(hourGlass, logStorage, TotalGenStringRes())
     private val mainContainerNavigator = MainContainerNavigator(
             logStorage,
             eventBus,
@@ -123,16 +123,21 @@ class CalendarWidget: View() {
         viewContainer = borderpane {
             center { }
         }
-        label("(i) Hold 'ALT' to update logs") {
+        viewInfoLabel = label {
+            addClass(Styles.emojiText)
+            addClass(Styles.labelMini)
             style {
+                backgroundColor.add(Color(1.0, 1.0, 1.0, 0.8))
+                backgroundRadius.add(box(6.pt))
+                backgroundInsets.add(box(2.px))
+                fontSize = 12.0.px
                 padding = box(
                         vertical = 4.px,
-                        horizontal = 0.px
+                        horizontal = 8.px
                 )
             }
-            StackPane.setAlignment(this, Pos.BOTTOM_CENTER)
+            StackPane.setAlignment(this, Pos.BOTTOM_LEFT)
             isMouseTransparent = true
-            addClass(Styles.labelMini)
         }
         viewDragIndicator = vbox(alignment = Pos.BOTTOM_CENTER) {
             isMouseTransparent = true
@@ -192,7 +197,20 @@ class CalendarWidget: View() {
         JavaFxObservable.valuesOf(viewZoomSlider.valueProperty())
                 .subscribe { viewCalendar.hourHeight = it.toDouble() }
         viewZoomSlider.value = 50.0
-        contextMenu = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
+        contextMenu = ContextMenuEditLog(
+                strings,
+                graphics,
+                logStorage,
+                eventBus,
+                listOf(
+                        LogEditType.UPDATE,
+                        LogEditType.CLONE,
+                        LogEditType.DELETE,
+                        LogEditType.SPLIT,
+                        LogEditType.WEBLINK,
+                        LogEditType.BROWSER
+                )
+        )
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
         logStorage.register(storageListener)
 
@@ -218,35 +236,61 @@ class CalendarWidget: View() {
                 schedulerProvider.io(),
                 schedulerProvider.ui()
         )
-        calendarUpdater = CalendarFxUpdater(
-                calendarUpdateListener,
-                schedulerProvider.waitScheduler(),
-                schedulerProvider.ui()
-        )
         logLoader.onAttach()
-        calendarUpdater.onAttach()
         logLoader.load(logStorage.data)
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
+        eventBus.register(this)
+        viewInfoLabel.text = totalWorkGenerator
+                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
     }
 
     override fun onUndock() {
+        eventBus.unregister(this)
         mainContainerNavigator.onDetach()
         viewCalendar.selections.removeListener(jfxCalSelectionListener)
-        calendarUpdater.onDetach()
         logLoader.onDetach()
         logStorage.unregister(storageListener)
         super.onUndock()
     }
 
-    fun changeEditMode(inEditMode: Boolean) {
-        this.inEditMode = inEditMode
+    //region Events
+
+    @Subscribe
+    fun eventClockChange(event: EventClockChange) {
+        viewInfoLabel.text = totalWorkGenerator
+                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+    }
+
+    @Subscribe
+    fun eventTickTock(event: EventTickTock) {
+        viewCalendar.today = LocalDate.now()
+        viewCalendar.time = LocalTime.now()
+        viewInfoLabel.text = totalWorkGenerator
+                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+    }
+
+    @Subscribe
+    fun onEditModeChange(event: EventEditMode) {
+        this.inEditMode = event.isInEdit
         if (inEditMode) {
             viewDragIndicator.show()
         } else {
             viewDragIndicator.hide()
         }
     }
+
+    @Subscribe
+    fun onFocusChange(event: EventFocusChange) {
+        if (event.isInFocus) {
+            viewCalendar.today = LocalDate.now()
+            viewCalendar.time = LocalTime.now()
+            viewInfoLabel.text = totalWorkGenerator
+                    .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+        }
+    }
+
+    //endregion
 
     //region Calendar listeners
 
@@ -321,19 +365,14 @@ class CalendarWidget: View() {
 
     //region Listeners
 
-
     private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
         override fun onDataChange(data: List<SimpleLog>) {
             logLoader.load(data)
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
-        }
-    }
-
-    private val calendarUpdateListener: CalendarFxUpdater.Listener = object : CalendarFxUpdater.Listener {
-        override fun onCurrentTimeUpdate(currentTime: LocalTime) {
-            viewCalendar.today = LocalDate.now()
-            viewCalendar.time = LocalTime.now()
+            viewInfoLabel.text = totalWorkGenerator
+                    .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+            eventBus.post(EventLogSelection(Const.NO_ID))
         }
     }
 

@@ -24,7 +24,7 @@ class NetworkModule {
             override fun log(message: String) {
                 loggerNetwork.debug(message)
             }
-        }).apply { level = HttpLoggingInterceptor.Level.BODY }
+        }).apply { level = HttpLoggingInterceptor.Level.HEADERS }
         val httpClient = OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)

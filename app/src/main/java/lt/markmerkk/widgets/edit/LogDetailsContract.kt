@@ -8,7 +8,7 @@ interface LogDetailsContract {
         fun initView(
                 labelHeader: String,
                 labelButtonSave: String,
-                glyphButtonSave: SVGGlyph,
+                glyphButtonSave: SVGGlyph?,
                 initDateTimeStart: DateTime,
                 initDateTimeEnd: DateTime,
                 initTicket: String,
@@ -16,7 +16,7 @@ interface LogDetailsContract {
                 enableFindTickets: Boolean,
                 enableDateTimeChange: Boolean
         )
-        fun close()
+        fun closeDetails()
         fun showDateTime(start: DateTime, end: DateTime)
         fun showTicketCode(ticket: String)
         fun showComment(comment: String)

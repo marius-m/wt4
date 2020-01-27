@@ -4,6 +4,7 @@ import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketStatus
 import org.joda.time.DateTime
 import rx.Single
 
@@ -16,6 +17,15 @@ class TicketApi(
         private val ticketsDatabaseRepo: TicketStorage,
         private val userSettings: UserSettings
 ) {
+
+    fun fetchProjectStatusesAndCache(
+            now: DateTime
+    ): Single<List<TicketStatus>> {
+        return Single.defer { Single.just(jiraClientProvider.client()) }
+                .flatMap { jiraTicketSearch.projectStatuses(now, it) }
+                .doOnSuccess { ticketsDatabaseRepo.refreshTicketStatuses(it).subscribe() }
+                .flatMap { ticketsDatabaseRepo.loadTicketStatuses() }
+    }
 
     fun searchRemoteTicketsAndCache(
             now: DateTime

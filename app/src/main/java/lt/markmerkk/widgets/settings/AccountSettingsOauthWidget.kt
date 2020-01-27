@@ -5,12 +5,12 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.controls.JFXTextArea
 import com.jfoenix.svg.SVGGlyph
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.web.WebView
 import lt.markmerkk.*
@@ -27,7 +27,7 @@ import java.io.File
 import javax.inject.Inject
 
 // todo incomplete display of behaviour
-class AccountSettingsOauthWidget : View() {
+class AccountSettingsOauthWidget : Fragment() {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider
@@ -95,6 +95,7 @@ class AccountSettingsOauthWidget : View() {
                                     isWrapText = true
                                 }
                                 viewButtonSetupConnection = jfxButton("Set-up new connection".toUpperCase()) {
+                                    addClass(Styles.dialogButtonAction)
                                     setOnAction { authorizator.setupAuthStep1() }
                                 }
                             }
@@ -126,7 +127,7 @@ class AccountSettingsOauthWidget : View() {
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
-                jfxButton("Dismiss".toUpperCase()) {
+                jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         close()
                     }

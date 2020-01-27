@@ -7,10 +7,17 @@ interface UserSettings {
     fun onDetach()
 
     var issueJql: String
+    var onlyCurrentUserIssues: Boolean
     var version: Int
     var autoUpdateMinutes: Int
     var lastUpdate: Long
     var ticketLastUpdate: Long
+    var ticketStatusUpdate: Long
+    var ticketFilterIncludeAssignee: Boolean
+    var ticketFilterIncludeReporter: Boolean
+    var ticketFilterIncludeIsWatching: Boolean
+    var settingsAutoStartClock: Boolean
+    var settingsAutoSync: Boolean
 
     fun jiraOAuthPreset(): JiraOAuthPreset
     fun jiraOAuthCreds(): JiraOAuthCreds

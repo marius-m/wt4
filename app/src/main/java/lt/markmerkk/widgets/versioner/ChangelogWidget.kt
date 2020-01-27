@@ -14,7 +14,7 @@ import lt.markmerkk.versioner.Changelog
 import org.slf4j.LoggerFactory
 import tornadofx.*
 
-class ChangelogWidget : View() {
+class ChangelogWidget : Fragment() {
 
     private lateinit var viewWebview: WebView
     private lateinit var viewLabelLocal: Label

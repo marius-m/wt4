@@ -8,9 +8,11 @@ import javafx.stage.StageStyle
 import lt.markmerkk.BuildConfig
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
+import lt.markmerkk.widgets.app_settings.AppSettingsWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
@@ -19,7 +21,8 @@ import tornadofx.*
 
 class PopUpSettings(
     private val graphics: Graphics<SVGGlyph>,
-    private val attachTo: Node
+    private val attachTo: Node,
+    private val hostServicesInteractor: HostServicesInteractor
 ): PopUpDisplay {
 
     override fun show() {
@@ -31,14 +34,14 @@ class PopUpSettings(
                                 action = {
                                     if (BuildConfig.oauth) {
                                         find<AccountSettingsOauthWidget>().openModal(
-                                                stageStyle = StageStyle.UTILITY,
+                                                stageStyle = StageStyle.DECORATED,
                                                 modality = Modality.APPLICATION_MODAL,
                                                 block = false,
                                                 resizable = true
                                         )
                                     } else {
                                         find<AccountSettingsWidget>().openModal(
-                                                stageStyle = StageStyle.UTILITY,
+                                                stageStyle = StageStyle.DECORATED,
                                                 modality = Modality.APPLICATION_MODAL,
                                                 block = false,
                                                 resizable = true
@@ -47,11 +50,11 @@ class PopUpSettings(
                                 }
                         ),
                         PopUpAction(
-                                title = "Statistics",
-                                graphic = graphics.from(Glyph.STATISTICS, Color.BLACK, 12.0),
+                                title = "App settings",
+                                graphic = graphics.from(Glyph.SETTINGS2, Color.BLACK, 12.0),
                                 action = {
-                                    find<StatisticsWidget>().openModal(
-                                            stageStyle = StageStyle.UTILITY,
+                                    find<AppSettingsWidget>().openModal(
+                                            stageStyle = StageStyle.DECORATED,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,
                                             resizable = true
@@ -59,11 +62,11 @@ class PopUpSettings(
                                 }
                         ),
                         PopUpAction(
-                                title = "Tickets",
-                                graphic = graphics.from(Glyph.PAGE, Color.BLACK, 10.0, 12.0),
+                                title = "Statistics",
+                                graphic = graphics.from(Glyph.STATISTICS, Color.BLACK, 12.0),
                                 action = {
-                                    find<TicketWidget>().openModal(
-                                            stageStyle = StageStyle.UTILITY,
+                                    find<StatisticsWidget>().openModal(
+                                            stageStyle = StageStyle.DECORATED,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,
                                             resizable = true
@@ -75,7 +78,7 @@ class PopUpSettings(
                                 graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                                 action = {
                                     find<CreditsWidget>().openModal(
-                                            stageStyle = StageStyle.UTILITY,
+                                            stageStyle = StageStyle.DECORATED,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,
                                             resizable = true
@@ -86,12 +89,7 @@ class PopUpSettings(
                                 title = "Help",
                                 graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                                 action = {
-                                    find<HelpWidget>().openModal(
-                                            stageStyle = StageStyle.UTILITY,
-                                            modality = Modality.APPLICATION_MODAL,
-                                            block = false,
-                                            resizable = true
-                                    )
+                                    hostServicesInteractor.openLink("https://github.com/marius-m/wt4/wiki")
                                 }
                         )
                 ),

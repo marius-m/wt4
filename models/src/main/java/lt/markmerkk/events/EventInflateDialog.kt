@@ -1,6 +1,6 @@
 package lt.markmerkk.events
 
-class EventInflateDialog(val type: DialogType)
+class EventInflateDialog(val type: DialogType): EventsBusEvent
 
 enum class DialogType {
     ACTIVE_CLOCK,

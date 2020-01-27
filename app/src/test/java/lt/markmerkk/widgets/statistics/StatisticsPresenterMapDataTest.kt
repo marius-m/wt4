@@ -1,8 +1,6 @@
 package lt.markmerkk.widgets.statistics
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.LogStorage
 import lt.markmerkk.Mocks

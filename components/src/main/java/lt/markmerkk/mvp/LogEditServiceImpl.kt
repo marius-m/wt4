@@ -1,8 +1,10 @@
 package lt.markmerkk.mvp
 
+import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.entities.TicketCode
 import org.joda.time.DateTime
 
 /**
@@ -12,6 +14,7 @@ import org.joda.time.DateTime
 class LogEditServiceImpl(
         private val logEditInteractor: LogEditInteractor,
         private val timeProvider: TimeProvider,
+        private val ticketStorage: TicketStorage,
         private val listener: LogEditService.Listener
 ) : LogEditService {
 
@@ -56,7 +59,8 @@ class LogEditServiceImpl(
             } else {
                 logEditInteractor.create(entityInEdit)
             }
-            listener.onEntitySaveComplete()
+            ticketStorage.saveTicketAsUsedSync(timeProvider.preciseNow(), TicketCode.new(task))
+            listener.onEntitySaveComplete(start, end)
         } catch(e: IllegalArgumentException) {
             listener.onEntitySaveFail(e)
         }

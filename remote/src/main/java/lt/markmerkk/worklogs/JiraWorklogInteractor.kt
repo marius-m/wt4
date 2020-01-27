@@ -7,6 +7,9 @@ import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.tickets.JiraTicketSearch
+import lt.markmerkk.tickets.TicketApi
+import lt.markmerkk.utils.TimedCommentStamper
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
@@ -35,7 +38,8 @@ class JiraWorklogInteractor(
                 JiraWorklogEmitter(
                         jiraClientProvider = jiraClientProvider,
                         jql = jql,
-                        searchFields = "summary,project,created,updated,parent,issuetype",
+                        searchFields = JiraTicketSearch.TICKET_SEARCH_FIELDS
+                                .joinToString(separator = ","),
                         start = startDate,
                         end = endDate
                 ),
@@ -45,6 +49,11 @@ class JiraWorklogInteractor(
             val ticket = Ticket.fromRemoteData(
                     code = issue.key,
                     description = issue.summary,
+                    status = issue?.status?.name ?: "",
+                    assigneeName = issue?.assignee?.name ?: "",
+                    reporterName = issue?.reporter?.name ?: "",
+                    isWatching = issue?.watches?.isWatching ?: false,
+                    parentCode = issue.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,
                             url = issue.url
@@ -58,10 +67,11 @@ class JiraWorklogInteractor(
                         )
                     }
                     .map {
+                        val noStampComment = TimedCommentStamper.removeStamp(it.comment)
                         Log.createFromRemoteData(
                                 timeProvider = timeProvider,
                                 code = ticket.code.code,
-                                comment = it.comment,
+                                comment = noStampComment,
                                 started = it.started,
                                 timeSpentSeconds = it.timeSpentSeconds,
                                 fetchTime = fetchTime,
@@ -71,19 +81,6 @@ class JiraWorklogInteractor(
             logger.debug("Remapping ${ticket.code.code} JIRA worklogs to Log (${worklogs.size} / ${issueWorklogPair.worklogs.size})")
             ticket to worklogs
         }
-    }
-
-    fun searchWorklogsAsList(
-            fetchTime: DateTime,
-            jql: String,
-            startDate: LocalDate,
-            endDate: LocalDate
-    ): Single<List<Log>> {
-        return searchWorlogs(fetchTime, jql, startDate, endDate)
-                .flatMap { Observable.from(it.second) }
-                .toList()
-                .take(1)
-                .toSingle()
     }
 
     /**
@@ -100,16 +97,20 @@ class JiraWorklogInteractor(
         return Single.defer {
             val jiraClient = jiraClientProvider.client()
             val issue = jiraClient.getIssue(log.code.code)
+            val commentWithTimeStamp = TimedCommentStamper
+                    .addStamp(log.time.start, log.time.end, log.comment)
             val remoteWorklog = issue.addWorkLog(
-                    log.comment,
+                    commentWithTimeStamp,
                     log.time.start,
                     log.time.duration.standardSeconds
             )
+            val noStampRemoteComment = TimedCommentStamper
+                    .removeStamp(remoteWorklog.comment)
             val logAsRemote = log.appendRemoteData(
                     timeProvider,
                     code = issue.key,
                     started = remoteWorklog.started,
-                    comment = remoteWorklog.comment,
+                    comment = noStampRemoteComment,
                     timeSpentSeconds = remoteWorklog.timeSpentSeconds,
                     fetchTime = fetchTime,
                     url = remoteWorklog.url

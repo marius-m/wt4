@@ -25,6 +25,11 @@ object Mocks {
             code: String = "TTS-123",
             description: String = "valid_descriotion",
             parentId: Long = -1,
+            parentCode: String = "",
+            status: String = "",
+            assigneeName: String = "",
+            reporterName: String = "",
+            isWatching: Boolean = false,
             remoteData: RemoteData? = null
     ): Ticket {
         return Ticket(
@@ -32,6 +37,11 @@ object Mocks {
                 code = TicketCode.new(code),
                 description = description,
                 parentId = parentId,
+                status = status,
+                assigneeName = assigneeName,
+                reporterName = reporterName,
+                isWatching = isWatching,
+                parentCode = TicketCode.new(parentCode),
                 remoteData = remoteData
         )
     }
@@ -198,6 +208,19 @@ object Mocks {
                 name = name,
                 displayName = displayName,
                 email = email
+        )
+    }
+
+    fun createTicketUseHistory(
+            timeProvider: TimeProvider,
+            code: String = "DEV-111",
+            description: String = "",
+            lastUsed: DateTime = timeProvider.now()
+    ): TicketUseHistory {
+        return TicketUseHistory(
+                TicketCode.new(code),
+                description,
+                lastUsed
         )
     }
 

@@ -11,7 +11,7 @@ import lt.markmerkk.TimeProvider
 import tornadofx.*
 import javax.inject.Inject
 
-class DatePickerWidget: View() {
+class DatePickerWidget: Fragment() {
 
     @Inject lateinit var logStorage: LogStorage
 

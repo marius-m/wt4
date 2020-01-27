@@ -9,13 +9,11 @@ object UIEUtils {
      * Structured to fix text for action buttons
      */
     fun fontSizeBasedOnLength(text: String): Double {
-        if (text.length <= 2) {
-            return 14.0
-        } else if (text.length <= 3) {
-            return 12.0
-        } else if (text.length <= 5) {
-            return 10.0
+        return when {
+            text.length <= 2 -> 14.0
+            text.length <= 3 -> 12.0
+            text.length <= 5 -> 10.0
+            else -> 8.0
         }
-        return 8.0
     }
 }

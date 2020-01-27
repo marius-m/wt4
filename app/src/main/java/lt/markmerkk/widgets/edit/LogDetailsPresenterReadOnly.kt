@@ -16,13 +16,15 @@ class LogDetailsPresenterReadOnly(
         private val logStorage: LogStorage,
         private val eventBus: EventBus,
         private val graphics: Graphics<SVGGlyph>,
-        private val timeProvider: TimeProvider
+        private val timeProvider: TimeProvider,
+        private val ticketStorage: TicketStorage
 ): LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
     private val logEditService: LogEditService = LogEditServiceImpl(
             logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
             timeProvider = timeProvider,
+            ticketStorage = ticketStorage,
             listener = object : LogEditService.Listener {
                 override fun onDataChange(
                         start: DateTime,
@@ -39,7 +41,7 @@ class LogDetailsPresenterReadOnly(
                     view?.showHint2(notification)
                 }
 
-                override fun onEntitySaveComplete() { }
+                override fun onEntitySaveComplete(start: DateTime, end: DateTime) { }
 
                 override fun onEntitySaveFail(error: Throwable) {
                     val errorMessage = error.message ?: "Error saving entity!"
@@ -70,8 +72,8 @@ class LogDetailsPresenterReadOnly(
         logEditService.serviceType = LogEditService.ServiceType.UPDATE
         view.initView(
                 labelHeader = "Log details (Read-only)",
-                labelButtonSave = "Update",
-                glyphButtonSave = graphics.from(Glyph.UPDATE, Color.BLACK, 12.0),
+                labelButtonSave = "Save",
+                glyphButtonSave = null,
                 initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
                 initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
                 initTicket = entityInEdit.task,

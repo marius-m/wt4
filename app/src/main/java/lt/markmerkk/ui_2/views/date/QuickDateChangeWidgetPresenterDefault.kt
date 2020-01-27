@@ -13,7 +13,6 @@ import lt.markmerkk.widgets.DatePickerWidget
 import tornadofx.*
 
 class QuickDateChangeWidgetPresenterDefault(
-        private val externalSourceNode: ExternalSourceNode<StackPane>,
         private val logStorage: LogStorage
 ) : DateChangeContract.Presenter {
 
@@ -46,7 +45,7 @@ class QuickDateChangeWidgetPresenterDefault(
 
     override fun onClickDate() {
         find<DatePickerWidget>().openModal(
-                stageStyle = StageStyle.UTILITY,
+                stageStyle = StageStyle.DECORATED,
                 block = true,
                 resizable = false
         )

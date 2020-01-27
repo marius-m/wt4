@@ -2,15 +2,13 @@ package lt.markmerkk.dagger.modules
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
+import com.sun.javafx.application.HostServicesDelegate
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.*
 import lt.markmerkk.interactors.ActiveLogPersistence
-import lt.markmerkk.migrations.Migration0To1
-import lt.markmerkk.migrations.Migration1To2
-import lt.markmerkk.migrations.Migration2To3
-import lt.markmerkk.migrations.Migration3To4
+import lt.markmerkk.migrations.*
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.repositories.CreditsRepository
 import lt.markmerkk.tickets.JiraTicketSearch
@@ -23,6 +21,7 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
 import lt.markmerkk.worklogs.JiraWorklogInteractor
@@ -103,7 +102,10 @@ class AppModule(
             application: Application,
             userSettings: UserSettings
     ): HostServicesInteractor {
-        return HostServicesInteractorImpl(application, userSettings)
+        return HostServicesInteractorImpl(
+                application,
+                userSettings
+        )
     }
 
     @Provides
@@ -167,6 +169,36 @@ class AppModule(
                                 databaseName = "wt4_2.db",
                                 databasePath = config.cfgPath
                         )
+                ),
+                Migration4To5(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration5To6(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration6To7(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration7To8(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration8To9(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
                 )
         )
         val dbConnProvider = DBConnProvider(databaseName = "wt4_2.db", databasePath = config.cfgPath)
@@ -178,9 +210,10 @@ class AppModule(
     @Provides
     @Singleton
     fun providesDatabaseRepo(
-            databaseProvider: DBConnProvider
+            databaseProvider: DBConnProvider,
+            timeProvider: TimeProvider
     ): TicketStorage {
-        return TicketStorage(databaseProvider)
+        return TicketStorage(databaseProvider, timeProvider)
     }
 
     @Provides
@@ -249,8 +282,11 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideHourGlass(): HourGlass {
-        return HourGlass()
+    fun provideHourGlass2(
+            timeProvider: TimeProvider,
+            eventBus: WTEventBus
+    ): HourGlass {
+        return HourGlass(eventBus, timeProvider)
     }
 
     @Provides
@@ -308,16 +344,30 @@ class AppModule(
 
     @Provides
     @Singleton
+    fun provideJiraLinkGenerator(
+            accountAvailablility: AccountAvailablility
+    ): JiraLinkGenerator {
+        if (BuildConfig.oauth) {
+            return JiraLinkGeneratorOAuth(view = null, accountAvailability = accountAvailablility)
+        } else {
+            return JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
+        }
+    }
+
+    @Provides
+    @Singleton
     fun provideAutoSyncWatcher(
             eventBus: WTEventBus,
             timeProvider: TimeProvider,
             schedulerProvider: SchedulerProvider,
-            accountAvailablility: AccountAvailablility
+            accountAvailablility: AccountAvailablility,
+            userSettings: UserSettings
     ): AutoSyncWatcher2 {
         return AutoSyncWatcher2(
                 timeProvider = timeProvider,
                 eventBus = eventBus,
                 accountAvailablility = accountAvailablility,
+                userSettings = userSettings,
                 ioScheduler = schedulerProvider.waitScheduler(),
                 uiScheduler = schedulerProvider.ui()
         )
@@ -335,6 +385,31 @@ class AppModule(
             api: Api
     ): VersionProvider {
         return VersionProviderImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTicker(
+            eventBus: WTEventBus,
+            schedulerProvider: SchedulerProvider
+    ): Ticker {
+        return Ticker(
+                eventBus,
+                schedulerProvider.waitScheduler(),
+                schedulerProvider.ui()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogFreshnessChecker(
+            worklogStorage: WorklogStorage,
+            timeProvider: TimeProvider
+    ): LogFreshnessChecker {
+        return LogFreshnessChecker(
+                worklogStorage,
+                timeProvider
+        )
     }
 
 }

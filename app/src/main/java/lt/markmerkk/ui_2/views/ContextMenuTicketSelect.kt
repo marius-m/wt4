@@ -2,11 +2,13 @@ package lt.markmerkk.ui_2.views
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
+import com.vdurmont.emoji.EmojiParser
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
@@ -19,7 +21,7 @@ import rx.Subscription
 
 class ContextMenuTicketSelect(
         private val graphics: Graphics<SVGGlyph>,
-        private val eventBus: EventBus,
+        private val eventBus: WTEventBus,
         private val hostServicesInteractor: HostServicesInteractor,
         private val accountAvailablility: AccountAvailablility
 ) {
@@ -37,12 +39,12 @@ class ContextMenuTicketSelect(
         subsTicketSelect?.unsubscribe()
     }
 
-    fun attachTicketSelection(ticketSelectAsStream: Observable<TicketViewModel?>) {
-        ticketSelectAsStream
+    fun attachTicketSelection(ticketCodeSelectAsStream: Observable<String?>) {
+        ticketCodeSelectAsStream
                 .filter { it != null }
                 .subscribe {
                     if (it != null) {
-                        bindCodes(listOf(it.code))
+                        bindCodes(listOf(it))
                     } else {
                         bindCodes(emptyList())
                     }
@@ -53,9 +55,13 @@ class ContextMenuTicketSelect(
             .apply {
                 items.addAll(
                         MenuItem(
-                                "Web link",
+                                "Copy web-link",
+                                graphics.from(Glyph.LINK, Color.BLACK, 14.0, 16.0)
+                        ).apply { id = SelectType.WEB_LINK.name },
+                        MenuItem(
+                                "Open in browser",
                                 graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
-                        ).apply { id = SelectType.WEB_LINK.name }
+                        ).apply { id = SelectType.BROWSER.name }
                 )
                 setOnAction { event ->
                     val selectType = SelectType.valueOf((event.target as MenuItem).id)
@@ -63,9 +69,14 @@ class ContextMenuTicketSelect(
                     if (!ticketCode.isEmpty()) {
                         when (selectType) {
                             SelectType.WEB_LINK -> {
-                                hostServicesInteractor.ticketWebLinkToClipboard(
-                                        jiraLinkGenerator.webLinkFromInput(ticketCode.code)
-                                )
+                                val webLinkToTicket = jiraLinkGenerator.webLinkFromInput(ticketCode.code)
+                                val message = EmojiParser.parseToUnicode("Copied $webLinkToTicket :rocket:")
+                                eventBus.post(EventSnackBarMessage(message))
+                                hostServicesInteractor.ticketWebLinkToClipboard(webLinkToTicket)
+                            }
+                            SelectType.BROWSER -> {
+                                val webLinkToTicket = jiraLinkGenerator.webLinkFromInput(ticketCode.code)
+                                hostServicesInteractor.openLink(webLinkToTicket)
                             }
                         }
                     }
@@ -79,6 +90,7 @@ class ContextMenuTicketSelect(
 
     private enum class SelectType {
         WEB_LINK,
+        BROWSER,
         ;
     }
 

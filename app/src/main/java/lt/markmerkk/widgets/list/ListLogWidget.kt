@@ -1,6 +1,5 @@
 package lt.markmerkk.widgets.list
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
@@ -19,12 +18,12 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class ListLogWidget: View(), IDataListener<SimpleLog> {
+class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
 
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
 
     init {
         Main.component().inject(this)
@@ -37,7 +36,21 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
             eventBus,
             this
     )
-    private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(strings, graphics, logStorage, eventBus)
+    private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(
+            strings,
+            graphics,
+            logStorage,
+            eventBus,
+            listOf(
+                    LogEditType.NEW,
+                    LogEditType.UPDATE,
+                    LogEditType.CLONE,
+                    LogEditType.DELETE,
+                    LogEditType.SPLIT,
+                    LogEditType.WEBLINK,
+                    LogEditType.BROWSER
+            )
+    )
     private val logs = mutableListOf<LogViewModel>()
             .observable()
 
@@ -106,7 +119,7 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
                 ticketCode = "TOTAL",
                 start = "",
                 end = "",
-                duration = LogUtils.formatShortDuration(logStorage.total().toLong()),
+                duration = LogUtils.formatShortDurationMillis(logStorage.total().toLong()),
                 comment = ""
         )
         val logViewModels = logStorage.data
@@ -118,7 +131,7 @@ class ListLogWidget: View(), IDataListener<SimpleLog> {
                             ticketCode = it.task,
                             start = LogFormatters.shortFormat.print(it.start),
                             end = LogFormatters.shortFormat.print(it.end),
-                            duration = LogUtils.formatShortDuration(it.duration),
+                            duration = LogUtils.formatShortDurationMillis(it.duration),
                             comment = it.comment
                     )
                 }

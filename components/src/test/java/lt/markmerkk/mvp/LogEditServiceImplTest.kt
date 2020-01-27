@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import com.nhaarman.mockitokotlin2.*
+import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProviderTest
 import org.joda.time.DateTime
 import org.junit.Before
@@ -13,6 +14,7 @@ class LogEditServiceImplTest {
 
     @Mock lateinit var listener: LogEditService.Listener
     @Mock lateinit var logEditInteractor: LogEditInteractor
+    @Mock lateinit var ticketStorage: TicketStorage
     lateinit var service: LogEditServiceImpl
 
     private val timeProvider = TimeProviderTest()
@@ -23,6 +25,7 @@ class LogEditServiceImplTest {
         service = LogEditServiceImpl(
                 logEditInteractor,
                 timeProvider,
+                ticketStorage,
                 listener
         )
     }
@@ -167,7 +170,7 @@ class LogEditServiceImplTest {
 
         // Assert
         verify(logEditInteractor).update(any())
-        verify(listener).onEntitySaveComplete()
+        verify(listener).onEntitySaveComplete(any(), any())
     }
 
     @Test
@@ -196,7 +199,7 @@ class LogEditServiceImplTest {
 
         // Assert
         verify(logEditInteractor).create(any())
-        verify(listener).onEntitySaveComplete()
+        verify(listener).onEntitySaveComplete(any(), any())
     }
 
     @Test

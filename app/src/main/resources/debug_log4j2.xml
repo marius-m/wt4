@@ -60,12 +60,12 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="ERROR">
-            <AppenderRef ref="FileAllErrors"/>
-        </Root>
-        <Logger name="lt.markmerkk" level="DEBUG" additivity="false">
+        <Root level="INFO">
             <AppenderRef ref="Console" />
             <AppenderRef ref="FileAllLogs"/>
+        </Root>
+        <Logger name="lt.markmerkk" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
         </Logger>
         <Logger name="DB" level="TRACE" additivity="false">
             <AppenderRef ref="Console" />
@@ -95,9 +95,6 @@
         </Logger>
         <Logger name="TRANSLATE" level="TRACE" additivity="false">
             <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="lt.markmerkk.widgets.MainContentWidget" level="TRACE" additivity="false">
-            <AppenderRef ref="FileTmp" />
         </Logger>
     </Loggers>
 </Configuration>

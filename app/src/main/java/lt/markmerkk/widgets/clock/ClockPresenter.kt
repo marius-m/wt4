@@ -1,57 +1,60 @@
 package lt.markmerkk.widgets.clock
 
 import lt.markmerkk.LogStorage
+import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.events.EventMainOpenLogDetails
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import org.joda.time.DateTime
+import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 
 class ClockPresenter(
         private val hourGlass: HourGlass,
         private val logStorage: LogStorage,
-        private val timeProvider: TimeProvider
+        private val timeProvider: TimeProvider,
+        private val eventBus: WTEventBus,
+        private val resultDispatcher: ResultDispatcher
 ): ClockContract.Presenter {
 
-    private var isRunning = false
     private var view: ClockContract.View? = null
 
     override fun onAttach(view: ClockContract.View) {
         this.view = view
-        this.hourGlass.setListener(hourglassListener)
     }
 
     override fun onDetach() {
-        this.hourGlass.setListener(null)
         this.view = null
     }
 
     override fun toggleClock() {
-        this.isRunning = !isRunning
-        if (isRunning) {
+        if (!hourGlass.isRunning()) {
             hourGlass.start()
         } else {
+            suggestSavingLog()
+        }
+        renderClock()
+    }
+
+    override fun cancelClock() {
+        if (hourGlass.isRunning()) {
             hourGlass.stop()
+        }
+        renderClock()
+    }
+
+    override fun renderClock() {
+        val duration = hourGlass.duration
+        if (hourGlass.isRunning()) {
+            view?.showActive(LogUtils.formatShortDuration(duration))
+        } else {
+            view?.showInactive()
         }
     }
 
-    private val hourglassListener: HourGlass.Listener = object : HourGlass.Listener {
-        override fun onStart(start: Long, end: Long, duration: Long) {
-            view?.showActive(LogUtils.formatShortDuration(duration))
-        }
-
-        override fun onStop(start: Long, end: Long, duration: Long) {
-            view?.showInactive()
-        }
-
-        override fun onTick(start: Long, end: Long, duration: Long) {
-            view?.showActive(LogUtils.formatShortDuration(duration))
-        }
-
-        override fun onError(error: HourGlass.Error) {
-            view?.showActive("-")
-        }
-
+    private fun suggestSavingLog() {
+        resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
+        eventBus.post(EventMainOpenLogDetails())
     }
 
 }

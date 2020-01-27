@@ -9,5 +9,7 @@ interface ClockContract {
         fun onAttach(view: View)
         fun onDetach()
         fun toggleClock()
+        fun cancelClock()
+        fun renderClock()
     }
 }

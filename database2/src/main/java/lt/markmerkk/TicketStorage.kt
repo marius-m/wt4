@@ -1,18 +1,62 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.Ticket
-import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.entities.*
+import lt.markmerkk.schema1.Tables.TICKET_USE_HISTORY
 import lt.markmerkk.schema1.tables.Ticket.TICKET
+import lt.markmerkk.schema1.tables.TicketStatus.TICKET_STATUS
 import lt.markmerkk.schema1.tables.records.TicketRecord
+import lt.markmerkk.schema1.tables.records.TicketStatusRecord
+import org.joda.time.DateTime
 import org.jooq.DSLContext
 import org.jooq.Result
 import org.slf4j.LoggerFactory
+import rx.Observable
 import rx.Single
 
 class TicketStorage(
-        private val connProvider: DBConnProvider
+        private val connProvider: DBConnProvider,
+        private val timeProvider: TimeProvider
 ) {
+
+    fun enabledStatuses(): Single<List<String>> {
+        return Single.defer {
+            val enabledStatuses: List<String> = connProvider.dsl
+                    .select()
+                    .from(TICKET_STATUS)
+                    .fetchInto(TICKET_STATUS)
+                    .map { TicketStatus(it.name, it.enabled.toBoolean()) }
+                    .filter { it.enabled }
+                    .map { it.name }
+            Single.just(enabledStatuses)
+        }
+    }
+
+    /**
+     * Loads tickets with enabled filter
+     * Filter includes statuses + user settings
+     * Note: If not statuses available, all tickets are loaded
+     */
+    fun loadFilteredTickets(
+            userSettings: UserSettings
+    ): Single<List<Ticket>> {
+        val userName = userSettings.jiraUser().name
+        return enabledStatuses()
+                .flatMap { statuses ->
+                    if (statuses.isEmpty()) {
+                        loadTickets()
+                    } else {
+                        loadTickets()
+                                .map { tickets -> tickets.filter { ticket -> statuses.contains(ticket.status) } }
+                    }
+                }
+                .map { tickets ->
+                    tickets.filter { ticket ->
+                        (userSettings.ticketFilterIncludeAssignee && ticket.assigneeName == userName)
+                                || (userSettings.ticketFilterIncludeReporter && ticket.reporterName == userName)
+                                || (userSettings.ticketFilterIncludeIsWatching && ticket.isWatching)
+                    }
+                }
+    }
 
     fun loadTickets(): Single<List<Ticket>> {
         return Single.defer {
@@ -27,6 +71,11 @@ class TicketStorage(
                                 code = TicketCode.new(ticket.code),
                                 description = ticket.description,
                                 parentId = ticket.parentId,
+                                status = ticket.status,
+                                assigneeName = ticket.assignee,
+                                reporterName = ticket.reporter,
+                                isWatching = ticket.isWatching.toBoolean(),
+                                parentCode = TicketCode.new(ticket.parentCode),
                                 remoteData = RemoteData.new(
                                         isDeleted = ticket.isDeleted.toBoolean(),
                                         isDirty = ticket.isDirty.toBoolean(),
@@ -39,6 +88,79 @@ class TicketStorage(
                     }
             Single.just(tickets)
         }
+    }
+
+    fun loadTicketStatuses(): Single<List<TicketStatus>> {
+        return Single.defer {
+            val dbResult: Result<TicketStatusRecord> = connProvider.dsl
+                    .select()
+                    .from(TICKET_STATUS)
+                    .fetchInto(TICKET_STATUS)
+            val ticketStatuses = dbResult
+                    .map { TicketStatus(name = it.name, enabled = it.enabled.toBoolean()) }
+            Single.just(ticketStatuses)
+        }
+    }
+
+    fun refreshTicketStatuses(ticketStatusesNames: List<String>): Single<Int> {
+        return Single.defer {
+            val newStatusNamesWithValues = ticketStatusesNames
+                    .map { TicketStatus(it, isTicketStatusEnabled(it)) }
+            connProvider.dsl
+                    .deleteFrom(TICKET_STATUS)
+                    .execute()
+            newStatusNamesWithValues
+                    .map { ticketStatus ->
+                        connProvider.dsl.insertInto(
+                                TICKET_STATUS,
+                                TICKET_STATUS.NAME,
+                                TICKET_STATUS.ENABLED
+                        ).values(
+                                ticketStatus.name,
+                                ticketStatus.enabled.toByte()
+                        )
+                    }.forEach { it.execute() }
+            Single.just(0)
+        }
+    }
+
+    fun updateTicketStatuses(ticketStatuses: List<TicketStatus>): Single<Int> {
+        return Single.defer {
+            ticketStatuses
+                    .filter {
+                        isTicketStatusExist(connProvider.dsl, it.name)
+                    }
+                    .forEach { ticketStatus ->
+                        connProvider.dsl.update(TICKET_STATUS)
+                                .set(TICKET_STATUS.NAME, ticketStatus.name)
+                                .set(TICKET_STATUS.ENABLED, ticketStatus.enabled.toByte())
+                                .where(TICKET_STATUS.NAME.eq(ticketStatus.name))
+                                .execute()
+                    }
+            Single.just(0)
+        }
+    }
+
+    private fun isTicketStatusExist(dslContext: DSLContext, ticketStatus: String): Boolean {
+        val ticketStatusCount = dslContext.selectCount()
+                .from(TICKET_STATUS)
+                .where(TICKET_STATUS.NAME.eq(ticketStatus))
+                .fetchOne(0, Integer::class.java)
+        return ticketStatusCount > 0
+    }
+
+    fun isTicketStatusEnabled(ticketStatus: String): Boolean {
+        return connProvider.dsl
+                .select()
+                .from(TICKET_STATUS)
+                .where(TICKET_STATUS.NAME.eq(ticketStatus))
+                .fetchInto(TICKET_STATUS)
+                .map { TicketStatus(it.name, it.enabled.toBoolean()) }
+                .firstOrNull { it.name == ticketStatus }?.enabled ?: true
+    }
+
+    fun refreshTicketStatusesSync(ticketStatuses: List<String>): Int {
+        return refreshTicketStatuses(ticketStatuses).toBlocking().value()
     }
 
     fun insertOrUpdate(ticket: Ticket): Single<Int> {
@@ -59,6 +181,11 @@ class TicketStorage(
                         .set(TICKET.ERROR_MESSAGE, remoteData.errorMessage)
                         .set(TICKET.FETCHTIME, remoteData.fetchTime)
                         .set(TICKET.URL, remoteData.url)
+                        .set(TICKET.STATUS, ticket.status)
+                        .set(TICKET.ASSIGNEE, ticket.assigneeName)
+                        .set(TICKET.REPORTER, ticket.reporterName)
+                        .set(TICKET.IS_WATCHING, ticket.isWatching.toByte())
+                        .set(TICKET.PARENT_CODE, ticket.parentCode.code)
                         .where(TICKET.REMOTE_ID.eq(remoteData.remoteId))
                         .execute()
             } else {
@@ -75,7 +202,12 @@ class TicketStorage(
                         TICKET.IS_ERROR,
                         TICKET.ERROR_MESSAGE,
                         TICKET.FETCHTIME,
-                        TICKET.URL
+                        TICKET.URL,
+                        TICKET.STATUS,
+                        TICKET.ASSIGNEE,
+                        TICKET.REPORTER,
+                        TICKET.IS_WATCHING,
+                        TICKET.PARENT_CODE
                 ).values(
                         ticket.code.code,
                         ticket.code.codeProject,
@@ -88,7 +220,12 @@ class TicketStorage(
                         remoteData.isError.toByte(),
                         remoteData.errorMessage,
                         remoteData.fetchTime,
-                        remoteData.url
+                        remoteData.url,
+                        ticket.status,
+                        ticket.assigneeName,
+                        ticket.reporterName,
+                        ticket.isWatching.toByte(),
+                        ticket.parentCode.code
                 ).execute()
             }
             Single.just(result)
@@ -111,6 +248,11 @@ class TicketStorage(
                                 code = TicketCode.new(ticket.code),
                                 description = ticket.description,
                                 parentId = ticket.parentId,
+                                status = ticket.status,
+                                assigneeName = ticket.assignee,
+                                reporterName = ticket.reporter,
+                                isWatching = ticket.isWatching.toBoolean(),
+                                parentCode = TicketCode.new(ticket.parentCode),
                                 remoteData = RemoteData.new(
                                         isDeleted = ticket.isDeleted.toBoolean(),
                                         isDirty = ticket.isDirty.toBoolean(),
@@ -123,6 +265,54 @@ class TicketStorage(
                     }
             Single.just(tickets)
         }
+    }
+
+    fun fetchRecentTickets(limit: Int): Single<List<TicketUseHistory>> {
+        return Single.defer {
+            val recentTickets = connProvider.dsl.select()
+                    .from(TICKET_USE_HISTORY)
+                    .orderBy(TICKET_USE_HISTORY.LASTUSED.desc())
+                    .limit(limit)
+                    .fetchInto(TICKET_USE_HISTORY)
+                    .map { ticketRecord ->
+                        TicketUseHistory(
+                                code = TicketCode.new(ticketRecord.code),
+                                description = "",
+                                lastUsed = timeProvider.preciseDateTime(ticketRecord.lastused)
+                        )
+                    }
+            Single.just(recentTickets)
+        }
+    }
+
+    fun saveTicketAsUsedSync(
+            now: DateTime,
+            ticketCode: TicketCode
+    ) {
+        if (!ticketCode.isEmpty()) {
+            rmHistoryWithCode(connProvider.dsl, ticketCode)
+            connProvider.dsl.insertInto(
+                    TICKET_USE_HISTORY,
+                    TICKET_USE_HISTORY.CODE,
+                    TICKET_USE_HISTORY.CODE_PROJECT,
+                    TICKET_USE_HISTORY.CODE_NUMBER,
+                    TICKET_USE_HISTORY.LASTUSED
+            ).values(
+                    ticketCode.code,
+                    ticketCode.codeProject,
+                    ticketCode.codeNumber,
+                    timeProvider.preciseMillis(now)
+            ).execute()
+        }
+    }
+
+    private fun rmHistoryWithCode(dslContext: DSLContext, ticketCode: TicketCode): Int {
+        if (ticketCode.isEmpty()) {
+            return -1
+        }
+        return dslContext.deleteFrom(TICKET_USE_HISTORY)
+                .where(TICKET_USE_HISTORY.CODE.eq(ticketCode.code))
+                .execute()
     }
 
     private fun isTicketExist(dslContext: DSLContext, ticket: Ticket): Boolean {

@@ -1,6 +1,5 @@
 package lt.markmerkk.ui_2.views
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
@@ -18,40 +17,19 @@ class ContextMenuEditLog(
         private val strings: Strings,
         private val graphics: Graphics<SVGGlyph>,
         private val logStorage: LogStorage,
-        private val eventBus: EventBus
+        private val eventBus: WTEventBus,
+        private val editTypes: List<LogEditType>
 ) {
     val root: ContextMenu = ContextMenu()
             .apply {
-                items.addAll(
-                        MenuItem(
-                                strings.getString("general_update"),
-                                graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
-                        ).apply { id = LogEditType.UPDATE.name },
-                        MenuItem(
-                                strings.getString("general_delete"),
-                                graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
-                        ).apply { id = LogEditType.DELETE.name },
-                        MenuItem(
-                                strings.getString("general_clone"),
-                                graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
-                        ).apply { id = LogEditType.CLONE.name },
-                        MenuItem(
-                                strings.getString("general_split"),
-                                graphics.from(Glyph.SPLIT, Color.BLACK, 16.0, 12.0)
-                        ).apply { id = LogEditType.SPLIT.name }
-                        // Disabled for incomplete feature
-//                        MenuItem(
-//                                strings.getString("general_merge"),
-//                                graphics.from(Glyph.MERGE, Color.BLACK, 16.0, 16.0)
-//                        ).apply { id = LogEditType.MERGE.name }
-                )
+                items.addAll(menuItemsFromEditTypes(editTypes, strings, graphics))
                 setOnAction { event ->
                     val logEditType = LogEditType.valueOf((event.target as MenuItem).id)
                     val selectedLogs = selectedLogIds
                             .mapNotNull { logStorage.findByIdOrNull(it) }
                     eventBus.post(EventEditLog(logEditType, selectedLogs))
                 }
-            }
+            } 
     private var selectedLogIds = emptyList<Long>()
 
     /**
@@ -63,6 +41,44 @@ class ContextMenuEditLog(
 
     companion object {
         val logger = LoggerFactory.getLogger(Tags.INTERNAL)!!
+        fun menuItemsFromEditTypes(
+                logEditTypes: List<LogEditType>,
+                strings: Strings,
+                graphics: Graphics<SVGGlyph>
+        ): List<MenuItem> {
+            return logEditTypes.map {
+                when (it) {
+                    LogEditType.NEW -> MenuItem(
+                            strings.getString("general_new"),
+                            graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
+                    ).apply { id = LogEditType.NEW.name }
+                    LogEditType.UPDATE -> MenuItem(
+                            strings.getString("general_update"),
+                            graphics.from(Glyph.UPDATE, Color.BLACK, 16.0, 16.0)
+                    ).apply { id = LogEditType.UPDATE.name }
+                    LogEditType.DELETE -> MenuItem(
+                            strings.getString("general_delete"),
+                            graphics.from(Glyph.DELETE, Color.BLACK, 12.0, 16.0)
+                    ).apply { id = LogEditType.DELETE.name }
+                    LogEditType.CLONE -> MenuItem(
+                            strings.getString("general_clone"),
+                            graphics.from(Glyph.CLONE, Color.BLACK, 16.0, 12.0)
+                    ).apply { id = LogEditType.CLONE.name }
+                    LogEditType.SPLIT -> MenuItem(
+                            strings.getString("general_split"),
+                            graphics.from(Glyph.SPLIT, Color.BLACK, 16.0, 12.0)
+                    ).apply { id = LogEditType.SPLIT.name }
+                    LogEditType.WEBLINK -> MenuItem(
+                            strings.getString("general_weblink"),
+                            graphics.from(Glyph.LINK, Color.BLACK, 14.0, 16.0)
+                    ).apply { id = LogEditType.WEBLINK.name }
+                    LogEditType.BROWSER -> MenuItem(
+                            strings.getString("general_browser"),
+                            graphics.from(Glyph.NEW, Color.BLACK, 16.0, 16.0)
+                    ).apply { id = LogEditType.BROWSER.name }
+                }
+            }
+        }
     }
 
 }

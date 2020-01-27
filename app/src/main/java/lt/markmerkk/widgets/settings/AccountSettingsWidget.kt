@@ -19,7 +19,7 @@ import tornadofx.*
 import java.io.File
 import javax.inject.Inject
 
-class AccountSettingsWidget : View() {
+class AccountSettingsWidget : Fragment() {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider
@@ -168,7 +168,7 @@ class AccountSettingsWidget : View() {
                         close()
                     }
                 }
-                jfxButton("Dismiss".toUpperCase()) {
+                jfxButton("Close".toUpperCase()) {
                     setOnAction {
                         close()
                     }

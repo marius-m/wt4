@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe
 import lt.markmerkk.DisplayType
 import lt.markmerkk.DisplayTypeLength
 import lt.markmerkk.LogStorage
+import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.list.ListLogWidget
@@ -16,7 +17,7 @@ import tornadofx.*
  */
 class MainContainerNavigator(
         private val logStorage: LogStorage,
-        private val eventBus: EventBus,
+        private val eventBus: WTEventBus,
         private val uiComponent: UIComponent
 ) {
 

@@ -1,42 +1,39 @@
 package lt.markmerkk.widgets.edit
 
-import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
 import lt.markmerkk.mvp.LogEditServiceImpl
-import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.DateTime
 
 class LogDetailsPresenterUpdateActiveClock(
         private val logStorage: LogStorage,
-        private val eventBus: EventBus,
+        private val eventBus: WTEventBus,
         private val graphics: Graphics<SVGGlyph>,
         private val timeProvider: TimeProvider,
         private val hourGlass: HourGlass,
-        private val activeLogPersistence: ActiveLogPersistence
+        private val activeLogPersistence: ActiveLogPersistence,
+        private val ticketStorage: TicketStorage,
+        private val userSettings: UserSettings
 ): LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
     private val logEditService: LogEditService = LogEditServiceImpl(
             logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
             timeProvider = timeProvider,
+            ticketStorage = ticketStorage,
             listener = object : LogEditService.Listener {
                 override fun onDataChange(
                         start: DateTime,
                         end: DateTime
                 ) {
-                    hourGlass.updateTimers(
-                            LogFormatters.longFormat.print(start),
-                            LogFormatters.longFormat.print(end)
-                    )
+                    hourGlass.changeStart(start)
                     view?.showDateTime(start, end)
                 }
 
@@ -48,10 +45,14 @@ class LogDetailsPresenterUpdateActiveClock(
                     view?.showHint2(notification)
                 }
 
-                override fun onEntitySaveComplete() {
-                    hourGlass.restart()
+                override fun onEntitySaveComplete(start: DateTime, end: DateTime) {
+                    if (userSettings.settingsAutoStartClock) {
+                        hourGlass.startFrom(end)
+                    } else {
+                        hourGlass.stop()
+                    }
                     activeLogPersistence.reset()
-                    view?.close()
+                    view?.closeDetails()
                 }
 
                 override fun onEntitySaveFail(error: Throwable) {
@@ -80,18 +81,20 @@ class LogDetailsPresenterUpdateActiveClock(
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
         val now = timeProvider.now()
+        val startMillis = timeProvider.roundMillis(hourGlass.start)
+        val endMillis = timeProvider.roundMillis(hourGlass.end)
         val entityInEdit = SimpleLogBuilder(now.millis)
-                .setStart(timeProvider.roundMillis(hourGlass.reportStart()))
-                .setEnd(timeProvider.roundMillis(hourGlass.reportEnd()))
+                .setStart(startMillis)
+                .setEnd(endMillis)
                 .setTask(activeLogPersistence.ticketCode.code)
                 .setComment(activeLogPersistence.comment)
                 .build()
         logEditService.serviceType = LogEditService.ServiceType.CREATE
         logEditService.entityInEdit = entityInEdit
         view.initView(
-                labelHeader = "Log details (Running clock)",
-                labelButtonSave = "Create",
-                glyphButtonSave = graphics.from(Glyph.NEW, Color.BLACK, 12.0),
+                labelHeader = "Active clock",
+                labelButtonSave = "Save",
+                glyphButtonSave = null,
                 initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
                 initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
                 initTicket = activeLogPersistence.ticketCode.code,
@@ -116,7 +119,7 @@ class LogDetailsPresenterUpdateActiveClock(
     }
 
     override fun openFindTickets() {
-        eventBus.post(EventInflateDialog(DialogType.TICKET_SEARCH))
+        eventBus.post(EventMainOpenTickets())
     }
 
     override fun changeTicketCode(ticket: String) {

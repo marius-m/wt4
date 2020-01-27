@@ -1,6 +1,6 @@
 package lt.markmerkk.widgets.clock
 
-import com.google.common.eventbus.EventBus
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.svg.SVGGlyph
 import javafx.geometry.Pos
@@ -8,21 +8,22 @@ import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import lt.markmerkk.*
-import lt.markmerkk.events.DialogType
-import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventClockChange
+import lt.markmerkk.events.EventFocusChange
+import lt.markmerkk.events.EventTickTock
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.UIEUtils
 import lt.markmerkk.utils.hourglass.HourGlass
-import lt.markmerkk.widgets.edit.LogDetailsWidget
+import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class ClockWidget: View(), ClockContract.View {
+class ClockWidget : Fragment(), ClockContract.View {
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var eventBus: EventBus
+    @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var resultDispatcher: ResultDispatcher
 
@@ -33,14 +34,20 @@ class ClockWidget: View(), ClockContract.View {
         Main.component().inject(this)
     }
 
-    private val presenter: ClockContract.Presenter = ClockPresenter(hourGlass, logStorage, timeProvider)
-    private val glyphClock = graphics.from(Glyph.CLOCK, Color.WHITE, 20.0)
+    private val presenter: ClockContract.Presenter = ClockPresenter(
+            hourGlass,
+            logStorage,
+            timeProvider,
+            eventBus,
+            resultDispatcher
+    )
+    private val glyphClock = graphics.from(Glyph.PLAY, Color.WHITE, 14.0, 16.0)
 
     override val root: Parent = stackpane {
         jfxButtonClock = jfxButton {
-            addClass(Styles.buttonMenu)
             graphic = glyphClock
-            setOnAction {
+            addClass(Styles.buttonMenu)
+            action {
                 presenter.toggleClock()
             }
         }
@@ -48,10 +55,9 @@ class ClockWidget: View(), ClockContract.View {
             isPickOnBounds = false
             jfxButtonClockSettings = jfxButton {
                 addClass(Styles.buttonMenuMini)
-                graphic = graphics.from(Glyph.INSERT, Color.WHITE, 10.0)
-                setOnAction {
-                    resultDispatcher.publish(LogDetailsWidget.RESULT_DISPATCH_KEY_ACTIVE_CLOCK, true)
-                    eventBus.post(EventInflateDialog(DialogType.ACTIVE_CLOCK))
+                graphic = graphics.from(Glyph.CANCEL2, Color.WHITE, 8.0)
+                action {
+                    presenter.cancelClock()
                 }
             }
         }
@@ -61,9 +67,11 @@ class ClockWidget: View(), ClockContract.View {
         super.onDock()
         presenter.onAttach(this)
         jfxButtonClockSettings.hide()
+        eventBus.register(this)
     }
 
     override fun onUndock() {
+        eventBus.unregister(this)
         presenter.onDetach()
         super.onUndock()
     }
@@ -81,5 +89,29 @@ class ClockWidget: View(), ClockContract.View {
         jfxButtonClockSettings.hide()
     }
 
+    //region Events
+
+    @Subscribe
+    fun eventClockChange(event: EventClockChange) {
+        presenter.renderClock()
+    }
+
+    @Subscribe
+    fun eventTickTock(event: EventTickTock) {
+        presenter.renderClock()
+    }
+
+    @Subscribe
+    fun eventFocusChange(eventFocusChange: EventFocusChange) {
+        if (eventFocusChange.isInFocus) {
+            presenter.renderClock()
+        }
+    }
+
+    //endregion
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ClockWidget::class.java)!!
+    }
 
 }
