@@ -263,9 +263,11 @@ class CalendarWidget: Fragment() {
     }
 
     @Subscribe
-    fun eventOnTick(event: EventTickTock) {
+    fun eventTickTock(event: EventTickTock) {
         viewCalendar.today = LocalDate.now()
         viewCalendar.time = LocalTime.now()
+        viewInfoLabel.text = totalWorkGenerator
+                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
     }
 
     @Subscribe
@@ -283,6 +285,8 @@ class CalendarWidget: Fragment() {
         if (event.isInFocus) {
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
+            viewInfoLabel.text = totalWorkGenerator
+                    .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
         }
     }
 
