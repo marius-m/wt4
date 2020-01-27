@@ -62,8 +62,10 @@ class TotalWorkGeneratorReportTotalTest {
                 .toLocalDate()
         val displayDateEnd = timeProvider.now()
                 .toLocalDate()
+                .plusDays(1)
         doReturn(false).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
+        doReturn(activeClockDate).whenever(hourGlass).end
 
         // Act
         val result = totalWorkGenerator.reportTotal(
@@ -86,8 +88,10 @@ class TotalWorkGeneratorReportTotalTest {
                 .toLocalDate()
         val displayDateEnd = timeProvider.now()
                 .toLocalDate()
+                .plusDays(1)
         doReturn(true).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
+        doReturn(activeClockDate).whenever(hourGlass).end
         doReturn(runningDuration).whenever(hourGlass).duration
 
         // Act
@@ -110,11 +114,11 @@ class TotalWorkGeneratorReportTotalTest {
         val displayDateStart = timeProvider.now()
                 .minusDays(1)
                 .toLocalDate()
-        val displayDateEnd = timeProvider.now()
-                .minusDays(1)
-                .toLocalDate()
+        val displayDateEnd = displayDateStart
+                .plusDays(1)
         doReturn(true).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
+        doReturn(activeClockDate).whenever(hourGlass).end
         doReturn(runningDuration).whenever(hourGlass).duration
 
         // Act
@@ -137,11 +141,11 @@ class TotalWorkGeneratorReportTotalTest {
         val displayDateStart = timeProvider.now()
                 .plusDays(1)
                 .toLocalDate()
-        val displayDateEnd = timeProvider.now()
+        val displayDateEnd = displayDateStart
                 .plusDays(1)
-                .toLocalDate()
         doReturn(true).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
+        doReturn(activeClockDate).whenever(hourGlass).end
         doReturn(runningDuration).whenever(hourGlass).duration
 
         // Act

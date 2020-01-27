@@ -20,7 +20,7 @@ class TotalWorkGenerator(
     /**
      * Reports total with indication workday has ended
      * @param displayDateStart start of display date
-     * @param displayDateEnd end of display date. Properly is incorrectly reported and will provide day ahread
+     * @param displayDateEnd end of display date. End date is always 1 day ahead
      */
     fun reportTotalWithWorkdayEnd(
             displayDateStart: LocalDate,
@@ -48,7 +48,7 @@ class TotalWorkGenerator(
     /**
      * Reports total including with running time
      * @param displayDateStart start of display date
-     * @param displayDateEnd end of display date. Property is incorrectly reported and will provide day ahread
+     * @param displayDateEnd end of display date. End date is always 1 day ahead
      */
     fun reportTotal(
             total: Duration,
@@ -61,6 +61,7 @@ class TotalWorkGenerator(
                 intStart,
                 intEnd
         ).contains(hourGlass.start)
+                || hourGlass.start.toLocalDate().isEqual(displayDateStart)
         return if (hourGlass.isRunning() && clockDateBetweenDisplayDate) {
             stringRes.totalWithRunning(total, hourGlass.duration)
         } else {
