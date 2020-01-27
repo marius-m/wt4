@@ -211,7 +211,10 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         presenter.loadProjectCodes()
         contextMenuTicketSelect.onAttach()
         contextMenuTicketSelect.attachTicketSelection(
-                JavaFxObservable.valuesOf(viewTable.selectionModel.selectedItemProperty()))
+                JavaFxObservable.valuesOf(viewTable.selectionModel.selectedItemProperty())
+                        .filter { it != null }
+                        .map { it.code }
+        )
         eventBus.register(this)
         Platform.runLater {
             // todo restore old search name
