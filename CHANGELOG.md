@@ -2,6 +2,13 @@
 
 Current: 1.6.0
 
+## 1.7.2
+- Fix: Search would reset whenever refreshing tickets
+- Fix: Total display in calendar would refresh properly
+- Fix: Rm focus on filter button when tabbing in 'TicketSearch'
+- Fix: Rm detailed ticket edit whenever changing dates
+- Fix: Context menu working properly in 'Recent tickets'
+
 ## 1.7.1
 - Add RAM limit whenever launching the app
 - Add context menu to launch tickets in external browser
