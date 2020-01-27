@@ -144,6 +144,7 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
                             find<TicketFilterSettingsWidget>()
                                     .openModal()
                         }
+                        isFocusTraversable = false
                     }
                 }
                 label("Search tickets") {
