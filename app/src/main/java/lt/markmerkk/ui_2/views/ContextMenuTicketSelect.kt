@@ -39,12 +39,12 @@ class ContextMenuTicketSelect(
         subsTicketSelect?.unsubscribe()
     }
 
-    fun attachTicketSelection(ticketSelectAsStream: Observable<TicketViewModel?>) {
-        ticketSelectAsStream
+    fun attachTicketSelection(ticketCodeSelectAsStream: Observable<String?>) {
+        ticketCodeSelectAsStream
                 .filter { it != null }
                 .subscribe {
                     if (it != null) {
-                        bindCodes(listOf(it.code))
+                        bindCodes(listOf(it))
                     } else {
                         bindCodes(emptyList())
                     }

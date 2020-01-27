@@ -417,6 +417,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     }
                 }
         )
+        contextMenuTicketSelect.onAttach()
+        contextMenuTicketSelect.attachTicketSelection(
+                JavaFxObservable.valuesOf(viewTableRecent.selectionModel.selectedItemProperty())
+                        .filter { it != null }
+                        .map { it.code }
+        )
         recentTicketLoader.onAttach()
         presenter.onAttach(this)
         uiBridgeDateTimeHandler.onAttach()
@@ -443,6 +449,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
+        contextMenuTicketSelect.onDetach()
         recentTicketLoader.onDetach()
         logger.debug("LogDetails:onUndock()")
         jiraLinkGenerator.onDetach()
