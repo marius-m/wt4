@@ -12,7 +12,7 @@ Dedicated worklog management for JIRA
 
 Builds for `1.6.0`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.6.0.dmg)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.2.dmg)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.6.0.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
@@ -26,7 +26,7 @@ Some people from my company [iTo](https://www.ito.lt/) are using this tool as we
 
 Builds for `1.6.0`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.dmg)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.2.dmg)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
@@ -38,8 +38,8 @@ Builds for `1.6.0`
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
 
-- [MacOS - Basic](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.1.dmg)
-- [MacOS - iTo](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.1.dmg)
+- [MacOS - Basic](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.2.dmg)
+- [MacOS - iTo](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.2.dmg)
 - [Windows - Basic](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.0.exe)
 - [Windows - iTo](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.0.exe)
 
