@@ -372,6 +372,7 @@ class CalendarWidget: Fragment() {
             viewCalendar.time = LocalTime.now()
             viewInfoLabel.text = totalWorkGenerator
                     .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+            eventBus.post(EventLogSelection(Const.NO_ID))
         }
     }
 
