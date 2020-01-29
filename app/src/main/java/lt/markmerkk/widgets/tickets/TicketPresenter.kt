@@ -1,13 +1,11 @@
 package lt.markmerkk.widgets.tickets
 
-import lt.markmerkk.SchedulerProvider
-import lt.markmerkk.TicketStorage
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.entities.TicketUseHistory
 import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketLoader
 import lt.markmerkk.tickets.TicketApi
+import org.slf4j.LoggerFactory
 import rx.Observable
 
 class TicketPresenter(
@@ -31,11 +29,17 @@ class TicketPresenter(
                 override fun onLoadFinish() {
                     view?.hideProgress()
                 }
-                override fun onFoundTickets(tickets: List<TicketLoader.TicketScore>) {
+                override fun onFoundTickets(
+                        searchTerm: String,
+                        searchProject: String,
+                        tickets: List<TicketLoader.TicketScore>
+                ) {
                     val ticketViewModels = tickets.map { TicketViewModel(it.ticket, it.filterScore) }
+                    logger.debug("Publishing ${ticketViewModels.size} tickets for '$searchTerm' / '$searchProject'")
                     view?.onTicketUpdate(ticketViewModels)
                 }
-                override fun onNoTickets() {
+                override fun onNoTickets(searchTerm: String, searchProject: String) {
+                    logger.debug("Publishing no tickets for '$searchTerm' / '$searchProject'")
                     view?.onTicketUpdate(emptyList())
                 }
                 override fun onError(throwable: Throwable) { }
@@ -91,4 +95,7 @@ class TicketPresenter(
         }
     }
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(Tags.TICKETS)
+    }
 }

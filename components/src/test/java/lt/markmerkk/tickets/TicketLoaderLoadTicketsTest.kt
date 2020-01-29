@@ -1,9 +1,6 @@
 package lt.markmerkk.tickets
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.entities.Ticket
 import org.junit.Before
@@ -48,7 +45,7 @@ class TicketLoaderLoadTicketsTest {
         loader.loadTickets()
 
         // Assert
-        verify(listener).onFoundTickets(any())
+        verify(listener).onFoundTickets(any(), any(), any())
     }
 
     @Test
@@ -64,7 +61,7 @@ class TicketLoaderLoadTicketsTest {
         val expectTicketResult = MocksTickets.ticketMix
                 .map { TicketLoader.TicketScore(it, 0) }
                 .first()
-        verify(listener).onFoundTickets(listOf(expectTicketResult))
+        verify(listener).onFoundTickets(any(), any(), eq(listOf(expectTicketResult)))
     }
 
     @Test
@@ -77,12 +74,13 @@ class TicketLoaderLoadTicketsTest {
         loader.loadTickets(inputFilter = "TTS-115")
 
         // Assert
-        verify(listener).onFoundTickets(listOf(
+        val expectedTickets = listOf(
                 TicketLoader.TicketScore(
                         MocksTickets.tickets[4],
                         29
                 )
-        ))
+        )
+        verify(listener).onFoundTickets(any(), any(), eq(expectedTickets))
     }
 
     @Test
@@ -95,7 +93,7 @@ class TicketLoaderLoadTicketsTest {
         loader.loadTickets()
 
         // Assert
-        verify(listener).onNoTickets()
+        verify(listener).onNoTickets(any(), any())
     }
 
     @Test

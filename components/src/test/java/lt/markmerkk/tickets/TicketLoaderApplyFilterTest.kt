@@ -50,9 +50,13 @@ class TicketLoaderApplyFilterTest {
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verify(listener).onFoundTickets(listOf(
-                TicketLoader.TicketScore(MocksTickets.tickets[4], 29)
-        )) // only TTS-005
+        val expectTickets = listOf(TicketLoader.TicketScore(MocksTickets.tickets[4], 29))
+        verify(listener).onFoundTickets(
+                any(),
+                any(),
+                eq(expectTickets)
+        ) // only TTS-005
+
     }
 
     @Test
@@ -71,7 +75,7 @@ class TicketLoaderApplyFilterTest {
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
 
         // Assert
-        verify(listener).onFoundTickets(any())
+        verify(listener).onFoundTickets(any(), any(), any())
     }
 
 }

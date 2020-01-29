@@ -50,7 +50,7 @@ class TicketLoaderFetchTicketsTest {
         verify(userSettings).ticketLastUpdate = TimeMachine.now().plusHours(1).millis
         verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(ticketStorage).loadFilteredTickets(any())
-        verify(listener).onFoundTickets(any())
+        verify(listener).onFoundTickets(any(), any(), any())
     }
 
     @Test
@@ -68,7 +68,7 @@ class TicketLoaderFetchTicketsTest {
         verify(userSettings, never()).ticketLastUpdate = any()
         verify(ticketApi, never()).searchRemoteTicketsAndCache(any())
         verify(ticketStorage).loadFilteredTickets(any())
-        verify(listener).onFoundTickets(any())
+        verify(listener).onFoundTickets(any(), any(), any())
     }
 
     @Test
@@ -86,7 +86,7 @@ class TicketLoaderFetchTicketsTest {
         verify(userSettings).ticketLastUpdate = any()
         verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(ticketStorage).loadFilteredTickets(any())
-        verify(listener).onFoundTickets(any())
+        verify(listener).onFoundTickets(any(), any(), any())
     }
 
     @Test
@@ -102,7 +102,7 @@ class TicketLoaderFetchTicketsTest {
         // Assert
         verify(userSettings).ticketLastUpdate = any()
         verify(ticketApi).searchRemoteTicketsAndCache(any())
-        verify(listener).onNoTickets()
+        verify(listener).onNoTickets(any(), any())
     }
 
     @Test
