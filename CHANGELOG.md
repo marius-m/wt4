@@ -2,6 +2,9 @@
 
 Current: 1.6.0
 
+## 1.7.3
+- Fix: Ticket loader not resetting #2 (Fix didn't work in 1.7.2)
+
 ## 1.7.2
 - Fix: Search would reset whenever refreshing tickets
 - Fix: Total display in calendar would refresh properly
