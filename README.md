@@ -17,13 +17,12 @@ Dedicated worklog management for JIRA
 Builds for `1.7.3` (Latest stable)
 
 * [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.dmg)
-  - Tips installing on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
-  - Tips installing on [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
 * [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.3.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
-- How to set-up: https://github.com/marius-m/wt4/wiki/Set-up-Basic
+- Tips how to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-Basic)
+- Having trouble installing ? Tips on how to install on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac) or [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
   
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
@@ -31,13 +30,12 @@ Some people from my company [iTo](https://www.ito.lt/) are using this tool as we
 Builds for `1.7.3` (Latest stable)
 
 * [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.dmg)
-  - Tips installing on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.exe)
-  - Tips installing on [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
 * Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
-- How to set-up: https://github.com/marius-m/wt4/wiki/Set-up-OAuth
+- How to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-OAuth)
+- Having trouble installing ? Tips on how to install on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac) or [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
 
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
