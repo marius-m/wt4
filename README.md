@@ -16,9 +16,9 @@ Dedicated worklog management for JIRA
 
 Builds for `1.7.3` (Latest stable)
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
-* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.3.deb)
+* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.dmg)
+* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
+* [Build Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.3.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
 - Tips how to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-Basic)
@@ -29,8 +29,8 @@ Some people from my company [iTo](https://www.ito.lt/) are using this tool as we
 
 Builds for `1.7.3` (Latest stable)
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.exe)
+* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.dmg)
+* [iTo Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.exe)
 * Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
