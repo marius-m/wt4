@@ -20,7 +20,7 @@ Builds for `1.7.3` (Latest stable)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
-* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.6.0.deb)
+* [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.3.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
 - How to set-up: https://github.com/marius-m/wt4/wiki/Set-up-Basic
