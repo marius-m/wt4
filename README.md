@@ -10,6 +10,8 @@ Dedicated worklog management for JIRA
 
 ![Main view screenshot](imgs/main.png)
 
+* Wiki how to use the tool - https://github.com/marius-m/wt4/wiki
+
 ## Downloads
 
 Builds for `1.7.3` (Latest stable)
