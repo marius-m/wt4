@@ -8,32 +8,34 @@ Dedicated worklog management for JIRA
 * Works on Windows, Linux and Mac
 * Supports Basic authorization (username / pass) + OAuth2
 
+![Main view screenshot](imgs/main.png)
+
 ## Downloads
 
-Builds for `1.6.0`
+Builds for `1.7.3`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.2.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.6.0.exe)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.dmg)
+* [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
 * [Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.6.0.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
-- How to set-up: https://github.com/marius-m/wt4/wiki#wt4
+- How to set-up: https://github.com/marius-m/wt4/wiki/Set-up-Basic
   
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.6.0`
+Builds for `1.7.3`
 
-* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.2.dmg)
-* [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.6.0.exe)
+* [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.dmg)
+* [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.exe)
   - **Note**: If you're downloading using Chrome or Edge on Windows you may encounter long time after download as there is a bug in 'Windows defender'. The only way to work around that is to wait for the fix on windows or download from other source (Like using slack, firefox)
   - Source: https://github.com/AdoptOpenJDK/openjdk-website/issues/477
 * Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
-- How to set-up: https://github.com/marius-m/wt4/wiki#wt4
+- How to set-up: https://github.com/marius-m/wt4/wiki/Set-up-OAuth
 
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
@@ -52,7 +54,7 @@ Track issues / feature requests - https://github.com/marius-m/wt4/issues
 This app serves me as a sandbox for trying out various java stuff that I find interesting. As a side effect app was born that is being used for easier time tracking. 
 Feel free copying / contributing / using code for your own pleasure. 
 
-* [CalendarFX](https://github.com/dlemmermann/CalendarFX) - Most amazing calendar that lets display logs and modify them. Very very cool.  
+* [CalendarFX](https://github.com/dlemmermann/CalendarFX) - Most amazing calendar that lets display logs and modify them. Very very cool.
 * [JFoenix](http://www.jfoenix.com/) - Material designs for JavaFX! Amazing!
 * [Kotlin](https://kotlinlang.org/) - Most of the app is converted to kotlin, once got used to it, never want to look back. 
 * [RXJava](https://github.com/ReactiveX/RxJava) Very cool programming [paradigm](http://reactivex.io/)
