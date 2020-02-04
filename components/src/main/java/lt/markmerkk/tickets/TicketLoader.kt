@@ -31,6 +31,10 @@ class TicketLoader(
 
     private var projectCode: ProjectCode = ProjectCode.asEmpty()
     private var inputFilter: String =""
+        set(value) {
+            field = value
+            logger.debug("Change filter to $value")
+        }
 
     fun onAttach() { }
 
@@ -69,10 +73,10 @@ class TicketLoader(
                 .flatMap { loadTicketsAsStream(this.inputFilter, projectCode) }
                 .subscribe({
                     userSettings.ticketLastUpdate = now.millis
-                    if (it.isNotEmpty()) {
-                        listener.onFoundTickets(it)
+                    if (it.tickets.isNotEmpty()) {
+                        listener.onFoundTickets(it.searchTerm, it.searchProject, it.tickets)
                     } else {
-                        listener.onNoTickets()
+                        listener.onNoTickets(it.searchTerm, it.searchProject)
                     }
                 }, {
                     listener.onError(it)
@@ -116,10 +120,10 @@ class TicketLoader(
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
                 .subscribe({
-                    if (it.isNotEmpty()) {
-                        listener.onFoundTickets(it)
+                    if (it.tickets.isNotEmpty()) {
+                        listener.onFoundTickets(it.searchTerm, it.searchProject, it.tickets)
                     } else {
-                        listener.onNoTickets()
+                        listener.onNoTickets(it.searchTerm, it.searchProject)
                     }
                 }, {
                     listener.onError(it)
@@ -129,7 +133,7 @@ class TicketLoader(
     fun loadTicketsAsStream(
             inputFilter: String,
             projectCode: ProjectCode
-    ): Single<List<TicketScore>> {
+    ): Single<TicketSearchResult> {
         return ticketStorage.loadFilteredTickets(userSettings)
                 .map { tickets ->
                     if (projectCode.isEmpty) {
@@ -139,25 +143,26 @@ class TicketLoader(
                     }
                 }
                 .map { filter(it, searchInput = inputFilter) }
+                .map { TicketSearchResult(inputFilter, projectCode.name, it) }
     }
 
     fun changeFilterStream(filterChange: Observable<String>) {
         inputFilterSubscription = filterChange
                 .throttleLast(FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
                 .flatMapSingle {
-                    this.inputFilter = inputFilter
+                    this.inputFilter = it
                     loadTicketsAsStream(it, projectCode)
                 }
                 .observeOn(uiScheduler)
-                .subscribe { listener.onFoundTickets(it) }
+                .subscribe { listener.onFoundTickets(it.searchTerm, it.searchProject, it.tickets) }
     }
 
     interface Listener {
         fun onLoadStart()
         fun onLoadFinish()
         fun onProjectCodes(projectCodes: List<ProjectCode>)
-        fun onFoundTickets(tickets: List<TicketScore>)
-        fun onNoTickets()
+        fun onFoundTickets(searchTerm: String, searchProject: String, tickets: List<TicketScore>)
+        fun onNoTickets(searchTerm: String, searchProject: String)
         fun onError(throwable: Throwable)
     }
 
@@ -203,6 +208,12 @@ class TicketLoader(
         }
     }
 
+    data class TicketSearchResult(
+            val searchTerm: String,
+            val searchProject: String,
+            val tickets: List<TicketScore>
+    )
+
     data class TicketScore(
             val ticket: Ticket,
             val filterScore: Int
@@ -221,4 +232,6 @@ class TicketLoader(
 
 }
 
-fun Ticket.withScore(score: Int): TicketLoader.TicketScore = TicketLoader.TicketScore(this, score)
+fun Ticket.withScore(
+        score: Int
+): TicketLoader.TicketScore = TicketLoader.TicketScore(this, score)
