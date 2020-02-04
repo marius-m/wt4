@@ -12,7 +12,7 @@ Dedicated worklog management for JIRA
 
 ## Downloads
 
-Builds for `1.7.3`
+Builds for `1.7.3` (Latest stable)
 
 * [MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.dmg)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
@@ -26,7 +26,7 @@ Builds for `1.7.3`
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.7.3`
+Builds for `1.7.3` (Latest stable)
 
 * [MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.dmg)
 * [Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.exe)
