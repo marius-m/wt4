@@ -1,6 +1,6 @@
 # Changelog
 
-Current: 1.6.0
+Current: 1.7.3
 
 ## 1.7.3
 - Fix: Ticket loader not resetting #2 (Fix didn't work in 1.7.2)
