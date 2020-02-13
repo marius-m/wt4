@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import rx.Emitter
 import rx.Observable
 import rx.Single
+import java.util.concurrent.TimeUnit
 
 class RemoteFileRepositoryImpl(
         private val sftpClient: SFTPClient
@@ -32,9 +33,11 @@ class RemoteFileRepositoryImpl(
     }
 
     override fun download(appJar: RemoteFileRepository.AppJar): Observable<Double> {
-        TODO()
-//        return Observable
-//                .create(DownloadEmitter(appJar, sftpCreds), Emitter.BackpressureMode.BUFFER)
+        return sftpClient.connect()
+                .flatMapObservable {
+                    Observable.create(DownloadEmitter(appJar, it), Emitter.BackpressureMode.BUFFER)
+                }.throttleLast(200L, TimeUnit.MILLISECONDS)
+                .doAfterTerminate { sftpClient.disconnect() }
     }
 
     companion object {
