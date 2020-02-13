@@ -20,15 +20,26 @@ buildscript {
 //    ext.oauth_key_consumer = keysProperties.getProperty("key_consumer")
 //    ext.oauth_key_private = keysProperties.getProperty("key_private")
 //    ext.oauth_host = keysProperties.getProperty("host")
+//    ext.sftp_user = keysProperties.getProperty("sftp_user")
+//    ext.sftp_host = keysProperties.getProperty("sftp_host")
+//    ext.sftp_pass = keysProperties.getProperty("sftp_pass")
     //endregion
 
     //region Debug basic properties
+    def keysPropertyFile = new File("${rootDir}/keys_debug", "private.properties")
+    assert keysPropertyFile.exists()
+    Properties keysProperties = new Properties()
+    keysProperties.load(new FileInputStream(keysPropertyFile.getAbsolutePath()))
+
     ext.debug = true
     ext.gaKey = "test"
     ext.oauth = false
     ext.oauth_key_consumer = ""
     ext.oauth_key_private = ""
     ext.oauth_host = ""
+    ext.sftp_user = keysProperties.getProperty("sftp_user")
+    ext.sftp_host = keysProperties.getProperty("sftp_host")
+    ext.sftp_pass = keysProperties.getProperty("sftp_pass")
     //endregion
 
     //region Release oauth properties
@@ -47,6 +58,9 @@ buildscript {
 //    ext.oauth_key_consumer = keysProperties.getProperty("key_consumer")
 //    ext.oauth_key_private = keysProperties.getProperty("key_private")
 //    ext.oauth_host = keysProperties.getProperty("host")
+//    ext.sftp_user = keysProperties.getProperty("sftp_user")
+//    ext.sftp_host = keysProperties.getProperty("sftp_host")
+//    ext.sftp_pass = keysProperties.getProperty("sftp_pass")
     //endregion
 
     //region Release basic properties
@@ -61,6 +75,9 @@ buildscript {
 //    ext.oauth_key_consumer = ""
 //    ext.oauth_key_private = ""
 //    ext.oauth_host = ""
+//    ext.sftp_user = keysProperties.getProperty("sftp_user")
+//    ext.sftp_host = keysProperties.getProperty("sftp_host")
+//    ext.sftp_pass = keysProperties.getProperty("sftp_pass")
     //endregion
 
     repositories {
@@ -69,8 +86,8 @@ buildscript {
 
         maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
         maven { url "https://repo.maven.apache.org/maven2" }
-        maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
-        maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
+        maven { url "https://gradle.artifactoryonline.com/gradle/libs/" }
+        maven { url "https://maven.wso2.org/nexus/content/groups/wso2-public/" }
         maven { url 'https://plugins.gradle.org/m2/' }
     }
 

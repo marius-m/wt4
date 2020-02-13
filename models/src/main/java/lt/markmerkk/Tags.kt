@@ -6,6 +6,7 @@ object Tags {
     const val JIRA = "JIRA"
     const val TRANSLATE = "TRANSLATE"
     const val NETWORK = "NETWORK"
+    const val DOWNLOAD = "DOWNLOAD"
 
     // Screens
     const val MAIN = "MAIN"
