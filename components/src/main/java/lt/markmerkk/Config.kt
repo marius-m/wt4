@@ -28,8 +28,9 @@ data class Config(
     fun generateRelativePath(): String {
         var path = configPathProvider.userHome() +
                 "/.${configPathProvider.configDefault()}/"
-        if (!configSetSettings.configSetName.isNullOrEmpty()) {
-            path += "${configSetSettings.configSetName}/"
+        val currentConfig = configSetSettings.currentConfig()
+        if (!currentConfig.isEmpty()) {
+            path += "$currentConfig/"
         }
         return path
     }
