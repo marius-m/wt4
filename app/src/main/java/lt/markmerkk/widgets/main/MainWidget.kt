@@ -36,6 +36,7 @@ import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxDrawer
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
+import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.validators.LogChangeValidator
@@ -79,6 +80,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var ticker: Ticker
     @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
+    @Inject lateinit var configSetSettings: ConfigSetSettings
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -246,7 +248,7 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     override fun onDock() {
         super.onDock()
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
-        title = "WT4 - ${BuildConfig.VERSION} $titleSuffix"
+        title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
         // Init ui elements
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {

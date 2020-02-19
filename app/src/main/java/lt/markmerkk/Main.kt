@@ -6,6 +6,7 @@ import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
+import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.main.MainWidget

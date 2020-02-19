@@ -25,7 +25,7 @@ class ConfigCfgPathTest {
         doReturn("home_dir").whenever(pathProvider).userHome()
         whenever(pathProvider.configDefault())
                 .thenReturn("wt4")
-        whenever(configSetSettings.configSetName)
+        whenever(configSetSettings.currentConfig())
                 .thenReturn("")
         val config = Config(
                 debug = false,
@@ -49,7 +49,7 @@ class ConfigCfgPathTest {
         doReturn("home_dir").whenever(pathProvider).userHome()
         whenever(pathProvider.configDefault())
                 .thenReturn("wt4_debug")
-        whenever(configSetSettings.configSetName)
+        whenever(configSetSettings.currentConfig())
                 .thenReturn("")
         val config = Config(
                 debug = false,
@@ -73,7 +73,7 @@ class ConfigCfgPathTest {
         doReturn("home_dir").whenever(pathProvider).userHome()
         whenever(pathProvider.configDefault())
                 .thenReturn("wt4_debug")
-        whenever(configSetSettings.configSetName)
+        whenever(configSetSettings.currentConfig())
                 .thenReturn("test_extension")
         val config = Config(
                 debug = false,
@@ -96,7 +96,7 @@ class ConfigCfgPathTest {
         // Arrange
         doReturn("home_dir").whenever(pathProvider).userHome()
         doReturn("wt4").whenever(pathProvider).configDefault()
-        doReturn("text_extension").whenever(configSetSettings).configSetName
+        doReturn("text_extension").whenever(configSetSettings).currentConfig()
         val config = Config(
                 debug = false,
                 versionName = "test_version",
