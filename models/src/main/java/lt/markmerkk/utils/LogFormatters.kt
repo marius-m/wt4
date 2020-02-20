@@ -5,6 +5,7 @@ import org.joda.time.Period
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.ISOPeriodFormat
 import jdk.jfr.internal.handlers.EventHandler.duration
+import lt.markmerkk.entities.Log
 import org.joda.time.DurationFieldType
 import org.joda.time.PeriodType
 import org.joda.time.format.PeriodFormatterBuilder
@@ -64,6 +65,14 @@ object LogFormatters {
         if (builder.isNotEmpty() && builder[builder.length - 1] == " "[0])
             builder.deleteCharAt(builder.length - 1)
         return builder.toString()
+    }
+
+    fun formatLogBasic(log: Log): String {
+        val formatStart = LogFormatters.shortFormat.print(log.time.start)
+        val formatEnd = LogFormatters.shortFormat.print(log.time.end)
+        val durationAsString = LogFormatters.humanReadableDurationShort(log.time.duration)
+        val ticketCodeAsString = if (!log.code.isEmpty()) "'${log.code.code}'" else ""
+        return "$formatStart - $formatEnd ($durationAsString) >> $ticketCodeAsString '${log.comment}'"
     }
 
 }

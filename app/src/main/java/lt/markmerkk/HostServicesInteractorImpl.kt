@@ -18,6 +18,13 @@ class HostServicesInteractorImpl(
         private val userSettings: UserSettings
 ) : HostServicesInteractor {
 
+    override fun copyText(inputText: String) {
+        val clipboard = Clipboard.getSystemClipboard()
+        val content = ClipboardContent()
+        content.putString(inputText)
+        clipboard.setContent(content)
+    }
+
     override fun ticketWebLinkToClipboard(webLinkToTicket: String) {
         val clipboard = Clipboard.getSystemClipboard()
         val content = ClipboardContent()

@@ -47,5 +47,6 @@ enum class Glyph {
     STOP,
     PLAY,
     FILTER,
+    IMPORT_EXPORT,
     ;
 }

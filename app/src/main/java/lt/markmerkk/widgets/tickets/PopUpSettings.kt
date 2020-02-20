@@ -14,6 +14,7 @@ import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
 import lt.markmerkk.widgets.app_settings.AppSettingsWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
+import lt.markmerkk.widgets.export.ExportWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
@@ -66,6 +67,18 @@ class PopUpSettings(
                                 graphic = graphics.from(Glyph.STATISTICS, Color.BLACK, 12.0),
                                 action = {
                                     find<StatisticsWidget>().openModal(
+                                            stageStyle = StageStyle.DECORATED,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
+                        ),
+                        PopUpAction(
+                                title = "Export worklogs",
+                                graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0),
+                                action = {
+                                    find<ExportWidget>().openModal(
                                             stageStyle = StageStyle.DECORATED,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,

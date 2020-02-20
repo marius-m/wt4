@@ -16,6 +16,8 @@ import lt.markmerkk.widgets.main.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
+import lt.markmerkk.widgets.export.ExportSampleWidget
+import lt.markmerkk.widgets.export.ExportWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
@@ -54,4 +56,6 @@ interface AppComponent {
     fun inject(ticketBasicSearchWidget: TicketBasicSearchWidget)
     fun inject(appSettingsWidget: AppSettingsWidget)
     fun inject(logFreshnessWidget: LogFreshnessWidget)
+    fun inject(exportWidget: ExportWidget)
+    fun inject(exportSampleWidget: ExportSampleWidget)
 }
