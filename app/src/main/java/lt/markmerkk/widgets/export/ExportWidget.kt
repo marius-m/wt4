@@ -9,7 +9,6 @@ import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
-import lt.markmerkk.utils.TimedCommentStamper
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -19,6 +18,7 @@ class ExportWidget : Fragment() {
     @Inject lateinit var dayProvider: DayProvider
     @Inject lateinit var worklogStorage: WorklogStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher
+    @Inject lateinit var worklogExporter: WorklogExporter
 
     init {
         Main.component().inject(this)
@@ -82,6 +82,19 @@ class ExportWidget : Fragment() {
                                 .filter { it.selectedProperty.get() }
                                 .map { it.log }
                         logger.debug("Exporting $logsForExport")
+                        val isExportSuccess = worklogExporter.exportToFile(logsForExport)
+                        if (isExportSuccess) {
+                            information(
+                                    header = "Success",
+                                    content = "Saved worklogs!"
+                            )
+                            close()
+                        } else {
+                            error(
+                                    header = "Error",
+                                    content = "Error saving worklogs"
+                            )
+                        }
                     }
                 }
                 jfxButton("Close".toUpperCase()) {
@@ -96,7 +109,9 @@ class ExportWidget : Fragment() {
         val worklogs = worklogStorage.loadWorklogsSync(
                 from = dayProvider.startAsDate(),
                 to = dayProvider.endAsDate()
-        ).map {
+        ).sortedBy {
+            it.time.start
+        }.map {
             ExportWorklogViewModel(it)
         }
         exportWorklogViewModels.clear()
