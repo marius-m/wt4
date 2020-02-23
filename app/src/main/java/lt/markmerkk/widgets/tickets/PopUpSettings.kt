@@ -9,11 +9,12 @@ import lt.markmerkk.BuildConfig
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.widgets.HelpWidget
 import lt.markmerkk.widgets.PopUpAction
 import lt.markmerkk.widgets.PopUpDisplay
 import lt.markmerkk.widgets.app_settings.AppSettingsWidget
+import lt.markmerkk.widgets.app_settings.ProfileWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
+import lt.markmerkk.widgets.export.ExportWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
@@ -28,6 +29,18 @@ class PopUpSettings(
     override fun show() {
         createPopUpDisplay(
                 actions = listOf(
+                        PopUpAction(
+                                title = "Profiles",
+                                graphic = graphics.from(Glyph.ACCOUNT, Color.BLACK, 12.0),
+                                action = {
+                                    find<ProfileWidget>().openModal(
+                                            stageStyle = StageStyle.DECORATED,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
+                        ),
                         PopUpAction(
                                 title = "Account settings",
                                 graphic = graphics.from(Glyph.ACCOUNT, Color.BLACK, 12.0),
@@ -66,6 +79,18 @@ class PopUpSettings(
                                 graphic = graphics.from(Glyph.STATISTICS, Color.BLACK, 12.0),
                                 action = {
                                     find<StatisticsWidget>().openModal(
+                                            stageStyle = StageStyle.DECORATED,
+                                            modality = Modality.APPLICATION_MODAL,
+                                            block = false,
+                                            resizable = true
+                                    )
+                                }
+                        ),
+                        PopUpAction(
+                                title = "Export worklogs",
+                                graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0),
+                                action = {
+                                    find<ExportWidget>().openModal(
                                             stageStyle = StageStyle.DECORATED,
                                             modality = Modality.APPLICATION_MODAL,
                                             block = false,
