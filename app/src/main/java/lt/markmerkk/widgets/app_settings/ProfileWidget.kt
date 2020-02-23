@@ -56,11 +56,12 @@ class ProfileWidget: Fragment() {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton("Save".toUpperCase()) {
+                jfxButton("Change profile".toUpperCase()) {
                     setOnAction {
                         configSetSettings.changeActiveConfig(viewConfigProfile.selectedItem ?: "")
                         configSetSettings.save()
                         close()
+                        Main.restart()
                     }
                 }
                 jfxButton("Close".toUpperCase()) {
