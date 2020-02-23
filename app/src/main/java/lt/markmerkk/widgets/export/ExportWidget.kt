@@ -42,7 +42,7 @@ class ExportWidget : Fragment() {
             vbox(spacing = 4.0) {
                 label {
                     val startDate = dayProvider.startAsDate().toString(LogFormatters.DATE_SHORT_FORMAT)
-                    val endDate = dayProvider.startAsDate().toString(LogFormatters.DATE_SHORT_FORMAT)
+                    val endDate = dayProvider.endAsDate().toString(LogFormatters.DATE_SHORT_FORMAT)
                     text = "Worklogs from $startDate to $endDate"
                     isWrapText = true
                 }
@@ -62,11 +62,10 @@ class ExportWidget : Fragment() {
                 addClass(Styles.dialogContainerActionsButtons)
                 jfxButton("Sample".toUpperCase()) {
                     action {
-                        val logsAsString = exportWorklogViewModels
+                        val logs = exportWorklogViewModels
                                 .filter { it.selectedProperty.get() }
                                 .map { it.log }
-                                .map { LogFormatters.formatLogBasic(it) }
-                                .joinToString("\n")
+                        val logsAsString = LogFormatters.formatLogsBasic(logs)
                         resultDispatcher.publish(ExportSampleWidget.RESULT_DISPATCH_KEY_SAMPLE, logsAsString)
                         find<ExportSampleWidget>().openModal(
                                 stageStyle = StageStyle.DECORATED,
@@ -106,16 +105,16 @@ class ExportWidget : Fragment() {
 
     override fun onDock() {
         super.onDock()
-        val worklogs = worklogStorage.loadWorklogsSync(
+        val worklogsForExport = worklogStorage.loadWorklogsSync(
                 from = dayProvider.startAsDate(),
                 to = dayProvider.endAsDate()
-        ).sortedBy {
-            it.time.start
-        }.map {
-            ExportWorklogViewModel(it)
-        }
+        )
+        val hasMultipleDates = LogFormatters.hasMultipleDates(worklogsForExport)
+        val worklogViewModels = worklogsForExport
+                .sortedBy { it.time.start }
+                .map { ExportWorklogViewModel(it, hasMultipleDates) }
         exportWorklogViewModels.clear()
-        exportWorklogViewModels.addAll(worklogs)
+        exportWorklogViewModels.addAll(worklogViewModels)
     }
 
     companion object {

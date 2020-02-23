@@ -1,13 +1,10 @@
 package lt.markmerkk.utils
 
-import org.joda.time.Duration
-import org.joda.time.Period
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.ISOPeriodFormat
 import jdk.jfr.internal.handlers.EventHandler.duration
 import lt.markmerkk.entities.Log
-import org.joda.time.DurationFieldType
-import org.joda.time.PeriodType
+import org.joda.time.*
 import org.joda.time.format.PeriodFormatterBuilder
 import org.joda.time.format.PeriodFormatter
 
@@ -67,12 +64,35 @@ object LogFormatters {
         return builder.toString()
     }
 
-    fun formatLogBasic(log: Log): String {
+    fun formatLogsBasic(logs: List<Log>): String {
+        val hasMultipleDates = hasMultipleDates(logs)
+        return logs
+                .map { formatLogBasic(log = it, includeDate = hasMultipleDates) }
+                .joinToString("\n")
+    }
+
+    fun formatLogBasic(log: Log, includeDate: Boolean): String {
+        val startDate = LogFormatters.shortFormatDate.print(log.time.start)
         val formatStart = LogFormatters.shortFormat.print(log.time.start)
         val formatEnd = LogFormatters.shortFormat.print(log.time.end)
         val durationAsString = LogFormatters.humanReadableDurationShort(log.time.duration)
-        val ticketCodeAsString = if (!log.code.isEmpty()) "'${log.code.code}'" else ""
-        return "$formatStart - $formatEnd ($durationAsString) >> $ticketCodeAsString '${log.comment}'"
+        return StringBuilder()
+                .append(if (includeDate) "$startDate " else "")
+                .append("$formatStart - $formatEnd ($durationAsString)")
+                .append(" >> ")
+                .append(if (!log.code.isEmpty()) "'${log.code.code}' " else "")
+                .append("'${log.comment}'")
+                .toString()
+    }
+
+    /**
+     * @return logs are in span through multiple dates
+     */
+    fun hasMultipleDates(logs: List<Log>): Boolean {
+        val logDates: Set<LocalDate> = logs
+                .map { it.time.start.toLocalDate() }
+                .toSet()
+        return logDates.size > 1
     }
 
 }
