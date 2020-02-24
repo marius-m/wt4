@@ -1,5 +1,6 @@
 package lt.markmerkk.widgets.export
 
+import lt.markmerkk.widgets.export.entities.ExportWorklogViewModel
 import tornadofx.*
 
 class ExportWorklogItemModel: ItemViewModel<ExportWorklogViewModel>() {

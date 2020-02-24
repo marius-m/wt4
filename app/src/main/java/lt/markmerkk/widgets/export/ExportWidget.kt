@@ -9,6 +9,7 @@ import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.widgets.export.entities.ExportWorklogViewModel
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
