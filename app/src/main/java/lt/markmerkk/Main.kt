@@ -96,7 +96,8 @@ class Main : App(MainWidget::class, Styles::class) {
         @JvmStatic fun component(): AppComponent = (FX.application as Main).appComponent
         @JvmStatic fun restart() {
             find<MainWidget>()
-                    .showInfo("Please restart application to take effect!")
+                    .showInfo("App will close now. Please start again to complete the changes!")
+            Platform.exit()
         }
 
         private val logger = LoggerFactory.getLogger(Main::class.java)!!

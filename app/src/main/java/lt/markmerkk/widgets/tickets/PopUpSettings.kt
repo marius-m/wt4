@@ -15,6 +15,7 @@ import lt.markmerkk.widgets.app_settings.AppSettingsWidget
 import lt.markmerkk.widgets.app_settings.ProfileWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.export.ExportWidget
+import lt.markmerkk.widgets.export.ImportWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
@@ -89,6 +90,18 @@ class PopUpSettings(
                         }
                 ),
                 PopUpAction(
+                        title = "Import worklogs",
+                        graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0, 14.0),
+                        action = {
+                            find<ImportWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = true
+                            )
+                        }
+                ),
+                PopUpAction(
                         title = "Credits",
                         graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                         action = {
@@ -150,6 +163,18 @@ class PopUpSettings(
                         graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0, 14.0),
                         action = {
                             find<ExportWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = true
+                            )
+                        }
+                ),
+                PopUpAction(
+                        title = "Import worklogs",
+                        graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0, 14.0),
+                        action = {
+                            find<ImportWidget>().openModal(
                                     stageStyle = StageStyle.DECORATED,
                                     modality = Modality.APPLICATION_MODAL,
                                     block = false,

@@ -19,6 +19,7 @@ import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.export.ExportSampleWidget
 import lt.markmerkk.widgets.export.ExportWidget
+import lt.markmerkk.widgets.export.ImportWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
@@ -60,4 +61,5 @@ interface AppComponent {
     fun inject(exportWidget: ExportWidget)
     fun inject(exportSampleWidget: ExportSampleWidget)
     fun inject(profileWidget: ProfileWidget)
+    fun inject(importWidget: ImportWidget)
 }

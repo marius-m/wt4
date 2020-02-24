@@ -10,4 +10,6 @@ interface FileInteractor {
      * Finds a directory to save to
      */
     fun saveDirectory(): File?
+
+    fun selectFile(): File?
 }

@@ -424,9 +424,10 @@ class AppModule(
     @Singleton
     fun provideWorklogExporter(
             gson: Gson,
-            fileInteractor: FileInteractor
+            fileInteractor: FileInteractor,
+            timeProvider: TimeProvider
     ): WorklogExporter {
-        return WorklogExporter(gson, fileInteractor)
+        return WorklogExporter(gson, fileInteractor, timeProvider)
     }
 
 }
