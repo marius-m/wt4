@@ -35,7 +35,7 @@ class WorklogExporter(
      */
     fun exportToFile(worklogs: List<Log>): Boolean {
         try {
-            val saveDir = fileInteractor.saveDirectory()
+            val saveDir = fileInteractor.saveFile()
             if (saveDir != null) {
                 val saveFile = File(saveDir, "worklogs.json")
                 val worklogsAsString = export(worklogs)
@@ -51,7 +51,7 @@ class WorklogExporter(
     }
 
     fun importFromFile(): List<Log> {
-        val selectFile = fileInteractor.selectFile()
+        val selectFile = fileInteractor.loadFile()
         if (selectFile != null) {
             val fileAsString = FileUtils
                     .readFileToString(selectFile, Charsets.UTF_8)

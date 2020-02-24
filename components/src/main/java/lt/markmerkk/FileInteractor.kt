@@ -11,5 +11,13 @@ interface FileInteractor {
      */
     fun saveDirectory(): File?
 
-    fun selectFile(): File?
+    /**
+     * Selects a file to load
+     */
+    fun saveFile(): File?
+
+    /**
+     * Selects a file to load
+     */
+    fun loadFile(): File?
 }
