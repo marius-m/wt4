@@ -1,11 +1,14 @@
 package lt.markmerkk
 
+import javafx.application.Application
+import javafx.application.Platform
 import javafx.stage.Stage
 import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.interactors.*
 import lt.markmerkk.ui_2.StageProperties
+import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.main.MainWidget
@@ -83,10 +86,6 @@ class Main : App(MainWidget::class, Styles::class) {
         super.stop()
     }
 
-    fun restart() {
-        find<MainWidget>().showInfo("Restart app to take effect")
-    }
-
     companion object {
         var DEBUG = false
 
@@ -95,6 +94,11 @@ class Main : App(MainWidget::class, Styles::class) {
 
         @JvmStatic fun mainInstance(): Main = (FX.application as Main)
         @JvmStatic fun component(): AppComponent = (FX.application as Main).appComponent
+        @JvmStatic fun restart() {
+            find<MainWidget>()
+                    .showInfo("App will close now. Please start again to complete the changes!")
+            Platform.exit()
+        }
 
         private val logger = LoggerFactory.getLogger(Main::class.java)!!
     }

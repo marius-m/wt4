@@ -1,6 +1,8 @@
 package lt.markmerkk.dagger.modules
 
 import com.google.common.eventbus.EventBus
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.jfoenix.svg.SVGGlyph
 import com.sun.javafx.application.HostServicesDelegate
 import dagger.Module
@@ -21,6 +23,7 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.export.WorklogExporter
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
@@ -41,7 +44,6 @@ class AppModule(
     @Provides
     @Singleton
     fun providesSchedulersProvider(): SchedulerProvider = SchedulerProviderFx()
-
 
     @Provides
     @Singleton
@@ -410,6 +412,22 @@ class AppModule(
                 worklogStorage,
                 timeProvider
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideFileInteractor(): FileInteractor {
+        return FileInteractorImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorklogExporter(
+            gson: Gson,
+            fileInteractor: FileInteractor,
+            timeProvider: TimeProvider
+    ): WorklogExporter {
+        return WorklogExporter(gson, fileInteractor, timeProvider)
     }
 
 }

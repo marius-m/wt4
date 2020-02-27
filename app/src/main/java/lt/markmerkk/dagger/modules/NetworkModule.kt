@@ -1,5 +1,7 @@
 package lt.markmerkk.dagger.modules
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import lt.markmerkk.Tags
@@ -10,6 +12,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.slf4j.LoggerFactory
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -19,7 +22,16 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApi(): Api {
+    fun providesGson(): Gson {
+        return GsonBuilder()
+                .create()
+    }
+
+    @Provides
+    @Singleton
+    fun provideApi(
+            gson: Gson
+    ): Api {
         val interceptorLogging = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
             override fun log(message: String) {
                 loggerNetwork.debug(message)
@@ -34,6 +46,7 @@ class NetworkModule {
                 .build()
         val retrofit = Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient)
                 .baseUrl("https://raw.githubusercontent.com/marius-m/wt4/")
                 .build()

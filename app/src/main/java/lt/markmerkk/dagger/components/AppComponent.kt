@@ -11,11 +11,15 @@ import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.widgets.DatePickerWidget
 import lt.markmerkk.widgets.app_settings.AppSettingsWidget
+import lt.markmerkk.widgets.app_settings.ProfileWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.main.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
+import lt.markmerkk.widgets.export.ExportSampleWidget
+import lt.markmerkk.widgets.export.ExportWidget
+import lt.markmerkk.widgets.export.ImportWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
@@ -54,4 +58,8 @@ interface AppComponent {
     fun inject(ticketBasicSearchWidget: TicketBasicSearchWidget)
     fun inject(appSettingsWidget: AppSettingsWidget)
     fun inject(logFreshnessWidget: LogFreshnessWidget)
+    fun inject(exportWidget: ExportWidget)
+    fun inject(exportSampleWidget: ExportSampleWidget)
+    fun inject(profileWidget: ProfileWidget)
+    fun inject(importWidget: ImportWidget)
 }

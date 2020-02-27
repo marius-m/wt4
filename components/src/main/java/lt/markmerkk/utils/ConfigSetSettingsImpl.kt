@@ -12,11 +12,24 @@ class ConfigSetSettingsImpl(
         private val configPathProvider: ConfigPathProvider
 ) : BaseSettings(), ConfigSetSettings {
 
-    override var configSetName: String = ""
+    private var configSetName: String = ""
         set(value) {
             field = sanitizeConfigName(value)
         }
-    override var configs: List<String> = emptyList()
+    private var configs: List<String> = emptyList()
+
+    override fun changeActiveConfig(configSelection: String) {
+        configSetName = configSelection
+    }
+
+    override fun configs(): List<String> {
+        return configs
+                .plus(DEFAULT_ROOT_CONFIG_NAME)
+    }
+
+    override fun currentConfig(): String {
+        return configSetName
+    }
 
     override fun currentConfigOrDefault(): String {
         if (configSetName.isEmpty()) {
