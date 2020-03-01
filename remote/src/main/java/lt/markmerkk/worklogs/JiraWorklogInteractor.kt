@@ -1,14 +1,10 @@
 package lt.markmerkk.worklogs
 
-import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.Tags
-import lt.markmerkk.TimeProvider
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.JiraTicketSearch
-import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.utils.TimedCommentStamper
 import net.rcarz.jiraclient.WorkLog
 import org.joda.time.DateTime
@@ -46,12 +42,14 @@ class JiraWorklogInteractor(
                 Emitter.BackpressureMode.BUFFER
         ).map { issueWorklogPair ->
             val issue = issueWorklogPair.issue
+            val assigneeAsUser = issue?.assignee?.toJiraUser() ?: JiraUser.asEmpty()
+            val reporterAsuser = issue?.reporter?.toJiraUser() ?: JiraUser.asEmpty()
             val ticket = Ticket.fromRemoteData(
                     code = issue.key,
                     description = issue.summary,
                     status = issue?.status?.name ?: "",
-                    assigneeName = issue?.assignee?.name ?: "",
-                    reporterName = issue?.reporter?.name ?: "",
+                    assigneeName = assigneeAsUser.identifierAsString(),
+                    reporterName = reporterAsuser.identifierAsString(),
                     isWatching = issue?.watches?.isWatching ?: false,
                     parentCode = issue.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
@@ -62,7 +60,7 @@ class JiraWorklogInteractor(
             val worklogs = issueWorklogPair.worklogs
                     .filter {
                         isCurrentUserLog(
-                                activeUsername = userSettings.jiraUser().name,
+                                activeIdentifier = userSettings.jiraUser().identifierAsString(),
                                 worklog = it
                         )
                     }
@@ -140,12 +138,17 @@ class JiraWorklogInteractor(
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.JIRA)
         fun isCurrentUserLog(
-                activeUsername: String,
+                activeIdentifier: String,
                 worklog: WorkLog
         ): Boolean {
-            return activeUsername.equals(worklog.author.displayName, ignoreCase = true)
-                    || activeUsername.equals(worklog.author.email, ignoreCase = true)
-                    || activeUsername.equals(worklog.author.name, ignoreCase = true)
+            val jiraUser = worklog.author.toJiraUser()
+            if (jiraUser.isEmpty()) {
+                return false
+            }
+            return activeIdentifier.equals(jiraUser.name, ignoreCase = true)
+                    || activeIdentifier.equals(jiraUser.displayName, ignoreCase = true)
+                    || activeIdentifier.equals(jiraUser.email, ignoreCase = true)
+                    || activeIdentifier.equals(jiraUser.accountId, ignoreCase = true)
         }
     }
 

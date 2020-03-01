@@ -1,8 +1,10 @@
 package lt.markmerkk.tickets
 
+import lt.markmerkk.JiraUser
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.toJiraUser
 import net.rcarz.jiraclient.JiraClient
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -39,12 +41,14 @@ class JiraTicketSearch {
         ).flatMap {
             Observable.from(it)
         }.map {
+            val assigneeAsUser: JiraUser = it?.assignee?.toJiraUser() ?: JiraUser.asEmpty()
+            val reporterAsUser: JiraUser = it?.reporter?.toJiraUser() ?: JiraUser.asEmpty()
             Ticket.fromRemoteData(
                     code = it.key,
                     description = it.summary,
                     status = it?.status?.name ?: "",
-                    assigneeName = it?.assignee?.name ?: "",
-                    reporterName = it?.reporter?.name ?: "",
+                    assigneeName = assigneeAsUser.identifierAsString(),
+                    reporterName = reporterAsUser.identifierAsString(),
                     isWatching = it?.watches?.isWatching ?: false,
                     parentCode = it?.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(

@@ -11,12 +11,14 @@ object Mocks {
     fun createUser(
             name: String = "valid_name",
             displayName: String = "valid_display_name",
-            email: String = "valid_email"
+            email: String = "valid_email",
+            accountId: String = "account_id"
     ): JiraUser {
         return JiraUser(
                 name = name,
                 displayName = displayName,
-                email = email
+                email = email,
+                accountId = accountId
         )
     }
 
@@ -196,18 +198,20 @@ object Mocks {
     }
 
     fun createJiraUserEmpty(): JiraUser {
-        return createJiraUser(name = "", displayName = "", email = "")
+        return createJiraUser(name = "", displayName = "", email = "", accountId = "")
     }
 
     fun createJiraUser(
             name: String = "name",
             displayName: String = "display_name",
-            email: String = "email"
+            email: String = "email",
+            accountId: String = "account_id"
     ): JiraUser {
         return JiraUser(
                 name = name,
                 displayName = displayName,
-                email = email
+                email = email,
+                accountId = accountId
         )
     }
 

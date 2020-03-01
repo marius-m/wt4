@@ -34,7 +34,7 @@ class AuthServiceImpl(
         testConnectionSubscription?.unsubscribe()
         testConnectionSubscription = authInteractor.jiraTestValidConnection(hostname, username, password)
                 .flatMap {
-                    userSettings.changeJiraUser(it.name, it.email, it.displayName)
+                    userSettings.changeJiraUser(it.name, it.email, it.displayName, it.accountId)
                     logger.info("Success logging in!")
                     Single.just(AuthService.AuthResult.SUCCESS)
                 }

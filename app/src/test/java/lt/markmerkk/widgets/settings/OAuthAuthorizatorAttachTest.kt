@@ -40,7 +40,7 @@ class OAuthAuthorizatorAttachTest {
     @Test
     fun noUserData() {
         // Assemble
-        val user = JiraUser(name = "", displayName = "", email = "")
+        val user = JiraUser(name = "", displayName = "", email = "", accountId = "")
         val token = JiraOAuthCreds(tokenSecret = "token", accessKey = "key")
         doReturn(user).whenever(userSettings).jiraUser()
         doReturn(token).whenever(userSettings).jiraOAuthCreds()
@@ -62,7 +62,7 @@ class OAuthAuthorizatorAttachTest {
     @Test
     fun noTokenData() {
         // Assemble
-        val user = JiraUser(name = "user", displayName = "user", email = "email")
+        val user = JiraUser(name = "user", displayName = "user", email = "email", accountId = "account_id")
         val token = JiraOAuthCreds(tokenSecret = "", accessKey = "")
         doReturn(user).whenever(userSettings).jiraUser()
         doReturn(token).whenever(userSettings).jiraOAuthCreds()
@@ -84,7 +84,7 @@ class OAuthAuthorizatorAttachTest {
     @Test
     fun userAvailable() {
         // Assemble
-        val user = JiraUser(name = "user", displayName = "user", email = "email")
+        val user = JiraUser(name = "user", displayName = "user", email = "email", accountId = "account_id")
         val token = JiraOAuthCreds(tokenSecret = "token", accessKey = "key")
         doReturn(user).whenever(userSettings).jiraUser()
         doReturn(token).whenever(userSettings).jiraOAuthCreds()
