@@ -1,18 +1,36 @@
 package lt.markmerkk.utils
 
-import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.Config
+import lt.markmerkk.ConfigPathProvider
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import java.util.*
 
 class AdvHashSettingsTest {
 
-    val config = Config(
-            gaKey = "test_key",
-            configPathProvider = mock(),
-            configSetSettings = mock()
-    )
+    @Mock lateinit var configPathProvider: ConfigPathProvider
+    @Mock lateinit var configSetSettings: ConfigSetSettings
+    private lateinit var config: Config
+
+    @Before
+    fun setUp() {
+        MockitoAnnotations.initMocks(this)
+        doNothing().whenever(configSetSettings).load()
+        doNothing().whenever(configSetSettings).save()
+        doReturn("/").whenever(configPathProvider)
+                .absolutePathWithMissingFolderCreate(any())
+        doReturn("/").whenever(configSetSettings)
+                .currentConfig()
+        config = Config(
+                configPathProvider = configPathProvider,
+                configSetSettings = configSetSettings,
+                gaKey = "test"
+        )
+    }
 
     @Test
     fun testValidInput() {

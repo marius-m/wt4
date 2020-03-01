@@ -4,10 +4,6 @@ import lt.markmerkk.ConfigPathProvider
 import org.slf4j.LoggerFactory
 import java.util.*
 
-/**
- * @author mariusmerkevicius
- * @since 2016-11-07
- */
 class ConfigSetSettingsImpl(
         private val configPathProvider: ConfigPathProvider
 ) : BaseSettings(), ConfigSetSettings {

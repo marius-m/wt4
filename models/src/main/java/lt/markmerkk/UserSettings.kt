@@ -26,7 +26,7 @@ interface UserSettings {
 
     fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
     fun changeOAuthCreds(tokenSecret: String, accessKey: String)
-    fun changeJiraUser(name: String, email: String, displayName: String)
+    fun changeJiraUser(name: String, email: String, displayName: String, accountId: String)
     fun changeBasicCreds(hostname: String, username: String, password: String)
     fun resetUserData()
 }
@@ -43,12 +43,37 @@ data class JiraOAuthPreset(
 data class JiraOAuthCreds(val tokenSecret: String, val accessKey: String) {
     fun isEmpty(): Boolean = tokenSecret.isEmpty() || accessKey.isEmpty()
 }
+
 data class JiraUser(
-        val name: String,
+        val name: String, // may be empty due to new JIRA API changes
         val displayName: String,
-        val email: String
+        val email: String,
+        val accountId: String // may be empty
 ) {
-    fun isEmpty(): Boolean = name.isEmpty() || displayName.isEmpty() || email.isEmpty()
+    fun isEmpty(): Boolean = name.isEmpty()
+            && displayName.isEmpty()
+            && email.isEmpty()
+            && accountId.isEmpty()
+
+    /**
+     * Provides user identifier based on available value
+     */
+    fun identifierAsString(): String {
+        if (name.isNotEmpty()) return name
+        if (accountId.isNotEmpty()) return accountId
+        if (email.isNotEmpty()) return email
+        return displayName
+    }
+
+    companion object {
+        fun asEmpty() = JiraUser(
+                name = "",
+                displayName = "",
+                email = "",
+                accountId = ""
+        )
+    }
+
 }
 
 data class JiraBasicCreds(val host: String, val username: String, val password: String) {

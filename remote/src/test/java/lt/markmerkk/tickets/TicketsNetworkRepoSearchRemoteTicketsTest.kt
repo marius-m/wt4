@@ -39,14 +39,14 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
     fun validSearch() {
         // Assemble
         val apiTickets = listOf(
-                Mocks.createTicket(id = 1),
-                Mocks.createTicket(id = 2),
-                Mocks.createTicket(id = 3)
+                Mocks.createTicket(id = 1, code = "DEV-111"),
+                Mocks.createTicket(id = 2, code = "DEV-222"),
+                Mocks.createTicket(id = 3, code = "DEV-333")
         )
         val dbTickets = listOf(
-                Mocks.createTicket(),
-                Mocks.createTicket(),
-                Mocks.createTicket()
+                Mocks.createTicket(code = "DEV-111"),
+                Mocks.createTicket(code = "DEV-222"),
+                Mocks.createTicket(code = "DEV-333")
         )
         doReturn(jiraClient).whenever(jiraClientProvider).client()
         doReturn(Observable.from(apiTickets)).whenever(jiraTicketSearch).searchIssues(any(), any(), any())
@@ -63,8 +63,8 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         val resultItems = result.onNextEvents.first()
         assertThat(resultItems.size).isEqualTo(3)
 
-        verify(ticketsDatabaseRepo, times(3)).insertOrUpdate(any())
-        verify(ticketsDatabaseRepo).loadTickets()
+        verify(ticketsDatabaseRepo, times(3)).insertOrUpdateSync(any())
+        verify(ticketsDatabaseRepo, atLeastOnce()).loadTickets()
     }
 
     @Test
@@ -105,7 +105,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
         assertThat(resultItems.size).isEqualTo(3)
 
         verify(ticketsDatabaseRepo, times(0)).insertOrUpdate(any())
-        verify(ticketsDatabaseRepo).loadTickets()
+        verify(ticketsDatabaseRepo, atLeastOnce()).loadTickets()
     }
 
 }

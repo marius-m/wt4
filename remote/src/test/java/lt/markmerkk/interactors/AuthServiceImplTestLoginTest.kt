@@ -67,7 +67,7 @@ class AuthServiceImplTestLoginTest {
         val resultCaptor = argumentCaptor<AuthService.AuthResult>()
         verify(view).showAuthResult(resultCaptor.capture())
         assertEquals(AuthService.AuthResult.SUCCESS, resultCaptor.firstValue)
-        verify(userSettings).changeJiraUser(any(), any(), any())
+        verify(userSettings).changeJiraUser(any(), any(), any(), any())
     }
 
     @Test

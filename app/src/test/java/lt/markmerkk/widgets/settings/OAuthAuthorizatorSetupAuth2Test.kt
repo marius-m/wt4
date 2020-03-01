@@ -1,10 +1,7 @@
 package lt.markmerkk.widgets.settings
 
 import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.JiraOAuthCreds
-import lt.markmerkk.JiraUser
-import lt.markmerkk.UserSettings
+import lt.markmerkk.*
 import lt.markmerkk.interactors.JiraBasicApi
 import net.rcarz.jiraclient.JiraClient
 import org.assertj.core.api.Assertions
@@ -45,7 +42,7 @@ class OAuthAuthorizatorSetupAuth2Test {
         // Assemble
         doReturn(Single.just(OAuthInteractor.OAuthToken("token", "key")))
                 .whenever(oauthInteractor).generateToken(any())
-        doReturn(Single.just(JiraUser("name", "display_name", "email")))
+        doReturn(Single.just(Mocks.createJiraUser()))
                 .whenever(jiraBasicApi).jiraUser()
         doReturn(mockJiraClient()).whenever(jiraClientProvider).newClient()
 
@@ -54,7 +51,7 @@ class OAuthAuthorizatorSetupAuth2Test {
 
         // Assert
         verify(userSettings).changeOAuthCreds(tokenSecret = "token", accessKey = "key")
-        verify(userSettings).changeJiraUser(name = "name", email = "email", displayName = "display_name")
+        verify(userSettings).changeJiraUser(name = "name", email = "email", displayName = "display_name", accountId = "account_id")
 
         val viewModelCapture = argumentCaptor<AuthViewModel>()
         verify(view, times(2)).renderView(viewModelCapture.capture())
@@ -109,7 +106,7 @@ class OAuthAuthorizatorSetupAuth2Test {
         // Assemble
         doReturn(Single.error<Any>(RuntimeException()))
                 .whenever(oauthInteractor).generateToken(any())
-        doReturn(Single.just(JiraUser("name", "display_name", "email")))
+        doReturn(Single.just(JiraUser("name", "display_name", "email", "account_id")))
                 .whenever(jiraBasicApi).jiraUser()
         doReturn(mockJiraClient()).whenever(jiraClientProvider).newClient()
 

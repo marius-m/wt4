@@ -57,7 +57,7 @@ class OAuthAuthorizatorCheckAuthTest {
         assertThat(viewModel.textStatus).isEqualTo("Welcome 'valid_display_name'!")
         assertThat(viewModel.showButtonSetupNew).isFalse()
 
-        verify(userSettings).changeJiraUser(any(), any(), any())
+        verify(userSettings).changeJiraUser(any(), any(), any(), any())
         verify(view).showProgress()
         verify(view).hideProgress()
         verify(view).accountReady()

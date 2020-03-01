@@ -6,14 +6,9 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
 
-/**
- * @author mariusmerkevicius
- * *
- * @since 2016-11-07
- */
 class ConfigSetSettingsImplTest {
 
-    val pathProvider: ConfigPathProvider = mock()
+    private val pathProvider: ConfigPathProvider = mock()
 
     @Test
     fun noValue_returnEmpty() {
@@ -25,7 +20,7 @@ class ConfigSetSettingsImplTest {
         settings.onLoad(properties)
 
         // Assert
-        assertEquals("", settings.configSetName)
+        assertEquals("", settings.currentConfig())
     }
 
     @Test
@@ -39,7 +34,7 @@ class ConfigSetSettingsImplTest {
         settings.onLoad(properties)
 
         // Assert
-        assertEquals("", settings.configSetName)
+        assertEquals("", settings.currentConfig())
     }
 
     @Test
@@ -53,7 +48,7 @@ class ConfigSetSettingsImplTest {
         settings.onLoad(properties)
 
         // Assert
-        assertEquals("valid_value", settings.configSetName)
+        assertEquals("valid_value", settings.currentConfig())
     }
 
     @Test
