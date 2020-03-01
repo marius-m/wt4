@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.utils.ConfigSetSettings
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -37,7 +36,7 @@ class ConfigCfgPathTest {
         )
 
         // Act
-        val result = config.generateRelativePath()
+        val result = config.profilePath()
 
         // Assert
         assertEquals("home_dir/.wt4/", result)
@@ -61,7 +60,7 @@ class ConfigCfgPathTest {
         )
 
         // Act
-        val result = config.generateRelativePath()
+        val result = config.profilePath()
 
         // Assert
         assertEquals("home_dir/.wt4_debug/", result)
@@ -85,7 +84,7 @@ class ConfigCfgPathTest {
         )
 
         // Act
-        val result = config.generateRelativePath()
+        val result = config.profilePath()
 
         // Assert
         assertEquals("home_dir/.wt4_debug/test_extension/", result)

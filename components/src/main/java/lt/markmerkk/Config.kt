@@ -2,10 +2,6 @@ package lt.markmerkk
 
 import lt.markmerkk.utils.ConfigSetSettings
 
-/**
- * @author mariusmerkevicius
- * @since 2016-08-14
- */
 data class Config(
         val debug: Boolean = false,
         val versionName: String = "Undefined",
@@ -17,15 +13,20 @@ data class Config(
 
     val appName: String = "WT4"
 
-    val configInCache by lazy {
+    private val configInCache by lazy {
         configSetSettings.load()
         configSetSettings.save()
-        configPathProvider.absolutePathWithMissingFolderCreate(generateRelativePath())
+        configPathProvider.absolutePathWithMissingFolderCreate(profilePath())
     }
 
     val cfgPath: String = configInCache
 
-    fun generateRelativePath(): String {
+    fun basePath(): String {
+        return configPathProvider.userHome() +
+                "/.${configPathProvider.configDefault()}/"
+    }
+
+    fun profilePath(): String {
         var path = configPathProvider.userHome() +
                 "/.${configPathProvider.configDefault()}/"
         val currentConfig = configSetSettings.currentConfig()
