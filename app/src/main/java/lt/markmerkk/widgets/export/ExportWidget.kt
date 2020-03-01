@@ -15,8 +15,6 @@ import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.export.entities.ExportWorklogViewModel
-import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
-import org.controlsfx.control.PrefixSelectionComboBox
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -37,10 +35,8 @@ class ExportWidget : Fragment(), ExportContract.View {
 
     private lateinit var presenter: ExportContract.Presenter
 
-    private val exportWorklogViewModels = mutableListOf<ExportWorklogViewModel>()
-            .asObservable()
-    private val projectFilters = mutableListOf<String>()
-            .asObservable()
+    private val worklogViewModels = mutableListOf<ExportWorklogViewModel>().asObservable()
+    private val projectFilters = mutableListOf<String>().asObservable()
 
     override val root: Parent = borderpane {
         addClass(Styles.dialogContainer)
@@ -71,7 +67,7 @@ class ExportWidget : Fragment(), ExportContract.View {
                         presenter.loadWorklogs(projectFilter = selectItem)
                     }
                 }
-                viewLogs = listview(exportWorklogViewModels) {
+                viewLogs = listview(worklogViewModels) {
                     prefHeight = 200.0
                     vgrow = Priority.ALWAYS
                     cellFragment(ExportWorklogItemFragment::class)
@@ -83,12 +79,12 @@ class ExportWidget : Fragment(), ExportContract.View {
                 addClass(Styles.dialogContainerActionsButtons)
                 jfxButton("Sample".toUpperCase()) {
                     action {
-                        presenter.sampleExport(exportWorklogViewModels)
+                        presenter.sampleExport(worklogViewModels)
                     }
                 }
                 jfxButton("Export".toUpperCase()) {
                     action {
-                        presenter.exportWorklogs(exportWorklogViewModels)
+                        presenter.exportWorklogs(worklogViewModels)
                     }
                 }
                 jfxButton("Close".toUpperCase()) {
@@ -116,8 +112,8 @@ class ExportWidget : Fragment(), ExportContract.View {
     }
 
     override fun showWorklogsForExport(worklogViewModels: List<ExportWorklogViewModel>) {
-        exportWorklogViewModels.clear()
-        exportWorklogViewModels.addAll(worklogViewModels)
+        this.worklogViewModels.clear()
+        this.worklogViewModels.addAll(worklogViewModels)
     }
 
     override fun showProjectFilters(projectFilters: List<String>, filterSelection: String) {
@@ -139,9 +135,8 @@ class ExportWidget : Fragment(), ExportContract.View {
     override fun showExportSuccess() {
         information(
                 header = "Success",
-                content = "Saved worklogs!"
+                content = "Worklogs exported!"
         )
-        close()
     }
 
     override fun showExportFailure() {
