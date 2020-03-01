@@ -1,6 +1,7 @@
 package lt.markmerkk.dagger.components
 
 import dagger.Component
+import lt.markmerkk.CoreWidget
 import lt.markmerkk.Main
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.NetworkModule
@@ -37,6 +38,7 @@ import javax.inject.Singleton
         )
 )
 interface AppComponent {
+    fun inject(coreWidget: CoreWidget)
     fun inject(application: Main)
     fun inject(mainWidget: MainWidget)
     fun inject(ticketSideDrawerWidget: TicketSideDrawerWidget)
