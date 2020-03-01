@@ -474,7 +474,20 @@ class MainWidget : Fragment(), ExternalSourceNode<StackPane>, MainContract.View 
                 resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventMainOpenLogDetails())
             }
-            LogEditType.DELETE -> logStorage.delete(event.logs.first())
+            LogEditType.DELETE -> {
+                warning(
+                        header = "Warning",
+                        content = "This will delete worklog. Are you sure you want to proceed?",
+                        buttons = *arrayOf(ButtonType.NO, ButtonType.YES),
+                        actionFn = { buttonType ->
+                            when (buttonType) {
+                                ButtonType.YES -> logStorage.delete(event.logs.first())
+                                else -> logger.info("Delete dialog dismissed")
+                            }
+                        }
+                )
+
+            }
             LogEditType.CLONE -> {
                 val logToClone = event.logs.first()
                 val newLog = SimpleLogBuilder()
