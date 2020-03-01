@@ -13,14 +13,11 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
-import lt.markmerkk.entities.Ticket
-import lt.markmerkk.entities.TicketUseHistory
 import lt.markmerkk.events.EventFocusTicketWidget
 import lt.markmerkk.events.EventMainCloseTickets
 import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.events.EventTicketFilterChange
 import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.views.ContextMenuTicketSelect
 import lt.markmerkk.ui_2.views.cfxPrefixSelectionComboBox
@@ -206,7 +203,11 @@ class TicketSideDrawerWidget: Fragment(), TicketContract.View {
         presenter.loadTickets(filter = "", projectCode = "")
         presenter.attachFilterStream(JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicketSearch.textProperty())
-                .subscribe { presenter.handleClearVisibility(it) }
+                .subscribe({
+                    presenter.handleClearVisibility(it)
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         viewComboProjectCodes.selectionModel.select("")
         presenter.loadProjectCodes()
         contextMenuTicketSelect.onAttach()

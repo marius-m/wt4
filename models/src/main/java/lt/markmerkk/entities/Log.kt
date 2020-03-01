@@ -87,6 +87,17 @@ data class Log private constructor(
         )
     }
 
+    fun clearTicketCode(): Log {
+        return Log(
+                id = id,
+                time = time,
+                code = TicketCode.asEmpty(),
+                comment = comment,
+                systemNote = systemNote,
+                remoteData = remoteData
+        )
+    }
+
     fun markAsDeleted(): Log {
         return Log(
                 id = id,

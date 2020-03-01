@@ -7,6 +7,7 @@ import javafx.scene.web.WebView
 import lt.markmerkk.Styles
 import lt.markmerkk.showIf
 import lt.markmerkk.ui_2.views.jfxSpinner
+import org.slf4j.LoggerFactory
 import rx.Subscription
 import rx.observables.JavaFxObservable
 import tornadofx.*
@@ -51,12 +52,16 @@ class HelpWidget: Fragment() {
     override fun onDock() {
         super.onDock()
         subsProgress = JavaFxObservable.valuesOf(viewWebview.engine.loadWorker.runningProperty())
-                .subscribe { viewProgress.showIf(it) }
+                .subscribe({ viewProgress.showIf(it) }, { error -> logger.warn("JFX prop error", error) })
     }
 
     override fun onUndock() {
         subsProgress?.unsubscribe()
         super.onUndock()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(HelpWidget::class.java)!!
     }
 
 }

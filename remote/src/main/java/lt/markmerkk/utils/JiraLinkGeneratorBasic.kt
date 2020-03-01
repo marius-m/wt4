@@ -1,6 +1,7 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.entities.TicketCode
+import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Subscription
 
@@ -21,7 +22,11 @@ class JiraLinkGeneratorBasic(
 
     override fun attachTicketCodeInput(inputTicketCodeAsStream: Observable<String>) {
         subsInputTicketCode = inputTicketCodeAsStream
-                .subscribe { handleTicketInput(it) }
+                .subscribe({
+                    handleTicketInput(it)
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
     }
 
     override fun webLinkFromInput(ticketCodeAsString: String): String {
@@ -43,6 +48,10 @@ class JiraLinkGeneratorBasic(
         } else {
             view?.hideCopyLink()
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(JiraLinkGeneratorBasic::class.java)!!
     }
 
 }

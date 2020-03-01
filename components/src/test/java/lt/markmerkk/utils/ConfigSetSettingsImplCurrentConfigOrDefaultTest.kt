@@ -14,7 +14,7 @@ class ConfigSetSettingsImplCurrentConfigOrDefaultTest {
     fun valid() {
         // Arrange
         // Act
-        settings.configSetName = "valid_config"
+        settings.changeActiveConfig("valid_config")
         val result = settings.currentConfigOrDefault()
 
         // Assert
@@ -25,7 +25,7 @@ class ConfigSetSettingsImplCurrentConfigOrDefaultTest {
     fun emptyConfig() {
         // Arrange
         // Act
-        settings.configSetName = ""
+        settings.changeActiveConfig("")
         val result = settings.currentConfigOrDefault()
 
         // Assert
@@ -36,7 +36,7 @@ class ConfigSetSettingsImplCurrentConfigOrDefaultTest {
     fun defaultConfig() {
         // Arrange
         // Act
-        settings.configSetName = ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME
+        settings.changeActiveConfig(ConfigSetSettingsImpl.DEFAULT_ROOT_CONFIG_NAME)
         val result = settings.currentConfigOrDefault()
 
         // Assert

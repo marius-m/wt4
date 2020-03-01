@@ -1,4 +1,4 @@
-package lt.markmerkk.widgets.export.entities
+package lt.markmerkk.export.entities
 
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.Log

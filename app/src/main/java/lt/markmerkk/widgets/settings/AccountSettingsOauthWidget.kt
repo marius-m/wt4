@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.controls.JFXTextArea
 import com.jfoenix.svg.SVGGlyph
-import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -241,7 +240,7 @@ class AccountSettingsOauthWidget : Fragment() {
         } else {
             viewContainerLogs.show()
             viewContainerSetup.hide()
-            logTailer.tail(File("${appConfig.generateRelativePath()}logs/jira.log"))
+            logTailer.tail(File("${appConfig.basePath()}logs/jira.log"))
         }
     }
 

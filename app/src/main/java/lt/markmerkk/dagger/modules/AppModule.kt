@@ -2,9 +2,7 @@ package lt.markmerkk.dagger.modules
 
 import com.google.common.eventbus.EventBus
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.jfoenix.svg.SVGGlyph
-import com.sun.javafx.application.HostServicesDelegate
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
@@ -23,7 +21,7 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
-import lt.markmerkk.widgets.export.WorklogExporter
+import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl

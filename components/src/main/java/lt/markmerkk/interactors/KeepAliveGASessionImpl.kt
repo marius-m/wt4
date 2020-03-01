@@ -18,7 +18,11 @@ class KeepAliveGASessionImpl(
 
     override fun onAttach() {
         subscription = Observable.interval(MINUTE_DELAY, TimeUnit.MINUTES, waitScheduler)
-                .subscribe { tracker.sendView(logStorage.displayType.name) }
+                .subscribe({
+                    tracker.sendView(logStorage.displayType.name)
+                }, { error ->
+                    logger.warn("Error sending ping", error)
+                })
     }
 
     override fun onDetach() {

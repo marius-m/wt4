@@ -26,7 +26,6 @@ import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.ui_2.views.SideContainerLogDetails
 import lt.markmerkk.ui_2.views.SideContainerTickets
@@ -59,7 +58,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
+class MainWidget : Fragment(), MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
@@ -247,8 +246,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     override fun onDock() {
         super.onDock()
-        val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
-        title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
         // Init ui elements
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {
@@ -265,7 +262,11 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
         snackBar = JFXSnackbar(root as StackPane)
                 .apply { toFront() }
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
-                .subscribe { eventBus.post(EventFocusChange(it)) }
+                .subscribe({ focus ->
+                    eventBus.post(EventFocusChange(focus))
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         presenter = MainPresenter()
         sidePaneHandler = SidePaneHandler(
                 listener = object : SidePaneHandler.Listener {
@@ -476,7 +477,20 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
                 resultDispatcher.publish(LogDetailsSideDrawerWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
                 eventBus.post(EventMainOpenLogDetails())
             }
-            LogEditType.DELETE -> logStorage.delete(event.logs.first())
+            LogEditType.DELETE -> {
+                warning(
+                        header = "Warning",
+                        content = "This will delete worklog. Are you sure you want to proceed?",
+                        buttons = *arrayOf(ButtonType.NO, ButtonType.YES),
+                        actionFn = { buttonType ->
+                            when (buttonType) {
+                                ButtonType.YES -> logStorage.delete(event.logs.first())
+                                else -> logger.info("Delete dialog dismissed")
+                            }
+                        }
+                )
+
+            }
             LogEditType.CLONE -> {
                 val logToClone = event.logs.first()
                 val newLog = SimpleLogBuilder()
@@ -517,8 +531,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
     }
 
     //endregion
-
-    override fun rootNode(): StackPane = root as StackPane
 
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {

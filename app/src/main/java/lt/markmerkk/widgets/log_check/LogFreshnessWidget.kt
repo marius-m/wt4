@@ -78,6 +78,11 @@ class LogFreshnessWidget: Fragment() {
                         Platform.exit()
                     }
                 }
+                jfxButton("Cancel".toUpperCase()) {
+                    setOnAction {
+                        close()
+                    }
+                }
             }
         }
     }

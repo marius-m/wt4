@@ -57,7 +57,7 @@ class OAuthAuthorizator(
     fun checkAuth() {
         subsCheckConnection?.unsubscribe()
         subsCheckConnection = jiraApi.jiraUser()
-                .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName) }
+                .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName, it.accountId) }
                 .doOnError { userSettings.resetUserData() }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
@@ -146,7 +146,7 @@ class OAuthAuthorizator(
                     )
                     Single.just(jiraClientProvider.newClient())
                 }.flatMap { jiraApi.jiraUser() }
-                .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName) }
+                .doOnSuccess { userSettings.changeJiraUser(it.name, it.email, it.displayName, it.accountId) }
                 .doOnError { userSettings.resetUserData() }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)

@@ -219,7 +219,7 @@ class AccountSettingsWidget : Fragment() {
         } else {
             viewContainerStatusAdvanced.show()
             viewContainerStatusBasic.hide()
-            logTailer.tail(File("${appConfig.generateRelativePath()}logs/jira.log"))
+            logTailer.tail(File("${appConfig.basePath()}logs/jira.log"))
         }
     }
 
