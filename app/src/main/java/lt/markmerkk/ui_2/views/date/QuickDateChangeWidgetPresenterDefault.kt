@@ -1,13 +1,11 @@
 package lt.markmerkk.ui_2.views.date
 
-import javafx.scene.layout.StackPane
 import javafx.stage.StageStyle
 import lt.markmerkk.DisplayTypeLength
 import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.utils.DateSwitcherFormatter
 import lt.markmerkk.widgets.DatePickerWidget
 import tornadofx.*

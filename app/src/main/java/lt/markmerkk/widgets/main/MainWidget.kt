@@ -26,7 +26,6 @@ import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.ui.ExternalSourceNode
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.ui_2.views.SideContainerLogDetails
 import lt.markmerkk.ui_2.views.SideContainerTickets
@@ -59,7 +58,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class MainWidget : Fragment(), ExternalSourceNode<StackPane>, MainContract.View {
+class MainWidget : Fragment(), MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
@@ -532,8 +531,6 @@ class MainWidget : Fragment(), ExternalSourceNode<StackPane>, MainContract.View 
     }
 
     //endregion
-
-    override fun rootNode(): StackPane = root as StackPane
 
     @Subscribe
     fun eventInflateDialog(event: EventInflateDialog) {
