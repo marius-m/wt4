@@ -57,10 +57,20 @@ class ImportPresenter(
         view?.showProjectFilters(projectFilters, defaultProjectFilter)
     }
 
-    override fun import(worklogViewModels: List<ExportWorklogViewModel>) {
-        worklogViewModels
-                .filter { it.selectedProperty.get() }
-                .map { it.log }
+    override fun import(
+            worklogViewModels: List<ExportWorklogViewModel>,
+            skipTicketCode: Boolean
+    ) {
+        val importWorklogs = if (skipTicketCode) {
+            worklogViewModels
+                    .filter { it.selectedProperty.get() }
+                    .map { it.log.clearTicketCode() }
+        } else {
+            worklogViewModels
+                    .filter { it.selectedProperty.get() }
+                    .map { it.log }
+        }
+        importWorklogs
                 .forEach { logStorage.insert(it.toLegacyLog(timeProvider)) }
         view?.showImportSuccess()
     }

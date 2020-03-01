@@ -3,6 +3,7 @@ package lt.markmerkk.widgets.export
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
@@ -33,6 +34,7 @@ class ImportWidget : Fragment(), ImportContract.View {
     private lateinit var presenter: ImportContract.Presenter
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
+    private lateinit var viewSkipTicketCode: CheckBox
     private lateinit var viewProjectFilters: ComboBox<String>
     private lateinit var viewTotal: Label
 
@@ -54,6 +56,7 @@ class ImportWidget : Fragment(), ImportContract.View {
                     text = "Import worklogs from file"
                     isWrapText = true
                 }
+                viewSkipTicketCode = checkbox("Skip ticket code when importing") { }
                 viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
                     setOnAction {
                         val selectItem = (it.source as ComboBox<String>)
@@ -87,7 +90,7 @@ class ImportWidget : Fragment(), ImportContract.View {
                 }
                 jfxButton("Import".toUpperCase()) {
                     setOnAction {
-                        presenter.import(worklogViewModels)
+                        presenter.import(worklogViewModels, viewSkipTicketCode.isSelected)
                     }
                 }
                 jfxButton("Close".toUpperCase()) {
