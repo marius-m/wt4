@@ -40,8 +40,8 @@ Builds for `1.7.3` (Latest stable)
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
 
-- [MacOS - Basic (1.7.4)](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.4.dmg)
-- [MacOS - iTo (1.7.4)](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.4.dmg)
+- [MacOS - Basic (1.7.5)](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.5.dmg)
+- [MacOS - iTo (1.7.5)](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.5.dmg)
 - [Windows - Basic (1.7.0)](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.0.exe)
 - [Windows - iTo (1.7.0)](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.0.exe)
 
