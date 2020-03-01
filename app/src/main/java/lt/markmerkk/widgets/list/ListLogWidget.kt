@@ -58,13 +58,15 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
         viewTable = this
         columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
         JavaFxObservable.valuesOf(selectionModel.selectedItemProperty())
-                .subscribe { selectItem ->
+                .subscribe({ selectItem ->
                     val selectItemIds = listOf(selectItem)
                             .filter { it != null }
                             .filter { selectItem.editable }
                             .map { selectItem.id }
                     contextMenuEditLog.bindLogs(selectItemIds)
-                }
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         setOnMouseClicked { mouseEvent ->
             val selectLogId = viewTable.selectionModel.selectedItems.firstOrNull()?.id
             val selectLog = logStorage.findByIdOrNull(selectLogId ?: -1)

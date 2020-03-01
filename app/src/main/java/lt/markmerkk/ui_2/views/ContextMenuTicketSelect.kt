@@ -42,13 +42,15 @@ class ContextMenuTicketSelect(
     fun attachTicketSelection(ticketCodeSelectAsStream: Observable<String?>) {
         ticketCodeSelectAsStream
                 .filter { it != null }
-                .subscribe {
+                .subscribe({
                     if (it != null) {
                         bindCodes(listOf(it))
                     } else {
                         bindCodes(emptyList())
                     }
-                }
+                }, { error ->
+                    logger.warn("Error subscribing to ticket code selection stream", error)
+                })
     }
 
     val root: ContextMenu = ContextMenu()

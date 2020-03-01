@@ -195,7 +195,11 @@ class CalendarWidget: Fragment() {
         viewContainer.center = viewCalendar
         viewCalendar.hoursLayoutStrategy = DayViewBase.HoursLayoutStrategy.FIXED_HOUR_HEIGHT
         JavaFxObservable.valuesOf(viewZoomSlider.valueProperty())
-                .subscribe { viewCalendar.hourHeight = it.toDouble() }
+                .subscribe({
+                    viewCalendar.hourHeight = it.toDouble()
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         viewZoomSlider.value = 50.0
         contextMenu = ContextMenuEditLog(
                 strings,

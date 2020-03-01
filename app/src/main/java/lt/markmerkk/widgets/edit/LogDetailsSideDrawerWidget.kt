@@ -430,16 +430,32 @@ class LogDetailsSideDrawerWidget : Fragment(),
         ticketInfoLoader.onAttach()
         ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
-                .subscribe { presenter.changeTicketCode(it) }
+                .subscribe({
+                    presenter.changeTicketCode(it)
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         jiraLinkGenerator.onAttach()
         jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
         JavaFxObservable.valuesOf(viewTextComment.textArea.textProperty())
-                .subscribe { presenter.changeComment(it) }
+                .subscribe({
+                    presenter.changeComment(it)
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         JavaFxObservable.valuesOf(viewTableRecent.focusedProperty())
-                .subscribe { handleRecentVisibility() }
+                .subscribe({
+                    handleRecentVisibility()
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         JavaFxObservable.valuesOf(viewTextFieldTicket.focusedProperty())
-                .subscribe { handleRecentVisibility() }
+                .subscribe({
+                    handleRecentVisibility()
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
 
         recentTicketLoader.fetch()
         Platform.runLater {

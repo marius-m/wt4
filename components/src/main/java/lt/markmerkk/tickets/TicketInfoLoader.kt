@@ -37,9 +37,11 @@ class TicketInfoLoader(
                 .throttleLast(INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
                 .subscribeOn(waitScheduler)
                 .observeOn(uiScheduler)
-                .subscribe {
+                .subscribe({
                     findTicket(it)
-                }
+                }, { error ->
+                    logger.warn("Error input code change", error)
+                })
     }
 
     fun findTicket(inputCode: String) {

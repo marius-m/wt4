@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventTickTock
+import org.slf4j.LoggerFactory
 import rx.Observable
 import rx.Scheduler
 import rx.Subscription
@@ -26,7 +27,11 @@ class Ticker(
         subscription = Observable.interval(30, 30, TimeUnit.SECONDS, waitScheduler)
                 .filter { inFocus.get() }
                 .observeOn(uiScheduler)
-                .subscribe { eventBus.post(EventTickTock()) }
+                .subscribe({
+                    eventBus.post(EventTickTock())
+                }, { error ->
+                    logger.warn("Error in auto update trigger", error)
+                })
     }
 
     fun onDetach() {
@@ -36,6 +41,10 @@ class Ticker(
 
     fun changeFocus(focused: Boolean) {
         inFocus.set(focused)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(Ticker::class.java)!!
     }
 
 }

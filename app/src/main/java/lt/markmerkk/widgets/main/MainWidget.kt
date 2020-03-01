@@ -263,7 +263,11 @@ class MainWidget : Fragment(), ExternalSourceNode<StackPane>, MainContract.View 
         snackBar = JFXSnackbar(root as StackPane)
                 .apply { toFront() }
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
-                .subscribe { eventBus.post(EventFocusChange(it)) }
+                .subscribe({ focus ->
+                    eventBus.post(EventFocusChange(focus))
+                }, { error ->
+                    logger.warn("JFX prop error", error)
+                })
         presenter = MainPresenter()
         sidePaneHandler = SidePaneHandler(
                 listener = object : SidePaneHandler.Listener {
