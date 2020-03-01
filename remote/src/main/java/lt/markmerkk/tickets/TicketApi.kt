@@ -4,6 +4,7 @@ import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketStatus
 import org.joda.time.DateTime
 import rx.Single
@@ -31,11 +32,48 @@ class TicketApi(
             now: DateTime
     ): Single<List<Ticket>> {
         return Single.defer { Single.just(jiraClientProvider.client()) }
-                .flatMapObservable { jiraTicketSearch.searchIssues(now, it, userSettings.issueJql) }
-                .doOnNext { ticketsDatabaseRepo.insertOrUpdate(it).subscribe() }
-                .toList()
-                .flatMapSingle { ticketsDatabaseRepo.loadTickets() }
-                .toSingle()
+                .flatMap { jiraClient ->
+                    val localTicketStream = ticketsDatabaseRepo.loadTickets()
+                    val remoteTicketStream = jiraTicketSearch.searchIssues(now, jiraClient, userSettings.issueJql)
+                            .toList()
+                            .toSingle()
+                            .map { it.toList() }
+                    localTicketStream.zipWith(
+                            remoteTicketStream,
+                            { localTickets, remoteTickets ->
+                                TicketBatch(localTickets, remoteTickets)
+                            })
+                }
+                .doOnSuccess { ticketBatch ->
+                    mergeLocalAndRemoteTickets(
+                            localTickets = ticketBatch.localTickets,
+                            remoteTickets = ticketBatch.remoteTickets
+                    )
+                }
+                .flatMap { ticketsDatabaseRepo.loadTickets() }
     }
+
+    fun mergeLocalAndRemoteTickets(
+            localTickets: List<Ticket>,
+            remoteTickets: List<Ticket>
+    ) {
+        val localByCode: Map<TicketCode, Ticket> = localTickets.map { it.code to it }.toMap()
+        val remoteByCode: Map<TicketCode, Ticket> = remoteTickets.map { it.code to it }.toMap()
+        val noStatusTickets = localByCode
+                .filterNot { (ticketCode, ticket) ->
+                    remoteByCode.containsKey(ticketCode)
+                }.map { (ticketCode, ticket) -> ticket }
+        remoteByCode
+                .values
+                .forEach { ticketsDatabaseRepo.insertOrUpdateSync(it) }
+        noStatusTickets
+                .map { it.clearStatus() } // Removing old status
+                .forEach { ticketsDatabaseRepo.insertOrUpdateSync(it) }
+    }
+
+    private data class TicketBatch(
+            val localTickets: List<Ticket>,
+            val remoteTickets: List<Ticket>
+    )
 
 }

@@ -15,6 +15,21 @@ data class Ticket(
         val remoteData: RemoteData? = null
 ) {
 
+    fun clearStatus(): Ticket {
+        return Ticket(
+                id = id,
+                code = code,
+                description = description,
+                parentId = parentId,
+                status = "",
+                assigneeName = assigneeName,
+                reporterName = reporterName,
+                isWatching = isWatching,
+                parentCode = parentCode,
+                remoteData = remoteData
+        )
+    }
+
     companion object {
         fun new(
                 code: String,
