@@ -1,7 +1,9 @@
 package lt.markmerkk.widgets.export
 
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.ComboBox
 import javafx.scene.control.ListView
 import javafx.scene.layout.Priority
 import javafx.stage.Modality
@@ -13,6 +15,8 @@ import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.export.entities.ExportWorklogViewModel
+import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
+import org.controlsfx.control.PrefixSelectionComboBox
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -29,10 +33,13 @@ class ExportWidget : Fragment(), ExportContract.View {
     }
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
+    private lateinit var viewProjectFilters: ComboBox<String>
 
     private lateinit var presenter: ExportContract.Presenter
 
     private val exportWorklogViewModels = mutableListOf<ExportWorklogViewModel>()
+            .asObservable()
+    private val projectFilters = mutableListOf<String>()
             .asObservable()
 
     override val root: Parent = borderpane {
@@ -55,6 +62,14 @@ class ExportWidget : Fragment(), ExportContract.View {
                 label {
                     text = "Select worklogs to export to file"
                     isWrapText = true
+                }
+                viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
+                    setOnAction {
+                        val selectItem = (it.source as ComboBox<String>)
+                                .selectionModel
+                                .selectedItem ?: ""
+                        presenter.loadWorklogs(projectFilter = selectItem)
+                    }
                 }
                 viewLogs = listview(exportWorklogViewModels) {
                     prefHeight = 200.0
@@ -91,7 +106,8 @@ class ExportWidget : Fragment(), ExportContract.View {
                 worklogExporter
         )
         presenter.onAttach(this)
-        presenter.load()
+        presenter.loadWorklogs(projectFilter = presenter.defaultProjectFilter)
+        presenter.loadProjectFilters()
     }
 
     override fun onUndock() {
@@ -102,6 +118,12 @@ class ExportWidget : Fragment(), ExportContract.View {
     override fun showWorklogsForExport(worklogViewModels: List<ExportWorklogViewModel>) {
         exportWorklogViewModels.clear()
         exportWorklogViewModels.addAll(worklogViewModels)
+    }
+
+    override fun showProjectFilters(projectFilters: List<String>, filterSelection: String) {
+        this.projectFilters.clear()
+        this.projectFilters.addAll(projectFilters)
+        this.viewProjectFilters.selectionModel.select(filterSelection)
     }
 
     override fun showExportSample(sampleAsString: String) {

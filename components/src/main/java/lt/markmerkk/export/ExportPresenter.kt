@@ -12,6 +12,8 @@ class ExportPresenter(
         private val worklogExporter: WorklogExporter
 ): ExportContract.Presenter {
 
+    override val defaultProjectFilter: String = PROJECT_FILTER_ALL
+
     private var view: ExportContract.View? = null
 
     override fun onAttach(view: ExportContract.View) {
@@ -22,16 +24,50 @@ class ExportPresenter(
         this.view = null
     }
 
-    override fun load() {
-        val worklogsForExport = worklogStorage.loadWorklogsSync(
-                from = dayProvider.startAsDate(),
-                to = dayProvider.endAsDate()
-        )
+    override fun loadWorklogs(projectFilter: String) {
+        val worklogsForExport = when (projectFilter) {
+            PROJECT_FILTER_ALL -> {
+                worklogStorage.loadWorklogsSync(
+                        from = dayProvider.startAsDate(),
+                        to = dayProvider.endAsDate()
+                )
+            }
+            PROJECT_FILTER_NOT_BOUND -> {
+                worklogStorage.loadWorklogsSync(
+                        from = dayProvider.startAsDate(),
+                        to = dayProvider.endAsDate()
+                ).filter { it.code.codeProject.isEmpty() }
+            }
+            else -> {
+                worklogStorage.loadWorklogsSync(
+                        from = dayProvider.startAsDate(),
+                        to = dayProvider.endAsDate()
+                ).filter { it.code.codeProject == projectFilter }
+            }
+        }
         val hasMultipleDates = LogFormatters.hasMultipleDates(worklogsForExport)
         val worklogViewModels = worklogsForExport
                 .sortedBy { it.time.start }
                 .map { ExportWorklogViewModel(it, hasMultipleDates) }
         view?.showWorklogsForExport(worklogViewModels)
+    }
+
+    override fun loadProjectFilters() {
+        val filterWithBoundTickets = worklogStorage.loadWorklogsSync(
+                from = dayProvider.startAsDate(),
+                to = dayProvider.endAsDate()
+        ).map {
+            val projectCode = it.code.codeProject
+            if (projectCode.isEmpty()) {
+                PROJECT_FILTER_NOT_BOUND
+            } else {
+                projectCode
+            }
+        }.filterNot { it == PROJECT_FILTER_NOT_BOUND }
+                .toSet()
+        val projectFilters = listOf(PROJECT_FILTER_ALL, PROJECT_FILTER_NOT_BOUND)
+                .plus(filterWithBoundTickets)
+        view?.showProjectFilters(projectFilters, defaultProjectFilter)
     }
 
     override fun sampleExport(worklogViewModels: List<ExportWorklogViewModel>) {
@@ -57,6 +93,8 @@ class ExportPresenter(
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExportPresenter::class.java)!!
+        const val PROJECT_FILTER_ALL = "All"
+        const val PROJECT_FILTER_NOT_BOUND = "Not assigned"
     }
 
 }
