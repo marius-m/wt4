@@ -59,7 +59,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
 
-class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
+class MainWidget : Fragment(), ExternalSourceNode<StackPane>, MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
@@ -247,8 +247,6 @@ class MainWidget : View(), ExternalSourceNode<StackPane>, MainContract.View {
 
     override fun onDock() {
         super.onDock()
-        val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
-        title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
         // Init ui elements
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {
