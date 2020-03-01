@@ -1,6 +1,6 @@
 package lt.markmerkk.widgets.export
 
-import lt.markmerkk.widgets.export.entities.ExportWorklogViewModel
+import lt.markmerkk.export.entities.ExportWorklogViewModel
 import tornadofx.*
 
 class ExportWorklogItemFragment : ListCellFragment<ExportWorklogViewModel>() {

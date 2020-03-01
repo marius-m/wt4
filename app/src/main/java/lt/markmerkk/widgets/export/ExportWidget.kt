@@ -7,14 +7,17 @@ import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
+import lt.markmerkk.export.ExportContract
+import lt.markmerkk.export.ExportPresenter
+import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
-import lt.markmerkk.widgets.export.entities.ExportWorklogViewModel
+import lt.markmerkk.export.entities.ExportWorklogViewModel
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class ExportWidget : Fragment() {
+class ExportWidget : Fragment(), ExportContract.View {
 
     @Inject lateinit var dayProvider: DayProvider
     @Inject lateinit var worklogStorage: WorklogStorage
@@ -26,6 +29,8 @@ class ExportWidget : Fragment() {
     }
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
+
+    private lateinit var presenter: ExportContract.Presenter
 
     private val exportWorklogViewModels = mutableListOf<ExportWorklogViewModel>()
             .asObservable()
@@ -63,38 +68,12 @@ class ExportWidget : Fragment() {
                 addClass(Styles.dialogContainerActionsButtons)
                 jfxButton("Sample".toUpperCase()) {
                     action {
-                        val logs = exportWorklogViewModels
-                                .filter { it.selectedProperty.get() }
-                                .map { it.log }
-                        val logsAsString = LogFormatters.formatLogsBasic(logs)
-                        resultDispatcher.publish(ExportSampleWidget.RESULT_DISPATCH_KEY_SAMPLE, logsAsString)
-                        find<ExportSampleWidget>().openModal(
-                                stageStyle = StageStyle.DECORATED,
-                                modality = Modality.APPLICATION_MODAL,
-                                block = false,
-                                resizable = true
-                        )
+                        presenter.sampleExport(exportWorklogViewModels)
                     }
                 }
                 jfxButton("Export".toUpperCase()) {
                     action {
-                        val logsForExport = exportWorklogViewModels
-                                .filter { it.selectedProperty.get() }
-                                .map { it.log }
-                        logger.debug("Exporting $logsForExport")
-                        val isExportSuccess = worklogExporter.exportToFile(logsForExport)
-                        if (isExportSuccess) {
-                            information(
-                                    header = "Success",
-                                    content = "Saved worklogs!"
-                            )
-                            close()
-                        } else {
-                            error(
-                                    header = "Error",
-                                    content = "Error saving worklogs"
-                            )
-                        }
+                        presenter.exportWorklogs(exportWorklogViewModels)
                     }
                 }
                 jfxButton("Close".toUpperCase()) {
@@ -106,16 +85,48 @@ class ExportWidget : Fragment() {
 
     override fun onDock() {
         super.onDock()
-        val worklogsForExport = worklogStorage.loadWorklogsSync(
-                from = dayProvider.startAsDate(),
-                to = dayProvider.endAsDate()
+        presenter = ExportPresenter(
+                worklogStorage,
+                dayProvider,
+                worklogExporter
         )
-        val hasMultipleDates = LogFormatters.hasMultipleDates(worklogsForExport)
-        val worklogViewModels = worklogsForExport
-                .sortedBy { it.time.start }
-                .map { ExportWorklogViewModel(it, hasMultipleDates) }
+        presenter.onAttach(this)
+        presenter.load()
+    }
+
+    override fun onUndock() {
+        presenter.onDetach()
+        super.onUndock()
+    }
+
+    override fun showWorklogsForExport(worklogViewModels: List<ExportWorklogViewModel>) {
         exportWorklogViewModels.clear()
         exportWorklogViewModels.addAll(worklogViewModels)
+    }
+
+    override fun showExportSample(sampleAsString: String) {
+        resultDispatcher.publish(ExportSampleWidget.RESULT_DISPATCH_KEY_SAMPLE, sampleAsString)
+        find<ExportSampleWidget>().openModal(
+                stageStyle = StageStyle.DECORATED,
+                modality = Modality.APPLICATION_MODAL,
+                block = false,
+                resizable = true
+        )
+    }
+
+    override fun showExportSuccess() {
+        information(
+                header = "Success",
+                content = "Saved worklogs!"
+        )
+        close()
+    }
+
+    override fun showExportFailure() {
+        error(
+                header = "Error",
+                content = "Error saving worklogs"
+        )
     }
 
     companion object {

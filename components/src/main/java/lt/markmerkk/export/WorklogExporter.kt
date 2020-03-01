@@ -1,4 +1,4 @@
-package lt.markmerkk.widgets.export
+package lt.markmerkk.export
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
@@ -7,8 +7,8 @@ import com.google.gson.reflect.TypeToken
 import lt.markmerkk.FileInteractor
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.Log
-import lt.markmerkk.widgets.export.entities.ExportLogResponse
-import lt.markmerkk.widgets.export.entities.ImportLogResponse
+import lt.markmerkk.export.entities.ExportLogResponse
+import lt.markmerkk.export.entities.ImportLogResponse
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
@@ -35,9 +35,8 @@ class WorklogExporter(
      */
     fun exportToFile(worklogs: List<Log>): Boolean {
         try {
-            val saveDir = fileInteractor.saveFile()
-            if (saveDir != null) {
-                val saveFile = File(saveDir, "worklogs.json")
+            val saveFile = fileInteractor.saveFile()
+            if (saveFile != null) {
                 val worklogsAsString = export(worklogs)
                 saveFile.outputStream()
                         .use { IOUtils.write(worklogsAsString, it, Charsets.UTF_8) }

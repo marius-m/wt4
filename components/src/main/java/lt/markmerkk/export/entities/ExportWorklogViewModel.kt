@@ -1,4 +1,4 @@
-package lt.markmerkk.widgets.export.entities
+package lt.markmerkk.export.entities
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
