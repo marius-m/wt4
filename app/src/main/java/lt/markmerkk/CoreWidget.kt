@@ -30,11 +30,9 @@ class CoreWidget : View() {
 
     private lateinit var viewActive: Fragment
 
-    override val root: Parent = borderpane {
-        center {
-            viewActive = find<EmptyWidget>()
-            add(viewActive)
-        }
+    override val root: Parent = stackpane {
+        viewActive = find<EmptyWidget>()
+        add(viewActive)
     }
 
     fun attachMain() {
