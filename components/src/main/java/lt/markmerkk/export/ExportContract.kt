@@ -7,6 +7,7 @@ interface ExportContract {
         fun showWorklogsForExport(worklogViewModels: List<ExportWorklogViewModel>)
         fun showProjectFilters(projectFilters: List<String>, filterSelection: String)
         fun showExportSample(sampleAsString: String)
+        fun showTotal(totalAsString: String)
         fun showExportSuccess()
         fun showExportFailure()
     }

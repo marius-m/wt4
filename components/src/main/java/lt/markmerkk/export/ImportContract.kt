@@ -8,6 +8,7 @@ interface ImportContract {
         fun showWorklogs(worklogViewModels: List<ExportWorklogViewModel>)
         fun showProjectFilters(projectFilters: List<String>, filterSelection: String)
         fun showImportSuccess()
+        fun showTotal(totalAsString: String)
     }
     interface Presenter {
         val defaultProjectFilter: String

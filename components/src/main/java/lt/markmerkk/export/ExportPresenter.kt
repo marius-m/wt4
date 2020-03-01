@@ -2,8 +2,10 @@ package lt.markmerkk.export
 
 import lt.markmerkk.DayProvider
 import lt.markmerkk.WorklogStorage
+import lt.markmerkk.entities.Log
 import lt.markmerkk.export.entities.ExportWorklogViewModel
 import lt.markmerkk.utils.LogFormatters
+import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 
 class ExportPresenter(
@@ -50,6 +52,7 @@ class ExportPresenter(
                 .sortedBy { it.time.start }
                 .map { ExportWorklogViewModel(it, hasMultipleDates) }
         view?.showWorklogsForExport(worklogViewModels)
+        view?.showTotal(calcTotal(worklogsForExport))
     }
 
     override fun loadProjectFilters() {
@@ -89,6 +92,14 @@ class ExportPresenter(
         } else {
             view?.showExportFailure()
         }
+    }
+
+    private fun calcTotal(worklogs: List<Log>): String {
+        val totalDuration = worklogs.map { it.time.duration }
+                .fold(Duration(0)) { acc, next ->
+                    acc.plus(next)
+                }
+        return LogFormatters.humanReadableDuration(totalDuration)
     }
 
     companion object {

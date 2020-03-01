@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ComboBox
+import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.layout.Priority
 import lt.markmerkk.*
@@ -33,6 +34,7 @@ class ImportWidget : Fragment(), ImportContract.View {
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
     private lateinit var viewProjectFilters: ComboBox<String>
+    private lateinit var viewTotal: Label
 
     private val worklogViewModels = mutableListOf<ExportWorklogViewModel>().asObservable()
     private val projectFilters = mutableListOf<String>().asObservable()
@@ -64,6 +66,9 @@ class ImportWidget : Fragment(), ImportContract.View {
                     prefHeight = 200.0
                     vgrow = Priority.ALWAYS
                     cellFragment(ExportWorklogItemFragment::class)
+                }
+                viewTotal = label {
+                    addClass(Styles.labelMini)
                 }
             }
         }
@@ -128,6 +133,10 @@ class ImportWidget : Fragment(), ImportContract.View {
                 content = "Worklogs imported!"
         )
         close()
+    }
+
+    override fun showTotal(totalAsString: String) {
+        viewTotal.text = "Total: $totalAsString"
     }
 
     companion object {

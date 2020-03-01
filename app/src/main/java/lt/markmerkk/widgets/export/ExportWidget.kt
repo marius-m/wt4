@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ComboBox
+import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.layout.Priority
 import javafx.stage.Modality
@@ -32,6 +33,7 @@ class ExportWidget : Fragment(), ExportContract.View {
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
     private lateinit var viewProjectFilters: ComboBox<String>
+    private lateinit var viewTotal: Label
 
     private lateinit var presenter: ExportContract.Presenter
 
@@ -71,6 +73,9 @@ class ExportWidget : Fragment(), ExportContract.View {
                     prefHeight = 200.0
                     vgrow = Priority.ALWAYS
                     cellFragment(ExportWorklogItemFragment::class)
+                }
+                viewTotal = label {
+                    addClass(Styles.labelMini)
                 }
             }
         }
@@ -144,6 +149,10 @@ class ExportWidget : Fragment(), ExportContract.View {
                 header = "Error",
                 content = "Error saving worklogs"
         )
+    }
+
+    override fun showTotal(totalAsString: String) {
+        viewTotal.text = "Total: $totalAsString"
     }
 
     companion object {

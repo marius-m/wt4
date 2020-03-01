@@ -3,6 +3,8 @@ package lt.markmerkk.export
 import lt.markmerkk.*
 import lt.markmerkk.entities.Log
 import lt.markmerkk.export.entities.ExportWorklogViewModel
+import lt.markmerkk.utils.LogFormatters
+import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 
 class ImportPresenter(
@@ -25,15 +27,19 @@ class ImportPresenter(
 
     override fun loadWorklogs(importWorklogs: List<Log>, projectFilter: String) {
         this.importWorklogs = importWorklogs
-        val filteredWorklogViewModels = applyFilter(importWorklogs, projectFilter)
+        val filterWorklogs = applyFilter(importWorklogs, projectFilter)
+        val viewModels = filterWorklogs
                 .map { ExportWorklogViewModel(it, includeDate = true) }
-        view?.showWorklogs(filteredWorklogViewModels)
+        view?.showWorklogs(viewModels)
+        view?.showTotal(calcTotal(filterWorklogs))
     }
 
     override fun filterWorklogs(projectFilter: String) {
-        val filteredWorklogViewModels = applyFilter(importWorklogs, projectFilter)
+        val filterWorklogs = applyFilter(importWorklogs, projectFilter)
+        val viewModels = filterWorklogs
                 .map { ExportWorklogViewModel(it, includeDate = true) }
-        view?.showWorklogs(filteredWorklogViewModels)
+        view?.showWorklogs(viewModels)
+        view?.showTotal(calcTotal(filterWorklogs))
     }
 
     override fun loadProjectFilters(worklogs: List<Log>) {
@@ -73,6 +79,14 @@ class ImportPresenter(
                         .sortedBy { it.time.start }
             }
         }
+    }
+
+    private fun calcTotal(worklogs: List<Log>): String {
+        val totalDuration = worklogs.map { it.time.duration }
+                .fold(Duration(0)) { acc, next ->
+                    acc.plus(next)
+                }
+        return LogFormatters.humanReadableDuration(totalDuration)
     }
 
     companion object {
