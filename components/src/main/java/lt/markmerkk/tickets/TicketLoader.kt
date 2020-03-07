@@ -1,6 +1,9 @@
 package lt.markmerkk.tickets
 
-import lt.markmerkk.*
+import lt.markmerkk.Tags
+import lt.markmerkk.TicketStorage
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
 import lt.markmerkk.entities.Ticket
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.joda.time.DateTime
@@ -30,7 +33,7 @@ class TicketLoader(
     private var dbSubsCodes: Subscription? = null
 
     private var projectCode: ProjectCode = ProjectCode.asEmpty()
-    private var inputFilter: String =""
+    private var inputFilter: String = ""
         set(value) {
             field = value
             logger.debug("Change filter to $value")
@@ -70,7 +73,7 @@ class TicketLoader(
                 .observeOn(uiScheduler)
                 .doOnSubscribe { listener.onLoadStart() }
                 .doAfterTerminate { listener.onLoadFinish() }
-                .flatMap { loadTicketsAsStream(this.inputFilter, projectCode) }
+                .flatMap { loadTicketsAsStream(this.inputFilter, this.projectCode) }
                 .subscribe({
                     userSettings.ticketLastUpdate = now.millis
                     if (it.tickets.isNotEmpty()) {
