@@ -68,7 +68,7 @@ buildscript {
         jcenter()
 
         maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
-        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "https://repo.maven.apache.org/maven2" }
         maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
         maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
         maven { url 'https://plugins.gradle.org/m2/' }
