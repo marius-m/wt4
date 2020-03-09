@@ -27,6 +27,7 @@ import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
 import lt.markmerkk.widgets.tickets.*
+import lt.markmerkk.widgets.versioner.ChangelogWidget
 import javax.inject.Singleton
 
 @Singleton
@@ -64,4 +65,5 @@ interface AppComponent {
     fun inject(exportSampleWidget: ExportSampleWidget)
     fun inject(profileWidget: ProfileWidget)
     fun inject(importWidget: ImportWidget)
+    fun inject(changelogWidget: ChangelogWidget)
 }

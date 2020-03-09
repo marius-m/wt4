@@ -1,22 +1,28 @@
 package lt.markmerkk.widgets.versioner
 
-import com.vladsch.flexmark.html.HtmlRenderer
-import com.vladsch.flexmark.parser.Parser
-import com.vladsch.flexmark.util.data.MutableDataSet
-import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.control.TextArea
 import javafx.scene.web.WebView
 import lt.markmerkk.BuildConfig
+import lt.markmerkk.Main
 import lt.markmerkk.Styles
 import lt.markmerkk.Tags
+import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.versioner.Changelog
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import javax.inject.Inject
 
 class ChangelogWidget : Fragment() {
 
-    private lateinit var viewWebview: WebView
+    @Inject lateinit var hostServicesInteractor: HostServicesInteractor
+
+    init {
+        Main.component().inject(this)
+    }
+
+    private lateinit var viewArea: TextArea
     private lateinit var viewLabelLocal: Label
     private lateinit var viewLabelRemote: Label
 
@@ -42,21 +48,24 @@ class ChangelogWidget : Fragment() {
                 val localVersion = Changelog.versionFrom(BuildConfig.versionName)
                 viewLabelLocal = label("Current version: $localVersion") {  }
                 viewLabelRemote = label("Version available: ")
+                hyperlink {
+                    text = "Download: https://github.com/marius-m/wt4"
+                    action {
+                        hostServicesInteractor.openLink("https://github.com/marius-m/wt4#downloads")
+                    }
+                }
             }
         }
         center {
-            viewWebview = webview { }
+            viewArea = textarea {
+                isWrapText = true
+            }
         }
     }
 
     fun render(changelog: Changelog) {
-        val options = MutableDataSet()
-        val parser = Parser.builder(options).build()
-        val renderer = HtmlRenderer.builder(options).build()
-        val document = parser.parse(changelog.contentAsString)
-        val changelogHtml = renderer.render(document)
-        viewWebview.engine.loadContent(changelogHtml)
         viewLabelRemote.text = "Version available: ${changelog.version}"
+        viewArea.text = changelog.contentAsString
     }
 
     companion object {
