@@ -2,6 +2,24 @@
 
 Current: 1.7.3
 
+## 1.7.7
+- Fix: Clean-up - remove unnecessary library that would bloat the app
+
+## 1.7.6
+- Fix: Incorrect filter whenever ticket list synchronizes with JIRA and project filter is applied (would reset project filter)
+
+## 1.7.5
+- Experimental: Change user Profile without restarting the app
+- Fix newest JIRA API changes in user to support latest version of JIRA Cloud
+- Fix internal bug, when shows error screen when typing or opening windows randomly (internal javafx bug when tracking text changes in input)
+
+## 1.7.4
+- Experimental: Add Profiles which helps workings with multiple JIRAs
+- Add worklog export to file (feature to support multiple JIRAs)
+- Add worklog import from file (feature to support multiple JIRAs)
+- Add delete worklog confirmation (less likely to delete worklog accidentally)
+- Cancel button in "Un-synced worklogs" screen
+
 ## 1.7.3
 - Fix: Ticket loader not resetting #2 (Fix didn't work in 1.7.2)
 
