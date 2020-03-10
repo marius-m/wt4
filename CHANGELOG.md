@@ -1,6 +1,6 @@
 # Changelog
 
-Current: 1.7.3
+Current: 1.7.7
 
 ## 1.7.7
 - Fix: Clean-up - remove unnecessary library that would bloat the app

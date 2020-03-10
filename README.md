@@ -14,11 +14,11 @@ Dedicated worklog management for JIRA
 
 ## Downloads
 
-Builds for `1.7.3` (Latest stable)
+Builds for `1.7.7` (Latest stable)
 
-* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.dmg)
-* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.3.exe)
-* [Build Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.3.deb)
+* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.dmg)
+* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.exe)
+* [Build Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.7.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
 - Tips how to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-Basic)
@@ -27,10 +27,10 @@ Builds for `1.7.3` (Latest stable)
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.7.3` (Latest stable)
+Builds for `1.7.7` (Latest stable)
 
-* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.dmg)
-* [iTo Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.3.exe)
+* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.7.dmg)
+* [iTo Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.7.exe)
 * Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
@@ -40,10 +40,7 @@ Builds for `1.7.3` (Latest stable)
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
 
-- [MacOS - Basic (1.7.5)](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.5.dmg)
-- [MacOS - iTo (1.7.5)](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.5.dmg)
-- [Windows - Basic (1.7.0)](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.0.exe)
-- [Windows - iTo (1.7.0)](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.0.exe)
+- No experimental builds at the moment!
 
 ## Issues
 
