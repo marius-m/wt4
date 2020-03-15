@@ -4,12 +4,11 @@ import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.TextArea
 import javafx.scene.web.WebView
-import lt.markmerkk.BuildConfig
-import lt.markmerkk.Main
-import lt.markmerkk.Styles
-import lt.markmerkk.Tags
+import lt.markmerkk.*
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.versioner.Changelog
+import lt.markmerkk.versioner.ChangelogLoader
+import lt.markmerkk.widgets.network.Api
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -17,6 +16,8 @@ import javax.inject.Inject
 class ChangelogWidget : Fragment() {
 
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
+    @Inject lateinit var api: Api
+    @Inject lateinit var schedulerProvider: SchedulerProvider
 
     init {
         Main.component().inject(this)
@@ -25,6 +26,8 @@ class ChangelogWidget : Fragment() {
     private lateinit var viewArea: TextArea
     private lateinit var viewLabelLocal: Label
     private lateinit var viewLabelRemote: Label
+
+    private lateinit var changelogLoader: ChangelogLoader
 
     override val root: Parent = borderpane {
         minWidth = 650.0
@@ -63,7 +66,29 @@ class ChangelogWidget : Fragment() {
         }
     }
 
-    fun render(changelog: Changelog) {
+    override fun onDock() {
+        super.onDock()
+        changelogLoader = ChangelogLoader(
+                listener = object : ChangelogLoader.Listener {
+                    override fun onChangelog(changelog: Changelog) {
+                        render(changelog)
+                    }
+                    override fun onNewVersion(changelog: Changelog) { }
+                },
+                versionProvider = VersionProviderImpl(api),
+                ioScheduler = schedulerProvider.io(),
+                uiScheduler = schedulerProvider.ui()
+        )
+        changelogLoader.onAttach()
+        changelogLoader.load()
+    }
+
+    override fun onUndock() {
+        changelogLoader.onDetach()
+        super.onUndock()
+    }
+
+    private fun render(changelog: Changelog) {
         viewLabelRemote.text = "Version available: ${changelog.version}"
         viewArea.text = changelog.contentAsString
     }

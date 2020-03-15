@@ -16,16 +16,32 @@ class ChangelogLoader(
         private val uiScheduler: Scheduler
 ) {
 
-    private var subs: Subscription? = null
+    private var subCheck: Subscription? = null
+    private var subLoad: Subscription? = null
 
     fun onAttach() {}
     fun onDetach() {
-        subs?.unsubscribe()
+        subCheck?.unsubscribe()
+        subLoad?.unsubscribe()
+    }
+
+    fun load() {
+        subLoad?.unsubscribe()
+        subLoad = versionProvider.changelogAsString()
+                .map { Changelog.from(it) }
+                .subscribeOn(ioScheduler)
+                .observeOn(uiScheduler)
+                .subscribe({
+                    logger.info("Found remote changelog")
+                    listener.onChangelog(it)
+                }, {
+                    logger.error("Changelog fetch failure", it)
+                })
     }
 
     fun check() {
-        subs?.unsubscribe()
-        subs = versionProvider.changelogAsString()
+        subCheck?.unsubscribe()
+        subCheck = versionProvider.changelogAsString()
                 .map { Changelog.from(it) }
                 .subscribeOn(ioScheduler)
                 .observeOn(uiScheduler)
@@ -42,6 +58,7 @@ class ChangelogLoader(
     }
 
     interface Listener {
+        fun onChangelog(changelog: Changelog)
         fun onNewVersion(changelog: Changelog)
     }
 

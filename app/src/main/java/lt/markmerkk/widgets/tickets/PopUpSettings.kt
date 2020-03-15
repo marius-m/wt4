@@ -19,6 +19,7 @@ import lt.markmerkk.widgets.export.ImportWidget
 import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
+import lt.markmerkk.widgets.versioner.ChangelogWidget
 import tornadofx.*
 
 class PopUpSettings(
@@ -114,6 +115,18 @@ class PopUpSettings(
                         }
                 ),
                 PopUpAction(
+                        title = "What's new?",
+                        graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
+                        action = {
+                            find<ChangelogWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = true
+                            )
+                        }
+                ),
+                PopUpAction(
                         title = "Help",
                         graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                         action = {
@@ -187,6 +200,18 @@ class PopUpSettings(
                         graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
                         action = {
                             find<CreditsWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = true
+                            )
+                        }
+                ),
+                PopUpAction(
+                        title = "What's new?",
+                        graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
+                        action = {
+                            find<ChangelogWidget>().openModal(
                                     stageStyle = StageStyle.DECORATED,
                                     modality = Modality.APPLICATION_MODAL,
                                     block = false,

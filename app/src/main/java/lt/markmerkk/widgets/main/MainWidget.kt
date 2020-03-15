@@ -249,6 +249,7 @@ class MainWidget : Fragment(), MainContract.View {
         // Init ui elements
         changelogLoader = ChangelogLoader(
                 listener = object : ChangelogLoader.Listener {
+                    override fun onChangelog(changelog: Changelog) { }
                     override fun onNewVersion(changelog: Changelog) {
                         logger.debug("Showing changelog")
                         eventBus.post(EventNewVersion(changelog))
@@ -446,7 +447,6 @@ class MainWidget : Fragment(), MainContract.View {
                 textFill = Color.WHITE
                 action {
                     val widgetChangelog = find<ChangelogWidget>()
-                    widgetChangelog.render(event.changelog)
                     widgetChangelog.openModal(
                             stageStyle = StageStyle.DECORATED,
                             modality = Modality.APPLICATION_MODAL,
