@@ -142,7 +142,7 @@ class JiraWorklogInteractor(
                 worklog: WorkLog
         ): Boolean {
             val jiraUser = worklog.author.toJiraUser()
-            if (jiraUser.isEmpty()) {
+            if (jiraUser.isEmpty() || activeIdentifier.isEmpty()) {
                 return false
             }
             return activeIdentifier.equals(jiraUser.name, ignoreCase = true)
