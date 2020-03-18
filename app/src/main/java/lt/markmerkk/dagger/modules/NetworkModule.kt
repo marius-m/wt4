@@ -41,20 +41,26 @@ class NetworkModule {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
-                .connectionSpecs(Arrays.asList(ConnectionSpec.COMPATIBLE_TLS))
+                .connectionSpecs(
+                        Arrays.asList(
+                                ConnectionSpec.COMPATIBLE_TLS,
+                                ConnectionSpec.CLEARTEXT // todo disable this for release
+                        )
+                )
                 .addInterceptor(interceptorLogging)
                 .build()
         val retrofit = Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient)
-                .baseUrl("https://raw.githubusercontent.com/marius-m/wt4/")
+                .baseUrl(PATH_ROOT)
                 .build()
         return retrofit.create(Api::class.java)
     }
 
     companion object {
         val loggerNetwork = LoggerFactory.getLogger(Tags.NETWORK)!!
+        const val PATH_ROOT = "http://10.0.1.150:8080"
     }
 
 }

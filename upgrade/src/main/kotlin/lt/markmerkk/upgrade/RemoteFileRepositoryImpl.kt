@@ -7,6 +7,7 @@ import rx.Observable
 import rx.Single
 import java.util.concurrent.TimeUnit
 
+@Deprecated("Use RemoteFileRepositoryImpl2")
 class RemoteFileRepositoryImpl(
         private val sftpClient: SFTPClient
 ) : RemoteFileRepository {

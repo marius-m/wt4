@@ -6,6 +6,8 @@ import javafx.scene.control.TextArea
 import javafx.scene.web.WebView
 import lt.markmerkk.*
 import lt.markmerkk.mvp.HostServicesInteractor
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.upgrade.AppDownloader
 import lt.markmerkk.versioner.Changelog
 import lt.markmerkk.versioner.ChangelogLoader
 import lt.markmerkk.widgets.network.Api
@@ -28,6 +30,7 @@ class ChangelogWidget : Fragment() {
     private lateinit var viewLabelRemote: Label
 
     private lateinit var changelogLoader: ChangelogLoader
+    private lateinit var appDownloader: AppDownloader
 
     override val root: Parent = borderpane {
         minWidth = 650.0
@@ -57,6 +60,11 @@ class ChangelogWidget : Fragment() {
                         hostServicesInteractor.openLink("https://github.com/marius-m/wt4#downloads")
                     }
                 }
+                jfxButton("Upgrade") {
+                    action {
+                        appDownloader.downloadApp()
+                    }
+                }
             }
         }
         center {
@@ -79,11 +87,14 @@ class ChangelogWidget : Fragment() {
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()
         )
+        appDownloader = AppDownloader()
+        appDownloader.onAttach()
         changelogLoader.onAttach()
         changelogLoader.load()
     }
 
     override fun onUndock() {
+        appDownloader.onDetach()
         changelogLoader.onDetach()
         super.onUndock()
     }

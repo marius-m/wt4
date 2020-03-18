@@ -7,4 +7,8 @@ import rx.Single
 interface Api {
     @GET("/changelog")
     fun changelog(): Single<ResponseBody>
+
+    @GET("/build/{id}")
+    @Streaming
+    fun downloadJar(): Single<ResponseBody>
 }
