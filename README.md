@@ -40,8 +40,8 @@ Builds for `1.7.7` (Latest stable)
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
 
-* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.8.dmg)
-* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.8.dmg)
+* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.8.dmg)
+* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.8.dmg)
 
 ## Issues
 
