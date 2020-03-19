@@ -26,6 +26,7 @@ CREATE TABLE `worklog` (
   `code` VARCHAR(50) DEFAULT '' NOT NULL,
   `comment` TEXT DEFAULT '' NOT NULL,
   `system_note` TEXT DEFAULT '' NOT NULL,
+  `author` VARCHAR(100) DEFAULT '' NOT NULL,
   `remote_id` BIGINT NOT NULL DEFAULT -1,
   `is_deleted` TINYINT NOT NULL DEFAULT 0,
   `is_dirty` TINYINT NOT NULL DEFAULT 0,

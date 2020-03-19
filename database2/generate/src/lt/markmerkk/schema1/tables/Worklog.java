@@ -39,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Worklog extends TableImpl<WorklogRecord> {
 
-    private static final long serialVersionUID = -401969062;
+    private static final long serialVersionUID = 203472946;
 
     /**
      * The reference instance of <code>worklog</code>
@@ -88,6 +88,11 @@ public class Worklog extends TableImpl<WorklogRecord> {
      * The column <code>worklog.system_note</code>.
      */
     public final TableField<WorklogRecord, String> SYSTEM_NOTE = createField("system_note", org.jooq.impl.SQLDataType.CLOB.nullable(false).defaultValue(org.jooq.impl.DSL.field("''", org.jooq.impl.SQLDataType.CLOB)), this, "");
+
+    /**
+     * The column <code>worklog.author</code>.
+     */
+    public final TableField<WorklogRecord, String> AUTHOR = createField("author", org.jooq.impl.SQLDataType.VARCHAR(100).nullable(false).defaultValue(org.jooq.impl.DSL.field("''", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>worklog.remote_id</code>.

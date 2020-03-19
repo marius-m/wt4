@@ -44,6 +44,7 @@ class DBInteractorLogJOOQ(
                             code = worklog.code,
                             comment = worklog.comment,
                             systemNote = worklog.systemNote,
+                            author = worklog.author,
                             remoteData = RemoteData.new(
                                     isDeleted = worklog.isDeleted.toBoolean(),
                                     isDirty = worklog.isDirty.toBoolean(),
@@ -70,6 +71,7 @@ class DBInteractorLogJOOQ(
                 WORKLOG.CODE,
                 WORKLOG.COMMENT,
                 WORKLOG.SYSTEM_NOTE,
+                WORKLOG.AUTHOR,
                 WORKLOG.REMOTE_ID,
                 WORKLOG.IS_DELETED,
                 WORKLOG.IS_DIRTY,
@@ -84,6 +86,7 @@ class DBInteractorLogJOOQ(
                 log.code.code,
                 log.comment,
                 log.systemNote,
+                log.author,
                 remoteData.remoteId,
                 remoteData.isDeleted.toByte(),
                 remoteData.isDirty.toByte(),
@@ -109,6 +112,7 @@ class DBInteractorLogJOOQ(
                 .set(WORKLOG.CODE, log.code.code)
                 .set(WORKLOG.COMMENT, log.comment)
                 .set(WORKLOG.SYSTEM_NOTE, log.systemNote)
+                .set(WORKLOG.AUTHOR, log.author)
                 .set(WORKLOG.REMOTE_ID, remoteData.remoteId)
                 .set(WORKLOG.IS_DELETED, remoteData.isDeleted.toByte())
                 .set(WORKLOG.IS_DIRTY, remoteData.isDirty.toByte())
@@ -167,6 +171,7 @@ class DBInteractorLogJOOQ(
                             code = worklog.code,
                             comment = worklog.comment,
                             systemNote = worklog.systemNote,
+                            author = worklog.author,
                             remoteData = RemoteData.new(
                                     isDeleted = worklog.isDeleted.toBoolean(),
                                     isDirty = worklog.isDirty.toBoolean(),
@@ -201,6 +206,7 @@ class DBInteractorLogJOOQ(
                             code = worklog.code,
                             comment = worklog.comment,
                             systemNote = worklog.systemNote,
+                            author = worklog.author,
                             remoteData = RemoteData.new(
                                     isDeleted = worklog.isDeleted.toBoolean(),
                                     isDirty = worklog.isDirty.toBoolean(),

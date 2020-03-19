@@ -87,6 +87,7 @@ object Mocks {
             code: String = "DEV-123",
             comment: String = "valid_comment",
             systemNote: String = "",
+            author: String = "author",
             remoteData: RemoteData? = null
     ): Log {
         val now = timeProvider.nowMillis()
@@ -98,6 +99,7 @@ object Mocks {
                 code = code,
                 comment = comment,
                 systemNote = systemNote,
+                author = author,
                 remoteData = remoteData
         )
     }

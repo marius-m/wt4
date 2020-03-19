@@ -13,6 +13,7 @@ data class Log private constructor(
         val code: TicketCode,
         val comment: String,
         val systemNote: String,
+        val author: String,
         val remoteData: RemoteData? = null
 ) {
 
@@ -69,6 +70,7 @@ data class Log private constructor(
                 code = TicketCode.new(code),
                 comment = comment ?: "",
                 systemNote = systemNote,
+                author = author,
                 remoteData = RemoteData.fromRemote(
                         fetchTime = fetchTime.millis,
                         url = url
@@ -83,6 +85,7 @@ data class Log private constructor(
                 code = code,
                 comment = comment,
                 systemNote = systemNote,
+                author = author,
                 remoteData = remoteData
         )
     }
@@ -94,6 +97,7 @@ data class Log private constructor(
                 code = TicketCode.asEmpty(),
                 comment = comment,
                 systemNote = systemNote,
+                author = author,
                 remoteData = remoteData
         )
     }
@@ -105,6 +109,7 @@ data class Log private constructor(
                 code = code,
                 comment = comment,
                 systemNote = systemNote,
+                author = author,
                 remoteData = this.remoteData.markAsDelete()
         )
     }
@@ -122,6 +127,7 @@ data class Log private constructor(
                     code = TicketCode.new(""),
                     comment = "",
                     systemNote = "",
+                    author = "",
                     remoteData = null
             )
         }
@@ -134,6 +140,7 @@ data class Log private constructor(
                 code: String,
                 comment: String,
                 systemNote: String,
+                author: String,
                 remoteData: RemoteData?
         ): Log {
             return Log(
@@ -141,7 +148,8 @@ data class Log private constructor(
                     time = LogTime.fromRaw(timeProvider, start, end),
                     code = TicketCode.new(code),
                     comment = comment,
-                    systemNote = "",
+                    systemNote = systemNote,
+                    author = author,
                     remoteData = remoteData
             )
         }
@@ -153,7 +161,8 @@ data class Log private constructor(
                 comment: String?,
                 timeSpentSeconds: Int,
                 fetchTime: DateTime,
-                url: String
+                url: String,
+                author: String
         ): Log {
             val start = timeProvider.roundDateTime(started.time)
             val end = start.withFieldAdded(
@@ -166,6 +175,7 @@ data class Log private constructor(
                     code = TicketCode.new(code),
                     comment = comment ?: "",
                     systemNote = "",
+                    author = author,
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,
                             url = url
@@ -181,6 +191,7 @@ data class Log private constructor(
                 code: String,
                 comment: String,
                 systemNote: String,
+                author: String,
                 remoteData: RemoteData?
         ): Log {
             return Log(
@@ -189,6 +200,7 @@ data class Log private constructor(
                     code = TicketCode.new(code),
                     comment = comment,
                     systemNote = systemNote,
+                    author = author,
                     remoteData = remoteData
             )
         }
@@ -202,6 +214,7 @@ data class Log private constructor(
                 code: String,
                 comment: String,
                 systemNote: String,
+                author: String,
                 remoteData: RemoteData?
         ): Log {
             return Log(
@@ -210,6 +223,7 @@ data class Log private constructor(
                     code = TicketCode.new(code),
                     comment = comment,
                     systemNote = systemNote,
+                    author = author,
                     remoteData = remoteData
             )
         }
