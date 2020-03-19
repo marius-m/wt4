@@ -57,15 +57,17 @@ class JiraWorklogInteractor(
                             url = issue.url
                     )
             )
+            val activeUserIdentifier = userSettings.jiraUser().identifierAsString()
             val worklogs = issueWorklogPair.worklogs
                     .filter {
                         isCurrentUserLog(
-                                activeIdentifier = userSettings.jiraUser().identifierAsString(),
+                                activeIdentifier = activeUserIdentifier,
                                 worklog = it
                         )
                     }
                     .map {
                         val noStampComment = TimedCommentStamper.removeStamp(it.comment)
+                        val jiraUser = it.author.toJiraUser()
                         Log.createFromRemoteData(
                                 timeProvider = timeProvider,
                                 code = ticket.code.code,
@@ -73,7 +75,8 @@ class JiraWorklogInteractor(
                                 started = it.started,
                                 timeSpentSeconds = it.timeSpentSeconds,
                                 fetchTime = fetchTime,
-                                url = it.url
+                                url = it.url,
+                                author = jiraUser.identifierAsString()
                         )
                     }
             logger.debug("Remapping ${ticket.code.code} JIRA worklogs to Log (${worklogs.size} / ${issueWorklogPair.worklogs.size})")

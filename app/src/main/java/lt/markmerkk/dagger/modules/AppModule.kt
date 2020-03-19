@@ -126,6 +126,7 @@ class AppModule(
             config: Config
     ): UserSettings {
         return UserSettingsImpl(
+                isOauth = BuildConfig.oauth,
                 settings = AdvHashSettings(config)
         )
     }
@@ -195,6 +196,12 @@ class AppModule(
                         )
                 ),
                 Migration8To9(
+                        database = DBConnProvider(
+                                databaseName = "wt4_2.db",
+                                databasePath = config.cfgPath
+                        )
+                ),
+                Migration9To10(
                         database = DBConnProvider(
                                 databaseName = "wt4_2.db",
                                 databasePath = config.cfgPath

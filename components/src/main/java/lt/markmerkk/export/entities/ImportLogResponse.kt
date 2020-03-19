@@ -8,7 +8,8 @@ data class ImportLogResponse(
         val end: Long,
         val duration: Long?,
         val code: String?,
-        val comment: String?
+        val comment: String?,
+        val author: String?
 ) {
     fun toLog(timeProvider: TimeProvider): Log {
         return Log.new(
@@ -18,6 +19,7 @@ data class ImportLogResponse(
                 code = code ?: "",
                 comment = comment ?: "",
                 systemNote = "",
+                author = author ?: "",
                 remoteData = null
         )
     }

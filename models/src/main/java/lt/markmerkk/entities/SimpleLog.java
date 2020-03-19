@@ -36,6 +36,7 @@ public class SimpleLog extends RemoteEntity {
 //  @Column(value = FieldType.TEXT)
   String comment;
   String systemNote;
+  String author;
 
   //region Getters / Setters
 
@@ -81,6 +82,10 @@ public class SimpleLog extends RemoteEntity {
 
   public String getSystemNote() {
     return systemNote;
+  }
+
+  public String getAuthor() {
+    return author;
   }
 
   /**
