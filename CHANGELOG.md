@@ -2,6 +2,9 @@
 
 Current: 1.7.7
 
+## 1.7.8
+- Fix: Sync other user logs when changing experimental profiles
+
 ## 1.7.7
 - Fix: Clean-up - remove unnecessary library that would bloat the app
 
