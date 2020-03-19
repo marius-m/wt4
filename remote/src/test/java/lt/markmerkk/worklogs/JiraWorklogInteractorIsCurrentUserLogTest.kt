@@ -101,6 +101,36 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     }
 
     @Test
+    fun invalidUser() {
+        val result = JiraWorklogInteractor.isCurrentUserLog(
+                activeIdentifier = "username",
+                worklog = mockWorklog(
+                        name = "diffusername",
+                        email = "user@mail.com",
+                        displayName = "User Namer",
+                        accountId = ""
+                )
+        )
+
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun emptyIdentifier() {
+        val result = JiraWorklogInteractor.isCurrentUserLog(
+                activeIdentifier = "",
+                worklog = mockWorklog(
+                        name = "diffusername",
+                        email = "user@mail.com",
+                        displayName = "User Namer",
+                        accountId = ""
+                )
+        )
+
+        assertThat(result).isFalse()
+    }
+
+    @Test
     fun emptyUser() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
                 activeIdentifier = "",

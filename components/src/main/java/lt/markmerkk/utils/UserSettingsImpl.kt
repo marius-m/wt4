@@ -6,6 +6,7 @@ import lt.markmerkk.*
  * Controller for holding persistent data
  */
 class UserSettingsImpl(
+        private val isOauth: Boolean,
         private val settings: HashSettings
 ) : UserSettings {
 
@@ -93,7 +94,7 @@ class UserSettingsImpl(
 
     override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
     override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
-    override fun jiraUser(): JiraUser = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail, jiraUserAccountId)
+    override fun jiraUser(): JiraUser  = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail, jiraUserAccountId)
     override fun jiraBasicCreds(): JiraBasicCreds = JiraBasicCreds(host, username, password)
 
     override fun changeOAuthPreset(

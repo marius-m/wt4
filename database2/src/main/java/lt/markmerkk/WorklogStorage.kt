@@ -53,6 +53,7 @@ class WorklogStorage(
                                 code = log.code.code,
                                 comment = log.comment,
                                 systemNote = "",
+                                author = log.author,
                                 remoteData = log.remoteData
                         )
                 )
@@ -103,6 +104,7 @@ class WorklogStorage(
                                 code = log.code.code,
                                 comment = log.comment,
                                 systemNote = "",
+                                author = log.author,
                                 remoteData = null
                         )
                 )

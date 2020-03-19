@@ -25,9 +25,10 @@ fun SimpleLog.toLog(
             id = this._id,
             start = this.start,
             end = this.end,
-            code = this.task,
-            comment = this.comment,
-            systemNote = this.systemNote,
+            code = this.task ?: "",
+            comment = this.comment ?: "",
+            systemNote = this.systemNote ?: "",
+            author = this.author ?: "",
             remoteData = RemoteData.new(
                     isDeleted = this.isDeleted,
                     isDirty = this.isDirty,

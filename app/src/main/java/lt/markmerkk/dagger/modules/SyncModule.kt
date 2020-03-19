@@ -32,7 +32,8 @@ class SyncModule {
             worklogStorage: WorklogStorage,
             worklogApi: WorklogApi,
             jiraClientProvider: JiraClientProvider,
-            userSettings: UserSettings
+            userSettings: UserSettings,
+            jiraBasicApi: JiraBasicApi
     ): SyncInteractor {
         return SyncInteractorImpl(
                 logStorage = logStorage,
@@ -43,7 +44,8 @@ class SyncModule {
                 jiraClientProvider = jiraClientProvider,
                 worklogStorage = worklogStorage,
                 worklogApi = worklogApi,
-                userSettings = userSettings
+                userSettings = userSettings,
+                jiraBasicApi = jiraBasicApi
         )
     }
 
