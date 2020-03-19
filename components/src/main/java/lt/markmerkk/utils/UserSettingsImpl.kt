@@ -94,18 +94,7 @@ class UserSettingsImpl(
 
     override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
     override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
-    override fun jiraUser(): JiraUser {
-        val currentUser = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail, jiraUserAccountId)
-        if (currentUser.isEmpty()) {
-            return JiraUser(
-                    name = username,
-                    displayName = username,
-                    email = username,
-                    accountId = ""
-            )
-        }
-        return currentUser
-    }
+    override fun jiraUser(): JiraUser  = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail, jiraUserAccountId)
     override fun jiraBasicCreds(): JiraBasicCreds = JiraBasicCreds(host, username, password)
 
     override fun changeOAuthPreset(

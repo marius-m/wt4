@@ -22,6 +22,7 @@ class SyncInteractorImpl(
         private val timeProvider: TimeProvider,
         private val jiraClientProvider: JiraClientProvider,
         private val userSettings: UserSettings,
+        private val jiraBasicApi: JiraBasicApi,
         private val uiScheduler: Scheduler,
         private val ioScheduler: Scheduler
 ) : SyncInteractor {
@@ -65,7 +66,17 @@ class SyncInteractorImpl(
         val now = timeProvider.now()
         val syncStart = System.currentTimeMillis()
         subscription = Completable.fromAction { logger.info("=== Sync ===") }
-                .andThen(worklogApi.deleteMarkedLogs(startDate, endDate))
+                .andThen(jiraBasicApi.jiraUser())
+                .doOnSuccess {
+                    logger.info("-- Renew logs for user($it) --")
+                    userSettings.changeJiraUser(
+                            name = it.name,
+                            email = it.email,
+                            displayName = it.displayName,
+                            accountId = it.accountId
+                    )
+                }
+                .flatMapCompletable { worklogApi.deleteMarkedLogs(startDate, endDate) }
                 .andThen(worklogApi.uploadLogs(now, startDate, endDate))
                 .andThen(worklogApi.fetchLogs(now, startDate, endDate))
                 .flatMapCompletable { worklogApi.deleteUnknownLogs(Single.just(it), startDate, endDate) }
