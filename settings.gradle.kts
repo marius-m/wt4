@@ -9,14 +9,15 @@
  * in the user guide at https://docs.gradle.org/2.7/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'wt4'
-
-include ':app'
-include ':jira-client'
-include ':remote'
-include ':models'
-include ':components'
-include ':database2'
-include ':mock-factory'
-include ':package'
-include ':credits'
+rootProject.name = "wt4"
+include(
+        ":app",
+        ":jira-client",
+        ":remote",
+        ":models",
+        ":components",
+        ":database2",
+        ":mock-factory",
+        ":package",
+        ":credits"
+)
