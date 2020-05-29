@@ -1,9 +1,9 @@
-package lt.markmerkk.tasks
+package lt.markmerkk.export.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class HelloTask: DefaultTask() {
+open class HelloTask: DefaultTask() {
 
     @TaskAction
     fun run() {

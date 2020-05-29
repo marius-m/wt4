@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
     implementation("com.android.tools.build:gradle:3.5.0")
-
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
 
     implementation(gradleApi())
@@ -31,14 +31,13 @@ dependencies {
     testImplementation("org.mockito:mockito-core:${PluginVersions.mockito}")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${PluginVersions.mockito_kotlin}")
     testImplementation("org.assertj:assertj-core:${PluginVersions.assertj}")
-    implementation(kotlin("stdlib-jdk8"))
 }
 
 gradlePlugin {
     plugins {
-        create("adform-plugin") {
-            id = "com.adform.plugin"
-            implementationClass = "com.adform.plugin.AdformPlugin"
+        create("jbundle") {
+            id = "lt.markmerkk.export"
+            implementationClass = "lt.markmerkk.export.JBundle"
         }
     }
 }

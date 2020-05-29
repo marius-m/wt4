@@ -3,12 +3,13 @@ import org.apache.tools.ant.taskdefs.condition.Os
 plugins {
     id("base")
     id("kotlin")
+    id("lt.markmerkk.export")
 }
 
 val versionName: String by project
 val publishVersion: String = versionName
 val applicationLibraryPath: File = file("${rootProject.project(":app").buildDir}/libs/")
-val mainJar: File = file("${applicationLibraryPath.absolutePath}/app-${publishVersion}-all.jar")
+val mainJar: File = file("${applicationLibraryPath.absolutePath}/app-${publishVersion}.jar")
 val bundlePath: File = file("${buildDir}/bundle")
 val bundlerScript: File = when (OsType.get()) {
     OsType.UNKNOWN -> throw IllegalStateException("Cannot build on unrecognized system")
@@ -37,33 +38,33 @@ ext {
     set("packageType", packageType)
 }
 
-tasks.register("recreateIconMacApp", Exec::class.java) {
-    group = "Package"
-    description = "Regenerate the Mac application icon"
-    commandLine(
-            "sh",
-            file("scripts/mac-icon.sh"),
-            file("icons/App1024.png"),
-            file("icons/mac"),
-            "AppIcon")
-}
-
-tasks.register("recreateIconWindowsApp", Exec::class.java) {
-    group = "Package"
-    description = "Regenerate the Windows application icon"
-    commandLine(
-            "sh",
-            file("scripts/windows-icon.sh"),
-            file("icons/App1024.png"),
-            file("icons/windows"),
-            "AppIcon")
-}
-
-tasks.register("recreateIcons") {
-    group = "Package"
-    description = "Regenerate all the application bundle icons"
-    dependsOn("recreateIconMacApp", "recreateIconWindowsApp")
-}
+//tasks.register("recreateIconMacApp", Exec::class.java) {
+//    group = "Package"
+//    description = "Regenerate the Mac application icon"
+//    commandLine(
+//            "sh",
+//            file("scripts/mac-icon.sh"),
+//            file("icons/App1024.png"),
+//            file("icons/mac"),
+//            "AppIcon")
+//}
+//
+//tasks.register("recreateIconWindowsApp", Exec::class.java) {
+//    group = "Package"
+//    description = "Regenerate the Windows application icon"
+//    commandLine(
+//            "sh",
+//            file("scripts/windows-icon.sh"),
+//            file("icons/App1024.png"),
+//            file("icons/windows"),
+//            "AppIcon")
+//}
+//
+//tasks.register("recreateIcons") {
+//    group = "Package"
+//    description = "Regenerate all the application bundle icons"
+//    dependsOn("recreateIconMacApp", "recreateIconWindowsApp")
+//}
 
 tasks.register("checkBundlingEnvironment") {
     group = "Package"
