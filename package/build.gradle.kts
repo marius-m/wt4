@@ -3,7 +3,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 plugins {
     id("base")
     id("kotlin")
-    id("lt.markmerkk.export")
+    id("lt.markmerkk.jbundle")
 }
 
 val versionName: String by project
