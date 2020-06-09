@@ -22,6 +22,8 @@ open class BundleTask: Exec() {
         assert(iconFile.exists() && iconFile.isFile) {
             throw IllegalArgumentException("Cannot find app icon at $iconFile")
         }
+        val jdkHomePath: String = System.getenv("JAVA_HOME") ?: ""
+        val jreHomePath: String = System.getenv("JRE_HOME") ?: ""
         bundleResource = JBundleResource(
                 project = project,
                 appName = appName,
@@ -29,8 +31,8 @@ open class BundleTask: Exec() {
                 mainJarFilePath = mainJarFilePath,
                 mainClassName = mainClassName,
                 mainIconFilePath = mainIconFilePath,
-                jdkHomePath = File(System.getenv("JAVA_HOME")).absolutePath,
-                jreHomePath = File(System.getenv("JRE_HOME")).absolutePath,
+                jdkHomePath = jdkHomePath,
+                jreHomePath = jreHomePath,
                 jvmOptions = JBundleResource.jvmOptionsDefault
         )
         scriptProvider = when (OsType.get()) {
