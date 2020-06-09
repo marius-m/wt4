@@ -1,11 +1,11 @@
 buildscript {
-    apply from: "versions.gradle"
-    ext.kotlin_test_version = '1.4.0'
+//    apply from: "versions.gradle"
+//    ext.kotlin_test_version = '1.4.0'
 
 
     // Version
-    ext.versionName = "1.7.8"
-    ext.versionCode = "63"
+//    ext.versionName = "1.7.8"
+//    ext.versionCode = "63"
 
     //region Debug oauth properties
     // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
@@ -23,12 +23,6 @@ buildscript {
     //endregion
 
     //region Debug basic properties
-    ext.debug = true
-    ext.gaKey = "test"
-    ext.oauth = false
-    ext.oauth_key_consumer = ""
-    ext.oauth_key_private = ""
-    ext.oauth_host = ""
     //endregion
 
     //region Release oauth properties
@@ -64,25 +58,35 @@ buildscript {
     //endregion
 
     repositories {
-        mavenLocal()
+        mavenCentral()
         jcenter()
-
-        maven { url "https://maven.atlassian.com/content/repositories/atlassian-public" }
-        maven { url "https://repo.maven.apache.org/maven2" }
-        maven { url "http://gradle.artifactoryonline.com/gradle/libs/" }
-        maven { url "http://maven.wso2.org/nexus/content/groups/wso2-public/" }
-        maven { url 'https://plugins.gradle.org/m2/' }
+        maven("https://maven.atlassian.com/content/repositories/atlassian-public")
+        maven("http://gradle.artifactoryonline.com/gradle/libs/")
+        maven("http://maven.wso2.org/nexus/content/groups/wso2-public/")
+        maven("https://plugins.gradle.org/m2/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
-        classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
-        classpath 'gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.8'
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${lt.markmerkk.Versions.kotlin}")
+        classpath("com.github.jengelman.gradle.plugins:shadow:4.0.2")
+        classpath("de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2")
+        classpath("gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.8")
     }
 }
 
 allprojects {
+    ext {
+        set("versionName", "1.7.8")
+        set("versionCode", "63")
+        set("debug", true)
+        set("gaKey", "test")
+        set("oauth", false)
+        set("oauthKeyConsumer", "")
+        set("oauthKeyPrivate", "")
+        set("oauthHost", "")
+    }
+
     repositories {
         mavenCentral()
         jcenter()

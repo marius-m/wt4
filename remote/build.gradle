@@ -1,4 +1,5 @@
 apply plugin: "kotlin"
+apply from: "$rootDir/versions.gradle"
 
 dependencies {
     implementation project(":jira-client")
