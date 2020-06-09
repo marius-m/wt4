@@ -31,6 +31,7 @@ class JBundle: Plugin<Project> {
             doFirst {
                 debugPrint()
             }
+            setDependsOn(listOf(":${project.name}:build", "${NAME_PLUGIN}GenIcons"))
         }
         project.tasks.register(
                 "${NAME_PLUGIN}GenIconMac",
