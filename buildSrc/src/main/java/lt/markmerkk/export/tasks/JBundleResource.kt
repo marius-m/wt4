@@ -66,7 +66,7 @@ data class JBundleResource(
                "-Xms128m",
                "-Xmx300m",
                "-XX:+UseG1GC",
-               "-Dlog4j.configurationFile=prod_log4j2.xml"
+               "-Dlog4j.configurationFile=prod_log4j2.xml" // todo move this to
        )
     }
 

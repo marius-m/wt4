@@ -2,11 +2,9 @@ package lt.markmerkk.export.tasks
 
 import lt.markmerkk.export.executor.JBundlerScriptJ8Unix
 import lt.markmerkk.export.executor.JBundlerScriptProvider
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 
 open class BundleTask: Exec() {
 
@@ -35,10 +33,21 @@ open class BundleTask: Exec() {
                 jreHomePath = File(System.getenv("JRE_HOME")).absolutePath,
                 jvmOptions = JBundleResource.jvmOptionsDefault
         )
-        scriptProvider = JBundlerScriptJ8Unix(
-                project = project,
-                bundleResource = bundleResource
-        )
+        scriptProvider = when (OsType.get()) {
+            OsType.UNKNOWN -> throw IllegalStateException("Unsupported OS type")
+            OsType.LINUX, OsType.MAC -> {
+                JBundlerScriptJ8Unix(
+                    project = project,
+                    bundleResource = bundleResource
+                )
+            }
+            OsType.WINDOWS -> {
+                JBundlerScriptJ8Unix(
+                        project = project,
+                        bundleResource = bundleResource
+                )
+            }
+        }
         val scriptArgs = scriptProvider.scriptCommand()
         workingDir = project.projectDir
         setCommandLine(*scriptArgs.toTypedArray())
