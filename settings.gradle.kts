@@ -18,6 +18,5 @@ include(
         ":components",
         ":database2",
         ":mock-factory",
-        ":package",
         ":credits"
 )
