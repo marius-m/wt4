@@ -1,40 +1,51 @@
 package lt.markmerkk.export.tasks
 
+import lt.markmerkk.export.executor.JBundlerScriptJ8Unix
+import lt.markmerkk.export.executor.JBundlerScriptProvider
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import lt.markmerkk.export.executor.JBundlerScriptProvider
-import lt.markmerkk.export.executor.JBundlerScriptJ8Unix
-import javax.inject.Inject
+import java.lang.IllegalArgumentException
 
-open class BundleTask @Inject constructor(
-        private val appName: String,
-        private val versionName: String,
-        private val mainClassName: String
-): DefaultTask() {
+open class BundleTask: Exec() {
 
-    @TaskAction
-    fun run() {
-        println("Gather resources")
-        val bundleResource = JBundleResource(
+    private lateinit var bundleResource: JBundleResource
+    private lateinit var scriptProvider: JBundlerScriptProvider
+
+    fun init(
+            appName: String,
+            versionName: String,
+            mainJarFilePath: String,
+            mainClassName: String,
+            mainIconFilePath: String
+    ) {
+        val iconFile = File(mainIconFilePath)
+        assert(iconFile.exists() && iconFile.isFile) {
+            throw IllegalArgumentException("Cannot find app icon at $iconFile")
+        }
+        bundleResource = JBundleResource(
                 project = project,
                 appName = appName,
                 versionName = versionName,
+                mainJarFilePath = mainJarFilePath,
                 mainClassName = mainClassName,
+                mainIconFilePath = mainIconFilePath,
+                jdkHomePath = File(System.getenv("JAVA_HOME")).absolutePath,
+                jreHomePath = File(System.getenv("JRE_HOME")).absolutePath,
                 jvmOptions = JBundleResource.jvmOptionsDefault
         )
-        println("Generate export script")
-        val scriptExec: JBundlerScriptProvider = JBundlerScriptJ8Unix(
+        scriptProvider = JBundlerScriptJ8Unix(
                 project = project,
-                jdkHomeDir = File(System.getenv("JAVA_HOME")),
-                jreHomeDir = File(System.getenv("JAVA_HOME")),
-                bundlerResource = bundleResource
+                bundleResource = bundleResource
         )
-        val scriptArgs = scriptExec.scriptCommand()
-        println("Executing: $scriptArgs")
-        scriptExec
-                .bundle()
+        val scriptArgs = scriptProvider.scriptCommand()
+        workingDir = project.projectDir
+        setCommandLine(*scriptArgs.toTypedArray())
+    }
+
+    fun debugPrint() {
+        scriptProvider.debugPrint()
     }
 
 }

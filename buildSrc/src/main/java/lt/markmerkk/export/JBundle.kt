@@ -1,6 +1,5 @@
 package lt.markmerkk.export
 
-import android.databinding.tool.ext.constructorSpec
 import lt.markmerkk.export.icons.GenIconMac
 import lt.markmerkk.export.icons.GenIconWindows
 import lt.markmerkk.export.tasks.BundleTask
@@ -8,7 +7,6 @@ import lt.markmerkk.export.tasks.JBundleExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
 
 class JBundle: Plugin<Project> {
 
@@ -17,16 +15,23 @@ class JBundle: Plugin<Project> {
                 EXTENSION_NAME,
                 JBundleExtension::class.java,
                 project)
-//        project.tasks.register(
-//                "${NAME_PLUGIN}Export",
-//                BundleTask::class.java,
-//                extension.appName,
-//                extension.versionName,
-//                extension.mainClassName
-//        ).apply {
-//            group = NAME_PLUGIN
-//            description = "Creates and exports bundle"
-//        }
+        project.tasks.register(
+                "${NAME_PLUGIN}Create",
+                BundleTask::class.java
+        ) {
+            group = NAME_PLUGIN
+            description = "Creates and exports bundle"
+            init(
+                    appName = extension.appName,
+                    versionName = extension.version,
+                    mainJarFilePath = extension.mainJarFilePath,
+                    mainClassName = extension.mainClassName,
+                    mainIconFilePath = extension.mainIconFilePath
+            )
+            doFirst {
+                debugPrint()
+            }
+        }
         project.tasks.register(
                 "${NAME_PLUGIN}GenIconMac",
                 GenIconMac::class.java

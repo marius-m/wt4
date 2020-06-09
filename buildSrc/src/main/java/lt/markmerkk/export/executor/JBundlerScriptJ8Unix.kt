@@ -10,12 +10,10 @@ import lt.markmerkk.export.utils.*
  */
 class JBundlerScriptJ8Unix(
         private val project: Project,
-        private val jdkHomeDir: File,
-        private val jreHomeDir: File,
-        private val bundlerResource: JBundleResource
+        private val bundleResource: JBundleResource
 ): JBundlerScriptProvider {
 
-    private val packagerPath = File(jdkHomeDir, "/bin/javapackager")
+    private val packagerPath = File(bundleResource.jdkHomeDir, "/bin/javapackager")
     private val rootDir = project.rootDir
 
     init {
@@ -25,24 +23,24 @@ class JBundlerScriptJ8Unix(
     }
 
     override fun scriptCommand(): List<String> {
-        val formatJvmOptions = bundlerResource.jvmOptions
+        val formatJvmOptions = bundleResource.jvmOptions
                 .map { option -> "-BjvmOptions=$option" }
         return listOf(
                 packagerPath.absolutePath,
                 "-deploy",
-                "-Bruntime=${jreHomeDir}",
-                "-srcdir", bundlerResource.applicationLibraryPath.absolutePath,
-                "-srcfiles", bundlerResource.mainJar.absolutePath,
-                "-outdir", bundlerResource.bundlePath.absolutePath,
-                "-outfile", bundlerResource.mainJar.name,
-                "-appclass", bundlerResource.mainClassName,
-                "-native", bundlerResource.packageType,
-                "-name", bundlerResource.appName,
-                "-title", bundlerResource.appName,
+                "-Bruntime=${bundleResource.jreHomeDir}",
+                "-srcdir", bundleResource.appLibraryPath.absolutePath,
+                "-srcfiles", bundleResource.mainJar.absolutePath,
+                "-outdir", bundleResource.bundlePath.absolutePath,
+                "-outfile", bundleResource.mainJar.name,
+                "-appclass", bundleResource.mainClassName,
+                "-native", bundleResource.packageType,
+                "-name", bundleResource.appName,
+                "-title", bundleResource.appName,
                 "-v",
                 "-nosign",
-                "-Bicon", bundlerResource.appIcon.absolutePath,
-                "-BappVersion", bundlerResource.versionName
+                "-Bicon=${bundleResource.appIcon.absolutePath}",
+                "-BappVersion=${bundleResource.versionName}"
         ).plus(formatJvmOptions)
     }
 
@@ -56,6 +54,14 @@ class JBundlerScriptJ8Unix(
             val errorAsString = process.errorAsString()
             throw IllegalStateException("Error executing: $errorAsString")
         }
+    }
+
+    override fun debugPrint() {
+        println("Using JDK: ${bundleResource.jdkHomeDir}")
+        println("Using JRE: ${bundleResource.jreHomeDir}")
+        println("Using Main JAR: ${bundleResource.mainJar}")
+        println("BundleResource: $bundleResource")
+        println("Exec: ${scriptCommand()}")
     }
 
 }

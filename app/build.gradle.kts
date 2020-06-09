@@ -112,8 +112,9 @@ buildConfig {
 
 extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).apply {
     appName = "app"
-    versionName = "1.0.0"
+    version = versionName
     mainClassName = "lt.markmerkk.MainAsJava"
+    mainJarFilePath = File(buildDir, "/libs/app-${versionName}.jar").absolutePath
 
     mainIconFilePath = File(projectDir, "icons/App1024.png").absolutePath
     scriptsDirPath = File(projectDir, "scripts").absolutePath
