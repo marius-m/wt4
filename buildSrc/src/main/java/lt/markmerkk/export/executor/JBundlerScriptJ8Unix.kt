@@ -30,7 +30,7 @@ class JBundlerScriptJ8Unix(
                 "-deploy",
                 "-Bruntime=${bundleResource.jreHomeDir}",
                 "-srcdir", bundleResource.appLibraryPath.absolutePath,
-                "-srcfiles", bundleResource.mainJar.absolutePath,
+                "-srcfiles", bundleResource.mainJar.name,
                 "-outdir", bundleResource.bundlePath.absolutePath,
                 "-outfile", bundleResource.mainJar.name,
                 "-appclass", bundleResource.mainClassName,
@@ -60,7 +60,6 @@ class JBundlerScriptJ8Unix(
         println("Using JDK: ${bundleResource.jdkHomeDir}")
         println("Using JRE: ${bundleResource.jreHomeDir}")
         println("Using Main JAR: ${bundleResource.mainJar}")
-        println("BundleResource: $bundleResource")
         println("Exec: ${scriptCommand()}")
     }
 
