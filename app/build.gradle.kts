@@ -8,6 +8,7 @@ plugins {
     id("idea")
     id("com.github.johnrengelman.shadow")
     id("de.fuerstenau.buildconfig")
+    id("lt.markmerkk.jbundle")
 }
 
 val versionName: String by project
@@ -109,6 +110,14 @@ buildConfig {
     charset = Charsets.UTF_8.toString()
 }
 
+extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).apply {
+    appName = "app"
+    versionName = "1.0.0"
+    mainClassName = "lt.markmerkk.MainAsJava"
+
+    mainIconFilePath = File(projectDir, "icons/App1024.png").absolutePath
+    scriptsDirPath = File(projectDir, "scripts").absolutePath
+}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
