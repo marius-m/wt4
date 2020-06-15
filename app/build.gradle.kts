@@ -120,6 +120,37 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
     scriptsDirPath = File(projectDir, "scripts").absolutePath
 }
 
+tasks.create("jBundleCreateBasic", DefaultTask::class.java).apply {
+    group = "JBundle"
+    tasks.getByName("jBundleCreate")
+            .dependsOn(this)
+    doLast {
+        println("Doing stuff")
+    }
+}
+
+//tasks.create("jBundleCreateITO", lt.markmerkk.export.tasks.BundleTask::class.java).apply {
+//    group = "JBundle"
+//    doFirst {
+//        extensions.getByType(de.fuerstenau.gradle.buildconfig.BuildConfigExtension::class.java).apply {
+//            appName = "WT4-ITO"
+//            version = versionName
+//            packageName = "lt.markmerkk"
+//
+//            buildConfigField("String", "versionName", versionName)
+//            buildConfigField("int", "versionCode", versionCode)
+//            buildConfigField("boolean", "debug", debug.toString())
+//            buildConfigField("String", "gaKey", gaKey)
+//            buildConfigField("boolean", "oauth", oauth.toString())
+//            buildConfigField("String", "oauthKeyConsumer", oauthKeyConsumer)
+//            buildConfigField("String", "oauthKeyPrivate", oauthKeyPrivate)
+//            buildConfigField("String", "oauthHost", oauthHost)
+//
+//            charset = Charsets.UTF_8.toString()
+//        }
+//    }
+//}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }

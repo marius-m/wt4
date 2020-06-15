@@ -7,21 +7,6 @@ buildscript {
 //    ext.versionName = "1.7.8"
 //    ext.versionCode = "63"
 
-    //region Debug oauth properties
-    // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
-//    def keysPropertyFile = new File("${rootDir}/keys_debug", "private.properties")
-//    assert keysPropertyFile.exists()
-//    Properties keysProperties = new Properties()
-//    keysProperties.load(new FileInputStream(keysPropertyFile.getAbsolutePath()))
-//
-//    ext.debug = true
-//    ext.gaKey = "test"
-//    ext.oauth = true
-//    ext.oauth_key_consumer = keysProperties.getProperty("key_consumer")
-//    ext.oauth_key_private = keysProperties.getProperty("key_private")
-//    ext.oauth_host = keysProperties.getProperty("host")
-    //endregion
-
     //region Debug basic properties
     //endregion
 
