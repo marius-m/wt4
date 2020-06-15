@@ -23,4 +23,5 @@ call "%JAVA_HOME%\bin\javapackager.exe" ^
     -BjvmOptions=-XX:+UseG1GC ^
     -BjvmOptions=-Dlog4j.configurationFile=prod_log4j2.xml ^
     -Bicon="%APP_ICON%" ^
-    -BappVersion="%VERSION%"
+    -BappVersion="%VERSION%" ^
+    -BsystemWide=true
