@@ -13,7 +13,8 @@ class Main : App(CoreWidget::class, Styles::class) {
     private lateinit var appComponent: AppComponent
 
     override fun start(stage: Stage) {
-        logger.info("File encoding: ${System.getProperty("file.encoding")}")
+        println("File encoding: ${System.getProperty("file.encoding")}")
+        println("User home: ${System.getProperty("user.home")}")
         generateGraph(stage)
         super.start(stage)
         stage.width = SCENE_WIDTH.toDouble()
