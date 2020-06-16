@@ -7,11 +7,10 @@ public class MainAsJava {
     static {
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("sun.jnu.encoding", "UTF-8");
+        System.setProperty("java.io.tmpdir", "C:\\installer\\tmp");
     }
 
     public static void main(String[] args) {
-        System.setProperty("file.encoding", "UTF-8");
-        System.setProperty("sun.jnu.encoding", "UTF-8");
         launch(Main.class);
     }
 }
