@@ -1,100 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="DEBUG">
+<Configuration>
+    <Properties>
+        <Property name="logs_path">${sys:user.home}/.wt4_debug/logs</Property>
+        <Property name="logs_path_archive">${sys:user.home}/.wt4_debug/logs/archive</Property>
+        <Property name="log_pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            <PatternLayout pattern="${log_pattern}" />
         </Console>
         <RollingFile name="FileAllLogs"
-                     fileName="${sys:user.home}/.wt4_debug/logs/out.log"
-                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz"
-                     immediateFlush="true"
-                     append="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                     fileName="${sys:logs_path}/out.log"
+                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz">
+            <PatternLayout pattern="${log_pattern}"/>
             <Policies>
+                <OnStartupTriggeringPolicy />
                 <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="1 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB" />
             </Policies>
+            <DefaultRolloverStrategy max="5" />
         </RollingFile>
         <RollingFile name="FileAllErrors"
-                     fileName="${sys:user.home}/.wt4_debug/logs/errors.log"
-                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz"
-                     immediateFlush="true"
-                     append="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                     fileName="${sys:logs_path}/errors.log"
+                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz">
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${log_pattern}"/>
             <Policies>
+                <OnStartupTriggeringPolicy />
                 <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="100 KB"/>
+                <SizeBasedTriggeringPolicy size="1 MB" />
             </Policies>
+            <DefaultRolloverStrategy max="5" />
         </RollingFile>
         <RollingFile name="FileAllJira"
-                     fileName="${sys:user.home}/.wt4_debug/logs/jira.log"
-                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz"
-                     immediateFlush="true" append="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                     fileName="${sys:logs_path}/jira.log"
+                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz">
+            <PatternLayout pattern="${log_pattern}"/>
             <Policies>
+                <OnStartupTriggeringPolicy />
                 <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="100 KB"/>
+                <SizeBasedTriggeringPolicy size="100 KB" />
             </Policies>
+            <DefaultRolloverStrategy max="5" />
         </RollingFile>
         <RollingFile name="FileAllDb"
-                     fileName="${sys:user.home}/.wt4_debug/logs/db.log"
-                     immediateFlush="true"
-                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
-                     append="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                     fileName="${sys:logs_path}/db.log"
+                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz">
+            <PatternLayout pattern="${log_pattern}"/>
             <Policies>
+                <OnStartupTriggeringPolicy />
                 <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="100 KB"/>
+                <SizeBasedTriggeringPolicy size="1 MB" />
             </Policies>
-        </RollingFile>
-        <RollingFile name="FileTmp"
-                     fileName="${sys:user.home}/.wt4_debug/logs/tmp.log"
-                     immediateFlush="true"
-                     filePattern="${sys:user.home}/.wt4_debug/logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz"
-                     append="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-            <Policies>
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="100 KB"/>
-            </Policies>
+            <DefaultRolloverStrategy max="5" />
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="INFO">
+        <Root level="DEBUG">
             <AppenderRef ref="Console" />
             <AppenderRef ref="FileAllLogs"/>
+            <AppenderRef ref="FileAllErrors"/>
         </Root>
-        <Logger name="lt.markmerkk" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="DB" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
+        <Logger name="org.jooq.tools.LoggerListener" level="WARN">
             <AppenderRef ref="FileAllDb"/>
         </Logger>
-        <Logger name="INTERNAL" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="JIRA" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
+        <Logger name="JIRA" level="DEBUG">
             <AppenderRef ref="FileAllJira"/>
-        </Logger>
-        <Logger name="MAIN" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="CALENDAR" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="TICKETS" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="TICKET_SPLIT" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="TICKET_MERGE" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="TRANSLATE" level="TRACE" additivity="false">
-            <AppenderRef ref="Console" />
         </Logger>
     </Loggers>
 </Configuration>
