@@ -29,5 +29,5 @@ $JAVA_HOME/bin/javapackager \
   -BjvmOptions=-Dlog4j.configurationFile=prod_log4j2.xml \
   -Bicon=${APP_ICON} \
   -BappVersion=${VERSION} \
-  -BsystemWide=true \
+  -BsystemWide=false \
   $EXTRA_BUNDLER_ARGUMENTS

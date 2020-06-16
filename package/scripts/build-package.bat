@@ -24,7 +24,6 @@ call "%JAVA_HOME%\bin\javapackager.exe" ^
     -BjvmOptions=-Dlog4j.configurationFile=prod_log4j2.xml ^
     -BjvmOptions=-Dfile.encoding="UTF-8" ^
     -BjvmOptions=-Dsun.jnu.encoding="UTF-8" ^
-    -BjvmOptions=-Djava.io.tmpdir="C:\installer\tmp" ^
     -Bicon="%APP_ICON%" ^
     -BappVersion="%VERSION%" ^
-    -BsystemWide=true
+    -BsystemWide=false
