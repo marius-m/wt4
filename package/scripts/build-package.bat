@@ -26,4 +26,4 @@ call "%JAVA_HOME%\bin\javapackager.exe" ^
     -BjvmOptions=-Dsun.jnu.encoding="UTF-8" ^
     -Bicon="%APP_ICON%" ^
     -BappVersion="%VERSION%" ^
-    -BsystemWide=false
+    -BsystemWide=true
