@@ -10,8 +10,8 @@ import static javafx.application.Application.launch;
 public class MainAsJava {
 
     static {
-        System.setProperty("file.encoding", "UTF-8");
-        System.setProperty("sun.jnu.encoding", "UTF-8");
+        System.setProperty("file.encoding", "UTF-16");
+        System.setProperty("sun.jnu.encoding", "UTF-16");
         final String tmpPath = System.getProperty("java.io.tmpdir");
 //        System.out.println("Tmp path: " + tmpPath);
 //        byte[] ptext = tmpPath.getBytes(ISO_8859_1);
