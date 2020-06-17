@@ -10,8 +10,8 @@ import static javafx.application.Application.launch;
 public class MainAsJava {
 
     static {
-        System.setProperty("file.encoding", "UTF-16");
-        System.setProperty("sun.jnu.encoding", "UTF-16");
+        System.setProperty("file.encoding", "UTF-8");
+        System.setProperty("sun.jnu.encoding", "UTF-8");
         final String tmpPath = System.getProperty("java.io.tmpdir");
 //        System.out.println("Tmp path: " + tmpPath);
 //        byte[] ptext = tmpPath.getBytes(ISO_8859_1);
@@ -25,7 +25,7 @@ public class MainAsJava {
         System.out.println("defaultCharacterEncoding by code: " + getDefaultCharEncoding());
         System.out.println("defaultCharacterEncoding by charSet: " + Charset.defaultCharset());
 
-        System.setProperty("file.encoding", "UTF-16");
+        System.setProperty("file.encoding", "UTF-8");
         System.out.println("defaultCharacterEncoding by property after updating file.encoding : " + System.getProperty("file.encoding"));
         System.out.println("defaultCharacterEncoding by code after updating file.encoding : " + getDefaultCharEncoding());
         System.out.println("defaultCharacterEncoding by java.nio.Charset after updating file.encoding : " + Charset.defaultCharset());
