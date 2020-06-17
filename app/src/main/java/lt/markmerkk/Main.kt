@@ -7,15 +7,24 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.ui_2.StageProperties
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import java.io.File
+import java.net.URLDecoder
+
 
 class Main : App(CoreWidget::class, Styles::class) {
 
     private lateinit var appComponent: AppComponent
 
     override fun start(stage: Stage) {
+        val userHome = System.getProperty("user.home")
         println("File encoding: ${System.getProperty("file.encoding")}")
         println("User home: ${System.getProperty("user.home")}")
         println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
+
+        val userDirPath = URLDecoder.decode(userHome, "UTF-8")
+        val userDir = File(userDirPath)
+        println(userDir.absolutePath)
+
         generateGraph(stage)
         super.start(stage)
         stage.width = SCENE_WIDTH.toDouble()
