@@ -8,6 +8,7 @@ import lt.markmerkk.ui_2.StageProperties
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import java.io.*
+import java.lang.IllegalStateException
 import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.nio.charset.CodingErrorAction
@@ -23,10 +24,11 @@ class Main : App(CoreWidget::class, Styles::class) {
         println("User home: ${System.getProperty("user.home")}")
         println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
 
-        println("User home decode: ${decodeText(userHome, Charsets.ISO_8859_1, CodingErrorAction.REPLACE)}")
-        val userDirPath = URLDecoder.decode(userHome, "UTF-8")
+        val userDirPath = decodeText(userHome, Charsets.US_ASCII, CodingErrorAction.REPLACE)
         val userDir = File(userDirPath)
         println("User dir: ${userDir.absolutePath}")
+        if (!userDir.exists())
+            throw IllegalStateException("Path ${userDir.absolutePath} does not exist!")
 
         generateGraph(stage)
         super.start(stage)
