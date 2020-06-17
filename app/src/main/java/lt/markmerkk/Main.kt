@@ -24,9 +24,10 @@ class Main : App(CoreWidget::class, Styles::class) {
         println("User home: ${System.getProperty("user.home")}")
         println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
 
-        val userDirPath = decodeText(userHome, Charsets.US_ASCII, CodingErrorAction.REPLACE)
+        val userDirPath = decodeText(userHome, Charsets.UTF_32LE, CodingErrorAction.REPLACE)
         val userDir = File(userDirPath)
         println("User dir: ${userDir.absolutePath}")
+        println("ąčęėįšųū90")
         if (!userDir.exists())
             throw IllegalStateException("Path ${userDir.absolutePath} does not exist!")
 
