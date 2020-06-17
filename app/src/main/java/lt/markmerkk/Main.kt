@@ -7,7 +7,10 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.ui_2.StageProperties
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.InputStreamReader
 import java.net.URLDecoder
 
 
@@ -21,9 +24,12 @@ class Main : App(CoreWidget::class, Styles::class) {
         println("User home: ${System.getProperty("user.home")}")
         println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
 
+        val userHomeDecode = BufferedReader(InputStreamReader(ByteArrayInputStream(userHome.toByteArray())))
+                .readLine()
+        println("User home decode: $userHomeDecode")
         val userDirPath = URLDecoder.decode(userHome, "UTF-8")
         val userDir = File(userDirPath)
-        println(userDir.absolutePath)
+        println("User dir: ${userDir.absolutePath}")
 
         generateGraph(stage)
         super.start(stage)
