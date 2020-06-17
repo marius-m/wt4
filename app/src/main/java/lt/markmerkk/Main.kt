@@ -23,7 +23,7 @@ class Main : App(CoreWidget::class, Styles::class) {
         println("User home: ${System.getProperty("user.home")}")
         println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
 
-        println("User home decode: ${decodeText(userHome, Charset.forName("windows-1252"), CodingErrorAction.REPORT)}")
+        println("User home decode: ${decodeText(userHome, Charsets.ISO_8859_1, CodingErrorAction.REPLACE)}")
         val userDirPath = URLDecoder.decode(userHome, "UTF-8")
         val userDir = File(userDirPath)
         println("User dir: ${userDir.absolutePath}")
