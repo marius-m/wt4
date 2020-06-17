@@ -7,11 +7,10 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.ui_2.StageProperties
 import org.slf4j.LoggerFactory
 import tornadofx.*
-import java.io.BufferedReader
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.InputStreamReader
+import java.io.*
 import java.net.URLDecoder
+import java.nio.charset.Charset
+import java.nio.charset.CodingErrorAction
 
 
 class Main : App(CoreWidget::class, Styles::class) {
@@ -24,9 +23,7 @@ class Main : App(CoreWidget::class, Styles::class) {
         println("User home: ${System.getProperty("user.home")}")
         println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
 
-        val userHomeDecode = BufferedReader(InputStreamReader(ByteArrayInputStream(userHome.toByteArray())))
-                .readLine()
-        println("User home decode: $userHomeDecode")
+        println("User home decode: ${decodeText(userHome, Charsets.US_ASCII, CodingErrorAction.REPORT)}")
         val userDirPath = URLDecoder.decode(userHome, "UTF-8")
         val userDir = File(userDirPath)
         println("User dir: ${userDir.absolutePath}")
@@ -55,6 +52,22 @@ class Main : App(CoreWidget::class, Styles::class) {
     }
 
     companion object {
+
+        @Throws(IOException::class)
+        fun decodeText(
+                input: String,
+                charset: Charset,
+                codingErrorAction: CodingErrorAction?
+        ): String? {
+            val charsetDecoder = charset.newDecoder()
+            charsetDecoder.onMalformedInput(codingErrorAction)
+            return BufferedReader(
+                    InputStreamReader(
+                            ByteArrayInputStream(input.toByteArray()),
+                            charsetDecoder
+                    )
+            ).readLine()
+        }
 
         var SCENE_WIDTH = 800
         var SCENE_HEIGHT = 600
