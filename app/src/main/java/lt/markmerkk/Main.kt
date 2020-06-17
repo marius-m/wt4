@@ -15,6 +15,7 @@ class Main : App(CoreWidget::class, Styles::class) {
     override fun start(stage: Stage) {
         println("File encoding: ${System.getProperty("file.encoding")}")
         println("User home: ${System.getProperty("user.home")}")
+        println("Tmp path: ${System.getProperty("java.io.tmpdir")}")
         generateGraph(stage)
         super.start(stage)
         stage.width = SCENE_WIDTH.toDouble()
