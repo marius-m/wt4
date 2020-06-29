@@ -139,7 +139,8 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
             val rootDirPath = "C:${File.separator}WT4"
-            val tmpDirPath = "${rootDirPath}${File.separator}tmp"
+            val appDirPath = "${rootDirPath}${File.separator}wt4"
+            val tmpDirPath = "${appDirPath}${File.separator}tmp"
             return JBundleExtraProps(
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
