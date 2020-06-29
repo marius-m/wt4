@@ -13,12 +13,12 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasicSystemWide(project)
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asBasic(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITO(project)
-
+val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasicSystemWide(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasic(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITO(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(project)
 
 sourceSets {
     main {
