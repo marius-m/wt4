@@ -16,7 +16,8 @@ open class BundleTask: Exec() {
             versionName: String,
             mainJarFilePath: String,
             mainClassName: String,
-            mainIconFilePath: String
+            mainIconFilePath: String,
+            systemWide: Boolean
     ) {
         val iconFile = File(mainIconFilePath)
         assert(iconFile.exists() && iconFile.isFile) {
@@ -31,6 +32,7 @@ open class BundleTask: Exec() {
                 mainJarFilePath = mainJarFilePath,
                 mainClassName = mainClassName,
                 mainIconFilePath = mainIconFilePath,
+                systemWide = systemWide,
                 jdkHomePath = jdkHomePath,
                 jreHomePath = jreHomePath,
                 jvmOptions = JBundleResource.jvmOptionsDefault

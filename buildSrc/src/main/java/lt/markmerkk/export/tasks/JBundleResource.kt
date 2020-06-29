@@ -13,6 +13,7 @@ data class JBundleResource(
         val mainJarFilePath: String,
         val mainClassName: String,
         val mainIconFilePath: String,
+        val systemWide: Boolean,
         private val jdkHomePath: String,
         private val jreHomePath: String,
         val jvmOptions: List<String>

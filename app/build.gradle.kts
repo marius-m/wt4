@@ -13,8 +13,8 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
-val jBundleProps = JBundleExtraPropsFactory.Debug.asBasicSystemWide(project)
+val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasicSystemWide(project)
 //val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasic(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITO(project)

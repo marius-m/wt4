@@ -40,7 +40,8 @@ class JBundlerScriptJ8Unix(
                 "-v",
                 "-nosign",
                 "-Bicon=${bundleResource.appIcon.absolutePath}",
-                "-BappVersion=${bundleResource.versionName}"
+                "-BappVersion=${bundleResource.versionName}",
+                "-BsystemWide=${bundleResource.systemWide}"
         ).plus(formatJvmOptions)
     }
 

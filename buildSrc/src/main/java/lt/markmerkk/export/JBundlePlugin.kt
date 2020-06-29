@@ -8,7 +8,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class JBundle: Plugin<Project> {
+class JBundlePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         val extension: JBundleExtension = project.extensions.create(

@@ -37,7 +37,7 @@ gradlePlugin {
     plugins {
         create("jbundle") {
             id = "lt.markmerkk.jbundle"
-            implementationClass = "lt.markmerkk.export.JBundle"
+            implementationClass = "lt.markmerkk.export.JBundlePlugin"
         }
     }
 }
