@@ -40,7 +40,7 @@ class CoreWidget : View() {
     fun attachMain() {
         // Init variables
         Main.component().inject(this)
-        l.info("Launching $appConfig")
+        l.info("Launching ${appConfig.initAndPrintPaths()}")
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
         title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
 

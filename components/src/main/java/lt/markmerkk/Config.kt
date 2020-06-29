@@ -39,7 +39,16 @@ data class Config(
         }
     }
 
-    override fun toString(): String {
+    fun tmpPath(): File {
+        val tmpDir = File(cpp.fullAppDir(), "${File.separator}tmp")
+        if (!tmpDir.exists()) {
+            tmpDir.mkdirs()
+        }
+        return tmpDir
+    }
+
+    fun initAndPrintPaths(): String {
+        val initTmpPath = tmpPath()
         return StringBuilder("Config: ")
                 .append("DEBUG=$debug; ")
                 .append("versionName=$versionName; ")
@@ -49,7 +58,9 @@ data class Config(
                 .append("wtAppPath='${cpp.configDefault()}'; ")
                 .append("basePath='${basePath()}'; ")
                 .append("profilePath='${profilePath()}'; ")
+                .append("tmpPath='${initTmpPath}'; ")
                 .toString()
     }
+
 }
 
