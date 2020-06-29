@@ -25,7 +25,7 @@ data class JBundleResource(
         OsType.UNKNOWN -> throw IllegalStateException("Cannot build on unrecognized system")
         OsType.MAC -> File(mainIconFile.parent, "/mac/${appIconName}.icns")
         OsType.LINUX -> File(mainIconFile.parent, "/${appIconName}.png")
-        OsType.WINDOWS -> File(mainIconFile.parent, "/windows/${appIconName}.ico")
+        OsType.WINDOWS -> File(mainIconFile.parent, "/win/${appIconName}.ico")
     }
     val mainJar = File(mainJarFilePath)
     val jarName = mainJar.nameWithoutExtension
