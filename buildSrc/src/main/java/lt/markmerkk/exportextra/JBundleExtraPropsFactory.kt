@@ -7,6 +7,12 @@ import java.util.*
 
 object JBundleExtraPropsFactory {
 
+    private val defaultJvmProps = listOf(
+            "-Xms128m",
+            "-Xmx300m",
+            "-XX:+UseG1GC"
+    )
+
     object Debug {
         fun asBasic(
                 project: Project
@@ -17,6 +23,9 @@ object JBundleExtraPropsFactory {
                     versionCode = versionProps.code,
                     debug = true,
                     systemWide = false,
+                    jvmProps = defaultJvmProps.plus(
+                            listOf("-DWT_APP_PATH=wt4_debug")
+                    ),
                     gaKey = "test",
                     oauth = false,
                     oauthKeyConsumer = "",
@@ -34,6 +43,9 @@ object JBundleExtraPropsFactory {
                     versionCode = versionProps.code,
                     debug = true,
                     systemWide = true,
+                    jvmProps = defaultJvmProps.plus(
+                            listOf("-DWT_APP_PATH=wt4_debug")
+                    ),
                     gaKey = "test",
                     oauth = false,
                     oauthKeyConsumer = "",
@@ -56,6 +68,9 @@ object JBundleExtraPropsFactory {
                     versionCode = versionProps.code,
                     debug = true,
                     systemWide = false,
+                    jvmProps = defaultJvmProps.plus(
+                            listOf("-DWT_APP_PATH=wt4_debug")
+                    ),
                     gaKey = "test",
                     oauth = true,
                     oauthKeyConsumer = keysProperties.getProperty("key_consumer"),
@@ -80,6 +95,9 @@ object JBundleExtraPropsFactory {
                     versionCode = versionProps.code,
                     debug = false,
                     systemWide = false,
+                    jvmProps = defaultJvmProps.plus(
+                            listOf("-DWT_APP_PATH=wt4")
+                    ),
                     gaKey = deployProps.getProperty("ga"),
                     oauth = false,
                     oauthKeyConsumer = "",
@@ -106,6 +124,9 @@ object JBundleExtraPropsFactory {
                     versionCode = versionProps.code,
                     debug = false,
                     systemWide = false,
+                    jvmProps = defaultJvmProps.plus(
+                            listOf("-DWT_APP_PATH=wt4")
+                    ),
                     gaKey = deployProps.getProperty("ga"),
                     oauth = true,
                     oauthKeyConsumer = keysProperties.getProperty("key_consumer"),

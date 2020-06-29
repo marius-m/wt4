@@ -115,6 +115,7 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
     mainClassName = "lt.markmerkk.MainAsJava"
     mainJarFilePath = File(buildDir, "/libs/app-${jBundleProps.versionName}.jar").absolutePath
     systemWide = jBundleProps.systemWide
+    jvmProps = jBundleProps.jvmProps
 
     mainIconFilePath = File(projectDir, "icons/App1024.png").absolutePath
     scriptsDirPath = File(projectDir, "scripts").absolutePath

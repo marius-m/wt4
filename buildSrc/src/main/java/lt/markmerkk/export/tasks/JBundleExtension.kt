@@ -8,6 +8,7 @@ open class JBundleExtension(private val project : Project) {
     var mainClassName: String = ""
     var mainJarFilePath: String = ""
     var systemWide: Boolean = false
+    var jvmProps: List<String> = emptyList()
 
     var mainIconFilePath: String = ""
     var scriptsDirPath: String = ""

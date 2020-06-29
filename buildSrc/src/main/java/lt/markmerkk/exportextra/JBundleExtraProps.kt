@@ -10,6 +10,7 @@ class JBundleExtraProps(
         val versionCode: Int,
         val debug: Boolean,
         val systemWide: Boolean,
+        val jvmProps: List<String>,
         val gaKey: String,
         val oauth: Boolean,
         val oauthKeyConsumer: String,

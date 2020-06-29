@@ -17,7 +17,8 @@ open class BundleTask: Exec() {
             mainJarFilePath: String,
             mainClassName: String,
             mainIconFilePath: String,
-            systemWide: Boolean
+            systemWide: Boolean,
+            jvmProps: List<String>
     ) {
         val iconFile = File(mainIconFilePath)
         assert(iconFile.exists() && iconFile.isFile) {
@@ -35,7 +36,7 @@ open class BundleTask: Exec() {
                 systemWide = systemWide,
                 jdkHomePath = jdkHomePath,
                 jreHomePath = jreHomePath,
-                jvmOptions = JBundleResource.jvmOptionsDefault
+                jvmOptions = jvmProps
         )
         scriptProvider = when (OsType.get()) {
             OsType.UNKNOWN -> throw IllegalStateException("Unsupported OS type")

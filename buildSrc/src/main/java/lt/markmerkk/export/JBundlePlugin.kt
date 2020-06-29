@@ -27,7 +27,8 @@ class JBundlePlugin: Plugin<Project> {
                     systemWide = extension.systemWide,
                     mainJarFilePath = extension.mainJarFilePath,
                     mainClassName = extension.mainClassName,
-                    mainIconFilePath = extension.mainIconFilePath
+                    mainIconFilePath = extension.mainIconFilePath,
+                    jvmProps = extension.jvmProps
             )
             doFirst {
                 debugPrint()
