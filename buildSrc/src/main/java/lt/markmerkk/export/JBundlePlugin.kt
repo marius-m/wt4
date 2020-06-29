@@ -24,6 +24,7 @@ class JBundlePlugin: Plugin<Project> {
             init(
                     appName = extension.appName,
                     versionName = extension.version,
+                    systemWide = extension.systemWide,
                     mainJarFilePath = extension.mainJarFilePath,
                     mainClassName = extension.mainClassName,
                     mainIconFilePath = extension.mainIconFilePath
