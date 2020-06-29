@@ -138,13 +138,19 @@ object JBundleExtraPropsFactory {
                 val keysPropertyFile = File("${project.rootDir}/keys", "private.properties")
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
+            val rootDirPath = "C:${File.separator}WT4"
+            val tmpDirPath = "${rootDirPath}${File.separator}tmp"
             return JBundleExtraProps(
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
                     systemWide = true,
                     jvmProps = defaultJvmProps.plus(
-                            listOf("-DWT_APP_PATH=wt4", "-DWT_ROOT=C:\\\\WT4")
+                            listOf(
+                                    "-DWT_APP_PATH=wt4",
+                                    "-DWT_ROOT=$rootDirPath",
+                                    "-Djava.io.tmpdir=$tmpDirPath"
+                            )
                     ),
                     gaKey = deployProps.getProperty("ga"),
                     oauth = true,
