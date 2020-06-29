@@ -83,12 +83,12 @@ project.extensions.getByType(JavaApplication::class.java).apply {
     mainClassName = "lt.markmerkk.MainAsJava"
     group = "lt.markmerkk"
     setVersion(jBundleProps.versionName)
-    val logConfig = if (jBundleProps.debug) "debug_log4j2.xml" else "prod_log4j2.xml"
     applicationDefaultJvmArgs = listOf(
-            "-Dlog4j.configurationFile=$logConfig",
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC"
+//            "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+//            "-DWT_APP_PATH=wt4_debug"
     )
 }
 

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Properties>
-        <Property name="logs_path">${sys:user.home}/.wt4_debug/logs</Property>
-        <Property name="logs_path_archive">${sys:user.home}/.wt4_debug/logs/archive</Property>
+        <Property name="WT_ROOT">${sys:user.home}</Property>
+        <Property name="WT_APP_PATH">wt4_debug</Property>
+        <Property name="LOG_PATH">${sys:WT_ROOT}/.${sys:WT_APP_PATH}/logs</Property>
+        <Property name="LOG_PATH_ARCHIVE">${LOG_PATH}/archive</Property>
         <Property name="log_pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
     <Appenders>
@@ -10,8 +12,8 @@
             <PatternLayout pattern="${log_pattern}" />
         </Console>
         <RollingFile name="FileAllLogs"
-                     fileName="${sys:logs_path}/out.log"
-                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz">
+                     fileName="${sys:LOG_PATH}/out.log"
+                     filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz">
             <PatternLayout pattern="${log_pattern}"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -21,8 +23,8 @@
             <DefaultRolloverStrategy max="5" />
         </RollingFile>
         <RollingFile name="FileAllErrors"
-                     fileName="${sys:logs_path}/errors.log"
-                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz">
+                     fileName="${sys:LOG_PATH}/errors.log"
+                     filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz">
             <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${log_pattern}"/>
             <Policies>
@@ -33,8 +35,8 @@
             <DefaultRolloverStrategy max="5" />
         </RollingFile>
         <RollingFile name="FileAllJira"
-                     fileName="${sys:logs_path}/jira.log"
-                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz">
+                     fileName="${sys:LOG_PATH}/jira.log"
+                     filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz">
             <PatternLayout pattern="${log_pattern}"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -44,8 +46,8 @@
             <DefaultRolloverStrategy max="5" />
         </RollingFile>
         <RollingFile name="FileAllDb"
-                     fileName="${sys:logs_path}/db.log"
-                     filePattern="${sys:logs_path_archive}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz">
+                     fileName="${sys:LOG_PATH}/db.log"
+                     filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz">
             <PatternLayout pattern="${log_pattern}"/>
             <Policies>
                 <OnStartupTriggeringPolicy />

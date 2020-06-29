@@ -240,7 +240,8 @@ class AccountSettingsOauthWidget : Fragment() {
         } else {
             viewContainerLogs.show()
             viewContainerSetup.hide()
-            logTailer.tail(File("${appConfig.basePath()}logs/jira.log"))
+            val logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}jira.log")
+            logTailer.tail(logFile)
         }
     }
 

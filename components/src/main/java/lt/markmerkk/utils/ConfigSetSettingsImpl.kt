@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import lt.markmerkk.ConfigPathProvider
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.util.*
 
 class ConfigSetSettingsImpl(
@@ -35,10 +36,8 @@ class ConfigSetSettingsImpl(
     }
 
     override fun propertyPath(): String {
-        val rootPath = configPathProvider.absolutePathWithMissingFolderCreate(
-                configPathProvider.userHome() + "/.${configPathProvider.configDefault()}/"
-        )
-        return rootPath + PROPERTIES_PATH
+        return File(configPathProvider.fullAppDir(), "${File.separator}${PROPERTIES_PATH}")
+                .absolutePath
     }
 
     override fun onLoad(properties: Properties) {

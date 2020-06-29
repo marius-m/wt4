@@ -1,6 +1,14 @@
 package lt.markmerkk
 
 object Const {
+    // System variable keyts
+    const val KEY_SYS_WT_ROOT = "WT_ROOT"
+    const val KEY_SYS_WT_APP_PATH = "WT_APP_PATH"
+
+    // Default system variables
+    const val DEFAULT_SYS_WT_ROOT = "user.home"
+    const val DEFAULT_SYS_WT_APP_PATH = "wt4_debug"
+
     const val NO_ID = 0L
     const val TRUE = 1
     const val FALSE = 0

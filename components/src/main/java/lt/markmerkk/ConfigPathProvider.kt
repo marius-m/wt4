@@ -1,5 +1,7 @@
 package lt.markmerkk
 
+import java.io.File
+
 interface ConfigPathProvider {
     /**
      * Path for user home directory
@@ -12,10 +14,8 @@ interface ConfigPathProvider {
     fun configDefault(): String
 
     /**
-     * Runs a run the path on the file system
-     * and creates missing folders
+     * Full app path
      */
-    @Throws(IllegalStateException::class)
-    fun absolutePathWithMissingFolderCreate(path: String): String
+    fun fullAppDir(): File
 
 }
