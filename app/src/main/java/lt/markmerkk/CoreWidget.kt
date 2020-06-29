@@ -1,7 +1,6 @@
 package lt.markmerkk
 
 import javafx.scene.Parent
-import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.interactors.KeepAliveGASession
 import lt.markmerkk.interactors.KeepAliveGASessionImpl
 import lt.markmerkk.interactors.SyncInteractor
@@ -40,7 +39,7 @@ class CoreWidget : View() {
     fun attachMain() {
         // Init variables
         Main.component().inject(this)
-        l.info("Launching ${appConfig.initAndPrintPaths()}")
+        l.info("Launching ${appConfig.printPaths()}")
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
         title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
 

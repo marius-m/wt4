@@ -22,6 +22,12 @@ data class Config(
 
     val cfgPath: String = configInCache
 
+    init {
+        basePath()
+        profilePath()
+        tmpPath()
+    }
+
     fun basePath(): File {
         return cpp.fullAppDir()
     }
@@ -47,8 +53,7 @@ data class Config(
         return tmpDir
     }
 
-    fun initAndPrintPaths(): String {
-        val initTmpPath = tmpPath()
+    fun printPaths(): String {
         return StringBuilder("Config: ")
                 .append("DEBUG=$debug; ")
                 .append("versionName=$versionName; ")
@@ -58,7 +63,7 @@ data class Config(
                 .append("wtAppPath='${cpp.configDefault()}'; ")
                 .append("basePath='${basePath()}'; ")
                 .append("profilePath='${profilePath()}'; ")
-                .append("tmpPath='${initTmpPath}'; ")
+                .append("tmpPath='${tmpPath()}'; ")
                 .toString()
     }
 
