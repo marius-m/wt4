@@ -1,6 +1,6 @@
 # Changelog
 
-Current: 1.7.9
+Current: 1.7.7
 
 ## 1.7.9
 - Workaround: Experimental system wide build for Windows (Problem with file path encoding)
