@@ -18,15 +18,14 @@ object JBundleExtraPropsFactory {
 
     object Debug {
         fun asBasic(
-                project: Project,
-                systemWide: Boolean
+                project: Project
         ): JBundleExtraProps {
             val versionProps = VersionProps.fromProps(project)
             return JBundleExtraProps(
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
-                    systemWide = systemWide,
+                    systemWide = false,
                     jvmProps = defaultJvmProps.plus(
                             listOf("-DWT_APP_PATH=wt4_debug")
                     ),
@@ -40,8 +39,7 @@ object JBundleExtraPropsFactory {
 
         // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
         fun asOauthITO(
-                project: Project,
-                systemWide: Boolean
+                project: Project
         ): JBundleExtraProps {
             val versionProps = VersionProps.fromProps(project)
             val keysProperties = Properties().apply {
@@ -52,7 +50,7 @@ object JBundleExtraPropsFactory {
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
-                    systemWide = systemWide,
+                    systemWide = false,
                     jvmProps = defaultJvmProps.plus(
                             listOf("-DWT_APP_PATH=wt4_debug")
                     ),
@@ -67,7 +65,7 @@ object JBundleExtraPropsFactory {
 
     object Release {
 
-        fun asBasic(
+        private fun asBasic(
                 project: Project,
                 systemWide: Boolean
         ): JBundleExtraProps {
@@ -92,8 +90,26 @@ object JBundleExtraPropsFactory {
             )
         }
 
+        fun asBasicMac(
+                project: Project
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.MAC) {
+                throw IllegalArgumentException("Bundle designed for MACOSX *ONLY*")
+            }
+            return asBasic(project, systemWide = true)
+        }
+
+        fun asBasicWin(
+                project: Project
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.WINDOWS) {
+                throw IllegalArgumentException("Bundle designed for Windows *ONLY*")
+            }
+            return asBasic(project, systemWide = false)
+        }
+
         // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
-        fun asOauthITO(
+        private fun asOauthITO(
                 project: Project,
                 systemWide: Boolean
         ): JBundleExtraProps {
@@ -122,12 +138,30 @@ object JBundleExtraPropsFactory {
             )
         }
 
+        fun asOauthITOMac(
+                project: Project
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.MAC) {
+                throw IllegalArgumentException("Bundle designed for MACOSX *ONLY*")
+            }
+            return asOauthITO(project, systemWide = true)
+        }
+
+        fun asOauthITOWin(
+                project: Project
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.WINDOWS) {
+                throw IllegalArgumentException("Bundle designed for Windows *ONLY*")
+            }
+            return asOauthITO(project, systemWide = false)
+        }
+
         // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
         fun asOauthITOCustomSystemWideWindows(
                 project: Project
         ): JBundleExtraProps {
             if (OsType.get() != OsType.WINDOWS) {
-                throw IllegalArgumentException("Cannot build 'CustomSystemWide' build NOT on WINDOWS system")
+                throw IllegalArgumentException("Bundle designed for Windows *ONLY*")
             }
             val versionProps = VersionProps.fromProps(project)
             val deployProps = Properties().apply {
