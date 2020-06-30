@@ -16,8 +16,8 @@ Dedicated worklog management for JIRA
 
 Builds for `1.7.7` (Latest stable)
 
-* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.9-basic.dmg)
-* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.9-basic.exe)
+* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.dmg)
+* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.exe)
 * [Build Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.7.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
