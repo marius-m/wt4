@@ -16,8 +16,8 @@ Dedicated worklog management for JIRA
 
 Builds for `1.7.7` (Latest stable)
 
-* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.dmg)
-* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.exe)
+* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.9-basic.dmg)
+* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.9-basic.exe)
 * [Build Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.7.deb)
 
 - Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
@@ -27,10 +27,11 @@ Builds for `1.7.7` (Latest stable)
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.7.7` (Latest stable)
+Builds for `1.7.9` (Latest stable)
 
-* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.7.dmg)
-* [iTo Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.7.exe)
+* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.9-ito.dmg)
+* [iTo Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.9-ito.exe)
+* [iTo Build for Windows - System wide](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.9-ito-sw.exe)
 * Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
