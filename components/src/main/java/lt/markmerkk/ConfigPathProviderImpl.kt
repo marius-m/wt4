@@ -1,35 +1,36 @@
 package lt.markmerkk
 
-import lt.markmerkk.utils.ConfigSetSettings
 import java.io.File
 import java.io.IOException
 
-/**
- * @author mariusmerkevicius
- * @since 2016-11-07
- */
 class ConfigPathProviderImpl(
         private val debug: Boolean
 ) : ConfigPathProvider {
 
     override fun configDefault(): String {
-        return if (debug) {
-            "wt4_debug"
+        val wtAppPath = System.getProperty(Const.KEY_SYS_WT_APP_PATH)
+        return if (!wtAppPath.isNullOrEmpty()) {
+            wtAppPath
         } else {
-            "wt4"
+            Const.DEFAULT_SYS_WT_APP_PATH
         }
     }
 
-    override fun userHome(): String = System.getProperty("user.home")
-
-    override fun absolutePathWithMissingFolderCreate(path: String): String {
-        try {
-            val file = File(path)
-            file.mkdirs()
-            return file.absolutePath + "/"
-        } catch (e: IOException) {
-            throw IllegalStateException("Error initializing config")
+    override fun userHome(): String {
+        val wtRoot = System.getProperty(Const.KEY_SYS_WT_ROOT)
+        return if (!wtRoot.isNullOrEmpty()) {
+            wtRoot
+        } else {
+            System.getProperty(Const.DEFAULT_SYS_WT_ROOT)
         }
+    }
+
+    override fun fullAppDir(): File {
+        val appDir = File("${userHome()}${File.separator}.${configDefault()}")
+        if (!appDir.exists()) {
+            appDir.mkdirs()
+        }
+        return appDir
     }
 
 }

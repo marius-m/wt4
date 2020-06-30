@@ -18,6 +18,8 @@ class DBConnProvider(
         private val databasePath: String
 ) {
 
+    private val dbFilePath = "$databasePath${File.separator}$databaseName"
+    private val dbFile = File(dbFilePath)
     private val sqliteDataSource = SQLiteDataSource()
     private val configuration = DefaultConfiguration()
             .set(SQLDialect.SQLITE)
@@ -25,11 +27,12 @@ class DBConnProvider(
             .set(connect())
     val dsl: DSLContext = DSL.using(configuration)
 
-    fun exist(): Boolean = File("$databasePath$databaseName").exists()
+    fun exist(): Boolean = dbFile.exists()
 
     fun connect(): Connection {
         Class.forName("org.sqlite.JDBC")
-        return DriverManager.getConnection("jdbc:sqlite:$databasePath$databaseName")
+        val jdbcPath = "jdbc:sqlite:${dbFilePath}"
+        return DriverManager.getConnection(jdbcPath)
     }
 
     companion object {

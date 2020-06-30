@@ -90,7 +90,7 @@ class AppModule(
                 versionName = BuildConfig.versionName,
                 versionCode = BuildConfig.versionCode,
                 gaKey = BuildConfig.gaKey,
-                configPathProvider = configPathProvider,
+                cpp = configPathProvider,
                 configSetSettings = configSetSettings
         )
         return config

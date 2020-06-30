@@ -10,6 +10,7 @@ import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.main.MainWidget
+import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
@@ -38,6 +39,7 @@ class CoreWidget : View() {
     fun attachMain() {
         // Init variables
         Main.component().inject(this)
+        l.info("Launching ${appConfig.printPaths()}")
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
         title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
 
@@ -84,6 +86,10 @@ class CoreWidget : View() {
         viewActive
                 .replaceWith(newSidePanel)
         viewActive = newSidePanel
+    }
+
+    companion object {
+        private val l = LoggerFactory.getLogger(CoreWidget::class.java)!!
     }
 
 }

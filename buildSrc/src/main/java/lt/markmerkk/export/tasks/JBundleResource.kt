@@ -13,6 +13,7 @@ data class JBundleResource(
         val mainJarFilePath: String,
         val mainClassName: String,
         val mainIconFilePath: String,
+        val systemWide: Boolean,
         private val jdkHomePath: String,
         private val jreHomePath: String,
         val jvmOptions: List<String>
@@ -24,7 +25,7 @@ data class JBundleResource(
         OsType.UNKNOWN -> throw IllegalStateException("Cannot build on unrecognized system")
         OsType.MAC -> File(mainIconFile.parent, "/mac/${appIconName}.icns")
         OsType.LINUX -> File(mainIconFile.parent, "/${appIconName}.png")
-        OsType.WINDOWS -> File(mainIconFile.parent, "/windows/${appIconName}.ico")
+        OsType.WINDOWS -> File(mainIconFile.parent, "/win/${appIconName}.ico")
     }
     val mainJar = File(mainJarFilePath)
     val jarName = mainJar.nameWithoutExtension
@@ -65,8 +66,7 @@ data class JBundleResource(
        val jvmOptionsDefault: List<String> = listOf(
                "-Xms128m",
                "-Xmx300m",
-               "-XX:+UseG1GC",
-               "-Dlog4j.configurationFile=prod_log4j2.xml" // todo move this to
+               "-XX:+UseG1GC"
        )
     }
 

@@ -1,5 +1,7 @@
 import lt.markmerkk.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import lt.markmerkk.exportextra.VersionProps
+import lt.markmerkk.exportextra.JBundleExtraPropsFactory
 
 plugins {
     id("application")
@@ -11,14 +13,12 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-val versionName: String by project
-val versionCode: String by project
-val debug: Boolean by project
-val gaKey: String by project
-val oauth: Boolean by project
-val oauthKeyConsumer: String by project
-val oauthKeyPrivate: String by project
-val oauthHost: String by project
+val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasicSystemWide(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasic(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITO(project, systemWide = false)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(project)
 
 sourceSets {
     main {
@@ -32,7 +32,6 @@ sourceSets {
         }
     }
 }
-
 
 dependencies {
 //    implementation(fileTree("libs", include: ["*.jar"]))
@@ -83,38 +82,40 @@ dependencies {
 project.extensions.getByType(JavaApplication::class.java).apply {
     mainClassName = "lt.markmerkk.MainAsJava"
     group = "lt.markmerkk"
-    setVersion(versionName)
-    val logConfig = if (debug) "debug_log4j2.xml" else "prod_log4j2.xml"
+    setVersion(jBundleProps.versionName)
     applicationDefaultJvmArgs = listOf(
-            "-Dlog4j.configurationFile=$logConfig",
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC"
+//            "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+//            "-DWT_APP_PATH=wt4_debug"
     )
 }
 
 buildConfig {
     appName = "WT4"
-    version = versionName
+    version = jBundleProps.versionName
     packageName = "lt.markmerkk"
 
-    buildConfigField("String", "versionName", versionName)
-    buildConfigField("int", "versionCode", versionCode)
-    buildConfigField("boolean", "debug", debug.toString())
-    buildConfigField("String", "gaKey", gaKey)
-    buildConfigField("boolean", "oauth", oauth.toString())
-    buildConfigField("String", "oauthKeyConsumer", oauthKeyConsumer)
-    buildConfigField("String", "oauthKeyPrivate", oauthKeyPrivate)
-    buildConfigField("String", "oauthHost", oauthHost)
+    buildConfigField("String", "versionName", jBundleProps.versionName)
+    buildConfigField("int", "versionCode", jBundleProps.versionCode.toString())
+    buildConfigField("boolean", "debug", jBundleProps.debug.toString())
+    buildConfigField("String", "gaKey", jBundleProps.gaKey)
+    buildConfigField("boolean", "oauth", jBundleProps.oauth.toString())
+    buildConfigField("String", "oauthKeyConsumer", jBundleProps.oauthKeyConsumer)
+    buildConfigField("String", "oauthKeyPrivate", jBundleProps.oauthKeyPrivate)
+    buildConfigField("String", "oauthHost", jBundleProps.oauthHost)
 
     charset = Charsets.UTF_8.toString()
 }
 
 extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).apply {
     appName = "WT4"
-    version = versionName
+    version = jBundleProps.versionName
     mainClassName = "lt.markmerkk.MainAsJava"
-    mainJarFilePath = File(buildDir, "/libs/app-${versionName}.jar").absolutePath
+    mainJarFilePath = File(buildDir, "/libs/app-${jBundleProps.versionName}.jar").absolutePath
+    systemWide = jBundleProps.systemWide
+    jvmProps = jBundleProps.jvmProps
 
     mainIconFilePath = File(projectDir, "icons/App1024.png").absolutePath
     scriptsDirPath = File(projectDir, "scripts").absolutePath

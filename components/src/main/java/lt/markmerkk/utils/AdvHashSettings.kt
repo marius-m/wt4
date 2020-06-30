@@ -2,6 +2,7 @@ package lt.markmerkk.utils
 
 import com.sun.org.apache.xpath.internal.operations.Bool
 import lt.markmerkk.Config
+import java.io.File
 import java.util.*
 
 /**
@@ -48,8 +49,8 @@ class AdvHashSettings(
     }
 
     override fun propertyPath(): String {
-        val configPath = config.cfgPath + PROPERTIES_PATH
-        return configPath
+        return File(config.cfgPath, "${File.separator}${PROPERTIES_PATH}")
+                .absolutePath
     }
 
     override fun onLoad(properties: Properties) {

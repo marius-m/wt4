@@ -8,7 +8,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class JBundle: Plugin<Project> {
+class JBundlePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         val extension: JBundleExtension = project.extensions.create(
@@ -24,9 +24,11 @@ class JBundle: Plugin<Project> {
             init(
                     appName = extension.appName,
                     versionName = extension.version,
+                    systemWide = extension.systemWide,
                     mainJarFilePath = extension.mainJarFilePath,
                     mainClassName = extension.mainClassName,
-                    mainIconFilePath = extension.mainIconFilePath
+                    mainIconFilePath = extension.mainIconFilePath,
+                    jvmProps = extension.jvmProps
             )
             doFirst {
                 debugPrint()
