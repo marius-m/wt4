@@ -1,6 +1,9 @@
 # Changelog
 
-Current: 1.7.7
+Current: 1.7.9
+
+## 1.7.9
+- Workaround: Experimental system wide build for Windows (Problem with file path encoding)
 
 ## 1.7.8
 - Fix: Sync other user logs when changing experimental profiles
