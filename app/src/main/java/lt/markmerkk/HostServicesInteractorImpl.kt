@@ -1,11 +1,9 @@
 package lt.markmerkk
 
-import com.sun.javafx.application.HostServicesDelegate
 import javafx.application.Application
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import lt.markmerkk.mvp.HostServicesInteractor
-import lt.markmerkk.widgets.main.MainWidget
 import org.slf4j.LoggerFactory
 import java.awt.Desktop
 import java.io.IOException

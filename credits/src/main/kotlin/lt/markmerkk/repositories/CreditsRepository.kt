@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import rx.Single
-import sun.misc.Launcher
 import java.io.File
 import java.io.IOException
 import java.net.URISyntaxException
@@ -40,7 +39,7 @@ class CreditsRepository {
 
     private fun readFromLocalResource(): Single<List<Credit>> {
         return Single.defer<List<Credit>> {
-            val url = Launcher::class.java.getResource("/$creditPath")
+            val url = CreditsRepository::class.java.getResource("/$creditPath")
             if (url == null) Single.error<List<Credit>>(IllegalStateException("Cannot figure URL"))
             try {
                 val credits = File(url.toURI()).listFiles()

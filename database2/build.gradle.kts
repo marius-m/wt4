@@ -23,6 +23,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
+    implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.kotlinTest}")

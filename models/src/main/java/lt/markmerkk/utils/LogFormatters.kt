@@ -1,14 +1,9 @@
 package lt.markmerkk.utils
 
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.ISOPeriodFormat
-import jdk.jfr.internal.handlers.EventHandler.duration
 import lt.markmerkk.entities.Log
 import org.joda.time.*
 import org.joda.time.format.PeriodFormatterBuilder
-import org.joda.time.format.PeriodFormatter
-
-
 
 object LogFormatters {
     const val TIME_SHORT_FORMAT = "HH:mm"

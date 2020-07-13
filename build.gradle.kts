@@ -21,5 +21,11 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
     }
 }

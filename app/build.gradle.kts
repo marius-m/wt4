@@ -46,10 +46,10 @@ dependencies {
     implementation(project(":mock-factory"))
     implementation(project(":credits"))
 
-    implementation("no.tornado:tornadofx:1.7.19")
+    implementation("no.tornado:tornadofx:2.0.0-SNAPSHOT")
     implementation("com.brsanthu:google-analytics-java:1.1.2")
     implementation("com.google.guava:guava:21.0")
-    implementation("com.jfoenix:jfoenix:8.0.8")
+    implementation("com.jfoenix:jfoenix:9.0.10")
     implementation("io.reactivex:rxjavafx:1.1.0")
     implementation("io.reactivex:rxjava:${lt.markmerkk.Versions.rxJava}")
     implementation("io.reactivex:rxjava-async-util:${lt.markmerkk.Versions.rxJavaAsync}")
@@ -63,6 +63,7 @@ dependencies {
     implementation("commons-io:commons-io:2.6")
     implementation("com.vdurmont:emoji-java:5.1.1")
     implementation("org.controlsfx:controlsfx:8.40.16")
+    implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
 
     implementation("com.google.dagger:dagger:${Versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${Versions.dagger}")
