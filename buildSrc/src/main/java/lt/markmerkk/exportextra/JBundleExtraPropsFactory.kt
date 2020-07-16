@@ -12,8 +12,9 @@ object JBundleExtraPropsFactory {
 
     private val defaultJvmProps = listOf(
             "-Xms128m",
-            "-Xmx300m",
-            "-XX:+UseG1GC"
+            "-Xmx500m",
+            "-XX:+UseG1GC",
+            "-splash:\$APPDIR/resources/splash.png"
     )
 
     object Debug {

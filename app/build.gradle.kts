@@ -13,12 +13,12 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
 //val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(project)
+val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(project)
 
 sourceSets {
@@ -119,8 +119,8 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
     systemWide = jBundleProps.systemWide
     jvmProps = jBundleProps.jvmProps
 
-    mainIconFilePath = File(projectDir, "icons/App1024.png").absolutePath
-    scriptsDirPath = File(projectDir, "scripts").absolutePath
+    mainIconFilePath = File(projectDir, "package/icons/App1024.png").absolutePath
+    scriptsDirPath = File(projectDir, "package/scripts").absolutePath
 }
 
 tasks.withType<KotlinCompile> {
