@@ -62,7 +62,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.6.1")
     implementation("commons-io:commons-io:2.6")
     implementation("com.vdurmont:emoji-java:5.1.1")
-    implementation("org.controlsfx:controlsfx:8.40.16")
+    implementation("org.controlsfx:controlsfx:11.0.2")
     implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
 
     implementation("com.google.dagger:dagger:${Versions.dagger}")
