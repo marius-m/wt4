@@ -1,10 +1,7 @@
 package lt.markmerkk.widgets.edit
 
 import com.google.common.eventbus.Subscribe
-import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXDatePicker
-import com.jfoenix.controls.JFXTextField
-import com.jfoenix.controls.JFXTimePicker
+import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
 import com.vdurmont.emoji.EmojiParser
 import javafx.application.Platform
@@ -28,6 +25,7 @@ import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
+import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler2
 import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
 import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.AccountAvailablility
@@ -64,11 +62,13 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXDatePicker
-    private lateinit var viewTimePickerFrom: JFXTimePicker
+//    private lateinit var viewTimePickerFrom: JFXTimePicker
+    private lateinit var viewTimeComboPickerFrom: JFXComboBox<String>
     private lateinit var viewButtonSubtractFrom: JFXButton
     private lateinit var viewButtonAppendFrom: JFXButton
     private lateinit var viewDatePickerTo: JFXDatePicker
-    private lateinit var viewTimePickerTo: JFXTimePicker
+//    private lateinit var viewTimePickerTo: JFXTimePicker
+    private lateinit var viewTimeComboPickerTo: JFXComboBox<String>
     private lateinit var viewButtonSubtractTo: JFXButton
     private lateinit var viewButtonAppendTo: JFXButton
     private lateinit var viewTextFieldTicket: JFXTextField
@@ -82,13 +82,16 @@ class LogDetailsSideDrawerWidget : Fragment(),
     private lateinit var viewLabelHint2: Label
     private lateinit var viewTableRecent: TableView<RecentTicketViewModel>
 
-    private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
-    private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
+//    private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
+//    private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
+    private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler2
     private lateinit var presenter: LogDetailsContract.Presenter
     private lateinit var ticketInfoLoader: TicketInfoLoader
     private lateinit var jiraLinkGenerator: JiraLinkGenerator
 
     private val recentTicketViewModels = mutableListOf<RecentTicketViewModel>().asObservable()
+    private val timeSelectFrom = mutableListOf<String>().asObservable()
+    private val timeSelectTo = mutableListOf<String>().asObservable()
 
     init {
         Main.component().inject(this)
@@ -150,21 +153,29 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     }
                     hbox(spacing = 4) {
                         viewDatePickerFrom = jfxDatePicker {
-                            maxWidth = 110.0
+                            maxWidth = 120.0
                             isFocusTraversable = false
                             isOverLay = true
                             defaultColor = Styles.cActiveRed
                         }
-                        viewTimePickerFrom = jfxTimePicker {
-                            maxWidth = 74.0
-                            isFocusTraversable = false
-                            isOverLay = true
-                            defaultColor = Styles.cActiveRed
-                        }
-                        viewButtonSubtractFrom = jfxButton("-") {
+                        jfxButton() {
+                            graphic = graphics.from(Glyph.ARROW_FAST_REWIND, Color.BLACK, 12.0, 10.0)
                             isFocusTraversable = false
                         }
-                        viewButtonAppendFrom = jfxButton("+") {
+                        viewButtonSubtractFrom = jfxButton {
+                            graphic = graphics.from(Glyph.ARROW_REWIND, Color.BLACK, 10.0)
+                            isFocusTraversable = false
+                        }
+                        viewTimeComboPickerFrom = jfxCombobox {
+                            maxWidth = 100.0
+                            isFocusTraversable = false
+                        }
+                        viewButtonAppendFrom = jfxButton {
+                            graphic = graphics.from(Glyph.ARROW_FORWARD, Color.BLACK, 10.0)
+                            isFocusTraversable = false
+                        }
+                        jfxButton() {
+                            graphic = graphics.from(Glyph.ARROW_FAST_FORWARD, Color.BLACK, 12.0, 10.0)
                             isFocusTraversable = false
                         }
                     }
@@ -181,16 +192,14 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     }
                     hbox(spacing = 4) {
                         viewDatePickerTo = jfxDatePicker {
-                            maxWidth = 110.0
+                            maxWidth = 120.0
                             isFocusTraversable = false
                             isOverLay = true
                             defaultColor = Styles.cActiveRed
                         }
-                        viewTimePickerTo = jfxTimePicker {
-                            maxWidth = 74.0
+                        viewTimeComboPickerTo = jfxCombobox {
+                            maxWidth = 100.0
                             isFocusTraversable = false
-                            isOverLay = true
-                            defaultColor = Styles.cActiveRed
                         }
                         viewButtonSubtractTo = jfxButton("-") {
                             isFocusTraversable = false
@@ -309,12 +318,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     addClass(Styles.dialogContainerActionsButtons)
                     viewButtonSave = jfxButton("Save".toUpperCase()) {
                         setOnAction {
-                            presenter.save(
-                                    start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-                                    end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-                                    task = viewTextFieldTicket.text,
-                                    comment = viewTextComment.textArea.text
-                            )
+//                            presenter.save(
+//                                    start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+//                                    end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+//                                    task = viewTextFieldTicket.text,
+//                                    comment = viewTextComment.textArea.text
+//                            )
                         }
                     }
                     viewButtonClose = jfxButton("Close".toUpperCase()) {
@@ -389,29 +398,29 @@ class LogDetailsSideDrawerWidget : Fragment(),
             )
         }
         viewTextTicketDesc.text = ""
-        uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
-                viewButtonSubtractFrom,
-                viewButtonSubtractTo,
-                viewButtonAppendFrom,
-                viewButtonAppendTo,
-                viewDatePickerFrom,
-                viewTimePickerFrom,
-                viewDatePickerTo,
-                viewTimePickerTo,
-                object : UIBridgeTimeQuickEdit.DateTimeUpdater {
-                    override fun updateDateTime(start: DateTime, end: DateTime) {
-                        presenter.changeDateTime(start, end)
-                    }
-                },
-                timeProvider
-        )
-        uiBridgeDateTimeHandler = UIBridgeDateTimeHandler(
+//        uiBridgeTimeQuickEdit = UIBridgeTimeQuickEdit(
+//                viewButtonSubtractFrom,
+//                viewButtonSubtractTo,
+//                viewButtonAppendFrom,
+//                viewButtonAppendTo,
+//                viewDatePickerFrom,
+//                viewTimePickerFrom,
+//                viewDatePickerTo,
+//                viewTimePickerTo,
+//                object : UIBridgeTimeQuickEdit.DateTimeUpdater {
+//                    override fun updateDateTime(start: DateTime, end: DateTime) {
+//                        presenter.changeDateTime(start, end)
+//                    }
+//                },
+//                timeProvider
+//        )
+        uiBridgeDateTimeHandler = UIBridgeDateTimeHandler2(
                 jfxDateFrom = viewDatePickerFrom,
-                jfxTimeFrom = viewTimePickerFrom,
+                jfxTimeFrom = viewTimeComboPickerFrom,
                 jfxDateTo = viewDatePickerTo,
-                jfxTimeTo = viewTimePickerTo,
+                jfxTimeTo = viewTimeComboPickerTo,
                 timeProvider = timeProvider,
-                dateTimeUpdater = object : UIBridgeDateTimeHandler.DateTimeUpdater {
+                dateTimeUpdater = object : UIBridgeDateTimeHandler2.DateTimeUpdater {
                     override fun updateDateTime(start: DateTime, end: DateTime) {
                         presenter.changeDateTime(start, end)
                     }
@@ -500,14 +509,14 @@ class LogDetailsSideDrawerWidget : Fragment(),
         }
         if (enableDateTimeChange) {
             viewDatePickerFrom.isDisable = false
-            viewTimePickerFrom.isDisable = false
+            viewTimeComboPickerFrom.isDisable = false
             viewDatePickerTo.isDisable = false
-            viewTimePickerTo.isDisable = false
+            viewTimeComboPickerTo.isDisable = false
         } else {
             viewDatePickerFrom.isDisable = true
-            viewTimePickerFrom.isDisable = true
+            viewTimeComboPickerFrom.isDisable = true
             viewDatePickerTo.isDisable = true
-            viewTimePickerTo.isDisable = true
+            viewTimeComboPickerTo.isDisable = true
         }
         ticketInfoLoader.findTicket(initTicket)
     }
@@ -527,12 +536,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     @Subscribe
     fun eventSave(event: EventLogDetailsSave) {
-        presenter.save(
-                start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-                end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-                task = viewTextFieldTicket.text,
-                comment = viewTextComment.textArea.text
-        )
+//        presenter.save(
+//                start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+//                end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+//                task = viewTextFieldTicket.text,
+//                comment = viewTextComment.textArea.text
+//        )
     }
 
     //endregion
@@ -561,14 +570,14 @@ class LogDetailsSideDrawerWidget : Fragment(),
         viewTextFieldTicket.isEditable = true
         viewTextComment.textArea.isEditable = true
         uiBridgeDateTimeHandler.enable()
-        uiBridgeTimeQuickEdit.enable()
+//        uiBridgeTimeQuickEdit.enable()
     }
 
     override fun disableInput() {
         viewTextFieldTicket.isEditable = false
         viewTextComment.textArea.isEditable = false
         uiBridgeDateTimeHandler.disable()
-        uiBridgeTimeQuickEdit.disable()
+//        uiBridgeTimeQuickEdit.disable()
     }
 
     override fun enableSaving() {
