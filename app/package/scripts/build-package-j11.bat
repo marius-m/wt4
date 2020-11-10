@@ -8,16 +8,24 @@ set APP_VENDOR=%6
 set APP_MAIN_JAR=%7
 set APP_MAIN_CLASS=%8
 set IMAGE_TYPE=%9
-set BUILD_DIR=%10
-set INPUT=%11
-set OUTPUT=%12
-set APP_ICON=%13
-set JVM_ARGS=%14
 
-call "%J11_HOME%\bin\jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
+REM https://stackoverflow.com/questions/8328338/how-do-you-utilize-more-than-9-arguments-when-calling-a-label-in-a-cmd-batch-scr%
+REM Shift arguments after 9
+shift
+set BUILD_DIR=%9
+shift
+set INPUT=%9
+shift
+set OUTPUT=%9
+shift
+set APP_ICON=%9
+shift
+set JVM_ARGS=%9
+
+call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
 REM call "%J11_HOME%\bin\jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.sql,java.logging,jdk.unsupported,java.xml,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.swing --output %BUILD_DIR%\java-runtime
 
-call "%J14_HOME%\bin\jpackage" ^
+call %J14_HOME%\bin\jpackage.exe ^
   --app-version %APP_VERSION% ^
   --name %APP_NAME% ^
   --description %APP_DESCRIPTION% ^
@@ -29,7 +37,7 @@ call "%J14_HOME%\bin\jpackage" ^
   --dest %OUTPUT% ^
   --java-options "%JVM_ARGS%" ^
   --icon %APP_ICON% ^
-  --runtime-image "%BUILD_DIR%/java-runtime" ^
+  --runtime-image %BUILD_DIR%\java-runtime ^
   --win-shortcut --win-menu ^
   --verbose
 
