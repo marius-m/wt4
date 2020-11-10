@@ -37,7 +37,7 @@ call %J14_HOME%\bin\jpackage.exe ^
   --type %IMAGE_TYPE% ^
   --input %INPUT% ^
   --dest %OUTPUT% ^
-  --java-options "%JVM_ARGS%" ^
+  --java-options %JVM_ARGS% ^
   --icon %APP_ICON% ^
   --runtime-image %BUILD_DIR%\java-runtime ^
   --win-shortcut --win-menu ^
