@@ -40,10 +40,8 @@ class JBundlerScriptJ11Win(
                 appIcon = bundleResource.appIcon.absolutePath,
                 jvmArgs = bundleResource.jvmOptions.joinToString(" ")
         )
-        return listOf(
-                "sh",
-                scriptDir.absolutePath
-        ).plus(scriptArgs.components)
+        return listOf("cmd", "/C", scriptDir.absolutePath)
+                .plus(scriptArgs.components)
     }
 
     override fun bundle(): String = throw UnsupportedOperationException()
