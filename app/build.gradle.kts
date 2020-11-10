@@ -13,12 +13,12 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
 //val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(project)
+val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(project)
 
 sourceSets {
@@ -62,7 +62,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.6.1")
     implementation("commons-io:commons-io:2.6")
     implementation("com.vdurmont:emoji-java:5.1.1")
-    implementation("org.controlsfx:controlsfx:8.40.16")
+    implementation("org.controlsfx:controlsfx:11.0.2")
     implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
 
     implementation("com.google.dagger:dagger:${Versions.dagger}")
@@ -119,8 +119,8 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
     systemWide = jBundleProps.systemWide
     jvmProps = jBundleProps.jvmProps
 
-    mainIconFilePath = File(projectDir, "icons/App1024.png").absolutePath
-    scriptsDirPath = File(projectDir, "scripts").absolutePath
+    mainIconFilePath = File(projectDir, "package/icons/App1024.png").absolutePath
+    scriptsDirPath = File(projectDir, "package/scripts").absolutePath
 }
 
 tasks.withType<KotlinCompile> {

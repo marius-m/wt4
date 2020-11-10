@@ -7,6 +7,7 @@ import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.ui_2.StageProperties
 import org.slf4j.LoggerFactory
 import tornadofx.*
+import java.awt.SplashScreen
 
 class Main : App(CoreWidget::class, Styles::class) {
 
@@ -21,6 +22,7 @@ class Main : App(CoreWidget::class, Styles::class) {
         stage.minHeight = SCENE_HEIGHT.toDouble()
         stage.title
         find<CoreWidget>().attachMain()
+        SplashScreen.getSplashScreen()?.close()
     }
 
     override fun stop() {

@@ -21,12 +21,10 @@ class AdvHashSettingsGetLongTest {
         MockitoAnnotations.initMocks(this)
         doNothing().whenever(configSetSettings).load()
         doNothing().whenever(configSetSettings).save()
-        doReturn("/").whenever(configPathProvider)
-                .absolutePathWithMissingFolderCreate(any())
         doReturn("/").whenever(configSetSettings)
                 .currentConfig()
         config = Config(
-                configPathProvider = configPathProvider,
+                cpp = configPathProvider,
                 configSetSettings = configSetSettings,
                 gaKey = "test"
         )

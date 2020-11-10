@@ -28,11 +28,9 @@ class JBundlePlugin: Plugin<Project> {
                     mainJarFilePath = extension.mainJarFilePath,
                     mainClassName = extension.mainClassName,
                     mainIconFilePath = extension.mainIconFilePath,
-                    jvmProps = extension.jvmProps
+                    jvmProps = extension.jvmProps,
+                    scriptsDirPath = extension.scriptsDirPath
             )
-            doFirst {
-                debugPrint()
-            }
             setDependsOn(listOf(":${project.name}:build"))
         }
         project.tasks.register(
