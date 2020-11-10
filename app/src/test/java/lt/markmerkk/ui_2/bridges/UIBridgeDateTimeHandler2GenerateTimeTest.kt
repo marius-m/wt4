@@ -35,6 +35,46 @@ class UIBridgeDateTimeHandler2GenerateTimeTest {
     }
 
     @Test
+    fun valid_unequalFrom() {
+        // Assemble
+        val timeFrom = LocalTime.of(0, 11)
+        val timeTo = LocalTime.of(2, 30)
+
+        // Act
+        val result = UIBridgeDateTimeHandler2.generateTime(timeFrom, timeTo)
+
+        // Assert
+        assertThat(result).containsExactly(
+                LocalTime.of(0, 11),
+                LocalTime.of(0, 30),
+                LocalTime.of(1, 0),
+                LocalTime.of(1, 30),
+                LocalTime.of(2, 0),
+                LocalTime.of(2, 30)
+        )
+    }
+
+    @Test
+    fun valid_unequalTo() {
+        // Assemble
+        val timeFrom = LocalTime.of(0, 0)
+        val timeTo = LocalTime.of(2, 13)
+
+        // Act
+        val result = UIBridgeDateTimeHandler2.generateTime(timeFrom, timeTo)
+
+        // Assert
+        assertThat(result).containsExactly(
+                LocalTime.of(0, 0),
+                LocalTime.of(0, 30),
+                LocalTime.of(1, 0),
+                LocalTime.of(1, 30),
+                LocalTime.of(2, 0),
+                LocalTime.of(2, 13)
+        )
+    }
+
+    @Test
     fun unEven() {
         // Assemble
         val timeFrom = LocalTime.of(0, 0)
