@@ -6,16 +6,16 @@ import lt.markmerkk.export.tasks.JBundleResource
 import java.lang.UnsupportedOperationException
 
 /**
- * Script executor for Java11, Unix platform
+ * Script executor for Java11, Win platform
  */
-class JBundlerScriptJ11Unix(
+class JBundlerScriptJ11Win(
         private val project: Project,
         private val bundleResource: JBundleResource
 ): JBundlerScriptProvider {
 
-    private val jPackage = File(bundleResource.jdk14HomeDir, "/bin/jpackage")
+    private val jPackage = File(bundleResource.jdk14HomeDir, "${File.separator}bin${File.separator}jpackage")
     private val rootDir = project.rootDir
-    private val scriptDir = File(bundleResource.scriptsDir, "/build-package-j11.sh")
+    private val scriptDir = File(bundleResource.scriptsDir, "${File.separator}build-package-j11.bat")
 
     init {
         assert(jPackage.exists()) {
