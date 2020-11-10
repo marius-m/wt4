@@ -1,3 +1,5 @@
+@echo on
+
 set J11_HOME=%1
 set J14_HOME=%2
 
