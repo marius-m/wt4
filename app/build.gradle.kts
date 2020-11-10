@@ -115,12 +115,12 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
     appName = "WT4"
     version = jBundleProps.versionName
     mainClassName = "lt.markmerkk.MainAsJava"
-    mainJarFilePath = File(buildDir, "/libs/app-${jBundleProps.versionName}.jar").absolutePath
+    mainJarFilePath = File(buildDir, "${File.separator}libs${File.separator}app-${jBundleProps.versionName}.jar").absolutePath
     systemWide = jBundleProps.systemWide
     jvmProps = jBundleProps.jvmProps
 
-    mainIconFilePath = File(projectDir, "package/icons/App1024.png").absolutePath
-    scriptsDirPath = File(projectDir, "package/scripts").absolutePath
+    mainIconFilePath = File(projectDir, "package${File.separator}icons${File.separator}App1024.png").absolutePath
+    scriptsDirPath = File(projectDir, "package${File.separator}scripts").absolutePath
 }
 
 tasks.withType<KotlinCompile> {

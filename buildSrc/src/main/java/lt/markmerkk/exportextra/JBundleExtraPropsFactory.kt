@@ -1,6 +1,5 @@
 package lt.markmerkk.exportextra
 
-import com.google.wireless.android.play.playlog.proto.ClientAnalytics
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream
@@ -14,7 +13,7 @@ object JBundleExtraPropsFactory {
             "-Xms128m",
             "-Xmx300m",
             "-XX:+UseG1GC",
-            "-splash:\$APPDIR/resources/splash.png"
+            "-splash:\$APPDIR${File.separator}resources${File.separator}splash.png"
     )
 
     object Debug {
