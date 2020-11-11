@@ -18,7 +18,7 @@ plugins {
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac("basic", project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin("iTo", project)
 val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac("iTo", project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows("iTo", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows("iToSW", project)
 
 sourceSets {
     main {
