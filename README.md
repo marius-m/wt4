@@ -14,25 +14,25 @@ Dedicated worklog management for JIRA
 
 ## Downloads
 
-Builds for `1.7.7` (Latest stable)
+Builds for `WT4-basic-1.8.0`
 
-* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.dmg)
-* [Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/WT4-1.7.7.exe)
-* [Build Linux Debian](http://738649.s.dedikuoti.lt/public/wt4/wt4-1.7.7.deb)
+* [Build for MacOS](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-basic-1.8.0.dmg)
+* [Build for Windows](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-basic-1.8.0.exe)
+* Build Linux Debian - Raise a ticket if binary is needed
 
-- Archived builds: http://738649.s.dedikuoti.lt/public/wt4/
+- Archived builds: https://github.com/marius-m/wt4/releases
 - Tips how to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-Basic)
 - Having trouble installing ? Tips on how to install on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac) or [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
   
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `1.7.9` (Latest stable)
+Builds for `WT4-iTo-1.8.0`
+*Note: Builds for iTo have 'WT4-iTo' in its app name*
 
-* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.7.dmg)
-* [iTo Build for Windows](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.9-ito.exe)
-* [iTo Build for Windows - System wide](http://738649.s.dedikuoti.lt/public/wt4/ito/WT4-1.7.9-ito-sw.exe)
-* Linux - Sorry, no users for linux at the moment (yeah, i know - sad :( )
+* [iTo Build for MacOS](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-iTo-1.8.0.dmg)
+* [iTo Build for Windows](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-iTo-1.8.0.exe)
+* [iTo Build for Windows - System wide](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-iToSW-1.8.0.exe)
 
 - Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
 - How to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-OAuth)
@@ -41,8 +41,7 @@ Builds for `1.7.9` (Latest stable)
 ## Early-access experimental builds
 There are experimental early access builds for testing. New upcoming things, though might not be too stable, use it at your own risk!
 
-* [Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/eap/WT4-1.7.8.dmg)
-* [iTo Build for MacOS](http://738649.s.dedikuoti.lt/public/wt4/ito/eap/WT4-1.7.8.dmg)
+* No builds as of yet!
 
 ## Issues
 
