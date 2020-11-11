@@ -1,6 +1,7 @@
 package lt.markmerkk.export.tasks
 
 import lt.markmerkk.export.executor.JBundlerScriptJ11Unix
+import lt.markmerkk.export.executor.JBundlerScriptJ11Win
 import lt.markmerkk.export.executor.JBundlerScriptProvider
 import org.gradle.api.tasks.Exec
 import java.io.File
@@ -50,13 +51,10 @@ open class BundleTask: Exec() {
         scriptProvider = when (OsType.get()) {
             OsType.UNKNOWN -> throw IllegalStateException("Unsupported OS type")
             OsType.LINUX, OsType.MAC -> {
-                JBundlerScriptJ11Unix(
-                    project = project,
-                    bundleResource = bundleResource
-                )
+                JBundlerScriptJ11Unix(project, bundleResource)
             }
             OsType.WINDOWS -> {
-                throw UnsupportedOperationException()
+                JBundlerScriptJ11Win(project, bundleResource)
             }
         }
         doFirst {

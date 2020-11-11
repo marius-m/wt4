@@ -1,6 +1,5 @@
 import lt.markmerkk.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import lt.markmerkk.exportextra.VersionProps
 import lt.markmerkk.exportextra.JBundleExtraPropsFactory
 
 plugins {
@@ -13,13 +12,13 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(project)
-val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic("debug", project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO("debug", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin("basic", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac("basic", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin("iTo", project)
+val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac("iTo", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows("iToSW", project)
 
 sourceSets {
     main {
@@ -95,7 +94,7 @@ project.extensions.getByType(JavaApplication::class.java).apply {
 }
 
 buildConfig {
-    appName = "WT4"
+    appName = jBundleProps.appName
     version = jBundleProps.versionName
     packageName = "lt.markmerkk"
 
@@ -112,19 +111,19 @@ buildConfig {
 }
 
 extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).apply {
-    appName = "WT4"
+    appName = jBundleProps.appName
     version = jBundleProps.versionName
     mainClassName = "lt.markmerkk.MainAsJava"
-    mainJarFilePath = File(buildDir, "/libs/app-${jBundleProps.versionName}.jar").absolutePath
+    mainJarFilePath = File(buildDir, "${File.separator}libs${File.separator}app-${jBundleProps.versionName}.jar").absolutePath
     systemWide = jBundleProps.systemWide
     jvmProps = jBundleProps.jvmProps
 
-    mainIconFilePath = File(projectDir, "package/icons/App1024.png").absolutePath
-    scriptsDirPath = File(projectDir, "package/scripts").absolutePath
+    mainIconFilePath = File(projectDir, "package${File.separator}icons${File.separator}App1024.png").absolutePath
+    scriptsDirPath = File(projectDir, "package${File.separator}scripts").absolutePath
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 kapt {

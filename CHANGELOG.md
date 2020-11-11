@@ -1,6 +1,11 @@
 # Changelog
 
-Current: 1.7.7
+Current: 1.8.0
+
+## 1.8.0
+- Major internal change - move from Java8 to Java11
+  - Improves stability, memory control, speed
+  - Separate app by flavor (ex.: 'WT4-basic', 'WT4-iTo') to create less confusion which app to use
 
 ## 1.7.9
 - Workaround: Experimental system wide build for Windows (Problem with file path encoding)

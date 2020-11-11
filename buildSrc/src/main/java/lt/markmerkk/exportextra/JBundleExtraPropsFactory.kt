@@ -1,6 +1,5 @@
 package lt.markmerkk.exportextra
 
-import com.google.wireless.android.play.playlog.proto.ClientAnalytics
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream
@@ -10,19 +9,23 @@ import java.lang.IllegalArgumentException
 
 object JBundleExtraPropsFactory {
 
+    const val APP_NAME = "WT4"
+
     private val defaultJvmProps = listOf(
             "-Xms128m",
             "-Xmx300m",
             "-XX:+UseG1GC",
-            "-splash:\$APPDIR/resources/splash.png"
+            "-splash:\$APPDIR${File.separator}resources${File.separator}splash.png"
     )
 
     object Debug {
         fun asBasic(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             val versionProps = VersionProps.fromProps(project)
             return JBundleExtraProps(
+                    appName = "${APP_NAME}-$versionNameSuffix",
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
@@ -40,6 +43,7 @@ object JBundleExtraPropsFactory {
 
         // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
         fun asOauthITO(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             val versionProps = VersionProps.fromProps(project)
@@ -48,6 +52,7 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
+                    appName = "${APP_NAME}-$versionNameSuffix",
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
@@ -67,6 +72,7 @@ object JBundleExtraPropsFactory {
     object Release {
 
         private fun asBasic(
+                versionNameSuffix: String,
                 project: Project,
                 systemWide: Boolean
         ): JBundleExtraProps {
@@ -76,6 +82,7 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(deployPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
+                    appName = "${APP_NAME}-$versionNameSuffix",
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
@@ -92,25 +99,28 @@ object JBundleExtraPropsFactory {
         }
 
         fun asBasicMac(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             if (OsType.get() != OsType.MAC) {
                 throw IllegalArgumentException("Bundle designed for MACOSX *ONLY*")
             }
-            return asBasic(project, systemWide = true)
+            return asBasic(versionNameSuffix, project, systemWide = true)
         }
 
         fun asBasicWin(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             if (OsType.get() != OsType.WINDOWS) {
                 throw IllegalArgumentException("Bundle designed for Windows *ONLY*")
             }
-            return asBasic(project, systemWide = false)
+            return asBasic(versionNameSuffix, project, systemWide = false)
         }
 
         // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
         private fun asOauthITO(
+                versionNameSuffix: String,
                 project: Project,
                 systemWide: Boolean
         ): JBundleExtraProps {
@@ -124,6 +134,7 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
+                    appName = "${APP_NAME}-$versionNameSuffix",
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
@@ -140,25 +151,28 @@ object JBundleExtraPropsFactory {
         }
 
         fun asOauthITOMac(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             if (OsType.get() != OsType.MAC) {
                 throw IllegalArgumentException("Bundle designed for MACOSX *ONLY*")
             }
-            return asOauthITO(project, systemWide = true)
+            return asOauthITO(versionNameSuffix, project, systemWide = true)
         }
 
         fun asOauthITOWin(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             if (OsType.get() != OsType.WINDOWS) {
                 throw IllegalArgumentException("Bundle designed for Windows *ONLY*")
             }
-            return asOauthITO(project, systemWide = false)
+            return asOauthITO(versionNameSuffix, project, systemWide = false)
         }
 
         // Generate keys: https://confluence.atlassian.com/jirakb/how-to-generate-public-key-to-application-link-3rd-party-applications-913214098.html
         fun asOauthITOCustomSystemWideWindows(
+                versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
             if (OsType.get() != OsType.WINDOWS) {
@@ -177,6 +191,7 @@ object JBundleExtraPropsFactory {
             val appDirPath = "${rootDirPath}${File.separator}.wt4"
             val tmpDirPath = "${appDirPath}${File.separator}tmp"
             return JBundleExtraProps(
+                    appName = "${APP_NAME}-$versionNameSuffix",
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,

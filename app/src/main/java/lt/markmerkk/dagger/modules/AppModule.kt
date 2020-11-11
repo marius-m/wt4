@@ -87,6 +87,7 @@ class AppModule(
     ): Config {
         val config = Config(
                 debug = BuildConfig.debug,
+                appName = BuildConfig.NAME,
                 versionName = BuildConfig.versionName,
                 versionCode = BuildConfig.versionCode,
                 gaKey = BuildConfig.gaKey,
