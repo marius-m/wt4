@@ -94,7 +94,7 @@ project.extensions.getByType(JavaApplication::class.java).apply {
 }
 
 buildConfig {
-    appName = "WT4"
+    appName = jBundleProps.appName
     version = jBundleProps.versionName
     packageName = "lt.markmerkk"
 
@@ -111,7 +111,7 @@ buildConfig {
 }
 
 extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).apply {
-    appName = "WT4"
+    appName = jBundleProps.appName
     version = jBundleProps.versionName
     mainClassName = "lt.markmerkk.MainAsJava"
     mainJarFilePath = File(buildDir, "${File.separator}libs${File.separator}app-${jBundleProps.versionName}.jar").absolutePath

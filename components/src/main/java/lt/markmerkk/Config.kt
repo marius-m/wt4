@@ -5,14 +5,13 @@ import java.io.File
 
 data class Config(
         val debug: Boolean = false,
+        val appName: String,
         val versionName: String = "Undefined",
         val versionCode: Int = -1,
         val gaKey: String,
         private val cpp: ConfigPathProvider,
         private val configSetSettings: ConfigSetSettings
 ) {
-
-    val appName: String = "WT4"
 
     private val configInCache by lazy {
         configSetSettings.load()

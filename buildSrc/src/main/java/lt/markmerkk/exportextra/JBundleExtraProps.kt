@@ -6,6 +6,7 @@ import java.io.FileInputStream
 import java.util.*
 
 class JBundleExtraProps(
+        val appName: String,
         val versionName: String,
         val versionCode: Int,
         val debug: Boolean,

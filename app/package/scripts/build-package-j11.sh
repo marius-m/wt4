@@ -24,7 +24,7 @@ ${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debu
 
 echo "Packaging app"
 ${J14_HOME}/bin/jpackage \
-  --app-version ${APP_VERSION}\
+  --app-version ${APP_VERSION} \
   --name ${APP_NAME} \
   --description "${APP_DESCRIPTION}" \
   --vendor "${APP_VENDOR}" \

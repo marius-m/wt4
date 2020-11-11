@@ -41,7 +41,7 @@ class CoreWidget : View() {
         Main.component().inject(this)
         l.info("Launching ${appConfig.printPaths()}")
         val titleSuffix = if (BuildConfig.debug) "(DEBUG)" else ""
-        title = "WT4 - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
+        title = "${BuildConfig.NAME} - ${BuildConfig.VERSION} $titleSuffix / Profile: ${configSetSettings.currentConfigOrDefault()}"
 
         // Init sevices
         userSettings.onAttach()

@@ -9,6 +9,8 @@ import java.lang.IllegalArgumentException
 
 object JBundleExtraPropsFactory {
 
+    const val APP_NAME = "WT4"
+
     private val defaultJvmProps = listOf(
             "-Xms128m",
             "-Xmx300m",
@@ -23,7 +25,8 @@ object JBundleExtraPropsFactory {
         ): JBundleExtraProps {
             val versionProps = VersionProps.fromProps(project)
             return JBundleExtraProps(
-                    versionName = "${versionProps.name}-$versionNameSuffix",
+                    appName = "${APP_NAME}-$versionNameSuffix",
+                    versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
                     systemWide = false,
@@ -49,7 +52,8 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
-                    versionName = "${versionProps.name}-$versionNameSuffix",
+                    appName = "${APP_NAME}-$versionNameSuffix",
+                    versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
                     systemWide = false,
@@ -78,7 +82,8 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(deployPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
-                    versionName = "${versionProps.name}-$versionNameSuffix",
+                    appName = "${APP_NAME}-$versionNameSuffix",
+                    versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
                     systemWide = systemWide,
@@ -129,7 +134,8 @@ object JBundleExtraPropsFactory {
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
-                    versionName = "${versionProps.name}-$versionNameSuffix",
+                    appName = "${APP_NAME}-$versionNameSuffix",
+                    versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
                     systemWide = systemWide,
@@ -185,7 +191,8 @@ object JBundleExtraPropsFactory {
             val appDirPath = "${rootDirPath}${File.separator}.wt4"
             val tmpDirPath = "${appDirPath}${File.separator}tmp"
             return JBundleExtraProps(
-                    versionName = "${versionProps.name}-$versionNameSuffix",
+                    appName = "${APP_NAME}-$versionNameSuffix",
+                    versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
                     systemWide = true,
