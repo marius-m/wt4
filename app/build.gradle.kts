@@ -1,6 +1,5 @@
 import lt.markmerkk.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import lt.markmerkk.exportextra.VersionProps
 import lt.markmerkk.exportextra.JBundleExtraPropsFactory
 
 plugins {
@@ -13,13 +12,13 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(project)
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(project)
-val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic("debug", project)
+//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO("debug", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin("basic", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac("basic", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin("iTo", project)
+val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac("iTo", project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows("iTo", project)
 
 sourceSets {
     main {
@@ -124,7 +123,7 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 kapt {

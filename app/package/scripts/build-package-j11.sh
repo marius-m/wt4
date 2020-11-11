@@ -26,8 +26,8 @@ echo "Packaging app"
 ${J14_HOME}/bin/jpackage \
   --app-version ${APP_VERSION}\
   --name ${APP_NAME} \
-  --description ${APP_DESCRIPTION} \
-  --vendor ${APP_VENDOR} \
+  --description "${APP_DESCRIPTION}" \
+  --vendor "${APP_VENDOR}" \
   --main-jar ${APP_MAIN_JAR} \
   --main-class ${APP_MAIN_CLASS} \
   --type ${IMAGE_TYPE} \
