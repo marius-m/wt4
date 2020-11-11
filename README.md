@@ -19,22 +19,21 @@ Builds for `WT4-basic-1.8.0`
 * [Build for MacOS](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-basic-1.8.0.dmg)
 * [Build for Windows](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-basic-1.8.0.exe)
 * Build Linux Debian - Raise a ticket if binary is needed
+* All builds archive - https://github.com/marius-m/wt4/releases
 
-- Archived builds: https://github.com/marius-m/wt4/releases
 - Tips how to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-Basic)
 - Having trouble installing ? Tips on how to install on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac) or [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
   
 ## Downloads iTo
 Some people from my company [iTo](https://www.ito.lt/) are using this tool as well, so we use specially baked app with OAuth connection. 
 
-Builds for `WT4-iTo-1.8.0`
-*Note: Builds for iTo have 'WT4-iTo' in its app name*
+Builds for `WT4-iTo-1.8.0` (*Note: Builds for iTo have 'WT4-iTo' in its app name*)
 
 * [iTo Build for MacOS](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-iTo-1.8.0.dmg)
 * [iTo Build for Windows](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-iTo-1.8.0.exe)
 * [iTo Build for Windows - System wide](https://github.com/marius-m/wt4/releases/download/1.8.0/WT4-iToSW-1.8.0.exe)
+* All builds archive - https://github.com/marius-m/wt4/releases
 
-- Archived builds - http://738649.s.dedikuoti.lt/public/wt4/ito/
 - How to [set-up to JIRA](https://github.com/marius-m/wt4/wiki/Set-up-OAuth)
 - Having trouble installing ? Tips on how to install on [MacOS](https://github.com/marius-m/wt4/wiki/Install-Mac) or [Windows](https://github.com/marius-m/wt4/wiki/Install-Win)
 
