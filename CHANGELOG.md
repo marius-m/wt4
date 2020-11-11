@@ -1,6 +1,6 @@
 # Changelog
 
-Current: 1.8.0
+Current: 1.7.7
 
 ## 1.8.0
 - Major internal change - move from Java8 to Java11
