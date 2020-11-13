@@ -40,7 +40,7 @@ call %J14_HOME%\bin\jpackage.exe ^
   --java-options %JVM_ARGS% ^
   --icon %APP_ICON% ^
   --runtime-image %BUILD_DIR%\java-runtime ^
-  --win-shortcut --win-menu ^
+  --win-shortcut --win-menu --win-per-user-install ^
   --verbose
 
 REM call "%J14_HOME%\bin\jpackage.exe" ^
