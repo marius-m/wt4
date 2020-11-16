@@ -15,9 +15,9 @@ data class BuildScriptArgs(
         val output: String,
         val appIcon: String,
         val jvmArgs: String,
-        val platformArgs: String
+        val platformArgs: List<String>
 ) {
-    val components = listOf(
+    val components: List<String> = listOf(
             j11Home,
             j14Home,
             appVersion,
@@ -31,8 +31,6 @@ data class BuildScriptArgs(
             input,
             output,
             appIcon,
-            jvmArgs,
-            platformArgs
-    )
-    val componentsAsString = components.joinToString(" ")
+            jvmArgs
+    ).plus(platformArgs)
 }

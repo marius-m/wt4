@@ -46,7 +46,7 @@ class JBundlerScriptJ11Win(
                 output = bundleResource.bundlePath.absolutePath,
                 appIcon = bundleResource.appIcon.absolutePath,
                 jvmArgs = bundleResource.jvmOptions.joinToString(" "),
-                platformArgs = winArgs.joinToString(" ")
+                platformArgs = winArgs
         )
         return listOf("cmd", "/C", scriptDir.absolutePath)
                 .plus(scriptArgs.components)
