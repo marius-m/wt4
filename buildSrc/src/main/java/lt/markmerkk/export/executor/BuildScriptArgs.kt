@@ -1,5 +1,7 @@
 package lt.markmerkk.export.executor
 
+import java.lang.IllegalArgumentException
+
 data class BuildScriptArgs(
         val j11Home: String,
         val j14Home: String,
@@ -14,9 +16,17 @@ data class BuildScriptArgs(
         val input: String,
         val output: String,
         val appIcon: String,
-        val jvmArgs: String
+        val jvmArgs: String,
+        val platformArgs: List<String> // Script accepts max 5 priperties
 ) {
-    val components = listOf(
+
+    init {
+        if (platformArgs.size > 5) {
+            throw IllegalArgumentException("Script does not accpet more than 5 arguments!")
+        }
+    }
+
+    val components: List<String> = listOf(
             j11Home,
             j14Home,
             appVersion,
@@ -31,6 +41,5 @@ data class BuildScriptArgs(
             output,
             appIcon,
             jvmArgs
-    )
-    val componentsAsString = components.joinToString(" ")
+    ).plus(platformArgs)
 }

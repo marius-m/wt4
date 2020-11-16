@@ -23,39 +23,35 @@ shift
 set APP_ICON=%9
 shift
 set JVM_ARGS=%9
+shift
+set PLATFORM_ARG1=%9
+shift
+set PLATFORM_ARG2=%9
+shift
+set PLATFORM_ARG3=%9
+shift
+set PLATFORM_ARG4=%9
+shift
+set PLATFORM_ARG5=%9
 
 call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
-REM call "%J11_HOME%\bin\jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.sql,java.logging,jdk.unsupported,java.xml,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.swing --output %BUILD_DIR%\java-runtime
 
 call %J14_HOME%\bin\jpackage.exe ^
-  --app-version %APP_VERSION% ^
-  --name %APP_NAME% ^
-  --description %APP_DESCRIPTION% ^
-  --vendor %APP_VENDOR% ^
-  --main-jar %APP_MAIN_JAR% ^
-  --main-class %APP_MAIN_CLASS% ^
-  --type %IMAGE_TYPE% ^
-  --input %INPUT% ^
-  --dest %OUTPUT% ^
-  --java-options %JVM_ARGS% ^
-  --icon %APP_ICON% ^
-  --runtime-image %BUILD_DIR%\java-runtime ^
-  --win-shortcut --win-menu ^
+  --app-version %APP_VERSION%^
+  --name %APP_NAME%^
+  --description %APP_DESCRIPTION%^
+  --vendor %APP_VENDOR%^
+  --main-jar %APP_MAIN_JAR%^
+  --main-class %APP_MAIN_CLASS%^
+  --type %IMAGE_TYPE%^
+  --input %INPUT%^
+  --dest %OUTPUT%^
+  --java-options %JVM_ARGS%^
+  --icon %APP_ICON%^
+  --runtime-image %BUILD_DIR%\java-runtime^
+  %PLATFORM_ARG1%^
+  %PLATFORM_ARG2%^
+  %PLATFORM_ARG3%^
+  %PLATFORM_ARG4%^
+  %PLATFORM_ARG5%^
   --verbose
-
-REM call "%J14_HOME%\bin\jpackage.exe" ^
-REM   --type exe ^
-REM   --app-version %VERSION% ^
-REM   --input %INPUT% ^
-REM   --name "pdf-map" ^
-REM   --description "PDF Mapping tool" ^
-REM   --vendor "iTo" ^
-REM   --main-jar %JAR% ^
-REM   --main-class "lt.ito.pdfmap.MainKt" ^
-REM   --dest %OUTPUT% ^
-REM   --java-options "-splash:$APPDIR/resources/splash.png -Xmx600m -Xms128m" ^
-REM   --icon %APP_ICON% ^
-REM   --temp %BUILD_DIR%\tmp ^
-REM   --runtime-image %BUILD_DIR%\java-runtime ^
-REM   --win-shortcut --win-menu ^
-REM   --verbose

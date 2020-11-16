@@ -38,7 +38,8 @@ class JBundlerScriptJ11Unix(
                 input = bundleResource.inputDir.absolutePath,
                 output = bundleResource.bundlePath.absolutePath,
                 appIcon = bundleResource.appIcon.absolutePath,
-                jvmArgs = bundleResource.jvmOptions.joinToString(" ")
+                jvmArgs = bundleResource.jvmOptions.joinToString(" "),
+                platformArgs = emptyList()
         )
         return listOf(
                 "sh",
