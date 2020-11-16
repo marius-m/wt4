@@ -17,7 +17,11 @@ INPUT=${11}
 OUTPUT=${12}
 APP_ICON=${13}
 JVM_ARGS=${14}
-PLATFORM_ARGS=${15}
+PLATFORM_ARG1=${15}
+PLATFORM_ARG2=${16}
+PLATFORM_ARG3=${17}
+PLATFORM_ARG4=${18}
+PLATFORM_ARG5=${19}
 
 echo "Creating runtime image"
 ${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output ${BUILD_DIR}/java-runtime
@@ -37,4 +41,9 @@ ${J14_HOME}/bin/jpackage \
   --java-options "${JVM_ARGS}" \
   --icon ${APP_ICON} \
   --runtime-image ${BUILD_DIR}/java-runtime \
+  $PLATFORM_ARG1\
+  $PLATFORM_ARG2\
+  $PLATFORM_ARG3\
+  $PLATFORM_ARG4\
+  $PLATFORM_ARG5\
   --verbose

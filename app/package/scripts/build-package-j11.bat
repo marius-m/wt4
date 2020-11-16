@@ -24,7 +24,15 @@ set APP_ICON=%9
 shift
 set JVM_ARGS=%9
 shift
-set PLATFORM_ARGS=%9
+set PLATFORM_ARG1=%9
+shift
+set PLATFORM_ARG2=%9
+shift
+set PLATFORM_ARG3=%9
+shift
+set PLATFORM_ARG4=%9
+shift
+set PLATFORM_ARG5=%9
 
 call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
 
@@ -41,5 +49,9 @@ call %J14_HOME%\bin\jpackage.exe ^
   --java-options %JVM_ARGS%^
   --icon %APP_ICON%^
   --runtime-image %BUILD_DIR%\java-runtime^
-  %PLATFORM_ARGS%^
+  %PLATFORM_ARG1%^
+  %PLATFORM_ARG2%^
+  %PLATFORM_ARG3%^
+  %PLATFORM_ARG4%^
+  %PLATFORM_ARG5%^
   --verbose

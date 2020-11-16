@@ -48,8 +48,7 @@ class JBundlerScriptJ11Win(
                 jvmArgs = bundleResource.jvmOptions.joinToString(" "),
                 platformArgs = winArgs
         )
-        return listOf("cmd", "/C", scriptDir.absolutePath)
-                .plus(scriptArgs.components)
+        return listOf("cmd", "/C", scriptDir.absolutePath).plus(scriptArgs.components)
     }
 
     override fun bundle(): String = throw UnsupportedOperationException()
