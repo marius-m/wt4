@@ -30,19 +30,19 @@ call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --st
 REM call "%J11_HOME%\bin\jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.sql,java.logging,jdk.unsupported,java.xml,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.swing --output %BUILD_DIR%\java-runtime
 
 call %J14_HOME%\bin\jpackage.exe ^
-  --app-version %APP_VERSION% ^
-  --name %APP_NAME% ^
-  --description %APP_DESCRIPTION% ^
-  --vendor %APP_VENDOR% ^
-  --main-jar %APP_MAIN_JAR% ^
-  --main-class %APP_MAIN_CLASS% ^
-  --type %IMAGE_TYPE% ^
-  --input %INPUT% ^
-  --dest %OUTPUT% ^
-  --java-options %JVM_ARGS% ^
-  --icon %APP_ICON% ^
-  --runtime-image %BUILD_DIR%\java-runtime ^
-  %PLATFORM_ARGS% ^
+  --app-version %APP_VERSION%^
+  --name %APP_NAME%^
+  --description %APP_DESCRIPTION%^
+  --vendor %APP_VENDOR%^
+  --main-jar %APP_MAIN_JAR%^
+  --main-class %APP_MAIN_CLASS%^
+  --type %IMAGE_TYPE%^
+  --input %INPUT%^
+  --dest %OUTPUT%^
+  --java-options %JVM_ARGS%^
+  --icon %APP_ICON%^
+  --runtime-image %BUILD_DIR%\java-runtime^
+  %PLATFORM_ARGS%^
   --verbose
 
 REM call "%J14_HOME%\bin\jpackage.exe" ^
