@@ -1,9 +1,8 @@
 package lt.markmerkk.export.executor
 
+import lt.markmerkk.export.tasks.JBundleResource
 import org.gradle.api.Project
 import java.io.File
-import lt.markmerkk.export.tasks.JBundleResource
-import java.lang.UnsupportedOperationException
 
 /**
  * Script executor for Java11, Win platform
@@ -24,6 +23,14 @@ class JBundlerScriptJ11Win(
     }
 
     override fun scriptCommand(): List<String> {
+        val winArgs = mutableListOf(
+                "--win-shortcut",
+                "--win-menu",
+                "--win-dir-chooser"
+        )
+        if (!bundleResource.systemWide) {
+            winArgs.plus("--win-per-user-install")
+        }
         val scriptArgs = BuildScriptArgs(
                 j11Home = bundleResource.jdk11HomeDir.absolutePath,
                 j14Home = bundleResource.jdk14HomeDir.absolutePath,
@@ -38,7 +45,8 @@ class JBundlerScriptJ11Win(
                 input = bundleResource.inputDir.absolutePath,
                 output = bundleResource.bundlePath.absolutePath,
                 appIcon = bundleResource.appIcon.absolutePath,
-                jvmArgs = bundleResource.jvmOptions.joinToString(" ")
+                jvmArgs = bundleResource.jvmOptions.joinToString(" "),
+                platformArgs = winArgs.joinToString(" ")
         )
         return listOf("cmd", "/C", scriptDir.absolutePath)
                 .plus(scriptArgs.components)

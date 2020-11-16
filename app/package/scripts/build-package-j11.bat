@@ -23,6 +23,8 @@ shift
 set APP_ICON=%9
 shift
 set JVM_ARGS=%9
+shift
+set PLATFORM_ARGS=%9
 
 call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
 REM call "%J11_HOME%\bin\jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.sql,java.logging,jdk.unsupported,java.xml,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.swing --output %BUILD_DIR%\java-runtime
@@ -40,7 +42,7 @@ call %J14_HOME%\bin\jpackage.exe ^
   --java-options %JVM_ARGS% ^
   --icon %APP_ICON% ^
   --runtime-image %BUILD_DIR%\java-runtime ^
-  --win-shortcut --win-menu --win-per-user-install --win-dir-chooser ^
+  %PLATFORM_ARGS% ^
   --verbose
 
 REM call "%J14_HOME%\bin\jpackage.exe" ^

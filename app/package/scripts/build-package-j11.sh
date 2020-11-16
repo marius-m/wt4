@@ -17,6 +17,7 @@ INPUT=${11}
 OUTPUT=${12}
 APP_ICON=${13}
 JVM_ARGS=${14}
+PLATFORM_ARGS=${15}
 
 echo "Creating runtime image"
 ${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output ${BUILD_DIR}/java-runtime
