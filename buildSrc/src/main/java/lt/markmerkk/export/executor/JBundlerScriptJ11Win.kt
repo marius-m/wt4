@@ -23,13 +23,18 @@ class JBundlerScriptJ11Win(
     }
 
     override fun scriptCommand(): List<String> {
-        val winArgs = mutableListOf(
-                "--win-shortcut",
-                "--win-menu"
-        )
-        if (!bundleResource.systemWide) {
-            winArgs.plus("--win-per-user-install")
-            winArgs.plus("--win-dir-chooser")
+        val winArgs = if (bundleResource.systemWide) {
+            listOf(
+                    "--win-shortcut",
+                    "--win-menu"
+            )
+        } else {
+            listOf(
+                    "--win-shortcut",
+                    "--win-menu",
+                    "--win-per-user-install",
+                    "--win-dir-chooser"
+            )
         }
         val scriptArgs = BuildScriptArgs(
                 j11Home = bundleResource.jdk11HomeDir.absolutePath,
