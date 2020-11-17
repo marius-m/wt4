@@ -34,7 +34,8 @@ set PLATFORM_ARG4=%9
 shift
 set PLATFORM_ARG5=%9
 
-call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
+REM call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output %BUILD_DIR%\java-runtime
+call %J11_HOME%\bin\jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.xml,java.sql,java.logging,jdk.unsupported,java.security.jgss,java.compiler,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.web --output %BUILD_DIR%\java-runtime
 
 call %J14_HOME%\bin\jpackage.exe ^
   --app-version %APP_VERSION%^
