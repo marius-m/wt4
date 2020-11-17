@@ -46,7 +46,7 @@ tasks.create("findDeps", DefaultTask::class.java) {
         val depPairsFiltered = depsPairs
             .filter { it.second != "not found" } // Ignore not found
             .filter { !it.second.contains(dependencyDir.absolutePath) } // ignore library cross-reference
-            .filter { !it.second.startsWith("javafx.") } // ignore jfx dependencies (maily as tornado uses everything possible)
+//            .filter { !it.second.startsWith("javafx.") } // ignore jfx dependencies (maily as tornado uses everything possible)
         // Solely app dependencies
         val appPairsFiltered = depsPairs
             .filter { it.first == targetFile.name }
