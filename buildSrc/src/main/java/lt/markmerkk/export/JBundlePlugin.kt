@@ -3,6 +3,7 @@ package lt.markmerkk.export
 import lt.markmerkk.export.icons.GenIconMac
 import lt.markmerkk.export.icons.GenIconWindows
 import lt.markmerkk.export.tasks.BundleTask
+import lt.markmerkk.export.tasks.DepsTask
 import lt.markmerkk.export.tasks.JBundleExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
@@ -32,6 +33,15 @@ class JBundlePlugin: Plugin<Project> {
                     scriptsDirPath = extension.scriptsDirPath
             )
             setDependsOn(listOf(":${project.name}:build"))
+        }
+        project.tasks.register(
+                "${NAME_PLUGIN}Deps",
+                DepsTask::class.java
+        ) {
+            group = NAME_PLUGIN
+            description = "Creates and exports bundle"
+            init(mainJarFilePath = extension.mainJarFilePath)
+            setDependsOn(listOf(":${project.name}:installDist"))
         }
         project.tasks.register(
                 "${NAME_PLUGIN}GenIconMac",
