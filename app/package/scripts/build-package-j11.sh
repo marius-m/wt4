@@ -24,8 +24,8 @@ PLATFORM_ARG4=${18}
 PLATFORM_ARG5=${19}
 
 echo "Creating runtime image"
-${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output ${BUILD_DIR}/java-runtime
-#${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.sql,java.logging,jdk.unsupported,java.xml,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.swing --output ${BUILD_DIR}/java-runtime
+#${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output ${BUILD_DIR}/java-runtime
+${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.xml,javafx.base,javafx.controls,javafx.graphics,javafx.web,java.sql,java.logging,javafx.fxml,jdk.unsupported,java.security.jgss,java.compiler,java.prefs,javafx.media --output ${BUILD_DIR}/java-runtime
 
 echo "Packaging app"
 ${J14_HOME}/bin/jpackage \

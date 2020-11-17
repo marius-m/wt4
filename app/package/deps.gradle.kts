@@ -4,7 +4,7 @@ tasks.create("findDeps", DefaultTask::class.java) {
     dependsOn("installDist")
     doLast {
         val dependencyDir = File(project.buildDir, "/install/app/lib")
-        val targetFile = File(dependencyDir, "/app-1.16.0.jar")
+        val targetFile = File(dependencyDir, "/app-1.8.99.jar")
         if (!dependencyDir.exists() || !dependencyDir.isDirectory) {
             throw java.lang.IllegalStateException("No library path @${dependencyDir.absolutePath}")
         }
@@ -22,16 +22,19 @@ tasks.create("findDeps", DefaultTask::class.java) {
             .map { "${dependencyDir.absolutePath}/${it.name}" }
             .joinToString(":")
         val depsAsString = listOf(
-            jDepsExec.absolutePath,
-            "--class-path",
-            "\"${javaLibsAsString}\"",
-            "-R",
-            "-summary",
-            targetFile.absolutePath
+                jDepsExec.absolutePath,
+                "--multi-release",
+                "11",
+                "--class-path",
+                "\"${javaLibsAsString}\"",
+                "-R",
+                "-summary",
+                targetFile.absolutePath
         ).executeAndWait(project.buildDir)
         println(depsAsString)
         val depsPairs: List<Pair<String, String>> = depsAsString.split("\n")
             .filter { it.isNotEmpty() }
+            .filter { !it.startsWith("Warning: split package:") }
             .map { newLine ->
                 val splitPair = newLine.split(" -> ")
                 if (splitPair.size < 2) {
@@ -43,7 +46,7 @@ tasks.create("findDeps", DefaultTask::class.java) {
         val depPairsFiltered = depsPairs
             .filter { it.second != "not found" } // Ignore not found
             .filter { !it.second.contains(dependencyDir.absolutePath) } // ignore library cross-reference
-            .filter { !it.second.startsWith("javafx.") } // ignore jfx dependencies (maily as tornado uses everything possible)
+//            .filter { !it.second.startsWith("javafx.") } // ignore jfx dependencies (maily as tornado uses everything possible)
         // Solely app dependencies
         val appPairsFiltered = depsPairs
             .filter { it.first == targetFile.name }

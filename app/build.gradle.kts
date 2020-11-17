@@ -11,6 +11,7 @@ plugins {
     id("de.fuerstenau.buildconfig")
     id("lt.markmerkk.jbundle")
 }
+apply("${project.projectDir}/package/deps.gradle.kts")
 
 //val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic("debug", project)
 //val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO("debug", project)
