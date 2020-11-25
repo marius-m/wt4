@@ -9,9 +9,6 @@ import java.lang.IllegalStateException
 
 open class BundleTask: Exec() {
 
-    private lateinit var bundleResource: JBundleResource
-    private lateinit var scriptProvider: JBundlerScriptProvider
-
     fun init(
             appName: String,
             versionName: String,
@@ -20,11 +17,16 @@ open class BundleTask: Exec() {
             mainIconFilePath: String,
             systemWide: Boolean,
             jvmProps: List<String>,
-            scriptsDirPath: String
+            scriptsDirPath: String,
+            moduleOutputPath: String
     ) {
+        val moduleOutputFile = File(moduleOutputPath)
         val iconFile = File(mainIconFilePath)
         assert(iconFile.exists() && iconFile.isFile) {
             throw IllegalArgumentException("Cannot find app icon at $iconFile")
+        }
+        assert(moduleOutputFile.exists() && moduleOutputFile.isFile) {
+            throw IllegalArgumentException("Cannot find used module list")
         }
         val inputDir = File(project.buildDir, "/input")
         val resourceDir = File(project.projectDir, "/package/resources")
@@ -32,33 +34,33 @@ open class BundleTask: Exec() {
         val jre8HomePath: String = System.getenv("JRE_HOME") ?: ""
         val j11HomePath: String = System.getenv("J11_HOME") ?: ""
         val j14HomePath: String = System.getenv("J14_HOME") ?: ""
-        bundleResource = JBundleResource(
-                project = project,
-                appName = appName,
-                versionName = versionName,
-                mainJarFilePath = mainJarFilePath,
-                mainClassName = mainClassName,
-                mainIconFilePath = mainIconFilePath,
-                systemWide = systemWide,
-                inputPath = inputDir.absolutePath,
-                jdk8HomePath = jdk8HomePath,
-                jre8HomePath = jre8HomePath,
-                jdk11HomePath = j11HomePath,
-                jdk14HomePath = j14HomePath,
-                scriptsPath = scriptsDirPath,
-                jvmOptions = jvmProps
-        )
-        scriptProvider = when (OsType.get()) {
-            OsType.UNKNOWN -> throw IllegalStateException("Unsupported OS type")
-            OsType.LINUX, OsType.MAC -> {
-                JBundlerScriptJ11Unix(project, bundleResource)
-            }
-            OsType.WINDOWS -> {
-                JBundlerScriptJ11Win(project, bundleResource)
-            }
-        }
         doFirst {
-            debugPrint()
+            val bundleResource = JBundleResource(
+                    project = project,
+                    appName = appName,
+                    versionName = versionName,
+                    mainJarFilePath = mainJarFilePath,
+                    mainClassName = mainClassName,
+                    mainIconFilePath = mainIconFilePath,
+                    systemWide = systemWide,
+                    inputPath = inputDir.absolutePath,
+                    jdk8HomePath = jdk8HomePath,
+                    jre8HomePath = jre8HomePath,
+                    jdk11HomePath = j11HomePath,
+                    jdk14HomePath = j14HomePath,
+                    scriptsPath = scriptsDirPath,
+                    jvmOptions = jvmProps,
+                    modules = moduleOutputFile.readText(Charsets.UTF_8).trim()
+            )
+            val scriptProvider = when (OsType.get()) {
+                OsType.UNKNOWN -> throw IllegalStateException("Unsupported OS type")
+                OsType.LINUX, OsType.MAC -> {
+                    JBundlerScriptJ11Unix(project, bundleResource)
+                }
+                OsType.WINDOWS -> {
+                    JBundlerScriptJ11Win(project, bundleResource)
+                }
+            }
             if (inputDir.exists()) {
                 inputDir.deleteRecursively()
             }
@@ -68,14 +70,11 @@ open class BundleTask: Exec() {
                     .apply { createNewFile() }
             bundleResource.mainJar.copyTo(inputMainJar, overwrite = true)
             resourceDir.copyRecursively(inputResDir, overwrite = true)
-        }
-        val scriptArgs = scriptProvider.scriptCommand()
-        workingDir = project.projectDir
-        setCommandLine(*scriptArgs.toTypedArray())
-    }
 
-    fun debugPrint() {
-        scriptProvider.debugPrint()
+            val scriptArgs = scriptProvider.scriptCommand()
+            setCommandLine(*scriptArgs.toTypedArray())
+        }
+        workingDir = project.projectDir
     }
 
 }

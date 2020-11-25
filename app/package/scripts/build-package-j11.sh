@@ -17,15 +17,17 @@ INPUT=${11}
 OUTPUT=${12}
 APP_ICON=${13}
 JVM_ARGS=${14}
-PLATFORM_ARG1=${15}
-PLATFORM_ARG2=${16}
-PLATFORM_ARG3=${17}
-PLATFORM_ARG4=${18}
-PLATFORM_ARG5=${19}
+MODULES=${15}
+PLATFORM_ARG1=${16}
+PLATFORM_ARG2=${17}
+PLATFORM_ARG3=${18}
+PLATFORM_ARG4=${19}
+PLATFORM_ARG5=${20}
 
 echo "Creating runtime image"
 #${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ALL-MODULE-PATH --output ${BUILD_DIR}/java-runtime
-${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.xml,java.sql,java.logging,jdk.unsupported,java.security.jgss,java.compiler,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.web --output ${BUILD_DIR}/java-runtime
+#${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop,java.xml,java.sql,java.logging,jdk.unsupported,java.security.jgss,java.compiler,java.prefs,javafx.base,javafx.controls,javafx.graphics,javafx.web --output ${BUILD_DIR}/java-runtime
+${J11_HOME}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules $MODULES --output ${BUILD_DIR}/java-runtime
 
 echo "Packaging app"
 ${J14_HOME}/bin/jpackage \

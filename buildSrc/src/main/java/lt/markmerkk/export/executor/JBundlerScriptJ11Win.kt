@@ -51,6 +51,7 @@ class JBundlerScriptJ11Win(
                 output = bundleResource.bundlePath.absolutePath,
                 appIcon = bundleResource.appIcon.absolutePath,
                 jvmArgs = bundleResource.jvmOptions.joinToString(" "),
+                modules = "", // todo missing funct
                 platformArgs = winArgs
         )
         return listOf("cmd", "/C", scriptDir.absolutePath).plus(scriptArgs.components)

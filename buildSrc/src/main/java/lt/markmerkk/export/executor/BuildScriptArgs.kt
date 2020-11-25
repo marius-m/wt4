@@ -17,6 +17,7 @@ data class BuildScriptArgs(
         val output: String,
         val appIcon: String,
         val jvmArgs: String,
+        val modules: String,
         val platformArgs: List<String> // Script accepts max 5 priperties
 ) {
 
@@ -40,6 +41,7 @@ data class BuildScriptArgs(
             input,
             output,
             appIcon,
-            jvmArgs
+            jvmArgs,
+            modules
     ).plus(platformArgs)
 }

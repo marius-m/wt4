@@ -20,7 +20,8 @@ data class JBundleResource(
         private val jdk11HomePath: String,
         private val jdk14HomePath: String,
         private val scriptsPath: String,
-        val jvmOptions: List<String>
+        val jvmOptions: List<String>,
+        val modules: String
 ) {
 
     val mainIconFile = File(mainIconFilePath)

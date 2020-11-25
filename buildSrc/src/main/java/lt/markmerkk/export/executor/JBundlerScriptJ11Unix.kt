@@ -39,6 +39,7 @@ class JBundlerScriptJ11Unix(
                 output = bundleResource.bundlePath.absolutePath,
                 appIcon = bundleResource.appIcon.absolutePath,
                 jvmArgs = bundleResource.jvmOptions.joinToString(" "),
+                modules = bundleResource.modules,
                 platformArgs = emptyList()
         )
         return listOf(
@@ -53,6 +54,7 @@ class JBundlerScriptJ11Unix(
         println("Using JDK11: ${bundleResource.jdk11HomeDir}")
         println("Using JRE: ${bundleResource.jdk14HomeDir}")
         println("Using Main JAR: ${bundleResource.mainJar}")
+        println("Building with modukes: ${bundleResource.modules}")
         println("Exec: ${scriptCommand()}")
     }
 

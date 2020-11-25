@@ -8,6 +8,7 @@ import lt.markmerkk.export.tasks.JBundleExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
 
 class JBundlePlugin: Plugin<Project> {
 
@@ -16,6 +17,7 @@ class JBundlePlugin: Plugin<Project> {
                 EXTENSION_NAME,
                 JBundleExtension::class.java,
                 project)
+        val moduleOutputFile = File(project.buildDir, "module-info.txt")
         project.tasks.register(
                 "${NAME_PLUGIN}Create",
                 BundleTask::class.java
@@ -30,7 +32,8 @@ class JBundlePlugin: Plugin<Project> {
                     mainClassName = extension.mainClassName,
                     mainIconFilePath = extension.mainIconFilePath,
                     jvmProps = extension.jvmProps,
-                    scriptsDirPath = extension.scriptsDirPath
+                    scriptsDirPath = extension.scriptsDirPath,
+                    moduleOutputPath = moduleOutputFile.absolutePath
             )
             setDependsOn(listOf(":${project.name}:build"))
         }
@@ -40,7 +43,10 @@ class JBundlePlugin: Plugin<Project> {
         ) {
             group = NAME_PLUGIN
             description = "Creates and exports bundle"
-            init(mainJarFilePath = extension.mainJarFilePath)
+            init(
+                    mainJarFilePath = extension.mainJarFilePath,
+                    moduleOutputPath = moduleOutputFile.absolutePath
+            )
             setDependsOn(listOf(":${project.name}:installDist"))
         }
         project.tasks.register(

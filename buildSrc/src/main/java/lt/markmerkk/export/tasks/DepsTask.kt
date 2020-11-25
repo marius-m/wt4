@@ -11,7 +11,11 @@ open class DepsTask: Exec() {
 
     private lateinit var scriptProvider: JBundlerScriptProvider
 
-    fun init(mainJarFilePath: String) {
+    fun init(
+            mainJarFilePath: String,
+            moduleOutputPath: String
+    ) {
+        val moduleOutputFile: File = File(moduleOutputPath)
         val stdOut = ByteArrayOutputStream()
         val dependencyDir = File(project.buildDir, "/install/app/lib")
         val j11HomePath: String = System.getenv("J11_HOME") ?: ""
@@ -69,7 +73,7 @@ open class DepsTask: Exec() {
                     .toSet()
                     .toList()
             val moduleSetAsString = moduleSet.joinToString(",")
-            println("Out: $moduleSetAsString")
+            moduleOutputFile.writeText(moduleSetAsString, Charsets.UTF_8)
         }
 
     }
