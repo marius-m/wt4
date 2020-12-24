@@ -1,5 +1,7 @@
 package lt.markmerkk
 
+import lt.markmerkk.migration.ConfigPathMigrationFactory
+import lt.markmerkk.migration.ConfigPathMigrator
 import java.io.File
 
 /**
@@ -9,6 +11,18 @@ class ConfigPathProvider(
         private val debug: Boolean,
         private val appFlavor: String
 ) {
+
+    init {
+        val configPathMigrator = ConfigPathMigrator(
+                migrations = ConfigPathMigrationFactory.create(
+                        versionCode = BuildConfig.versionCode,
+                        configDirRoot = rootAppDir(),
+                        configDirFull = fullAppDir()
+                )
+        )
+        configPathMigrator
+                .runMigrations()
+    }
 
     /**
      * Path to root config dir
@@ -39,7 +53,7 @@ class ConfigPathProvider(
      * Root path of configuration
      */
     fun rootAppDir(): File {
-        val appDir = File("${userHome()}${File.separator}.${configDefault()}-$appFlavor")
+        val appDir = File("${userHome()}${File.separator}.${configDefault()}")
         if (!appDir.exists()) {
             appDir.mkdirs()
         }
@@ -50,7 +64,7 @@ class ConfigPathProvider(
      * Full path of configuration
      */
     fun fullAppDir(): File {
-        val appDir = File("${userHome()}${File.separator}.${configDefault()}-$appFlavor")
+        val appDir = File("${userHome()}${File.separator}.${configDefault()}${File.separator}$appFlavor")
         if (!appDir.exists()) {
             appDir.mkdirs()
         }
