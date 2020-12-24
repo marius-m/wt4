@@ -23,8 +23,8 @@ class ConfigMigration1(
                 .count()
         // Only one version would trigger migration + full path should be empty
         l.info("Checking if configs need migration1: [configCountInFull <= 1($configCountInFull)] " +
-                "/ [versionCode <= 66($versionCode)]")
-        return configCountInFull <= 1 && versionCode <= 66
+                "/ [versionCode <= 67($versionCode)]")
+        return configCountInFull <= 1 && versionCode <= 67
     }
 
     override fun doMigration() {
