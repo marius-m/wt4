@@ -70,7 +70,11 @@ class AppModule(
     @Provides
     @Singleton
     fun providesConfigPathProvider(): ConfigPathProvider {
-        return ConfigPathProviderImpl(BuildConfig.debug)
+        return ConfigPathProvider(
+                debug = BuildConfig.debug,
+                versionCode = BuildConfig.versionCode,
+                appFlavor = BuildConfig.flavor
+        )
     }
 
     @Provides
@@ -88,6 +92,7 @@ class AppModule(
         val config = Config(
                 debug = BuildConfig.debug,
                 appName = BuildConfig.NAME,
+                appFlavor = BuildConfig.flavor,
                 versionName = BuildConfig.versionName,
                 versionCode = BuildConfig.versionCode,
                 gaKey = BuildConfig.gaKey,

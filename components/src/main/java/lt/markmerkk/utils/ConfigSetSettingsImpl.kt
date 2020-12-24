@@ -36,7 +36,7 @@ class ConfigSetSettingsImpl(
     }
 
     override fun propertyPath(): String {
-        return File(configPathProvider.fullAppDir(), "${File.separator}${PROPERTIES_PATH}")
+        return File(configPathProvider.fullAppDir, "${File.separator}${PROPERTIES_FILENAME}")
                 .absolutePath
     }
 
@@ -107,7 +107,7 @@ class ConfigSetSettingsImpl(
         const val KEY_CONFIG_NAME = "config_set_name"
         const val KEY_CONFIGS = "configs"
         const val DEFAULT_ROOT_CONFIG_NAME = "default"
-        const val PROPERTIES_PATH = "config_set.properties"
+        const val PROPERTIES_FILENAME = "config_set.properties"
         val logger = LoggerFactory.getLogger(ConfigSetSettingsImpl::class.java)!!
     }
 

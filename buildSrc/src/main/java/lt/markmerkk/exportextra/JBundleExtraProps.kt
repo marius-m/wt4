@@ -7,6 +7,7 @@ import java.util.*
 
 class JBundleExtraProps(
         val appName: String,
+        val appFlavor: String,
         val versionName: String,
         val versionCode: Int,
         val debug: Boolean,
@@ -21,17 +22,18 @@ class JBundleExtraProps(
 
 data class VersionProps(
         val name: String,
-        val flavor: String = "",
+        val flavor: String,
         val code: Int
 ) {
     companion object {
-        fun fromProps(project: Project, flavor: String = ""): VersionProps {
+        fun fromProps(project: Project, flavor: String): VersionProps {
             val versionPropsFile = File(project.rootDir, "version.properties")
             val versionProps = Properties().apply {
                 load(FileInputStream(versionPropsFile.absolutePath))
             }
             return VersionProps(
                     name = versionProps.getProperty("version_name"),
+                    flavor = flavor,
                     code = versionProps.getProperty("version_code").toInt()
             )
         }
