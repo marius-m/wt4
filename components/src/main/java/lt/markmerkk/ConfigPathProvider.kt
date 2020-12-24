@@ -21,7 +21,7 @@ class ConfigPathProvider(
         val configPathMigrator = ConfigPathMigrator(
                 migrations = ConfigPathMigrationFactory.create(
                         versionCode = versionCode,
-                        configDirRoot = rootAppDir(),
+                        configDirLegacy = legacyAppDir(),
                         configDirFull = fullAppDir()
                 )
         )
@@ -58,7 +58,7 @@ class ConfigPathProvider(
      * Full path of configuration
      */
     private fun fullAppDir(): File {
-        val appDir = File("${userHome()}${File.separator}.${configDefault()}${File.separator}$appFlavor")
+        val appDir = File("${userHome()}${File.separator}.${configDefault()}-$appFlavor")
         if (!appDir.exists()) {
             appDir.mkdirs()
         }
@@ -66,9 +66,9 @@ class ConfigPathProvider(
     }
 
     /**
-     * Root path of configuration
+     * Root path legacy directory of the app
      */
-    private fun rootAppDir(): File {
+    private fun legacyAppDir(): File {
         val appDir = File("${userHome()}${File.separator}.${configDefault()}")
         if (!appDir.exists()) {
             appDir.mkdirs()
