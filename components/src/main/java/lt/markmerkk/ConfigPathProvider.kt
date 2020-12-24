@@ -9,13 +9,18 @@ import java.io.File
  */
 class ConfigPathProvider(
         private val debug: Boolean,
+        private val versionCode: Int,
         private val appFlavor: String
 ) {
+
+    val configDefault: String by lazy { configDefault() }
+    val userHome: String by lazy { userHome() }
+    val fullAppDir: File by lazy { fullAppDir() }
 
     init {
         val configPathMigrator = ConfigPathMigrator(
                 migrations = ConfigPathMigrationFactory.create(
-                        versionCode = BuildConfig.versionCode,
+                        versionCode = versionCode,
                         configDirRoot = rootAppDir(),
                         configDirFull = fullAppDir()
                 )
@@ -28,7 +33,7 @@ class ConfigPathProvider(
      * Path to root config dir
      * Ex.: '~/.wt4'; '~/.wt4_debug'
      */
-    fun configDefault(): String {
+    private fun configDefault(): String {
         val wtAppPath = System.getProperty(Const.KEY_SYS_WT_APP_PATH)
         return if (!wtAppPath.isNullOrEmpty()) {
             wtAppPath
@@ -40,7 +45,7 @@ class ConfigPathProvider(
     /**
      * Root home dir
      */
-    fun userHome(): String {
+    private fun userHome(): String {
         val wtRoot = System.getProperty(Const.KEY_SYS_WT_ROOT)
         return if (!wtRoot.isNullOrEmpty()) {
             wtRoot
@@ -50,10 +55,10 @@ class ConfigPathProvider(
     }
 
     /**
-     * Root path of configuration
+     * Full path of configuration
      */
-    fun rootAppDir(): File {
-        val appDir = File("${userHome()}${File.separator}.${configDefault()}")
+    private fun fullAppDir(): File {
+        val appDir = File("${userHome()}${File.separator}.${configDefault()}${File.separator}$appFlavor")
         if (!appDir.exists()) {
             appDir.mkdirs()
         }
@@ -61,10 +66,10 @@ class ConfigPathProvider(
     }
 
     /**
-     * Full path of configuration
+     * Root path of configuration
      */
-    fun fullAppDir(): File {
-        val appDir = File("${userHome()}${File.separator}.${configDefault()}${File.separator}$appFlavor")
+    private fun rootAppDir(): File {
+        val appDir = File("${userHome()}${File.separator}.${configDefault()}")
         if (!appDir.exists()) {
             appDir.mkdirs()
         }

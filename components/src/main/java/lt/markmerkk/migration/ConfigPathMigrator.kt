@@ -47,17 +47,22 @@ class ConfigMigration1(
                 .listConfigs(configDirFull)
                 .count()
         // Only one version would trigger migration + full path should be empty
-        l.info("Checking if configs need migration1: [configCountInFull == 0($configCountInFull)] " +
+        l.info("Checking if configs need migration1: [configCountInFull <= 1($configCountInFull)] " +
                 "/ [versionCode <= 66($versionCode)]")
-        return configCountInFull == 0 && versionCode <= 66
+        return configCountInFull <= 1 && versionCode <= 66
     }
 
     override fun doMigration() {
         l.info("Triggering migration1...")
         ConfigUtils.listConfigs(configDirRoot)
                 .filter { it != configDirFull }
+                .filterNot { it.isDirectory && it.name == "logs" } // ignore log directory
                 .forEach {
-                    FileUtils.moveToDirectory(it, configDirFull, false)
+                    try {
+                        FileUtils.moveToDirectory(it, configDirFull, false)
+                    } catch (e: Exception) {
+                        l.warn("Error doing migration1", e)
+                    }
                 }
         l.info("Migration complete!")
     }

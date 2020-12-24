@@ -36,7 +36,7 @@ class ConfigSetSettingsImpl(
     }
 
     override fun propertyPath(): String {
-        return File(configPathProvider.fullAppDir(), "${File.separator}${PROPERTIES_FILENAME}")
+        return File(configPathProvider.fullAppDir, "${File.separator}${PROPERTIES_FILENAME}")
                 .absolutePath
     }
 

@@ -72,6 +72,7 @@ class AppModule(
     fun providesConfigPathProvider(): ConfigPathProvider {
         return ConfigPathProvider(
                 debug = BuildConfig.debug,
+                versionCode = BuildConfig.versionCode,
                 appFlavor = BuildConfig.flavor
         )
     }
@@ -91,6 +92,7 @@ class AppModule(
         val config = Config(
                 debug = BuildConfig.debug,
                 appName = BuildConfig.NAME,
+                appFlavor = BuildConfig.flavor,
                 versionName = BuildConfig.versionName,
                 versionCode = BuildConfig.versionCode,
                 gaKey = BuildConfig.gaKey,

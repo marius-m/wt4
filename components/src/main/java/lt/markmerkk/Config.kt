@@ -4,8 +4,9 @@ import lt.markmerkk.utils.ConfigSetSettings
 import java.io.File
 
 data class Config(
-        val debug: Boolean = false,
+        val debug: Boolean,
         val appName: String,
+        val appFlavor: String,
         val versionName: String = "Undefined",
         val versionCode: Int = -1,
         val gaKey: String,
@@ -28,24 +29,24 @@ data class Config(
     }
 
     fun basePath(): File {
-        return cpp.fullAppDir()
+        return cpp.fullAppDir
     }
 
     fun profilePath(): File {
         val currentConfig = configSetSettings.currentConfig()
         return if (currentConfig.isNotEmpty()) {
-            val configDir = File(cpp.fullAppDir(), "${File.separator}${currentConfig}")
+            val configDir = File(cpp.fullAppDir, "${File.separator}${currentConfig}")
             if (!configDir.exists()) {
                 configDir.mkdirs()
             }
             configDir
         } else {
-            cpp.fullAppDir()
+            cpp.fullAppDir
         }
     }
 
     fun tmpPath(): File {
-        val tmpDir = File(cpp.fullAppDir(), "${File.separator}tmp")
+        val tmpDir = File(cpp.fullAppDir, "${File.separator}tmp")
         if (!tmpDir.exists()) {
             tmpDir.mkdirs()
         }
@@ -57,9 +58,10 @@ data class Config(
                 .append("DEBUG=$debug; ")
                 .append("versionName=$versionName; ")
                 .append("versionCode=$versionCode; ")
+                .append("appFlavor=$appFlavor; ")
                 .append("gaKey=$gaKey; ")
-                .append("wtRoot='${cpp.userHome()}'; ")
-                .append("wtAppPath='${cpp.configDefault()}'; ")
+                .append("wtRoot='${cpp.userHome}'; ")
+                .append("wtAppPath='${cpp.configDefault}'; ")
                 .append("basePath='${basePath()}'; ")
                 .append("profilePath='${profilePath()}'; ")
                 .append("tmpPath='${tmpPath()}'; ")

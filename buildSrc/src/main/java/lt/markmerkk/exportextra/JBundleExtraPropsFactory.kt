@@ -34,7 +34,10 @@ object JBundleExtraPropsFactory {
                     debug = true,
                     systemWide = false,
                     jvmProps = defaultJvmProps.plus(
-                            listOf("-DWT_APP_PATH=wt4_debug")
+                            listOf(
+                                    "-DWT_APP_PATH=wt4_debug",
+                                    "-DWT_APP_FLAVOR=${versionProps.flavor}"
+                            )
                     ),
                     gaKey = "test",
                     oauth = false,
@@ -62,7 +65,10 @@ object JBundleExtraPropsFactory {
                     debug = true,
                     systemWide = false,
                     jvmProps = defaultJvmProps.plus(
-                            listOf("-DWT_APP_PATH=wt4_debug")
+                            listOf(
+                                    "-DWT_APP_PATH=wt4_debug",
+                                    "-DWT_APP_FLAVOR=${versionProps.flavor}"
+                            )
                     ),
                     gaKey = "test",
                     oauth = true,
@@ -93,7 +99,10 @@ object JBundleExtraPropsFactory {
                     debug = false,
                     systemWide = systemWide,
                     jvmProps = defaultJvmProps.plus(
-                            listOf("-DWT_APP_PATH=wt4")
+                            listOf(
+                                    "-DWT_APP_PATH=wt4",
+                                    "-DWT_APP_FLAVOR=${versionProps.flavor}"
+                            )
                     ),
                     gaKey = deployProps.getProperty("ga"),
                     oauth = false,
@@ -146,7 +155,10 @@ object JBundleExtraPropsFactory {
                     debug = false,
                     systemWide = systemWide,
                     jvmProps = defaultJvmProps.plus(
-                            listOf("-DWT_APP_PATH=wt4")
+                            listOf(
+                                    "-DWT_APP_PATH=wt4",
+                                    "-DWT_APP_FLAVOR=${versionProps.flavor}"
+                            )
                     ),
                     gaKey = deployProps.getProperty("ga"),
                     oauth = true,
@@ -207,7 +219,8 @@ object JBundleExtraPropsFactory {
                             listOf(
                                     "-DWT_APP_PATH=wt4",
                                     "-DWT_ROOT=$rootDirPath",
-                                    "-Djava.io.tmpdir=$tmpDirPath"
+                                    "-Djava.io.tmpdir=$tmpDirPath",
+                                    "-DWT_APP_FLAVOR=${versionProps.flavor}"
                             )
                     ),
                     gaKey = deployProps.getProperty("ga"),
