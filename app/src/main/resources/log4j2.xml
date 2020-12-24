@@ -10,63 +10,34 @@
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${log_pattern}" />
+            <PatternLayout pattern="${log_pattern}"/>
         </Console>
         <RollingFile name="FileAllLogs"
                      fileName="${sys:LOG_PATH}/out.log"
                      filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.out_log.gz">
             <PatternLayout pattern="${log_pattern}"/>
             <Policies>
-                <OnStartupTriggeringPolicy />
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB" />
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="5" />
-        </RollingFile>
-        <RollingFile name="FileAllErrors"
-                     fileName="${sys:LOG_PATH}/errors.log"
-                     filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.error_log.gz">
-            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${log_pattern}"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="1 MB" />
-            </Policies>
-            <DefaultRolloverStrategy max="5" />
+            <DefaultRolloverStrategy max="5"/>
         </RollingFile>
         <RollingFile name="FileAllJira"
                      fileName="${sys:LOG_PATH}/jira.log"
                      filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.jira_log.gz">
             <PatternLayout pattern="${log_pattern}"/>
             <Policies>
-                <OnStartupTriggeringPolicy />
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="100 KB" />
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 KB"/>
             </Policies>
-            <DefaultRolloverStrategy max="5" />
-        </RollingFile>
-        <RollingFile name="FileAllDb"
-                     fileName="${sys:LOG_PATH}/db.log"
-                     filePattern="${sys:LOG_PATH_ARCHIVE}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.db_log.gz">
-            <PatternLayout pattern="${log_pattern}"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="1 MB" />
-            </Policies>
-            <DefaultRolloverStrategy max="5" />
+            <DefaultRolloverStrategy max="5"/>
         </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="DEBUG">
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="Console"/>
             <AppenderRef ref="FileAllLogs"/>
-            <AppenderRef ref="FileAllErrors"/>
         </Root>
-        <Logger name="org.jooq.tools.LoggerListener" level="WARN">
-            <AppenderRef ref="FileAllDb"/>
-        </Logger>
         <Logger name="JIRA" level="DEBUG">
             <AppenderRef ref="FileAllJira"/>
         </Logger>
