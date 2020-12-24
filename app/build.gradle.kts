@@ -98,6 +98,7 @@ buildConfig {
     version = jBundleProps.versionName
     packageName = "lt.markmerkk"
 
+    buildConfigField("String", "flavor", jBundleProps.appFlavor)
     buildConfigField("String", "versionName", jBundleProps.versionName)
     buildConfigField("int", "versionCode", jBundleProps.versionCode.toString())
     buildConfigField("boolean", "debug", jBundleProps.debug.toString())

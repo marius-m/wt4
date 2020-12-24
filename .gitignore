@@ -36,12 +36,8 @@ app/src/main/deploy/package/macosx/Info.plist
 app/src/main/deploy/keystore.jks
 app/out
 app/test_database.db
-app/nullusr.properties
 app/wt4_1.db
 app/wt4_2.db
-
-# components module
-components/nullusr.properties
 
 # database2 module
 database2/generate/wt4_2.db

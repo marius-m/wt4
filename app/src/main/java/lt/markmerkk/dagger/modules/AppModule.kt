@@ -70,7 +70,10 @@ class AppModule(
     @Provides
     @Singleton
     fun providesConfigPathProvider(): ConfigPathProvider {
-        return ConfigPathProviderImpl(BuildConfig.debug)
+        return ConfigPathProvider(
+                debug = BuildConfig.debug,
+                appFlavor = BuildConfig.flavor
+        )
     }
 
     @Provides

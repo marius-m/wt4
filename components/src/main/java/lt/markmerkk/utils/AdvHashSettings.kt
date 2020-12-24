@@ -48,7 +48,7 @@ class AdvHashSettings(
     }
 
     override fun propertyPath(): String {
-        return File(config.cfgPath, "${File.separator}${PROPERTIES_PATH}")
+        return File(config.cfgPath, "${File.separator}${PROPERTIES_FILENAME}")
                 .absolutePath
     }
 
@@ -72,6 +72,6 @@ class AdvHashSettings(
     }
 
     companion object {
-        const val PROPERTIES_PATH = "usr.properties"
+        const val PROPERTIES_FILENAME = "usr.properties"
     }
 }

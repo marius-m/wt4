@@ -10,6 +10,8 @@ import java.lang.IllegalArgumentException
 object JBundleExtraPropsFactory {
 
     const val APP_NAME = "WT4"
+    const val APP_FLAVOR_BASIC = "basic"
+    const val APP_FLAVOR_ITO = "ito"
 
     private val defaultJvmProps = listOf(
             "-Xms128m",
@@ -23,9 +25,10 @@ object JBundleExtraPropsFactory {
                 versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
-            val versionProps = VersionProps.fromProps(project)
+            val versionProps = VersionProps.fromProps(project, APP_FLAVOR_BASIC)
             return JBundleExtraProps(
                     appName = "${APP_NAME}-$versionNameSuffix",
+                    appFlavor = versionProps.flavor,
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
@@ -46,13 +49,14 @@ object JBundleExtraPropsFactory {
                 versionNameSuffix: String,
                 project: Project
         ): JBundleExtraProps {
-            val versionProps = VersionProps.fromProps(project)
+            val versionProps = VersionProps.fromProps(project, flavor = APP_FLAVOR_ITO)
             val keysProperties = Properties().apply {
                 val keysPropertyFile = File("${project.rootDir}/keys_debug", "private.properties")
                 load(FileInputStream(keysPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
                     appName = "${APP_NAME}-$versionNameSuffix",
+                    appFlavor = versionProps.flavor,
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = true,
@@ -76,13 +80,14 @@ object JBundleExtraPropsFactory {
                 project: Project,
                 systemWide: Boolean
         ): JBundleExtraProps {
-            val versionProps = VersionProps.fromProps(project)
+            val versionProps = VersionProps.fromProps(project, flavor = APP_FLAVOR_BASIC)
             val deployProps = Properties().apply {
                 val deployPropertyFile = File("${project.rootDir}", "deploy.properties")
                 load(FileInputStream(deployPropertyFile.absolutePath))
             }
             return JBundleExtraProps(
                     appName = "${APP_NAME}-$versionNameSuffix",
+                    appFlavor = versionProps.flavor,
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
@@ -124,7 +129,7 @@ object JBundleExtraPropsFactory {
                 project: Project,
                 systemWide: Boolean
         ): JBundleExtraProps {
-            val versionProps = VersionProps.fromProps(project)
+            val versionProps = VersionProps.fromProps(project, flavor = APP_FLAVOR_ITO)
             val deployProps = Properties().apply {
                 val deployPropertyFile = File("${project.rootDir}", "deploy.properties")
                 load(FileInputStream(deployPropertyFile.absolutePath))
@@ -135,6 +140,7 @@ object JBundleExtraPropsFactory {
             }
             return JBundleExtraProps(
                     appName = "${APP_NAME}-$versionNameSuffix",
+                    appFlavor = versionProps.flavor,
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
@@ -178,7 +184,7 @@ object JBundleExtraPropsFactory {
             if (OsType.get() != OsType.WINDOWS) {
                 throw IllegalArgumentException("Bundle designed for Windows *ONLY*")
             }
-            val versionProps = VersionProps.fromProps(project)
+            val versionProps = VersionProps.fromProps(project, flavor = APP_FLAVOR_ITO)
             val deployProps = Properties().apply {
                 val deployPropertyFile = File("${project.rootDir}", "deploy.properties")
                 load(FileInputStream(deployPropertyFile.absolutePath))
@@ -192,6 +198,7 @@ object JBundleExtraPropsFactory {
             val tmpDirPath = "${appDirPath}${File.separator}tmp"
             return JBundleExtraProps(
                     appName = "${APP_NAME}-$versionNameSuffix",
+                    appFlavor = versionProps.flavor,
                     versionName = versionProps.name,
                     versionCode = versionProps.code,
                     debug = false,
