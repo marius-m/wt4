@@ -4,7 +4,7 @@
         <Property name="WT_ROOT">${sys:user.home}</Property>
         <Property name="WT_APP_PATH">wt4_debug</Property>
         <Property name="WT_APP_FLAVOR">basic</Property>
-        <Property name="LOG_PATH">${sys:WT_ROOT}/.${sys:WT_APP_PATH}/${sys:WT_APP_FLAVOR}/logs</Property>
+        <Property name="LOG_PATH">${sys:WT_ROOT}/.${sys:WT_APP_PATH}-${sys:WT_APP_FLAVOR}/logs</Property>
         <Property name="LOG_PATH_ARCHIVE">${LOG_PATH}/archive</Property>
         <Property name="log_pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
