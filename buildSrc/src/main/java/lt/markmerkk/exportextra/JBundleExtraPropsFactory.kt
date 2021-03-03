@@ -122,6 +122,16 @@ object JBundleExtraPropsFactory {
             return asBasic(versionNameSuffix, project, systemWide = true)
         }
 
+        fun asBasicLinux(
+            versionNameSuffix: String,
+            project: Project
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.LINUX) {
+                throw IllegalArgumentException("Bundle designed for LINUX *ONLY*")
+            }
+            return asBasic(versionNameSuffix, project, systemWide = false)
+        }
+
         fun asBasicWin(
                 versionNameSuffix: String,
                 project: Project
@@ -178,6 +188,15 @@ object JBundleExtraPropsFactory {
             return asOauthITO(versionNameSuffix, project, systemWide = true)
         }
 
+        fun asOauthITOLinux(
+            versionNameSuffix: String,
+            project: Project
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.LINUX) {
+                throw IllegalArgumentException("Bundle designed for LINUX *ONLY*")
+            }
+            return asOauthITO(versionNameSuffix, project, systemWide = false)
+        }
         fun asOauthITOWin(
                 versionNameSuffix: String,
                 project: Project
