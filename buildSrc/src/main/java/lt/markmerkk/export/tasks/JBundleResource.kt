@@ -66,7 +66,7 @@ data class JBundleResource(
         OsType.UNKNOWN -> ""
         OsType.MAC -> "dmg"
         OsType.LINUX -> "deb"
-        OsType.WINDOWS -> "exe"
+        OsType.WINDOWS -> "msi"
     }
 
     companion object {
