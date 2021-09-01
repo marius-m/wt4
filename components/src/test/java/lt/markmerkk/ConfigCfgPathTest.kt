@@ -23,13 +23,15 @@ class ConfigCfgPathTest {
     @Test
     fun releasePath_returnDefault() {
         // Arrange
-        doReturn("home_dir").whenever(pathProvider).userHome()
-        whenever(pathProvider.configDefault())
+        doReturn("home_dir").whenever(pathProvider).userHome
+        whenever(pathProvider.configDefault)
                 .thenReturn("wt4")
         whenever(configSetSettings.currentConfig())
                 .thenReturn("")
         val config = Config(
                 debug = false,
+                appName = "wt4",
+                appFlavor = "basic",
                 versionName = "test_version",
                 versionCode = 1,
                 gaKey = "test_key",
@@ -47,13 +49,15 @@ class ConfigCfgPathTest {
     @Test
     fun debugPath_returnDefault() {
         // Arrange
-        doReturn("home_dir").whenever(pathProvider).userHome()
-        whenever(pathProvider.configDefault())
+        doReturn("home_dir").whenever(pathProvider).userHome
+        whenever(pathProvider.configDefault)
                 .thenReturn("wt4_debug")
         whenever(configSetSettings.currentConfig())
                 .thenReturn("")
         val config = Config(
                 debug = false,
+                appName = "wt4",
+                appFlavor = "basic",
                 versionName = "test_version",
                 versionCode = 1,
                 gaKey = "test_key",
@@ -71,13 +75,15 @@ class ConfigCfgPathTest {
     @Test
     fun withExtension_returnExtension() {
         // Arrange
-        doReturn("home_dir").whenever(pathProvider).userHome()
-        whenever(pathProvider.configDefault())
+        doReturn("home_dir").whenever(pathProvider).userHome
+        whenever(pathProvider.configDefault)
                 .thenReturn("wt4_debug")
         whenever(configSetSettings.currentConfig())
                 .thenReturn("test_extension")
         val config = Config(
                 debug = false,
+                appName = "wt4",
+                appFlavor = "basic",
                 versionName = "test_version",
                 versionCode = 1,
                 gaKey = "test_key",

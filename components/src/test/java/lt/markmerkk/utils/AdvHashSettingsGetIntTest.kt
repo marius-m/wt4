@@ -1,6 +1,8 @@
 package lt.markmerkk.utils
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.doNothing
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.Config
 import lt.markmerkk.ConfigPathProvider
 import org.assertj.core.api.Assertions.assertThat
@@ -8,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import java.util.*
+import java.util.Properties
 
 class AdvHashSettingsGetIntTest {
 
@@ -24,9 +26,14 @@ class AdvHashSettingsGetIntTest {
         doReturn("/").whenever(configSetSettings)
                 .currentConfig()
         config = Config(
-                cpp = configPathProvider,
-                configSetSettings = configSetSettings,
-                gaKey = "test"
+            debug = false,
+            appName = "wt4",
+            appFlavor = "basic",
+            versionName = "test_version",
+            versionCode = 1,
+            cpp = configPathProvider,
+            configSetSettings = configSetSettings,
+            gaKey = "test"
         )
     }
 
