@@ -87,7 +87,6 @@ class MainWidget : Fragment(), MainContract.View {
     lateinit var viewSideDrawerTickets: JFXDrawer
 
     lateinit var snackBar: JFXSnackbar
-    lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
 
@@ -247,18 +246,6 @@ class MainWidget : Fragment(), MainContract.View {
     override fun onDock() {
         super.onDock()
         // Init ui elements
-        changelogLoader = ChangelogLoader(
-                listener = object : ChangelogLoader.Listener {
-                    override fun onNewVersion(changelog: Changelog) {
-                        logger.debug("Showing changelog")
-                        eventBus.post(EventNewVersion(changelog))
-                    }
-                },
-                versionProvider = versionProvider,
-                ioScheduler = schedulerProvider.io(),
-                uiScheduler = schedulerProvider.ui()
-
-        )
         snackBar = JFXSnackbar(root as StackPane)
                 .apply { toFront() }
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
@@ -316,14 +303,11 @@ class MainWidget : Fragment(), MainContract.View {
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
         eventBus.register(this)
-        changelogLoader.onAttach()
-        changelogLoader.check()
         presenter.onAttach(this)
     }
 
     override fun onUndock() {
         presenter.onDetach()
-        changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
         eventBus.unregister(this)
         syncInteractor.removeLoadingListener(syncInteractorListener)
