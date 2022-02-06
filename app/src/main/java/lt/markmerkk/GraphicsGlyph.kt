@@ -19,6 +19,10 @@ class GraphicsGlyph : Graphics<SVGGlyph> {
         return glyph(glyph.name.toLowerCase(), color, width, height)
     }
 
+    override fun from(glyph: Glyph, color: Color, width: Double, height: Double, rotate: Double): SVGGlyph {
+        return glyph(glyph.name.toLowerCase(), color, width, height, rotate)
+    }
+
     override fun from(
             glyph: Glyph,
             color: Color,
@@ -28,10 +32,11 @@ class GraphicsGlyph : Graphics<SVGGlyph> {
     }
 
     private fun glyph(
-            key: String,
-            color: Color,
-            width: Double,
-            height: Double
+        key: String,
+        color: Color,
+        width: Double,
+        height: Double,
+        rotate: Double = 0.0
     ): SVGGlyph {
         if (!glyphs.containsKey(key)) {
             return graphAlert(color, width, height)
@@ -43,6 +48,7 @@ class GraphicsGlyph : Graphics<SVGGlyph> {
                 color
         )
         svgGlyph.setSize(width, height)
+        svgGlyph.rotate = rotate
         return svgGlyph
     }
 
