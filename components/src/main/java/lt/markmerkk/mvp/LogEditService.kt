@@ -19,6 +19,16 @@ interface LogEditService {
     /**
      * Updates current date time for the [entityInEdit]
      */
+    fun updateDateTimeRaw(
+        startDate: String,
+        startTime: String,
+        endDate: String,
+        endTime: String
+    )
+
+    /**
+     * Updates current date time for the [entityInEdit]
+     */
     fun updateDateTime(
             start: DateTime,
             end: DateTime

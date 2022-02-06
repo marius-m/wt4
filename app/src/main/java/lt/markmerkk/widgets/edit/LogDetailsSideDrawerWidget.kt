@@ -2,9 +2,7 @@ package lt.markmerkk.widgets.edit
 
 import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTextField
-import com.jfoenix.controls.JFXTimePicker
 import com.jfoenix.svg.SVGGlyph
 import com.vdurmont.emoji.EmojiParser
 import javafx.application.Platform
@@ -17,6 +15,8 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import javafx.stage.Modality
+import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
@@ -27,15 +27,18 @@ import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.RecentTicketLoader
 import lt.markmerkk.tickets.TicketInfoLoader
-import lt.markmerkk.ui_2.bridges.UIBridgeDateTimeHandler
-import lt.markmerkk.ui_2.bridges.UIBridgeTimeQuickEdit
+import lt.markmerkk.timeselect.entities.TimeSelectRequest
+import lt.markmerkk.timeselect.entities.TimeSelectResult
+import lt.markmerkk.timeselect.entities.TimeSelectType
 import lt.markmerkk.ui_2.views.*
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
+import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
+import lt.markmerkk.widgets.datetimepicker.TimeSelectWidget
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -63,14 +66,11 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var accountAvailablility: AccountAvailablility
 
     private lateinit var viewLabelHeader: Label
-    private lateinit var viewDatePickerFrom: JFXDatePicker
-    private lateinit var viewTimePickerFrom: JFXTimePicker
-    private lateinit var viewButtonSubtractFrom: JFXButton
-    private lateinit var viewButtonAppendFrom: JFXButton
-    private lateinit var viewDatePickerTo: JFXDatePicker
-    private lateinit var viewTimePickerTo: JFXTimePicker
-    private lateinit var viewButtonSubtractTo: JFXButton
-    private lateinit var viewButtonAppendTo: JFXButton
+    private lateinit var viewDatePickerFrom: JFXTextField
+    private lateinit var viewTimePickerFrom: JFXTextField
+    private lateinit var viewDatePickerTo: JFXTextField
+    private lateinit var viewTimePickerTo: JFXTextField
+    private lateinit var viewDuration: JFXTextField
     private lateinit var viewTextFieldTicket: JFXTextField
     private lateinit var viewTextTicketDesc: Label
     private lateinit var viewButtonTicketLink: JFXButton
@@ -82,8 +82,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
     private lateinit var viewLabelHint2: Label
     private lateinit var viewTableRecent: TableView<RecentTicketViewModel>
 
-    private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
-    private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
+    // private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
+    // private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
     private lateinit var presenter: LogDetailsContract.Presenter
     private lateinit var ticketInfoLoader: TicketInfoLoader
     private lateinit var jiraLinkGenerator: JiraLinkGenerator
@@ -136,67 +136,95 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 }
             }
             center {
-                vbox {
-                    label("From") {
+                vbox(spacing = 10) {
+                    label("Time range") {
                         addClass(Styles.labelMini)
                         style {
                             padding = box(
-                                    top = 10.px,
-                                    left = 0.px,
-                                    right = 0.px,
-                                    bottom = 0.px
+                                top = 10.px,
+                                left = 0.px,
+                                right = 0.px,
+                                bottom = 0.px
                             )
                         }
                     }
-                    hbox(spacing = 4) {
-                        viewDatePickerFrom = jfxDatePicker {
-                            maxWidth = 110.0
-                            isFocusTraversable = false
-                            isOverLay = true
-                            defaultColor = Styles.cActiveRed
+                    hbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
+                        viewDatePickerFrom = jfxTextField {
+                            minWidth = 100.0
+                            alignment = Pos.CENTER
+                            hgrow = Priority.ALWAYS
+                            isFocusTraversable = true
+                            isEditable = false
+                            focusColor = Styles.cActiveRed
+                            isLabelFloat = false
+                            promptText = ""
+                            unFocusColor = Color.BLACK
+                            text = ""
                         }
-                        viewTimePickerFrom = jfxTimePicker {
-                            maxWidth = 74.0
-                            isFocusTraversable = false
-                            isOverLay = true
-                            defaultColor = Styles.cActiveRed
+                        viewTimePickerFrom = jfxTextField {
+                            minWidth = 60.0
+                            alignment = Pos.CENTER
+                            hgrow = Priority.ALWAYS
+                            isFocusTraversable = true
+                            isEditable = false
+                            focusColor = Styles.cActiveRed
+                            isLabelFloat = false
+                            promptText = ""
+                            unFocusColor = Color.BLACK
+                            text = ""
+                            setOnMouseClicked {
+                                resultDispatcher.publish(
+                                    key = TimeSelectWidget.RESULT_DISPATCH_KEY_PRESELECT,
+                                    resultEntity = TimeSelectRequest.asTimeFrom(
+                                        timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerFrom.text)
+                                    )
+                                )
+                                find<TimeSelectWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = true
+                                )
+                            }
                         }
-                        viewButtonSubtractFrom = jfxButton("-") {
-                            isFocusTraversable = false
+                        label("-")
+                        viewDatePickerTo = jfxTextField {
+                            minWidth = 100.0
+                            alignment = Pos.CENTER
+                            hgrow = Priority.ALWAYS
+                            isFocusTraversable = true
+                            isEditable = false
+                            focusColor = Styles.cActiveRed
+                            isLabelFloat = false
+                            promptText = ""
+                            unFocusColor = Color.BLACK
+                            text = ""
                         }
-                        viewButtonAppendFrom = jfxButton("+") {
-                            isFocusTraversable = false
-                        }
-                    }
-                    label("To") {
-                        addClass(Styles.labelMini)
-                        style {
-                            padding = box(
-                                    top = 10.px,
-                                    left = 0.px,
-                                    right = 0.px,
-                                    bottom = 0.px
-                            )
-                        }
-                    }
-                    hbox(spacing = 4) {
-                        viewDatePickerTo = jfxDatePicker {
-                            maxWidth = 110.0
-                            isFocusTraversable = false
-                            isOverLay = true
-                            defaultColor = Styles.cActiveRed
-                        }
-                        viewTimePickerTo = jfxTimePicker {
-                            maxWidth = 74.0
-                            isFocusTraversable = false
-                            isOverLay = true
-                            defaultColor = Styles.cActiveRed
-                        }
-                        viewButtonSubtractTo = jfxButton("-") {
-                            isFocusTraversable = false
-                        }
-                        viewButtonAppendTo = jfxButton("+") {
-                            isFocusTraversable = false
+                        viewTimePickerTo = jfxTextField {
+                            minWidth = 60.0
+                            alignment = Pos.CENTER
+                            hgrow = Priority.ALWAYS
+                            isFocusTraversable = true
+                            isEditable = false
+                            focusColor = Styles.cActiveRed
+                            isLabelFloat = false
+                            promptText = ""
+                            unFocusColor = Color.BLACK
+                            text = ""
+                            setOnMouseClicked {
+                                resultDispatcher.publish(
+                                    key = TimeSelectWidget.RESULT_DISPATCH_KEY_PRESELECT,
+                                    resultEntity = TimeSelectRequest.asTimeTo(
+                                        timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerTo.text)
+                                    )
+                                )
+                                find<TimeSelectWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = true
+                                )
+                            }
                         }
                     }
                     hbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
@@ -512,7 +540,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
         ticketInfoLoader.findTicket(initTicket)
     }
 
-    //register Events
+    //region Events
 
     @Subscribe
     fun onFocusLogDetailsWidget(event: EventFocusLogDetailsWidget) {
@@ -527,18 +555,52 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     @Subscribe
     fun eventSave(event: EventLogDetailsSave) {
-        presenter.save(
-                start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
-                end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
-                task = viewTextFieldTicket.text,
-                comment = viewTextComment.textArea.text
+        // presenter.save(
+        //         start = timeProvider.toJodaDateTime(viewDatePickerFrom.value, viewTimePickerFrom.value),
+        //         end = timeProvider.toJodaDateTime(viewDatePickerTo.value, viewTimePickerTo.value),
+        //         task = viewTextFieldTicket.text,
+        //         comment = viewTextComment.textArea.text
+        // )
+    }
+
+    @Subscribe
+    fun eventChangeTime(event: EventChangeTime) {
+        val timeSelectResult = resultDispatcher.consume(
+            TimeSelectWidget.RESULT_DISPATCH_KEY_RESULT,
+            TimeSelectResult::class.java
         )
+        if (timeSelectResult != null) {
+            val timeSelectType = TimeSelectType.fromRaw(timeSelectResult.extra)
+            when (timeSelectType) {
+                TimeSelectType.UNKNOWN -> {}
+                TimeSelectType.FROM -> {
+                    presenter.changeDateTimeRaw(
+                        startDate = viewDatePickerFrom.text,
+                        startTime = LogFormatters.shortFormat.print(timeSelectResult.timeSelectionNew),
+                        endDate = viewDatePickerTo.text,
+                        endTime = viewTimePickerTo.text
+                    )
+                }
+                TimeSelectType.TO -> {
+                    presenter.changeDateTimeRaw(
+                        startDate = viewDatePickerFrom.text,
+                        startTime = viewTimePickerFrom.text,
+                        endDate = viewDatePickerTo.text,
+                        endTime = LogFormatters.shortFormat.print(timeSelectResult.timeSelectionNew)
+                    )
+                }
+            }.javaClass
+        }
     }
 
     //endregion
 
     override fun showDateTime(start: DateTime, end: DateTime) {
         uiBridgeDateTimeHandler.changeDate(start, end)
+        viewDatePickerFrom.text = LogFormatters.shortFormatDate.print(start)
+        viewTimePickerFrom.text = LogFormatters.shortFormat.print(start)
+        viewDatePickerTo.text = LogFormatters.shortFormatDate.print(end)
+        viewTimePickerTo.text = LogFormatters.shortFormat.print(end)
     }
 
     override fun showTicketCode(ticket: String) {

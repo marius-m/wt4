@@ -4,8 +4,10 @@ import org.joda.time.format.DateTimeFormat
 import lt.markmerkk.entities.Log
 import org.joda.time.*
 import org.joda.time.format.PeriodFormatterBuilder
+import org.slf4j.LoggerFactory
 
 object LogFormatters {
+    private val l = LoggerFactory.getLogger(LogFormatters::class.java)!!
     const val TIME_SHORT_FORMAT = "HH:mm"
     const val DATE_SHORT_FORMAT = "yyyy-MM-dd"
     const val DATE_LONG_FORMAT = "yyyy-MM-dd HH:mm"
@@ -90,4 +92,28 @@ object LogFormatters {
         return logDates.size > 1
     }
 
+    fun dtFromRawOrNull(
+        dateAsString: String,
+        timeAsString: String
+    ): DateTime? {
+        return try {
+            val date = LogFormatters.shortFormatDate.parseLocalDate(dateAsString)
+            val time = LogFormatters.shortFormat.parseLocalTime(timeAsString)
+            date.toDateTime(time)
+        } catch (e: IllegalArgumentException) {
+            l.warn("Error parsing date time as string from ${dateAsString} / ${timeAsString}", e)
+            null
+        }
+    }
+
+    fun timeFromRawOrDefault(
+        timeAsString: String
+    ): LocalTime {
+        return try {
+            shortFormat.parseLocalTime(timeAsString)
+        } catch (e: IllegalArgumentException) {
+            l.warn("Error parsing time as string from ${timeAsString}", e)
+            LocalTime.MIDNIGHT
+        }
+    }
 }

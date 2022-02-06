@@ -36,6 +36,12 @@ interface LogDetailsContract {
                 task: String,
                 comment: String
         )
+        fun changeDateTimeRaw(
+            startDate: String,
+            startTime: String,
+            endDate: String,
+            endTime: String
+        )
         fun changeDateTime(start: DateTime, end: DateTime)
         fun openFindTickets()
         fun changeTicketCode(ticket: String)

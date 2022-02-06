@@ -1,6 +1,7 @@
 package lt.markmerkk.widgets.datetimepicker
 
 import com.jfoenix.svg.SVGGlyph
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ListView
@@ -14,8 +15,11 @@ import lt.markmerkk.Styles
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.ViewProvider
 import lt.markmerkk.WTEventBus
-import lt.markmerkk.timeselect.DateTimeSelectContract
-import lt.markmerkk.timeselect.DateTimeSelectPresenter
+import lt.markmerkk.events.EventChangeTime
+import lt.markmerkk.timeselect.TimeSelectContract
+import lt.markmerkk.timeselect.TimeSelectPresenter
+import lt.markmerkk.timeselect.entities.TimeSelectRequest
+import lt.markmerkk.timeselect.entities.TimeSelectResult
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.widgets.datetimepicker.listitems.TimePickItemFragment
 import lt.markmerkk.widgets.datetimepicker.listitems.TimePickViewModel
@@ -39,7 +43,7 @@ import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
 
-class DateTimeSelectWidget : Fragment(), DateTimeSelectContract.View {
+class TimeSelectWidget : Fragment(), TimeSelectContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
@@ -48,6 +52,8 @@ class DateTimeSelectWidget : Fragment(), DateTimeSelectContract.View {
 
     private lateinit var viewListHour: ListView<TimePickViewModel>
     private lateinit var viewListMinute: ListView<TimePickViewModel>
+
+    private lateinit var request: TimeSelectRequest
 
     private val obsHours = hourSelections()
         .map { TimePickViewModel(it.hourOfDay.toString()) }
@@ -62,9 +68,9 @@ class DateTimeSelectWidget : Fragment(), DateTimeSelectContract.View {
         Main.component().inject(this)
     }
 
-    private val presenter: DateTimeSelectContract.Presenter = DateTimeSelectPresenter(
-        view = object : ViewProvider<DateTimeSelectContract.View>() {
-            override fun get(): DateTimeSelectContract.View? = this@DateTimeSelectWidget
+    private val presenter: TimeSelectContract.Presenter = TimeSelectPresenter(
+        view = object : ViewProvider<TimeSelectContract.View>() {
+            override fun get(): TimeSelectContract.View? = this@TimeSelectWidget
         }
     )
 
@@ -152,6 +158,17 @@ class DateTimeSelectWidget : Fragment(), DateTimeSelectContract.View {
                 jfxButton("Close".toUpperCase()) {
                     setOnAction { close() }
                 }
+                jfxButton("Select".toUpperCase()) {
+                    setOnAction {
+                        resultDispatcher.publish(
+                            key = RESULT_DISPATCH_KEY_RESULT,
+                            resultEntity = TimeSelectResult
+                                .withNewValue(request, presenter.timeSelection)
+                        )
+                        eventBus.post(EventChangeTime)
+                        close()
+                    }
+                }
             }
         }
     }
@@ -160,10 +177,24 @@ class DateTimeSelectWidget : Fragment(), DateTimeSelectContract.View {
         super.onDock()
         presenter.onAttach()
         l.debug("onDock()")
-        presenter.selectTime(14, 20)
+        this.request = resultDispatcher
+            .consume(RESULT_DISPATCH_KEY_PRESELECT, TimeSelectRequest::class.java) ?: TimeSelectRequest.asDefault()
+        presenter.selectTime(request.timeSelection)
+        viewListHour.selectionModel
+            .selectedItemProperty()
+            .addListener(listenerTimeSelectChangeHour)
+        viewListMinute.selectionModel
+            .selectedItemProperty()
+            .addListener(listenerTimeSelectChangeMinute)
     }
 
     override fun onUndock() {
+        viewListHour.selectionModel
+            .selectedItemProperty()
+            .removeListener(listenerTimeSelectChangeHour)
+        viewListMinute.selectionModel
+            .selectedItemProperty()
+            .removeListener(listenerTimeSelectChangeMinute)
         presenter.onDetach()
         l.debug("onUndock()")
         super.onUndock()
@@ -182,12 +213,26 @@ class DateTimeSelectWidget : Fragment(), DateTimeSelectContract.View {
         }
     }
 
+    //region Listeners
+
+    private val listenerTimeSelectChangeHour = ChangeListener<TimePickViewModel> { _, _, newValue ->
+        presenter.selectHour(newValue.timeAsProperty.get().toInt(), render = false)
+    }
+
+    private val listenerTimeSelectChangeMinute = ChangeListener<TimePickViewModel> { _, _, newValue ->
+        presenter.selectMinute(newValue.timeAsProperty.get().toInt(), render = false)
+    }
+
+    //endregion
+
     companion object {
-        val l = LoggerFactory.getLogger(DateTimeSelectWidget::class.java)!!
+        const val RESULT_DISPATCH_KEY_PRESELECT = "747b6ef3-5e5e-4c5c-bf38-c03c87fa3919"
+        const val RESULT_DISPATCH_KEY_RESULT = "dfdfc9bd-c059-4970-bc2f-ca37f79a145e"
+        val l = LoggerFactory.getLogger(TimeSelectWidget::class.java)!!
 
         const val TIME_SHORT_FORMAT = "HH:mm"
         const val MINUTE_JUMP = 1
-        const val MINUTE_JUMP_FAST = 15
+        const val MINUTE_JUMP_FAST = 10
         const val HOUR_JUMP = 1
         const val HOUR_JUMP_FAST = 3
         val shortFormat = DateTimeFormat.forPattern(TIME_SHORT_FORMAT)!!

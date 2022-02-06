@@ -94,6 +94,11 @@ class LogDetailsPresenterReadOnly(
         eventBus.post(EventSnackBarMessage("Ticket in 'Read-only' mode, cannot be updated!"))
     }
 
+    override fun changeDateTimeRaw(startDate: String, startTime: String, endDate: String, endTime: String) {
+        logEditService.updateDateTimeRaw(startDate, startTime, endDate, endTime)
+        logEditService.redraw()
+    }
+
     override fun changeDateTime(start: DateTime, end: DateTime) {
         logEditService.redraw()
     }
