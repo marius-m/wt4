@@ -1,4 +1,4 @@
-package lt.markmerkk.widgets.datetimepicker.listitems
+package lt.markmerkk.widgets.timepicker.listitems
 
 import tornadofx.ListCellFragment
 import tornadofx.bindTo

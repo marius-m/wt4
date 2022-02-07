@@ -7,7 +7,7 @@ import lt.markmerkk.LogStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.utils.DateSwitcherFormatter
-import lt.markmerkk.widgets.DatePickerWidget
+import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import tornadofx.*
 
 class QuickDateChangeWidgetPresenterDefault(

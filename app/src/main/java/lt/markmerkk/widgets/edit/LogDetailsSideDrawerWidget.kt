@@ -42,7 +42,7 @@ import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
 import lt.markmerkk.widgets.datepicker.DatePickerWidget
-import lt.markmerkk.widgets.datetimepicker.TimePickerWidget
+import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import lt.markmerkk.widgets.wrapAsSource
 import org.joda.time.DateTime

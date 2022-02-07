@@ -1,4 +1,4 @@
-package lt.markmerkk.widgets.datetimepicker
+package lt.markmerkk.widgets.timepicker
 
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
@@ -23,8 +23,8 @@ import lt.markmerkk.timeselect.entities.TimeSelectRequest
 import lt.markmerkk.timeselect.entities.TimeSelectResult
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
-import lt.markmerkk.widgets.datetimepicker.listitems.TimePickItemFragment
-import lt.markmerkk.widgets.datetimepicker.listitems.TimePickViewModel
+import lt.markmerkk.widgets.timepicker.listitems.TimePickItemFragment
+import lt.markmerkk.widgets.timepicker.listitems.TimePickViewModel
 import org.joda.time.LocalDateTime
 import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormat
