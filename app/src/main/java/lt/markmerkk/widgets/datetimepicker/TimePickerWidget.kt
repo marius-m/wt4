@@ -17,8 +17,8 @@ import lt.markmerkk.TimeProvider
 import lt.markmerkk.ViewProvider
 import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventChangeTime
-import lt.markmerkk.timeselect.TimeSelectContract
-import lt.markmerkk.timeselect.TimeSelectPresenter
+import lt.markmerkk.timeselect.TimePickerContract
+import lt.markmerkk.timeselect.TimePickerPresenter
 import lt.markmerkk.timeselect.entities.TimeSelectRequest
 import lt.markmerkk.timeselect.entities.TimeSelectResult
 import lt.markmerkk.ui_2.views.jfxButton
@@ -40,13 +40,12 @@ import tornadofx.label
 import tornadofx.listview
 import tornadofx.px
 import tornadofx.style
-import tornadofx.text
 import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
 
-class TimeSelectWidget : Fragment(), TimeSelectContract.View {
+class TimePickerWidget : Fragment(), TimePickerContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
@@ -73,9 +72,9 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
         Main.component().inject(this)
     }
 
-    private val presenter: TimeSelectContract.Presenter = TimeSelectPresenter(
-        view = object : ViewProvider<TimeSelectContract.View>() {
-            override fun get(): TimeSelectContract.View? = this@TimeSelectWidget
+    private val presenter: TimePickerContract.Presenter = TimePickerPresenter(
+        view = object : ViewProvider<TimePickerContract.View>() {
+            override fun get(): TimePickerContract.View? = this@TimePickerWidget
         }
     )
 
@@ -240,7 +239,7 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
     companion object {
         const val RESULT_DISPATCH_KEY_PRESELECT = "747b6ef3-5e5e-4c5c-bf38-c03c87fa3919"
         const val RESULT_DISPATCH_KEY_RESULT = "dfdfc9bd-c059-4970-bc2f-ca37f79a145e"
-        val l = LoggerFactory.getLogger(TimeSelectWidget::class.java)!!
+        val l = LoggerFactory.getLogger(TimePickerWidget::class.java)!!
 
         const val TIME_SHORT_FORMAT = "HH:mm"
         const val MINUTE_JUMP = 1

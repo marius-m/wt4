@@ -2,7 +2,7 @@ package lt.markmerkk.timeselect
 
 import org.joda.time.LocalTime
 
-interface TimeSelectContract {
+interface TimePickerContract {
     interface View {
         fun renderSelection(localTime: LocalTime)
     }

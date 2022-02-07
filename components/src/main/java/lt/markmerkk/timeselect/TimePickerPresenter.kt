@@ -3,9 +3,9 @@ package lt.markmerkk.timeselect
 import lt.markmerkk.ViewProvider
 import org.joda.time.LocalTime
 
-class TimeSelectPresenter(
-    private val view: ViewProvider<TimeSelectContract.View>
-): TimeSelectContract.Presenter {
+class TimePickerPresenter(
+    private val view: ViewProvider<TimePickerContract.View>
+): TimePickerContract.Presenter {
 
     private var selection: LocalTime = LocalTime(0, 0)
 

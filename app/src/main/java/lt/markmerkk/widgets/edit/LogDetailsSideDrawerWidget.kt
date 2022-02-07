@@ -8,7 +8,6 @@ import com.vdurmont.emoji.EmojiParser
 import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextInputControl
@@ -24,7 +23,6 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketUseHistory
-import lt.markmerkk.entities.TimeRangeRaw
 import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndTime
 import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartTime
 import lt.markmerkk.events.*
@@ -43,9 +41,8 @@ import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
-import lt.markmerkk.widgets.DatePickerWidget
-import lt.markmerkk.widgets.TimeRangeSourceTextfield
-import lt.markmerkk.widgets.datetimepicker.TimeSelectWidget
+import lt.markmerkk.widgets.datepicker.DatePickerWidget
+import lt.markmerkk.widgets.datetimepicker.TimePickerWidget
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import lt.markmerkk.widgets.wrapAsSource
 import org.joda.time.DateTime
@@ -192,12 +189,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             text = ""
                             setOnMouseClicked {
                                 resultDispatcher.publish(
-                                    key = TimeSelectWidget.RESULT_DISPATCH_KEY_PRESELECT,
+                                    key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
                                     resultEntity = TimeSelectRequest.asTimeFrom(
                                         timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerFrom.text)
                                     )
                                 )
-                                find<TimeSelectWidget>().openModal(
+                                find<TimePickerWidget>().openModal(
                                     stageStyle = StageStyle.DECORATED,
                                     modality = Modality.APPLICATION_MODAL,
                                     block = false,
@@ -231,12 +228,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             text = ""
                             setOnMouseClicked {
                                 resultDispatcher.publish(
-                                    key = TimeSelectWidget.RESULT_DISPATCH_KEY_PRESELECT,
+                                    key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
                                     resultEntity = TimeSelectRequest.asTimeTo(
                                         timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerTo.text)
                                     )
                                 )
-                                find<TimeSelectWidget>().openModal(
+                                find<TimePickerWidget>().openModal(
                                     stageStyle = StageStyle.DECORATED,
                                     modality = Modality.APPLICATION_MODAL,
                                     block = false,
@@ -566,7 +563,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Subscribe
     fun eventChangeTime(event: EventChangeTime) {
         val timeSelectResult = resultDispatcher.consume(
-            TimeSelectWidget.RESULT_DISPATCH_KEY_RESULT,
+            TimePickerWidget.RESULT_DISPATCH_KEY_RESULT,
             TimeSelectResult::class.java
         )
         if (timeSelectResult != null) {
