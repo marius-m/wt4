@@ -1,12 +1,21 @@
 package lt.markmerkk.ui_2.views.date
 
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.svg.SVGGlyph
 import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import lt.markmerkk.*
+import lt.markmerkk.datepick.DateSelectResult
+import lt.markmerkk.datepick.DateSelectType
+import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndTime
+import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartTime
+import lt.markmerkk.events.EventChangeDate
+import lt.markmerkk.events.EventChangeTime
+import lt.markmerkk.timeselect.entities.TimeSelectType
 import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -15,6 +24,8 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var logStorage: LogStorage
+    @Inject lateinit var eventBus: WTEventBus
+    @Inject lateinit var resultDispatcher: ResultDispatcher
 
     init {
         Main.component().inject(this)
@@ -46,11 +57,16 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
 
     override fun onDock() {
         super.onDock()
-        presenter = QuickDateChangeWidgetPresenterDefault(logStorage)
+        presenter = QuickDateChangeWidgetPresenterDefault(
+            resultDispatcher,
+            logStorage
+        )
         presenter.onAttach(this)
+        eventBus.register(this)
     }
 
     override fun onUndock() {
+        eventBus.register(this)
         presenter.onDetach()
         super.onUndock()
     }
@@ -66,6 +82,29 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
     override fun render(title: String) {
         viewButtonDate.text = title
     }
+
+    //region Events
+
+    @Subscribe
+    fun eventChangeDate(event: EventChangeDate) {
+        val dateSelectResult = resultDispatcher.consume(
+            DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
+            DateSelectResult::class.java
+        )
+        if (dateSelectResult != null) {
+            val dateSelectType = DateSelectType.fromRaw(dateSelectResult.extra)
+            when (dateSelectType) {
+                DateSelectType.TARGET_DATE -> {
+                    presenter.selectDate(dateSelectResult.dateSelectionNew)
+                }
+                DateSelectType.UNKNOWN,
+                DateSelectType.SELECT_FROM,
+                DateSelectType.SELECT_TO -> {}
+            }.javaClass
+        }
+    }
+
+    //endregion
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.MAIN)

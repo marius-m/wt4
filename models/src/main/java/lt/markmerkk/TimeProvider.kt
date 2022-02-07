@@ -95,6 +95,17 @@ interface TimeProvider {
         /**
          * Converts joda [DateTime] to java8 [LocalDate]
          */
+        fun toJavaLocalDate(jodaDate: LocalDate): java.time.LocalDate {
+            return java.time.LocalDate.of(
+                jodaDate.year,
+                jodaDate.monthOfYear,
+                jodaDate.dayOfMonth
+            )
+        }
+
+        /**
+         * Converts joda [DateTime] to java8 [LocalDate]
+         */
         fun toJavaLocalTime(jodaDateTime: DateTime): java.time.LocalTime {
             return java.time.LocalTime.of(
                     jodaDateTime.hourOfDay,

@@ -4,14 +4,19 @@ import javafx.stage.StageStyle
 import lt.markmerkk.DisplayTypeLength
 import lt.markmerkk.IDataListener
 import lt.markmerkk.LogStorage
+import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.datepick.DateSelectRequest
+import lt.markmerkk.datepick.DateSelectType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.utils.DateSwitcherFormatter
 import lt.markmerkk.widgets.datepicker.DatePickerWidget
-import tornadofx.*
+import org.joda.time.LocalDate
+import tornadofx.find
 
 class QuickDateChangeWidgetPresenterDefault(
-        private val logStorage: LogStorage
+    private val resultDispatcher: ResultDispatcher,
+    private val logStorage: LogStorage
 ) : DateChangeContract.Presenter {
 
     private var view: DateChangeContract.View? = null
@@ -25,6 +30,10 @@ class QuickDateChangeWidgetPresenterDefault(
     override fun onDetach() {
         this.view = null
         logStorage.unregister(dataListener)
+    }
+
+    override fun selectDate(localDate: LocalDate) {
+        logStorage.targetDate = localDate.toDateTimeAtStartOfDay()
     }
 
     override fun onClickNext() {
@@ -42,6 +51,13 @@ class QuickDateChangeWidgetPresenterDefault(
     }
 
     override fun onClickDate() {
+        resultDispatcher.publish(
+            key = DatePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
+            resultEntity = DateSelectRequest(
+                dateSelection = logStorage.targetDate.toLocalDate(),
+                extra = DateSelectType.TARGET_DATE.name
+            )
+        )
         find<DatePickerWidget>().openModal(
                 stageStyle = StageStyle.DECORATED,
                 block = true,
