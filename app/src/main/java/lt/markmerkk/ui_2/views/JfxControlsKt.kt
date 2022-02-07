@@ -7,7 +7,6 @@ import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.geometry.Side
 import javafx.scene.Node
-import javafx.scene.control.Button
 import org.controlsfx.control.MasterDetailPane
 import org.controlsfx.control.PrefixSelectionComboBox
 import tornadofx.*

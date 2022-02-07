@@ -1,6 +1,7 @@
 package lt.markmerkk.widgets.edit
 
 import com.jfoenix.svg.SVGGlyph
+import lt.markmerkk.entities.TimeRangeRaw
 import org.joda.time.DateTime
 
 interface LogDetailsContract {
@@ -36,12 +37,7 @@ interface LogDetailsContract {
                 task: String,
                 comment: String
         )
-        fun changeDateTimeRaw(
-            startDate: String,
-            startTime: String,
-            endDate: String,
-            endTime: String
-        )
+        fun changeDateTimeRaw(timeRangeRaw: TimeRangeRaw)
         fun changeDateTime(start: DateTime, end: DateTime)
         fun openFindTickets()
         fun changeTicketCode(ticket: String)

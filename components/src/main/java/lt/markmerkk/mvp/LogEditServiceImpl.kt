@@ -5,7 +5,7 @@ import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.entities.TicketCode
-import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.entities.TimeRangeRaw
 import org.joda.time.DateTime
 
 /**
@@ -27,17 +27,8 @@ class LogEditServiceImpl(
             .setComment("")
             .build()
 
-    override fun updateDateTimeRaw(
-        startDate: String,
-        startTime: String,
-        endDate: String,
-        endTime: String
-    ) {
-        val dtStart = LogFormatters.dtFromRawOrNull(startDate, startTime)
-        val dtEnd = LogFormatters.dtFromRawOrNull(endDate, endTime)
-        if (dtStart != null && dtEnd != null) {
-            updateDateTime(dtStart, dtEnd)
-        }
+    override fun updateDateTimeRaw(timeRangeRaw: TimeRangeRaw) {
+        updateDateTime(timeRangeRaw.dtStart, timeRangeRaw.dtEnd)
     }
 
     override fun updateDateTime(

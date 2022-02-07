@@ -1,6 +1,7 @@
 package lt.markmerkk.mvp
 
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.TimeRangeRaw
 import org.joda.time.DateTime
 
 /**
@@ -19,12 +20,7 @@ interface LogEditService {
     /**
      * Updates current date time for the [entityInEdit]
      */
-    fun updateDateTimeRaw(
-        startDate: String,
-        startTime: String,
-        endDate: String,
-        endTime: String
-    )
+    fun updateDateTimeRaw(timeRangeRaw: TimeRangeRaw)
 
     /**
      * Updates current date time for the [entityInEdit]

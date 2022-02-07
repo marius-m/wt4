@@ -4,6 +4,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.TimeRangeRaw
 import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
@@ -90,8 +91,8 @@ class LogDetailsPresenterUpdate(
         logEditService.saveEntity(start, end, task, comment)
     }
 
-    override fun changeDateTimeRaw(startDate: String, startTime: String, endDate: String, endTime: String) {
-        logEditService.updateDateTimeRaw(startDate, startTime, endDate, endTime)
+    override fun changeDateTimeRaw(timeRangeRaw: TimeRangeRaw) {
+        logEditService.updateDateTimeRaw(timeRangeRaw)
         logEditService.redraw()
     }
 

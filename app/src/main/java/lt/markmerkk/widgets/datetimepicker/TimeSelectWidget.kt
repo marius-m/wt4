@@ -155,9 +155,6 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton("Close".toUpperCase()) {
-                    setOnAction { close() }
-                }
                 jfxButton("Select".toUpperCase()) {
                     setOnAction {
                         resultDispatcher.publish(
@@ -168,6 +165,9 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
                         eventBus.post(EventChangeTime)
                         close()
                     }
+                }
+                jfxButton("Close".toUpperCase()) {
+                    setOnAction { close() }
                 }
             }
         }

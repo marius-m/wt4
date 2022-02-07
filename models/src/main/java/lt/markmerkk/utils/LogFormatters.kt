@@ -18,6 +18,8 @@ object LogFormatters {
     val longFormat = DateTimeFormat.forPattern(DATE_LONG_FORMAT)!!
     val veryLongFormat = DateTimeFormat.forPattern(DATE_VERY_LONG_FORMAT)!!
 
+    val defaultDate = LocalDate(1970, 1, 1)
+
     private val periodFormatter = PeriodFormatterBuilder()
             .appendDays()
             .appendSuffix("d")
@@ -103,6 +105,17 @@ object LogFormatters {
         } catch (e: IllegalArgumentException) {
             l.warn("Error parsing date time as string from ${dateAsString} / ${timeAsString}", e)
             null
+        }
+    }
+
+    fun dateFromRawOrDefault(
+        dateAsString: String
+    ): LocalDate {
+        return try {
+            shortFormatDate.parseLocalDate(dateAsString)
+        } catch (e: IllegalArgumentException) {
+            l.warn("Error parsing date as string from ${dateAsString}", e)
+            defaultDate
         }
     }
 
