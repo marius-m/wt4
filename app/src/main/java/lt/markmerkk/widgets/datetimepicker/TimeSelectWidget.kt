@@ -4,6 +4,7 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
@@ -21,6 +22,7 @@ import lt.markmerkk.timeselect.TimeSelectPresenter
 import lt.markmerkk.timeselect.entities.TimeSelectRequest
 import lt.markmerkk.timeselect.entities.TimeSelectResult
 import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.widgets.datetimepicker.listitems.TimePickItemFragment
 import lt.markmerkk.widgets.datetimepicker.listitems.TimePickViewModel
 import org.joda.time.LocalDateTime
@@ -38,6 +40,7 @@ import tornadofx.label
 import tornadofx.listview
 import tornadofx.px
 import tornadofx.style
+import tornadofx.text
 import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
@@ -50,8 +53,10 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var resultDispatcher: ResultDispatcher
 
+    private lateinit var viewHeader: Label
     private lateinit var viewListHour: ListView<TimePickViewModel>
     private lateinit var viewListMinute: ListView<TimePickViewModel>
+    private lateinit var viewHint: Label
 
     private lateinit var request: TimeSelectRequest
 
@@ -75,21 +80,26 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
     )
 
     override val root: Parent = borderpane {
-        addClass(Styles.dialogContainer)
         style {
             minWidth = 300.px
-            prefWidth = 300.px
-            prefHeight = 260.px
+            maxWidth = 300.px
+            minHeight = 340.px
+            maxHeight = 340.px
         }
         top {
-            hbox(spacing = 10, alignment = Pos.TOP_LEFT) {
-                label("Time picker") {
-                    addClass(Styles.dialogHeader)
+            vbox(alignment = Pos.BOTTOM_LEFT) {
+                addClass(Styles.dialogHeaderContainerColorful)
+                viewHeader = label("") {
+                    addClass(Styles.dialogHeaderTextColorful)
+                    style {
+                        textFill = Styles.cTextHeaderColorful
+                    }
                 }
             }
         }
         center {
             vbox(spacing = 4.0) {
+                addClass(Styles.dialogContainerColorContent)
                 hbox(alignment = Pos.CENTER) {
                     label("Hours / Minutes")
                 }
@@ -145,7 +155,7 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
                         }
                     }
                 }
-                label("Original time selection: 14:10") {
+                viewHint = label() {
                     style {
                         addClass(Styles.labelMini)
                     }
@@ -154,7 +164,7 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
         }
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
-                addClass(Styles.dialogContainerActionsButtons)
+                addClass(Styles.dialogContainerColorActionsButtons)
                 jfxButton("Select".toUpperCase()) {
                     setOnAction {
                         resultDispatcher.publish(
@@ -186,6 +196,7 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
         viewListMinute.selectionModel
             .selectedItemProperty()
             .addListener(listenerTimeSelectChangeMinute)
+        viewHint.text = "Original time selection: ${LogFormatters.shortFormat.print(request.timeSelection)}"
     }
 
     override fun onUndock() {
@@ -200,13 +211,14 @@ class TimeSelectWidget : Fragment(), TimeSelectContract.View {
         super.onUndock()
     }
 
-    override fun renderSelection(hour: Int, minute: Int) {
-        val obsHour = obsHours.firstOrNull { it.timeAsProperty.get() == hour.toString() }
+    override fun renderSelection(localTime: LocalTime) {
+        viewHeader.text = LogFormatters.shortFormat.print(localTime)
+        val obsHour = obsHours.firstOrNull { it.timeAsProperty.get() == localTime.hourOfDay.toString() }
         if (obsHour != null) {
             viewListHour.selectionModel.select(obsHour)
             viewListHour.scrollTo(obsHour)
         }
-        val obsMinute = obsMinutes.firstOrNull { it.timeAsProperty.get() == minute.toString() }
+        val obsMinute = obsMinutes.firstOrNull { it.timeAsProperty.get() == localTime.minuteOfHour.toString() }
         if (obsMinute != null) {
             viewListMinute.selectionModel.select(obsMinute)
             viewListMinute.scrollTo(obsMinute)

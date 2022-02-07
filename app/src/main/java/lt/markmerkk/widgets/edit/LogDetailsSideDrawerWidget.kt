@@ -43,6 +43,7 @@ import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
+import lt.markmerkk.widgets.DatePickerWidget
 import lt.markmerkk.widgets.TimeRangeSourceTextfield
 import lt.markmerkk.widgets.datetimepicker.TimeSelectWidget
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
@@ -169,6 +170,14 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             promptText = ""
                             unFocusColor = Color.BLACK
                             text = ""
+                            setOnMouseClicked {
+                                find<DatePickerWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    modality = Modality.APPLICATION_MODAL,
+                                    block = false,
+                                    resizable = false
+                                )
+                            }
                         }
                         viewTimePickerFrom = jfxTextField {
                             minWidth = 60.0
@@ -192,7 +201,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                                     stageStyle = StageStyle.DECORATED,
                                     modality = Modality.APPLICATION_MODAL,
                                     block = false,
-                                    resizable = true
+                                    resizable = false
                                 )
                             }
                         }
@@ -231,7 +240,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                                     stageStyle = StageStyle.DECORATED,
                                     modality = Modality.APPLICATION_MODAL,
                                     block = false,
-                                    resizable = true
+                                    resizable = false
                                 )
                             }
                         }

@@ -4,7 +4,7 @@ import org.joda.time.LocalTime
 
 interface TimeSelectContract {
     interface View {
-        fun renderSelection(hour: Int, minute: Int)
+        fun renderSelection(localTime: LocalTime)
     }
     interface Presenter {
         val timeSelection: LocalTime

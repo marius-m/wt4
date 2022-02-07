@@ -20,45 +20,45 @@ class TimeSelectPresenter(
 
     override fun selectTime(hour: Int, minute: Int) {
         this.selection = LocalTime(hour, minute)
-        view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+        view.get()?.renderSelection(this.selection)
     }
 
     override fun selectTime(time: LocalTime) {
         this.selection = time
-        view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+        view.get()?.renderSelection(this.selection)
     }
 
     override fun selectHour(hour: Int, render: Boolean) {
         this.selection = this.selection.withHourOfDay(hour)
         if (render) {
-            view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+            view.get()?.renderSelection(this.selection)
         }
     }
 
     override fun selectMinute(minute: Int, render: Boolean) {
         this.selection = this.selection.withMinuteOfHour(minute)
         if (render) {
-            view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+            view.get()?.renderSelection(this.selection)
         }
     }
 
     override fun plusMinute(minuteStep: Int) {
         this.selection = this.selection.plusMinutes(minuteStep)
-        view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+        view.get()?.renderSelection(this.selection)
     }
 
     override fun minusMinute(minuteStep: Int) {
         this.selection = this.selection.minusMinutes(minuteStep)
-        view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+        view.get()?.renderSelection(this.selection)
     }
 
     override fun plusHour(hourStep: Int) {
         this.selection = this.selection.plusHours(hourStep)
-        view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+        view.get()?.renderSelection(this.selection)
     }
 
     override fun minusHour(hourStep: Int) {
         this.selection = this.selection.minusHours(hourStep)
-        view.get()?.renderSelection(this.selection.hourOfDay, this.selection.minuteOfHour)
+        view.get()?.renderSelection(this.selection)
     }
 }
