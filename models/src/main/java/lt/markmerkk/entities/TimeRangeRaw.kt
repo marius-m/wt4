@@ -1,9 +1,10 @@
 package lt.markmerkk.entities
 
 import lt.markmerkk.utils.LogFormatters
+import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 
-class TimeRangeRaw(
+data class TimeRangeRaw(
     val startDateRaw: String,
     val startTimeRaw: String,
     val endDateRaw: String,
@@ -21,12 +22,12 @@ class TimeRangeRaw(
     val dtEnd = endDate.toDateTime(endTime)
 
     companion object {
-        fun TimeRangeRaw.withEndTime(endTime: LocalTime): TimeRangeRaw {
+        fun TimeRangeRaw.withStartDate(startDate: LocalDate): TimeRangeRaw {
             return TimeRangeRaw(
-                startDateRaw = startDateRaw,
+                startDateRaw = LogFormatters.shortFormatDate.print(startDate),
                 startTimeRaw = startTimeRaw,
                 endDateRaw = endDateRaw,
-                endTimeRaw = LogFormatters.shortFormat.print(endTime)
+                endTimeRaw = endTimeRaw
             )
         }
 
@@ -38,5 +39,24 @@ class TimeRangeRaw(
                 endTimeRaw = endTimeRaw
             )
         }
+
+        fun TimeRangeRaw.withEndDate(endDate: LocalDate): TimeRangeRaw {
+            return TimeRangeRaw(
+                startDateRaw = startDateRaw,
+                startTimeRaw = startTimeRaw,
+                endDateRaw = LogFormatters.shortFormatDate.print(endDate),
+                endTimeRaw = endTimeRaw
+            )
+        }
+
+        fun TimeRangeRaw.withEndTime(endTime: LocalTime): TimeRangeRaw {
+            return TimeRangeRaw(
+                startDateRaw = startDateRaw,
+                startTimeRaw = startTimeRaw,
+                endDateRaw = endDateRaw,
+                endTimeRaw = LogFormatters.shortFormat.print(endTime)
+            )
+        }
+
     }
 }

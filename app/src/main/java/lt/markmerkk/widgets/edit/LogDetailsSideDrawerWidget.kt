@@ -19,12 +19,17 @@ import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
+import lt.markmerkk.datepick.DateSelectRequest
+import lt.markmerkk.datepick.DateSelectResult
+import lt.markmerkk.datepick.DateSelectType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketUseHistory
 import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndTime
+import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartDate
 import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartTime
+import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndDate
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -168,10 +173,17 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             unFocusColor = Color.BLACK
                             text = ""
                             setOnMouseClicked {
+                                val datePreselect = LogFormatters.dateFromRawOrDefault(viewDatePickerFrom.text)
+                                resultDispatcher.publish(
+                                    key = DatePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
+                                    resultEntity = DateSelectRequest(
+                                        dateSelection = datePreselect,
+                                        extra = DateSelectType.SELECT_FROM.name
+                                    )
+                                )
                                 find<DatePickerWidget>().openModal(
                                     stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
+                                    block = true,
                                     resizable = false
                                 )
                             }
@@ -214,6 +226,21 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             promptText = ""
                             unFocusColor = Color.BLACK
                             text = ""
+                            setOnMouseClicked {
+                                val datePreselect = LogFormatters.dateFromRawOrDefault(viewDatePickerTo.text)
+                                resultDispatcher.publish(
+                                    key = DatePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
+                                    resultEntity = DateSelectRequest(
+                                        dateSelection = datePreselect,
+                                        extra = DateSelectType.SELECT_TO.name
+                                    )
+                                )
+                                find<DatePickerWidget>().openModal(
+                                    stageStyle = StageStyle.DECORATED,
+                                    block = true,
+                                    resizable = false
+                                )
+                            }
                         }
                         viewTimePickerTo = jfxTextField {
                             minWidth = 60.0
@@ -578,6 +605,33 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 TimeSelectType.TO -> {
                     val timeRange = timeRangeGenerator.generateTimeRange()
                         .withEndTime(timeSelectResult.timeSelectionNew)
+                    presenter.changeDateTimeRaw(timeRange)
+                }
+            }.javaClass
+        }
+    }
+
+    @Subscribe
+    fun eventChangeDate(event: EventChangeDate) {
+        val dateSelectResult = resultDispatcher.peek(
+            DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
+            DateSelectResult::class.java
+        )
+        if (dateSelectResult != null) {
+            val dateSelectType = DateSelectType.fromRaw(dateSelectResult.extra)
+            when (dateSelectType) {
+                DateSelectType.UNKNOWN,
+                DateSelectType.TARGET_DATE -> {}
+                DateSelectType.SELECT_FROM -> {
+                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
+                    val timeRange = timeRangeGenerator.generateTimeRange()
+                        .withStartDate(dateSelectResult.dateSelectionNew)
+                    presenter.changeDateTimeRaw(timeRange)
+                }
+                DateSelectType.SELECT_TO -> {
+                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
+                    val timeRange = timeRangeGenerator.generateTimeRange()
+                        .withEndDate(dateSelectResult.dateSelectionNew)
                     presenter.changeDateTimeRaw(timeRange)
                 }
             }.javaClass

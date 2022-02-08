@@ -87,7 +87,7 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
 
     @Subscribe
     fun eventChangeDate(event: EventChangeDate) {
-        val dateSelectResult = resultDispatcher.consume(
+        val dateSelectResult = resultDispatcher.peek(
             DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
             DateSelectResult::class.java
         )
@@ -96,6 +96,7 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
             when (dateSelectType) {
                 DateSelectType.TARGET_DATE -> {
                     presenter.selectDate(dateSelectResult.dateSelectionNew)
+                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
                 }
                 DateSelectType.UNKNOWN,
                 DateSelectType.SELECT_FROM,

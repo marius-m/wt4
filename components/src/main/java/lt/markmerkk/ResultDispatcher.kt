@@ -18,6 +18,31 @@ class ResultDispatcher {
     }
 
     /**
+     * Returns result entity by the [key] if available
+     * Will not consume the value
+     * If need to consume, use [consume]
+     */
+    fun <T> peek(key: String, clazz: Class<T>): T? {
+        if (resultEntities.containsKey(key)) {
+            val entity = resultEntities[key]
+            if (entity != null && entity::class.java == clazz) {
+                return entity as T
+            }
+        }
+        return null
+    }
+
+    /**
+     * Consumes value for [key]
+     * Useful if value was returned using [peek]
+     */
+    fun consume(key: String) {
+        if (resultEntities.containsKey(key)) {
+            resultEntities.remove(key)
+        }
+    }
+
+    /**
      * Consumes result entity by the [key]
      * Will return null if no entity is published
      */
