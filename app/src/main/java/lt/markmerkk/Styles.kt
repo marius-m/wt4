@@ -1,7 +1,6 @@
 package lt.markmerkk
 
 import com.jfoenix.controls.JFXButton
-import javafx.geometry.Pos
 import javafx.scene.control.OverrunStyle
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
@@ -16,7 +15,8 @@ class Styles: Stylesheet() {
         val jfxButtonType by cssproperty<JFXButton.ButtonType>("-jfx-button-type") { it.name }
 
         val dialogHeader by cssclass()
-        val dialogHeaderTextColorful by cssclass()
+        val dialogH1TextColorful by cssclass()
+        val dialogH9TextColorful by cssclass()
         val dialogHeaderContainerColorful by cssclass()
         val sidePanelHeader by cssclass()
         val sidePanelContainer by cssclass()
@@ -108,16 +108,15 @@ class Styles: Stylesheet() {
                     bottom = 20.px
             )
         }
-        dialogHeaderTextColorful {
+        dialogH1TextColorful {
             textFill = cTextHeaderColorful
             fontSize = 24.pt
             fontFamily = "Verdana"
-            padding = box(
-                top = 0.px,
-                left = 24.px,
-                right = 0.px,
-                bottom = 12.px
-            )
+        }
+        dialogH9TextColorful {
+            textFill = cTextHeaderColorful
+            fontSize = 8.pt
+            fontFamily = "Verdana"
         }
         dialogHeaderContainerColorful {
             backgroundColor += cActiveRed

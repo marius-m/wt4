@@ -34,6 +34,7 @@ import tornadofx.addClass
 import tornadofx.asObservable
 import tornadofx.borderpane
 import tornadofx.bottom
+import tornadofx.box
 import tornadofx.center
 import tornadofx.hbox
 import tornadofx.label
@@ -52,10 +53,10 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var resultDispatcher: ResultDispatcher
 
-    private lateinit var viewHeader: Label
+    private lateinit var viewTitle: Label
+    private lateinit var viewSubtitle: Label
     private lateinit var viewListHour: ListView<TimePickViewModel>
     private lateinit var viewListMinute: ListView<TimePickViewModel>
-    private lateinit var viewHint: Label
 
     private lateinit var request: TimeSelectRequest
 
@@ -88,10 +89,28 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
         top {
             vbox(alignment = Pos.BOTTOM_LEFT) {
                 addClass(Styles.dialogHeaderContainerColorful)
-                viewHeader = label("") {
-                    addClass(Styles.dialogHeaderTextColorful)
+                viewTitle = label("") {
+                    addClass(Styles.dialogH1TextColorful)
                     style {
                         textFill = Styles.cTextHeaderColorful
+                        padding = box(
+                            top = 0.px,
+                            left = 24.px,
+                            right = 0.px,
+                            bottom = 0.px
+                        )
+                    }
+                }
+                viewSubtitle = label("") {
+                    addClass(Styles.dialogH9TextColorful)
+                    style {
+                        textFill = Styles.cTextHeaderColorful
+                        padding = box(
+                            top = 0.px,
+                            left = 24.px,
+                            right = 0.px,
+                            bottom = 12.px
+                        )
                     }
                 }
             }
@@ -154,11 +173,6 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
                         }
                     }
                 }
-                viewHint = label() {
-                    style {
-                        addClass(Styles.labelMini)
-                    }
-                }
             }
         }
         bottom {
@@ -195,7 +209,7 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
         viewListMinute.selectionModel
             .selectedItemProperty()
             .addListener(listenerTimeSelectChangeMinute)
-        viewHint.text = "Original time selection: ${LogFormatters.shortFormat.print(request.timeSelection)}"
+        viewSubtitle.text = "Original: ${LogFormatters.shortFormat.print(request.timeSelection)}"
     }
 
     override fun onUndock() {
@@ -211,7 +225,7 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
     }
 
     override fun renderSelection(localTime: LocalTime) {
-        viewHeader.text = LogFormatters.shortFormat.print(localTime)
+        viewTitle.text = LogFormatters.shortFormat.print(localTime)
         val obsHour = obsHours.firstOrNull { it.timeAsProperty.get() == localTime.hourOfDay.toString() }
         if (obsHour != null) {
             viewListHour.selectionModel.select(obsHour)
