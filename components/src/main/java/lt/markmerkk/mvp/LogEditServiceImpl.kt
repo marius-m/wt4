@@ -5,7 +5,7 @@ import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.entities.TicketCode
-import lt.markmerkk.entities.TimeRangeRaw
+import lt.markmerkk.entities.TimeGap
 import org.joda.time.DateTime
 
 /**
@@ -27,8 +27,8 @@ class LogEditServiceImpl(
             .setComment("")
             .build()
 
-    override fun updateDateTimeRaw(timeRangeRaw: TimeRangeRaw) {
-        updateDateTime(timeRangeRaw.dtStart, timeRangeRaw.dtEnd)
+    override fun updateDateTimeRaw(timeGap: TimeGap) {
+        updateDateTime(timeGap.start, timeGap.end)
     }
 
     override fun updateDateTime(

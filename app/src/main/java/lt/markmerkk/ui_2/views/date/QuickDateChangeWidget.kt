@@ -9,11 +9,7 @@ import javafx.scene.paint.Paint
 import lt.markmerkk.*
 import lt.markmerkk.datepick.DateSelectResult
 import lt.markmerkk.datepick.DateSelectType
-import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndTime
-import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartTime
 import lt.markmerkk.events.EventChangeDate
-import lt.markmerkk.events.EventChangeTime
-import lt.markmerkk.timeselect.entities.TimeSelectType
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import org.slf4j.LoggerFactory

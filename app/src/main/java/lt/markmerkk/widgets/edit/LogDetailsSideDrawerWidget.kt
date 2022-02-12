@@ -26,10 +26,10 @@ import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketUseHistory
-import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndTime
-import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartDate
-import lt.markmerkk.entities.TimeRangeRaw.Companion.withStartTime
-import lt.markmerkk.entities.TimeRangeRaw.Companion.withEndDate
+import lt.markmerkk.entities.TimeGap.Companion.withEndDate
+import lt.markmerkk.entities.TimeGap.Companion.withEndTime
+import lt.markmerkk.entities.TimeGap.Companion.withStartDate
+import lt.markmerkk.entities.TimeGap.Companion.withStartTime
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -98,7 +98,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     private lateinit var presenter: LogDetailsContract.Presenter
     private lateinit var ticketInfoLoader: TicketInfoLoader
     private lateinit var jiraLinkGenerator: JiraLinkGenerator
-    private lateinit var timeRangeGenerator: TimeRangeGenerator
+    private lateinit var timeGapGenerator: TimeGapGenerator
 
     private val recentTicketViewModels = mutableListOf<RecentTicketViewModel>().asObservable()
 
@@ -379,10 +379,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     addClass(Styles.dialogContainerActionsButtons)
                     viewButtonSave = jfxButton("Save".toUpperCase()) {
                         setOnAction {
-                            val timeRange = timeRangeGenerator.generateTimeRange()
+                            val timeGap = timeGapGenerator.generateTimeGap()
                             presenter.save(
-                                    start = timeRange.dtStart,
-                                    end = timeRange.dtEnd,
+                                    start = timeGap.start,
+                                    end = timeGap.end,
                                     task = viewTextFieldTicket.text,
                                     comment = viewTextComment.textArea.text
                             )
@@ -467,11 +467,11 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     accountAvailablility = accountAvailablility
             )
         }
-        timeRangeGenerator = object : TimeRangeGenerator {
-            override val startDateSource: TimeRangeGenerator.Source = viewDatePickerFrom.wrapAsSource()
-            override val startTimeSource: TimeRangeGenerator.Source = viewTimePickerFrom.wrapAsSource()
-            override val endDateSource: TimeRangeGenerator.Source = viewDatePickerTo.wrapAsSource()
-            override val endTimeSource: TimeRangeGenerator.Source = viewTimePickerTo.wrapAsSource()
+        timeGapGenerator = object : TimeGapGenerator {
+            override val startDateSource: TimeGapGenerator.Source = viewDatePickerFrom.wrapAsSource()
+            override val startTimeSource: TimeGapGenerator.Source = viewTimePickerFrom.wrapAsSource()
+            override val endDateSource: TimeGapGenerator.Source = viewDatePickerTo.wrapAsSource()
+            override val endTimeSource: TimeGapGenerator.Source = viewTimePickerTo.wrapAsSource()
         }
         viewTextTicketDesc.text = ""
         contextMenuTicketSelect.onAttach()
@@ -578,10 +578,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     @Subscribe
     fun eventSave(event: EventLogDetailsSave) {
-        val timeRange = timeRangeGenerator.generateTimeRange()
+        val timeGap = timeGapGenerator.generateTimeGap()
         presenter.save(
-            start = timeRange.dtStart,
-            end = timeRange.dtEnd,
+            start = timeGap.start,
+            end = timeGap.end,
             task = viewTextFieldTicket.text,
             comment = viewTextComment.textArea.text
         )
@@ -598,14 +598,14 @@ class LogDetailsSideDrawerWidget : Fragment(),
             when (timeSelectType) {
                 TimeSelectType.UNKNOWN -> {}
                 TimeSelectType.FROM -> {
-                    val timeRange = timeRangeGenerator.generateTimeRange()
+                    val timeGap = timeGapGenerator.generateTimeGap()
                         .withStartTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTimeRaw(timeRange)
+                    presenter.changeDateTimeRaw(timeGap)
                 }
                 TimeSelectType.TO -> {
-                    val timeRange = timeRangeGenerator.generateTimeRange()
+                    val timeGap = timeGapGenerator.generateTimeGap()
                         .withEndTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTimeRaw(timeRange)
+                    presenter.changeDateTimeRaw(timeGap)
                 }
             }.javaClass
         }
@@ -624,15 +624,15 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 DateSelectType.TARGET_DATE -> {}
                 DateSelectType.SELECT_FROM -> {
                     resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
-                    val timeRange = timeRangeGenerator.generateTimeRange()
+                    val timeGap = timeGapGenerator.generateTimeGap()
                         .withStartDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTimeRaw(timeRange)
+                    presenter.changeDateTimeRaw(timeGap)
                 }
                 DateSelectType.SELECT_TO -> {
                     resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
-                    val timeRange = timeRangeGenerator.generateTimeRange()
+                    val timeGap = timeGapGenerator.generateTimeGap()
                         .withEndDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTimeRaw(timeRange)
+                    presenter.changeDateTimeRaw(timeGap)
                 }
             }.javaClass
         }

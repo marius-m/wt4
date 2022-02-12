@@ -1,10 +1,9 @@
 package lt.markmerkk.widgets.edit
 
 import com.jfoenix.svg.SVGGlyph
-import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.entities.TimeRangeRaw
+import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.LogEditInteractorImpl
@@ -114,8 +113,8 @@ class LogDetailsPresenterUpdateActiveClock(
         logEditService.saveEntity(start, end, task, comment)
     }
 
-    override fun changeDateTimeRaw(timeRangeRaw: TimeRangeRaw) {
-        logEditService.updateDateTimeRaw(timeRangeRaw)
+    override fun changeDateTimeRaw(timeGap: TimeGap) {
+        logEditService.updateDateTimeRaw(timeGap)
         logEditService.redraw()
     }
 

@@ -2,10 +2,9 @@ package lt.markmerkk.widgets.edit
 
 import com.google.common.eventbus.EventBus
 import com.jfoenix.svg.SVGGlyph
-import javafx.scene.paint.Color
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.TimeRangeRaw
+import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.mvp.LogEditInteractorImpl
 import lt.markmerkk.mvp.LogEditService
@@ -95,8 +94,8 @@ class LogDetailsPresenterReadOnly(
         eventBus.post(EventSnackBarMessage("Ticket in 'Read-only' mode, cannot be updated!"))
     }
 
-    override fun changeDateTimeRaw(timeRangeRaw: TimeRangeRaw) {
-        logEditService.updateDateTimeRaw(timeRangeRaw)
+    override fun changeDateTimeRaw(timeGap: TimeGap) {
+        logEditService.updateDateTimeRaw(timeGap)
         logEditService.redraw()
     }
 
