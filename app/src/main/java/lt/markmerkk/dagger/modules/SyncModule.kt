@@ -25,27 +25,27 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesSyncInteractor(
-            dayProvider: DayProvider,
-            logStorage: LogStorage,
-            schedulerProvider: SchedulerProvider,
-            timeProvider: TimeProvider,
-            worklogStorage: WorklogStorage,
-            worklogApi: WorklogApi,
-            jiraClientProvider: JiraClientProvider,
-            userSettings: UserSettings,
-            jiraBasicApi: JiraBasicApi
+        dayProvider: DayProvider,
+        schedulerProvider: SchedulerProvider,
+        timeProvider: TimeProvider,
+        worklogStorage: WorklogStorage,
+        worklogApi: WorklogApi,
+        jiraClientProvider: JiraClientProvider,
+        userSettings: UserSettings,
+        jiraBasicApi: JiraBasicApi,
+        logRepository: LogRepository
     ): SyncInteractor {
         return SyncInteractorImpl(
-                logStorage = logStorage,
-                dayProvider = dayProvider,
-                ioScheduler = schedulerProvider.io(),
-                uiScheduler = schedulerProvider.ui(),
-                timeProvider = timeProvider,
-                jiraClientProvider = jiraClientProvider,
-                worklogStorage = worklogStorage,
-                worklogApi = worklogApi,
-                userSettings = userSettings,
-                jiraBasicApi = jiraBasicApi
+            dayProvider = dayProvider,
+            ioScheduler = schedulerProvider.io(),
+            uiScheduler = schedulerProvider.ui(),
+            timeProvider = timeProvider,
+            jiraClientProvider = jiraClientProvider,
+            worklogStorage = worklogStorage,
+            worklogApi = worklogApi,
+            userSettings = userSettings,
+            jiraBasicApi = jiraBasicApi,
+            logRepository = logRepository
         )
     }
 

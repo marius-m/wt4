@@ -25,9 +25,10 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.util.Callback
 import lt.markmerkk.*
+import lt.markmerkk.entities.Log
+import lt.markmerkk.entities.Log.Companion.clone
+import lt.markmerkk.entities.Log.Companion.cloneAsNewLocal
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.total.TotalGenStringRes
 import lt.markmerkk.total.TotalWorkGenerator
@@ -51,7 +52,6 @@ import javax.inject.Inject
 
 class CalendarWidget: Fragment() {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
@@ -61,6 +61,7 @@ class CalendarWidget: Fragment() {
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var dayProvider: DayProvider
+    @Inject lateinit var logRepository: LogRepository
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
@@ -75,11 +76,11 @@ class CalendarWidget: Fragment() {
         Main.component().inject(this)
     }
 
-    private val totalWorkGenerator = TotalWorkGenerator(hourGlass, logStorage, TotalGenStringRes())
+    private val totalWorkGenerator = TotalWorkGenerator(hourGlass, TotalGenStringRes(), logRepository)
     private val mainContainerNavigator = MainContainerNavigator(
-            logStorage,
             eventBus,
-            this
+            this,
+        logRepository
     )
     private lateinit var contextMenu: ContextMenuEditLog
 
@@ -88,12 +89,13 @@ class CalendarWidget: Fragment() {
             if (event.eventType == CalendarEvent.ENTRY_INTERVAL_CHANGED) {
                 val calendarEntryStart = event.entry.startMillis
                 val calendarEntryEnd = event.entry.endMillis
-                val oldLogEntry = event.entry.userObject as SimpleLog
-                val newLogEntry = SimpleLogBuilder(oldLogEntry)
-                        .setStart(calendarEntryStart)
-                        .setEnd(calendarEntryEnd)
-                        .build()
-                logStorage.update(newLogEntry)
+                val oldLogEntry = event.entry.userObject as Log
+                val newLogEntry = oldLogEntry.clone(
+                    timeProvider = timeProvider,
+                    start = timeProvider.roundDateTime(calendarEntryStart),
+                    end = timeProvider.roundDateTime(calendarEntryEnd)
+                )
+                logRepository.update(newLogEntry)
             }
         }
     }
@@ -188,7 +190,7 @@ class CalendarWidget: Fragment() {
 
     override fun onDock() {
         super.onDock()
-        viewCalendar = when (logStorage.displayType) {
+        viewCalendar = when (logRepository.displayType) {
             DisplayTypeLength.DAY -> DetailedDayView()
             DisplayTypeLength.WEEK -> DetailedWeekView()
         }
@@ -204,7 +206,7 @@ class CalendarWidget: Fragment() {
         contextMenu = ContextMenuEditLog(
                 strings,
                 graphics,
-                logStorage,
+                logRepository,
                 eventBus,
                 listOf(
                         LogEditType.UPDATE,
@@ -216,7 +218,6 @@ class CalendarWidget: Fragment() {
                 )
         )
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
-        logStorage.register(storageListener)
 
         viewCalendar.calendarSources.add(calendarSource)
         if (viewCalendar is com.calendarfx.view.DetailedDayView) {
@@ -241,7 +242,7 @@ class CalendarWidget: Fragment() {
                 schedulerProvider.ui()
         )
         logLoader.onAttach()
-        logLoader.load(logStorage.data)
+        logLoader.load(logRepository.data)
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
         eventBus.register(this)
@@ -254,7 +255,6 @@ class CalendarWidget: Fragment() {
         mainContainerNavigator.onDetach()
         viewCalendar.selections.removeListener(jfxCalSelectionListener)
         logLoader.onDetach()
-        logStorage.unregister(storageListener)
         super.onUndock()
     }
 
@@ -294,6 +294,16 @@ class CalendarWidget: Fragment() {
         }
     }
 
+    @Subscribe
+    fun onActiveDisplayDataChange(event: EventActiveDisplayDataChange) {
+        logLoader.load(event.data)
+        viewCalendar.today = LocalDate.now()
+        viewCalendar.time = LocalTime.now()
+        viewInfoLabel.text = totalWorkGenerator
+            .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+        eventBus.post(EventLogSelection(Const.NO_ID))
+    }
+
     //endregion
 
     //region Calendar listeners
@@ -306,8 +316,8 @@ class CalendarWidget: Fragment() {
             if ((param.inputEvent as MouseEvent).clickCount < 2) {
                 return true
             }
-            val simpleLog = param.entry.userObject as SimpleLog
-            eventBus.post(EventEditLog(LogEditType.UPDATE, listOf(simpleLog)))
+            val log = param.entry.userObject as Log
+            eventBus.post(EventEditLog(LogEditType.UPDATE, listOf(log)))
             return true
         }
     }
@@ -315,8 +325,8 @@ class CalendarWidget: Fragment() {
     private val calendarEntryContextMenuCallback = object : Callback<DateControl.EntryContextMenuParameter, ContextMenu> {
         override fun call(param: DateControl.EntryContextMenuParameter): ContextMenu {
             val selectedLogs = viewCalendar.selections
-                    .map { it.userObject as SimpleLog }
-                    .map { it._id }
+                    .map { it.userObject as Log }
+                    .map { it.id }
             contextMenu.bindLogs(selectedLogs)
             return contextMenu.root
         }
@@ -325,7 +335,15 @@ class CalendarWidget: Fragment() {
     private val calendarContextMenuCallback = object : Callback<DateControl.ContextMenuParameter, ContextMenu> {
         override fun call(param: DateControl.ContextMenuParameter): ContextMenu {
             val contextMenu = ContextMenu()
-            contextMenu.items.add(CalendarMenuItemProvider.provideMenuItemNewItem(param.zonedDateTime, strings, logStorage))
+            contextMenu.items.add(
+                CalendarMenuItemProvider
+                    .provideMenuItemNewItem(
+                        param.zonedDateTime,
+                        strings,
+                        timeProvider,
+                        logRepository
+                    )
+            )
             contextMenu.onAction = object : EventHandler<ActionEvent> {
                 override fun handle(event: ActionEvent) {
                     contextMenu.hide()
@@ -336,14 +354,16 @@ class CalendarWidget: Fragment() {
     }
 
     private val calendarEntryFactory = object : Callback<DateControl.CreateEntryParameter, Entry<*>> {
-        override fun call(param: DateControl.CreateEntryParameter): Entry<SimpleLog>? {
+        override fun call(param: DateControl.CreateEntryParameter): Entry<Log>? {
             val startMillis = param.zonedDateTime.toInstant().toEpochMilli()
             val endMillis = param.zonedDateTime.plusHours(1).toInstant().toEpochMilli()
-            val simpleLog = SimpleLogBuilder()
-                    .setStart(startMillis)
-                    .setEnd(endMillis)
-                    .build()
-            logStorage.insert(simpleLog)
+            val log = Log.createAsEmpty(timeProvider = timeProvider)
+                .cloneAsNewLocal(
+                    timeProvider = timeProvider,
+                    start = timeProvider.roundDateTime(startMillis),
+                    end = timeProvider.roundDateTime(endMillis)
+                )
+            logRepository.insertOrUpdate(log)
             return null
         }
     }
@@ -357,8 +377,8 @@ class CalendarWidget: Fragment() {
     private val jfxCalSelectionListener = SetChangeListener<Entry<*>> {
         val currentSelection = viewCalendar.selections.toList()
         if (currentSelection.isNotEmpty()) {
-            val simpleLog = currentSelection.first().userObject as SimpleLog
-            this.selectedId = simpleLog._id
+            val simpleLog = currentSelection.first().userObject as Log
+            this.selectedId = simpleLog.id
         } else {
             this.selectedId = Const.NO_ID
         }
@@ -369,25 +389,14 @@ class CalendarWidget: Fragment() {
 
     //region Listeners
 
-    private val storageListener: IDataListener<SimpleLog> = object : IDataListener<SimpleLog> {
-        override fun onDataChange(data: List<SimpleLog>) {
-            logLoader.load(data)
-            viewCalendar.today = LocalDate.now()
-            viewCalendar.time = LocalTime.now()
-            viewInfoLabel.text = totalWorkGenerator
-                    .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
-            eventBus.post(EventLogSelection(Const.NO_ID))
-        }
-    }
-
     private val calendarLoaderListener: CalendarFxLogLoader.View = object : CalendarFxLogLoader.View {
         override fun onCalendarEntries(
-                allEntries: List<Entry<SimpleLog>>,
-                entriesInSync: List<Entry<SimpleLog>>,
-                entriesWaitingForSync: List<Entry<SimpleLog>>,
-                entriesInError: List<Entry<SimpleLog>>
+                allEntries: List<Entry<Log>>,
+                entriesInSync: List<Entry<Log>>,
+                entriesWaitingForSync: List<Entry<Log>>,
+                entriesInError: List<Entry<Log>>
         ) {
-            val targetDate = logStorage.targetDate.toLocalDate() // todo: Provide shown date
+            val targetDate = logRepository.targetDate.toLocalDate() // todo: Provide shown date
             viewCalendar.date = LocalDate.of(
                     targetDate.year,
                     targetDate.monthOfYear,
@@ -412,7 +421,7 @@ class CalendarWidget: Fragment() {
         }
 
         override fun onCalendarNoEntries() {
-            val targetDate = logStorage.targetDate.toLocalDate() // todo: Provide shown date
+            val targetDate = logRepository.targetDate.toLocalDate() // todo: Provide shown date
             viewCalendar.date = LocalDate.of(
                     targetDate.year,
                     targetDate.monthOfYear,
@@ -427,12 +436,12 @@ class CalendarWidget: Fragment() {
 
     private fun findEntryByLocalIdOrNull(
             localId: Long,
-            entries: List<Entry<SimpleLog>>
-    ): Entry<SimpleLog>? {
-        return entries.firstOrNull { it.userObject._id == localId }
+            entries: List<Entry<Log>>
+    ): Entry<Log>? {
+        return entries.firstOrNull { it.userObject.id == localId }
     }
 
-    private fun selectActiveLog(allEntries: List<Entry<SimpleLog>>) {
+    private fun selectActiveLog(allEntries: List<Entry<Log>>) {
         val selection = findEntryByLocalIdOrNull(selectedId, allEntries)
         if (selection != null) {
             viewCalendar.select(selection)

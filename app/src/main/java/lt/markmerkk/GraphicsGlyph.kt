@@ -16,11 +16,11 @@ class GraphicsGlyph : Graphics<SVGGlyph> {
             width: Double,
             height: Double
     ): SVGGlyph {
-        return glyph(glyph.name.toLowerCase(), color, width, height)
+        return glyph(glyph.name.lowercase(), color, width, height)
     }
 
     override fun from(glyph: Glyph, color: Color, width: Double, height: Double, rotate: Double): SVGGlyph {
-        return glyph(glyph.name.toLowerCase(), color, width, height, rotate)
+        return glyph(glyph.name.lowercase(), color, width, height, rotate)
     }
 
     override fun from(
@@ -28,7 +28,7 @@ class GraphicsGlyph : Graphics<SVGGlyph> {
             color: Color,
             size: Double
     ): SVGGlyph {
-        return glyph(glyph.name.toLowerCase(), color, size)
+        return glyph(glyph.name.lowercase(), color, size)
     }
 
     private fun glyph(

@@ -1,75 +1,55 @@
 package lt.markmerkk.widgets.edit
 
 import com.google.common.eventbus.EventBus
-import com.jfoenix.svg.SVGGlyph
 import lt.markmerkk.*
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventSnackBarMessage
-import lt.markmerkk.mvp.LogEditInteractorImpl
-import lt.markmerkk.mvp.LogEditService
-import lt.markmerkk.mvp.LogEditServiceImpl
-import org.joda.time.DateTime
+import lt.markmerkk.mvp.LogEditService2
+import lt.markmerkk.mvp.LogEditService2Impl
 
 class LogDetailsPresenterReadOnly(
-        private val entityInEdit: SimpleLog,
-        private val logStorage: LogStorage,
-        private val eventBus: EventBus,
-        private val graphics: Graphics<SVGGlyph>,
-        private val timeProvider: TimeProvider,
-        private val ticketStorage: TicketStorage
-): LogDetailsContract.Presenter {
+    private val entityInEdit: SimpleLog,
+    private val eventBus: EventBus,
+    private val timeProvider: TimeProvider,
+    private val ticketStorage: TicketStorage,
+    private val logRepository: LogRepository
+) : LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
-    private val logEditService: LogEditService = LogEditServiceImpl(
-            logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
-            timeProvider = timeProvider,
-            ticketStorage = ticketStorage,
-            listener = object : LogEditService.Listener {
-                override fun onDataChange(
-                        start: DateTime,
-                        end: DateTime
-                ) {
-                    view?.showDateTime(start, end)
-                }
+    private val logEditService: LogEditService2 = LogEditService2Impl(
+        timeProvider = timeProvider,
+        ticketStorage = ticketStorage,
+        logRepository = logRepository,
+        listener = object : LogEditService2.Listener {
+            override fun showDataTimeChange(timeGap: TimeGap) {
+                view?.showDateTime(timeGap.start, timeGap.end)
+            }
 
-                override fun onDurationChange(durationAsString: String) {
-                    view?.showHint1(durationAsString)
-                }
+            override fun showDuration(durationAsString: String) {
+                view?.showHint1(durationAsString)
+            }
 
-                override fun onGenericNotification(notification: String) {
-                    view?.showHint2(notification)
-                }
-
-                override fun onEntitySaveComplete(start: DateTime, end: DateTime) { }
-
-                override fun onEntitySaveFail(error: Throwable) {
-                    val errorMessage = error.message ?: "Error saving entity!"
-                    view?.showHint1(errorMessage)
-                }
-
-                override fun onEnableInput() {
-                    // Always disabled
-                }
-
-                override fun onDisableInput() {
-                    // Always disabled
-                }
-
-                override fun onEnableSaving() {
-                    // Always disabled
-                }
-
-                override fun onDisableSaving() {
-                    // Always disabled
+            override fun lockEdit(isEnabled: Boolean) {
+                if (isEnabled) {
+                    view?.enableInput()
+                    view?.enableSaving()
+                } else {
+                    view?.disableInput()
+                    view?.disableSaving()
                 }
             }
+
+            override fun showSuccess() {
+                view?.closeDetails()
+            }
+        }
     )
 
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
-        logEditService.entityInEdit = entityInEdit
-        logEditService.serviceType = LogEditService.ServiceType.UPDATE
+        logEditService.bindLogByLocalId(entityInEdit.id)
+        logEditService.serviceType = LogEditService2.ServiceType.UPDATE
         view.initView(
                 labelHeader = "Log details (Read-only)",
                 labelButtonSave = "Save",
@@ -90,16 +70,12 @@ class LogDetailsPresenterReadOnly(
         this.view = null
     }
 
-    override fun save(start: DateTime, end: DateTime, task: String, comment: String) {
+    override fun save(timeGap: TimeGap, task: String, comment: String) {
         eventBus.post(EventSnackBarMessage("Ticket in 'Read-only' mode, cannot be updated!"))
     }
 
-    override fun changeDateTimeRaw(timeGap: TimeGap) {
-        logEditService.updateDateTimeRaw(timeGap)
-        logEditService.redraw()
-    }
-
-    override fun changeDateTime(start: DateTime, end: DateTime) {
+    override fun changeDateTime(timeGap: TimeGap) {
+        logEditService.updateDateTime(timeGap)
         logEditService.redraw()
     }
 

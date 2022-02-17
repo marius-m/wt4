@@ -21,8 +21,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("com.android.tools.build:gradle:3.5.0")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
 
     implementation(gradleApi())
     implementation(localGroovy())
@@ -43,9 +42,9 @@ gradlePlugin {
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }

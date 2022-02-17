@@ -1,9 +1,7 @@
 package lt.markmerkk.utils
 
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.Log
 import org.joda.time.*
-import org.joda.time.format.PeriodFormatterBuilder
-import java.util.regex.Pattern
 
 object LogUtils {
 
@@ -73,11 +71,11 @@ object LogUtils {
     /**
      * Formats log as a pretty text
      */
-    @JvmStatic fun formatLogToText(simpleLog: SimpleLog): String {
-        val timeFrom = LogFormatters.shortFormat.print(simpleLog.start)
-        val timeTo = LogFormatters.shortFormat.print(simpleLog.end)
-        val duration = formatShortDurationMillis(simpleLog.duration)
-        return "${simpleLog.task} ($timeFrom - $timeTo = $duration) ${firstLine(simpleLog.comment)}"
+    @JvmStatic fun formatLogToText(log: Log): String {
+        val timeFrom = LogFormatters.shortFormat.print(log.time.start)
+        val timeTo = LogFormatters.shortFormat.print(log.time.end)
+        val duration = formatShortDurationMillis(log.time.duration.millis)
+        return "${log.code.code} ($timeFrom - $timeTo = $duration) ${firstLine(log.comment)}"
                 .trim()
     }
 

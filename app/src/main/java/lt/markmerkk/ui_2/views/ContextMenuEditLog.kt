@@ -4,7 +4,12 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.paint.Color
-import lt.markmerkk.*
+import lt.markmerkk.Glyph
+import lt.markmerkk.Graphics
+import lt.markmerkk.LogRepository
+import lt.markmerkk.Strings
+import lt.markmerkk.Tags
+import lt.markmerkk.WTEventBus
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.events.EventEditLog
@@ -14,11 +19,11 @@ import org.slf4j.LoggerFactory
  * Represents a context menu that is reused throughout the app
  */
 class ContextMenuEditLog(
-        private val strings: Strings,
-        private val graphics: Graphics<SVGGlyph>,
-        private val logStorage: LogStorage,
-        private val eventBus: WTEventBus,
-        private val editTypes: List<LogEditType>
+    private val strings: Strings,
+    private val graphics: Graphics<SVGGlyph>,
+    private val logRepository: LogRepository,
+    private val eventBus: WTEventBus,
+    private val editTypes: List<LogEditType>
 ) {
     val root: ContextMenu = ContextMenu()
             .apply {
@@ -26,7 +31,7 @@ class ContextMenuEditLog(
                 setOnAction { event ->
                     val logEditType = LogEditType.valueOf((event.target as MenuItem).id)
                     val selectedLogs = selectedLogIds
-                            .mapNotNull { logStorage.findByIdOrNull(it) }
+                            .mapNotNull { logRepository.findByIdOrNull(it) }
                     eventBus.post(EventEditLog(logEditType, selectedLogs))
                 }
             } 

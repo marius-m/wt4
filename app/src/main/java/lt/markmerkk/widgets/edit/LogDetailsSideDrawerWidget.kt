@@ -22,6 +22,7 @@ import lt.markmerkk.*
 import lt.markmerkk.datepick.DateSelectRequest
 import lt.markmerkk.datepick.DateSelectResult
 import lt.markmerkk.datepick.DateSelectType
+import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
@@ -47,8 +48,8 @@ import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
 import lt.markmerkk.widgets.datepicker.DatePickerWidget
-import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
+import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.wrapAsSource
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -61,7 +62,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
     JiraLinkGenerator.View,
     RecentTicketLoader.Listener {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var graphics: Graphics<SVGGlyph>
@@ -74,6 +74,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
     @Inject lateinit var accountAvailablility: AccountAvailablility
+    @Inject lateinit var logRepository: LogRepository
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXTextField
@@ -381,8 +382,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                         setOnAction {
                             val timeGap = timeGapGenerator.generateTimeGap()
                             presenter.save(
-                                    start = timeGap.start,
-                                    end = timeGap.end,
+                                    timeGap = timeGap,
                                     task = viewTextFieldTicket.text,
                                     comment = viewTextComment.textArea.text
                             )
@@ -410,34 +410,31 @@ class LogDetailsSideDrawerWidget : Fragment(),
         super.onDock()
         logger.debug("LogDetails:onDock()")
         val isActiveClock = resultDispatcher.consumeBoolean(RESULT_DISPATCH_KEY_ACTIVE_CLOCK, false)
-        val entity: SimpleLog? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)
+        val entity: Log? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, Log::class.java)
         presenter = if (entity != null) {
             LogDetailsPresenterUpdate(
-                    entity,
-                    logStorage,
-                    eventBus,
-                    graphics,
-                    timeProvider,
-                    ticketStorage
+                entity,
+                eventBus,
+                timeProvider,
+                ticketStorage,
+                logRepository
             )
         } else {
             when  {
                 isActiveClock -> LogDetailsPresenterUpdateActiveClock(
-                        logStorage,
-                        eventBus,
-                        graphics,
-                        timeProvider,
-                        hourGlass,
-                        activeLogPersistence,
-                        ticketStorage,
-                        userSettings
+                    eventBus,
+                    timeProvider,
+                    hourGlass,
+                    activeLogPersistence,
+                    ticketStorage,
+                    userSettings,
+                    logRepository
                 )
                 else -> LogDetailsPresenterCreate(
-                        logStorage,
-                        eventBus,
-                        graphics,
-                        timeProvider,
-                        ticketStorage
+                    eventBus,
+                    timeProvider,
+                    ticketStorage,
+                    logRepository
                 )
             }
         }
@@ -580,8 +577,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     fun eventSave(event: EventLogDetailsSave) {
         val timeGap = timeGapGenerator.generateTimeGap()
         presenter.save(
-            start = timeGap.start,
-            end = timeGap.end,
+            timeGap = timeGap,
             task = viewTextFieldTicket.text,
             comment = viewTextComment.textArea.text
         )
@@ -600,12 +596,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 TimeSelectType.FROM -> {
                     val timeGap = timeGapGenerator.generateTimeGap()
                         .withStartTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTimeRaw(timeGap)
+                    presenter.changeDateTime(timeGap)
                 }
                 TimeSelectType.TO -> {
                     val timeGap = timeGapGenerator.generateTimeGap()
                         .withEndTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTimeRaw(timeGap)
+                    presenter.changeDateTime(timeGap)
                 }
             }.javaClass
         }
@@ -626,13 +622,13 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
                     val timeGap = timeGapGenerator.generateTimeGap()
                         .withStartDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTimeRaw(timeGap)
+                    presenter.changeDateTime(timeGap)
                 }
                 DateSelectType.SELECT_TO -> {
                     resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
                     val timeGap = timeGapGenerator.generateTimeGap()
                         .withEndDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTimeRaw(timeGap)
+                    presenter.changeDateTime(timeGap)
                 }
             }.javaClass
         }

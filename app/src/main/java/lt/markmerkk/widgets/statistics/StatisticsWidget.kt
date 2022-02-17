@@ -18,10 +18,10 @@ import javax.inject.Inject
 
 class StatisticsWidget: Fragment(), StatisticsContract.View {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var hourGlass: HourGlass
+    @Inject lateinit var logRepository: LogRepository
 
     init {
         Main.component().inject(this)
@@ -75,7 +75,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
 
     override fun onDock() {
         super.onDock()
-        presenter = StatisticsPresenter(logStorage, hourGlass)
+        presenter = StatisticsPresenter(hourGlass, logRepository)
         ticketInfoLoader = TicketInfoLoader(
                 listener = ticketInfoLoaderListener,
                 ticketStorage = ticketStorage,

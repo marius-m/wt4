@@ -1,102 +1,63 @@
 package lt.markmerkk.widgets.edit
 
-import com.jfoenix.svg.SVGGlyph
 import lt.markmerkk.*
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.interactors.ActiveLogPersistence
-import lt.markmerkk.mvp.LogEditInteractorImpl
-import lt.markmerkk.mvp.LogEditService
-import lt.markmerkk.mvp.LogEditServiceImpl
+import lt.markmerkk.mvp.LogEditService2
+import lt.markmerkk.mvp.LogEditService2Impl
 import lt.markmerkk.utils.hourglass.HourGlass
-import org.joda.time.DateTime
 
 class LogDetailsPresenterUpdateActiveClock(
-        private val logStorage: LogStorage,
-        private val eventBus: WTEventBus,
-        private val graphics: Graphics<SVGGlyph>,
-        private val timeProvider: TimeProvider,
-        private val hourGlass: HourGlass,
-        private val activeLogPersistence: ActiveLogPersistence,
-        private val ticketStorage: TicketStorage,
-        private val userSettings: UserSettings
-): LogDetailsContract.Presenter {
+    private val eventBus: WTEventBus,
+    private val timeProvider: TimeProvider,
+    private val hourGlass: HourGlass,
+    private val activeLogPersistence: ActiveLogPersistence,
+    private val ticketStorage: TicketStorage,
+    private val userSettings: UserSettings,
+    private val logRepository: LogRepository
+) : LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
-    private val logEditService: LogEditService = LogEditServiceImpl(
-            logEditInteractor = LogEditInteractorImpl(logStorage, timeProvider),
-            timeProvider = timeProvider,
-            ticketStorage = ticketStorage,
-            listener = object : LogEditService.Listener {
-                override fun onDataChange(
-                        start: DateTime,
-                        end: DateTime
-                ) {
-                    hourGlass.changeStart(start)
-                    view?.showDateTime(start, end)
-                }
+    private val logEditService: LogEditService2 = LogEditService2Impl(
+        timeProvider = timeProvider,
+        ticketStorage = ticketStorage,
+        logRepository = logRepository,
+        listener = object : LogEditService2.Listener {
+            override fun showDataTimeChange(timeGap: TimeGap) {
+                view?.showDateTime(timeGap.start, timeGap.end)
+            }
 
-                override fun onDurationChange(durationAsString: String) {
-                    view?.showHint1(durationAsString)
-                }
+            override fun showDuration(durationAsString: String) {
+                view?.showHint1(durationAsString)
+            }
 
-                override fun onGenericNotification(notification: String) {
-                    view?.showHint2(notification)
-                }
-
-                override fun onEntitySaveComplete(start: DateTime, end: DateTime) {
-                    if (userSettings.settingsAutoStartClock) {
-                        hourGlass.startFrom(end)
-                    } else {
-                        hourGlass.stop()
-                    }
-                    activeLogPersistence.reset()
-                    view?.closeDetails()
-                }
-
-                override fun onEntitySaveFail(error: Throwable) {
-                    val errorMessage = error.message ?: "Error saving entity!"
-                    view?.showHint1(errorMessage)
-                }
-
-                override fun onEnableInput() {
+            override fun lockEdit(isEnabled: Boolean) {
+                if (isEnabled) {
                     view?.enableInput()
-                }
-
-                override fun onDisableInput() {
-                    view?.disableInput()
-                }
-
-                override fun onEnableSaving() {
                     view?.enableSaving()
-                }
-
-                override fun onDisableSaving() {
+                } else {
+                    view?.disableInput()
                     view?.disableSaving()
                 }
             }
+
+            override fun showSuccess() {
+                view?.closeDetails()
+            }
+        }
     )
 
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
-        val now = timeProvider.now()
-        val startMillis = timeProvider.roundMillis(hourGlass.start)
-        val endMillis = timeProvider.roundMillis(hourGlass.end)
-        val entityInEdit = SimpleLogBuilder(now.millis)
-                .setStart(startMillis)
-                .setEnd(endMillis)
-                .setTask(activeLogPersistence.ticketCode.code)
-                .setComment(activeLogPersistence.comment)
-                .build()
-        logEditService.serviceType = LogEditService.ServiceType.CREATE
-        logEditService.entityInEdit = entityInEdit
+        logEditService.bindLogByLocalId(localId = Const.NO_ID)
+        logEditService.serviceType = LogEditService2.ServiceType.CREATE
         view.initView(
                 labelHeader = "Active clock",
                 labelButtonSave = "Save",
                 glyphButtonSave = null,
-                initDateTimeStart = timeProvider.roundDateTime(entityInEdit.start),
-                initDateTimeEnd = timeProvider.roundDateTime(entityInEdit.end),
+                initDateTimeStart = timeProvider.roundDateTime(hourGlass.start.millis),
+                initDateTimeEnd = timeProvider.roundDateTime(hourGlass.end.millis),
                 initTicket = activeLogPersistence.ticketCode.code,
                 initComment = activeLogPersistence.comment,
                 enableFindTickets = true,
@@ -109,17 +70,12 @@ class LogDetailsPresenterUpdateActiveClock(
         this.view = null
     }
 
-    override fun save(start: DateTime, end: DateTime, task: String, comment: String) {
-        logEditService.saveEntity(start, end, task, comment)
+    override fun save(timeGap: TimeGap, task: String, comment: String) {
+        logEditService.saveEntity(timeGap, task, comment)
     }
 
-    override fun changeDateTimeRaw(timeGap: TimeGap) {
-        logEditService.updateDateTimeRaw(timeGap)
-        logEditService.redraw()
-    }
-
-    override fun changeDateTime(start: DateTime, end: DateTime) {
-        logEditService.updateDateTime(start, end)
+    override fun changeDateTime(timeGap: TimeGap) {
+        logEditService.updateDateTime(timeGap)
         logEditService.redraw()
     }
 

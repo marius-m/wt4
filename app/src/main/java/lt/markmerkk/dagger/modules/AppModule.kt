@@ -6,22 +6,69 @@ import com.jfoenix.svg.SVGGlyph
 import dagger.Module
 import dagger.Provides
 import javafx.application.Application
-import lt.markmerkk.*
+import lt.markmerkk.AccountAvailabilityBasic
+import lt.markmerkk.AccountAvailabilityOAuth
+import lt.markmerkk.AutoSyncWatcher2
+import lt.markmerkk.BuildConfig
+import lt.markmerkk.Config
+import lt.markmerkk.ConfigPathProvider
+import lt.markmerkk.DBConnProvider
+import lt.markmerkk.DBInteractorLogJOOQ
+import lt.markmerkk.DayProvider
+import lt.markmerkk.FileInteractor
+import lt.markmerkk.FileInteractorImpl
+import lt.markmerkk.Graphics
+import lt.markmerkk.GraphicsGlyph
+import lt.markmerkk.HostServicesInteractorImpl
+import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.LogRepository
+import lt.markmerkk.LogRepositoryDefault
+import lt.markmerkk.MigrationsRunner
+import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.SchedulerProvider
+import lt.markmerkk.SchedulerProviderFx
+import lt.markmerkk.Strings
+import lt.markmerkk.StringsImpl
+import lt.markmerkk.TicketStorage
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.TimeProviderJfx
+import lt.markmerkk.UserSettings
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WTEventBusImpl
+import lt.markmerkk.WorklogStorage
+import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.interactors.ActiveLogPersistence
-import lt.markmerkk.migrations.*
+import lt.markmerkk.migrations.Migration0To1
+import lt.markmerkk.migrations.Migration1To2
+import lt.markmerkk.migrations.Migration2To3
+import lt.markmerkk.migrations.Migration3To4
+import lt.markmerkk.migrations.Migration4To5
+import lt.markmerkk.migrations.Migration5To6
+import lt.markmerkk.migrations.Migration6To7
+import lt.markmerkk.migrations.Migration7To8
+import lt.markmerkk.migrations.Migration8To9
+import lt.markmerkk.migrations.Migration9To10
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.repositories.CreditsRepository
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
-import lt.markmerkk.utils.*
+import lt.markmerkk.utils.AccountAvailablility
+import lt.markmerkk.utils.AdvHashSettings
+import lt.markmerkk.utils.ConfigSetSettings
+import lt.markmerkk.utils.ConfigSetSettingsImpl
+import lt.markmerkk.utils.DayProviderImpl
+import lt.markmerkk.utils.JiraLinkGenerator
+import lt.markmerkk.utils.JiraLinkGeneratorBasic
+import lt.markmerkk.utils.JiraLinkGeneratorOAuth
+import lt.markmerkk.utils.Ticker
+import lt.markmerkk.utils.UserSettingsImpl
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
-import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
@@ -283,14 +330,13 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideBasicLogStorage(
-            worklogRepo: WorklogStorage,
-            timeProvider: TimeProvider,
-            schedulerProvider: SchedulerProvider,
-            autoSyncWatcher: AutoSyncWatcher2
-    ): LogStorage {
-//        return LogStorageLegacy(dbExecutor, worklogRepo, timeProvider) // rename to restore old usage
-        return LogStorage(worklogRepo, timeProvider, autoSyncWatcher)
+    fun provideLogRepository(
+        worklogRepo: WorklogStorage,
+        timeProvider: TimeProvider,
+        autoSyncWatcher: AutoSyncWatcher2,
+        eventbus: WTEventBus
+    ): LogRepository {
+        return LogRepositoryDefault(worklogRepo, timeProvider, autoSyncWatcher, eventbus)
     }
 
     @Provides
@@ -304,8 +350,8 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideDayProvider(logStorage: LogStorage): DayProvider {
-        return DayProviderImpl(logStorage)
+    fun provideDayProvider(logRepository: LogRepository): DayProvider {
+        return DayProviderImpl(logRepository)
     }
 
     @Provides
@@ -337,9 +383,9 @@ class AppModule(
     @Provides
     @Singleton
     fun provideLogChangeValidator(
-            logStorage: LogStorage
+        logRepository: LogRepository
     ): LogChangeValidator {
-        return LogChangeValidator(logStorage)
+        return LogChangeValidator(logRepository)
     }
 
     @Provides

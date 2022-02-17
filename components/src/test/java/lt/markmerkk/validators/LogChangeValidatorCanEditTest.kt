@@ -28,7 +28,7 @@ class LogChangeValidatorCanEditTest {
         doReturn(MocksLogEditService.createValidLogWithDate()).whenever(logStorage).findByIdOrNull(any())
 
         // Act
-        val resultCanEdit = logChangeValidator.canEditSimpleLog(simpleLogId = 1L)
+        val resultCanEdit = logChangeValidator.canEditSimpleLog(logLocalId = 1L)
 
         // Assert
         assertThat(resultCanEdit).isTrue()
@@ -40,7 +40,7 @@ class LogChangeValidatorCanEditTest {
         doReturn(null).whenever(logStorage).findByIdOrNull(any())
 
         // Act
-        val resultCanEdit = logChangeValidator.canEditSimpleLog(simpleLogId = 1L)
+        val resultCanEdit = logChangeValidator.canEditSimpleLog(logLocalId = 1L)
 
         // Assert
         assertThat(resultCanEdit).isFalse()

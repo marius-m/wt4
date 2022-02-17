@@ -9,6 +9,7 @@ import javafx.scene.paint.Paint
 import lt.markmerkk.*
 import lt.markmerkk.datepick.DateSelectResult
 import lt.markmerkk.datepick.DateSelectType
+import lt.markmerkk.events.EventActiveDisplayDataChange
 import lt.markmerkk.events.EventChangeDate
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.widgets.datepicker.DatePickerWidget
@@ -19,9 +20,9 @@ import javax.inject.Inject
 class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var resultDispatcher: ResultDispatcher
+    @Inject lateinit var logRepository: LogRepository
 
     init {
         Main.component().inject(this)
@@ -55,7 +56,7 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
         super.onDock()
         presenter = QuickDateChangeWidgetPresenterDefault(
             resultDispatcher,
-            logStorage
+            logRepository
         )
         presenter.onAttach(this)
         eventBus.register(this)
@@ -99,6 +100,11 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
                 DateSelectType.SELECT_TO -> {}
             }.javaClass
         }
+    }
+
+    @Subscribe
+    fun eventActiveDisplayDataChange(event: EventActiveDisplayDataChange) {
+        render(presenter.activeDateAsString())
     }
 
     //endregion

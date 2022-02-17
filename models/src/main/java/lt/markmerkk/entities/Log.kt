@@ -155,7 +155,7 @@ data class Log private constructor(
         }
 
         fun createFromRemoteData(
-                timeProvider: TimeProvider,
+            timeProvider: TimeProvider,
                 code: String,
                 started: java.util.Date,
                 comment: String?,
@@ -205,6 +205,42 @@ data class Log private constructor(
             )
         }
 
+        fun Log.clone(
+            timeProvider: TimeProvider,
+            start: DateTime = this.time.start,
+            end: DateTime = this.time.end,
+            code: TicketCode = this.code,
+            comment: String = this.comment
+        ): Log {
+            return Log(
+                id = id,
+                time = LogTime.from(timeProvider, start, end),
+                code = code,
+                comment = comment,
+                systemNote = systemNote,
+                author = author,
+                remoteData = remoteData
+            )
+        }
+
+        fun Log.cloneAsNewLocal(
+            timeProvider: TimeProvider,
+            start: DateTime = this.time.start,
+            end: DateTime = this.time.end,
+            code: TicketCode = this.code,
+            comment: String = this.comment
+        ): Log {
+            return Log(
+                id = Const.NO_ID,
+                time = LogTime.from(timeProvider, start, end),
+                code = code,
+                comment = comment,
+                systemNote = "",
+                author = "",
+                remoteData = null
+            )
+        }
+
         // Should only be used for testing
         fun createAsTestable(
                 timeProvider: TimeProvider,
@@ -232,12 +268,12 @@ data class Log private constructor(
 }
 
 data class LogTime(
-        val start: DateTime,
-        val end: DateTime,
-        val duration: Duration,
-        val startAsRaw: Long,
-        val endAsRaw: Long,
-        val durationAsRaw: Long
+    val start: DateTime,
+    val end: DateTime,
+    val duration: Duration,
+    val startAsRaw: Long,
+    val endAsRaw: Long,
+    val durationAsRaw: Long
 ) {
     companion object {
 
@@ -282,4 +318,18 @@ data class LogTime(
         }
     }
 
+}
+
+fun Log.toTimeGap(): TimeGap {
+    return TimeGap.from(
+        time.start,
+        time.end
+    )
+}
+
+fun Log.toTimeGapRounded(timeProvider: TimeProvider): TimeGap {
+    return TimeGap.from(
+        timeProvider.roundDateTime(time.start.millis),
+        timeProvider.roundDateTime(time.end.millis)
+    )
 }

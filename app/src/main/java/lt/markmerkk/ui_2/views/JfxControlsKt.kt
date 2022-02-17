@@ -65,12 +65,11 @@ fun <T> EventTarget.jfxCombobox(
         property: Property<T>? = null,
         values: List<T>? = null,
         op: JFXComboBox<T>.() -> Unit = {}) = JFXComboBox<T>().attachTo(this, op) {
-    if (values != null) it.items = values as? ObservableList<T> ?: values.observable()
+    if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
     if (property != null) it.bind(property)
     it.selectionModel.select(0)
 }
 fun <T> EventTarget.jfxListview(
-        childWidgets: List<T> = emptyList(),
         op: JFXListView<T>.() -> Unit = {}
 ) = JFXListView<T>()
         .attachTo(this, op)

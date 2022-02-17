@@ -40,11 +40,10 @@ enum class SyncStatus {
         /**
          * Exposes [SyncStatus] from [SimpleLog]
          */
-        @JvmStatic fun exposeStatus(simpleLog: SimpleLog): SyncStatus {
+        @JvmStatic fun exposeStatus(log: Log): SyncStatus {
             return when {
-                simpleLog.isError -> ERROR
-                simpleLog.isRemote -> IN_SYNC
-                !simpleLog.isRemote -> WAITING_FOR_SYNC
+                log.isRemote -> IN_SYNC
+                !log.isRemote -> WAITING_FOR_SYNC
                 else -> INVALID
             }
         }

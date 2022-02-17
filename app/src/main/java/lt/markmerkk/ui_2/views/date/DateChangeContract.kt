@@ -17,6 +17,7 @@ interface DateChangeContract {
         fun onClickNext()
         fun onClickPrev()
         fun onClickDate()
+        fun activeDateAsString(): String
     }
 
 }

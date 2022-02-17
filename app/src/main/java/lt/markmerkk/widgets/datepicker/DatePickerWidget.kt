@@ -5,7 +5,6 @@ import com.jfoenix.skins.JFXDatePickerContentLocal
 import javafx.beans.value.ChangeListener
 import javafx.scene.Parent
 import javafx.scene.layout.VBox
-import lt.markmerkk.LogStorage
 import lt.markmerkk.Main
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.Styles
@@ -21,7 +20,6 @@ import javax.inject.Inject
 
 class DatePickerWidget: Fragment() {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var eventBus: WTEventBus
 

@@ -1,13 +1,13 @@
 package lt.markmerkk.widgets.statistics
 
-import lt.markmerkk.LogStorage
+import lt.markmerkk.LogRepository
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
 
 class StatisticsPresenter(
-        private val logStorage: LogStorage,
-        private val hourGlass: HourGlass
-): StatisticsContract.Presenter {
+    private val hourGlass: HourGlass,
+    private val logRepository: LogRepository
+) : StatisticsContract.Presenter {
 
     private var view: StatisticsContract.View? = null
 
@@ -20,8 +20,8 @@ class StatisticsPresenter(
     }
 
     override fun mapData(): Map<String, Long> {
-        val ticketDurationMap = logStorage.data
-                .map { it.task to it.duration }
+        val ticketDurationMap = logRepository.data
+                .map { it.code.code to it.time.duration.millis }
         val ticketDurationSumMap = mutableMapOf<String, Long>()
         ticketDurationMap
                 .forEach {
@@ -41,14 +41,14 @@ class StatisticsPresenter(
 
     override fun totalAsString(): String {
         if (hourGlass.isRunning()) {
-            val totalLogged: Long = logStorage.total().toLong()
+            val totalLogged: Long = logRepository.totalInMillis()
             val formatTotalLogged = LogUtils.formatShortDurationMillis(totalLogged)
             val totalRunning = hourGlass.duration.millis
             val formatTotalRunning = LogUtils.formatShortDurationMillis(totalRunning)
             val formatTotal = LogUtils.formatShortDurationMillis(totalLogged + totalRunning)
             return "Logged ($formatTotalLogged) + Running ($formatTotalRunning) = $formatTotal"
         } else {
-            val totalLogged = logStorage.total().toLong()
+            val totalLogged = logRepository.totalInMillis()
             val formatTotalLogged = LogUtils.formatShortDurationMillis(totalLogged)
             return "Logged ($formatTotalLogged)"
         }

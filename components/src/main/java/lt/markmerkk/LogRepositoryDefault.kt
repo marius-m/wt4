@@ -1,74 +1,74 @@
 package lt.markmerkk
 
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.Log
+import lt.markmerkk.events.EventActiveDisplayDataChange
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 
-/**
- * Synchronous storage
- */
-@Deprecated("Should be replaced with WorklogStorage as it serves the same purpose / Or LogStorage2")
-class LogStorage(
-        private val worklogStorage: WorklogStorage,
-        private val timeProvider: TimeProvider,
-        private val autoSyncWatcher: AutoSyncWatcher2
-) : IDataStorage<SimpleLog> {
+class LogRepositoryDefault(
+    private val worklogStorage: WorklogStorage,
+    private val timeProvider: TimeProvider,
+    private val autoSyncWatcher: AutoSyncWatcher2,
+    private val eventBus: WTEventBus
+) : LogRepository {
 
-    override var data = emptyList<SimpleLog>()
+    private var _data = emptyList<Log>()
+    override val data: List<Log>
+        get() = _data
 
-    private var listeners = mutableListOf<IDataListener<SimpleLog>>()
-    var displayType = DisplayTypeLength.DAY
+    private var _displayType = DisplayTypeLength.DAY
         set(value) {
             field = value
             notifyDataChange()
         }
-    var targetDate = DateTime().withTime(0, 0, 0, 0)
+    override val displayType: DisplayTypeLength
+        get() = _displayType
+
+    private var _targetDate = DateTime().withTime(0, 0, 0, 0)
         set(value) {
             field = value.withTime(0, 0, 0, 0)
             notifyDataChange()
         }
+    override val targetDate: DateTime
+        get() = _targetDate
 
     init {
         notifyDataChange()
     }
 
-    override fun register(listener: IDataListener<SimpleLog>) {
-        listeners.add(listener)
+    override fun changeDisplayType(displayType: DisplayTypeLength) {
+        this._displayType = displayType
     }
 
-    override fun unregister(listener: IDataListener<SimpleLog>) {
-        listeners.remove(listener)
+    override fun changeActiveDate(newActiveDate: DateTime) {
+        this._targetDate = newActiveDate
     }
 
-    override fun insert(dataEntity: SimpleLog): Long {
-        val log = dataEntity.toLog(timeProvider)
+    override fun insertOrUpdate(log: Log): Long {
         val newId = worklogStorage.insertOrUpdateSync(log)
         autoSyncWatcher.markForShortCycleUpdate()
         notifyDataChange()
         return newId
     }
 
-    override fun delete(dataEntity: SimpleLog): Long {
-        val log = dataEntity.toLog(timeProvider)
+    override fun delete(log: Log): Long {
         val newId = worklogStorage.deleteSync(log)
         autoSyncWatcher.markForShortCycleUpdate()
         notifyDataChange()
         return newId
     }
 
-    override fun update(dataEntity: SimpleLog): Long {
-        val log = dataEntity.toLog(timeProvider)
+    override fun update(log: Log): Long {
         val newId = worklogStorage.updateSync(log)
         autoSyncWatcher.markForShortCycleUpdate()
         notifyDataChange()
         return newId
     }
 
-    override fun findByIdOrNull(id: Long): SimpleLog? {
+    override fun findByIdOrNull(id: Long): Log? {
         return worklogStorage.findById(id)
-                ?.toLegacyLog(timeProvider)
     }
 
     override fun notifyDataChange() {
@@ -85,15 +85,18 @@ class LogStorage(
                     .withTimeAtStartOfDay()
                     .toLocalDate()
         }
-        data = worklogStorage.loadWorklogsSync(fromDate, toDate)
+        _data = worklogStorage.loadWorklogsSync(fromDate, toDate)
                 .filter { !it.isMarkedForDeletion }
-                .map { it.toLegacyLog(timeProvider) }
-        listeners.forEach { it.onDataChange(data) }
+        eventBus.post(EventActiveDisplayDataChange(data))
     }
 
-    fun total() = data.sumBy { it.duration.toInt() }
+    override fun totalInMillis() = data.fold(0L) { sum, log ->
+        sum + log.time.duration.millis
+    }
 
-    fun totalAsDuration() = Duration(total().toLong())
+    override fun totalAsDuration(): Duration {
+        return Duration(totalInMillis())
+    }
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.DB)!!
