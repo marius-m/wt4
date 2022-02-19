@@ -5,20 +5,31 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
 import javafx.scene.control.TableView
-import javafx.scene.paint.Color
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Graphics
+import lt.markmerkk.Main
+import lt.markmerkk.Strings
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.LogEditType
 import lt.markmerkk.entities.SyncStatus
-import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.events.EventActiveDisplayDataChange
+import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.widgets.MainContainerNavigator
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.asObservable
+import tornadofx.column
+import tornadofx.getValue
+import tornadofx.observable
+import tornadofx.readonlyColumn
+import tornadofx.setValue
+import tornadofx.tableview
 import javax.inject.Inject
 
 class ListLogWidget: Fragment() {
@@ -26,7 +37,7 @@ class ListLogWidget: Fragment() {
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
     @Inject lateinit var worklogStorage: WorklogStorage
 
     init {
@@ -38,25 +49,25 @@ class ListLogWidget: Fragment() {
     private val mainContainerNavigator = MainContainerNavigator(
         eventBus = eventBus,
         uiComponent = this,
-        logRepository = logRepository
+        activeDisplayRepository = activeDisplayRepository
     )
     private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(
-            strings,
-            graphics,
-            logRepository,
-            eventBus,
-            listOf(
-                    LogEditType.NEW,
-                    LogEditType.UPDATE,
-                    LogEditType.CLONE,
-                    LogEditType.DELETE,
-                    LogEditType.SPLIT,
-                    LogEditType.WEBLINK,
-                    LogEditType.BROWSER
-            )
+        strings,
+        graphics,
+        eventBus,
+        worklogStorage,
+        listOf(
+            LogEditType.NEW,
+            LogEditType.UPDATE,
+            LogEditType.CLONE,
+            LogEditType.DELETE,
+            LogEditType.SPLIT,
+            LogEditType.WEBLINK,
+            LogEditType.BROWSER
+        )
     )
     private val logs = mutableListOf<LogViewModel>()
-            .observable()
+            .asObservable()
 
     override val root: Parent = tableview(logs) {
         viewTable = this
@@ -107,7 +118,7 @@ class ListLogWidget: Fragment() {
         super.onDock()
         mainContainerNavigator.onAttach()
         eventBus.register(this)
-        reloadLogs(logRepository.data)
+        reloadLogs(activeDisplayRepository.displayLogs)
     }
 
     override fun onUndock() {
@@ -143,10 +154,10 @@ class ListLogWidget: Fragment() {
             ticketCode = "TOTAL",
             start = "",
             end = "",
-            duration = LogUtils.formatShortDurationMillis(logRepository.totalInMillis()),
+            duration = LogUtils.formatShortDurationMillis(activeDisplayRepository.totalInMillis()),
             comment = ""
         )
-        val logViewModels = logRepository.data
+        val logViewModels = activeDisplayRepository.displayLogs
             .map {
                 LogViewModel(
                     id = it.id,

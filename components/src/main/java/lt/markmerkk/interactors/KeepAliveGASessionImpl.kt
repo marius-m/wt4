@@ -1,6 +1,6 @@
 package lt.markmerkk.interactors
 
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.utils.tracker.ITracker
 import org.slf4j.LoggerFactory
 import rx.Observable
@@ -9,7 +9,7 @@ import rx.Subscription
 import java.util.concurrent.TimeUnit
 
 class KeepAliveGASessionImpl(
-    private val logRepository: LogRepository,
+    private val activeDisplayRepository: ActiveDisplayRepository,
     private val tracker: ITracker,
     private val waitScheduler: Scheduler
 ) : KeepAliveGASession {
@@ -19,7 +19,7 @@ class KeepAliveGASessionImpl(
     override fun onAttach() {
         subscription = Observable.interval(MINUTE_DELAY, TimeUnit.MINUTES, waitScheduler)
                 .subscribe({
-                    tracker.sendView(logRepository.displayType.name)
+                    tracker.sendView(activeDisplayRepository.displayType.name)
                 }, { error ->
                     logger.warn("Error sending ping", error)
                 })

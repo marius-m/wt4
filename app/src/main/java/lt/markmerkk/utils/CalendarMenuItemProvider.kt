@@ -1,13 +1,11 @@
 package lt.markmerkk.utils
 
 import javafx.scene.control.MenuItem
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Strings
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.Log.Companion.cloneAsNewLocal
-import lt.markmerkk.entities.SimpleLogBuilder
-import lt.markmerkk.entities.TicketCode
 import java.time.ZonedDateTime
 
 object CalendarMenuItemProvider {
@@ -17,7 +15,7 @@ object CalendarMenuItemProvider {
         zonedDateTime: ZonedDateTime,
         strings: Strings,
         timeProvider: TimeProvider,
-        logRepository: LogRepository
+        activeDisplayRepository: ActiveDisplayRepository
     ): MenuItem {
         val newEntryItem = MenuItem(strings.getString("calendar_menu_new_entry"))
         newEntryItem.setOnAction {
@@ -29,7 +27,7 @@ object CalendarMenuItemProvider {
                     start = timeProvider.roundDateTime(startMillis),
                     end = timeProvider.roundDateTime(endMillis)
                 )
-            logRepository.insertOrUpdate(log)
+            activeDisplayRepository.insertOrUpdate(log)
         }
         return newEntryItem
     }

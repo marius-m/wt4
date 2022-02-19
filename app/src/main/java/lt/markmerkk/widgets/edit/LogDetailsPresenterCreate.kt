@@ -10,14 +10,16 @@ class LogDetailsPresenterCreate(
     private val eventBus: WTEventBus,
     private val timeProvider: TimeProvider,
     private val ticketStorage: TicketStorage,
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository,
+    private val worklogStorage: WorklogStorage
 ) : LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
     private val logEditService: LogEditService2 = LogEditService2Impl(
         timeProvider = timeProvider,
         ticketStorage = ticketStorage,
-        logRepository = logRepository,
+        activeDisplayRepository = activeDisplayRepository,
+        worklogStorage = worklogStorage,
         listener = object : LogEditService2.Listener {
             override fun showDataTimeChange(timeGap: TimeGap) {
                 view?.showDateTime(timeGap.start, timeGap.end)

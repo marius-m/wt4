@@ -1,13 +1,12 @@
 package lt.markmerkk.ui_2.views.calendar_edit
 
 import lt.markmerkk.Const
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.Log.Companion.clone
-import lt.markmerkk.entities.Log.Companion.cloneAsNewLocal
 import lt.markmerkk.entities.toTimeGapRounded
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
@@ -20,7 +19,7 @@ class QuickEditPresenterMove(
     private val logChangeValidator: LogChangeValidator,
     private val selectEntryProvider: QuickEditContract.SelectEntryProvider,
     private val worklogStorage: WorklogStorage,
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) : QuickEditContract.MovePresenter {
 
     private var view: QuickEditContract.MoveView? = null
@@ -66,7 +65,7 @@ class QuickEditPresenterMove(
             end = end
         )
         if (logChangeValidator.canEditSimpleLog(selectEntryProvider.entryId())) {
-            return logRepository.update(newLog)
+            return activeDisplayRepository.update(newLog)
         }
         return Const.NO_ID
     }

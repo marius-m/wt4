@@ -22,7 +22,6 @@ import javafx.stage.StageStyle
 import lt.markmerkk.*
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
@@ -40,8 +39,6 @@ import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.validators.LogChangeValidator
-import lt.markmerkk.versioner.Changelog
-import lt.markmerkk.versioner.ChangelogLoader
 import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
@@ -80,7 +77,7 @@ class MainWidget : Fragment(), MainContract.View {
     @Inject lateinit var ticker: Ticker
     @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
     @Inject lateinit var configSetSettings: ConfigSetSettings
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -469,7 +466,7 @@ class MainWidget : Fragment(), MainContract.View {
                         buttons = *arrayOf(ButtonType.NO, ButtonType.YES),
                         actionFn = { buttonType ->
                             when (buttonType) {
-                                ButtonType.YES -> logRepository.delete(event.logs.first())
+                                ButtonType.YES -> activeDisplayRepository.delete(event.logs.first())
                                 else -> logger.info("Delete dialog dismissed")
                             }
                         }
@@ -488,7 +485,7 @@ class MainWidget : Fragment(), MainContract.View {
                     author = "",
                     remoteData = null
                 )
-                logRepository.insertOrUpdate(newLog)
+                activeDisplayRepository.insertOrUpdate(newLog)
             }
             LogEditType.SPLIT -> {
                 resultDispatcher.publish(TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())

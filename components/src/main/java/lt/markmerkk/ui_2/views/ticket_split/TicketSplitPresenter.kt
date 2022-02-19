@@ -13,7 +13,7 @@ class TicketSplitPresenter(
     private val strings: Strings,
     private val ticketStorage: TicketStorage,
     private val schedulerProvider: SchedulerProvider,
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) : TicketSplitContract.Presenter {
 
     private var timeSplitPair: TimeSplitPair = logSplitter.split(
@@ -96,9 +96,9 @@ class TicketSplitPresenter(
             code = TicketCode.new(ticketName),
             comment = newComment
         )
-        logRepository.delete(input)
-        logRepository.insertOrUpdate(worklog1)
-        logRepository.insertOrUpdate(worklog2)
+        activeDisplayRepository.delete(input)
+        activeDisplayRepository.insertOrUpdate(worklog1)
+        activeDisplayRepository.insertOrUpdate(worklog2)
     }
 
 }

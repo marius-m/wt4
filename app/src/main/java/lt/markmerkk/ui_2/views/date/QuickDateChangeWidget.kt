@@ -22,7 +22,7 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var resultDispatcher: ResultDispatcher
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -56,7 +56,7 @@ class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
         super.onDock()
         presenter = QuickDateChangeWidgetPresenterDefault(
             resultDispatcher,
-            logRepository
+            activeDisplayRepository
         )
         presenter.onAttach(this)
         eventBus.register(this)

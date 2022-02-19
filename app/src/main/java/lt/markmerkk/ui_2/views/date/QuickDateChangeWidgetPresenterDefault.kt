@@ -2,7 +2,7 @@ package lt.markmerkk.ui_2.views.date
 
 import javafx.stage.StageStyle
 import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.datepick.DateSelectRequest
 import lt.markmerkk.datepick.DateSelectType
@@ -13,7 +13,7 @@ import tornadofx.find
 
 class QuickDateChangeWidgetPresenterDefault(
     private val resultDispatcher: ResultDispatcher,
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) : DateChangeContract.Presenter {
 
     private var view: DateChangeContract.View? = null
@@ -28,36 +28,22 @@ class QuickDateChangeWidgetPresenterDefault(
     }
 
     override fun selectDate(localDate: LocalDate) {
-        logRepository.changeActiveDate(localDate.toDateTimeAtStartOfDay())
+        activeDisplayRepository.changeDisplayDate(localDate)
     }
 
     override fun onClickNext() {
-        when (logRepository.displayType) {
-            DisplayTypeLength.DAY -> {
-                logRepository.changeActiveDate(logRepository.targetDate.plusDays(1))
-            }
-            DisplayTypeLength.WEEK -> {
-                logRepository.changeActiveDate(logRepository.targetDate.plusDays(7))
-            }
-        }
+        activeDisplayRepository.nextDisplayDate()
     }
 
     override fun onClickPrev() {
-        when (logRepository.displayType) {
-            DisplayTypeLength.DAY -> {
-                logRepository.changeActiveDate(logRepository.targetDate.minusDays(1))
-            }
-            DisplayTypeLength.WEEK -> {
-                logRepository.changeActiveDate(logRepository.targetDate.minusDays(7))
-            }
-        }
+        activeDisplayRepository.prevDisplayDate()
     }
 
     override fun onClickDate() {
         resultDispatcher.publish(
             key = DatePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
             resultEntity = DateSelectRequest(
-                dateSelection = logRepository.targetDate.toLocalDate(),
+                dateSelection = activeDisplayRepository.displayDateRange.selectDate,
                 extra = DateSelectType.TARGET_DATE.name
             )
         )
@@ -69,8 +55,8 @@ class QuickDateChangeWidgetPresenterDefault(
     }
 
     override fun activeDateAsString(): String {
-        val localDate = logRepository.targetDate.toLocalDate()
-        return when (logRepository.displayType) {
+        val localDate = activeDisplayRepository.displayDateRange.start
+        return when (activeDisplayRepository.displayType) {
             DisplayTypeLength.DAY -> DateSwitcherFormatterJoda.formatDateForDay(localDate)
             DisplayTypeLength.WEEK -> DateSwitcherFormatterJoda.formatDateForWeek(localDate)
         }

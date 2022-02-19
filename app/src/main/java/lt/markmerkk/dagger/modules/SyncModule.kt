@@ -33,7 +33,7 @@ class SyncModule {
         jiraClientProvider: JiraClientProvider,
         userSettings: UserSettings,
         jiraBasicApi: JiraBasicApi,
-        logRepository: LogRepository
+        activeDisplayRepository: ActiveDisplayRepository
     ): SyncInteractor {
         return SyncInteractorImpl(
             dayProvider = dayProvider,
@@ -45,7 +45,7 @@ class SyncModule {
             worklogApi = worklogApi,
             userSettings = userSettings,
             jiraBasicApi = jiraBasicApi,
-            logRepository = logRepository
+            activeDisplayRepository = activeDisplayRepository
         )
     }
 

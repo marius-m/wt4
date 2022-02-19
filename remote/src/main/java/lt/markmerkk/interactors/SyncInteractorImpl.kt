@@ -21,7 +21,7 @@ class SyncInteractorImpl(
     private val jiraClientProvider: JiraClientProvider,
     private val userSettings: UserSettings,
     private val jiraBasicApi: JiraBasicApi,
-    private val logRepository: LogRepository,
+    private val activeDisplayRepository: ActiveDisplayRepository,
     private val uiScheduler: Scheduler,
     private val ioScheduler: Scheduler
 ) : SyncInteractor {
@@ -85,7 +85,7 @@ class SyncInteractorImpl(
                 .doOnSubscribe { changeLoadingState(true) }
                 .doAfterTerminate {
                     changeLoadingState(false)
-                    logRepository.notifyDataChange()
+                    activeDisplayRepository.notifyDataChange()
                 }
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
@@ -106,7 +106,7 @@ class SyncInteractorImpl(
                         }
                     }
                     logger.error("=== Sync error ===")
-                    logRepository.notifyDataChange()
+                    activeDisplayRepository.notifyDataChange()
                 })
     }
 

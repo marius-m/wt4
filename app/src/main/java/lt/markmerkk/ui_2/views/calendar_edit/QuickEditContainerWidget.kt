@@ -6,7 +6,7 @@ import javafx.scene.layout.Priority
 import javafx.scene.paint.Paint
 import lt.markmerkk.Const
 import lt.markmerkk.Graphics
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Main
 import lt.markmerkk.MaterialColors
 import lt.markmerkk.TimeProvider
@@ -34,7 +34,7 @@ class QuickEditContainerWidget : Fragment(),
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var logChangeValidator: LogChangeValidator
     @Inject lateinit var worklogStorage: WorklogStorage
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -78,7 +78,7 @@ class QuickEditContainerWidget : Fragment(),
                 logChangeValidator,
                 selectEntryProvider,
                 worklogStorage,
-                logRepository
+                activeDisplayRepository
             )
         ),
         QuickEditAction.SCALE to QuickEditWidgetScale(
@@ -93,7 +93,7 @@ class QuickEditContainerWidget : Fragment(),
                 logChangeValidator,
                 selectEntryProvider,
                 worklogStorage,
-                logRepository
+                activeDisplayRepository
             )
         ),
         QuickEditAction.SCALE10x to QuickEditWidgetScale(
@@ -108,7 +108,7 @@ class QuickEditContainerWidget : Fragment(),
                 logChangeValidator,
                 selectEntryProvider,
                 worklogStorage,
-                logRepository
+                activeDisplayRepository
             )
         )
     )

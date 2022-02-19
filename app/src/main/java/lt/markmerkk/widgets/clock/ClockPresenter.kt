@@ -1,6 +1,5 @@
 package lt.markmerkk.widgets.clock
 
-import lt.markmerkk.LogRepository
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WTEventBus

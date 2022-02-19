@@ -23,7 +23,6 @@ import lt.markmerkk.datepick.DateSelectRequest
 import lt.markmerkk.datepick.DateSelectResult
 import lt.markmerkk.datepick.DateSelectType
 import lt.markmerkk.entities.Log
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketUseHistory
@@ -74,7 +73,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
     @Inject lateinit var accountAvailablility: AccountAvailablility
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
+    @Inject lateinit var worklogStorage: WorklogStorage
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewDatePickerFrom: JFXTextField
@@ -417,7 +417,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 eventBus,
                 timeProvider,
                 ticketStorage,
-                logRepository
+                activeDisplayRepository,
+                worklogStorage
             )
         } else {
             when  {
@@ -428,13 +429,15 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     activeLogPersistence,
                     ticketStorage,
                     userSettings,
-                    logRepository
+                    activeDisplayRepository,
+                    worklogStorage
                 )
                 else -> LogDetailsPresenterCreate(
                     eventBus,
                     timeProvider,
                     ticketStorage,
-                    logRepository
+                    activeDisplayRepository,
+                    worklogStorage
                 )
             }
         }

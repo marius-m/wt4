@@ -21,7 +21,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
     @Inject lateinit var hourGlass: HourGlass
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -75,7 +75,7 @@ class StatisticsWidget: Fragment(), StatisticsContract.View {
 
     override fun onDock() {
         super.onDock()
-        presenter = StatisticsPresenter(hourGlass, logRepository)
+        presenter = StatisticsPresenter(hourGlass, activeDisplayRepository)
         ticketInfoLoader = TicketInfoLoader(
                 listener = ticketInfoLoaderListener,
                 ticketStorage = ticketStorage,

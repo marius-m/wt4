@@ -1,8 +1,9 @@
 package lt.markmerkk.mvp
 
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.Log.Companion.clone
 import lt.markmerkk.entities.TicketCode
@@ -16,14 +17,15 @@ class LogEditService2Impl(
     private val timeProvider: TimeProvider,
     private val ticketStorage: TicketStorage,
     private val listener: LogEditService2.Listener,
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository,
+    private val worklogStorage: WorklogStorage
 ) : LogEditService2 {
 
     override var serviceType: LogEditService2.ServiceType = LogEditService2.ServiceType.UPDATE
     private var log: Log = Log.createAsEmpty(timeProvider)
 
     override fun bindLogByLocalId(localId: Long) {
-        log = logRepository.findByIdOrNull(localId) ?: Log.createAsEmpty(timeProvider)
+        log = worklogStorage.findById(localId) ?: Log.createAsEmpty(timeProvider)
     }
 
     override fun updateDateTime(timeGap: TimeGap) {
@@ -44,7 +46,7 @@ class LogEditService2Impl(
             code = TicketCode.new(task),
             comment = comment
         )
-        logRepository.insertOrUpdate(saveLog)
+        activeDisplayRepository.insertOrUpdate(saveLog)
         log = saveLog
         ticketStorage.saveTicketAsUsedSync(timeProvider.preciseNow(), saveLog.code)
         listener.showSuccess()

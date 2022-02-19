@@ -27,7 +27,7 @@ class CoreWidget : View() {
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
     @Inject lateinit var ticker: Ticker
     @Inject lateinit var configSetSettings: ConfigSetSettings
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     private lateinit var keepAliveGASession: KeepAliveGASession
 
@@ -54,7 +54,7 @@ class CoreWidget : View() {
                 GAStatics.ACTION_START
         )
         keepAliveGASession = KeepAliveGASessionImpl(
-            logRepository,
+            activeDisplayRepository,
             tracker,
             schedulersProvider.waitScheduler()
         )

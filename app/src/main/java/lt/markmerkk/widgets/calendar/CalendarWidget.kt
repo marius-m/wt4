@@ -61,7 +61,8 @@ class CalendarWidget: Fragment() {
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var dayProvider: DayProvider
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
+    @Inject lateinit var worklogStorage: WorklogStorage
 
     private lateinit var viewCalendar: DayViewBase
     private lateinit var viewContainer: BorderPane
@@ -76,11 +77,11 @@ class CalendarWidget: Fragment() {
         Main.component().inject(this)
     }
 
-    private val totalWorkGenerator = TotalWorkGenerator(hourGlass, TotalGenStringRes(), logRepository)
+    private val totalWorkGenerator = TotalWorkGenerator(hourGlass, TotalGenStringRes(), activeDisplayRepository)
     private val mainContainerNavigator = MainContainerNavigator(
             eventBus,
             this,
-        logRepository
+        activeDisplayRepository
     )
     private lateinit var contextMenu: ContextMenuEditLog
 
@@ -95,7 +96,7 @@ class CalendarWidget: Fragment() {
                     start = timeProvider.roundDateTime(calendarEntryStart),
                     end = timeProvider.roundDateTime(calendarEntryEnd)
                 )
-                logRepository.update(newLogEntry)
+                activeDisplayRepository.update(newLogEntry)
             }
         }
     }
@@ -190,7 +191,7 @@ class CalendarWidget: Fragment() {
 
     override fun onDock() {
         super.onDock()
-        viewCalendar = when (logRepository.displayType) {
+        viewCalendar = when (activeDisplayRepository.displayType) {
             DisplayTypeLength.DAY -> DetailedDayView()
             DisplayTypeLength.WEEK -> DetailedWeekView()
         }
@@ -204,18 +205,18 @@ class CalendarWidget: Fragment() {
                 })
         viewZoomSlider.value = 50.0
         contextMenu = ContextMenuEditLog(
-                strings,
-                graphics,
-                logRepository,
-                eventBus,
-                listOf(
-                        LogEditType.UPDATE,
-                        LogEditType.CLONE,
-                        LogEditType.DELETE,
-                        LogEditType.SPLIT,
-                        LogEditType.WEBLINK,
-                        LogEditType.BROWSER
-                )
+            strings,
+            graphics,
+            eventBus,
+            worklogStorage,
+            listOf(
+                LogEditType.UPDATE,
+                LogEditType.CLONE,
+                LogEditType.DELETE,
+                LogEditType.SPLIT,
+                LogEditType.WEBLINK,
+                LogEditType.BROWSER
+            )
         )
         tracker.sendView(GAStatics.VIEW_CALENDAR_DAY)
 
@@ -242,7 +243,7 @@ class CalendarWidget: Fragment() {
                 schedulerProvider.ui()
         )
         logLoader.onAttach()
-        logLoader.load(logRepository.data)
+        logLoader.load(activeDisplayRepository.displayLogs)
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
         eventBus.register(this)
@@ -341,7 +342,7 @@ class CalendarWidget: Fragment() {
                         param.zonedDateTime,
                         strings,
                         timeProvider,
-                        logRepository
+                        activeDisplayRepository
                     )
             )
             contextMenu.onAction = object : EventHandler<ActionEvent> {
@@ -363,7 +364,7 @@ class CalendarWidget: Fragment() {
                     start = timeProvider.roundDateTime(startMillis),
                     end = timeProvider.roundDateTime(endMillis)
                 )
-            logRepository.insertOrUpdate(log)
+            activeDisplayRepository.insertOrUpdate(log)
             return null
         }
     }
@@ -396,12 +397,7 @@ class CalendarWidget: Fragment() {
                 entriesWaitingForSync: List<Entry<Log>>,
                 entriesInError: List<Entry<Log>>
         ) {
-            val targetDate = logRepository.targetDate.toLocalDate() // todo: Provide shown date
-            viewCalendar.date = LocalDate.of(
-                    targetDate.year,
-                    targetDate.monthOfYear,
-                    targetDate.dayOfMonth
-            )
+            viewCalendar.date = TimeProvider.toJavaLocalDate(activeDisplayRepository.displayDateRange.selectDate)
             calendarInSync.startBatchUpdates()
             calendarWaitingForSync.startBatchUpdates()
             calendarError.startBatchUpdates()
@@ -421,12 +417,7 @@ class CalendarWidget: Fragment() {
         }
 
         override fun onCalendarNoEntries() {
-            val targetDate = logRepository.targetDate.toLocalDate() // todo: Provide shown date
-            viewCalendar.date = LocalDate.of(
-                    targetDate.year,
-                    targetDate.monthOfYear,
-                    targetDate.dayOfMonth
-            )
+            viewCalendar.date = TimeProvider.toJavaLocalDate(activeDisplayRepository.displayDateRange.selectDate)
             calendarInSync.clear()
             calendarWaitingForSync.clear()
             calendarError.clear()

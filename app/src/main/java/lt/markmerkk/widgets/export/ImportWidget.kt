@@ -25,7 +25,7 @@ class ImportWidget : Fragment(), ImportContract.View {
     @Inject lateinit var worklogExporter: WorklogExporter
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var worklogStorage: WorklogStorage
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -103,7 +103,7 @@ class ImportWidget : Fragment(), ImportContract.View {
     override fun onDock() {
         super.onDock()
         presenter = ImportPresenter(
-            logRepository = logRepository
+            activeDisplayRepository = activeDisplayRepository
         )
         presenter.onAttach(this)
         presenter.filterWorklogs(projectFilter = presenter.defaultProjectFilter)

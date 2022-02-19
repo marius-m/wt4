@@ -35,7 +35,7 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
-    @Inject lateinit var logRepository: LogRepository
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     private lateinit var viewDateTimeFrom: Label
     private lateinit var viewDateTimeMiddle: Label
@@ -235,7 +235,7 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
             strings,
             ticketStorage,
             schedulerProvider,
-            logRepository
+            activeDisplayRepository
         )
         presenter.onAttach(this)
         viewSlider.valueProperty().addListener(viewSliderChangeListener)

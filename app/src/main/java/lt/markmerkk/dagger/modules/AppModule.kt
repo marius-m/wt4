@@ -21,8 +21,8 @@ import lt.markmerkk.Graphics
 import lt.markmerkk.GraphicsGlyph
 import lt.markmerkk.HostServicesInteractorImpl
 import lt.markmerkk.JiraClientProvider
-import lt.markmerkk.LogRepository
-import lt.markmerkk.LogRepositoryDefault
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.ActiveDisplayRepositoryDefault
 import lt.markmerkk.MigrationsRunner
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.SchedulerProvider
@@ -335,8 +335,8 @@ class AppModule(
         timeProvider: TimeProvider,
         autoSyncWatcher: AutoSyncWatcher2,
         eventbus: WTEventBus
-    ): LogRepository {
-        return LogRepositoryDefault(worklogRepo, timeProvider, autoSyncWatcher, eventbus)
+    ): ActiveDisplayRepository {
+        return ActiveDisplayRepositoryDefault(worklogRepo, timeProvider, autoSyncWatcher, eventbus)
     }
 
     @Provides
@@ -350,8 +350,8 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideDayProvider(logRepository: LogRepository): DayProvider {
-        return DayProviderImpl(logRepository)
+    fun provideDayProvider(activeDisplayRepository: ActiveDisplayRepository): DayProvider {
+        return DayProviderImpl(activeDisplayRepository)
     }
 
     @Provides
@@ -383,9 +383,9 @@ class AppModule(
     @Provides
     @Singleton
     fun provideLogChangeValidator(
-        logRepository: LogRepository
+        worklogStorage: WorklogStorage
     ): LogChangeValidator {
-        return LogChangeValidator(logRepository)
+        return LogChangeValidator(worklogStorage)
     }
 
     @Provides

@@ -1,9 +1,10 @@
 package lt.markmerkk.widgets.edit
 
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventMainOpenTickets
@@ -16,14 +17,16 @@ class LogDetailsPresenterUpdate(
     private val eventBus: WTEventBus,
     private val timeProvider: TimeProvider,
     private val ticketStorage: TicketStorage,
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository,
+    private val worklogStorage: WorklogStorage
 ) : LogDetailsContract.Presenter {
 
     private var view: LogDetailsContract.View? = null
     private val logEditService: LogEditService2 = LogEditService2Impl(
         timeProvider = timeProvider,
         ticketStorage = ticketStorage,
-        logRepository = logRepository,
+        activeDisplayRepository = activeDisplayRepository,
+        worklogStorage = worklogStorage,
         listener = object : LogEditService2.Listener {
             override fun showDataTimeChange(timeGap: TimeGap) {
                 view?.showDateTime(timeGap.start, timeGap.end)

@@ -1,14 +1,13 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.DayProvider
-import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.LogRepository
+import lt.markmerkk.ActiveDisplayRepository
 import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 
 class DayProviderImpl(
-    private val logRepository: LogRepository
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) : DayProvider {
 
     override fun startAsDate(): LocalDate = start().toLocalDate()
@@ -20,24 +19,16 @@ class DayProviderImpl(
     override fun endMillis(): Long = end().millis
 
     private fun start(): DateTime {
-        return when (logRepository.displayType) {
-            DisplayTypeLength.WEEK -> {
-                logRepository.targetDate.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
-            }
-            else -> logRepository.targetDate
-        }
+        return activeDisplayRepository.displayDateRange
+            .start
+            .toDateTime(LocalTime.MIDNIGHT)
     }
 
     private fun end(): DateTime {
-        return when (logRepository.displayType) {
-            DisplayTypeLength.WEEK -> {
-                logRepository.targetDate.withDayOfWeek(DateTimeConstants.SUNDAY)
-                        .plusDays(1)
-                        .withTimeAtStartOfDay()
-            }
-            else -> logRepository.targetDate
-                    .plusDays(1)
-        }
+        return activeDisplayRepository.displayDateRange
+            .end
+            .plusDays(1)
+            .toDateTime(LocalTime.MIDNIGHT)
     }
 
 }
