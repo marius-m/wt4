@@ -9,6 +9,18 @@ data class DateRange(
     val start: LocalDate,
     val end: LocalDate
 ) {
+
+    /**
+     * Date range +1 day to include next day start
+     */
+    val endAsNextDay: LocalDate = end.plusDays(1)
+
+    val startAsMillis = start.toDateTimeAtStartOfDay().millis
+
+    val endAsMillis: Long = end.toDateTimeAtStartOfDay().millis
+
+    val endNextDayAsMillis: Long = endAsNextDay.toDateTimeAtStartOfDay().millis
+
     companion object {
         fun byDisplayType(
             displayType: DisplayTypeLength,

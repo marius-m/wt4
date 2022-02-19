@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Handles synchronization with jira from other components
  */
 class SyncInteractorImpl(
-    private val dayProvider: DayProvider,
     private val worklogApi: WorklogApi,
     private val worklogStorage: WorklogStorage,
     private val timeProvider: TimeProvider,
@@ -49,9 +48,10 @@ class SyncInteractorImpl(
     }
 
     override fun syncActiveTime() {
-        val startDate = timeProvider.roundDateTime(dayProvider.startMillis()).toLocalDate()
-        val endDate = timeProvider.roundDateTime(dayProvider.endMillis()).toLocalDate()
-        syncLogs(startDate, endDate)
+        syncLogs(
+            startDate = activeDisplayRepository.displayDateRange.start,
+            endDate = activeDisplayRepository.displayDateRange.endAsNextDay
+        )
     }
 
     override fun syncLogs(

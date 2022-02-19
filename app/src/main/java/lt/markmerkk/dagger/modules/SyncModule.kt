@@ -25,7 +25,6 @@ class SyncModule {
     @Provides
     @Singleton
     fun providesSyncInteractor(
-        dayProvider: DayProvider,
         schedulerProvider: SchedulerProvider,
         timeProvider: TimeProvider,
         worklogStorage: WorklogStorage,
@@ -36,7 +35,6 @@ class SyncModule {
         activeDisplayRepository: ActiveDisplayRepository
     ): SyncInteractor {
         return SyncInteractorImpl(
-            dayProvider = dayProvider,
             ioScheduler = schedulerProvider.io(),
             uiScheduler = schedulerProvider.ui(),
             timeProvider = timeProvider,

@@ -60,7 +60,6 @@ class CalendarWidget: Fragment() {
     @Inject lateinit var logChangeValidator: LogChangeValidator
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var hourGlass: HourGlass
-    @Inject lateinit var dayProvider: DayProvider
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
     @Inject lateinit var worklogStorage: WorklogStorage
 
@@ -248,7 +247,10 @@ class CalendarWidget: Fragment() {
         mainContainerNavigator.onAttach()
         eventBus.register(this)
         viewInfoLabel.text = totalWorkGenerator
-                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+                .reportTotalWithWorkdayEnd(
+                    activeDisplayRepository.displayDateRange.start,
+                    activeDisplayRepository.displayDateRange.endAsNextDay
+                )
     }
 
     override fun onUndock() {
@@ -264,7 +266,10 @@ class CalendarWidget: Fragment() {
     @Subscribe
     fun eventClockChange(event: EventClockChange) {
         viewInfoLabel.text = totalWorkGenerator
-                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+                .reportTotalWithWorkdayEnd(
+                    activeDisplayRepository.displayDateRange.start,
+                    activeDisplayRepository.displayDateRange.endAsNextDay
+                )
     }
 
     @Subscribe
@@ -272,7 +277,10 @@ class CalendarWidget: Fragment() {
         viewCalendar.today = LocalDate.now()
         viewCalendar.time = LocalTime.now()
         viewInfoLabel.text = totalWorkGenerator
-                .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+                .reportTotalWithWorkdayEnd(
+                    activeDisplayRepository.displayDateRange.start,
+                    activeDisplayRepository.displayDateRange.endAsNextDay
+                )
     }
 
     @Subscribe
@@ -291,7 +299,10 @@ class CalendarWidget: Fragment() {
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
             viewInfoLabel.text = totalWorkGenerator
-                    .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+                    .reportTotalWithWorkdayEnd(
+                        activeDisplayRepository.displayDateRange.start,
+                        activeDisplayRepository.displayDateRange.endAsNextDay
+                    )
         }
     }
 
@@ -301,7 +312,10 @@ class CalendarWidget: Fragment() {
         viewCalendar.today = LocalDate.now()
         viewCalendar.time = LocalTime.now()
         viewInfoLabel.text = totalWorkGenerator
-            .reportTotalWithWorkdayEnd(dayProvider.startAsDate(), dayProvider.endAsDate())
+            .reportTotalWithWorkdayEnd(
+                activeDisplayRepository.displayDateRange.start,
+                activeDisplayRepository.displayDateRange.endAsNextDay
+            )
         eventBus.post(EventLogSelection(Const.NO_ID))
     }
 

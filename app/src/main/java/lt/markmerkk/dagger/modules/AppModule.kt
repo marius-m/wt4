@@ -14,7 +14,6 @@ import lt.markmerkk.Config
 import lt.markmerkk.ConfigPathProvider
 import lt.markmerkk.DBConnProvider
 import lt.markmerkk.DBInteractorLogJOOQ
-import lt.markmerkk.DayProvider
 import lt.markmerkk.FileInteractor
 import lt.markmerkk.FileInteractorImpl
 import lt.markmerkk.Graphics
@@ -57,7 +56,6 @@ import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.AdvHashSettings
 import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.ConfigSetSettingsImpl
-import lt.markmerkk.utils.DayProviderImpl
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
 import lt.markmerkk.utils.JiraLinkGeneratorOAuth
@@ -346,12 +344,6 @@ class AppModule(
             eventBus: WTEventBus
     ): HourGlass {
         return HourGlass(eventBus, timeProvider)
-    }
-
-    @Provides
-    @Singleton
-    fun provideDayProvider(activeDisplayRepository: ActiveDisplayRepository): DayProvider {
-        return DayProviderImpl(activeDisplayRepository)
     }
 
     @Provides

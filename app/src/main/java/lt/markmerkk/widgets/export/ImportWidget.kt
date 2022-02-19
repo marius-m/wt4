@@ -20,7 +20,6 @@ import javax.inject.Inject
 
 class ImportWidget : Fragment(), ImportContract.View {
 
-    @Inject lateinit var dayProvider: DayProvider
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var worklogExporter: WorklogExporter
     @Inject lateinit var timeProvider: TimeProvider
