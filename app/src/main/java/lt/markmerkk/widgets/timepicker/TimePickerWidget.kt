@@ -224,8 +224,11 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
         super.onUndock()
     }
 
-    override fun renderSelection(localTime: LocalTime) {
+    override fun renderHeader(localTime: LocalTime) {
         viewTitle.text = LogFormatters.shortFormat.print(localTime)
+    }
+
+    override fun renderSelection(localTime: LocalTime) {
         val obsHour = obsHours.firstOrNull { it.timeAsProperty.get() == localTime.hourOfDay.toString() }
         if (obsHour != null) {
             viewListHour.selectionModel.select(obsHour)
@@ -241,11 +244,11 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
     //region Listeners
 
     private val listenerTimeSelectChangeHour = ChangeListener<TimePickViewModel> { _, _, newValue ->
-        presenter.selectHour(newValue.timeAsProperty.get().toInt(), render = false)
+        presenter.selectHour(newValue.timeAsProperty.get().toInt())
     }
 
     private val listenerTimeSelectChangeMinute = ChangeListener<TimePickViewModel> { _, _, newValue ->
-        presenter.selectMinute(newValue.timeAsProperty.get().toInt(), render = false)
+        presenter.selectMinute(newValue.timeAsProperty.get().toInt())
     }
 
     //endregion

@@ -4,6 +4,7 @@ import org.joda.time.LocalTime
 
 interface TimePickerContract {
     interface View {
+        fun renderHeader(localTime: LocalTime)
         fun renderSelection(localTime: LocalTime)
     }
     interface Presenter {
@@ -11,10 +12,9 @@ interface TimePickerContract {
 
         fun onAttach()
         fun onDetach()
-        fun selectTime(hour: Int, minute: Int)
         fun selectTime(time: LocalTime)
-        fun selectHour(hour: Int, render: Boolean)
-        fun selectMinute(minute: Int, render: Boolean)
+        fun selectHour(hour: Int)
+        fun selectMinute(minute: Int)
         fun plusMinute(minuteStep: Int)
         fun minusMinute(minuteStep: Int)
         fun plusHour(hourStep: Int)
