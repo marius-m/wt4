@@ -1,13 +1,20 @@
 package lt.markmerkk.widgets.list
 
+import com.google.common.eventbus.Subscribe
 import com.jfoenix.svg.SVGGlyph
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.Parent
 import javafx.scene.control.TableView
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Graphics
+import lt.markmerkk.Main
+import lt.markmerkk.Strings
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
+import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SyncStatus
+import lt.markmerkk.events.EventActiveDisplayDataChange
 import lt.markmerkk.events.EventEditLog
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.utils.LogFormatters
@@ -15,15 +22,22 @@ import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.widgets.MainContainerNavigator
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.asObservable
+import tornadofx.column
+import tornadofx.getValue
+import tornadofx.readonlyColumn
+import tornadofx.setValue
+import tornadofx.tableview
 import javax.inject.Inject
 
-class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
+class ListLogWidget: Fragment() {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
+    @Inject lateinit var worklogStorage: WorklogStorage
 
     init {
         Main.component().inject(this)
@@ -32,27 +46,27 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
     private lateinit var viewTable: TableView<LogViewModel>
 
     private val mainContainerNavigator = MainContainerNavigator(
-            logStorage,
-            eventBus,
-            this
+        eventBus = eventBus,
+        uiComponent = this,
+        activeDisplayRepository = activeDisplayRepository
     )
     private val contextMenuEditLog: ContextMenuEditLog = ContextMenuEditLog(
-            strings,
-            graphics,
-            logStorage,
-            eventBus,
-            listOf(
-                    LogEditType.NEW,
-                    LogEditType.UPDATE,
-                    LogEditType.CLONE,
-                    LogEditType.DELETE,
-                    LogEditType.SPLIT,
-                    LogEditType.WEBLINK,
-                    LogEditType.BROWSER
-            )
+        strings,
+        graphics,
+        eventBus,
+        worklogStorage,
+        listOf(
+            LogEditType.NEW,
+            LogEditType.UPDATE,
+            LogEditType.CLONE,
+            LogEditType.DELETE,
+            LogEditType.SPLIT,
+            LogEditType.WEBLINK,
+            LogEditType.BROWSER
+        )
     )
     private val logs = mutableListOf<LogViewModel>()
-            .observable()
+            .asObservable()
 
     override val root: Parent = tableview(logs) {
         viewTable = this
@@ -69,7 +83,7 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
                 })
         setOnMouseClicked { mouseEvent ->
             val selectLogId = viewTable.selectionModel.selectedItems.firstOrNull()?.id
-            val selectLog = logStorage.findByIdOrNull(selectLogId ?: -1)
+            val selectLog = worklogStorage.findById(selectLogId ?: -1)
             if (mouseEvent.clickCount >= 2 && selectLog != null) {
                 eventBus.post(EventEditLog(LogEditType.UPDATE, listOf(selectLog)))
             }
@@ -101,46 +115,15 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
 
     override fun onDock() {
         super.onDock()
-        onDataChange(logStorage.data)
-        logStorage.register(this)
         mainContainerNavigator.onAttach()
+        eventBus.register(this)
+        reloadLogs(activeDisplayRepository.displayLogs)
     }
 
     override fun onUndock() {
+        eventBus.unregister(this)
         mainContainerNavigator.onDetach()
-        logStorage.unregister(this)
         super.onUndock()
-    }
-
-    // todo should be moved to presenter side
-    override fun onDataChange(data: List<SimpleLog>) {
-        val totalViewModel = LogViewModel(
-                id = -1,
-                editable = false,
-                syncStatusColor = SyncStatus.INVALID.toColor().toString(),
-                ticketCode = "TOTAL",
-                start = "",
-                end = "",
-                duration = LogUtils.formatShortDurationMillis(logStorage.total().toLong()),
-                comment = ""
-        )
-        val logViewModels = logStorage.data
-                .map {
-                    LogViewModel(
-                            id = it._id,
-                            editable = true,
-                            syncStatusColor = SyncStatus.exposeStatus(it).toColor().toString(),
-                            ticketCode = it.task,
-                            start = LogFormatters.shortFormat.print(it.start),
-                            end = LogFormatters.shortFormat.print(it.end),
-                            duration = LogUtils.formatShortDurationMillis(it.duration),
-                            comment = it.comment
-                    )
-                }
-                .sortedBy { it.start }
-                .plus(totalViewModel)
-        logs.clear()
-        logs.addAll(logViewModels)
     }
 
     data class LogViewModel(
@@ -155,6 +138,41 @@ class ListLogWidget: Fragment(), IDataListener<SimpleLog> {
     ) {
         val colorProperty = SimpleStringProperty(syncStatusColor)
         var color by colorProperty
+    }
+
+    @Subscribe
+    fun onLogStorageDataChange(event: EventActiveDisplayDataChange) {
+        reloadLogs(event.data)
+    }
+
+    private fun reloadLogs(logs: List<Log>) {
+        val totalViewModel = LogViewModel(
+            id = -1,
+            editable = false,
+            syncStatusColor = SyncStatus.INVALID.toColor().toString(),
+            ticketCode = "TOTAL",
+            start = "",
+            end = "",
+            duration = LogUtils.formatShortDurationMillis(activeDisplayRepository.totalInMillis()),
+            comment = ""
+        )
+        val logViewModels = activeDisplayRepository.displayLogs
+            .map {
+                LogViewModel(
+                    id = it.id,
+                    editable = true,
+                    syncStatusColor = SyncStatus.exposeStatus(it).toColor().toString(),
+                    ticketCode = it.code.code,
+                    start = LogFormatters.formatTime.print(it.time.start),
+                    end = LogFormatters.formatTime.print(it.time.end),
+                    duration = LogUtils.formatShortDurationMillis(it.time.duration.millis),
+                    comment = it.comment
+                )
+            }
+            .sortedBy { it.start }
+            .plus(totalViewModel)
+        this.logs.clear()
+        this.logs.addAll(logViewModels)
     }
 
     companion object {

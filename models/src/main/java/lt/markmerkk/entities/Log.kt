@@ -2,6 +2,8 @@ package lt.markmerkk.entities
 
 import lt.markmerkk.Const
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.round
+import lt.markmerkk.roundMillis
 import lt.markmerkk.utils.LogFormatters
 import org.joda.time.DateTime
 import org.joda.time.Duration
@@ -25,8 +27,8 @@ data class Log private constructor(
             && !isRemote
 
     fun toStringShort(): String {
-        val shortFormatStart = LogFormatters.shortFormat.print(time.start)
-        val shortFormatEnd = LogFormatters.shortFormat.print(time.end)
+        val shortFormatStart = LogFormatters.formatTime.print(time.start)
+        val shortFormatEnd = LogFormatters.formatTime.print(time.end)
         val shortFormatDuration = LogFormatters.humanReadableDuration(time.duration)
         val shortRemoteMessage = if (remoteData != null) {
             "isRemote: $isRemote (remoteId=${remoteData.remoteId})"
@@ -37,8 +39,8 @@ data class Log private constructor(
     }
 
     fun toStringLonger(): String {
-        val shortFormatStart = LogFormatters.shortFormat.print(time.start)
-        val shortFormatEnd = LogFormatters.shortFormat.print(time.end)
+        val shortFormatStart = LogFormatters.formatTime.print(time.start)
+        val shortFormatEnd = LogFormatters.formatTime.print(time.end)
         val shortFormatDuration = LogFormatters.humanReadableDuration(time.duration)
         val shortRemoteMessage = if (remoteData != null) {
             "isRemote: $isRemote (remoteId=${remoteData.remoteId})"
@@ -59,7 +61,7 @@ data class Log private constructor(
             fetchTime: DateTime,
             url: String
     ): Log {
-        val start = timeProvider.roundDateTime(started.time)
+        val start = timeProvider.roundMillisToDt(started.time)
         val end = start.withFieldAdded(
                 DurationFieldType.seconds(),
                 timeSpentSeconds
@@ -155,7 +157,7 @@ data class Log private constructor(
         }
 
         fun createFromRemoteData(
-                timeProvider: TimeProvider,
+            timeProvider: TimeProvider,
                 code: String,
                 started: java.util.Date,
                 comment: String?,
@@ -164,7 +166,7 @@ data class Log private constructor(
                 url: String,
                 author: String
         ): Log {
-            val start = timeProvider.roundDateTime(started.time)
+            val start = timeProvider.roundMillisToDt(started.time)
             val end = start.withFieldAdded(
                     DurationFieldType.seconds(),
                     timeSpentSeconds
@@ -205,6 +207,42 @@ data class Log private constructor(
             )
         }
 
+        fun Log.clone(
+            timeProvider: TimeProvider,
+            start: DateTime = this.time.start,
+            end: DateTime = this.time.end,
+            code: TicketCode = this.code,
+            comment: String = this.comment
+        ): Log {
+            return Log(
+                id = id,
+                time = LogTime.from(timeProvider, start, end),
+                code = code,
+                comment = comment,
+                systemNote = systemNote,
+                author = author,
+                remoteData = remoteData
+            )
+        }
+
+        fun Log.cloneAsNewLocal(
+            timeProvider: TimeProvider,
+            start: DateTime = this.time.start,
+            end: DateTime = this.time.end,
+            code: TicketCode = this.code,
+            comment: String = this.comment
+        ): Log {
+            return Log(
+                id = Const.NO_ID,
+                time = LogTime.from(timeProvider, start, end),
+                code = code,
+                comment = comment,
+                systemNote = "",
+                author = "",
+                remoteData = null
+            )
+        }
+
         // Should only be used for testing
         fun createAsTestable(
                 timeProvider: TimeProvider,
@@ -232,12 +270,12 @@ data class Log private constructor(
 }
 
 data class LogTime(
-        val start: DateTime,
-        val end: DateTime,
-        val duration: Duration,
-        val startAsRaw: Long,
-        val endAsRaw: Long,
-        val durationAsRaw: Long
+    val start: DateTime,
+    val end: DateTime,
+    val duration: Duration,
+    val startAsRaw: Long,
+    val endAsRaw: Long,
+    val durationAsRaw: Long
 ) {
     companion object {
 
@@ -248,8 +286,8 @@ data class LogTime(
         ): LogTime {
             return fromRaw(
                     timeProvider,
-                    timeProvider.roundMillis(start),
-                    timeProvider.roundMillis(end)
+                    start.roundMillis(),
+                    end.roundMillis()
             )
         }
 
@@ -258,15 +296,15 @@ data class LogTime(
                 start: Long,
                 end: Long
         ): LogTime {
-            val startDateTime = timeProvider.roundDateTime(start)
-            val endDateTime = timeProvider.roundDateTime(end)
+            val startDateTime = timeProvider.roundMillisToDt(start)
+            val endDateTime = timeProvider.roundMillisToDt(end)
             if (startDateTime.isAfter(endDateTime)) {
                 return LogTime(
                         start = startDateTime,
                         end = startDateTime,
                         duration = Duration.ZERO,
-                        startAsRaw = timeProvider.roundMillis(startDateTime),
-                        endAsRaw = timeProvider.roundMillis(endDateTime),
+                        startAsRaw = startDateTime.millis,
+                        endAsRaw = endDateTime.millis,
                         durationAsRaw = Duration.ZERO.millis
                 )
             }
@@ -275,11 +313,25 @@ data class LogTime(
                     start = startDateTime,
                     end = endDateTime,
                     duration = duration,
-                    startAsRaw = timeProvider.roundMillis(startDateTime),
-                    endAsRaw = timeProvider.roundMillis(endDateTime),
+                    startAsRaw = startDateTime.millis,
+                    endAsRaw = endDateTime.millis,
                     durationAsRaw = duration.millis
             )
         }
     }
 
+}
+
+fun Log.toTimeGap(): TimeGap {
+    return TimeGap.from(
+        time.start,
+        time.end
+    )
+}
+
+fun Log.toTimeGapRounded(): TimeGap {
+    return TimeGap.from(
+        this.time.start.round(),
+        this.time.end.round()
+    )
 }

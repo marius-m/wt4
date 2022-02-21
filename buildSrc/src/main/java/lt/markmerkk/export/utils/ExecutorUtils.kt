@@ -1,8 +1,6 @@
 package lt.markmerkk.export.utils
 
-import org.apache.commons.io.IOUtils
 import java.io.File
-import java.io.StringWriter
 
 fun String.execute(
         workingDir: File
@@ -26,7 +24,9 @@ val Process.text: String
     get() = inputStream.bufferedReader().readText()
 
 fun Process.errorAsString(): String {
-    val writer = StringWriter()
-    IOUtils.copy(this.errorStream, writer, Charsets.UTF_8.toString())
-    return writer.toString()
+    return this.errorStream
+        .bufferedReader()
+        .use {
+            it.readText()
+        }
 }

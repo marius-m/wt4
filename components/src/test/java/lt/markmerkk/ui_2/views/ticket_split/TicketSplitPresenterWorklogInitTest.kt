@@ -1,8 +1,16 @@
 package lt.markmerkk.ui_2.views.ticket_split
 
-import com.nhaarman.mockitokotlin2.*
-import lt.markmerkk.*
-import lt.markmerkk.entities.SimpleLog
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.reset
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Mocks
+import lt.markmerkk.SchedulerProviderImmediate
+import lt.markmerkk.Strings
+import lt.markmerkk.TicketStorage
+import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.utils.LogSplitter
 import org.junit.Before
 import org.junit.Test
@@ -12,24 +20,24 @@ import rx.Single
 
 class TicketSplitPresenterWorklogInitTest {
     @Mock lateinit var view: TicketSplitContract.View
-    @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var strings: Strings
     @Mock lateinit var ticketStorage: TicketStorage
+    @Mock lateinit var activeDisplayRepository: ActiveDisplayRepository
     lateinit var presenter: TicketSplitPresenter
     private val timeProvider = TimeProviderTest()
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        val inputLog = Mocks.createLocalLog(timeProvider)
+        val inputLog = Mocks.createLog(timeProvider)
         presenter = TicketSplitPresenter(
-                inputLog,
-                timeProvider,
-                logStorage,
-                LogSplitter,
-                strings,
-                ticketStorage,
-                SchedulerProviderImmediate()
+            inputLog,
+            timeProvider,
+            LogSplitter,
+            strings,
+            ticketStorage,
+            SchedulerProviderImmediate(),
+            activeDisplayRepository
         )
         doReturn("valid_string").whenever(strings).getString(any())
         doReturn(Single.just(Mocks.createTicket())).whenever(ticketStorage).findTicketsByCode(any())
@@ -41,7 +49,7 @@ class TicketSplitPresenterWorklogInitTest {
     fun valid() {
         // Assemble
         // Act
-        presenter.handleWorklogInit(Mocks.createLocalLog(timeProvider))
+        presenter.handleWorklogInit(Mocks.createLog(timeProvider))
 
         // Assert
         verify(view).hideError()
@@ -57,9 +65,9 @@ class TicketSplitPresenterWorklogInitTest {
     fun noTicket() {
         // Act
         presenter.handleWorklogInit(
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider,
-                        task = ""
+                        code = ""
                 )
         )
 
@@ -76,7 +84,7 @@ class TicketSplitPresenterWorklogInitTest {
     @Test
     fun remoteTask() {
         // Act
-        presenter.handleWorklogInit(Mocks.mockRemoteLog(timeProvider, task = "DEV-123"))
+        presenter.handleWorklogInit(Mocks.createBasicLogRemote(timeProvider, code = "DEV-123"))
 
         // Assert
         verify(view).onWorklogInit(

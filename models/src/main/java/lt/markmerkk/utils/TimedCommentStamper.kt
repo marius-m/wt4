@@ -26,8 +26,8 @@ object TimedCommentStamper {
             return ""
         }
         val commentNoStamp = removeStamp(comment)
-        val formatStart = LogFormatters.shortFormat.print(start)
-        val formatEnd = LogFormatters.shortFormat.print(end)
+        val formatStart = LogFormatters.formatTime.print(start)
+        val formatEnd = LogFormatters.formatTime.print(end)
         return "$formatStart - $formatEnd $SEPERATOR $commentNoStamp"
     }
 

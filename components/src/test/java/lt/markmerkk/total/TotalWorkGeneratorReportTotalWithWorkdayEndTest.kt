@@ -2,8 +2,8 @@ package lt.markmerkk.total
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.LogStorage
 import lt.markmerkk.TimeProviderJfx
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -16,8 +16,8 @@ import org.mockito.MockitoAnnotations
 
 class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
 
-    @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var hourGlass: HourGlass
+    @Mock lateinit var activeDisplayRepository: ActiveDisplayRepository
     lateinit var totalWorkGenerator: TotalWorkGenerator
 
     private val timeProvider = TimeProviderJfx()
@@ -48,9 +48,9 @@ class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         totalWorkGenerator = TotalWorkGenerator(
-                hourGlass,
-                logStorage,
-                stringRes
+            hourGlass,
+            stringRes,
+            activeDisplayRepository
         )
     }
 
@@ -67,8 +67,8 @@ class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
         doReturn(true).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
         doReturn(runningDuration).whenever(hourGlass).duration
-        doReturn(totalDuration).whenever(logStorage).totalAsDuration()
-        doReturn(DisplayTypeLength.DAY).whenever(logStorage).displayType
+        doReturn(totalDuration).whenever(activeDisplayRepository).totalAsDuration()
+        doReturn(DisplayTypeLength.DAY).whenever(activeDisplayRepository).displayType
 
         // Act
         val result = totalWorkGenerator.reportTotalWithWorkdayEnd(
@@ -91,8 +91,8 @@ class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
                 .toLocalDate()
         doReturn(false).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
-        doReturn(totalDuration).whenever(logStorage).totalAsDuration()
-        doReturn(DisplayTypeLength.DAY).whenever(logStorage).displayType
+        doReturn(totalDuration).whenever(activeDisplayRepository).totalAsDuration()
+        doReturn(DisplayTypeLength.DAY).whenever(activeDisplayRepository).displayType
 
         // Act
         val result = totalWorkGenerator.reportTotalWithWorkdayEnd(
@@ -115,8 +115,8 @@ class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
                 .toLocalDate()
         doReturn(false).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
-        doReturn(totalDuration).whenever(logStorage).totalAsDuration()
-        doReturn(DisplayTypeLength.DAY).whenever(logStorage).displayType
+        doReturn(totalDuration).whenever(activeDisplayRepository).totalAsDuration()
+        doReturn(DisplayTypeLength.DAY).whenever(activeDisplayRepository).displayType
 
         // Act
         val result = totalWorkGenerator.reportTotalWithWorkdayEnd(
@@ -139,8 +139,8 @@ class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
                 .toLocalDate()
         doReturn(false).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
-        doReturn(totalDuration).whenever(logStorage).totalAsDuration()
-        doReturn(DisplayTypeLength.WEEK).whenever(logStorage).displayType
+        doReturn(totalDuration).whenever(activeDisplayRepository).totalAsDuration()
+        doReturn(DisplayTypeLength.WEEK).whenever(activeDisplayRepository).displayType
 
         // Act
         val result = totalWorkGenerator.reportTotalWithWorkdayEnd(
@@ -163,8 +163,8 @@ class TotalWorkGeneratorReportTotalWithWorkdayEndTest {
                 .toLocalDate()
         doReturn(false).whenever(hourGlass).isRunning()
         doReturn(activeClockDate).whenever(hourGlass).start
-        doReturn(totalDuration).whenever(logStorage).totalAsDuration()
-        doReturn(DisplayTypeLength.WEEK).whenever(logStorage).displayType
+        doReturn(totalDuration).whenever(activeDisplayRepository).totalAsDuration()
+        doReturn(DisplayTypeLength.WEEK).whenever(activeDisplayRepository).displayType
 
         // Act
         val result = totalWorkGenerator.reportTotalWithWorkdayEnd(

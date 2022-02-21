@@ -1,10 +1,9 @@
 package lt.markmerkk.widgets
 
-import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import lt.markmerkk.DisplayType
 import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.LogStorage
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.WTEventBus
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.widgets.calendar.CalendarWidget
@@ -16,9 +15,9 @@ import tornadofx.*
  * Lifecycle: [onAttach], [onDetach]
  */
 class MainContainerNavigator(
-        private val logStorage: LogStorage,
-        private val eventBus: WTEventBus,
-        private val uiComponent: UIComponent
+    private val eventBus: WTEventBus,
+    private val uiComponent: UIComponent,
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) {
 
     fun onAttach() {
@@ -33,15 +32,15 @@ class MainContainerNavigator(
     fun onDisplayTypeChange(eventChangeDisplayType: EventChangeDisplayType) {
         when (eventChangeDisplayType.displayType) {
             DisplayType.TABLE_VIEW_DETAIL -> {
-                logStorage.displayType = DisplayTypeLength.DAY
+                activeDisplayRepository.changeDisplayType(DisplayTypeLength.DAY)
                 uiComponent.replaceWith<ListLogWidget>()
             }
             DisplayType.CALENDAR_VIEW_DAY -> {
-                logStorage.displayType = DisplayTypeLength.DAY
+                activeDisplayRepository.changeDisplayType(DisplayTypeLength.DAY)
                 uiComponent.replaceWith<CalendarWidget>()
             }
             DisplayType.CALENDAR_VIEW_WEEK -> {
-                logStorage.displayType = DisplayTypeLength.WEEK
+                activeDisplayRepository.changeDisplayType(DisplayTypeLength.WEEK)
                 uiComponent.replaceWith<CalendarWidget>()
             }
             DisplayType.GRAPHS -> {}

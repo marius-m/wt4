@@ -1,6 +1,6 @@
 package lt.markmerkk.export
 
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.entities.Log
 import lt.markmerkk.export.entities.ExportWorklogViewModel
 import lt.markmerkk.utils.LogFormatters
@@ -8,12 +8,8 @@ import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 
 class ImportPresenter(
-        private val worklogStorage: WorklogStorage,
-        private val dayProvider: DayProvider,
-        private val worklogExporter: WorklogExporter,
-        private val logStorage: LogStorage,
-        private val timeProvider: TimeProvider
-): ImportContract.Presenter {
+    private val activeDisplayRepository: ActiveDisplayRepository
+) : ImportContract.Presenter {
 
     override val defaultProjectFilter: String = PROJECT_FILTER_ALL
     private var view: ImportContract.View? = null
@@ -71,7 +67,7 @@ class ImportPresenter(
                     .map { it.log }
         }
         importWorklogs
-                .forEach { logStorage.insert(it.toLegacyLog(timeProvider)) }
+                .forEach { activeDisplayRepository.insertOrUpdate(it) }
         view?.showImportSuccess()
     }
 

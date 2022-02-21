@@ -2,7 +2,7 @@ package lt.markmerkk.widgets.statistics
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.LogStorage
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Mocks
 import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -16,8 +16,8 @@ import org.mockito.MockitoAnnotations
 class StatisticsPresenterMapDataTest {
 
     @Mock lateinit var view: StatisticsContract.View
-    @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var hourGlass: HourGlass
+    @Mock lateinit var activeDisplayRepository: ActiveDisplayRepository
     lateinit var presenter: StatisticsPresenter
 
     private val timeProvider = TimeProviderTest()
@@ -25,7 +25,7 @@ class StatisticsPresenterMapDataTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = StatisticsPresenter(logStorage, hourGlass)
+        presenter = StatisticsPresenter(hourGlass, activeDisplayRepository)
         presenter.onAttach(view)
     }
 
@@ -33,21 +33,21 @@ class StatisticsPresenterMapDataTest {
     fun valid() {
         // Assemble
         val inputLogs = listOf(
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-1"
+                        code = "DEV-1"
                 )
         )
-        doReturn(inputLogs).whenever(logStorage).data
+        doReturn(inputLogs).whenever(activeDisplayRepository).displayLogs
 
         // Act
         val result = presenter.mapData()
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 540000)
+                entry("DEV-1", 600000)
         )
     }
 
@@ -55,28 +55,28 @@ class StatisticsPresenterMapDataTest {
     fun multipleDiffLogs() {
         // Assemble
         val inputLogs = listOf(
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-1"
+                        code = "DEV-1"
                 ),
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-2"
+                        code = "DEV-2"
                 )
         )
-        doReturn(inputLogs).whenever(logStorage).data
+        doReturn(inputLogs).whenever(activeDisplayRepository).displayLogs
 
         // Act
         val result = presenter.mapData()
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 540000),
-                entry("DEV-2", 540000)
+                entry("DEV-1", 600000),
+                entry("DEV-2", 600000)
         )
     }
 
@@ -84,27 +84,27 @@ class StatisticsPresenterMapDataTest {
     fun sameLogs() {
         // Assemble
         val inputLogs = listOf(
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-1"
+                        code = "DEV-1"
                 ),
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-1"
+                        code = "DEV-1"
                 )
         )
-        doReturn(inputLogs).whenever(logStorage).data
+        doReturn(inputLogs).whenever(activeDisplayRepository).displayLogs
 
         // Act
         val result = presenter.mapData()
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 1080000)
+                entry("DEV-1", 1200000L)
         )
     }
 
@@ -112,40 +112,40 @@ class StatisticsPresenterMapDataTest {
     fun containsEmptyMappings() {
         // Assemble
         val inputLogs = listOf(
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-1"
+                        code = "DEV-1"
                 ),
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(10),
-                        task = "DEV-1"
+                        code = "DEV-1"
                 ),
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(5),
-                        task = ""
+                        code = ""
                 ),
-                Mocks.createLocalLog(
+                Mocks.createLog(
                         timeProvider = timeProvider,
                         start = timeProvider.now(),
                         end = timeProvider.now().plusMinutes(4),
-                        task = ""
+                        code = ""
                 )
         )
-        doReturn(inputLogs).whenever(logStorage).data
+        doReturn(inputLogs).whenever(activeDisplayRepository).displayLogs
 
         // Act
         val result = presenter.mapData()
 
         // Assert
         assertThat(result).containsExactly(
-                entry("DEV-1", 1080000),
-                entry("Not mapped", 420000)
+                entry("DEV-1", 1200000L),
+                entry("Not mapped", 540000L)
         )
     }
 }

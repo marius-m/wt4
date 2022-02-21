@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import lt.markmerkk.*
-import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.Log
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.ui_2.views.jfxTextArea
@@ -33,9 +33,9 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var timeProvider: TimeProvider
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     private lateinit var viewDateTimeFrom: Label
     private lateinit var viewDateTimeMiddle: Label
@@ -229,13 +229,13 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
         viewTextCommentOriginal.text = ""
         viewTextCommentNew.text = ""
         presenter = TicketSplitPresenter(
-                resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, SimpleLog::class.java)!!,
-                timeProvider,
-                logStorage,
-                LogSplitter,
-                strings,
-                ticketStorage,
-                schedulerProvider
+            resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, Log::class.java)!!,
+            timeProvider,
+            LogSplitter,
+            strings,
+            ticketStorage,
+            schedulerProvider,
+            activeDisplayRepository
         )
         presenter.onAttach(this)
         viewSlider.valueProperty().addListener(viewSliderChangeListener)
@@ -267,13 +267,13 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
             durationStart: Duration,
             durationEnd: Duration
     ) {
-        val formatDateStart = LogFormatters.longFormat.print(start)
+        val formatDateStart = LogFormatters.longFormatDateTime.print(start)
         val formatDurationStart = LogFormatters.humanReadableDuration(durationStart)
-        val formatDateEnd = LogFormatters.longFormat.print(end)
+        val formatDateEnd = LogFormatters.longFormatDateTime.print(end)
         val formatDurationEnd = LogFormatters.humanReadableDuration(durationEnd)
         viewDateTimeFrom.text = "$formatDateStart ($formatDurationStart)"
         viewDateTimeTo.text = "$formatDateEnd ($formatDurationEnd)"
-        viewDateTimeMiddle.text = LogFormatters.shortFormat.print(splitGap)
+        viewDateTimeMiddle.text = LogFormatters.formatTime.print(splitGap)
     }
 
     override fun showTicketLabel(ticketTitle: String) {

@@ -1,6 +1,6 @@
 package lt.markmerkk.export
 
-import lt.markmerkk.DayProvider
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.export.entities.ExportWorklogViewModel
@@ -9,10 +9,10 @@ import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 
 class ExportPresenter(
-        private val worklogStorage: WorklogStorage,
-        private val dayProvider: DayProvider,
-        private val worklogExporter: WorklogExporter
-): ExportContract.Presenter {
+    private val worklogStorage: WorklogStorage,
+    private val worklogExporter: WorklogExporter,
+    private val activeDisplayRepository: ActiveDisplayRepository
+) : ExportContract.Presenter {
 
     override val defaultProjectFilter: String = PROJECT_FILTER_ALL
 
@@ -30,20 +30,20 @@ class ExportPresenter(
         val worklogsForExport = when (projectFilter) {
             PROJECT_FILTER_ALL -> {
                 worklogStorage.loadWorklogsSync(
-                        from = dayProvider.startAsDate(),
-                        to = dayProvider.endAsDate()
+                        from = activeDisplayRepository.displayDateRange.start,
+                        to = activeDisplayRepository.displayDateRange.endAsNextDay
                 )
             }
             PROJECT_FILTER_NOT_BOUND -> {
                 worklogStorage.loadWorklogsSync(
-                        from = dayProvider.startAsDate(),
-                        to = dayProvider.endAsDate()
+                        from = activeDisplayRepository.displayDateRange.start,
+                        to = activeDisplayRepository.displayDateRange.endAsNextDay
                 ).filter { it.code.codeProject.isEmpty() }
             }
             else -> {
                 worklogStorage.loadWorklogsSync(
-                        from = dayProvider.startAsDate(),
-                        to = dayProvider.endAsDate()
+                        from = activeDisplayRepository.displayDateRange.start,
+                        to = activeDisplayRepository.displayDateRange.endAsNextDay
                 ).filter { it.code.codeProject == projectFilter }
             }
         }
@@ -57,8 +57,8 @@ class ExportPresenter(
 
     override fun loadProjectFilters() {
         val filterWithBoundTickets = worklogStorage.loadWorklogsSync(
-                from = dayProvider.startAsDate(),
-                to = dayProvider.endAsDate()
+                from = activeDisplayRepository.displayDateRange.start,
+                to = activeDisplayRepository.displayDateRange.endAsNextDay
         ).map {
             val projectCode = it.code.codeProject
             if (projectCode.isEmpty()) {

@@ -10,13 +10,14 @@ import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
 import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
-import lt.markmerkk.widgets.DatePickerWidget
+import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import lt.markmerkk.widgets.app_settings.AppSettingsWidget
 import lt.markmerkk.widgets.app_settings.ProfileWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.main.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
+import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.export.ExportSampleWidget
 import lt.markmerkk.widgets.export.ExportWidget
@@ -66,4 +67,5 @@ interface AppComponent {
     fun inject(profileWidget: ProfileWidget)
     fun inject(importWidget: ImportWidget)
     fun inject(changelogWidget: ChangelogWidget)
+    fun inject(timeSelectWidget: TimePickerWidget)
 }
