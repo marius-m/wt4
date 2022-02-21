@@ -267,13 +267,13 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
             durationStart: Duration,
             durationEnd: Duration
     ) {
-        val formatDateStart = LogFormatters.longFormat.print(start)
+        val formatDateStart = LogFormatters.longFormatDateTime.print(start)
         val formatDurationStart = LogFormatters.humanReadableDuration(durationStart)
-        val formatDateEnd = LogFormatters.longFormat.print(end)
+        val formatDateEnd = LogFormatters.longFormatDateTime.print(end)
         val formatDurationEnd = LogFormatters.humanReadableDuration(durationEnd)
         viewDateTimeFrom.text = "$formatDateStart ($formatDurationStart)"
         viewDateTimeTo.text = "$formatDateEnd ($formatDurationEnd)"
-        viewDateTimeMiddle.text = LogFormatters.shortFormat.print(splitGap)
+        viewDateTimeMiddle.text = LogFormatters.formatTime.print(splitGap)
     }
 
     override fun showTicketLabel(ticketTitle: String) {

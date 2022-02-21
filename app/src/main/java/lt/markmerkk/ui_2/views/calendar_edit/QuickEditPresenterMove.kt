@@ -1,7 +1,7 @@
 package lt.markmerkk.ui_2.views.calendar_edit
 
-import lt.markmerkk.Const
 import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Const
 import lt.markmerkk.Tags
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WorklogStorage
@@ -35,8 +35,8 @@ class QuickEditPresenterMove(
     override fun moveForward(minutes: Int): Long {
         val log: Log = worklogStorage.findById(selectEntryProvider.entryId()) ?: return Const.NO_ID
         val newTimeGap = timeChangeValidator.moveForward(
-                log.toTimeGapRounded(timeProvider),
-                minutes
+            log.toTimeGapRounded(),
+            minutes
         )
         val updateLogId = updateLog(log, newTimeGap.start, newTimeGap.end)
         selectEntryProvider.suggestNewEntry(updateLogId)
@@ -46,8 +46,8 @@ class QuickEditPresenterMove(
     override fun moveBackward(minutes: Int): Long {
         val log = worklogStorage.findById(selectEntryProvider.entryId()) ?: return Const.NO_ID
         val newTimeGap = timeChangeValidator.moveBackward(
-                log.toTimeGapRounded(timeProvider),
-                minutes
+            log.toTimeGapRounded(),
+            minutes
         )
         val updateLogId = updateLog(log, newTimeGap.start, newTimeGap.end)
         selectEntryProvider.suggestNewEntry(updateLogId)

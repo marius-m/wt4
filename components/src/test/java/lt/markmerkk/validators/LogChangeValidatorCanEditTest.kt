@@ -3,8 +3,9 @@ package lt.markmerkk.validators
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.LogStorage
-import lt.markmerkk.mvp.MocksLogEditService
+import lt.markmerkk.Mocks
+import lt.markmerkk.TimeProviderJfx
+import lt.markmerkk.WorklogStorage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -13,19 +14,22 @@ import org.mockito.MockitoAnnotations
 
 class LogChangeValidatorCanEditTest {
 
-    @Mock lateinit var logStorage: LogStorage
+    @Mock lateinit var worklogStorage: WorklogStorage
     private lateinit var logChangeValidator: LogChangeValidator
+
+    private val timeProvider = TimeProviderJfx()
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        logChangeValidator = LogChangeValidator(logStorage)
+        logChangeValidator = LogChangeValidator(worklogStorage)
     }
 
     @Test
     fun valid() {
         // Assemble
-        doReturn(MocksLogEditService.createValidLogWithDate()).whenever(logStorage).findByIdOrNull(any())
+        doReturn(Mocks.createLog(timeProvider))
+            .whenever(worklogStorage).findById(any())
 
         // Act
         val resultCanEdit = logChangeValidator.canEditSimpleLog(logLocalId = 1L)
@@ -37,7 +41,7 @@ class LogChangeValidatorCanEditTest {
     @Test
     fun logDoesNotExist() {
         // Assemble
-        doReturn(null).whenever(logStorage).findByIdOrNull(any())
+        doReturn(null).whenever(worklogStorage).findById(any())
 
         // Act
         val resultCanEdit = logChangeValidator.canEditSimpleLog(logLocalId = 1L)

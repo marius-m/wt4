@@ -1,6 +1,8 @@
 package lt.markmerkk.entities
 
 import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.round
+import lt.markmerkk.roundMillis
 import org.assertj.core.api.Assertions.assertThat
 import org.joda.time.Duration
 import org.junit.Test
@@ -17,8 +19,8 @@ class LogTimeFromRawTest {
         // Act
         val result = LogTime.fromRaw(
                 timeProvider = timeProvider,
-                start = timeProvider.roundMillis(now),
-                end = timeProvider.roundMillis(now.plusHours(2))
+                start = now.roundMillis(),
+                end = now.plusHours(2).roundMillis()
         )
 
         // Assert
@@ -35,8 +37,8 @@ class LogTimeFromRawTest {
         // Act
         val result = LogTime.fromRaw(
                 timeProvider = timeProvider,
-                start = timeProvider.roundMillis(now.plusHours(2)),
-                end = timeProvider.roundMillis(now)
+                start = now.plusHours(2).roundMillis(),
+                end = now.roundMillis()
         )
 
         // Assert
@@ -53,8 +55,8 @@ class LogTimeFromRawTest {
         // Act
         val result = LogTime.fromRaw(
                 timeProvider = timeProvider,
-                start = timeProvider.roundMillis(now),
-                end = timeProvider.roundMillis(now)
+                start = now.roundMillis(),
+                end = now.roundMillis()
         )
 
         // Assert
@@ -71,8 +73,8 @@ class LogTimeFromRawTest {
         // Act
         val result = LogTime.fromRaw(
                 timeProvider = timeProvider,
-                start = timeProvider.roundMillis(now),
-                end = timeProvider.roundMillis(now.minusHours(2))
+                start = now.roundMillis(),
+                end = now.minusHours(2).roundMillis()
         )
 
         // Assert

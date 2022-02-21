@@ -8,6 +8,8 @@ import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.Log.Companion.clone
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TimeGap
+import lt.markmerkk.entities.toTimeGap
+import lt.markmerkk.entities.toTimeGapRounded
 import lt.markmerkk.utils.LogUtils
 
 /**
@@ -21,17 +23,17 @@ class LogEditService2Impl(
     private val worklogStorage: WorklogStorage
 ) : LogEditService2 {
 
-    override var serviceType: LogEditService2.ServiceType = LogEditService2.ServiceType.UPDATE
     private var log: Log = Log.createAsEmpty(timeProvider)
 
-    override fun bindLogByLocalId(localId: Long) {
-        log = worklogStorage.findById(localId) ?: Log.createAsEmpty(timeProvider)
+    override fun initByLocalId(localId: Long) {
+        this.log = worklogStorage.findById(localId) ?: Log.createAsEmpty(timeProvider)
+        listener.showDuration(LogUtils.formatShortDuration(log.time.duration))
     }
 
     override fun updateDateTime(timeGap: TimeGap) {
-        log = updateTime(timeGap)
+        this.log = updateTime(timeGap)
+        listener.showDataTimeChange(log.toTimeGapRounded())
         listener.showDuration(LogUtils.formatShortDuration(log.time.duration))
-        listener.lockEdit(isEnabled = true)
     }
 
     override fun saveEntity(
@@ -39,7 +41,7 @@ class LogEditService2Impl(
             task: String,
             comment: String
     ) {
-        val saveLog = log.clone(
+        val saveLog = this.log.clone(
             timeProvider = timeProvider,
             start = timeGap.start,
             end = timeGap.end,
@@ -47,7 +49,7 @@ class LogEditService2Impl(
             comment = comment
         )
         activeDisplayRepository.insertOrUpdate(saveLog)
-        log = saveLog
+        this.log = saveLog
         ticketStorage.saveTicketAsUsedSync(timeProvider.preciseNow(), saveLog.code)
         listener.showSuccess()
     }
@@ -59,22 +61,7 @@ class LogEditService2Impl(
         val start = log.time.start
         val end = log.time.end
         listener.showDataTimeChange(TimeGap.from(start, end))
-        changeEditLock(log)
-    }
-
-    /**
-     * Generates a generic type of notification for the user
-     */
-    private fun changeEditLock(entity: Log) {
-        if (entity.isRemote) {
-            listener.lockEdit(isEnabled = false)
-            return
-        }
-        if (entity.systemNote.isNotEmpty()) {
-            listener.lockEdit(isEnabled = true)
-            return
-        }
-        listener.lockEdit(isEnabled = true)
+        listener.showDuration(LogUtils.formatShortDuration(log.time.duration))
     }
 
     private fun updateTime(

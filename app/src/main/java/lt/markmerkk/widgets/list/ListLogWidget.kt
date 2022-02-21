@@ -26,7 +26,6 @@ import tornadofx.Fragment
 import tornadofx.asObservable
 import tornadofx.column
 import tornadofx.getValue
-import tornadofx.observable
 import tornadofx.readonlyColumn
 import tornadofx.setValue
 import tornadofx.tableview
@@ -164,8 +163,8 @@ class ListLogWidget: Fragment() {
                     editable = true,
                     syncStatusColor = SyncStatus.exposeStatus(it).toColor().toString(),
                     ticketCode = it.code.code,
-                    start = LogFormatters.shortFormat.print(it.time.start),
-                    end = LogFormatters.shortFormat.print(it.time.end),
+                    start = LogFormatters.formatTime.print(it.time.start),
+                    end = LogFormatters.formatTime.print(it.time.end),
                     duration = LogUtils.formatShortDurationMillis(it.time.duration.millis),
                     comment = it.comment
                 )

@@ -72,8 +72,8 @@ object LogUtils {
      * Formats log as a pretty text
      */
     @JvmStatic fun formatLogToText(log: Log): String {
-        val timeFrom = LogFormatters.shortFormat.print(log.time.start)
-        val timeTo = LogFormatters.shortFormat.print(log.time.end)
+        val timeFrom = LogFormatters.formatTime.print(log.time.start)
+        val timeTo = LogFormatters.formatTime.print(log.time.end)
         val duration = formatShortDurationMillis(log.time.duration.millis)
         return "${log.code.code} ($timeFrom - $timeTo = $duration) ${firstLine(log.comment)}"
                 .trim()

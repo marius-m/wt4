@@ -24,8 +24,8 @@ class DBInteractorLogJOOQ(
             to: LocalDate
     ): List<Log> {
         val localTime = LocalTime.MIDNIGHT
-        val fromAsMillis = timeProvider.roundMillis(from.toDateTime(localTime))
-        val toAsMillis = timeProvider.roundMillis(to.toDateTime(localTime))
+        val fromAsMillis = from.toDateTime(localTime).roundMillis()
+        val toAsMillis = to.toDateTime(localTime).roundMillis()
         val dbResult: org.jooq.Result<WorklogRecord> = connProvider.dsl
                 .select()
                 .from(WORKLOG)

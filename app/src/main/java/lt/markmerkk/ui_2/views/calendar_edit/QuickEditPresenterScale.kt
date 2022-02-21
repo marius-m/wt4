@@ -1,7 +1,7 @@
 package lt.markmerkk.ui_2.views.calendar_edit
 
-import lt.markmerkk.Const
 import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Const
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
@@ -34,8 +34,8 @@ class QuickEditPresenterScale(
     override fun shrinkFromStart(minutes: Int): Long {
         val log = worklogStorage.findById(selectEntryProvider.entryId()) ?: return Const.NO_ID
         val newTimeGap = timeChangeValidator.shrinkFromStart(
-                log.toTimeGapRounded(timeProvider),
-                minutes
+            log.toTimeGapRounded(),
+            minutes
         )
         val updateLogId = updateLog(log, newTimeGap.start, newTimeGap.end)
         selectEntryProvider.suggestNewEntry(updateLogId)
@@ -45,8 +45,8 @@ class QuickEditPresenterScale(
     override fun expandToStart(minutes: Int): Long {
         val log = worklogStorage.findById(selectEntryProvider.entryId()) ?: return Const.NO_ID
         val newTimeGap = timeChangeValidator.expandToStart(
-                log.toTimeGapRounded(timeProvider),
-                minutes
+            log.toTimeGapRounded(),
+            minutes
         )
         val updateLogId = updateLog(log, newTimeGap.start, newTimeGap.end)
         selectEntryProvider.suggestNewEntry(updateLogId)
@@ -56,8 +56,8 @@ class QuickEditPresenterScale(
     override fun shrinkFromEnd(minutes: Int): Long {
         val log = worklogStorage.findById(selectEntryProvider.entryId()) ?: return Const.NO_ID
         val newTimeGap = timeChangeValidator.shrinkFromEnd(
-                log.toTimeGapRounded(timeProvider),
-                minutes
+            log.toTimeGapRounded(),
+            minutes
         )
         val updateLogId = updateLog(log, newTimeGap.start, newTimeGap.end)
         selectEntryProvider.suggestNewEntry(updateLogId)
@@ -67,8 +67,8 @@ class QuickEditPresenterScale(
     override fun expandToEnd(minutes: Int): Long {
         val log = worklogStorage.findById(selectEntryProvider.entryId()) ?: return Const.NO_ID
         val newTimeGap = timeChangeValidator.expandToEnd(
-                log.toTimeGapRounded(timeProvider),
-                minutes
+            log.toTimeGapRounded(),
+            minutes
         )
         val updateLogId = updateLog(log, newTimeGap.start, newTimeGap.end)
         selectEntryProvider.suggestNewEntry(updateLogId)
@@ -76,9 +76,9 @@ class QuickEditPresenterScale(
     }
 
     private fun updateLog(
-            oldLog: Log,
-            start: DateTime,
-            end: DateTime
+        oldLog: Log,
+        start: DateTime,
+        end: DateTime
     ): Long {
         val newLog = oldLog.clone(
             timeProvider = timeProvider,

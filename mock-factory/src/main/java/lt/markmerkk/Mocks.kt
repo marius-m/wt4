@@ -3,7 +3,13 @@ package lt.markmerkk
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.entities.*
+import lt.markmerkk.entities.Log
+import lt.markmerkk.entities.RemoteData
+import lt.markmerkk.entities.SimpleLog
+import lt.markmerkk.entities.SimpleLogBuilder
+import lt.markmerkk.entities.Ticket
+import lt.markmerkk.entities.TicketCode
+import lt.markmerkk.entities.TicketUseHistory
 import org.joda.time.DateTime
 
 object Mocks {
@@ -60,22 +66,24 @@ object Mocks {
     }
 
     fun createBasicLogRemote(
-            timeProvider: TimeProvider,
-            localId: Long = 1L,
-            remoteId: Long = 2L,
-            start: DateTime = timeProvider.now(),
-            end: DateTime = timeProvider.now()
+        timeProvider: TimeProvider,
+        localId: Long = 1L,
+        remoteId: Long = 2L,
+        start: DateTime = timeProvider.now(),
+        end: DateTime = timeProvider.now(),
+        code: String = "DEV-123"
     ): Log {
         val now = timeProvider.nowMillis()
         return createLog(
-                timeProvider = timeProvider,
-                id = localId,
-                start = start,
-                end = end,
-                remoteData = createRemoteData(
-                        timeProvider,
-                        remoteId = remoteId
-                )
+            timeProvider = timeProvider,
+            id = localId,
+            start = start,
+            end = end,
+            code = code,
+            remoteData = createRemoteData(
+                timeProvider,
+                remoteId = remoteId
+            )
         )
     }
 
@@ -133,8 +141,8 @@ object Mocks {
     ): SimpleLog {
         val now = timeProvider.now().plusMinutes(1).millis
         return SimpleLogBuilder(now)
-                .setStart(timeProvider.roundMillis(start))
-                .setEnd(timeProvider.roundMillis(end))
+                .setStart(start.roundMillis())
+                .setEnd(end.roundMillis())
                 .setTask(task)
                 .setComment(comment)
                 .build()
@@ -152,8 +160,8 @@ object Mocks {
     ): SimpleLog {
         val log: SimpleLog = mock()
         doReturn(task).whenever(log).task
-        doReturn(timeProvider.roundMillis(start)).whenever(log).start
-        doReturn(timeProvider.roundMillis(end)).whenever(log).end
+        doReturn(start).whenever(log).start
+        doReturn(end).whenever(log).end
         doReturn(comment).whenever(log).comment
         doReturn(remoteId).whenever(log).id
         doReturn(localId).whenever(log)._id

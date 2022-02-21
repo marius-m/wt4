@@ -1,11 +1,18 @@
 package lt.markmerkk.widgets.edit
 
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Const
+import lt.markmerkk.TicketStorage
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.LogEditService2
 import lt.markmerkk.mvp.LogEditService2Impl
+import lt.markmerkk.round
 import lt.markmerkk.utils.hourglass.HourGlass
 
 class LogDetailsPresenterUpdateActiveClock(
@@ -34,16 +41,6 @@ class LogDetailsPresenterUpdateActiveClock(
                 view?.showHint1(durationAsString)
             }
 
-            override fun lockEdit(isEnabled: Boolean) {
-                if (isEnabled) {
-                    view?.enableInput()
-                    view?.enableSaving()
-                } else {
-                    view?.disableInput()
-                    view?.disableSaving()
-                }
-            }
-
             override fun showSuccess() {
                 view?.closeDetails()
             }
@@ -52,18 +49,17 @@ class LogDetailsPresenterUpdateActiveClock(
 
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
-        logEditService.bindLogByLocalId(localId = Const.NO_ID)
-        logEditService.serviceType = LogEditService2.ServiceType.CREATE
+        logEditService.initByLocalId(localId = Const.NO_ID)
         view.initView(
-                labelHeader = "Active clock",
-                labelButtonSave = "Save",
-                glyphButtonSave = null,
-                initDateTimeStart = timeProvider.roundDateTime(hourGlass.start.millis),
-                initDateTimeEnd = timeProvider.roundDateTime(hourGlass.end.millis),
-                initTicket = activeLogPersistence.ticketCode.code,
-                initComment = activeLogPersistence.comment,
-                enableFindTickets = true,
-                enableDateTimeChange = true
+            labelHeader = "Active clock",
+            labelButtonSave = "Save",
+            glyphButtonSave = null,
+            initDateTimeStart = hourGlass.start.round(),
+            initDateTimeEnd = hourGlass.end.round(),
+            initTicket = activeLogPersistence.ticketCode.code,
+            initComment = activeLogPersistence.comment,
+            enableFindTickets = true,
+            enableDateTimeChange = true
         )
         logEditService.redraw()
     }

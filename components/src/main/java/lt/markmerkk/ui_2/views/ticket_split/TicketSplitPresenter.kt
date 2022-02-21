@@ -18,8 +18,8 @@ class TicketSplitPresenter(
 
     private var timeSplitPair: TimeSplitPair = logSplitter.split(
             timeGap = TimeGap.from(
-                    timeProvider.roundDateTime(input.time.start.millis),
-                    timeProvider.roundDateTime(input.time.end.millis)
+                    timeProvider.roundMillisToDt(input.time.start.millis),
+                    timeProvider.roundMillisToDt(input.time.end.millis)
             ),
             splitPercent = 50
     )
@@ -67,8 +67,8 @@ class TicketSplitPresenter(
     override fun changeSplitBalance(balancePercent: Int) {
         timeSplitPair = logSplitter.split(
                 timeGap = TimeGap.from(
-                        timeProvider.roundDateTime(input.time.start.millis),
-                        timeProvider.roundDateTime(input.time.end.millis)
+                        timeProvider.roundMillisToDt(input.time.start.millis),
+                        timeProvider.roundMillisToDt(input.time.end.millis)
                 ),
                 splitPercent = balancePercent
         )

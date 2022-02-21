@@ -6,9 +6,7 @@ import lt.markmerkk.entities.TimeGap
  * Responsible for updating log and controlling the input view changes
  */
 interface LogEditService2 {
-    var serviceType: ServiceType
-
-    fun bindLogByLocalId(localId: Long)
+    fun initByLocalId(localId: Long)
 
     /**
      * Forces a redraw
@@ -41,17 +39,6 @@ interface LogEditService2 {
          */
         fun showDuration(durationAsString: String)
 
-        /**
-         * Enables / disables input field editing
-         */
-        fun lockEdit(isEnabled: Boolean)
-
         fun showSuccess()
     }
-
-    enum class ServiceType {
-        CREATE,
-        UPDATE
-    }
-
 }

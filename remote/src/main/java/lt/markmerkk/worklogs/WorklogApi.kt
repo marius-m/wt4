@@ -32,8 +32,8 @@ class WorklogApi(
             start: LocalDate,
             end: LocalDate
     ): Single<List<Log>> {
-        val startFormat = LogFormatters.shortFormatDate.print(start)
-        val endFormat = LogFormatters.shortFormatDate.print(end)
+        val startFormat = LogFormatters.formatDate.print(start)
+        val endFormat = LogFormatters.formatDate.print(end)
         val jql = "(worklogDate >= \"$startFormat\" && worklogDate <= \"$endFormat\" && worklogAuthor = currentUser())"
         val startAsDateTime = start.toDateTimeAtStartOfDay(timeProvider.dateTimeZone)
         val endAsDateTime = end.toDateTimeAtStartOfDay(timeProvider.dateTimeZone)

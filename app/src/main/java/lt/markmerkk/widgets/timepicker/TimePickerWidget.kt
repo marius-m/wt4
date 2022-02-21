@@ -209,7 +209,7 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
         viewListMinute.selectionModel
             .selectedItemProperty()
             .addListener(listenerTimeSelectChangeMinute)
-        viewSubtitle.text = "Original: ${LogFormatters.shortFormat.print(request.timeSelection)}"
+        viewSubtitle.text = "Original: ${LogFormatters.formatTime.print(request.timeSelection)}"
     }
 
     override fun onUndock() {
@@ -225,7 +225,7 @@ class TimePickerWidget : Fragment(), TimePickerContract.View {
     }
 
     override fun renderHeader(localTime: LocalTime) {
-        viewTitle.text = LogFormatters.shortFormat.print(localTime)
+        viewTitle.text = LogFormatters.formatTime.print(localTime)
     }
 
     override fun renderSelection(localTime: LocalTime) {

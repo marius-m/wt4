@@ -12,13 +12,13 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-// val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic("debug", project)
-//val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO("debug", project)
+val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic("debug", project)
+// val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO("debug", project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin("basic", project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac("basic", project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicLinux("basic", project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin("iTo", project)
-val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac("iTo", project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac("iTo", project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOLinux("iTo", project)
 //val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows("iToSW", project)
 
@@ -50,7 +50,7 @@ dependencies {
     implementation("no.tornado:tornadofx:2.0.0-SNAPSHOT")
     implementation("com.brsanthu:google-analytics-java:1.1.2")
     implementation("com.google.guava:guava:21.0")
-    implementation("com.jfoenix:jfoenix:9.0.10")
+    implementation("com.jfoenix:jfoenix:9.0.9")
     implementation("io.reactivex:rxjavafx:1.1.0")
     implementation("io.reactivex:rxjava:${lt.markmerkk.Versions.rxJava}")
     implementation("io.reactivex:rxjava-async-util:${lt.markmerkk.Versions.rxJavaAsync}")

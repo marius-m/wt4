@@ -10,6 +10,7 @@ import lt.markmerkk.entities.TimeGap
 import lt.markmerkk.events.EventMainOpenTickets
 import lt.markmerkk.mvp.LogEditService2
 import lt.markmerkk.mvp.LogEditService2Impl
+import lt.markmerkk.round
 import lt.markmerkk.utils.LogFormatters
 
 class LogDetailsPresenterUpdate(
@@ -36,16 +37,6 @@ class LogDetailsPresenterUpdate(
                 view?.showHint1(durationAsString)
             }
 
-            override fun lockEdit(isEnabled: Boolean) {
-                if (isEnabled) {
-                    view?.enableInput()
-                    view?.enableSaving()
-                } else {
-                    view?.disableInput()
-                    view?.disableSaving()
-                }
-            }
-
             override fun showSuccess() {
                 view?.closeDetails()
             }
@@ -54,12 +45,11 @@ class LogDetailsPresenterUpdate(
 
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
-        logEditService.bindLogByLocalId(entityInEdit.id)
-        logEditService.serviceType = LogEditService2.ServiceType.UPDATE
-        val logStart = timeProvider.roundDateTime(entityInEdit.time.start.millis)
-        val logStartFormatted = logStart.toString(LogFormatters.shortFormat)
-        val logEnd = timeProvider.roundDateTime(entityInEdit.time.end.millis)
-        val logEndFormatted = logEnd.toString(LogFormatters.shortFormat)
+        logEditService.initByLocalId(entityInEdit.id)
+        val logStart = entityInEdit.time.start.round()
+        val logStartFormatted = logStart.toString(LogFormatters.formatTime)
+        val logEnd = entityInEdit.time.end.round()
+        val logEndFormatted = logEnd.toString(LogFormatters.formatTime)
         view.initView(
                 labelHeader = "Update log $logStartFormatted - $logEndFormatted",
                 labelButtonSave = "Save",

@@ -29,16 +29,6 @@ class LogDetailsPresenterCreate(
                 view?.showHint1(durationAsString)
             }
 
-            override fun lockEdit(isEnabled: Boolean) {
-                if (isEnabled) {
-                    view?.enableInput()
-                    view?.enableSaving()
-                } else {
-                    view?.disableInput()
-                    view?.disableSaving()
-                }
-            }
-
             override fun showSuccess() {
                 view?.closeDetails()
             }
@@ -48,7 +38,6 @@ class LogDetailsPresenterCreate(
     override fun onAttach(view: LogDetailsContract.View) {
         this.view = view
         val now = timeProvider.now()
-        logEditService.serviceType = LogEditService2.ServiceType.CREATE
         view.initView(
                 labelHeader = "Create new log",
                 labelButtonSave = "Save",

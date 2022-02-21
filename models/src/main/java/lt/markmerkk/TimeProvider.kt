@@ -29,14 +29,9 @@ interface TimeProvider {
     /**
      * Converts millis to joda datetime
      */
-    fun roundDateTime(millis: Long): DateTime
+    fun roundMillisToDt(millis: Long): DateTime
 
     fun preciseMillis(dateTime: DateTime): Long
-
-    /**
-     * Converts joda date time without seconds
-     */
-    fun roundMillis(dateTime: DateTime): Long
 
     /**
      * Converts millis to java8 datetime
@@ -124,7 +119,19 @@ interface TimeProvider {
                     javaLocalDate.dayOfMonth
             )
         }
-
     }
+}
 
+/**
+ * Rounds time to minutes
+ */
+fun DateTime.round(): DateTime {
+    return this.withSecondOfMinute(0)
+        .withMillisOfSecond(0)
+}
+/**
+ * Rounds time to minutes
+ */
+fun DateTime.roundMillis(): Long {
+    return this.round().millis
 }

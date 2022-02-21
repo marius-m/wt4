@@ -92,8 +92,8 @@ class CalendarWidget: Fragment() {
                 val oldLogEntry = event.entry.userObject as Log
                 val newLogEntry = oldLogEntry.clone(
                     timeProvider = timeProvider,
-                    start = timeProvider.roundDateTime(calendarEntryStart),
-                    end = timeProvider.roundDateTime(calendarEntryEnd)
+                    start = timeProvider.roundMillisToDt(calendarEntryStart),
+                    end = timeProvider.roundMillisToDt(calendarEntryEnd)
                 )
                 activeDisplayRepository.update(newLogEntry)
             }
@@ -375,8 +375,8 @@ class CalendarWidget: Fragment() {
             val log = Log.createAsEmpty(timeProvider = timeProvider)
                 .cloneAsNewLocal(
                     timeProvider = timeProvider,
-                    start = timeProvider.roundDateTime(startMillis),
-                    end = timeProvider.roundDateTime(endMillis)
+                    start = timeProvider.roundMillisToDt(startMillis),
+                    end = timeProvider.roundMillisToDt(endMillis)
                 )
             activeDisplayRepository.insertOrUpdate(log)
             return null

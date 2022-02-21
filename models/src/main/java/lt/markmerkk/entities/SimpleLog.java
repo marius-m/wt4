@@ -41,19 +41,19 @@ public class SimpleLog extends RemoteEntity {
   //region Getters / Setters
 
   public String getLongStart() {
-    return LogFormatters.INSTANCE.getLongFormat().print(start);
+    return LogFormatters.INSTANCE.getLongFormatDateTime().print(start);
   }
 
   public String getShortStart() {
-    return LogFormatters.INSTANCE.getShortFormat().print(start);
+    return LogFormatters.INSTANCE.getFormatTime().print(start);
   }
 
   public String getLongEnd() {
-    return LogFormatters.INSTANCE.getLongFormat().print(end);
+    return LogFormatters.INSTANCE.getLongFormatDateTime().print(end);
   }
 
   public String getShortEnd() {
-    return LogFormatters.INSTANCE.getShortFormat().print(end);
+    return LogFormatters.INSTANCE.getFormatTime().print(end);
   }
 
   public String getPrettyDuration() {
@@ -132,8 +132,8 @@ public class SimpleLog extends RemoteEntity {
     final DateTime dateTimeEnd = new DateTime(end);
     final Duration durationObj = new Duration(duration);
     return "SimpleLog{" +
-            "start=" + LogFormatters.INSTANCE.getLongFormat().print(dateTimeStart) +
-            ", end=" + LogFormatters.INSTANCE.getLongFormat().print(dateTimeEnd) +
+            "start=" + LogFormatters.INSTANCE.getLongFormatDateTime().print(dateTimeStart) +
+            ", end=" + LogFormatters.INSTANCE.getLongFormatDateTime().print(dateTimeEnd) +
             ", duration=" + durationObj.toString() +
             ", task='" + task + '\'' +
             ", comment='" + comment + '\'' +

@@ -640,10 +640,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
     //endregion
 
     override fun showDateTime(start: DateTime, end: DateTime) {
-        viewDatePickerFrom.text = LogFormatters.shortFormatDate.print(start)
-        viewTimePickerFrom.text = LogFormatters.shortFormat.print(start)
-        viewDatePickerTo.text = LogFormatters.shortFormatDate.print(end)
-        viewTimePickerTo.text = LogFormatters.shortFormat.print(end)
+        viewDatePickerFrom.text = LogFormatters.formatDate.print(start)
+        viewTimePickerFrom.text = LogFormatters.formatTime.print(start)
+        viewDatePickerTo.text = LogFormatters.formatDate.print(end)
+        viewTimePickerTo.text = LogFormatters.formatTime.print(end)
     }
 
     override fun showTicketCode(ticket: String) {

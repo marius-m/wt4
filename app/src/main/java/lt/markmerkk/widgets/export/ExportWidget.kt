@@ -71,8 +71,8 @@ class ExportWidget : Fragment(), ExportContract.View {
         center {
             vbox(spacing = 4.0) {
                 label {
-                    val startDate = LogFormatters.shortFormatDate.print(activeDisplayRepository.displayDateRange.start)
-                    val endDate = LogFormatters.shortFormatDate.print(activeDisplayRepository.displayDateRange.endAsNextDay)
+                    val startDate = LogFormatters.formatDate.print(activeDisplayRepository.displayDateRange.start)
+                    val endDate = LogFormatters.formatDate.print(activeDisplayRepository.displayDateRange.endAsNextDay)
                     text = "Worklogs from $startDate to $endDate"
                     isWrapText = true
                 }

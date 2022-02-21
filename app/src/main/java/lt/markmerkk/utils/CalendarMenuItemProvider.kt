@@ -24,8 +24,8 @@ object CalendarMenuItemProvider {
             val log = Log.createAsEmpty(timeProvider = timeProvider)
                 .cloneAsNewLocal(
                     timeProvider = timeProvider,
-                    start = timeProvider.roundDateTime(startMillis),
-                    end = timeProvider.roundDateTime(endMillis)
+                    start = timeProvider.roundMillisToDt(startMillis),
+                    end = timeProvider.roundMillisToDt(endMillis)
                 )
             activeDisplayRepository.insertOrUpdate(log)
         }
