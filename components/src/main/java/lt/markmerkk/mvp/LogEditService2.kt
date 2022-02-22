@@ -1,44 +1,40 @@
 package lt.markmerkk.mvp
 
+import lt.markmerkk.entities.Log
+import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TimeGap
 
 /**
  * Responsible for updating log and controlling the input view changes
  */
 interface LogEditService2 {
-    fun initByLocalId(localId: Long)
+    val timeGap: TimeGap
 
-    /**
-     * Forces a redraw
-     */
-    fun redraw()
+    fun initWithLog(log: Log)
 
-    /**
-     * Updates current date time for the [entityInEdit]
-     */
     fun updateDateTime(timeGap: TimeGap)
 
-    /**
-     * Update log with new input data
-     * Depends on the [serviceType]. If CREATE, will create a new entity.
-     */
-    fun saveEntity(
-            timeGap: TimeGap,
-            task: String,
-            comment: String
-    )
+    fun updateCode(code: String)
+
+    fun updateComment(comment: String)
+
+    fun saveEntity()
 
     interface Listener {
         /**
          * Refresh views with new log data
          */
-        fun showDataTimeChange(timeGap: TimeGap)
+        fun showDateTimeChange(timeGap: TimeGap)
 
         /**
          * Refresh views with new log data
          */
         fun showDuration(durationAsString: String)
 
-        fun showSuccess()
+        fun showComment(comment: String)
+
+        fun showCode(ticketCode: TicketCode)
+
+        fun showSuccess(log: Log)
     }
 }

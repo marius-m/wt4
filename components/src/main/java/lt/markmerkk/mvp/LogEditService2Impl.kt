@@ -3,13 +3,11 @@ package lt.markmerkk.mvp
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.TicketStorage
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.Log.Companion.clone
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TimeGap
-import lt.markmerkk.entities.toTimeGap
-import lt.markmerkk.entities.toTimeGapRounded
+import lt.markmerkk.entities.TimeGap.Companion.toTimeGap
 import lt.markmerkk.utils.LogUtils
 
 /**
@@ -20,58 +18,61 @@ class LogEditService2Impl(
     private val ticketStorage: TicketStorage,
     private val listener: LogEditService2.Listener,
     private val activeDisplayRepository: ActiveDisplayRepository,
-    private val worklogStorage: WorklogStorage
 ) : LogEditService2 {
 
-    private var log: Log = Log.createAsEmpty(timeProvider)
+    override val timeGap: TimeGap
+        get() = _timeGap
+    private var initLog: Log = Log.createAsEmpty(timeProvider)
+    private var _timeGap: TimeGap = TimeGap.asEmpty(timeProvider)
+    private var codeRaw: String = ""
+    private var comment: String = ""
 
-    override fun initByLocalId(localId: Long) {
-        this.log = worklogStorage.findById(localId) ?: Log.createAsEmpty(timeProvider)
-        listener.showDuration(LogUtils.formatShortDuration(log.time.duration))
+    override fun initWithLog(log: Log) {
+        this.initLog = log
+        this._timeGap = log.time.toTimeGap()
+        this.codeRaw = log.code.code
+        this.comment = log.comment
+        redraw()
     }
 
     override fun updateDateTime(timeGap: TimeGap) {
-        this.log = updateTime(timeGap)
-        listener.showDataTimeChange(log.toTimeGapRounded())
-        listener.showDuration(LogUtils.formatShortDuration(log.time.duration))
+        this._timeGap = timeGap
+        listener.showDateTimeChange(this._timeGap)
+        listener.showDuration(LogUtils.formatShortDuration(timeGap.duration))
     }
 
-    override fun saveEntity(
-            timeGap: TimeGap,
-            task: String,
-            comment: String
-    ) {
-        val saveLog = this.log.clone(
+    override fun updateCode(code: String) {
+        this.codeRaw = code
+    }
+
+    override fun updateComment(comment: String) {
+        this.comment = comment
+    }
+
+    override fun saveEntity() {
+        val saveLog = initLog.clone(
             timeProvider = timeProvider,
-            start = timeGap.start,
-            end = timeGap.end,
-            code = TicketCode.new(task),
+            start = _timeGap.start,
+            end = _timeGap.end,
+            code = TicketCode.new(codeRaw),
             comment = comment
         )
-        activeDisplayRepository.insertOrUpdate(saveLog)
-        this.log = saveLog
+        if (saveLog.hasId) {
+            activeDisplayRepository.update(saveLog)
+        } else {
+            activeDisplayRepository.insertOrUpdate(saveLog)
+        }
         ticketStorage.saveTicketAsUsedSync(timeProvider.preciseNow(), saveLog.code)
-        listener.showSuccess()
+        listener.showSuccess(saveLog)
     }
 
     /**
      * Triggers according functions to show on screen
      */
-    override fun redraw() {
-        val start = log.time.start
-        val end = log.time.end
-        listener.showDataTimeChange(TimeGap.from(start, end))
-        listener.showDuration(LogUtils.formatShortDuration(log.time.duration))
+    private fun redraw() {
+        listener.showDateTimeChange(this._timeGap)
+        listener.showDuration(LogUtils.formatShortDuration(_timeGap.duration))
+        listener.showCode(TicketCode.new(codeRaw))
+        listener.showComment(this.comment)
     }
-
-    private fun updateTime(
-        timeGap: TimeGap
-    ): Log {
-        return log.clone(
-            timeProvider = timeProvider,
-            start = timeGap.start,
-            end = timeGap.end
-        )
-    }
-
 }
