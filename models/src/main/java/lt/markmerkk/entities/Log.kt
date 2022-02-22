@@ -19,6 +19,7 @@ data class Log private constructor(
         val remoteData: RemoteData? = null
 ) {
 
+    val hasId: Boolean = id > 0
     val isRemote: Boolean = remoteData != null
     val isMarkedForDeletion = remoteData?.isDeleted ?: false
     val canUpload = !comment.isEmpty()

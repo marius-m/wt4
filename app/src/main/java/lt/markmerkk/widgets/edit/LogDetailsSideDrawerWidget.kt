@@ -378,17 +378,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
             bottom {
                 hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                     addClass(Styles.dialogContainerActionsButtons)
-                    viewButtonSave = jfxButton("Save".toUpperCase()) {
+                    viewButtonSave = jfxButton("Save".uppercase()) {
                         setOnAction {
-                            val timeGap = timeGapGenerator.generateTimeGap()
-                            presenter.save(
-                                    timeGap = timeGap,
-                                    task = viewTextFieldTicket.text,
-                                    comment = viewTextComment.textArea.text
-                            )
+                            presenter.save()
                         }
                     }
-                    viewButtonClose = jfxButton("Close".toUpperCase()) {
+                    viewButtonClose = jfxButton("Close".uppercase()) {
                         setOnAction {
                             eventBus.post(EventMainCloseLogDetails())
                         }
@@ -413,31 +408,43 @@ class LogDetailsSideDrawerWidget : Fragment(),
         val entity: Log? = resultDispatcher.consume(RESULT_DISPATCH_KEY_ENTITY, Log::class.java)
         presenter = if (entity != null) {
             LogDetailsPresenterUpdate(
-                entity,
-                eventBus,
-                timeProvider,
-                ticketStorage,
-                activeDisplayRepository,
-                worklogStorage
+                viewProvider = object : ViewProvider<LogDetailsContract.View>() {
+                    override fun get(): LogDetailsContract.View? {
+                        return this@LogDetailsSideDrawerWidget
+                    }
+                },
+                entityInEdit = entity,
+                eventBus = eventBus,
+                timeProvider = timeProvider,
+                ticketStorage = ticketStorage,
+                activeDisplayRepository = activeDisplayRepository,
             )
         } else {
             when  {
                 isActiveClock -> LogDetailsPresenterUpdateActiveClock(
-                    eventBus,
-                    timeProvider,
-                    hourGlass,
-                    activeLogPersistence,
-                    ticketStorage,
-                    userSettings,
-                    activeDisplayRepository,
-                    worklogStorage
+                    viewProvider = object : ViewProvider<LogDetailsContract.View>() {
+                        override fun get(): LogDetailsContract.View? {
+                            return this@LogDetailsSideDrawerWidget
+                        }
+                    },
+                    eventBus = eventBus,
+                    timeProvider = timeProvider,
+                    hourGlass = hourGlass,
+                    activeLogPersistence = activeLogPersistence,
+                    ticketStorage = ticketStorage,
+                    activeDisplayRepository = activeDisplayRepository,
+                    userSettings = userSettings,
                 )
                 else -> LogDetailsPresenterCreate(
-                    eventBus,
-                    timeProvider,
-                    ticketStorage,
-                    activeDisplayRepository,
-                    worklogStorage
+                    viewProvider = object : ViewProvider<LogDetailsContract.View>() {
+                        override fun get(): LogDetailsContract.View? {
+                            return this@LogDetailsSideDrawerWidget
+                        }
+                    },
+                    eventBus = eventBus,
+                    timeProvider = timeProvider,
+                    ticketStorage = ticketStorage,
+                    activeDisplayRepository = activeDisplayRepository,
                 )
             }
         }
@@ -481,7 +488,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                         .map { it.code }
         )
         recentTicketLoader.onAttach()
-        presenter.onAttach(this)
+        presenter.onAttach()
         // uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
@@ -533,34 +540,9 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun initView(
-            labelHeader: String,
-            labelButtonSave: String,
-            glyphButtonSave: SVGGlyph?,
-            initDateTimeStart: DateTime,
-            initDateTimeEnd: DateTime,
-            initTicket: String,
-            initComment: String,
-            enableFindTickets: Boolean,
-            enableDateTimeChange: Boolean
+        labelHeader: String
     ) {
         viewLabelHeader.text = labelHeader
-        viewButtonSave.text = labelButtonSave.toUpperCase()
-        viewButtonSave.graphic = glyphButtonSave
-        viewTextFieldTicket.text = initTicket
-        viewTextComment.textArea.text = initComment
-        if (enableFindTickets) {
-            viewButtonSearch.show()
-        } else {
-            viewButtonSearch.hide()
-        }
-        if (enableDateTimeChange) {
-            viewsDateTimeRangeElements
-                .forEach { it.isDisable = false }
-        } else {
-            viewsDateTimeRangeElements
-                .forEach { it.isDisable = true }
-        }
-        ticketInfoLoader.findTicket(initTicket)
     }
 
     //region Events
@@ -578,12 +560,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     @Subscribe
     fun eventSave(event: EventLogDetailsSave) {
-        val timeGap = timeGapGenerator.generateTimeGap()
-        presenter.save(
-            timeGap = timeGap,
-            task = viewTextFieldTicket.text,
-            comment = viewTextComment.textArea.text
-        )
+        presenter.save()
     }
 
     @Subscribe
@@ -660,28 +637,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     override fun showHint2(hint: String) {
         viewLabelHint2.text = hint
-    }
-
-    override fun enableInput() {
-        viewTextFieldTicket.isEditable = true
-        viewTextComment.textArea.isEditable = true
-        viewsDateTimeRangeElements
-            .forEach { it.isEditable = true }
-    }
-
-    override fun disableInput() {
-        viewTextFieldTicket.isEditable = false
-        viewTextComment.textArea.isEditable = false
-        viewsDateTimeRangeElements
-            .forEach { it.isEditable = false }
-    }
-
-    override fun enableSaving() {
-        viewButtonSave.isDisable = false
-    }
-
-    override fun disableSaving() {
-        viewButtonSave.isDisable = true
     }
 
     override fun showCopyLink(ticketCode: TicketCode, webLink: String) {

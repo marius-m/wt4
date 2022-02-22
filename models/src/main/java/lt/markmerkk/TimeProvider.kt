@@ -3,6 +3,7 @@ package lt.markmerkk
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 
 interface TimeProvider {
     val dateTimeZone: DateTimeZone
@@ -129,6 +130,12 @@ fun DateTime.round(): DateTime {
     return this.withSecondOfMinute(0)
         .withMillisOfSecond(0)
 }
+
+fun LocalTime.round(): LocalTime {
+    return this.withSecondOfMinute(0)
+        .withMillisOfSecond(0)
+}
+
 /**
  * Rounds time to minutes
  */
