@@ -63,14 +63,12 @@ class LogTailer(
             val listener = object : TailerListener {
 
                 override fun handle(line: String?) {
-                    logger.debug("Emitting items: $line")
                     if (line != null) {
                         emitter.onNext(line)
                     }
                 }
 
                 override fun handle(ex: Exception) {
-                    logger.debug("handle(): $ex")
                     tailer?.stop()
                     emitter.onError(ex)
                 }

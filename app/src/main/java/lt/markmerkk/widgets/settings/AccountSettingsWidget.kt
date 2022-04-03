@@ -219,7 +219,7 @@ class AccountSettingsWidget : Fragment() {
         } else {
             viewContainerStatusAdvanced.show()
             viewContainerStatusBasic.hide()
-            val logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}jira.log")
+            val logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}app.log")
             logTailer.tail(logFile)
         }
     }

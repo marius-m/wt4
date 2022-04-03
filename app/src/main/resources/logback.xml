@@ -16,9 +16,9 @@
     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${HOME_LOG}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${sys:LOG_PATH_ARCHIVE}/%d{yyyy-MM-dd}/app-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <totalSizeCap>100MB</totalSizeCap>
+            <fileNamePattern>${LOG_PATH_ARCHIVE}/%d{yyyy-MM-dd}/app-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
+            <maxFileSize>500KB</maxFileSize>
+            <totalSizeCap>50MB</totalSizeCap>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
