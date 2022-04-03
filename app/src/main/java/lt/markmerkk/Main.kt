@@ -12,6 +12,7 @@ import tornadofx.App
 import tornadofx.FX
 import tornadofx.find
 import java.awt.SplashScreen
+import java.lang.management.ManagementFactory
 
 class Main : App(CoreWidget::class, Styles::class) {
 
@@ -21,6 +22,7 @@ class Main : App(CoreWidget::class, Styles::class) {
         generateGraph(stage)
         super.start(stage)
         initSentry()
+        printArguments()
         stage.width = SCENE_WIDTH.toDouble()
         stage.height = SCENE_HEIGHT.toDouble()
         stage.minWidth = SCENE_WIDTH.toDouble()
@@ -49,6 +51,15 @@ class Main : App(CoreWidget::class, Styles::class) {
             environment = "${BuildConfig.NAME}-${BuildConfig.flavor} (debug=${BuildConfig.debug})"
             release = "${BuildConfig.versionName}-${BuildConfig.versionCode}"
         })
+    }
+
+    private fun printArguments() {
+        ManagementFactory
+            .getRuntimeMXBean()
+            .getInputArguments()
+            .forEachIndexed { index, arg ->
+                logger.info("ARG${index}: '${arg}'")
+            }
     }
 
     companion object {

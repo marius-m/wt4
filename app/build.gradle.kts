@@ -94,9 +94,9 @@ project.extensions.getByType(JavaApplication::class.java).apply {
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC"
-//            "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
-//            "-DWT_APP_PATH=wt4_debug"
-    )
+           // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+           // "-DWT_APP_PATH=${jBundleProps.app}"
+    ).plus(jBundleProps.jvmProps)
 }
 
 buildConfig {

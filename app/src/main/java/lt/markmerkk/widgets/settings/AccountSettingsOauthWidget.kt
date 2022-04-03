@@ -5,6 +5,9 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSpinner
 import com.jfoenix.controls.JFXTextArea
 import com.jfoenix.svg.SVGGlyph
+import io.sentry.Attachment
+import io.sentry.Scope
+import io.sentry.Sentry
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -13,6 +16,7 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.web.WebView
 import lt.markmerkk.*
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.AuthService
 import lt.markmerkk.interactors.JiraBasicApi
 import lt.markmerkk.ui_2.views.jfxButton
@@ -38,6 +42,7 @@ class AccountSettingsOauthWidget : Fragment() {
     @Inject lateinit var appConfig: Config
     @Inject lateinit var jiraBasicApi: JiraBasicApi
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
+    @Inject lateinit var timeProvider: TimeProvider
 
     private lateinit var viewWebview: WebView
     private lateinit var viewButtonStatus: JFXButton
@@ -49,6 +54,8 @@ class AccountSettingsOauthWidget : Fragment() {
     private lateinit var viewContainerSetup: VBox
     private lateinit var viewContainerSetupStatus: VBox
     private lateinit var viewContainerSetupWebview: VBox
+
+    private lateinit var logFile: File
 
     init {
         Main.component().inject(this)
@@ -123,6 +130,13 @@ class AccountSettingsOauthWidget : Fragment() {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
+                jfxButton("Send report".toUpperCase()) {
+                    setOnAction {
+                        sendReport()
+                        eventBus.post(EventSnackBarMessage("Thank you for the report!"))
+                        close()
+                    }
+                }
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
@@ -137,6 +151,7 @@ class AccountSettingsOauthWidget : Fragment() {
 
     override fun onDock() {
         super.onDock()
+        this.logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}app.log")
         authorizator = OAuthAuthorizator(
                 view = object : OAuthAuthorizator.View {
                     override fun accountReady() {
@@ -240,8 +255,16 @@ class AccountSettingsOauthWidget : Fragment() {
         } else {
             viewContainerLogs.show()
             viewContainerSetup.hide()
-            val logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}jira.log")
+            this.logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}app.log")
             logTailer.tail(logFile)
+        }
+    }
+
+    private fun sendReport() {
+        val attachment = Attachment(logFile.absolutePath)
+        Sentry.withScope { scope: Scope ->
+            scope.addAttachment(attachment)
+            Sentry.captureMessage("Sentry report (${timeProvider.now()})");
         }
     }
 

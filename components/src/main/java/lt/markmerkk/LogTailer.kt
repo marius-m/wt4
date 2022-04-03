@@ -83,8 +83,8 @@ class LogTailer(
 
                 override fun fileNotFound() {
                     tailer?.stop()
-                    logger.warn("File not found!")
-                    emitter.onError(IllegalArgumentException("File not found!"))
+                    logger.warn("File not found! (${file.absolutePath})")
+                    emitter.onError(IllegalArgumentException("File not found! (${file.absolutePath})"))
                 }
             }
             Tailer.create(file, listener, 2000L)
