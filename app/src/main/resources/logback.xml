@@ -1,0 +1,41 @@
+<configuration debug="true" packagingData="true">
+    <property name="WT_ROOT" value="${user.home}" />
+    <property name="WT_APP_PATH" value="wt4_debug" />
+    <property name="WT_APP_FLAVOR" value="basic" />
+    <property name="LOG_PATH" value="${WT_ROOT}/.${WT_APP_PATH}-${WT_APP_FLAVOR}/logs"/>
+    <property name="LOG_PATH_ARCHIVE" value="${LOG_PATH}/archive"/>
+    <property name="HOME_LOG" value="${LOG_PATH}/app.log"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${sys:LOG_PATH_ARCHIVE}/%d{yyyy-MM-dd}/app-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+        <minimumEventLevel>WARN</minimumEventLevel>
+        <minimumBreadcrumbLevel>DEBUG</minimumBreadcrumbLevel>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-ROLLING"/>
+        <appender-ref ref="Sentry"/>
+    </root>
+    <logger name="lt.markmerkk" level="DEBUG" />
+    <logger name="org.jooq" level="INFO" />
+    <logger name="org.apache.http" level="INFO" />
+    <logger name="org.apache.http.wire" level="DEBUG" />
+</configuration>

@@ -1,12 +1,16 @@
 package lt.markmerkk
 
+import io.sentry.Sentry
+import io.sentry.SentryOptions
 import javafx.stage.Stage
 import lt.markmerkk.dagger.components.AppComponent
 import lt.markmerkk.dagger.components.DaggerAppComponent
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.ui_2.StageProperties
 import org.slf4j.LoggerFactory
-import tornadofx.*
+import tornadofx.App
+import tornadofx.FX
+import tornadofx.find
 import java.awt.SplashScreen
 
 class Main : App(CoreWidget::class, Styles::class) {
@@ -16,6 +20,7 @@ class Main : App(CoreWidget::class, Styles::class) {
     override fun start(stage: Stage) {
         generateGraph(stage)
         super.start(stage)
+        initSentry()
         stage.width = SCENE_WIDTH.toDouble()
         stage.height = SCENE_HEIGHT.toDouble()
         stage.minWidth = SCENE_WIDTH.toDouble()
@@ -36,6 +41,14 @@ class Main : App(CoreWidget::class, Styles::class) {
                 .appModule(AppModule(this, StageProperties(stage)))
                 .build()
         appComponent.inject(this)
+    }
+
+    private fun initSentry() {
+        Sentry.init(SentryOptions().apply {
+            dsn = BuildConfig.sentryDsn
+            environment = "${BuildConfig.NAME}-${BuildConfig.flavor} (debug=${BuildConfig.debug})"
+            release = "${BuildConfig.versionName}-${BuildConfig.versionCode}"
+        })
     }
 
     companion object {
