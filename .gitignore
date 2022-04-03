@@ -46,6 +46,10 @@ database2/out
 # mock factory
 mock-factory/out
 
+# JDeploy
+jdeploy/
+jdeploy-bundle/
+
 # Other
 out4/
 build/

@@ -3,7 +3,6 @@ buildscript {
         mavenCentral()
         jcenter()
         maven("https://maven.atlassian.com/content/repositories/atlassian-public")
-        maven("http://gradle.artifactoryonline.com/gradle/libs/")
         maven("http://maven.wso2.org/nexus/content/groups/wso2-public/")
         maven("https://plugins.gradle.org/m2/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
