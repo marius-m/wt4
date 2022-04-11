@@ -1,4 +1,5 @@
 import lt.markmerkk.Versions
+import lt.markmerkk.exportextra.AppType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import lt.markmerkk.exportextra.JBundleExtraPropsFactory
 
@@ -12,15 +13,15 @@ plugins {
     id("lt.markmerkk.jbundle")
 }
 
-val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic("debug", project)
-// val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO("debug", project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin("basic", project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac("basic", project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicLinux("basic", project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin("iTo", project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac("iTo", project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOLinux("iTo", project)
-//val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows("iToSW", project)
+val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(AppType.DEBUG, project)
+// val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(AppType.DEBUG, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(AppType.BASIC, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(AppType.BASIC, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicLinux(AppType.BASIC, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(AppType.ITO, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(AppType.ITO, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOLinux(AppType.ITO, project)
+// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(AppType.SW, project)
 
 sourceSets {
     main {
@@ -52,8 +53,8 @@ dependencies {
     implementation("com.google.guava:guava:21.0")
     implementation("com.jfoenix:jfoenix:9.0.9")
     implementation("io.reactivex:rxjavafx:1.1.0")
-    implementation("io.reactivex:rxjava:${lt.markmerkk.Versions.rxJava}")
-    implementation("io.reactivex:rxjava-async-util:${lt.markmerkk.Versions.rxJavaAsync}")
+    implementation("io.reactivex:rxjava:${Versions.rxJava}")
+    implementation("io.reactivex:rxjava-async-util:${Versions.rxJavaAsync}")
     implementation("org.bouncycastle:bcprov-jdk15on:1.51")
     implementation("com.google.protobuf:protobuf-java:3.7.0")
     implementation("org.scribe:scribe:1.3.7")
@@ -72,8 +73,11 @@ dependencies {
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     implementation("com.calendarfx:view:8.5.0")
 
+    implementation("io.sentry:sentry:${Versions.sentry}")
+    implementation("io.sentry:sentry-logback:${Versions.sentry}")
+    implementation("org.slf4j:jul-to-slf4j:${Versions.slf4j}")
     implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:${Versions.log4j}")
+    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.kotlinTest}")
@@ -90,9 +94,9 @@ project.extensions.getByType(JavaApplication::class.java).apply {
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC"
-//            "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
-//            "-DWT_APP_PATH=wt4_debug"
-    )
+           // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+           // "-DWT_APP_PATH=${jBundleProps.app}"
+    ).plus(jBundleProps.jvmProps)
 }
 
 buildConfig {
@@ -104,6 +108,7 @@ buildConfig {
     buildConfigField("String", "versionName", jBundleProps.versionName)
     buildConfigField("int", "versionCode", jBundleProps.versionCode.toString())
     buildConfigField("boolean", "debug", jBundleProps.debug.toString())
+    buildConfigField("String", "sentryDsn", jBundleProps.sentryDsn)
     buildConfigField("String", "gaKey", jBundleProps.gaKey)
     buildConfigField("boolean", "oauth", jBundleProps.oauth.toString())
     buildConfigField("String", "oauthKeyConsumer", jBundleProps.oauthKeyConsumer)

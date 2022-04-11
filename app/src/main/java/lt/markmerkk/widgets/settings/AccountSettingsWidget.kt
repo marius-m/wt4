@@ -3,6 +3,9 @@ package lt.markmerkk.widgets.settings
 import com.google.common.eventbus.EventBus
 import com.jfoenix.controls.*
 import com.jfoenix.svg.SVGGlyph
+import io.sentry.Attachment
+import io.sentry.Scope
+import io.sentry.Sentry
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -17,6 +20,7 @@ import lt.markmerkk.interactors.AuthServiceImpl
 import lt.markmerkk.ui_2.views.*
 import tornadofx.*
 import java.io.File
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class AccountSettingsWidget : Fragment() {
@@ -29,6 +33,7 @@ class AccountSettingsWidget : Fragment() {
     @Inject lateinit var eventBus: EventBus
     @Inject lateinit var appConfig: Config
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
+    @Inject lateinit var timeProvider: TimeProvider
 
     private lateinit var viewInputHostname: JFXTextField
     private lateinit var viewInputUsername: JFXTextField
@@ -39,6 +44,8 @@ class AccountSettingsWidget : Fragment() {
     private lateinit var viewTextOutput: JFXTextArea
     private lateinit var viewContainerStatusAdvanced: BorderPane
     private lateinit var viewContainerStatusBasic: VBox
+
+    private lateinit var logFile: File
 
     init {
         Main.component().inject(this)
@@ -145,6 +152,13 @@ class AccountSettingsWidget : Fragment() {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
+                jfxButton("Send report".toUpperCase()) {
+                    setOnAction {
+                        sendReport()
+                        eventBus.post(EventSnackBarMessage("Thank you for the report!"))
+                        close()
+                    }
+                }
                 jfxButton("Show logs".toUpperCase()) {
                     setOnAction { toggleAdvanced() }
                 }
@@ -179,6 +193,7 @@ class AccountSettingsWidget : Fragment() {
 
     override fun onDock() {
         super.onDock()
+        this.logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}app.log")
         viewContainerStatusBasic.show()
         viewContainerStatusAdvanced.hide()
         val jiraBasicCreds = userSettings.jiraBasicCreds()
@@ -219,8 +234,15 @@ class AccountSettingsWidget : Fragment() {
         } else {
             viewContainerStatusAdvanced.show()
             viewContainerStatusBasic.hide()
-            val logFile = File(appConfig.basePath(), "${File.separator}logs${File.separator}jira.log")
             logTailer.tail(logFile)
+        }
+    }
+
+    private fun sendReport() {
+        val attachment = Attachment(logFile.absolutePath)
+        Sentry.withScope { scope: Scope ->
+            scope.addAttachment(attachment)
+            Sentry.captureMessage("Sentry report (${timeProvider.now()})");
         }
     }
 

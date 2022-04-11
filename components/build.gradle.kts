@@ -16,7 +16,6 @@ dependencies {
     implementation("io.reactivex:rxjava-async-util:${Versions.rxJavaAsync}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
     implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:${Versions.log4j}")
     implementation("commons-io:commons-io:2.6")
     implementation("com.squareup.retrofit2:converter-gson:2.6.1")
 

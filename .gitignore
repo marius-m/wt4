@@ -46,6 +46,10 @@ database2/out
 # mock factory
 mock-factory/out
 
+# JDeploy
+jdeploy/
+jdeploy-bundle/
+
 # Other
 out4/
 build/
@@ -62,3 +66,4 @@ wt4_2.db
 app/logs/
 keys/
 .java-version
+sentry.properties
