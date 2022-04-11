@@ -1,9 +1,7 @@
 package lt.markmerkk.total
 
 import lt.markmerkk.DisplayTypeLength
-import lt.markmerkk.LogStorage
-import lt.markmerkk.Tags
-import lt.markmerkk.utils.LogUtils
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.utils.hourglass.HourGlass
 import org.joda.time.*
 import org.slf4j.LoggerFactory
@@ -12,9 +10,9 @@ import org.slf4j.LoggerFactory
  * Reports total work
  */
 class TotalWorkGenerator(
-        private val hourGlass: HourGlass,
-        private val logStorage: LogStorage,
-        private val stringRes: StringRes
+    private val hourGlass: HourGlass,
+    private val stringRes: StringRes,
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) {
 
     /**
@@ -26,8 +24,8 @@ class TotalWorkGenerator(
             displayDateStart: LocalDate,
             displayDateEnd: LocalDate
     ): String {
-        val totalDuration = logStorage.totalAsDuration()
-        return when (logStorage.displayType) {
+        val totalDuration = activeDisplayRepository.totalAsDuration()
+        return when (activeDisplayRepository.displayType) {
             DisplayTypeLength.DAY -> {
                 if (totalDuration.standardHours >= 8) {
                     stringRes.dayFinish(totalDuration)

@@ -4,17 +4,21 @@ import org.joda.time.format.DateTimeFormat
 import lt.markmerkk.entities.Log
 import org.joda.time.*
 import org.joda.time.format.PeriodFormatterBuilder
+import org.slf4j.LoggerFactory
 
 object LogFormatters {
+    private val l = LoggerFactory.getLogger(LogFormatters::class.java)!!
     const val TIME_SHORT_FORMAT = "HH:mm"
     const val DATE_SHORT_FORMAT = "yyyy-MM-dd"
     const val DATE_LONG_FORMAT = "yyyy-MM-dd HH:mm"
     const val DATE_VERY_LONG_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS"
 
-    val shortFormat = DateTimeFormat.forPattern(TIME_SHORT_FORMAT)!!
-    val shortFormatDate = DateTimeFormat.forPattern(DATE_SHORT_FORMAT)!!
-    val longFormat = DateTimeFormat.forPattern(DATE_LONG_FORMAT)!!
+    val formatTime = DateTimeFormat.forPattern(TIME_SHORT_FORMAT)!!
+    val formatDate = DateTimeFormat.forPattern(DATE_SHORT_FORMAT)!!
+    val longFormatDateTime = DateTimeFormat.forPattern(DATE_LONG_FORMAT)!!
     val veryLongFormat = DateTimeFormat.forPattern(DATE_VERY_LONG_FORMAT)!!
+
+    val defaultDate = LocalDate(1970, 1, 1)
 
     private val periodFormatter = PeriodFormatterBuilder()
             .appendDays()
@@ -67,9 +71,9 @@ object LogFormatters {
     }
 
     fun formatLogBasic(log: Log, includeDate: Boolean): String {
-        val startDate = LogFormatters.shortFormatDate.print(log.time.start)
-        val formatStart = LogFormatters.shortFormat.print(log.time.start)
-        val formatEnd = LogFormatters.shortFormat.print(log.time.end)
+        val startDate = LogFormatters.formatDate.print(log.time.start)
+        val formatStart = LogFormatters.formatTime.print(log.time.start)
+        val formatEnd = LogFormatters.formatTime.print(log.time.end)
         val durationAsString = LogFormatters.humanReadableDurationShort(log.time.duration)
         return StringBuilder()
                 .append(if (includeDate) "$startDate " else "")
@@ -90,4 +94,39 @@ object LogFormatters {
         return logDates.size > 1
     }
 
+    fun dtFromRawOrNull(
+        dateAsString: String,
+        timeAsString: String
+    ): DateTime? {
+        return try {
+            val date = LogFormatters.formatDate.parseLocalDate(dateAsString)
+            val time = LogFormatters.formatTime.parseLocalTime(timeAsString)
+            date.toDateTime(time)
+        } catch (e: IllegalArgumentException) {
+            l.warn("Error parsing date time as string from ${dateAsString} / ${timeAsString}", e)
+            null
+        }
+    }
+
+    fun dateFromRawOrDefault(
+        dateAsString: String
+    ): LocalDate {
+        return try {
+            formatDate.parseLocalDate(dateAsString)
+        } catch (e: IllegalArgumentException) {
+            l.warn("Error parsing date as string from ${dateAsString}", e)
+            defaultDate
+        }
+    }
+
+    fun timeFromRawOrDefault(
+        timeAsString: String
+    ): LocalTime {
+        return try {
+            formatTime.parseLocalTime(timeAsString)
+        } catch (e: IllegalArgumentException) {
+            l.warn("Error parsing time as string from ${timeAsString}", e)
+            LocalTime.MIDNIGHT
+        }
+    }
 }

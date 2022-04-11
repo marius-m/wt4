@@ -8,7 +8,6 @@ dependencies {
     implementation(project(":jira-client"))
 
     implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:${Versions.log4j}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
 

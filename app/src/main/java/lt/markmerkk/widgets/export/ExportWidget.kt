@@ -9,23 +9,42 @@ import javafx.scene.control.ListView
 import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import javafx.stage.StageStyle
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Main
+import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.Styles
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.export.ExportContract
 import lt.markmerkk.export.ExportPresenter
 import lt.markmerkk.export.WorklogExporter
+import lt.markmerkk.export.entities.ExportWorklogViewModel
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
-import lt.markmerkk.export.entities.ExportWorklogViewModel
 import org.slf4j.LoggerFactory
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.action
+import tornadofx.addClass
+import tornadofx.asObservable
+import tornadofx.borderpane
+import tornadofx.bottom
+import tornadofx.center
+import tornadofx.combobox
+import tornadofx.error
+import tornadofx.hbox
+import tornadofx.information
+import tornadofx.label
+import tornadofx.listview
+import tornadofx.top
+import tornadofx.vbox
+import tornadofx.vgrow
 import javax.inject.Inject
 
 class ExportWidget : Fragment(), ExportContract.View {
 
-    @Inject lateinit var dayProvider: DayProvider
     @Inject lateinit var worklogStorage: WorklogStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var worklogExporter: WorklogExporter
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -52,8 +71,8 @@ class ExportWidget : Fragment(), ExportContract.View {
         center {
             vbox(spacing = 4.0) {
                 label {
-                    val startDate = dayProvider.startAsDate().toString(LogFormatters.DATE_SHORT_FORMAT)
-                    val endDate = dayProvider.endAsDate().toString(LogFormatters.DATE_SHORT_FORMAT)
+                    val startDate = LogFormatters.formatDate.print(activeDisplayRepository.displayDateRange.start)
+                    val endDate = LogFormatters.formatDate.print(activeDisplayRepository.displayDateRange.endAsNextDay)
                     text = "Worklogs from $startDate to $endDate"
                     isWrapText = true
                 }
@@ -102,9 +121,9 @@ class ExportWidget : Fragment(), ExportContract.View {
     override fun onDock() {
         super.onDock()
         presenter = ExportPresenter(
-                worklogStorage,
-                dayProvider,
-                worklogExporter
+            worklogStorage,
+            worklogExporter,
+            activeDisplayRepository
         )
         presenter.onAttach(this)
         presenter.loadWorklogs(projectFilter = presenter.defaultProjectFilter)

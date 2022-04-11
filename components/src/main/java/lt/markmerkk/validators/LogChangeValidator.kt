@@ -1,18 +1,18 @@
 package lt.markmerkk.validators
 
-import lt.markmerkk.LogStorage
+import lt.markmerkk.WorklogStorage
 
 /**
  * Defines rules for log changes
  */
 class LogChangeValidator(
-        private val logStorage: LogStorage
+    private val worklogStorage: WorklogStorage
 ) {
 
     /**
      * @return true whenever log is valid for editing
      */
-    fun canEditSimpleLog(simpleLogId: Long): Boolean {
-        return logStorage.findByIdOrNull(simpleLogId) != null
+    fun canEditSimpleLog(logLocalId: Long): Boolean {
+        return worklogStorage.findById(logLocalId) != null
     }
 }

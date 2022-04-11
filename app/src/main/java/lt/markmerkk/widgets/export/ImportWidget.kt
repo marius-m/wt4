@@ -20,12 +20,11 @@ import javax.inject.Inject
 
 class ImportWidget : Fragment(), ImportContract.View {
 
-    @Inject lateinit var dayProvider: DayProvider
-    @Inject lateinit var worklogStorage: WorklogStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var worklogExporter: WorklogExporter
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var timeProvider: TimeProvider
+    @Inject lateinit var worklogStorage: WorklogStorage
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -103,11 +102,7 @@ class ImportWidget : Fragment(), ImportContract.View {
     override fun onDock() {
         super.onDock()
         presenter = ImportPresenter(
-                worklogStorage,
-                dayProvider,
-                worklogExporter,
-                logStorage,
-                timeProvider
+            activeDisplayRepository = activeDisplayRepository
         )
         presenter.onAttach(this)
         presenter.filterWorklogs(projectFilter = presenter.defaultProjectFilter)

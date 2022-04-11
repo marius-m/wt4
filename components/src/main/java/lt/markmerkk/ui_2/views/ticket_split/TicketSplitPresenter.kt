@@ -2,23 +2,24 @@ package lt.markmerkk.ui_2.views.ticket_split
 
 import lt.markmerkk.*
 import lt.markmerkk.entities.*
+import lt.markmerkk.entities.Log.Companion.cloneAsNewLocal
 import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.utils.LogSplitter
 
 class TicketSplitPresenter(
-        private val input: SimpleLog,
-        private val timeProvider: TimeProvider,
-        private val logStorage: LogStorage,
-        private val logSplitter: LogSplitter,
-        private val strings: Strings,
-        private val ticketStorage: TicketStorage,
-        private val schedulerProvider: SchedulerProvider
+    private val input: Log,
+    private val timeProvider: TimeProvider,
+    private val logSplitter: LogSplitter,
+    private val strings: Strings,
+    private val ticketStorage: TicketStorage,
+    private val schedulerProvider: SchedulerProvider,
+    private val activeDisplayRepository: ActiveDisplayRepository
 ) : TicketSplitContract.Presenter {
 
     private var timeSplitPair: TimeSplitPair = logSplitter.split(
             timeGap = TimeGap.from(
-                    timeProvider.roundDateTime(input.start),
-                    timeProvider.roundDateTime(input.end)
+                    timeProvider.roundMillisToDt(input.time.start.millis),
+                    timeProvider.roundMillisToDt(input.time.end.millis)
             ),
             splitPercent = 50
     )
@@ -45,7 +46,7 @@ class TicketSplitPresenter(
         changeSplitBalance(balancePercent = 50)
         handleWorklogInit(simpleLog = input)
         ticketInfoLoader.onAttach()
-        ticketInfoLoader.findTicket(input.task)
+        ticketInfoLoader.findTicket(input.code.code)
     }
 
     override fun onDetach() {
@@ -53,10 +54,10 @@ class TicketSplitPresenter(
         this.view = null
     }
 
-    internal fun handleWorklogInit(simpleLog: SimpleLog) {
+    internal fun handleWorklogInit(simpleLog: Log) {
         view?.onWorklogInit(
-                showTicket = simpleLog.task.isNotEmpty(),
-                ticketCode = simpleLog.task,
+                showTicket = !simpleLog.code.isEmpty(),
+                ticketCode = simpleLog.code.code,
                 originalComment = simpleLog.comment,
                 isSplitEnabled = !simpleLog.isRemote
         )
@@ -66,8 +67,8 @@ class TicketSplitPresenter(
     override fun changeSplitBalance(balancePercent: Int) {
         timeSplitPair = logSplitter.split(
                 timeGap = TimeGap.from(
-                        timeProvider.roundDateTime(input.start),
-                        timeProvider.roundDateTime(input.end)
+                        timeProvider.roundMillisToDt(input.time.start.millis),
+                        timeProvider.roundMillisToDt(input.time.end.millis)
                 ),
                 splitPercent = balancePercent
         )
@@ -81,21 +82,23 @@ class TicketSplitPresenter(
     }
 
     override fun split(ticketName: String, originalComment: String, newComment: String) {
-        val worklog1 = SimpleLogBuilder(timeProvider.now().millis)
-                .setStart(timeProvider.roundMillis(timeSplitPair.first.start))
-                .setEnd(timeProvider.roundMillis(timeSplitPair.first.end))
-                .setTask(ticketName)
-                .setComment(originalComment)
-                .build()
-        val worklog2 = SimpleLogBuilder(timeProvider.now().millis)
-                .setStart(timeProvider.roundMillis(timeSplitPair.second.start))
-                .setEnd(timeProvider.roundMillis(timeSplitPair.second.end))
-                .setTask(ticketName)
-                .setComment(newComment)
-                .build()
-        logStorage.delete(input)
-        logStorage.insert(worklog1)
-        logStorage.insert(worklog2)
+        val worklog1 = input.cloneAsNewLocal(
+            timeProvider = timeProvider,
+            start = timeSplitPair.first.start,
+            end = timeSplitPair.first.end,
+            code = TicketCode.new(ticketName),
+            comment = originalComment
+        )
+        val worklog2 = input.cloneAsNewLocal(
+            timeProvider = timeProvider,
+            start = timeSplitPair.second.start,
+            end = timeSplitPair.second.end,
+            code = TicketCode.new(ticketName),
+            comment = newComment
+        )
+        activeDisplayRepository.delete(input)
+        activeDisplayRepository.insertOrUpdate(worklog1)
+        activeDisplayRepository.insertOrUpdate(worklog2)
     }
 
 }

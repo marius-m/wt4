@@ -2,7 +2,7 @@ package lt.markmerkk.total
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import lt.markmerkk.LogStorage
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.TimeProviderJfx
 import lt.markmerkk.utils.LogUtils
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -15,8 +15,8 @@ import org.mockito.MockitoAnnotations
 
 class TotalWorkGeneratorReportTotalTest {
 
-    @Mock lateinit var logStorage: LogStorage
     @Mock lateinit var hourGlass: HourGlass
+    @Mock lateinit var activeDisplayRepository: ActiveDisplayRepository
     lateinit var totalWorkGenerator: TotalWorkGenerator
 
     private val timeProvider = TimeProviderJfx()
@@ -47,9 +47,9 @@ class TotalWorkGeneratorReportTotalTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         totalWorkGenerator = TotalWorkGenerator(
-                hourGlass,
-                logStorage,
-                stringRes
+            hourGlass,
+            stringRes,
+            activeDisplayRepository
         )
     }
 

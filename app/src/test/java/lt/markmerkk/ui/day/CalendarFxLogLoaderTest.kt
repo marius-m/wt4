@@ -4,7 +4,9 @@ import com.calendarfx.model.Entry
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.verify
+import lt.markmerkk.Mocks
 import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.utils.CalendarFxLogLoader
@@ -20,12 +22,14 @@ class CalendarFxLogLoaderTest {
     @Mock lateinit var view: CalendarFxLogLoader.View
     lateinit var loader: CalendarFxLogLoader
 
+    private val timeProvider = TimeProviderTest()
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         loader = CalendarFxLogLoader(
                 view,
-                TimeProviderTest(),
+                timeProvider,
                 Schedulers.immediate(),
                 Schedulers.immediate()
         )
@@ -35,10 +39,10 @@ class CalendarFxLogLoaderTest {
     fun valid() {
         // Assemble
         // Act
-        loader.load(listOf(createSimpleLog()))
+        loader.load(listOf(Mocks.createLog(timeProvider)))
 
         // Assert
-        val calendarEntryCaptor = argumentCaptor<List<Entry<SimpleLog>>>()
+        val calendarEntryCaptor = argumentCaptor<List<Entry<Log>>>()
         verify(view).onCalendarEntries(
                 calendarEntryCaptor.capture(),
                 any(),
@@ -57,18 +61,4 @@ class CalendarFxLogLoaderTest {
         // Assert
         verify(view).onCalendarNoEntries()
     }
-
-    //region Mocks
-
-    fun createSimpleLog(): SimpleLog {
-        val simpleLog: SimpleLog = SimpleLogBuilder()
-                .setStart(1000)
-                .setEnd(2000)
-                .setComment("valid_comment")
-                .build()
-        return simpleLog
-    }
-
-    //endregion
-
 }

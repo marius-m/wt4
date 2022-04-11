@@ -11,12 +11,13 @@ import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.widgets.main.MainWidget
 import org.slf4j.LoggerFactory
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.View
+import tornadofx.stackpane
 import javax.inject.Inject
 
 class CoreWidget : View() {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var appConfig: Config
     @Inject lateinit var tracker: ITracker
@@ -26,6 +27,7 @@ class CoreWidget : View() {
     @Inject lateinit var autoSyncWatcher: AutoSyncWatcher2
     @Inject lateinit var ticker: Ticker
     @Inject lateinit var configSetSettings: ConfigSetSettings
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     private lateinit var keepAliveGASession: KeepAliveGASession
 
@@ -52,9 +54,9 @@ class CoreWidget : View() {
                 GAStatics.ACTION_START
         )
         keepAliveGASession = KeepAliveGASessionImpl(
-                logStorage,
-                tracker,
-                schedulersProvider.waitScheduler()
+            activeDisplayRepository,
+            tracker,
+            schedulersProvider.waitScheduler()
         )
         keepAliveGASession.onAttach()
         stageProperties.onAttach()

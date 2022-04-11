@@ -3,6 +3,7 @@ package lt.markmerkk
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 
 interface TimeProvider {
     val dateTimeZone: DateTimeZone
@@ -29,14 +30,9 @@ interface TimeProvider {
     /**
      * Converts millis to joda datetime
      */
-    fun roundDateTime(millis: Long): DateTime
+    fun roundMillisToDt(millis: Long): DateTime
 
     fun preciseMillis(dateTime: DateTime): Long
-
-    /**
-     * Converts joda date time without seconds
-     */
-    fun roundMillis(dateTime: DateTime): Long
 
     /**
      * Converts millis to java8 datetime
@@ -95,6 +91,17 @@ interface TimeProvider {
         /**
          * Converts joda [DateTime] to java8 [LocalDate]
          */
+        fun toJavaLocalDate(jodaDate: LocalDate): java.time.LocalDate {
+            return java.time.LocalDate.of(
+                jodaDate.year,
+                jodaDate.monthOfYear,
+                jodaDate.dayOfMonth
+            )
+        }
+
+        /**
+         * Converts joda [DateTime] to java8 [LocalDate]
+         */
         fun toJavaLocalTime(jodaDateTime: DateTime): java.time.LocalTime {
             return java.time.LocalTime.of(
                     jodaDateTime.hourOfDay,
@@ -113,7 +120,25 @@ interface TimeProvider {
                     javaLocalDate.dayOfMonth
             )
         }
-
     }
+}
 
+/**
+ * Rounds time to minutes
+ */
+fun DateTime.round(): DateTime {
+    return this.withSecondOfMinute(0)
+        .withMillisOfSecond(0)
+}
+
+fun LocalTime.round(): LocalTime {
+    return this.withSecondOfMinute(0)
+        .withMillisOfSecond(0)
+}
+
+/**
+ * Rounds time to minutes
+ */
+fun DateTime.roundMillis(): Long {
+    return this.round().millis
 }

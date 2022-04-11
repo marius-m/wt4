@@ -1,0 +1,31 @@
+{
+    "bin": {"wt4-basic-debug": "jdeploy-bundle/jdeploy.js"},
+    "author": "MM",
+    "description": "Worklog tracker for JIRA",
+    "main": "index.js",
+    "preferGlobal": true,
+    "repository": "",
+    "version": "1.9.2",
+    "jdeploy": {
+        "jdk": false,
+        "args": [
+            "-DWT_APP_PATH=wt4_debug",
+            "-DWT_APP_FLAVOR=basic"
+        ],
+        "javaVersion": "11",
+        "jar": "app/build/libs/app-1.9.1.jar",
+        "javafx": true,
+        "title": "wt4-basic-debug",
+    	"bundles": ["mac"],
+	"installers": ["mac"],
+	"stripJavaFXFiles": false
+    },
+    "dependencies": {
+        "njre": "^0.2.0",
+        "shelljs": "^0.8.4"
+    },
+    "license": "Apache-2.0",
+    "name": "wt4-basic-debug",
+    "files": ["jdeploy-bundle"],
+    "scripts": {"test": "echo \"Error: no test specified\" && exit 1"}
+}

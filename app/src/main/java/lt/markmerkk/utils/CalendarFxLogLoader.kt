@@ -3,6 +3,7 @@ package lt.markmerkk.utils
 import com.calendarfx.model.Entry
 import com.calendarfx.model.Interval
 import lt.markmerkk.TimeProvider
+import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SyncStatus
 import rx.Observable
@@ -28,15 +29,15 @@ class CalendarFxLogLoader(
         subscription?.unsubscribe()
     }
 
-    fun load(logs: List<SimpleLog>) {
+    fun load(logs: List<Log>) {
         subscription?.unsubscribe()
         subscription = Observable.defer { Observable.just(logs) }
                 .subscribeOn(ioScheduler)
                 .map { logEntry ->
                     logEntry.map {
-                        val startDateTime = timeProvider.roundDateTimeJava8(it.start)
-                        val endDateTime = timeProvider.roundDateTimeJava8(it.end)
-                        val entry = Entry<SimpleLog>(
+                        val startDateTime = timeProvider.roundDateTimeJava8(it.time.start.millis)
+                        val endDateTime = timeProvider.roundDateTimeJava8(it.time.end.millis)
+                        val entry = Entry<Log>(
                                 LogUtils.formatLogToText(it),
                                 Interval(
                                         startDateTime.toLocalDate(),
@@ -69,10 +70,10 @@ class CalendarFxLogLoader(
 
     interface View {
         fun onCalendarEntries(
-                allEntries: List<Entry<SimpleLog>>,
-                entriesInSync: List<Entry<SimpleLog>>,
-                entriesWaitingForSync: List<Entry<SimpleLog>>,
-                entriesInError: List<Entry<SimpleLog>>
+                allEntries: List<Entry<Log>>,
+                entriesInSync: List<Entry<Log>>,
+                entriesWaitingForSync: List<Entry<Log>>,
+                entriesInError: List<Entry<Log>>
         )
         fun onCalendarNoEntries()
     }

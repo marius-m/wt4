@@ -21,7 +21,6 @@ import javax.inject.Inject
 class ClockWidget : Fragment(), ClockContract.View {
 
     @Inject lateinit var hourGlass: HourGlass
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var timeProvider: TimeProvider
@@ -36,7 +35,6 @@ class ClockWidget : Fragment(), ClockContract.View {
 
     private val presenter: ClockContract.Presenter = ClockPresenter(
             hourGlass,
-            logStorage,
             timeProvider,
             eventBus,
             resultDispatcher

@@ -24,7 +24,7 @@ class TimeProviderJfx(
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
 
-    override fun nowMillis(): Long = roundMillis(now())
+    override fun nowMillis(): Long = now().roundMillis()
 
     override fun jNow(): java.time.LocalDateTime {
         val nowMillis = now().millis
@@ -37,7 +37,7 @@ class TimeProviderJfx(
         return DateTime(millis, dateTimeZone)
     }
 
-    override fun roundDateTime(millis: Long): DateTime {
+    override fun roundMillisToDt(millis: Long): DateTime {
         return DateTime(millis, dateTimeZone)
                 .withSecondOfMinute(0)
                 .withMillisOfSecond(0)
@@ -53,13 +53,6 @@ class TimeProviderJfx(
 
     override fun preciseMillis(dateTime: DateTime): Long {
         return dateTime.withZone(dateTimeZone)
-                .millis
-    }
-
-    override fun roundMillis(dateTime: DateTime): Long {
-        return dateTime.withZone(dateTimeZone)
-                .withSecondOfMinute(0)
-                .withMillisOfSecond(0)
                 .millis
     }
 

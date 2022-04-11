@@ -20,8 +20,8 @@ import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import lt.markmerkk.*
+import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.events.*
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
@@ -39,8 +39,6 @@ import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.validators.LogChangeValidator
-import lt.markmerkk.versioner.Changelog
-import lt.markmerkk.versioner.ChangelogLoader
 import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
@@ -62,7 +60,6 @@ class MainWidget : Fragment(), MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var stageProperties: StageProperties
@@ -80,6 +77,7 @@ class MainWidget : Fragment(), MainContract.View {
     @Inject lateinit var ticker: Ticker
     @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
     @Inject lateinit var configSetSettings: ConfigSetSettings
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -87,7 +85,6 @@ class MainWidget : Fragment(), MainContract.View {
     lateinit var viewSideDrawerTickets: JFXDrawer
 
     lateinit var snackBar: JFXSnackbar
-    lateinit var changelogLoader: ChangelogLoader
 
     private var subsFocusChange: Subscription? = null
 
@@ -247,18 +244,6 @@ class MainWidget : Fragment(), MainContract.View {
     override fun onDock() {
         super.onDock()
         // Init ui elements
-        changelogLoader = ChangelogLoader(
-                listener = object : ChangelogLoader.Listener {
-                    override fun onNewVersion(changelog: Changelog) {
-                        logger.debug("Showing changelog")
-                        eventBus.post(EventNewVersion(changelog))
-                    }
-                },
-                versionProvider = versionProvider,
-                ioScheduler = schedulerProvider.io(),
-                uiScheduler = schedulerProvider.ui()
-
-        )
         snackBar = JFXSnackbar(root as StackPane)
                 .apply { toFront() }
         subsFocusChange = JavaFxObservable.valuesOf(primaryStage.focusedProperty())
@@ -316,14 +301,11 @@ class MainWidget : Fragment(), MainContract.View {
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)
         eventBus.register(this)
-        changelogLoader.onAttach()
-        changelogLoader.check()
         presenter.onAttach(this)
     }
 
     override fun onUndock() {
         presenter.onDetach()
-        changelogLoader.onDetach()
         subsFocusChange?.unsubscribe()
         eventBus.unregister(this)
         syncInteractor.removeLoadingListener(syncInteractorListener)
@@ -484,7 +466,7 @@ class MainWidget : Fragment(), MainContract.View {
                         buttons = *arrayOf(ButtonType.NO, ButtonType.YES),
                         actionFn = { buttonType ->
                             when (buttonType) {
-                                ButtonType.YES -> logStorage.delete(event.logs.first())
+                                ButtonType.YES -> activeDisplayRepository.delete(event.logs.first())
                                 else -> logger.info("Delete dialog dismissed")
                             }
                         }
@@ -493,13 +475,17 @@ class MainWidget : Fragment(), MainContract.View {
             }
             LogEditType.CLONE -> {
                 val logToClone = event.logs.first()
-                val newLog = SimpleLogBuilder()
-                        .setStart(logToClone.start)
-                        .setEnd(logToClone.end)
-                        .setTask(logToClone.task)
-                        .setComment(logToClone.comment)
-                        .build()
-                logStorage.insert(newLog)
+                val newLog = Log.new(
+                    timeProvider = timeProvider,
+                    start = logToClone.time.startAsRaw,
+                    end = logToClone.time.endAsRaw,
+                    code = logToClone.code.code,
+                    comment = logToClone.comment,
+                    systemNote = "",
+                    author = "",
+                    remoteData = null
+                )
+                activeDisplayRepository.insertOrUpdate(newLog)
             }
             LogEditType.SPLIT -> {
                 resultDispatcher.publish(TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
@@ -507,7 +493,7 @@ class MainWidget : Fragment(), MainContract.View {
             }
             LogEditType.WEBLINK -> {
                 val activeLog = event.logs.first()
-                val webLink = jiraLinkGenerator.webLinkFromInput(activeLog.task)
+                val webLink = jiraLinkGenerator.webLinkFromInput(activeLog.code.code)
                 if (webLink.isNotEmpty()) {
                     val message = EmojiParser.parseToUnicode("Copied $webLink :rocket:")
                     eventBus.post(EventSnackBarMessage(message))
@@ -519,7 +505,7 @@ class MainWidget : Fragment(), MainContract.View {
             }
             LogEditType.BROWSER -> {
                 val activeLog = event.logs.first()
-                val webLink = jiraLinkGenerator.webLinkFromInput(activeLog.task)
+                val webLink = jiraLinkGenerator.webLinkFromInput(activeLog.code.code)
                 if (webLink.isNotEmpty()) {
                     hostServicesInteractor.openLink(webLink)
                 } else {
@@ -527,7 +513,7 @@ class MainWidget : Fragment(), MainContract.View {
                     eventBus.post(EventSnackBarMessage(message))
                 }
             }
-        }.javaClass
+        }
     }
 
     //endregion

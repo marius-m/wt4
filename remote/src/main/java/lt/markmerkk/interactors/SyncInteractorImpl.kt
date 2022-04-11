@@ -1,7 +1,6 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.*
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.worklogs.WorklogApi
@@ -12,19 +11,18 @@ import java.net.UnknownHostException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Created by mariusmerkevicius on 1/5/16. Handles synchronization with jira from other components
+ * Handles synchronization with jira from other components
  */
 class SyncInteractorImpl(
-        private val logStorage: IDataStorage<SimpleLog>,
-        private val dayProvider: DayProvider,
-        private val worklogApi: WorklogApi,
-        private val worklogStorage: WorklogStorage,
-        private val timeProvider: TimeProvider,
-        private val jiraClientProvider: JiraClientProvider,
-        private val userSettings: UserSettings,
-        private val jiraBasicApi: JiraBasicApi,
-        private val uiScheduler: Scheduler,
-        private val ioScheduler: Scheduler
+    private val worklogApi: WorklogApi,
+    private val worklogStorage: WorklogStorage,
+    private val timeProvider: TimeProvider,
+    private val jiraClientProvider: JiraClientProvider,
+    private val userSettings: UserSettings,
+    private val jiraBasicApi: JiraBasicApi,
+    private val activeDisplayRepository: ActiveDisplayRepository,
+    private val uiScheduler: Scheduler,
+    private val ioScheduler: Scheduler
 ) : SyncInteractor {
 
     // todo replace this with event bus
@@ -50,9 +48,10 @@ class SyncInteractorImpl(
     }
 
     override fun syncActiveTime() {
-        val startDate = timeProvider.roundDateTime(dayProvider.startMillis()).toLocalDate()
-        val endDate = timeProvider.roundDateTime(dayProvider.endMillis()).toLocalDate()
-        syncLogs(startDate, endDate)
+        syncLogs(
+            startDate = activeDisplayRepository.displayDateRange.start,
+            endDate = activeDisplayRepository.displayDateRange.endAsNextDay
+        )
     }
 
     override fun syncLogs(
@@ -86,7 +85,7 @@ class SyncInteractorImpl(
                 .doOnSubscribe { changeLoadingState(true) }
                 .doAfterTerminate {
                     changeLoadingState(false)
-                    logStorage.notifyDataChange()
+                    activeDisplayRepository.notifyDataChange()
                 }
                 .subscribe({
                     val syncEnd = System.currentTimeMillis()
@@ -107,7 +106,7 @@ class SyncInteractorImpl(
                         }
                     }
                     logger.error("=== Sync error ===")
-                    logStorage.notifyDataChange()
+                    activeDisplayRepository.notifyDataChange()
                 })
     }
 

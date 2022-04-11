@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 /**
  * Synchronous storage
  */
-@Deprecated("Should be replaced with WorklogStorage as it serves the same purpose")
+@Deprecated("Should be replaced with WorklogStorage as it serves the same purpose / Or LogStorage2")
 class LogStorage(
         private val worklogStorage: WorklogStorage,
         private val timeProvider: TimeProvider,
@@ -42,7 +42,7 @@ class LogStorage(
         listeners.remove(listener)
     }
 
-    override fun insert(dataEntity: SimpleLog): Int {
+    override fun insert(dataEntity: SimpleLog): Long {
         val log = dataEntity.toLog(timeProvider)
         val newId = worklogStorage.insertOrUpdateSync(log)
         autoSyncWatcher.markForShortCycleUpdate()
@@ -50,7 +50,7 @@ class LogStorage(
         return newId
     }
 
-    override fun delete(dataEntity: SimpleLog): Int {
+    override fun delete(dataEntity: SimpleLog): Long {
         val log = dataEntity.toLog(timeProvider)
         val newId = worklogStorage.deleteSync(log)
         autoSyncWatcher.markForShortCycleUpdate()
@@ -58,7 +58,7 @@ class LogStorage(
         return newId
     }
 
-    override fun update(dataEntity: SimpleLog): Int {
+    override fun update(dataEntity: SimpleLog): Long {
         val log = dataEntity.toLog(timeProvider)
         val newId = worklogStorage.updateSync(log)
         autoSyncWatcher.markForShortCycleUpdate()

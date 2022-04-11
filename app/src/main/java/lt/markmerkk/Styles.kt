@@ -15,10 +15,15 @@ class Styles: Stylesheet() {
         val jfxButtonType by cssproperty<JFXButton.ButtonType>("-jfx-button-type") { it.name }
 
         val dialogHeader by cssclass()
+        val dialogH1TextColorful by cssclass()
+        val dialogH9TextColorful by cssclass()
+        val dialogHeaderContainerColorful by cssclass()
         val sidePanelHeader by cssclass()
         val sidePanelContainer by cssclass()
         val dialogContainer by cssclass()
+        val dialogContainerColorContent by cssclass()
         val dialogContainerActionsButtons by cssclass()
+        val dialogContainerColorActionsButtons by cssclass()
         val dialogButtonAction by cssclass()
         val buttonMenu by cssclass()
         val buttonMenuMini by cssclass()
@@ -40,6 +45,9 @@ class Styles: Stylesheet() {
         val cActivatePrimary = c("#FF9800")
         val cActivateDark = c("#FF9100")
         val cActivateDarkest = c("#FF6D00")
+
+        val cTextHeaderColorful = Color.WHITE
+        val cTextMini = c("#FF6D00")
 
         val cActiveRed = c("#E91E63")
         val cActiveOrange = Color.ORANGE
@@ -64,12 +72,30 @@ class Styles: Stylesheet() {
                     bottom = 10.px
             )
         }
+        dialogContainerColorContent {
+            backgroundColor += Color.WHITE
+            padding = box(
+                top = 10.px,
+                left = 20.px,
+                right = 20.px,
+                bottom = 10.px
+            )
+        }
         dialogContainerActionsButtons {
             padding = box(
                     top = 10.px,
                     left = 0.px,
                     right = 0.px,
                     bottom = 0.px
+            )
+        }
+        dialogContainerColorActionsButtons {
+            backgroundColor += Color.WHITE
+            padding = box(
+                top = 10.px,
+                left = 20.px,
+                right = 20.px,
+                bottom = 10.px
             )
         }
         dialogHeader {
@@ -81,6 +107,21 @@ class Styles: Stylesheet() {
                     right = 0.px,
                     bottom = 20.px
             )
+        }
+        dialogH1TextColorful {
+            textFill = cTextHeaderColorful
+            fontSize = 24.pt
+            fontFamily = "Verdana"
+        }
+        dialogH9TextColorful {
+            textFill = cTextHeaderColorful
+            fontSize = 8.pt
+            fontFamily = "Verdana"
+        }
+        dialogHeaderContainerColorful {
+            backgroundColor += cActiveRed
+            minHeight = 82.px
+            maxHeight = 82.px
         }
         sidePanelHeader {
             fontSize = 16.pt

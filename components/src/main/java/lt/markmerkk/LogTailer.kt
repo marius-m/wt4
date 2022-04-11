@@ -63,14 +63,12 @@ class LogTailer(
             val listener = object : TailerListener {
 
                 override fun handle(line: String?) {
-                    logger.debug("Emitting items: $line")
                     if (line != null) {
                         emitter.onNext(line)
                     }
                 }
 
                 override fun handle(ex: Exception) {
-                    logger.debug("handle(): $ex")
                     tailer?.stop()
                     emitter.onError(ex)
                 }
@@ -85,8 +83,8 @@ class LogTailer(
 
                 override fun fileNotFound() {
                     tailer?.stop()
-                    logger.warn("File not found!")
-                    emitter.onError(IllegalArgumentException("File not found!"))
+                    logger.warn("File not found! (${file.absolutePath})")
+                    emitter.onError(IllegalArgumentException("File not found! (${file.absolutePath})"))
                 }
             }
             Tailer.create(file, listener, 2000L)

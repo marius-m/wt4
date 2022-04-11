@@ -4,24 +4,37 @@ import com.jfoenix.svg.SVGGlyph
 import javafx.scene.Parent
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Paint
-import lt.markmerkk.*
+import lt.markmerkk.Const
+import lt.markmerkk.Graphics
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Main
+import lt.markmerkk.MaterialColors
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.ui_2.views.VisibilityChangeableView
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.validators.TimeChangeValidator
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.box
+import tornadofx.hgrow
+import tornadofx.px
+import tornadofx.style
+import tornadofx.vbox
+import tornadofx.vgrow
 import javax.inject.Inject
 
-class QuickEditContainerWidget: Fragment(),
-        QuickEditContract.ContainerView,
-        QuickEditActionChangeListener,
-        VisibilityChangeableView
-{
+class QuickEditContainerWidget : Fragment(),
+    QuickEditContract.ContainerView,
+    QuickEditActionChangeListener,
+    VisibilityChangeableView {
 
-    @Inject lateinit var logStorage: LogStorage
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus
     @Inject lateinit var logChangeValidator: LogChangeValidator
+    @Inject lateinit var worklogStorage: WorklogStorage
+    @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     init {
         Main.component().inject(this)
@@ -31,70 +44,73 @@ class QuickEditContainerWidget: Fragment(),
 
     private val timeChangeValidator = TimeChangeValidator
     private val quickEditActions = setOf(
-            QuickEditAction.MOVE,
-            QuickEditAction.SCALE,
-            QuickEditAction.SCALE10x
+        QuickEditAction.MOVE,
+        QuickEditAction.SCALE,
+        QuickEditAction.SCALE10x
     )
     private val uiPrefs = QuickEditUiPrefs(
-            prefHeightContainer = 28.0,
-            prefWidthTypeSelector = 120.0,
-            prefWidthActionIcons = 28.0,
-            maxWidthContainer = 240.0, // 4 * actionIcons + typeSelector
-            widthActionIcon = 8.0,
-            heightActionIcon = 8.0,
-            widthActionIconFaster = 14.0,
-            heightActionIconFaster = 10.0
+        prefHeightContainer = 28.0,
+        prefWidthTypeSelector = 120.0,
+        prefWidthActionIcons = 28.0,
+        maxWidthContainer = 240.0, // 4 * actionIcons + typeSelector
+        widthActionIcon = 8.0,
+        heightActionIcon = 8.0,
+        widthActionIconFaster = 14.0,
+        heightActionIconFaster = 10.0
     )
-
 
     private val selectEntryProvider = object : QuickEditContract.SelectEntryProvider {
         override fun suggestNewEntry(newEntryId: Long) {
             selectedLogId = newEntryId
         }
+
         override fun entryId(): Long = selectedLogId
     }
     private val widgetMap = mapOf<QuickEditAction, Fragment>(
-            QuickEditAction.MOVE to QuickEditWidgetMove(
-                    quickEditActions = quickEditActions,
-                    quickEditActionChangeListener = this,
-                    uiPrefs = uiPrefs,
-                    graphics = graphics,
-                    presenter = QuickEditPresenterMove(
-                            logStorage,
-                            timeChangeValidator,
-                            timeProvider,
-                            logChangeValidator,
-                            selectEntryProvider
-                    )
-            ),
-            QuickEditAction.SCALE to QuickEditWidgetScale(
-                    quickEditActions = quickEditActions,
-                    quickEditActionChangeListener = this,
-                    uiPrefs = uiPrefs,
-                    graphics = graphics,
-                    scaleStepMinutes = 1,
-                    presenter = QuickEditPresenterScale(
-                            logStorage,
-                            timeChangeValidator,
-                            timeProvider,
-                            logChangeValidator,
-                            selectEntryProvider
-                    )
-            ),
-            QuickEditAction.SCALE10x to QuickEditWidgetScale(
-                    quickEditActions = quickEditActions,
-                    quickEditActionChangeListener = this,
-                    uiPrefs = uiPrefs,
-                    graphics = graphics,
-                    scaleStepMinutes = 10,
-                    presenter = QuickEditPresenterScale(
-                            logStorage,
-                            timeChangeValidator,
-                            timeProvider,
-                            logChangeValidator,
-                            selectEntryProvider
-                    )
+        QuickEditAction.MOVE to QuickEditWidgetMove(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
+            uiPrefs = uiPrefs,
+            graphics = graphics,
+            presenter = QuickEditPresenterMove(
+                timeChangeValidator,
+                timeProvider,
+                logChangeValidator,
+                selectEntryProvider,
+                worklogStorage,
+                activeDisplayRepository
             )
+        ),
+        QuickEditAction.SCALE to QuickEditWidgetScale(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
+            uiPrefs = uiPrefs,
+            graphics = graphics,
+            scaleStepMinutes = 1,
+            presenter = QuickEditPresenterScale(
+                timeChangeValidator,
+                timeProvider,
+                logChangeValidator,
+                selectEntryProvider,
+                worklogStorage,
+                activeDisplayRepository
+            )
+        ),
+        QuickEditAction.SCALE10x to QuickEditWidgetScale(
+            quickEditActions = quickEditActions,
+            quickEditActionChangeListener = this,
+            uiPrefs = uiPrefs,
+            graphics = graphics,
+            scaleStepMinutes = 10,
+            presenter = QuickEditPresenterScale(
+                timeChangeValidator,
+                timeProvider,
+                logChangeValidator,
+                selectEntryProvider,
+                worklogStorage,
+                activeDisplayRepository
+            )
+        )
     )
 
     override val root: Parent = vbox {
@@ -144,14 +160,14 @@ class QuickEditContainerWidget: Fragment(),
 
     override fun onActiveActionChange(quickEditAction: QuickEditAction) {
         widgetMap.values
-                .filterIsInstance<QuickEditChangableAction>()
-                .forEach { it.changeActiveAction(quickEditAction) }
+            .filterIsInstance<QuickEditChangableAction>()
+            .forEach { it.changeActiveAction(quickEditAction) }
         widgetMap.getValue(quickEditAction)
-                .let { (it as VisibilityChangeableView).changeVisibility(isVisible = true) }
+            .let { (it as VisibilityChangeableView).changeVisibility(isVisible = true) }
         widgetMap
-                .filter { it.key != quickEditAction }
-                .map { it.value }
-                .filterIsInstance<VisibilityChangeableView>()
-                .forEach { it.changeVisibility(isVisible = false) }
+            .filter { it.key != quickEditAction }
+            .map { it.value }
+            .filterIsInstance<VisibilityChangeableView>()
+            .forEach { it.changeVisibility(isVisible = false) }
     }
 }
