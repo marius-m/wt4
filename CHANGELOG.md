@@ -1,6 +1,16 @@
 # Changelog
 
-Current: 1.7.7
+Current: 1.9.2
+
+## 1.9.2
+- New OS systems introduced new challenges for the app to work properly, needed to repackage with newest JRE + JFX modules (MacOS had problems, also M1)
+  - New OS also introduced in breaking JFX UI components and misbehaving, had to replace them entirely. So now we have _new time and date selection_
+  - Still same problem remains for code sign on _MacOS_, so you'll have to run `sudo xattr -rd com.apple.quarantine /Applications/WT4-basic.app` for the app to launch.
+- Initializing package system with auto-update (still not enabled yet, in new version maybe)
+  - Hopefully this fixes code signing and launch problems as well 🤞
+- Logging changed from `Log4j` to `logback`
+  - Changed due to having more experience, more logs are piped therough (now it should even pipe System.out)
+  - Also `Log4j` having infamous bug, however it should not cause too many problems, as it is a local app and does not expose anything outside (unlike web)
 
 ## 1.8.0
 - Major internal change - move from Java8 to Java11
