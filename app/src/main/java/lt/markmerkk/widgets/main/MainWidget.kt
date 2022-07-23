@@ -194,7 +194,7 @@ class MainWidget : Fragment(), MainContract.View {
             direction = JFXDrawer.DrawerDirection.LEFT
             isOverLayVisible = true
             isResizableOnDrag = true
-            defaultDrawerSize = 340.0
+            defaultDrawerSize = 400.0
             setOnDrawerOpened {
                 sidePaneHandler.notifyOnSidePaneChange()
             }
