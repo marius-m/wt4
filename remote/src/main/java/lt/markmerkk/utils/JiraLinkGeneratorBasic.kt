@@ -13,21 +13,8 @@ class JiraLinkGeneratorBasic(
         private val accountAvailablility: AccountAvailablility
 ): JiraLinkGenerator {
 
-    private var subsInputTicketCode: Subscription? = null
-
     override fun onAttach() { }
-    override fun onDetach() {
-        subsInputTicketCode?.unsubscribe()
-    }
-
-    override fun attachTicketCodeInput(inputTicketCodeAsStream: Observable<String>) {
-        subsInputTicketCode = inputTicketCodeAsStream
-                .subscribe({
-                    handleTicketInput(it)
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
-    }
+    override fun onDetach() { }
 
     override fun webLinkFromInput(ticketCodeAsString: String): String {
         val host = accountAvailablility.host()

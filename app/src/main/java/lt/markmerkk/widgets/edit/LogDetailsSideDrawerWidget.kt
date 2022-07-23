@@ -612,15 +612,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
         // uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
-        ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
-        JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
-                .subscribe({
-                    presenter.changeTicketCode(it)
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
+        ticketInfoLoader.findTicket(viewTextFieldTicket.text.toString())
         jiraLinkGenerator.onAttach()
-        jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
         JavaFxObservable.valuesOf(viewTextComment.textArea.textProperty())
                 .subscribe({
@@ -634,6 +627,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 }, { error ->
                     logger.warn("JFX prop error", error)
                 })
+        viewTextFieldTicket.textProperty().addListener(listenerTextChangeInputTicket)
         viewTextFieldTicket.focusedProperty().addListener(listenerFocusChangeInputTicket)
         initTimePickSelectValues()
         root.setOnMouseClicked {
@@ -647,6 +641,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
+        viewTextFieldTicket.textProperty().removeListener(listenerTextChangeInputTicket)
         viewTextFieldTicket.focusedProperty().removeListener(listenerFocusChangeInputTicket)
         contextMenuTicketSelect.onDetach()
         recentTicketLoader.onDetach()
@@ -711,6 +706,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     //region Listeners
+
+    private val listenerTextChangeInputTicket = ChangeListener<String> { _, _, newValue ->
+        ticketInfoLoader.findTicket(newValue)
+        jiraLinkGenerator.handleTicketInput(newValue)
+        presenter.changeTicketCode(newValue)
+    }
 
     private val listenerFocusChangeInputTicket = ChangeListener<Boolean> { _, _, newValue ->
         handleRecentVisibility()

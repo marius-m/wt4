@@ -6,7 +6,6 @@ import rx.Observable
 interface JiraLinkGenerator {
     fun onAttach()
     fun onDetach()
-    fun attachTicketCodeInput(inputTicketCodeAsStream: Observable<String>)
 
     /**
      * @return generates a valid web link or empty
