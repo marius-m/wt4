@@ -7,6 +7,8 @@ import com.jfoenix.svg.SVGGlyph
 import com.vdurmont.emoji.EmojiParser
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
@@ -16,7 +18,9 @@ import javafx.scene.control.TextInputControl
 import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCombination
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
+import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Modality
@@ -129,7 +133,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var worklogStorage: WorklogStorage
 
     private lateinit var viewLabelHeader: Label
-    private lateinit var viewContainerMain: VBox
+    private lateinit var viewContainerMain: Region
     private lateinit var viewDatePickerFrom: JFXTextField
     private lateinit var viewTimePickerFrom: JFXTextField
     private lateinit var viewTimePickerFromOptions: ListView<BasicTimePickViewModel>
@@ -214,7 +218,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 }
             }
             center {
-                viewContainerMain = vbox(spacing = 10) {
+                vbox(spacing = 10) {
                     label("Time range") {
                         addClass(Styles.labelMini)
                         style {
@@ -637,12 +641,9 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     logger.warn("JFX prop error", error)
                 })
         initTimePickSelectValues()
-        viewTextComment.textArea.focusedProperty().addListener(listenerClosePopOverOnFocus)
-        viewTextFieldTicket.focusedProperty().addListener(listenerClosePopOverOnFocus)
-        viewTimePickerFrom.focusedProperty().addListener(listenerClosePopOverOnFocus)
-        viewTimePickerTo.focusedProperty().addListener(listenerClosePopOverOnFocus)
-        viewDatePickerFrom.focusedProperty().addListener(listenerClosePopOverOnFocus)
-        viewDatePickerTo.focusedProperty().addListener(listenerClosePopOverOnFocus)
+        root.setOnMouseClicked {
+            popOverElementsCloseAll()
+        }
         recentTicketLoader.fetch()
         Platform.runLater {
             viewTextComment.textArea.requestFocus()
@@ -651,12 +652,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
-        viewTimePickerFrom.focusedProperty().removeListener(listenerClosePopOverOnFocus)
-        viewTimePickerTo.focusedProperty().removeListener(listenerClosePopOverOnFocus)
-        viewDatePickerFrom.focusedProperty().removeListener(listenerClosePopOverOnFocus)
-        viewDatePickerTo.focusedProperty().removeListener(listenerClosePopOverOnFocus)
-        viewTextFieldTicket.focusedProperty().removeListener(listenerClosePopOverOnFocus)
-        viewTextComment.textArea.focusedProperty().removeListener(listenerClosePopOverOnFocus)
         contextMenuTicketSelect.onDetach()
         recentTicketLoader.onDetach()
         logger.debug("LogDetails:onUndock()")
@@ -735,10 +730,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
             .withEndTime(newValue.time)
         presenter.changeDateTime(timeGap)
         initTimePickSelectValues()
-    }
-
-    private val listenerClosePopOverOnFocus = ChangeListener<Boolean> { _, _, newValue ->
-        popOverElementsCloseAll()
     }
 
     //endregion
