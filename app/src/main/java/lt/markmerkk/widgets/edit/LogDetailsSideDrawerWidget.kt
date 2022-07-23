@@ -621,12 +621,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 }, { error ->
                     logger.warn("JFX prop error", error)
                 })
-        JavaFxObservable.valuesOf(viewTableRecent.focusedProperty())
-                .subscribe({
-                    handleRecentVisibility()
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
+        viewTableRecent.focusedProperty().addListener(listenerFocusChangeListRecentTickets)
         viewTextFieldTicket.textProperty().addListener(listenerTextChangeInputTicket)
         viewTextFieldTicket.focusedProperty().addListener(listenerFocusChangeInputTicket)
         initTimePickSelectValues()
@@ -641,6 +636,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
+        viewTableRecent.focusedProperty().removeListener(listenerFocusChangeListRecentTickets)
         viewTextFieldTicket.textProperty().removeListener(listenerTextChangeInputTicket)
         viewTextFieldTicket.focusedProperty().removeListener(listenerFocusChangeInputTicket)
         contextMenuTicketSelect.onDetach()
@@ -706,6 +702,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     //region Listeners
+
+    private val listenerFocusChangeListRecentTickets = ChangeListener<Boolean> { _, _, newValue ->
+        handleRecentVisibility()
+    }
 
     private val listenerTextChangeInputTicket = ChangeListener<String> { _, _, newValue ->
         ticketInfoLoader.findTicket(newValue)
