@@ -634,12 +634,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 }, { error ->
                     logger.warn("JFX prop error", error)
                 })
-        JavaFxObservable.valuesOf(viewTextFieldTicket.focusedProperty())
-                .subscribe({
-                    handleRecentVisibility()
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
+        viewTextFieldTicket.focusedProperty().addListener(listenerFocusChangeInputTicket)
         initTimePickSelectValues()
         root.setOnMouseClicked {
             popOverElementsCloseAll()
@@ -652,6 +647,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
+        viewTextFieldTicket.focusedProperty().removeListener(listenerFocusChangeInputTicket)
         contextMenuTicketSelect.onDetach()
         recentTicketLoader.onDetach()
         logger.debug("LogDetails:onUndock()")
@@ -716,6 +712,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     //region Listeners
 
+    private val listenerFocusChangeInputTicket = ChangeListener<Boolean> { _, _, newValue ->
+        handleRecentVisibility()
+    }
+
     private val listenerTimePickFrom = ChangeListener<BasicTimePickViewModel> { _, _, newValue ->
         viewTimePickerFromPopOver.hide(Duration.ZERO)
         val timeGap = timeGapGenerator.generateTimeGap()
@@ -738,68 +738,78 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     @Subscribe
     fun onFocusLogDetailsWidget(event: EventFocusLogDetailsWidget) {
-        viewTextComment.textArea.requestFocus()
-        viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+        Platform.runLater {
+            viewTextComment.textArea.requestFocus()
+            viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+        }
     }
 
     @Subscribe
     fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
-        viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+        Platform.runLater {
+            viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+        }
     }
 
     @Subscribe
     fun eventSave(event: EventLogDetailsSave) {
-        presenter.save()
+        Platform.runLater {
+            presenter.save()
+        }
     }
 
     @Subscribe
     fun eventChangeTime(event: EventChangeTime) {
-        val timeSelectResult = resultDispatcher.consume(
-            TimePickerWidget.RESULT_DISPATCH_KEY_RESULT,
-            TimeSelectResult::class.java
-        )
-        if (timeSelectResult != null) {
-            val timeSelectType = TimeSelectType.fromRaw(timeSelectResult.extra)
-            when (timeSelectType) {
-                TimeSelectType.UNKNOWN -> {}
-                TimeSelectType.FROM -> {
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withStartTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-                TimeSelectType.TO -> {
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withEndTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-            }.javaClass
+        Platform.runLater {
+            val timeSelectResult = resultDispatcher.consume(
+                TimePickerWidget.RESULT_DISPATCH_KEY_RESULT,
+                TimeSelectResult::class.java
+            )
+            if (timeSelectResult != null) {
+                val timeSelectType = TimeSelectType.fromRaw(timeSelectResult.extra)
+                when (timeSelectType) {
+                    TimeSelectType.UNKNOWN -> {}
+                    TimeSelectType.FROM -> {
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withStartTime(timeSelectResult.timeSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                    TimeSelectType.TO -> {
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withEndTime(timeSelectResult.timeSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                }.javaClass
+            }
         }
     }
 
     @Subscribe
     fun eventChangeDate(event: EventChangeDate) {
-        val dateSelectResult = resultDispatcher.peek(
-            DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
-            DateSelectResult::class.java
-        )
-        if (dateSelectResult != null) {
-            val dateSelectType = DateSelectType.fromRaw(dateSelectResult.extra)
-            when (dateSelectType) {
-                DateSelectType.UNKNOWN,
-                DateSelectType.TARGET_DATE -> {}
-                DateSelectType.SELECT_FROM -> {
-                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withStartDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-                DateSelectType.SELECT_TO -> {
-                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withEndDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-            }.javaClass
+        Platform.runLater {
+            val dateSelectResult = resultDispatcher.peek(
+                DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
+                DateSelectResult::class.java
+            )
+            if (dateSelectResult != null) {
+                val dateSelectType = DateSelectType.fromRaw(dateSelectResult.extra)
+                when (dateSelectType) {
+                    DateSelectType.UNKNOWN,
+                    DateSelectType.TARGET_DATE -> {}
+                    DateSelectType.SELECT_FROM -> {
+                        resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withStartDate(dateSelectResult.dateSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                    DateSelectType.SELECT_TO -> {
+                        resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withEndDate(dateSelectResult.dateSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                }.javaClass
+            }
         }
     }
 

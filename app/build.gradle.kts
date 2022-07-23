@@ -54,7 +54,6 @@ dependencies {
     implementation("com.jfoenix:jfoenix:9.0.9")
     implementation("io.reactivex:rxjavafx:1.1.0")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
-    implementation("io.reactivex:rxjava-async-util:${Versions.rxJavaAsync}")
     implementation("org.bouncycastle:bcprov-jdk15on:1.51")
     implementation("com.google.protobuf:protobuf-java:3.7.0")
     implementation("org.scribe:scribe:1.3.7")
