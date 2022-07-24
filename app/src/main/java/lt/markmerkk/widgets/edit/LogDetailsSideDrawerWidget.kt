@@ -417,10 +417,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             maxWidth = 100.0
                         }
                         readonlyColumn("Description", RecentTicketViewModel::description) { }
-                        readonlyColumn("Last used", RecentTicketViewModel::lastUsed) {
-                            minWidth = 100.0
-                            maxWidth = 100.0
-                        }
                         hide()
                     }
                     hbox {
@@ -628,6 +624,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
         root.setOnMouseClicked {
             popOverElementsCloseAll()
         }
+        recentTicketLoader.filterLoadedTickets(rawInput = viewTextFieldTicket.text)
         recentTicketLoader.fetch()
         Platform.runLater {
             viewTextComment.textArea.requestFocus()
@@ -708,6 +705,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     private val listenerTextChangeInputTicket = ChangeListener<String> { _, _, newValue ->
+        recentTicketLoader.filterLoadedTickets(
+            publishResults = true,
+            rawInput = newValue,
+        )
         ticketInfoLoader.findTicket(newValue)
         jiraLinkGenerator.handleTicketInput(newValue)
         presenter.changeTicketCode(newValue)
