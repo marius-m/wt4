@@ -29,7 +29,7 @@ class RecentTicketLoader(
 
     fun fetch() {
         fetchSub?.unsubscribe()
-        fetchSub = ticketStorage.fetchRecentTickets(20)
+        fetchSub = ticketStorage.fetchRecentTickets(DEFAULT_MAX_RECENT_VALUES)
                 .flatMapObservable { Observable.from(it) }
                 .flatMapSingle { ticketUseHistory ->
                     ticketStorage.findTicketsByCode(ticketUseHistory.code.code)
@@ -91,5 +91,6 @@ class RecentTicketLoader(
 
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.TICKETS)
+        private const val DEFAULT_MAX_RECENT_VALUES = 40
     }
 }
