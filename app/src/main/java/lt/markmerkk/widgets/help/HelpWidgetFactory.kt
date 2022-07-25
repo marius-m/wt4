@@ -1,6 +1,8 @@
 package lt.markmerkk.widgets.help
 
 import javafx.scene.Node
+import lt.markmerkk.widgets.edit.timepick.PopOverConfig
+import lt.markmerkk.widgets.edit.timepick.PopOverConfigHelp
 import org.controlsfx.control.PopOver
 import tornadofx.*
 
@@ -12,7 +14,8 @@ class HelpWidgetFactory(
 
     fun createHelpIconWith(
         anchorNode: Node,
-        helpRes: ResourceHelp
+        helpRes: ResourceHelp,
+        popOverConfig: PopOverConfigHelp = PopOverConfigHelp(title = helpRes.title),
     ): SVGIcon {
         return SVGIcon(imgResLoader.imageResRaw(ResourceSvg.HELP), size = 14).apply {
             setOnMouseClicked {
@@ -29,8 +32,7 @@ class HelpWidgetFactory(
                         }
                     }
                 ).apply {
-                    title = "test"
-                    arrowLocation = PopOver.ArrowLocation.RIGHT_CENTER
+                    popOverConfig.applyValues(this)
                 }.show(anchorNode)
             }
         }

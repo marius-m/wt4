@@ -83,6 +83,7 @@ import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import lt.markmerkk.widgets.edit.timepick.BasicTimePickItemFragment
 import lt.markmerkk.widgets.edit.timepick.BasicTimePickViewModel
 import lt.markmerkk.widgets.edit.timepick.PopOverConfigDrawerTimeSelect
+import lt.markmerkk.widgets.edit.timepick.PopOverConfigHelp
 import lt.markmerkk.widgets.help.HelpWidgetFactory
 import lt.markmerkk.widgets.help.ResourceHelp
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
@@ -369,6 +370,10 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             helpWidgetFactory.createHelpIconWith(
                                 anchorNode = viewTextFieldTicket,
                                 helpRes = ResourceHelp.RECENT_TICKET_FILTER,
+                                popOverConfig = PopOverConfigHelp(
+                                    title = ResourceHelp.RECENT_TICKET_FILTER.title,
+                                    arrowLocation = PopOver.ArrowLocation.TOP_LEFT,
+                                )
                             )
                         )
                     }
