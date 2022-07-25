@@ -274,23 +274,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
                                 viewTimePickerFromPopOver.show(timePicker)
                             }
                         }
-                        jfxButton {
-                            graphic = graphics.from(Glyph.CLOCK, Color.BLACK, 12.0)
-                            setOnMouseClicked {
-                                resultDispatcher.publish(
-                                    key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
-                                    resultEntity = TimeSelectRequest.asTimeFrom(
-                                        timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerFrom.text)
-                                    )
-                                )
-                                find<TimePickerWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = false
-                                )
-                            }
-                        }
                         label("-")
                         viewDatePickerTo = jfxTextField {
                             minWidth = 100.0
@@ -332,23 +315,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             val timePicker = this
                             setOnMouseClicked {
                                 viewTimePickerToPopOver.show(timePicker)
-                            }
-                        }
-                        jfxButton {
-                            graphic = graphics.from(Glyph.CLOCK, Color.BLACK, 12.0)
-                            setOnMouseClicked {
-                                resultDispatcher.publish(
-                                    key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
-                                    resultEntity = TimeSelectRequest.asTimeTo(
-                                        timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerTo.text)
-                                    )
-                                )
-                                find<TimePickerWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = false
-                                )
                             }
                         }
                     }
