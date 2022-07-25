@@ -83,6 +83,8 @@ import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import lt.markmerkk.widgets.edit.timepick.BasicTimePickItemFragment
 import lt.markmerkk.widgets.edit.timepick.BasicTimePickViewModel
 import lt.markmerkk.widgets.edit.timepick.PopOverConfigDrawerTimeSelect
+import lt.markmerkk.widgets.help.HelpWidgetFactory
+import lt.markmerkk.widgets.help.ResourceHelp
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.wrapAsSource
@@ -131,6 +133,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var accountAvailablility: AccountAvailablility
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
     @Inject lateinit var worklogStorage: WorklogStorage
+    @Inject lateinit var helpWidgetFactory: HelpWidgetFactory
 
     private lateinit var viewLabelHeader: Label
     private lateinit var viewContainerMain: Region
@@ -362,6 +365,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             shortcut(KeyCombination.valueOf("Ctrl+f"))
                             shortcut(KeyCombination.valueOf("Meta+f"))
                         }
+                        add(
+                            helpWidgetFactory.createHelpIconWith(
+                                anchorNode = viewTextFieldTicket,
+                                helpRes = ResourceHelp.RECENT_TICKET_FILTER,
+                            )
+                        )
                     }
                     viewTableRecent = tableview(recentTicketViewModels) {
                         minHeight = 120.0

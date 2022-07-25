@@ -36,12 +36,5 @@ class HelpResourceLoader(
 }
 
 enum class ResourceHelp(val resFileName: String) {
-    AR_ACTIVE("ar_help_active.md"),
-    AR_ACTIVE_MULTI("ar_help_active_multi.md"),
-    AR_INACTIVE("ar_help_inactive.md"),
-    INVERT_PAGE("invert_page.md"),
-    FIELD_TYPE("field_type.md"),
-    PDF_READ("pdf-read.md"),
-    PDF_READ_LANG("pdf-read-lang.md"),
-    SHORTCUT_SAVE("shortcut-save.md"),
+    RECENT_TICKET_FILTER("recent_ticket_filter.md"),
 }

@@ -21,8 +21,11 @@ class HelpWidgetFactory(
                         style {
                             padding = box(all = 10.px)
                         }
-                        markdown(helpResLoader.helpResRaw(helpRes)) {
-                            minWidth = 320.0
+                        // markdown(helpResLoader.helpResRaw(helpRes)) {
+                        //     minWidth = 320.0
+                        // }
+                        textarea {
+                            text = helpResLoader.helpResRaw(helpRes)
                         }
                     }
                 ).apply {
