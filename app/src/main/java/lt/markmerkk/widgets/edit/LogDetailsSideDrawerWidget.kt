@@ -6,19 +6,42 @@ import com.jfoenix.controls.JFXTextField
 import com.jfoenix.svg.SVGGlyph
 import com.vdurmont.emoji.EmojiParser
 import javafx.application.Platform
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.control.ListView
 import javafx.scene.control.TableView
 import javafx.scene.control.TextInputControl
 import javafx.scene.control.Tooltip
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCombination
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
+import javafx.scene.layout.Region
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.StageStyle
-import lt.markmerkk.*
+import javafx.util.Duration
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.AutoSyncWatcher2
+import lt.markmerkk.BuildConfig
+import lt.markmerkk.Glyph
+import lt.markmerkk.Graphics
+import lt.markmerkk.Main
+import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.SchedulerProvider
+import lt.markmerkk.Styles
+import lt.markmerkk.TicketStorage
+import lt.markmerkk.TimeGapGenerator
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
+import lt.markmerkk.ViewProvider
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.datepick.DateSelectRequest
 import lt.markmerkk.datepick.DateSelectResult
 import lt.markmerkk.datepick.DateSelectType
@@ -30,7 +53,15 @@ import lt.markmerkk.entities.TimeGap.Companion.withEndDate
 import lt.markmerkk.entities.TimeGap.Companion.withEndTime
 import lt.markmerkk.entities.TimeGap.Companion.withStartDate
 import lt.markmerkk.entities.TimeGap.Companion.withStartTime
-import lt.markmerkk.events.*
+import lt.markmerkk.events.EventChangeDate
+import lt.markmerkk.events.EventChangeTime
+import lt.markmerkk.events.EventFocusLogDetailsWidget
+import lt.markmerkk.events.EventLogDetailsSave
+import lt.markmerkk.events.EventMainCloseLogDetails
+import lt.markmerkk.events.EventMainCloseTickets
+import lt.markmerkk.events.EventMainOpenTickets
+import lt.markmerkk.events.EventSnackBarMessage
+import lt.markmerkk.events.EventSuggestTicket
 import lt.markmerkk.interactors.ActiveLogPersistence
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.tickets.RecentTicketLoader
@@ -38,7 +69,9 @@ import lt.markmerkk.tickets.TicketInfoLoader
 import lt.markmerkk.timeselect.entities.TimeSelectRequest
 import lt.markmerkk.timeselect.entities.TimeSelectResult
 import lt.markmerkk.timeselect.entities.TimeSelectType
-import lt.markmerkk.ui_2.views.*
+import lt.markmerkk.ui_2.views.ContextMenuTicketSelect
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.ui_2.views.jfxTextField
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.JiraLinkGeneratorBasic
@@ -47,13 +80,36 @@ import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.views.JFXScrollFreeTextArea
 import lt.markmerkk.widgets.datepicker.DatePickerWidget
+import lt.markmerkk.widgets.edit.timepick.BasicTimePickItemFragment
+import lt.markmerkk.widgets.edit.timepick.BasicTimePickViewModel
+import lt.markmerkk.widgets.edit.timepick.PopOverConfigDrawerTimeSelect
 import lt.markmerkk.widgets.tickets.RecentTicketViewModel
 import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.wrapAsSource
+import org.controlsfx.control.PopOver
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.addClass
+import tornadofx.asObservable
+import tornadofx.borderpane
+import tornadofx.bottom
+import tornadofx.box
+import tornadofx.center
+import tornadofx.hbox
+import tornadofx.hgrow
+import tornadofx.hide
+import tornadofx.label
+import tornadofx.listview
+import tornadofx.px
+import tornadofx.readonlyColumn
+import tornadofx.show
+import tornadofx.stackpane
+import tornadofx.style
+import tornadofx.tableview
+import tornadofx.top
+import tornadofx.vbox
 import javax.inject.Inject
 
 class LogDetailsSideDrawerWidget : Fragment(),
@@ -77,10 +133,15 @@ class LogDetailsSideDrawerWidget : Fragment(),
     @Inject lateinit var worklogStorage: WorklogStorage
 
     private lateinit var viewLabelHeader: Label
+    private lateinit var viewContainerMain: Region
     private lateinit var viewDatePickerFrom: JFXTextField
     private lateinit var viewTimePickerFrom: JFXTextField
+    private lateinit var viewTimePickerFromOptions: ListView<BasicTimePickViewModel>
+    private lateinit var viewTimePickerFromPopOver: PopOver
     private lateinit var viewDatePickerTo: JFXTextField
     private lateinit var viewTimePickerTo: JFXTextField
+    private lateinit var viewTimePickerToOptions: ListView<BasicTimePickViewModel>
+    private lateinit var viewTimePickerToPopOver: PopOver
     private lateinit var viewDuration: JFXTextField
     private lateinit var viewTextFieldTicket: JFXTextField
     private lateinit var viewTextTicketDesc: Label
@@ -93,6 +154,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     private lateinit var viewLabelHint2: Label
     private lateinit var viewTableRecent: TableView<RecentTicketViewModel>
     private lateinit var viewsDateTimeRangeElements: List<TextInputControl>
+    private lateinit var viewsPopOverElements: List<PopOver>
 
     // private lateinit var uiBridgeTimeQuickEdit: UIBridgeTimeQuickEdit
     // private lateinit var uiBridgeDateTimeHandler: UIBridgeDateTimeHandler
@@ -100,6 +162,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
     private lateinit var ticketInfoLoader: TicketInfoLoader
     private lateinit var jiraLinkGenerator: JiraLinkGenerator
     private lateinit var timeGapGenerator: TimeGapGenerator
+    private val timePickFromViewModels = mutableListOf<BasicTimePickViewModel>().asObservable()
+    private val timePickToViewModels = mutableListOf<BasicTimePickViewModel>().asObservable()
 
     private val recentTicketViewModels = mutableListOf<RecentTicketViewModel>().asObservable()
 
@@ -138,6 +202,11 @@ class LogDetailsSideDrawerWidget : Fragment(),
                         eventBus.post(EventMainCloseTickets())
                         focusInput()
                     }
+                }
+            }
+            if (keyEvent.code == KeyCode.ESCAPE) {
+                if (isPopOverElementsOpen()) {
+                    popOverElementsCloseAll()
                 }
             }
         }
@@ -200,6 +269,13 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             promptText = ""
                             unFocusColor = Color.BLACK
                             text = ""
+                            val timePicker = this
+                            setOnMouseClicked {
+                                viewTimePickerFromPopOver.show(timePicker)
+                            }
+                        }
+                        jfxButton {
+                            graphic = graphics.from(Glyph.CLOCK, Color.BLACK, 12.0)
                             setOnMouseClicked {
                                 resultDispatcher.publish(
                                     key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
@@ -253,7 +329,13 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             isLabelFloat = false
                             promptText = ""
                             unFocusColor = Color.BLACK
-                            text = ""
+                            val timePicker = this
+                            setOnMouseClicked {
+                                viewTimePickerToPopOver.show(timePicker)
+                            }
+                        }
+                        jfxButton {
+                            graphic = graphics.from(Glyph.CLOCK, Color.BLACK, 12.0)
                             setOnMouseClicked {
                                 resultDispatcher.publish(
                                     key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
@@ -335,10 +417,6 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             maxWidth = 100.0
                         }
                         readonlyColumn("Description", RecentTicketViewModel::description) { }
-                        readonlyColumn("Last used", RecentTicketViewModel::lastUsed) {
-                            minWidth = 100.0
-                            maxWidth = 100.0
-                        }
                         hide()
                     }
                     hbox {
@@ -392,11 +470,49 @@ class LogDetailsSideDrawerWidget : Fragment(),
             }
         }
     }.let { stackPane ->
+        val popOverConfigFrom = PopOverConfigDrawerTimeSelect(title = "Time from")
+        viewTimePickerFromPopOver = PopOver(
+            vbox {
+                style {
+                    padding = box(all = 10.px)
+                }
+                viewTimePickerFromOptions = listview(timePickFromViewModels) {
+                    prefHeight = popOverConfigFrom.defaultHeight
+                    prefWidth = popOverConfigFrom.defaultWidth
+                    maxHeight = popOverConfigFrom.defaultHeight
+                    maxWidth = popOverConfigFrom.defaultWidth
+                    cellFragment(BasicTimePickItemFragment::class)
+                }
+            }
+        ).apply {
+            popOverConfigFrom.applyValues(this)
+        }
+        val popOverConfigTo = PopOverConfigDrawerTimeSelect(title = "Time to")
+        viewTimePickerToPopOver = PopOver(
+            vbox {
+                style {
+                    padding = box(all = 10.px)
+                }
+                viewTimePickerToOptions = listview(timePickToViewModels) {
+                    prefHeight = popOverConfigTo.defaultHeight
+                    prefWidth = popOverConfigTo.defaultWidth
+                    maxHeight = popOverConfigTo.defaultHeight
+                    maxWidth = popOverConfigTo.defaultWidth
+                    cellFragment(BasicTimePickItemFragment::class)
+                }
+            }
+        ).apply {
+            popOverConfigTo.applyValues(this)
+        }
         viewsDateTimeRangeElements = listOf(
             viewDatePickerFrom,
             viewTimePickerFrom,
             viewDatePickerTo,
-            viewTimePickerTo
+            viewTimePickerTo,
+        )
+        viewsPopOverElements = listOf(
+            viewTimePickerFromPopOver,
+            viewTimePickerToPopOver,
         )
         stackPane
     }
@@ -474,12 +590,12 @@ class LogDetailsSideDrawerWidget : Fragment(),
                     accountAvailablility = accountAvailablility
             )
         }
-        timeGapGenerator = object : TimeGapGenerator {
-            override val startDateSource: TimeGapGenerator.Source = viewDatePickerFrom.wrapAsSource()
-            override val startTimeSource: TimeGapGenerator.Source = viewTimePickerFrom.wrapAsSource()
-            override val endDateSource: TimeGapGenerator.Source = viewDatePickerTo.wrapAsSource()
-            override val endTimeSource: TimeGapGenerator.Source = viewTimePickerTo.wrapAsSource()
-        }
+        timeGapGenerator = TimeGapGenerator(
+            startDateSource = viewDatePickerFrom.wrapAsSource(),
+            startTimeSource = viewTimePickerFrom.wrapAsSource(),
+            endDateSource = viewDatePickerTo.wrapAsSource(),
+            endTimeSource = viewTimePickerTo.wrapAsSource(),
+        )
         viewTextTicketDesc.text = ""
         contextMenuTicketSelect.onAttach()
         contextMenuTicketSelect.attachTicketSelection(
@@ -492,15 +608,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
         // uiBridgeDateTimeHandler.onAttach()
         eventBus.register(this)
         ticketInfoLoader.onAttach()
-        ticketInfoLoader.attachInputCodeAsStream(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
-        JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty())
-                .subscribe({
-                    presenter.changeTicketCode(it)
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
+        ticketInfoLoader.findTicket(viewTextFieldTicket.text.toString())
         jiraLinkGenerator.onAttach()
-        jiraLinkGenerator.attachTicketCodeInput(JavaFxObservable.valuesOf(viewTextFieldTicket.textProperty()))
         jiraLinkGenerator.handleTicketInput(viewTextFieldTicket.text.toString())
         JavaFxObservable.valuesOf(viewTextComment.textArea.textProperty())
                 .subscribe({
@@ -508,19 +617,14 @@ class LogDetailsSideDrawerWidget : Fragment(),
                 }, { error ->
                     logger.warn("JFX prop error", error)
                 })
-        JavaFxObservable.valuesOf(viewTableRecent.focusedProperty())
-                .subscribe({
-                    handleRecentVisibility()
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
-        JavaFxObservable.valuesOf(viewTextFieldTicket.focusedProperty())
-                .subscribe({
-                    handleRecentVisibility()
-                }, { error ->
-                    logger.warn("JFX prop error", error)
-                })
-
+        viewTableRecent.focusedProperty().addListener(listenerFocusChangeListRecentTickets)
+        viewTextFieldTicket.textProperty().addListener(listenerTextChangeInputTicket)
+        viewTextFieldTicket.focusedProperty().addListener(listenerFocusChangeInputTicket)
+        initTimePickSelectValues()
+        root.setOnMouseClicked {
+            popOverElementsCloseAll()
+        }
+        recentTicketLoader.filterLoadedTickets(rawInput = viewTextFieldTicket.text)
         recentTicketLoader.fetch()
         Platform.runLater {
             viewTextComment.textArea.requestFocus()
@@ -529,6 +633,9 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
+        viewTableRecent.focusedProperty().removeListener(listenerFocusChangeListRecentTickets)
+        viewTextFieldTicket.textProperty().removeListener(listenerTextChangeInputTicket)
+        viewTextFieldTicket.focusedProperty().removeListener(listenerFocusChangeInputTicket)
         contextMenuTicketSelect.onDetach()
         recentTicketLoader.onDetach()
         logger.debug("LogDetails:onUndock()")
@@ -545,72 +652,166 @@ class LogDetailsSideDrawerWidget : Fragment(),
         viewLabelHeader.text = labelHeader
     }
 
+    private fun initTimePickSelectValues() {
+        // Remove listeners
+        viewTimePickerToOptions.selectionModel
+            .selectedItemProperty()
+            .removeListener(listenerTimePickTo)
+        viewTimePickerFromOptions.selectionModel
+            .selectedItemProperty()
+            .removeListener(listenerTimePickFrom)
+
+        // Initialize values to pick up
+        val timePickValuesFrom = timeGapGenerator.timeValuesStart()
+        val timePickValuesTo = timeGapGenerator.timeValuesEnd()
+        timePickFromViewModels.clear()
+        timePickFromViewModels.addAll(
+            timePickValuesFrom
+                .map { BasicTimePickViewModel(it) }
+        )
+        timePickToViewModels.clear()
+        timePickToViewModels.addAll(
+            timePickValuesTo
+                .map { BasicTimePickViewModel(it) }
+        )
+
+        // Selecting current value
+        val timePickFromCurrentValue = timePickFromViewModels
+            .firstOrNull { it.timeAsString == timeGapGenerator.startTimeSource.rawInput() }
+        if (timePickFromCurrentValue != null) {
+            viewTimePickerFromOptions.selectionModel.select(timePickFromCurrentValue)
+            viewTimePickerFromOptions.scrollTo(timePickFromCurrentValue)
+        }
+        val timePickToCurrentValue = timePickToViewModels
+            .firstOrNull { it.timeAsString == timeGapGenerator.endTimeSource.rawInput() }
+        if (timePickToCurrentValue != null) {
+            viewTimePickerToOptions.selectionModel.select(timePickToCurrentValue)
+            viewTimePickerToOptions.scrollTo(timePickToCurrentValue)
+        }
+
+        // Bind listeners again
+        viewTimePickerToOptions.selectionModel
+            .selectedItemProperty()
+            .addListener(listenerTimePickTo)
+        viewTimePickerFromOptions.selectionModel
+            .selectedItemProperty()
+            .addListener(listenerTimePickFrom)
+    }
+
+    //region Listeners
+
+    private val listenerFocusChangeListRecentTickets = ChangeListener<Boolean> { _, _, newValue ->
+        handleRecentVisibility()
+    }
+
+    private val listenerTextChangeInputTicket = ChangeListener<String> { _, _, newValue ->
+        recentTicketLoader.filterLoadedTickets(
+            publishResults = true,
+            rawInput = newValue,
+        )
+        ticketInfoLoader.findTicket(newValue)
+        jiraLinkGenerator.handleTicketInput(newValue)
+        presenter.changeTicketCode(newValue)
+    }
+
+    private val listenerFocusChangeInputTicket = ChangeListener<Boolean> { _, _, newValue ->
+        handleRecentVisibility()
+    }
+
+    private val listenerTimePickFrom = ChangeListener<BasicTimePickViewModel> { _, _, newValue ->
+        viewTimePickerFromPopOver.hide(Duration.ZERO)
+        val timeGap = timeGapGenerator.generateTimeGap()
+            .withStartTime(newValue.time)
+        presenter.changeDateTime(timeGap)
+        initTimePickSelectValues()
+    }
+
+    private val listenerTimePickTo = ChangeListener<BasicTimePickViewModel> { _, _, newValue ->
+        viewTimePickerToPopOver.hide(Duration.ZERO)
+        val timeGap = timeGapGenerator.generateTimeGap()
+            .withEndTime(newValue.time)
+        presenter.changeDateTime(timeGap)
+        initTimePickSelectValues()
+    }
+
+    //endregion
+
     //region Events
 
     @Subscribe
     fun onFocusLogDetailsWidget(event: EventFocusLogDetailsWidget) {
-        viewTextComment.textArea.requestFocus()
-        viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+        Platform.runLater {
+            viewTextComment.textArea.requestFocus()
+            viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+        }
     }
 
     @Subscribe
     fun eventSuggestTicket(eventSuggestTicket: EventSuggestTicket) {
-        viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+        Platform.runLater {
+            viewTextFieldTicket.text = eventSuggestTicket.ticket.code.code
+        }
     }
 
     @Subscribe
     fun eventSave(event: EventLogDetailsSave) {
-        presenter.save()
+        Platform.runLater {
+            presenter.save()
+        }
     }
 
     @Subscribe
     fun eventChangeTime(event: EventChangeTime) {
-        val timeSelectResult = resultDispatcher.consume(
-            TimePickerWidget.RESULT_DISPATCH_KEY_RESULT,
-            TimeSelectResult::class.java
-        )
-        if (timeSelectResult != null) {
-            val timeSelectType = TimeSelectType.fromRaw(timeSelectResult.extra)
-            when (timeSelectType) {
-                TimeSelectType.UNKNOWN -> {}
-                TimeSelectType.FROM -> {
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withStartTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-                TimeSelectType.TO -> {
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withEndTime(timeSelectResult.timeSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-            }.javaClass
+        Platform.runLater {
+            val timeSelectResult = resultDispatcher.consume(
+                TimePickerWidget.RESULT_DISPATCH_KEY_RESULT,
+                TimeSelectResult::class.java
+            )
+            if (timeSelectResult != null) {
+                val timeSelectType = TimeSelectType.fromRaw(timeSelectResult.extra)
+                when (timeSelectType) {
+                    TimeSelectType.UNKNOWN -> {}
+                    TimeSelectType.FROM -> {
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withStartTime(timeSelectResult.timeSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                    TimeSelectType.TO -> {
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withEndTime(timeSelectResult.timeSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                }.javaClass
+            }
         }
     }
 
     @Subscribe
     fun eventChangeDate(event: EventChangeDate) {
-        val dateSelectResult = resultDispatcher.peek(
-            DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
-            DateSelectResult::class.java
-        )
-        if (dateSelectResult != null) {
-            val dateSelectType = DateSelectType.fromRaw(dateSelectResult.extra)
-            when (dateSelectType) {
-                DateSelectType.UNKNOWN,
-                DateSelectType.TARGET_DATE -> {}
-                DateSelectType.SELECT_FROM -> {
-                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withStartDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-                DateSelectType.SELECT_TO -> {
-                    resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
-                    val timeGap = timeGapGenerator.generateTimeGap()
-                        .withEndDate(dateSelectResult.dateSelectionNew)
-                    presenter.changeDateTime(timeGap)
-                }
-            }.javaClass
+        Platform.runLater {
+            val dateSelectResult = resultDispatcher.peek(
+                DatePickerWidget.RESULT_DISPATCH_KEY_RESULT,
+                DateSelectResult::class.java
+            )
+            if (dateSelectResult != null) {
+                val dateSelectType = DateSelectType.fromRaw(dateSelectResult.extra)
+                when (dateSelectType) {
+                    DateSelectType.UNKNOWN,
+                    DateSelectType.TARGET_DATE -> {}
+                    DateSelectType.SELECT_FROM -> {
+                        resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withStartDate(dateSelectResult.dateSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                    DateSelectType.SELECT_TO -> {
+                        resultDispatcher.consume(DatePickerWidget.RESULT_DISPATCH_KEY_RESULT)
+                        val timeGap = timeGapGenerator.generateTimeGap()
+                            .withEndDate(dateSelectResult.dateSelectionNew)
+                        presenter.changeDateTime(timeGap)
+                    }
+                }.javaClass
+            }
         }
     }
 
@@ -654,6 +855,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun closeDetails() {
+        popOverElementsCloseAll()
         eventBus.post(EventMainCloseLogDetails())
     }
 
@@ -676,6 +878,15 @@ class LogDetailsSideDrawerWidget : Fragment(),
     fun focusInput() {
         viewTextComment.textArea.requestFocus()
         viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+    }
+
+    private fun isPopOverElementsOpen(): Boolean {
+        return viewsPopOverElements
+            .firstOrNull { it.isShowing } != null
+    }
+
+    private fun popOverElementsCloseAll() {
+        viewsPopOverElements.forEach { it.hide(Duration.ZERO) }
     }
 
     companion object {

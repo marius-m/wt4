@@ -23,25 +23,11 @@ class TicketInfoLoader(
 ) {
 
     private var searchSubscription: Subscription? = null
-    private var inputSubscription: Subscription? = null
 
     fun onAttach() { }
 
     fun onDetach() {
         searchSubscription?.unsubscribe()
-        inputSubscription?.unsubscribe()
-    }
-
-    fun attachInputCodeAsStream(inputCode: Observable<String>) {
-        inputSubscription = inputCode
-                .throttleLast(INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS, ioScheduler)
-                .subscribeOn(waitScheduler)
-                .observeOn(uiScheduler)
-                .subscribe({
-                    findTicket(it)
-                }, { error ->
-                    logger.warn("Error input code change", error)
-                })
     }
 
     fun findTicket(inputCode: String) {
