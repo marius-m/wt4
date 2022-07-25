@@ -2,6 +2,7 @@ package lt.markmerkk.tickets
 
 import lt.markmerkk.Tags
 import lt.markmerkk.TicketStorage
+import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketUseHistory
 import org.slf4j.LoggerFactory
 import rx.Observable
@@ -65,6 +66,7 @@ class RecentTicketLoader(
                 ticket.code.codeProject.contains(rawInput, ignoreCase = true)
                     || ticket.code.codeNumber.contains(rawInput)
                     || ticket.description.contains(rawInput, ignoreCase = true)
+                    || ticket.code.code.contains(rawInput, ignoreCase = true)
             }
             .sortedBy { it.lastUsed }
             .reversed()
