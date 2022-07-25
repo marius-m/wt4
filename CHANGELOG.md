@@ -2,6 +2,13 @@
 
 Current: 1.9.2
 
+## 1.9.3
+- Still same problem remains for code sign on _MacOS_, so you'll have to run `sudo xattr -rd com.apple.quarantine /Applications/WT4-basic.app` for the app to launch.
+
+- Change how time select is done using 'Google calendar' style (There were quite a bit of requests for this) (LogDetailsScreen)
+- Fix (hopefully) random error when data changes in ticket code (LogDetailsScreen) 
+- Apply filter for recent results when changing ticket code (LogDetailsScreem)
+
 ## 1.9.2
 - New OS systems introduced new challenges for the app to work properly, needed to repackage with newest JRE + JFX modules (MacOS had problems, also M1)
   - New OS also introduced in breaking JFX UI components and misbehaving, had to replace them entirely. So now we have _new time and date selection_
