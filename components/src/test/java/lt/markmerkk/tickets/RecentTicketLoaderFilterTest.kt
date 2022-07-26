@@ -246,4 +246,23 @@ class RecentTicketLoaderFilterTest {
             ),
         )
     }
+
+    @Test
+    fun fullTicketName() {
+        // Assemble
+        // Act
+        val result = recentTicketLoader.filterLoadedTickets(
+            rawInput = "DEV-333",
+        )
+
+        // Assert
+        assertThat(result).containsExactly(
+            Mocks.createTicketUseHistory(
+                timeProvider = timeProvider,
+                code = "DEV-333",
+                description = "test fixture 3",
+                lastUsed = timeProvider.now().plusMinutes(5),
+            ),
+        )
+    }
 }

@@ -272,22 +272,9 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             val timePicker = this
                             setOnMouseClicked {
                                 viewTimePickerFromPopOver.show(timePicker)
-                            }
-                        }
-                        jfxButton {
-                            graphic = graphics.from(Glyph.CLOCK, Color.BLACK, 12.0)
-                            setOnMouseClicked {
-                                resultDispatcher.publish(
-                                    key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
-                                    resultEntity = TimeSelectRequest.asTimeFrom(
-                                        timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerFrom.text)
-                                    )
-                                )
-                                find<TimePickerWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = false
+                                focusTimeSelectionInList(
+                                    timeAsRawInput = timePicker.text,
+                                    viewListViewTimePicker = viewTimePickerFromOptions,
                                 )
                             }
                         }
@@ -332,22 +319,9 @@ class LogDetailsSideDrawerWidget : Fragment(),
                             val timePicker = this
                             setOnMouseClicked {
                                 viewTimePickerToPopOver.show(timePicker)
-                            }
-                        }
-                        jfxButton {
-                            graphic = graphics.from(Glyph.CLOCK, Color.BLACK, 12.0)
-                            setOnMouseClicked {
-                                resultDispatcher.publish(
-                                    key = TimePickerWidget.RESULT_DISPATCH_KEY_PRESELECT,
-                                    resultEntity = TimeSelectRequest.asTimeTo(
-                                        timeSelection = LogFormatters.timeFromRawOrDefault(viewTimePickerTo.text)
-                                    )
-                                )
-                                find<TimePickerWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = false
+                                focusTimeSelectionInList(
+                                    timeAsRawInput = timePicker.text,
+                                    viewListViewTimePicker = viewTimePickerToOptions,
                                 )
                             }
                         }
@@ -620,6 +594,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
         viewTableRecent.focusedProperty().addListener(listenerFocusChangeListRecentTickets)
         viewTextFieldTicket.textProperty().addListener(listenerTextChangeInputTicket)
         viewTextFieldTicket.focusedProperty().addListener(listenerFocusChangeInputTicket)
+        viewTimePickerFrom.focusedProperty().addListener(listenerFocusChangeInputSelectTimeFrom)
+        viewTimePickerTo.focusedProperty().addListener(listenerFocusChangeInputSelectTimeTo)
         initTimePickSelectValues()
         root.setOnMouseClicked {
             popOverElementsCloseAll()
@@ -633,6 +609,8 @@ class LogDetailsSideDrawerWidget : Fragment(),
     }
 
     override fun onUndock() {
+        viewTimePickerTo.focusedProperty().removeListener(listenerFocusChangeInputSelectTimeTo)
+        viewTimePickerFrom.focusedProperty().removeListener(listenerFocusChangeInputSelectTimeFrom)
         viewTableRecent.focusedProperty().removeListener(listenerFocusChangeListRecentTickets)
         viewTextFieldTicket.textProperty().removeListener(listenerTextChangeInputTicket)
         viewTextFieldTicket.focusedProperty().removeListener(listenerFocusChangeInputTicket)
@@ -716,6 +694,18 @@ class LogDetailsSideDrawerWidget : Fragment(),
 
     private val listenerFocusChangeInputTicket = ChangeListener<Boolean> { _, _, newValue ->
         handleRecentVisibility()
+    }
+
+    private val listenerFocusChangeInputSelectTimeFrom = ChangeListener<Boolean> { _, _, newValue ->
+        if (!newValue) {
+            viewTimePickerFromPopOver.hide(Duration.ZERO)
+        }
+    }
+
+    private val listenerFocusChangeInputSelectTimeTo = ChangeListener<Boolean> { _, _, newValue ->
+        if (!newValue) {
+            viewTimePickerToPopOver.hide(Duration.ZERO)
+        }
     }
 
     private val listenerTimePickFrom = ChangeListener<BasicTimePickViewModel> { _, _, newValue ->
@@ -878,6 +868,19 @@ class LogDetailsSideDrawerWidget : Fragment(),
     fun focusInput() {
         viewTextComment.textArea.requestFocus()
         viewTextComment.textArea.positionCaret(viewTextComment.textArea.text.length)
+    }
+
+    private fun focusTimeSelectionInList(
+        timeAsRawInput: String,
+        viewListViewTimePicker: ListView<BasicTimePickViewModel>,
+    ) {
+        val selectValue = viewListViewTimePicker.items
+            .firstOrNull { it.timeAsString == timeAsRawInput }
+        if (selectValue != null) {
+            val selectValueIndex = viewListViewTimePicker.items.indexOf(selectValue)
+            viewListViewTimePicker.selectionModel.clearAndSelect(selectValueIndex)
+            viewListViewTimePicker.scrollTo(selectValueIndex)
+        }
     }
 
     private fun isPopOverElementsOpen(): Boolean {
