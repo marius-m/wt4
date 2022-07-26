@@ -67,3 +67,4 @@ app/logs/
 keys/
 .java-version
 sentry.properties
+CHANGELOG.org
