@@ -7,7 +7,7 @@ import lt.markmerkk.widgets.help.html.StyledText
 import org.controlsfx.control.PopOver
 import org.fxmisc.flowless.VirtualizedScrollPane
 import org.fxmisc.richtext.InlineCssTextArea
-import org.fxmisc.richtext.StyleClassedTextArea
+import org.fxmisc.richtext.model.SimpleEditableStyledDocument
 import tornadofx.SVGIcon
 import tornadofx.add
 import tornadofx.box
@@ -32,14 +32,18 @@ class HelpWidgetFactory(
                         style {
                             padding = box(all = 10.px)
                         }
-                        val area = InlineCssTextArea().apply {
-                            appendText(helpResLoader.helpResRaw(helpRes))
-                            isWrapText = true
-                            isEditable = false
-                            prefWidth = 300.0
-                            prefHeight = 200.0
-                            applyStyle(this)
-                        }
+                        val initialStyle = "-fx-font-face: sans-serif; -fx-font-size: 20; "
+                        val area = InlineCssTextArea(SimpleEditableStyledDocument(initialStyle, initialStyle))
+                            .apply {
+                                isWrapText = true
+                                isEditable = false
+                                prefWidth = 300.0
+                                prefHeight = 200.0
+                                applyStyleWithText(
+                                    area = this,
+                                    text = helpResLoader.helpResRaw(helpRes),
+                                )
+                            }
                         val vsPane = VirtualizedScrollPane(area)
                         add(vsPane)
                     }
@@ -50,16 +54,12 @@ class HelpWidgetFactory(
         }
     }
 
-    private fun applyStyle(
-        // area: StyleClassedTextArea,
+    private fun applyStyleWithText(
         area: InlineCssTextArea,
+        text: String,
     ) {
-        area.style = "-fx-font: sans-serif;"
-        val htmlParser = HtmlParser2()
-        val originalText = area.text
-        val styledText = htmlParser.parse(originalText)
-        area.deleteText(0, originalText.length - 1)
-        area.insertText(0, styledText.text())
+        val styledText = HtmlParser2().parse(text)
+        area.appendText(styledText.text())
         styledText.elements().forEach { styleElement ->
             when (styleElement) {
                 is StyledText.ElementNoStyle -> {}

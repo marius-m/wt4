@@ -1,5 +1,6 @@
 package lt.markmerkk.widgets.help.html
 
+import lt.markmerkk.widgets.help.html.styles.HtmlToJfxMapper
 import lt.markmerkk.widgets.help.html.utils.TraverserFindTextNode
 import lt.markmerkk.widgets.help.html.utils.TraverserParentsCrawler
 import org.jsoup.Jsoup
@@ -22,10 +23,13 @@ class HtmlParser2 {
     private fun convertTextNodesToStyle(
         textNodes: List<TextNode>,
     ): StyledText {
+        val htmlToJfxMapper = HtmlToJfxMapper.asDefault()
         val styledText = StyledText()
         textNodes.forEach { textNode ->
             val textNodeParents = TraverserParentsCrawler.crawl(textNode)
-            val styles: Map<String, String> = styleNodesToStyleName(nodes = textNodeParents)
+            val styles: Map<String, String> = htmlToJfxMapper.jfxPropsFromNodes(
+                nodes = textNodeParents,
+            )
             if (styles.isEmpty()) {
                 styledText.appendTextBasic(text = textNode.wholeText)
             } else {
@@ -38,40 +42,5 @@ class HtmlParser2 {
         return styledText
     }
 
-    /**
-     * Only a handful of nodes have style representations.
-     * This functions finds those nodes and applies a style if available
-     * @return list of styles or empty
-     */
-    private fun styleNodesToStyleName(
-        nodes: List<Node>,
-    ): Map<String, String> {
-        val styleMap: Map<String, String> = nodes
-            .filterIsInstance<Element>()
-            .reversed()
-            .fold(mutableMapOf<String, String>()) { accumulator, node ->
-                val styleMap: Map<String, String> = when {
-                    node.tagName() == "h1" -> {
-                        mapOf(
-                            "-fx-font-family" to "sans-serif",
-                            "-fx-font-size" to "8",
-                            "-fx-fill" to "red",
-                        )
-                    }
-                    node.tagName() == "b" -> {
-                        mapOf(
-                            "-fx-font-family" to  "sans-serif",
-                            "-fx-font-weight" to "700",
-                            "-fx-font-size" to "14",
-                            "-fx-fill" to "blue",
-                        )
-                    }
-                    else -> emptyMap()
-                }
-                accumulator.putAll(styleMap)
-                accumulator
-            }
-        return styleMap
-    }
 
 }
