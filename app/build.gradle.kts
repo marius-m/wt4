@@ -65,8 +65,8 @@ dependencies {
     implementation("com.vdurmont:emoji-java:5.1.1")
     implementation("org.controlsfx:controlsfx:11.0.2")
     implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
-    implementation("com.github.rjeschke:txtmark:0.13")
     implementation("org.fxmisc.richtext:richtextfx:1.0.0-SNAPSHOT")
+    implementation("org.jsoup:jsoup:1.15.2")
 
     implementation("com.google.dagger:dagger:${Versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${Versions.dagger}")

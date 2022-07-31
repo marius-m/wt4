@@ -36,5 +36,5 @@ class HelpResourceLoader(
 }
 
 enum class ResourceHelp(val title: String, val resFileName: String) {
-    RECENT_TICKET_FILTER(title = "Recent ticket filter","recent_ticket_filter.md"),
+    RECENT_TICKET_FILTER(title = "Recent ticket filter","recent_ticket_filter.html"),
 }
