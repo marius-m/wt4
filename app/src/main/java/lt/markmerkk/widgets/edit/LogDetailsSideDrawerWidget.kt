@@ -368,6 +368,7 @@ class LogDetailsSideDrawerWidget : Fragment(),
                         }
                         add(
                             helpWidgetFactory.createHelpIconWith(
+                                anchorNode = viewTextFieldTicket,
                                 helpRes = ResourceHelp.RECENT_TICKET_FILTER,
                                 popOverConfig = PopOverConfigHelp(
                                     title = ResourceHelp.RECENT_TICKET_FILTER.title,

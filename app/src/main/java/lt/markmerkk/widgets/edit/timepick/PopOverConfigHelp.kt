@@ -11,7 +11,7 @@ class PopOverConfigHelp(
 
     override val isCloseButtonEnabled: Boolean = true
     override val isHeaderAlwaysVisible: Boolean = true
-    override val arrowSize: Double = 6.0
+    override val arrowSize: Double = 0.0
     override val cornerRadius: Double = 4.0
     override val isAutoHide: Boolean = false
     override val isDetachable: Boolean = false
