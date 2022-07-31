@@ -2,7 +2,7 @@ package lt.markmerkk.widgets.help
 
 import javafx.scene.Node
 import lt.markmerkk.widgets.edit.timepick.PopOverConfigHelp
-import lt.markmerkk.widgets.help.html.HtmlParser2
+import lt.markmerkk.widgets.help.html.HtmlParser
 import lt.markmerkk.widgets.help.html.StyledText
 import org.controlsfx.control.PopOver
 import org.fxmisc.flowless.VirtualizedScrollPane
@@ -58,7 +58,7 @@ class HelpWidgetFactory(
         area: InlineCssTextArea,
         text: String,
     ) {
-        val styledText = HtmlParser2().parse(text)
+        val styledText = HtmlParser().parse(text)
         area.appendText(styledText.text())
         styledText.elements().forEach { styleElement ->
             when (styleElement) {

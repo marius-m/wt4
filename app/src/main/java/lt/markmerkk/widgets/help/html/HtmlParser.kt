@@ -5,19 +5,14 @@ import lt.markmerkk.widgets.help.html.utils.TraverserFindTextNode
 import lt.markmerkk.widgets.help.html.utils.TraverserParentsCrawler
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 
-class HtmlParser2 {
-
-    private var styledText = StyledText()
+class HtmlParser {
 
     fun parse(inputRaw: String): StyledText {
         val doc: Document = Jsoup.parse(inputRaw)
         val textNodes = TraverserFindTextNode.find(doc = doc)
-        this.styledText = convertTextNodesToStyle(textNodes = textNodes)
-        return styledText
+        return convertTextNodesToStyle(textNodes = textNodes)
     }
 
     private fun convertTextNodesToStyle(
@@ -41,6 +36,4 @@ class HtmlParser2 {
         }
         return styledText
     }
-
-
 }
