@@ -21,11 +21,12 @@ class HelpWidgetFactory(
 ) {
 
     fun createHelpIconWith(
-        anchorNode: Node,
+        anchorNode: Node? = null,
         helpRes: ResourceHelp,
         popOverConfig: PopOverConfigHelp = PopOverConfigHelp(title = helpRes.title),
     ): SVGIcon {
         return SVGIcon(imgResLoader.imageResRaw(ResourceSvg.HELP), size = 14).apply {
+            val popAnchor = anchorNode ?: this
             setOnMouseClicked {
                 PopOver(
                     hbox {
@@ -49,7 +50,7 @@ class HelpWidgetFactory(
                     }
                 ).apply {
                     popOverConfig.applyValues(this)
-                }.show(anchorNode)
+                }.show(popAnchor)
             }
         }
     }
@@ -72,8 +73,6 @@ class HelpWidgetFactory(
                 }
             }
         }
-        // area.setStyleClass(0,  10, "blue")
-        // area.setStyleClass(10,  20, "bold")
     }
 
 }
