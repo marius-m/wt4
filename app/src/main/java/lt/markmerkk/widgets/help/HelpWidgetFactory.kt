@@ -46,6 +46,7 @@ class HelpWidgetFactory(
                                 )
                             }
                         val vsPane = VirtualizedScrollPane(area)
+                        vsPane.scrollToPixel(0.0, 0.0)
                         add(vsPane)
                     }
                 ).apply {

@@ -48,6 +48,7 @@ class HtmlToJfxMapper(
             return HtmlToJfxMapper(
                 converters = setOf(
                     JfxConverterH1(),
+                    JfxConverterH2(),
                     JfxConverterParagraph(),
                     JfxConverterBold(),
                     JfxConverterItalic(),
