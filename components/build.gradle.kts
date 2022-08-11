@@ -15,9 +15,13 @@ dependencies {
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
     implementation("io.reactivex:rxjava-async-util:${Versions.rxJavaAsync}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
-    implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
     implementation("commons-io:commons-io:2.6")
     implementation("com.squareup.retrofit2:converter-gson:2.6.1")
+
+    // Logging
+    implementation("org.slf4j:jul-to-slf4j:${Versions.slf4j}")
+    implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
+    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.kotlinTest}")
