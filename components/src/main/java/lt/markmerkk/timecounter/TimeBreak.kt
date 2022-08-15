@@ -66,7 +66,16 @@ data class TimeBreak(
              *           | break |
              *           --------
              */
-            timeWork.start.isBefore(timeBreak.start) && timeWork.end.isAfter(timeBreak.start) -> {
+
+            /**
+             * -------------------------->
+             *   | time gap |
+             *   ------------
+             *   |    break       |
+             *   -----------------
+             */
+            (timeWork.start.isBefore(timeBreak.start) || timeWork.start.isEqual(timeBreak.start)) &&
+                timeWork.end.isAfter(timeBreak.start) -> {
                 Period(timeBreak.start, timeWork.end).toStandardDuration()
             }
 
@@ -76,6 +85,14 @@ data class TimeBreak(
              *              ------------
              *        | break |
              *        --------
+             */
+
+            /**
+             * -------------------------->
+             *              | time gap |
+             *              ------------
+             *        |      break     |
+             *        -----------------
              */
             timeWork.start.isAfter(timeBreak.start) && timeWork.start.isBefore(timeBreak.end) -> {
                 Period(timeWork.start, timeBreak.end).toStandardDuration()

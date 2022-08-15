@@ -91,6 +91,6 @@ class WorkDayRuleDurationTest {
 
         // Assert
         Assertions.assertThat(result)
-            .isEqualTo(Duration.standardHours(0))
+            .isEqualTo(Duration.ZERO)
     }
 }
