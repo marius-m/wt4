@@ -1,6 +1,5 @@
 package lt.markmerkk.timecounter
 
-import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
@@ -34,6 +33,7 @@ class DurationGoalForecaster(
             .dropLast(1)
         val targetWeekDayLast = targetWeekDays
             .last()
-        return targetWeekDays.duration()
+        return targetWeekDaysWithoutLast.duration()
+            .plus(targetWeekDayLast.workDurationWithTargetEnd(targetTime))
     }
 }

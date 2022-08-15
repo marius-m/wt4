@@ -14,10 +14,15 @@ data class WorkDayRule(
     val timeBreak: TimeBreak,
 ) {
     val workDuration: Duration
-        get() = durationWithTargetEnd(targetTime = workSchedule.end)
+        get() = workDurationWithTargetEnd(targetEndTime = workSchedule.end)
 
-    fun durationWithTargetEnd(targetTime: LocalTime): Duration {
-        val targetGap = LocalTimeGap.from(workSchedule.start, targetTime)
+    fun workDurationWithTargetEnd(targetEndTime: LocalTime): Duration {
+        val endTime = if (targetEndTime.isBefore(workSchedule.end)) {
+            targetEndTime
+        } else {
+            workSchedule.end
+        }
+        val targetGap = LocalTimeGap.from(workSchedule.start, endTime)
         val durationStartEnd = targetGap.period.toStandardDuration()
         val breakDurationFromTimeGap = timeBreak.breakDurationFromTimeGap(timeWork = targetGap)
         val totalDuration = durationStartEnd.minus(breakDurationFromTimeGap)
