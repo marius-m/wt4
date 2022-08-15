@@ -22,7 +22,7 @@ class WorkDayRuleDurationTest {
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
-            breaks = TimeBreaks.asEmpty(),
+            timeBreak = TimeBreak.asEmpty(),
         )
 
         // Assert
@@ -40,7 +40,7 @@ class WorkDayRuleDurationTest {
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
-            breaks = TimeBreaks.asDefault(),
+            timeBreak = TimeBreak.asDefault(),
         )
 
         // Assert
@@ -59,7 +59,7 @@ class WorkDayRuleDurationTest {
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
-            breaks = TimeBreaks.fromTimeGaps(
+            timeBreak = TimeBreak(
                 LocalTimeGap.from(
                     start = LocalTime.MIDNIGHT.plusHours(9),
                     end = LocalTime.MIDNIGHT.plusHours(13),
@@ -82,7 +82,7 @@ class WorkDayRuleDurationTest {
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
-            breaks = TimeBreaks.asEmpty(),
+            timeBreak = TimeBreak.asEmpty(),
         )
 
         // Assert

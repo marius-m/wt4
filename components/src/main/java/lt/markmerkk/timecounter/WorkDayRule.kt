@@ -12,23 +12,20 @@ import org.slf4j.LoggerFactory
 data class WorkDayRule(
     val weekDay: WeekDay,
     val workSchedule: LocalTimeGap,
-    val breaks: TimeBreaks,
+    val timeBreak: TimeBreak,
 ) {
     val duration: Duration
         get() = durationWithTargetEnd(targetTime = workSchedule.end)
 
-    fun totalBreakDuration(): Duration {
-        return breaks.duration()
-    }
-
     fun durationWithTargetEnd(targetTime: LocalTime): Duration {
-        val durationStartEnd = Period(workSchedule.start, targetTime)
-            .toStandardDuration()
-        val totalDuration = durationStartEnd.minus(totalBreakDuration())
+        val targetGap = LocalTimeGap.from(workSchedule.start, targetTime)
+        val durationStartEnd = targetGap.period.toStandardDuration()
+        val breakDurationFromTimeGap = timeBreak.breakDurationFromTimeGap(timeGap = targetGap)
+        val totalDuration = durationStartEnd.minus(breakDurationFromTimeGap)
         l.debug(
             "durationWithTargetEnd(durationStartEnd: {}, breakDuration: {})",
             durationStartEnd.toStandardMinutes(),
-            totalBreakDuration().toStandardMinutes(),
+            breakDurationFromTimeGap.toStandardMinutes(),
         )
         if (totalDuration.isShorterThan(Duration.ZERO)) {
             return Duration.ZERO
@@ -46,7 +43,7 @@ data class WorkDayRule(
             return WorkDayRule(
                 weekDay = weekDay,
                 workSchedule = LocalTimeGap.asEmpty(),
-                breaks = TimeBreaks.asEmpty(),
+                timeBreak = TimeBreak.asEmpty(),
             )
         }
 
@@ -54,7 +51,7 @@ data class WorkDayRule(
             return WorkDayRule(
                 weekDay = DEFAULT_WEEK_DAY,
                 workSchedule = LocalTimeGap.from(DEFAULT_WORK_START, DEFAULT_WORK_END),
-                breaks = TimeBreaks.asDefault(),
+                timeBreak = TimeBreak.asDefault(),
             )
         }
 
@@ -62,7 +59,7 @@ data class WorkDayRule(
             return WorkDayRule(
                 weekDay = weekDay,
                 workSchedule = LocalTimeGap.from(DEFAULT_WORK_START, DEFAULT_WORK_END),
-                breaks = TimeBreaks.asDefault(),
+                timeBreak = TimeBreak.asDefault(),
             )
         }
 

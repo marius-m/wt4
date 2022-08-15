@@ -26,13 +26,13 @@ class WorkDayRuleDurationWithTargetEndTest {
         )
 
         // Assert
-        val expectDuration = Duration.standardHours(2)
+        val expectDuration = Duration.standardHours(3)
             .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDuration)
     }
 
     @Test
-    fun onlyHourPassed() {
+    fun noBreak() {
         // Assemble
         val workDayRule = WorkDayRule.default()
         val targetTime = LocalTime.MIDNIGHT
@@ -45,7 +45,42 @@ class WorkDayRuleDurationWithTargetEndTest {
         )
 
         // Assert
-        val expectDuration = Duration.ZERO
+        val expectDuration = Duration.standardHours(1)
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun basic_halfAfternoonBreak() {
+        // Assemble
+        val workDayRule = WorkDayRule.default()
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(12)
+            .plusMinutes(30)
+
+        // Act
+        val result = workDayRule.durationWithTargetEnd(
+            targetTime = targetTime,
+        )
+
+        // Assert
+        val expectDuration = Duration.standardHours(4)
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun basic_withAfternoon() {
+        // Assemble
+        val workDayRule = WorkDayRule.default()
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(15)
+
+        // Act
+        val result = workDayRule.durationWithTargetEnd(
+            targetTime = targetTime,
+        )
+
+        // Assert
+        val expectDuration = Duration.standardHours(6)
         Assertions.assertThat(result).isEqualTo(expectDuration)
     }
 
