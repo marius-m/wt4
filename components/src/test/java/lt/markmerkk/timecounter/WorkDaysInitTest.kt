@@ -26,7 +26,7 @@ class WorkDaysInitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun missindDay() {
+    fun missingDay() {
         // Assemble
         val inputDays = listOf(
             WorkDayRule.defaultWithWeekDay(WeekDay.MON),

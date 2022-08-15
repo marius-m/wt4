@@ -1,5 +1,7 @@
 package lt.markmerkk.utils
 
+import lt.markmerkk.Mocks
+import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.entities.SimpleLogBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.joda.time.DateTime
@@ -10,6 +12,8 @@ import org.mockito.MockitoAnnotations
 
 class LogUtilsFormatLogToTextTest {
 
+    private val timeProvider = TimeProviderTest()
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
@@ -19,12 +23,13 @@ class LogUtilsFormatLogToTextTest {
     @Test
     fun valid() {
         // Assemble
-        val log = SimpleLogBuilder(DateTime.now().millis)
-                .setStart(DateTime.now().millis)
-                .setEnd(DateTime.now().plusMinutes(5).millis)
-                .setTask("DEV-123")
-                .setComment("valid_comment")
-                .build()
+        val log = Mocks.createLog(
+            timeProvider = timeProvider,
+            start = timeProvider.now().plusHours(3),
+            end = timeProvider.now().plusHours(3).plusMinutes(5),
+            code = "DEV-123",
+            comment = "valid_comment",
+        )
 
         // Act
         val result = LogUtils.formatLogToText(log)
@@ -36,11 +41,13 @@ class LogUtilsFormatLogToTextTest {
     @Test
     fun noTask() {
         // Assemble
-        val log = SimpleLogBuilder(DateTime.now().millis)
-                .setStart(DateTime.now().millis)
-                .setEnd(DateTime.now().plusMinutes(5).millis)
-                .setComment("valid_comment")
-                .build()
+        val log = Mocks.createLog(
+            timeProvider = timeProvider,
+            start = timeProvider.now().plusHours(3),
+            end = timeProvider.now().plusHours(3).plusMinutes(5),
+            code = "",
+            comment = "valid_comment",
+        )
 
         // Act
         val result = LogUtils.formatLogToText(log)
@@ -52,11 +59,13 @@ class LogUtilsFormatLogToTextTest {
     @Test
     fun noComment() {
         // Assemble
-        val log = SimpleLogBuilder(DateTime.now().millis)
-                .setStart(DateTime.now().millis)
-                .setEnd(DateTime.now().plusMinutes(5).millis)
-                .setTask("DEV-123")
-                .build()
+        val log = Mocks.createLog(
+            timeProvider = timeProvider,
+            start = timeProvider.now().plusHours(3),
+            end = timeProvider.now().plusHours(3).plusMinutes(5),
+            code = "DEV-123",
+            comment = "",
+        )
 
         // Act
         val result = LogUtils.formatLogToText(log)
@@ -68,10 +77,13 @@ class LogUtilsFormatLogToTextTest {
     @Test
     fun noTaskNoComment() {
         // Assemble
-        val log = SimpleLogBuilder(DateTime.now().millis)
-                .setStart(DateTime.now().millis)
-                .setEnd(DateTime.now().plusMinutes(5).millis)
-                .build()
+        val log = Mocks.createLog(
+            timeProvider = timeProvider,
+            start = timeProvider.now().plusHours(3),
+            end = timeProvider.now().plusHours(3).plusMinutes(5),
+            code = "",
+            comment = "",
+        )
 
         // Act
         val result = LogUtils.formatLogToText(log)

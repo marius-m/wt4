@@ -1,8 +1,10 @@
 package lt.markmerkk.timecounter
 
 import lt.markmerkk.TimeProviderTest
+import lt.markmerkk.entities.LocalTimeGap
 import org.assertj.core.api.Assertions
 import org.joda.time.Duration
+import org.joda.time.LocalTime
 import org.junit.Test
 
 class WorkDayRuleDurationTest {
@@ -19,9 +21,8 @@ class WorkDayRuleDurationTest {
         // Act
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
-            workStart = start,
-            workEnd = end,
-            breakDuration = Duration.ZERO,
+            workSchedule = LocalTimeGap.from(start, end),
+            breaks = TimeBreaks.asEmpty(),
         )
 
         // Assert
@@ -32,20 +33,18 @@ class WorkDayRuleDurationTest {
     @Test
     fun basic_withBreak() {
         // Assemble
-        val start = now.plusHours(9).toLocalTime()
+        val start = now.plusHours(8).toLocalTime()
         val end = now.plusHours(17).toLocalTime()
 
         // Act
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
-            workStart = start,
-            workEnd = end,
-            breakDuration = Duration.standardMinutes(30),
+            workSchedule = LocalTimeGap.from(start, end),
+            breaks = TimeBreaks.asDefault(),
         )
 
         // Assert
         val expectDuration = Duration.standardHours(8)
-            .minus(Duration.standardMinutes(30))
         Assertions.assertThat(result.duration)
             .isEqualTo(expectDuration)
     }
@@ -59,9 +58,13 @@ class WorkDayRuleDurationTest {
         // Act
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
-            workStart = start,
-            workEnd = end,
-            breakDuration = Duration.standardHours(5),
+            workSchedule = LocalTimeGap.from(start, end),
+            breaks = TimeBreaks.fromTimeGaps(
+                LocalTimeGap.from(
+                    start = LocalTime.MIDNIGHT.plusHours(9),
+                    end = LocalTime.MIDNIGHT.plusHours(13),
+                )
+            ),
         )
 
         // Assert
@@ -78,9 +81,8 @@ class WorkDayRuleDurationTest {
         // Act
         val result = WorkDayRule(
             weekDay = WeekDay.MON,
-            workStart = start,
-            workEnd = end,
-            breakDuration = Duration.ZERO,
+            workSchedule = LocalTimeGap.from(start, end),
+            breaks = TimeBreaks.asEmpty(),
         )
 
         // Assert

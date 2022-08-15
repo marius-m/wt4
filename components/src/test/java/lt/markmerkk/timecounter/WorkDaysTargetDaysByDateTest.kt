@@ -62,8 +62,8 @@ class WorkDaysTargetDaysByDateTest {
             WorkDayRule.defaultWithWeekDay(WeekDay.WED),
             WorkDayRule.defaultWithWeekDay(WeekDay.THU),
             WorkDayRule.defaultWithWeekDay(WeekDay.FRI),
-            WorkDayRule.defaultWithWeekDay(WeekDay.SAT),
-            WorkDayRule.defaultWithWeekDay(WeekDay.SUN),
+            WorkDayRule.emptyWithWeekDay(WeekDay.SAT),
+            WorkDayRule.emptyWithWeekDay(WeekDay.SUN),
         )
     }
 }

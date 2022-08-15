@@ -3,6 +3,7 @@ package lt.markmerkk.timecounter
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 
 /**
  * Forecasts duration of worktime needed to be logged for target date in a week
@@ -20,6 +21,19 @@ class DurationGoalForecaster(
     ): Duration {
         val targetWeekDays = workDays
             .spawnTargetDaysByDate(targetDate = targetDate)
+        return targetWeekDays.duration()
+    }
+
+    fun forecastDurationGoalForTime(
+        targetDate: LocalDate,
+        targetTime: LocalTime,
+    ): Duration {
+        val targetWeekDays = workDays
+            .spawnTargetDaysByDate(targetDate = targetDate)
+        val targetWeekDaysWithoutLast = targetWeekDays
+            .dropLast(1)
+        val targetWeekDayLast = targetWeekDays
+            .last()
         return targetWeekDays.duration()
     }
 }

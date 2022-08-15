@@ -1,49 +1,68 @@
 package lt.markmerkk.timecounter
 
+import lt.markmerkk.entities.LocalTimeGap
 import org.joda.time.Duration
 import org.joda.time.LocalTime
 import org.joda.time.Period
+import org.slf4j.LoggerFactory
 
 /**
  * Defines rules work day (when work starts, ends, its breaks)
  */
 data class WorkDayRule(
     val weekDay: WeekDay,
-    val workStart: LocalTime,
-    val workEnd: LocalTime,
-    val breakDuration: Duration = Duration.ZERO,
+    val workSchedule: LocalTimeGap,
+    val breaks: TimeBreaks,
 ) {
     val duration: Duration
-        get() {
-            val durationStartEnd = Period(workStart, workEnd)
-                .toStandardDuration()
-            val totalDuration = durationStartEnd.minus(breakDuration)
-            if (totalDuration.isShorterThan(Duration.ZERO)) {
-                return Duration.ZERO
-            }
-            return totalDuration
+        get() = durationWithTargetEnd(targetTime = workSchedule.end)
+
+    fun totalBreakDuration(): Duration {
+        return breaks.duration()
+    }
+
+    fun durationWithTargetEnd(targetTime: LocalTime): Duration {
+        val durationStartEnd = Period(workSchedule.start, targetTime)
+            .toStandardDuration()
+        val totalDuration = durationStartEnd.minus(totalBreakDuration())
+        l.debug(
+            "durationWithTargetEnd(durationStartEnd: {}, breakDuration: {})",
+            durationStartEnd.toStandardMinutes(),
+            totalBreakDuration().toStandardMinutes(),
+        )
+        if (totalDuration.isShorterThan(Duration.ZERO)) {
+            return Duration.ZERO
         }
+        return totalDuration
+    }
 
     companion object {
+        private val l = LoggerFactory.getLogger(WorkDayRule::class.java)!!
+        val DEFAULT_WEEK_DAY = WeekDay.MON
         val DEFAULT_WORK_START = LocalTime.MIDNIGHT.plusHours(8)
         val DEFAULT_WORK_END = LocalTime.MIDNIGHT.plusHours(17)
-        val DEFAULT_DURATION_BREAK = Duration.standardHours(1)
 
         fun emptyWithWeekDay(weekDay: WeekDay): WorkDayRule {
             return WorkDayRule(
                 weekDay = weekDay,
-                workStart = LocalTime.MIDNIGHT,
-                workEnd = LocalTime.MIDNIGHT,
-                breakDuration = Duration.ZERO,
+                workSchedule = LocalTimeGap.asEmpty(),
+                breaks = TimeBreaks.asEmpty(),
+            )
+        }
+
+        fun default(): WorkDayRule {
+            return WorkDayRule(
+                weekDay = DEFAULT_WEEK_DAY,
+                workSchedule = LocalTimeGap.from(DEFAULT_WORK_START, DEFAULT_WORK_END),
+                breaks = TimeBreaks.asDefault(),
             )
         }
 
         fun defaultWithWeekDay(weekDay: WeekDay): WorkDayRule {
             return WorkDayRule(
                 weekDay = weekDay,
-                workStart = DEFAULT_WORK_START,
-                workEnd = DEFAULT_WORK_END,
-                breakDuration = DEFAULT_DURATION_BREAK,
+                workSchedule = LocalTimeGap.from(DEFAULT_WORK_START, DEFAULT_WORK_END),
+                breaks = TimeBreaks.asDefault(),
             )
         }
 
