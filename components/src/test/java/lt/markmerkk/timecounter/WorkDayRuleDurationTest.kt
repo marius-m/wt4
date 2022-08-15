@@ -17,16 +17,17 @@ class WorkDayRuleDurationTest {
         // Assemble
         val start = now.plusHours(9).toLocalTime()
         val end = now.plusHours(17).toLocalTime()
-
-        // Act
-        val result = WorkDayRule(
+        val workDayRule = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
             timeBreak = TimeBreak.asEmpty(),
         )
 
+        // Act
+        val result = workDayRule.workDuration
+
         // Assert
-        Assertions.assertThat(result.duration)
+        Assertions.assertThat(result)
             .isEqualTo(Duration.standardHours(8))
     }
 
@@ -35,17 +36,18 @@ class WorkDayRuleDurationTest {
         // Assemble
         val start = now.plusHours(8).toLocalTime()
         val end = now.plusHours(17).toLocalTime()
-
-        // Act
-        val result = WorkDayRule(
+        val workDayRule = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
             timeBreak = TimeBreak.asDefault(),
         )
 
+        // Act
+        val result = workDayRule.workDuration
+
         // Assert
         val expectDuration = Duration.standardHours(8)
-        Assertions.assertThat(result.duration)
+        Assertions.assertThat(result)
             .isEqualTo(expectDuration)
     }
 
@@ -54,9 +56,7 @@ class WorkDayRuleDurationTest {
         // Assemble
         val start = now.plusHours(9).toLocalTime()
         val end = now.plusHours(11).toLocalTime()
-
-        // Act
-        val result = WorkDayRule(
+        val workDayRule = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
             timeBreak = TimeBreak(
@@ -67,8 +67,11 @@ class WorkDayRuleDurationTest {
             ),
         )
 
+        // Act
+        val result = workDayRule.workDuration
+
         // Assert
-        Assertions.assertThat(result.duration)
+        Assertions.assertThat(result)
             .isEqualTo(Duration.ZERO)
     }
 
@@ -77,16 +80,17 @@ class WorkDayRuleDurationTest {
         // Assemble
         val start = now.plusHours(9).toLocalTime()
         val end = now.plusHours(6).toLocalTime()
-
-        // Act
-        val result = WorkDayRule(
+        val workDayRule = WorkDayRule(
             weekDay = WeekDay.MON,
             workSchedule = LocalTimeGap.from(start, end),
             timeBreak = TimeBreak.asEmpty(),
         )
 
+        // Act
+        val result = workDayRule.workDuration
+
         // Assert
-        Assertions.assertThat(result.duration)
+        Assertions.assertThat(result)
             .isEqualTo(Duration.standardHours(0))
     }
 }

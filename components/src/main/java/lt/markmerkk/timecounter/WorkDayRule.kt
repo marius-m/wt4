@@ -3,7 +3,6 @@ package lt.markmerkk.timecounter
 import lt.markmerkk.entities.LocalTimeGap
 import org.joda.time.Duration
 import org.joda.time.LocalTime
-import org.joda.time.Period
 import org.slf4j.LoggerFactory
 
 /**
@@ -14,13 +13,13 @@ data class WorkDayRule(
     val workSchedule: LocalTimeGap,
     val timeBreak: TimeBreak,
 ) {
-    val duration: Duration
+    val workDuration: Duration
         get() = durationWithTargetEnd(targetTime = workSchedule.end)
 
     fun durationWithTargetEnd(targetTime: LocalTime): Duration {
         val targetGap = LocalTimeGap.from(workSchedule.start, targetTime)
         val durationStartEnd = targetGap.period.toStandardDuration()
-        val breakDurationFromTimeGap = timeBreak.breakDurationFromTimeGap(timeGap = targetGap)
+        val breakDurationFromTimeGap = timeBreak.breakDurationFromTimeGap(timeWork = targetGap)
         val totalDuration = durationStartEnd.minus(breakDurationFromTimeGap)
         l.debug(
             "durationWithTargetEnd(durationStartEnd: {}, breakDuration: {})",
@@ -78,5 +77,5 @@ data class WorkDayRule(
 }
 
 fun List<WorkDayRule>.duration(): Duration {
-    return this.fold(Duration.ZERO) { totalDuration, workDayRule -> totalDuration.plus(workDayRule.duration) }
+    return this.fold(Duration.ZERO) { totalDuration, workDayRule -> totalDuration.plus(workDayRule.workDuration) }
 }

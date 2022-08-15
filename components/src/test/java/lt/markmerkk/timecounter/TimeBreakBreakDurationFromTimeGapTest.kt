@@ -11,7 +11,7 @@ class TimeBreakBreakDurationFromTimeGapTest {
     @Test
     fun doesNotIncludeBreak1() {
         // Assemble
-        val timeGap = LocalTimeGap.from(
+        val timeWork = LocalTimeGap.from(
             start = LocalTime.MIDNIGHT.plusHours(8),
             end = LocalTime.MIDNIGHT.plusHours(9),
         )
@@ -23,7 +23,7 @@ class TimeBreakBreakDurationFromTimeGapTest {
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = timeGap)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.ZERO
@@ -33,7 +33,7 @@ class TimeBreakBreakDurationFromTimeGapTest {
     @Test
     fun doesNotIncludeBreak_timeGapWayBefore() {
         // Assemble
-        val timeGap = LocalTimeGap.from(
+        val timeWork = LocalTimeGap.from(
             start = LocalTime.MIDNIGHT.plusHours(8),
             end = LocalTime.MIDNIGHT.plusHours(11).plusMinutes(30),
         )
@@ -45,7 +45,7 @@ class TimeBreakBreakDurationFromTimeGapTest {
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = timeGap)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.ZERO
@@ -55,7 +55,7 @@ class TimeBreakBreakDurationFromTimeGapTest {
     @Test
     fun doesNotIncludeBreak_timeGapWayAfter() {
         // Assemble
-        val timeGap = LocalTimeGap.from(
+        val timeWork = LocalTimeGap.from(
             start = LocalTime.MIDNIGHT.plusHours(15),
             end = LocalTime.MIDNIGHT.plusHours(18),
         )
@@ -67,7 +67,7 @@ class TimeBreakBreakDurationFromTimeGapTest {
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = timeGap)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.ZERO
@@ -77,41 +77,63 @@ class TimeBreakBreakDurationFromTimeGapTest {
     @Test
     fun breakInMiddle() {
         // Assemble
-        val timeGap = LocalTimeGap.from(
+        val timeWork = LocalTimeGap.from(
             start = LocalTime.MIDNIGHT.plusHours(8),
-            end = LocalTime.MIDNIGHT.plusHours(15),
+            end = LocalTime.MIDNIGHT.plusHours(17),
         )
         val timeBreak = TimeBreak(
             timeBreak = LocalTimeGap.from(
-                start = LocalTime.MIDNIGHT.plusHours(9),
-                end = LocalTime.MIDNIGHT.plusHours(11),
+                start = LocalTime.MIDNIGHT.plusHours(12),
+                end = LocalTime.MIDNIGHT.plusHours(13),
             )
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = timeGap)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
-        val expectDuration = Duration.standardHours(2)
+        val expectDuration = Duration.standardHours(1)
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun breakBiggerThanWork() {
+        // Assemble
+        val timeWork = LocalTimeGap.from(
+            start = LocalTime.MIDNIGHT.plusHours(8),
+            end = LocalTime.MIDNIGHT.plusHours(17),
+        )
+        val timeBreak = TimeBreak(
+            timeBreak = LocalTimeGap.from(
+                start = LocalTime.MIDNIGHT.plusHours(7),
+                end = LocalTime.MIDNIGHT.plusHours(19),
+            )
+        )
+
+        // Act
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
+
+        // Assert
+        val expectDuration = Duration.standardHours(9)
         Assertions.assertThat(result).isEqualTo(expectDuration)
     }
 
     @Test
     fun breakOnEnd() {
         // Assemble
-        val inputTime = LocalTimeGap.from(
+        val timeWork = LocalTimeGap.from(
             start = LocalTime.MIDNIGHT.plusHours(8),
-            end = LocalTime.MIDNIGHT.plusHours(9).plusMinutes(30),
+            end = LocalTime.MIDNIGHT.plusHours(17),
         )
         val timeBreak = TimeBreak(
             timeBreak = LocalTimeGap.from(
-                start = LocalTime.MIDNIGHT.plusHours(9),
-                end = LocalTime.MIDNIGHT.plusHours(11),
+                start = LocalTime.MIDNIGHT.plusHours(16).plusMinutes(30),
+                end = LocalTime.MIDNIGHT.plusHours(19),
             )
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = inputTime)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.standardMinutes(30)
@@ -121,19 +143,19 @@ class TimeBreakBreakDurationFromTimeGapTest {
     @Test
     fun breakOnStart() {
         // Assemble
-        val inputTime = LocalTimeGap.from(
-            start = LocalTime.MIDNIGHT.plusHours(10).plusMinutes(30),
-            end = LocalTime.MIDNIGHT.plusHours(15),
+        val timeWork = LocalTimeGap.from(
+            start = LocalTime.MIDNIGHT.plusHours(8),
+            end = LocalTime.MIDNIGHT.plusHours(17),
         )
         val timeBreak = TimeBreak(
             timeBreak = LocalTimeGap.from(
-                start = LocalTime.MIDNIGHT.plusHours(9),
-                end = LocalTime.MIDNIGHT.plusHours(11),
+                start = LocalTime.MIDNIGHT.plusHours(7),
+                end = LocalTime.MIDNIGHT.plusHours(8).plusMinutes(30),
             )
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = inputTime)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.standardMinutes(30)
@@ -141,21 +163,21 @@ class TimeBreakBreakDurationFromTimeGapTest {
     }
 
     @Test
-    fun breakOnEdgeStart() {
+    fun noBreak_breakOnEdgeStart() {
         // Assemble
-        val inputTime = LocalTimeGap.from(
+        val timeWork = LocalTimeGap.from(
             start = LocalTime.MIDNIGHT.plusHours(8),
-            end = LocalTime.MIDNIGHT.plusHours(9),
+            end = LocalTime.MIDNIGHT.plusHours(17),
         )
         val timeBreak = TimeBreak(
             timeBreak = LocalTimeGap.from(
-                start = LocalTime.MIDNIGHT.plusHours(9),
-                end = LocalTime.MIDNIGHT.plusHours(11),
+                start = LocalTime.MIDNIGHT.plusHours(7),
+                end = LocalTime.MIDNIGHT.plusHours(8),
             )
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = inputTime)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.ZERO
@@ -163,24 +185,70 @@ class TimeBreakBreakDurationFromTimeGapTest {
     }
 
     @Test
-    fun breakOnEdgeEnd() {
+    fun hasBreak_breakOnEdgeStart() {
         // Assemble
-        val inputTime = LocalTimeGap.from(
-            start = LocalTime.MIDNIGHT.plusHours(11),
-            end = LocalTime.MIDNIGHT.plusHours(13),
+        val timeWork = LocalTimeGap.from(
+            start = LocalTime.MIDNIGHT.plusHours(8),
+            end = LocalTime.MIDNIGHT.plusHours(17),
         )
         val timeBreak = TimeBreak(
             timeBreak = LocalTimeGap.from(
-                start = LocalTime.MIDNIGHT.plusHours(9),
-                end = LocalTime.MIDNIGHT.plusHours(11),
+                start = LocalTime.MIDNIGHT.plusHours(8),
+                end = LocalTime.MIDNIGHT.plusHours(9).plusMinutes(30),
             )
         )
 
         // Act
-        val result = timeBreak.breakDurationFromTimeGap(timeGap = inputTime)
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
+
+        // Assert
+        val expectDuration = Duration.standardHours(1)
+            .plus(Duration.standardMinutes(30))
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun noBreak_breakOnEdgeEnd() {
+        // Assemble
+        val timeWork = LocalTimeGap.from(
+            start = LocalTime.MIDNIGHT.plusHours(8),
+            end = LocalTime.MIDNIGHT.plusHours(17),
+        )
+        val timeBreak = TimeBreak(
+            timeBreak = LocalTimeGap.from(
+                start = LocalTime.MIDNIGHT.plusHours(17),
+                end = LocalTime.MIDNIGHT.plusHours(19),
+            )
+        )
+
+        // Act
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
 
         // Assert
         val expectDuration = Duration.ZERO
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun hasBreak_breakOnEdgeEnd() {
+        // Assemble
+        val timeWork = LocalTimeGap.from(
+            start = LocalTime.MIDNIGHT.plusHours(8),
+            end = LocalTime.MIDNIGHT.plusHours(17),
+        )
+        val timeBreak = TimeBreak(
+            timeBreak = LocalTimeGap.from(
+                start = LocalTime.MIDNIGHT.plusHours(15).plusMinutes(30),
+                end = LocalTime.MIDNIGHT.plusHours(17),
+            )
+        )
+
+        // Act
+        val result = timeBreak.breakDurationFromTimeGap(timeWork = timeWork)
+
+        // Assert
+        val expectDuration = Duration.standardHours(1)
+            .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDuration)
     }
 }

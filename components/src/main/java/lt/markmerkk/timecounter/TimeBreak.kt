@@ -18,8 +18,19 @@ data class TimeBreak(
 
     fun duration(): Duration = timeBreak.duration
 
-    fun breakDurationFromTimeGap(timeGap: LocalTimeGap): Duration {
+    fun breakDurationFromTimeGap(timeWork: LocalTimeGap): Duration {
         return when {
+            /**
+             * -------------------------->
+             *       |time gap|
+             *       ----------
+             *   |       break         |
+             *   ----------------------
+             */
+            timeWork.start.isAfter(timeBreak.start) && timeWork.end.isBefore(timeBreak.end) -> {
+                Period(timeWork.start, timeWork.end).toStandardDuration()
+            }
+
             /**
              * -------------------------->
              *   |    time gap    |
@@ -27,8 +38,25 @@ data class TimeBreak(
              *       | break |
              *       --------
              */
-            timeGap.start.isBefore(timeBreak.start) && timeGap.end.isAfter(timeBreak.end) -> {
-                return Period(timeBreak.start, timeBreak.end).toStandardDuration()
+
+            /**
+             * -------------------------->
+             *   | time gap |
+             *   -----------
+             *   | break |
+             *   --------
+             */
+
+            /**
+             * -------------------------->
+             *   | time gap |
+             *   -----------
+             *     | break |
+             *     --------
+             */
+            (timeWork.start.isBefore(timeBreak.start) || timeWork.start.isEqual(timeBreak.start)) &&
+                (timeWork.end.isAfter(timeBreak.end)) -> {
+                Period(timeBreak.start, timeBreak.end).toStandardDuration()
             }
 
             /**
@@ -38,8 +66,8 @@ data class TimeBreak(
              *           | break |
              *           --------
              */
-            timeGap.start.isBefore(timeBreak.start) && timeGap.end.isAfter(timeBreak.start) -> {
-                return Period(timeBreak.start, timeGap.end).toStandardDuration()
+            timeWork.start.isBefore(timeBreak.start) && timeWork.end.isAfter(timeBreak.start) -> {
+                Period(timeBreak.start, timeWork.end).toStandardDuration()
             }
 
             /**
@@ -49,8 +77,8 @@ data class TimeBreak(
              *        | break |
              *        --------
              */
-            timeGap.start.isAfter(timeBreak.start) && timeGap.start.isBefore(timeBreak.end) -> {
-                return Period(timeGap.start, timeBreak.end).toStandardDuration()
+            timeWork.start.isAfter(timeBreak.start) && timeWork.start.isBefore(timeBreak.end) -> {
+                Period(timeWork.start, timeBreak.end).toStandardDuration()
             }
             else -> Duration.ZERO
         }
