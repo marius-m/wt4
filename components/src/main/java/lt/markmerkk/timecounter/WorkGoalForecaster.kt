@@ -116,6 +116,27 @@ class WorkGoalForecaster(
         return dtWorkLeftFromStart
     }
 
+    fun dayGoal(dtCurrent: DateTime): Duration {
+        val workDayRuleByDate = workDays.workDayRulesByDate(dtCurrent.toLocalDate())
+        return workDayRuleByDate.workDuration
+    }
+
+    fun dayGoalLeft(
+        dtCurrent: DateTime,
+        durationWorked: Duration,
+    ): Duration {
+        val durationDayGoal = dayGoal(dtCurrent)
+        val durationWorkLeft = durationDayGoal.minus(durationWorked)
+        if (durationWorkLeft.isShorterThan(Duration.ZERO)) {
+            return Duration.ZERO
+        }
+        return durationWorkLeft
+    }
+
+    fun daySchedule(dtCurrent: DateTime): WorkDayRule {
+        return workDays.workDayRulesByDate(dtCurrent.toLocalDate())
+    }
+
     companion object {
         private val l = LoggerFactory.getLogger(WorkGoalForecaster::class.java)!!
     }

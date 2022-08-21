@@ -1,6 +1,7 @@
 package lt.markmerkk.entities
 
 import lt.markmerkk.round
+import lt.markmerkk.utils.LogFormatters
 import org.joda.time.Duration
 import org.joda.time.LocalTime
 import org.joda.time.Period
@@ -19,6 +20,13 @@ data class LocalTimeGap private constructor(
 
     fun isOverlappingWithAny(otherTimeGaps: List<LocalTimeGap>): Boolean {
         return otherTimeGaps.any { it.isOverlapping(this) }
+    }
+
+    fun toStringShort(): String {
+        return "%s - %s".format(
+            LogFormatters.formatTime.print(start),
+            LogFormatters.formatTime.print(end),
+        )
     }
 
     companion object {

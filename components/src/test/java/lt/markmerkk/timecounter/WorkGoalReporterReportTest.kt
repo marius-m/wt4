@@ -152,4 +152,59 @@ class WorkGoalReporterReportTest {
         // Assert
         Assertions.assertThat(result).isEqualTo("Should complete: 17:00")
     }
+
+    @Test
+    fun dayDuration() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(14)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(5)
+
+        // Act
+        val result = workGoalReporter.reportDayGoalDuration(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Day goal: 8h (3h left)")
+    }
+
+    @Test
+    fun dayDuration_noTimeLeft() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(14)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(8)
+
+        // Act
+        val result = workGoalReporter.reportDayGoalDuration(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Day goal: 8h (0m left)")
+    }
+
+    @Test
+    fun daySchedule() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(14)
+        val targetNow = nowDate.toDateTime(nowTime)
+
+        // Act
+        val result = workGoalReporter.reportDaySchedule(
+            now = targetNow,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Day schedule: MON 08:00 - 17:00 (Break: 12:00 - 13:00)")
+    }
 }
