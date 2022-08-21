@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions
 import org.joda.time.Duration
 import org.junit.Test
 
-class WorkGoalForecasterWeekDurationForDayTest {
+class WorkGoalForecasterWeekShouldWorkedDurationForDayTest {
 
     private val timeProvider = TimeProviderTest()
     private val now = timeProvider.now()
@@ -18,7 +18,7 @@ class WorkGoalForecasterWeekDurationForDayTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForWholeDay(targetDate = targetDate)
+            .forecastWeekDurationShouldWorkedForWholeDay(targetDate = targetDate)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(8)
@@ -32,7 +32,7 @@ class WorkGoalForecasterWeekDurationForDayTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForWholeDay(targetDate = targetDate)
+            .forecastWeekDurationShouldWorkedForWholeDay(targetDate = targetDate)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(16)
@@ -46,7 +46,7 @@ class WorkGoalForecasterWeekDurationForDayTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForWholeDay(targetDate = targetDate)
+            .forecastWeekDurationShouldWorkedForWholeDay(targetDate = targetDate)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(40)

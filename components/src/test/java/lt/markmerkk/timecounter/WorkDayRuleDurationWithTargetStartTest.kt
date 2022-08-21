@@ -6,26 +6,43 @@ import org.joda.time.Duration
 import org.joda.time.LocalTime
 import org.junit.Test
 
-class WorkDayRuleDurationWithTargetEndTest {
+class WorkDayRuleDurationWithTargetStartTest {
 
     private val timeProvider = TimeProviderTest()
     private val now = timeProvider.now()
 
     @Test
-    fun noBreak() {
+    fun noBreak_basic() {
         // Assemble
         val workDayRule = WorkDayRule.default()
         val targetTime = LocalTime.MIDNIGHT
-            .plusHours(11)
-            .plusMinutes(30)
+            .plusHours(15)
 
         // Act
-        val result = workDayRule.workDurationWithTargetEnd(
-            targetEndTime = targetTime,
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime,
         )
 
         // Assert
-        val expectDuration = Duration.standardHours(3)
+        val expectDuration = Duration.standardHours(2)
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun noBreak_hasMinutes() {
+        // Assemble
+        val workDayRule = WorkDayRule.default()
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(15)
+            .plusMinutes(30)
+
+        // Act
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime,
+        )
+
+        // Assert
+        val expectDuration = Duration.standardHours(1)
             .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDuration)
     }
@@ -39,8 +56,8 @@ class WorkDayRuleDurationWithTargetEndTest {
             .plusMinutes(30)
 
         // Act
-        val result = workDayRule.workDurationWithTargetEnd(
-            targetEndTime = targetTime,
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime
         )
 
         // Assert
@@ -53,15 +70,15 @@ class WorkDayRuleDurationWithTargetEndTest {
         // Assemble
         val workDayRule = WorkDayRule.default()
         val targetTime = LocalTime.MIDNIGHT
-            .plusHours(15)
+            .plusHours(9)
 
         // Act
-        val result = workDayRule.workDurationWithTargetEnd(
-            targetEndTime = targetTime,
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime,
         )
 
         // Assert
-        val expectDuration = Duration.standardHours(6)
+        val expectDuration = Duration.standardHours(7)
         Assertions.assertThat(result).isEqualTo(expectDuration)
     }
 
@@ -70,11 +87,11 @@ class WorkDayRuleDurationWithTargetEndTest {
         // Assemble
         val workDayRule = WorkDayRule.default()
         val targetTime = LocalTime.MIDNIGHT
-            .plusHours(17)
+            .plusHours(8)
 
         // Act
-        val result = workDayRule.workDurationWithTargetEnd(
-            targetEndTime = targetTime,
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime,
         )
 
         // Assert
@@ -83,33 +100,32 @@ class WorkDayRuleDurationWithTargetEndTest {
     }
 
     @Test
-    fun targetMoreThanWorkScheduledEnd() {
+    fun targetLessThanWorkSchduledStart() {
+        // Assemble
+        val workDayRule = WorkDayRule.default()
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(6)
+
+        // Act
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime,
+        )
+
+        // Assert
+        val expectDuration = Duration.standardHours(8)
+        Assertions.assertThat(result).isEqualTo(expectDuration)
+    }
+
+    @Test
+    fun invalid_targetAfterEnd() {
         // Assemble
         val workDayRule = WorkDayRule.default()
         val targetTime = LocalTime.MIDNIGHT
             .plusHours(20)
 
         // Act
-        val result = workDayRule.workDurationWithTargetEnd(
-            targetEndTime = targetTime,
-        )
-
-        // Assert
-        val expectDuration = Duration.standardHours(8)
-        Assertions.assertThat(result).isEqualTo(expectDuration)
-    }
-
-    @Test
-    fun invalid_targetBeforeStart() {
-        // Assemble
-        val workDayRule = WorkDayRule.default()
-        val targetTime = LocalTime.MIDNIGHT
-            .plusHours(5)
-            .plusMinutes(30)
-
-        // Act
-        val result = workDayRule.workDurationWithTargetEnd(
-            targetEndTime = targetTime,
+        val result = workDayRule.workDurationWithTargetStart(
+            targetStartTime = targetTime,
         )
 
         // Assert

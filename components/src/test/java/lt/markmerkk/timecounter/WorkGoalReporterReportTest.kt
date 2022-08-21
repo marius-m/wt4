@@ -27,7 +27,7 @@ class WorkGoalReporterReportTest {
     }
 
     @Test
-    fun valid_logged() {
+    fun logged() {
         // Assemble
         val durationLogged = Duration.standardHours(2)
             .plus(Duration.standardMinutes(31))
@@ -40,7 +40,7 @@ class WorkGoalReporterReportTest {
     }
 
     @Test
-    fun valid_loggedOngoing() {
+    fun loggedOngoing() {
         // Assemble
         val durationLogged = Duration.standardHours(2)
             .plus(Duration.standardMinutes(31))
@@ -54,7 +54,7 @@ class WorkGoalReporterReportTest {
     }
 
     @Test
-    fun valid_pacePositive() {
+    fun pacePositive() {
         // Assemble
         val nowDate = now.plusDays(4).toLocalDate() // mon
         val nowTime = LocalTime.MIDNIGHT
@@ -75,7 +75,26 @@ class WorkGoalReporterReportTest {
     }
 
     @Test
-    fun valid_paceNegative() {
+    fun paceEquals() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(11)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(3)
+
+        // Act
+        val result = workGoalReporter.reportPaceDay(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Pace: +0m")
+    }
+
+    @Test
+    fun paceNegative() {
         // Assemble
         val nowDate = now.plusDays(4).toLocalDate() // mon
         val nowTime = LocalTime.MIDNIGHT
@@ -93,5 +112,44 @@ class WorkGoalReporterReportTest {
 
         // Assert
         Assertions.assertThat(result).isEqualTo("Pace: -2h 50m")
+    }
+
+    @Test
+    fun shouldCompleteDay_noBreak() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(11)
+            .plusMinutes(30)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(3)
+
+        // Act
+        val result = workGoalReporter.reportShouldComplete(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Should complete: 16:30")
+    }
+
+    @Test
+    fun shouldCompleteDay_hasBreak() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(14)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(5)
+
+        // Act
+        val result = workGoalReporter.reportShouldComplete(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Should complete: 17:00")
     }
 }

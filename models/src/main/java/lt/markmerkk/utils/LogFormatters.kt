@@ -130,3 +130,7 @@ object LogFormatters {
         }
     }
 }
+
+fun Duration.toStringShort(): String {
+    return LogFormatters.humanReadableDurationShort(this)
+}

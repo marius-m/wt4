@@ -34,11 +34,12 @@ class WorkGoalReporter(
         now: DateTime,
         durationWorked: Duration,
     ): String {
-        val durationGoal = workGoalForecaster.forecastDayDurationGoalForTargetTime(
+        val durationGoal = workGoalForecaster.forecastDayDurationShouldWorkedForTargetTime(
             targetDate = now.toLocalDate(),
             targetTime = now.toLocalTime(),
         )
-        val reportPace: String = if (durationWorked.compareTo(durationGoal) == 1) {
+        val compareDurationWorkedToGoal = durationWorked.compareTo(durationGoal)
+        val reportPace: String = if (compareDurationWorkedToGoal == 1 || compareDurationWorkedToGoal == 0) {
             val resultDuration = durationWorked.minus(durationGoal)
             "+%s".format(LogFormatters.humanReadableDurationShort(resultDuration))
         } else {
@@ -52,8 +53,24 @@ class WorkGoalReporter(
             )
     }
 
+    fun reportShouldComplete(
+        now: DateTime,
+        durationWorked: Duration,
+    ): String {
+        val dtShouldFinish = workGoalForecaster.forecastShouldFinishDay(
+            dtCurrent = now,
+            durationWorked = durationWorked,
+        )
+        return "%s: %s".format(
+            stringRes.resDayGoal(),
+            LogFormatters.formatTime.print(dtShouldFinish),
+        )
+    }
+
     interface StringRes {
         fun resTotal(): String
         fun resPace(): String
+        fun resDayGoal(): String
+        fun resShouldComplete(): String
     }
 }

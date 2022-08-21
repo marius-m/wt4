@@ -31,9 +31,19 @@ data class WorkDayRule(
             durationStartEnd.toStandardMinutes(),
             breakDurationFromTimeGap.toStandardMinutes(),
         )
-        if (totalDuration.isShorterThan(Duration.ZERO)) {
-            return Duration.ZERO
+        return totalDuration
+    }
+
+    fun workDurationWithTargetStart(targetStartTime: LocalTime): Duration {
+        val startTime = if (targetStartTime.isAfter(workSchedule.start)) {
+            targetStartTime
+        } else {
+            workSchedule.start
         }
+        val targetGap = LocalTimeGap.from(startTime, workSchedule.end)
+        val durationStartEnd = targetGap.period.toStandardDuration()
+        val breakDurationFromTimeGap = timeBreak.breakDurationFromTimeGap(timeWork = targetGap)
+        val totalDuration = durationStartEnd.minus(breakDurationFromTimeGap)
         return totalDuration
     }
 

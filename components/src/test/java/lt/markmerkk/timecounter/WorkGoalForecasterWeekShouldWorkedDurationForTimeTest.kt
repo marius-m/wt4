@@ -6,7 +6,7 @@ import org.joda.time.Duration
 import org.joda.time.LocalTime
 import org.junit.Test
 
-class WorkGoalForecasterWeekDurationForTimeTest {
+class WorkGoalForecasterWeekShouldWorkedDurationForTimeTest {
 
     private val timeProvider = TimeProviderTest()
     private val now = timeProvider.now()
@@ -22,7 +22,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(3)
@@ -40,7 +40,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(5)
@@ -58,7 +58,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(8)
@@ -74,7 +74,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(10)
@@ -90,7 +90,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(16)
@@ -106,7 +106,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(40)
@@ -122,7 +122,7 @@ class WorkGoalForecasterWeekDurationForTimeTest {
 
         // Act
         val result = workGoalForecaster
-            .forecastWeekDurationGoalForTargetTime(targetDate = targetDate, targetTime = targetTime)
+            .forecastWeekDurationShouldWorkedForTargetTime(targetDate = targetDate, targetTime = targetTime)
 
         // Assert
         val expectDurationGoal = Duration.standardHours(40)

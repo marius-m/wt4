@@ -37,7 +37,6 @@ data class LocalTimeGap private constructor(
 
         /**
          * Ensures the time gap is a valid one
-         * Note: Will always have at least 1 min gap
          */
         fun from(start: LocalTime, end: LocalTime): LocalTimeGap {
             val rStart = start.round()

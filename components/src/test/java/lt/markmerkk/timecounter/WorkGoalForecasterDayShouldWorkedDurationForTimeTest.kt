@@ -6,7 +6,7 @@ import org.joda.time.Duration
 import org.joda.time.LocalTime
 import org.junit.Test
 
-class WorkGoalForecasterDayDurationForDayTest {
+class WorkGoalForecasterDayShouldWorkedDurationForTimeTest {
 
     private val timeProvider = TimeProviderTest()
     private val now = timeProvider.now()
@@ -16,15 +16,20 @@ class WorkGoalForecasterDayDurationForDayTest {
     fun mon_noBreak() {
         // Assemble
         val targetDate = now.plusDays(4).toLocalDate() // mon
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(11)
+            .plusMinutes(30)
 
         // Act
         val result = workGoalForecaster
-            .forecastDayDurationGoalForWholeDay(
+            .forecastDayDurationShouldWorkedForTargetTime(
                 targetDate = targetDate,
+                targetTime = targetTime,
             )
 
         // Assert
-        val expectDurationGoal = Duration.standardHours(8)
+        val expectDurationGoal = Duration.standardHours(3)
+            .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDurationGoal)
     }
 
@@ -32,15 +37,20 @@ class WorkGoalForecasterDayDurationForDayTest {
     fun mon_withBreak() {
         // Assemble
         val targetDate = now.plusDays(4).toLocalDate() // mon
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(15)
+            .plusMinutes(30)
 
         // Act
         val result = workGoalForecaster
-            .forecastDayDurationGoalForWholeDay(
+            .forecastDayDurationShouldWorkedForTargetTime(
                 targetDate = targetDate,
+                targetTime = targetTime,
             )
 
         // Assert
-        val expectDurationGoal = Duration.standardHours(8)
+        val expectDurationGoal = Duration.standardHours(6)
+            .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDurationGoal)
     }
 
@@ -48,31 +58,41 @@ class WorkGoalForecasterDayDurationForDayTest {
     fun fri_noBreak() {
         // Assemble
         val targetDate = now.plusDays(8).toLocalDate() // fri
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(11)
+            .plusMinutes(30)
 
         // Act
         val result = workGoalForecaster
-            .forecastDayDurationGoalForWholeDay(
+            .forecastDayDurationShouldWorkedForTargetTime(
                 targetDate = targetDate,
+                targetTime = targetTime,
             )
 
         // Assert
-        val expectDurationGoal = Duration.standardHours(8)
+        val expectDurationGoal = Duration.standardHours(3)
+            .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDurationGoal)
     }
 
     @Test
-    fun sat_withBreak() {
+    fun fri_withBreak() {
         // Assemble
-        val targetDate = now.plusDays(9).toLocalDate() // sat
+        val targetDate = now.plusDays(8).toLocalDate() // fri
+        val targetTime = LocalTime.MIDNIGHT
+            .plusHours(15)
+            .plusMinutes(30)
 
         // Act
         val result = workGoalForecaster
-            .forecastDayDurationGoalForWholeDay(
+            .forecastDayDurationShouldWorkedForTargetTime(
                 targetDate = targetDate,
+                targetTime = targetTime,
             )
 
         // Assert
-        val expectDurationGoal = Duration.ZERO
+        val expectDurationGoal = Duration.standardHours(6)
+            .plus(Duration.standardMinutes(30))
         Assertions.assertThat(result).isEqualTo(expectDurationGoal)
     }
 }
