@@ -9,12 +9,17 @@ class WorkDays private constructor(
     /**
      * Spawns work days from MON to SUN, but only needed days
      */
-    fun spawnTargetDaysByDate(targetDate: LocalDate): List<WorkDayRule> {
+    fun weekDayRulesInSequenceByDate(targetDate: LocalDate): List<WorkDayRule> {
         val targetWeekDay = WeekDay.fromInt(targetDate.dayOfWeek)
         l.debug("spawnTargetDaysByDate(targetWeekDay: {})", targetWeekDay)
         val targetWorkDayRules = workDayRules
             .filter { weekDayRule -> weekDayRule.weekDay.compareTo(targetWeekDay) <= 0 }
         return targetWorkDayRules
+    }
+
+    fun weekDayRulesByDate(targetDate: LocalDate): WorkDayRule {
+        val targetWeekDay = WeekDay.fromInt(targetDate.dayOfWeek)
+        return workDayRules.first { targetWeekDay == it.weekDay }
     }
 
     companion object {

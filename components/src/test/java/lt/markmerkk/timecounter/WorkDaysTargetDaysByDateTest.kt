@@ -23,7 +23,7 @@ class WorkDaysTargetDaysByDateTest {
         val targetDate = now.plusDays(4).toLocalDate() // monday
 
         // Act
-        val result = workDays.spawnTargetDaysByDate(targetDate = targetDate)
+        val result = workDays.weekDayRulesInSequenceByDate(targetDate = targetDate)
 
         // Assert
         Assertions.assertThat(result).containsExactly(
@@ -37,7 +37,7 @@ class WorkDaysTargetDaysByDateTest {
         val targetDate = now.plusDays(6).toLocalDate() // wed
 
         // Act
-        val result = workDays.spawnTargetDaysByDate(targetDate = targetDate)
+        val result = workDays.weekDayRulesInSequenceByDate(targetDate = targetDate)
 
         // Assert
         Assertions.assertThat(result).containsExactly(
@@ -53,7 +53,7 @@ class WorkDaysTargetDaysByDateTest {
         val targetDate = now.plusDays(10).toLocalDate() // sun
 
         // Act
-        val result = workDays.spawnTargetDaysByDate(targetDate = targetDate)
+        val result = workDays.weekDayRulesInSequenceByDate(targetDate = targetDate)
 
         // Assert
         Assertions.assertThat(result).containsExactly(
