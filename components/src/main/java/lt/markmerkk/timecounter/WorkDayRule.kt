@@ -91,6 +91,6 @@ data class WorkDayRule(
     }
 }
 
-fun List<WorkDayRule>.duration(): Duration {
+fun List<WorkDayRule>.workDuration(): Duration {
     return this.fold(Duration.ZERO) { totalDuration, workDayRule -> totalDuration.plus(workDayRule.workDuration) }
 }

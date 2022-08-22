@@ -27,7 +27,7 @@ class WorkGoalForecaster(
     ): Duration {
         val targetWeekDays = workDays
             .workDayRulesInSequenceByDate(targetDate = targetDate)
-        return targetWeekDays.duration()
+        return targetWeekDays.workDuration()
     }
 
     /**
@@ -44,7 +44,7 @@ class WorkGoalForecaster(
             .dropLast(1)
         val targetWeekDayRuleLast = targetWeekDayRules
             .last()
-        return targetWeekDayRulesWithoutLast.duration()
+        return targetWeekDayRulesWithoutLast.workDuration()
             .plus(targetWeekDayRuleLast.workDurationWithTargetEnd(targetTime))
     }
 
@@ -71,6 +71,8 @@ class WorkGoalForecaster(
 
     /**
      * Returns how much time is left to work to finish the day
+     * @param dtCurrent current date time
+     * @param durationWorked duration how much time has been logged
      */
     fun forecastShouldFinishDay(
         dtCurrent: DateTime,
@@ -78,42 +80,88 @@ class WorkGoalForecaster(
     ): DateTime {
         val workDayRuleByDate = workDays.workDayRulesByDate(dtCurrent.toLocalDate())
         val dtWorkDayStart = dtCurrent.withTime(workDayRuleByDate.workSchedule.start)
-        val timeGapCurrent = LocalTimeGap.from(
-            start = workDayRuleByDate.workSchedule.start,
-            end = dtCurrent.toLocalTime(),
+        val durationBreak = workDayRuleByDate.timeBreak.breakDurationFromTimeGap(
+            timeWork = LocalTimeGap.from(
+                start = workDayRuleByDate.workSchedule.start,
+                end = dtCurrent.toLocalTime(),
+            )
         )
-        val durationShouldHaveWorked = workDayRuleByDate
-            .workDurationWithTargetEnd(targetEndTime = dtCurrent.toLocalTime())
-        val durationTotalWorkLeft = workDayRuleByDate.workDuration
-            .minus(durationShouldHaveWorked)
-        val durationTotalWork = durationShouldHaveWorked.plus(durationTotalWorkLeft)
-        val durationWorkedOffset = durationShouldHaveWorked.minus(durationWorked)
-        val durationBreak = workDayRuleByDate.timeBreak.breakDurationFromTimeGap(timeGapCurrent)
-        val durationTotalWorkFromStart = durationTotalWork
+        val durationWorkedOffset = durationWorkedOffsetDay(dtCurrent, durationWorked)
+        val durationTotalWorkFromStart = workDayRuleByDate.workDuration
             .plus(durationWorkedOffset)
             .plus(durationBreak)
         val dtWorkLeftFromStart = dtWorkDayStart.plus(durationTotalWorkFromStart)
+        val dtShouldFinish = if (dtWorkLeftFromStart.isBefore(dtCurrent)) {
+            dtCurrent
+        } else {
+            dtWorkLeftFromStart
+        }
         l.debug(
             "forecastShouldFinishDay(" +
                 "dtCurrent: {}," +
-                " durationShouldHaveWorked: {}," +
-                " durationTotalWorkLeft: {}," +
+                " durationWorkedOffset: {}," +
+                " durationBreak: {}," +
+                " durationTotalWorkFromStart: {}," +
+                " dtWorkLeftFromStart: {}," +
+                " dtShouldFinish: {}," +
+                ")",
+            dtCurrent,
+            durationWorkedOffset.toStringShort(),
+            durationBreak.toStringShort(),
+            durationTotalWorkFromStart.toStringShort(),
+            dtWorkLeftFromStart,
+            dtShouldFinish,
+        )
+        return dtShouldFinish
+    }
+
+    /**
+     * Returns how much time is left to work to finish the week
+     */
+    fun forecastShouldFinishWeek(
+        dtCurrent: DateTime,
+        durationWorked: Duration,
+    ): DateTime {
+        val workDayRules = workDays.workDayRulesInSequenceByDate(dtCurrent.toLocalDate())
+        val workDayRuleLast = workDayRules.last()
+        val durationWeekTotalWork = workDayRules.workDuration()
+        val durationDayTotalWork = workDayRuleLast.workDuration
+        val durationWorkedOffset = durationWorkedOffsetWeek(dtCurrent, durationWorked)
+        val durationDayBreak = workDayRuleLast.timeBreak.breakDurationFromTimeGap(
+            timeWork = LocalTimeGap.from(
+                start = workDayRuleLast.workSchedule.start,
+                end = dtCurrent.toLocalTime(),
+            )
+        )
+        val durationTotalWorkFromStart = durationDayTotalWork
+            .plus(durationWorkedOffset)
+            .plus(durationDayBreak)
+        val dtWorkDayStart = dtCurrent.withTime(workDayRuleLast.workSchedule.start)
+        val dtWorkLeftFromStart = dtWorkDayStart.plus(durationTotalWorkFromStart)
+        val dtShouldFinish = if (dtWorkLeftFromStart.isBefore(dtCurrent)) {
+            dtCurrent
+        } else {
+            dtWorkLeftFromStart
+        }
+        l.debug(
+            "forecastShouldFinishDay(" +
+                "dtCurrent: {}," +
                 " durationTotalWork: {}," +
                 " durationWorkedOffset: {}," +
                 " durationBreak: {}," +
                 " durationTotalWorkFromStart: {}," +
                 " dtWorkLeftFromStart: {}," +
+                " dtShouldFinish: {}," +
                 ")",
             dtCurrent,
-            durationShouldHaveWorked.toStringShort(),
-            durationTotalWorkLeft.toStringShort(),
-            durationTotalWork.toStringShort(),
+            durationWeekTotalWork.toStringShort(),
             durationWorkedOffset.toStringShort(),
-            durationBreak.toStringShort(),
+            durationDayBreak.toStringShort(),
             durationTotalWorkFromStart.toStringShort(),
             dtWorkLeftFromStart,
+            dtShouldFinish,
         )
-        return dtWorkLeftFromStart
+        return dtShouldFinish
     }
 
     fun dayGoal(dtCurrent: DateTime): Duration {
@@ -135,6 +183,42 @@ class WorkGoalForecaster(
 
     fun daySchedule(dtCurrent: DateTime): WorkDayRule {
         return workDays.workDayRulesByDate(dtCurrent.toLocalDate())
+    }
+
+    /**
+     * Returns how much time has worked, based on 'how much should have worked'
+     * Calculates for a day
+     * May be either positive or negative
+     * @param dtCurrent current date time
+     * @param durationWorked duration how much time has been logged
+     */
+    private fun durationWorkedOffsetDay(
+        dtCurrent: DateTime,
+        durationWorked: Duration,
+    ): Duration {
+        val durationShouldHaveWorked = forecastDayDurationShouldWorkedForTargetTime(
+            targetDate = dtCurrent.toLocalDate(),
+            targetTime = dtCurrent.toLocalTime(),
+        )
+        return durationShouldHaveWorked.minus(durationWorked)
+    }
+
+    /**
+     * Returns how much time has worked, based on 'how much should have worked'
+     * Calculates for a week
+     * May be either positive or negative
+     * @param dtCurrent current date time
+     * @param durationWorked duration how much time has been logged
+     */
+    private fun durationWorkedOffsetWeek(
+        dtCurrent: DateTime,
+        durationWorked: Duration,
+    ): Duration {
+        val durationShouldHaveWorked = forecastWeekDurationShouldWorkedForTargetTime(
+            targetDate = dtCurrent.toLocalDate(),
+            targetTime = dtCurrent.toLocalTime(),
+        )
+        return durationShouldHaveWorked.minus(durationWorked)
     }
 
     companion object {

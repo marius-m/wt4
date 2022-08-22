@@ -99,6 +99,33 @@ class WorkGoalForecasterShouldFinishDayTest {
     }
 
     @Test
+    fun mon_workedWayMore_workLeft_hasBreak() {
+        // Assemble
+        val localNow = now.plusDays(4) // mon
+            .withTime(
+                LocalTime.MIDNIGHT
+                    .plusHours(15)
+                    .plusMinutes(0)
+            )
+        val durationWorked = Duration.standardHours(14)
+
+        // Act
+        val result = workGoalForecaster
+            .forecastShouldFinishDay(
+                dtCurrent = localNow,
+                durationWorked = durationWorked,
+            )
+
+        // Assert
+        val expectDtFinish = now.plusDays(4)
+            .withTime(
+                LocalTime.MIDNIGHT
+                    .plusHours(15)
+            )
+        Assertions.assertThat(result).isEqualTo(expectDtFinish)
+    }
+
+    @Test
     fun mon_workedAsNeeded_hasBreak_workFinished() {
         // Assemble
         val localNow = now.plusDays(4) // mon
@@ -148,7 +175,7 @@ class WorkGoalForecasterShouldFinishDayTest {
         val expectDtFinish = now.plusDays(4)
             .withTime(
                 LocalTime.MIDNIGHT
-                    .plusHours(17)
+                    .plusHours(18)
                     .plusMinutes(0)
             )
         Assertions.assertThat(result).isEqualTo(expectDtFinish)
