@@ -129,6 +129,18 @@ object LogFormatters {
             LocalTime.MIDNIGHT
         }
     }
+
+    /**
+     * Formats time
+     * If not the same day, will include date
+     */
+    fun formatTime(dtCurrent: DateTime, dtTarget: DateTime): String {
+        return if (dtCurrent.toLocalDate().isEqual(dtTarget.toLocalDate())) {
+            formatTime.print(dtTarget)
+        } else {
+            longFormatDateTime.print(dtTarget)
+        }
+    }
 }
 
 fun Duration.toStringShort(): String {

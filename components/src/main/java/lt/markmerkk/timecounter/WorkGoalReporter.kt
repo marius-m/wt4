@@ -54,7 +54,7 @@ class WorkGoalReporter(
             )
     }
 
-    fun reportShouldComplete(
+    fun reportDayShouldComplete(
         now: DateTime,
         durationWorked: Duration,
     ): String {
@@ -64,7 +64,7 @@ class WorkGoalReporter(
         )
         return "%s: %s".format(
             stringRes.resShouldComplete(),
-            LogFormatters.formatTime.print(dtShouldFinish),
+            LogFormatters.formatTime(dtCurrent = now, dtTarget = dtShouldFinish),
         )
     }
 
@@ -90,6 +90,20 @@ class WorkGoalReporter(
             workDayRule.workSchedule.toStringShort(),
             stringRes.resBreak(),
             workDayRule.timeBreak.timeBreak.toStringShort(),
+        )
+    }
+
+    fun reportWeekShouldComplete(
+        now: DateTime,
+        durationWorked: Duration,
+    ): String {
+        val dtShouldFinish = workGoalForecaster.forecastShouldFinishWeek(
+            dtCurrent = now,
+            durationWorked = durationWorked,
+        )
+        return "%s: %s".format(
+            stringRes.resShouldComplete(),
+            LogFormatters.formatTime(dtCurrent = now, dtTarget = dtShouldFinish),
         )
     }
 

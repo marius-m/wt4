@@ -125,7 +125,7 @@ class WorkGoalReporterReportTest {
         val durationWorked = Duration.standardHours(3)
 
         // Act
-        val result = workGoalReporter.reportShouldComplete(
+        val result = workGoalReporter.reportDayShouldComplete(
             now = targetNow,
             durationWorked = durationWorked,
         )
@@ -144,7 +144,7 @@ class WorkGoalReporterReportTest {
         val durationWorked = Duration.standardHours(5)
 
         // Act
-        val result = workGoalReporter.reportShouldComplete(
+        val result = workGoalReporter.reportDayShouldComplete(
             now = targetNow,
             durationWorked = durationWorked,
         )
@@ -206,5 +206,62 @@ class WorkGoalReporterReportTest {
 
         // Assert
         Assertions.assertThat(result).isEqualTo("Day schedule: MON 08:00 - 17:00 (Break: 12:00 - 13:00)")
+    }
+
+    @Test
+    fun shouldCompleteWeek_weekStart() {
+        // Assemble
+        val nowDate = now.plusDays(4).toLocalDate() // mon
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(15)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(6)
+
+        // Act
+        val result = workGoalReporter.reportWeekShouldComplete(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Should complete: 17:00")
+    }
+
+    @Test
+    fun shouldCompleteWeek_endOfWeek() {
+        // Assemble
+        val nowDate = now.plusDays(8).toLocalDate() // fri
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(17)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(38)
+
+        // Act
+        val result = workGoalReporter.reportWeekShouldComplete(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Should complete: 19:00")
+    }
+
+    @Test
+    fun shouldCompleteWeek_endOfWeek_lotsOfTimeMissing() {
+        // Assemble
+        val nowDate = now.plusDays(8).toLocalDate() // fri
+        val nowTime = LocalTime.MIDNIGHT
+            .plusHours(17)
+        val targetNow = nowDate.toDateTime(nowTime)
+        val durationWorked = Duration.standardHours(20)
+
+        // Act
+        val result = workGoalReporter.reportWeekShouldComplete(
+            now = targetNow,
+            durationWorked = durationWorked,
+        )
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo("Should complete: 1970-01-10 13:00")
     }
 }
