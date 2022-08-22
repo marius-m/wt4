@@ -181,6 +181,21 @@ class WorkGoalForecaster(
         return durationWorkLeft
     }
 
+    fun weekGoal(): Duration {
+        return workDays.workDayRules.workDuration()
+    }
+
+    fun weekGoalLeft(
+        durationWorked: Duration,
+    ): Duration {
+        val durationDayGoal = weekGoal()
+        val durationWorkLeft = durationDayGoal.minus(durationWorked)
+        if (durationWorkLeft.isShorterThan(Duration.ZERO)) {
+            return Duration.ZERO
+        }
+        return durationWorkLeft
+    }
+
     fun daySchedule(dtCurrent: DateTime): WorkDayRule {
         return workDays.workDayRulesByDate(dtCurrent.toLocalDate())
     }
