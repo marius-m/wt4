@@ -1,4 +1,4 @@
-<configuration debug="true" packagingData="true">
+<configuration debug="false" packagingData="false">
     <property name="WT_ROOT" value="${user.home}" />
     <property name="WT_APP_PATH" value="${WT_APP_PATH}:-wt4_debug" />
     <property name="WT_APP_FLAVOR" value="${WT_APP_FLAVOR}:-basic" />

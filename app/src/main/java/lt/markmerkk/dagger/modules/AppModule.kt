@@ -49,6 +49,7 @@ import lt.markmerkk.migrations.Migration8To9
 import lt.markmerkk.migrations.Migration9To10
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.repositories.CreditsRepository
+import lt.markmerkk.repositories.ExternalResRepository
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
 import lt.markmerkk.ui_2.StageProperties
@@ -67,6 +68,9 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.help.HelpResourceLoader
+import lt.markmerkk.widgets.help.HelpWidgetFactory
+import lt.markmerkk.widgets.help.ImgResourceLoader
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
@@ -477,6 +481,44 @@ class AppModule(
             timeProvider: TimeProvider
     ): WorklogExporter {
         return WorklogExporter(gson, fileInteractor, timeProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExternalResRepository(): ExternalResRepository {
+        return ExternalResRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideImgResLoader(
+        externalResRepository: ExternalResRepository
+    ): ImgResourceLoader {
+        return ImgResourceLoader(
+            externalResRepository = externalResRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideHelpResLoader(
+        externalResRepository: ExternalResRepository
+    ): HelpResourceLoader {
+        return HelpResourceLoader(
+            externalResRepository = externalResRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideHelpWidgetFactory(
+        imgResLoader: ImgResourceLoader,
+        helpResourceLoader: HelpResourceLoader,
+    ): HelpWidgetFactory {
+        return HelpWidgetFactory(
+            imgResLoader = imgResLoader,
+            helpResLoader = helpResourceLoader,
+        )
     }
 
 }
