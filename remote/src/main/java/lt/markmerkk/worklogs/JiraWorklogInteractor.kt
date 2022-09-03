@@ -42,16 +42,16 @@ class JiraWorklogInteractor(
                 Emitter.BackpressureMode.BUFFER
         ).map { issueWorklogPair ->
             val issue = issueWorklogPair.issue
-            val assigneeAsUser = issue?.assignee?.toJiraUser() ?: JiraUser.asEmpty()
-            val reporterAsuser = issue?.reporter?.toJiraUser() ?: JiraUser.asEmpty()
+            val assigneeAsUser = issue.assignee?.toJiraUser() ?: JiraUser.asEmpty()
+            val reporterAsuser = issue.reporter?.toJiraUser() ?: JiraUser.asEmpty()
             val ticket = Ticket.fromRemoteData(
                     code = issue.key,
                     description = issue.summary,
-                    status = issue?.status?.name ?: "",
+                    status = issue.status?.name ?: "",
                     assigneeName = assigneeAsUser.identifierAsString(),
                     reporterName = reporterAsuser.identifierAsString(),
-                    isWatching = issue?.watches?.isWatching ?: false,
-                    parentCode = issue.parent?.key ?: "",
+                    isWatching = issue.watches?.isWatching ?: false,
+            parentCode = issue.parent?.key ?: "",
                     remoteData = RemoteData.fromRemote(
                             fetchTime = fetchTime.millis,
                             url = issue.url
@@ -65,17 +65,18 @@ class JiraWorklogInteractor(
                                 worklog = it
                         )
                     }
-                    .map {
-                        val noStampComment = TimedCommentStamper.removeStamp(it.comment)
-                        val jiraUser = it.author.toJiraUser()
+                    .map { workLog ->
+                        val comment: String = workLog.comment ?: ""
+                        val noStampComment = TimedCommentStamper.removeStamp(comment)
+                        val jiraUser = workLog.author.toJiraUser()
                         Log.createFromRemoteData(
                                 timeProvider = timeProvider,
                                 code = ticket.code.code,
                                 comment = noStampComment,
-                                started = it.started,
-                                timeSpentSeconds = it.timeSpentSeconds,
+                                started = workLog.started,
+                                timeSpentSeconds = workLog.timeSpentSeconds,
                                 fetchTime = fetchTime,
-                                url = it.url,
+                                url = workLog.url,
                                 author = jiraUser.identifierAsString()
                         )
                     }
