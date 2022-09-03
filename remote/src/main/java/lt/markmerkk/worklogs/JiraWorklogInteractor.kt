@@ -7,6 +7,7 @@ import lt.markmerkk.entities.Ticket
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.utils.TimedCommentStamper
 import net.rcarz.jiraclient.WorkLog
+import org.jetbrains.annotations.TestOnly
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
@@ -24,7 +25,7 @@ class JiraWorklogInteractor(
      * Fetches worklogs for time gap. The worklogs returned will exceed [startDate] and [endDate]
      * as it'll bind 1:1 worklogs with their related issues
      */
-    fun searchWorlogs(
+    fun searchWorklogs(
             fetchTime: DateTime,
             jql: String,
             startDate: LocalDate,
@@ -66,18 +67,11 @@ class JiraWorklogInteractor(
                         )
                     }
                     .map { workLog ->
-                        val comment: String = workLog.comment ?: ""
-                        val noStampComment = TimedCommentStamper.removeStamp(comment)
-                        val jiraUser = workLog.author.toJiraUser()
-                        Log.createFromRemoteData(
-                                timeProvider = timeProvider,
-                                code = ticket.code.code,
-                                comment = noStampComment,
-                                started = workLog.started,
-                                timeSpentSeconds = workLog.timeSpentSeconds,
-                                fetchTime = fetchTime,
-                                url = workLog.url,
-                                author = jiraUser.identifierAsString()
+                        mapRemoteToLocalWorklog(
+                            timeProvider = timeProvider,
+                            fetchTime = fetchTime,
+                            ticket = ticket,
+                            remoteWorkLog = workLog,
                         )
                     }
             logger.debug("Remapping ${ticket.code.code} JIRA worklogs to Log (${worklogs.size} / ${issueWorklogPair.worklogs.size})")
@@ -139,11 +133,12 @@ class JiraWorklogInteractor(
         }
     }
 
+
     companion object {
         private val logger = LoggerFactory.getLogger(Tags.JIRA)
         fun isCurrentUserLog(
-                activeIdentifier: String,
-                worklog: WorkLog
+            activeIdentifier: String,
+            worklog: WorkLog
         ): Boolean {
             val jiraUser = worklog.author.toJiraUser()
             if (jiraUser.isEmpty() || activeIdentifier.isEmpty()) {
@@ -153,6 +148,28 @@ class JiraWorklogInteractor(
                     || activeIdentifier.equals(jiraUser.displayName, ignoreCase = true)
                     || activeIdentifier.equals(jiraUser.email, ignoreCase = true)
                     || activeIdentifier.equals(jiraUser.accountId, ignoreCase = true)
+        }
+
+        @TestOnly
+        internal fun mapRemoteToLocalWorklog(
+            timeProvider: TimeProvider,
+            fetchTime: DateTime,
+            ticket: Ticket,
+            remoteWorkLog: WorkLog,
+        ): Log {
+            val comment: String = remoteWorkLog.comment ?: ""
+            val noStampComment = TimedCommentStamper.removeStamp(comment)
+            val jiraUser = remoteWorkLog.author.toJiraUser()
+            return Log.createFromRemoteData(
+                timeProvider = timeProvider,
+                code = ticket.code.code,
+                comment = noStampComment,
+                started = remoteWorkLog.started,
+                timeSpentSeconds = remoteWorkLog.timeSpentSeconds,
+                fetchTime = fetchTime,
+                url = remoteWorkLog.url,
+                author = jiraUser.identifierAsString()
+            )
         }
     }
 
