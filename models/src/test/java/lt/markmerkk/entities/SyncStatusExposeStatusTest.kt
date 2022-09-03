@@ -12,7 +12,7 @@ class SyncStatusExposeStatusTest {
     @Test
     fun waitingForSync() {
         // Assemble
-        val defaultLog = Mocks.createLocalLog(timeProvider)
+        val defaultLog = Mocks.createBasicLog(timeProvider)
 
         // Act
         val result = SyncStatus.exposeStatus(defaultLog)
@@ -24,7 +24,7 @@ class SyncStatusExposeStatusTest {
     @Test
     fun inSync() {
         // Assemble
-        val defaultLog = Mocks.mockRemoteLog(
+        val defaultLog = Mocks.createBasicLogRemote(
                 timeProvider,
                 remoteId = 1L
         )
@@ -39,10 +39,10 @@ class SyncStatusExposeStatusTest {
     @Test
     fun isError() {
         // Assemble
-        val defaultLog = Mocks.mockRemoteLog(
+        val defaultLog = Mocks.createBasicLogRemote(
                 timeProvider,
                 remoteId = 0L,
-                isError = true
+                errorMessage = "error",
         )
 
         // Act
@@ -51,5 +51,4 @@ class SyncStatusExposeStatusTest {
         // Assert
         assertThat(result).isEqualTo(SyncStatus.ERROR)
     }
-
 }

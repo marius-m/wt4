@@ -1,20 +1,22 @@
 package lt.markmerkk.validators
 
 import lt.markmerkk.TimeMachine
+import lt.markmerkk.TimeProviderTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TimeChangeValidatorChangeStartTest {
 
+    private val timeProvider = TimeProviderTest()
     private val validator = TimeChangeValidator
 
     @Test
     fun simple() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(10)
 
@@ -23,12 +25,12 @@ class TimeChangeValidatorChangeStartTest {
 
         // Assert
         assertThat(resultTimeGap.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultTimeGap.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(10)
         )
@@ -37,10 +39,10 @@ class TimeChangeValidatorChangeStartTest {
     @Test
     fun equal() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
 
@@ -49,12 +51,12 @@ class TimeChangeValidatorChangeStartTest {
 
         // Assert
         assertThat(resultTimeGap.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultTimeGap.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
@@ -63,10 +65,10 @@ class TimeChangeValidatorChangeStartTest {
     @Test
     fun startIsAfterEnd() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(10)
 
@@ -75,12 +77,12 @@ class TimeChangeValidatorChangeStartTest {
 
         // Assert
         assertThat(resultTimeGap.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
         assertThat(resultTimeGap.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )

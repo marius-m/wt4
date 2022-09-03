@@ -32,11 +32,11 @@ internal class JiraWorklogEmitter(
                 if (sr.issues.size == 0) throw IllegalStateException("result is empty")
                 logger.info("Found ${sr.issues.size} issues.")
                 sr.issues
-                        .map {
+                        .map { issue ->
                             val fetchStart = System.currentTimeMillis()
-                            val worklogs = it.allWorkLogs
-                            logger.info("Fetched worklogs for ${it.key} in ${System.currentTimeMillis() - fetchStart}ms")
-                            IssueWorklogPair(it, worklogs)
+                            val worklogs = issue.allWorkLogs
+                            logger.info("Fetched worklogs for ${issue.key} in ${System.currentTimeMillis() - fetchStart}ms")
+                            IssueWorklogPair(issue, worklogs)
                         }
                         .forEach { emitter.onNext(it) }
                 startAt += sr.max

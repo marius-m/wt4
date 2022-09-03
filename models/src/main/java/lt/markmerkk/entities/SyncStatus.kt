@@ -1,6 +1,7 @@
 package lt.markmerkk.entities
 
 import javafx.scene.paint.Color
+import lt.markmerkk.entities.Log.Companion.isRemoteError
 
 /**
  * Defines sync status for the entries
@@ -38,10 +39,11 @@ enum class SyncStatus {
 
     companion object {
         /**
-         * Exposes [SyncStatus] from [SimpleLog]
+         * Exposes [SyncStatus] from [Log]
          */
         @JvmStatic fun exposeStatus(log: Log): SyncStatus {
             return when {
+                log.remoteData.isRemoteError() -> ERROR
                 log.isRemote -> IN_SYNC
                 !log.isRemote -> WAITING_FOR_SYNC
                 else -> INVALID

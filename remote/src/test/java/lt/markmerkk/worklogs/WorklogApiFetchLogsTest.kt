@@ -43,7 +43,7 @@ class WorklogApiFetchLogsTest {
         val worklog1 = Mocks.createBasicLogRemote(timeProvider)
         val searchResultPair = ticket1 to listOf(worklog1)
         doReturn(Observable.just(searchResultPair))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -70,7 +70,7 @@ class WorklogApiFetchLogsTest {
         )
         val searchResultPair = ticket1 to listOf(worklog1)
         doReturn(Observable.just(searchResultPair))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -96,7 +96,7 @@ class WorklogApiFetchLogsTest {
         )
         val searchResultPair = ticket1 to listOf(worklog1)
         doReturn(Observable.just(searchResultPair))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -122,7 +122,7 @@ class WorklogApiFetchLogsTest {
         )
         val searchResultPair = ticket1 to listOf(worklog1)
         doReturn(Observable.just(searchResultPair))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -144,7 +144,7 @@ class WorklogApiFetchLogsTest {
         val ticket1 = Mocks.createTicket(id = 1)
         val worklog1 = Mocks.createBasicLogRemote(timeProvider)
         doReturn(Observable.error<Any>(RuntimeException()))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -168,7 +168,7 @@ class WorklogApiFetchLogsTest {
         val worklog1 = Mocks.createBasicLogRemote(timeProvider)
         val noNetworkException = JiraException("no-network", UnknownHostException())
         doReturn(Observable.error<Any>(noNetworkException))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -191,7 +191,7 @@ class WorklogApiFetchLogsTest {
         val ticket1 = Mocks.createTicket(id = 1)
         val worklog1 = Mocks.createBasicLogRemote(timeProvider)
         doReturn(Observable.error<Any>(JiraMocks.createJiraException()))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
@@ -215,7 +215,7 @@ class WorklogApiFetchLogsTest {
         val worklog1 = Mocks.createBasicLogRemote(timeProvider)
         val authException = JiraMocks.createAuthException()
         doReturn(Observable.error<Any>(authException))
-                .whenever(jiraWorklogInteractor).searchWorlogs(any(), any(), any(), any())
+                .whenever(jiraWorklogInteractor).searchWorklogs(any(), any(), any(), any())
 
         // Act
         val fetchResult = worklogApi.fetchLogs(
