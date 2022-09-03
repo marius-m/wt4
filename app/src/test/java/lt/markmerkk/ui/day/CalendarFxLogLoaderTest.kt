@@ -7,8 +7,6 @@ import com.nhaarman.mockitokotlin2.verify
 import lt.markmerkk.Mocks
 import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.entities.Log
-import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.utils.CalendarFxLogLoader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before

@@ -1,12 +1,7 @@
 package lt.markmerkk
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
-import lt.markmerkk.entities.SimpleLog
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.entities.Ticket
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.entities.TicketUseHistory
@@ -71,7 +66,8 @@ object Mocks {
         remoteId: Long = 2L,
         start: DateTime = timeProvider.now(),
         end: DateTime = timeProvider.now(),
-        code: String = "DEV-123"
+        code: String = "DEV-123",
+        errorMessage: String = "",
     ): Log {
         val now = timeProvider.nowMillis()
         return createLog(
@@ -82,7 +78,8 @@ object Mocks {
             code = code,
             remoteData = createRemoteData(
                 timeProvider,
-                remoteId = remoteId
+                remoteId = remoteId,
+                errorMessage = errorMessage,
             )
         )
     }
@@ -130,46 +127,6 @@ object Mocks {
                 fetchTime = fetchTime,
                 url = url
         )
-    }
-
-    fun createLocalLog(
-            timeProvider: TimeProvider,
-            start: DateTime = timeProvider.now().plusMinutes(1),
-            end: DateTime = timeProvider.now().plusMinutes(10),
-            task: String = "DEV-123",
-            comment: String = "valid_comment"
-    ): SimpleLog {
-        val now = timeProvider.now().plusMinutes(1).millis
-        return SimpleLogBuilder(now)
-                .setStart(start.roundMillis())
-                .setEnd(end.roundMillis())
-                .setTask(task)
-                .setComment(comment)
-                .build()
-    }
-
-    fun mockRemoteLog(
-            timeProvider: TimeProvider,
-            task: String = "DEV-123",
-            start: DateTime = timeProvider.now(),
-            end: DateTime = timeProvider.now().plusMinutes(10),
-            comment: String = "valid_comment",
-            remoteId: Long = 1,
-            localId: Long = 1,
-            isError: Boolean = false
-    ): SimpleLog {
-        val log: SimpleLog = mock()
-        doReturn(task).whenever(log).task
-        doReturn(start).whenever(log).start
-        doReturn(end).whenever(log).end
-        doReturn(comment).whenever(log).comment
-        doReturn(remoteId).whenever(log).id
-        doReturn(localId).whenever(log)._id
-        doReturn(true).whenever(log).isRemote
-        doReturn(false).whenever(log).isDirty
-        doReturn(false).whenever(log).isDeleted
-        doReturn(isError).whenever(log).isError
-        return log
     }
 
     fun createJiraBasicCreds(

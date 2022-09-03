@@ -1,13 +1,10 @@
 package lt.markmerkk.interactors
 
 import lt.markmerkk.TimeProvider
-import lt.markmerkk.entities.SimpleLogBuilder
 import lt.markmerkk.entities.TicketCode
-import org.joda.time.DateTime
 
 /**
  * Responsible of holding data for currently running clock
- * Note: Until [SimpleLogBuilder] is used, this class does not control
  * full functionality of the persistence of the active log
  */
 class ActiveLogPersistence(

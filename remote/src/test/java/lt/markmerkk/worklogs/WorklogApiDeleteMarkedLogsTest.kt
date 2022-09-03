@@ -51,7 +51,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.just(remoteId))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
+        doReturn(2L).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(
@@ -109,7 +109,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.just(remoteId))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
+        doReturn(2L).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(
@@ -142,7 +142,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.error<Any>(RuntimeException("Error trying to delete worklog")))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
+        doReturn(2L).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(
@@ -175,7 +175,7 @@ class WorklogApiDeleteMarkedLogsTest {
                 .whenever(worklogStorage).loadWorklogs(any(), any())
         doReturn(Single.error<Any>(JiraMocks.createAuthException()))
                 .whenever(jiraWorklogInteractor).delete(any())
-        doReturn(2).whenever(worklogStorage).hardDeleteRemoteSync(any())
+        doReturn(2L).whenever(worklogStorage).hardDeleteRemoteSync(any())
 
         // Act
         val fetchResult = worklogApi.deleteMarkedLogs(

@@ -267,6 +267,9 @@ data class Log private constructor(
             )
         }
 
+        fun RemoteData?.isRemoteError(): Boolean {
+            return this?.isError ?: false
+        }
     }
 }
 
