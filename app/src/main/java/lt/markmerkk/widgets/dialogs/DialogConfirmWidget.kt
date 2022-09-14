@@ -34,7 +34,13 @@ class DialogConfirmWidget : Fragment() {
         .consume(RESULT_DISPATCH_KEY_BUNDLE, DialogBundle::class.java) ?: DialogBundle.asEmpty()
 
     override val root: Parent = borderpane {
+        val actionConfirm = {
+            dialogBundle.onConfirm.invoke()
+            close()
+        }
         shortcut(KeyCombination.valueOf("Esc")) { close() }
+        shortcut(KeyCombination.valueOf("Meta+Enter"), actionConfirm)
+        shortcut(KeyCombination.valueOf("Ctrl+Enter"), actionConfirm)
         addClass(Styles.dialogAlertContainer)
         top {
             hbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
@@ -108,7 +114,5 @@ class DialogConfirmWidget : Fragment() {
     companion object {
         private val l = LoggerFactory.getLogger(Tags.INTERNAL)!!
         const val RESULT_DISPATCH_KEY_BUNDLE = "Kb3t*Xy49M1iWS&d"
-        const val PARAM_KEY_TITLE = "PARAM_KEY_TITLE"
-        const val PARAM_KEY_CONTENT = "PARAM_KEY_CONTENT"
     }
 }

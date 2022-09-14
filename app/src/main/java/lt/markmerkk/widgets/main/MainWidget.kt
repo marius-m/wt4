@@ -42,7 +42,6 @@ import lt.markmerkk.UserSettings
 import lt.markmerkk.WTEventBus
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.events.DialogType
 import lt.markmerkk.events.EventAutoSync
 import lt.markmerkk.events.EventChangeDisplayType
 import lt.markmerkk.events.EventEditLog
@@ -50,7 +49,6 @@ import lt.markmerkk.events.EventEditMode
 import lt.markmerkk.events.EventFocusChange
 import lt.markmerkk.events.EventFocusLogDetailsWidget
 import lt.markmerkk.events.EventFocusTicketWidget
-import lt.markmerkk.events.EventInflateDialog
 import lt.markmerkk.events.EventLogDetailsSave
 import lt.markmerkk.events.EventMainCloseLogDetails
 import lt.markmerkk.events.EventMainCloseTickets
@@ -538,8 +536,10 @@ class MainWidget : Fragment(), MainContract.View {
                 activeDisplayRepository.insertOrUpdate(newLog)
             }
             LogEditType.SPLIT -> {
-                resultDispatcher.publish(TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY, event.logs.first())
-                eventBus.post(EventInflateDialog(DialogType.TICKET_SPLIT))
+                dialogs.showDialogSplitTicket(
+                    uiComponent = this,
+                    worklog = event.logs.first(),
+                )
             }
             LogEditType.WEBLINK -> {
                 val activeLog = event.logs.first()
@@ -567,30 +567,6 @@ class MainWidget : Fragment(), MainContract.View {
     }
 
     //endregion
-
-    @Subscribe
-    fun eventInflateDialog(event: EventInflateDialog) {
-        when (event.type) {
-            DialogType.ACTIVE_CLOCK -> { logger.warn("LogDetailsWidget was moved to sidePanel (LogDetailsSideDrawerWidget)") }
-            DialogType.LOG_EDIT -> { logger.warn("LogDetailsWidget was moved to sidePanel (LogDetailsSideDrawerWidget)") }
-            DialogType.TICKET_SEARCH -> { logger.warn("TicketWidget was moved to sidePanel (TicketSideDrawerWidget)") }
-            DialogType.TICKET_SPLIT -> {
-                find<TicketSplitWidget>().openWindow(
-                        stageStyle = StageStyle.DECORATED,
-                        modality = Modality.APPLICATION_MODAL,
-                        block = false,
-                        resizable = true
-                )
-            }
-        }
-    }
-
-    fun showInfo(message: String) {
-        information(
-                header = "Info",
-                content = message
-        )
-    }
 
     fun showError(message: String) {
         error(

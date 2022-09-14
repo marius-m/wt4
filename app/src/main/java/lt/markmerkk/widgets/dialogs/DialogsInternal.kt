@@ -2,6 +2,8 @@ package lt.markmerkk.widgets.dialogs
 
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.Strings
+import lt.markmerkk.entities.Log
+import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import org.slf4j.LoggerFactory
 import tornadofx.UIComponent
 
@@ -26,10 +28,19 @@ class DialogsInternal(
         )
         uiComponent.openInternalWindow<DialogConfirmWidget>(
             escapeClosesWindow = true,
-            params = mapOf(
-                DialogConfirmWidget.PARAM_KEY_TITLE to header,
-                DialogConfirmWidget.PARAM_KEY_CONTENT to content,
-            )
+        )
+    }
+
+    override fun showDialogSplitTicket(
+        uiComponent: UIComponent,
+        worklog: Log,
+    ) {
+        resultDispatcher.publish(
+            TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY,
+            worklog,
+        )
+        uiComponent.openInternalWindow<TicketSplitWidget>(
+            escapeClosesWindow = true,
         )
     }
 
