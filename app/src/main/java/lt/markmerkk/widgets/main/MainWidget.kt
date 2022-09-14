@@ -15,14 +15,49 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCombination
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.StageStyle
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.AutoSyncWatcher2
+import lt.markmerkk.BuildConfig
+import lt.markmerkk.DBConnProvider
+import lt.markmerkk.DisplayType
+import lt.markmerkk.Glyph
+import lt.markmerkk.Graphics
+import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.Main
+import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.SchedulerProvider
+import lt.markmerkk.Strings
+import lt.markmerkk.Styles
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
+import lt.markmerkk.WTEventBus
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.events.*
+import lt.markmerkk.events.DialogType
+import lt.markmerkk.events.EventAutoSync
+import lt.markmerkk.events.EventChangeDisplayType
+import lt.markmerkk.events.EventEditLog
+import lt.markmerkk.events.EventEditMode
+import lt.markmerkk.events.EventFocusChange
+import lt.markmerkk.events.EventFocusLogDetailsWidget
+import lt.markmerkk.events.EventFocusTicketWidget
+import lt.markmerkk.events.EventInflateDialog
+import lt.markmerkk.events.EventLogDetailsSave
+import lt.markmerkk.events.EventMainCloseLogDetails
+import lt.markmerkk.events.EventMainCloseTickets
+import lt.markmerkk.events.EventMainOpenLogDetails
+import lt.markmerkk.events.EventMainOpenTickets
+import lt.markmerkk.events.EventNewVersion
+import lt.markmerkk.events.EventSnackBarMessage
 import lt.markmerkk.interactors.SyncInteractor
 import lt.markmerkk.interfaces.IRemoteLoadListener
 import lt.markmerkk.mvp.HostServicesInteractor
@@ -42,6 +77,7 @@ import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
+import lt.markmerkk.widgets.dialogs.Dialogs
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
@@ -53,7 +89,26 @@ import lt.markmerkk.widgets.versioner.ChangelogWidget
 import org.slf4j.LoggerFactory
 import rx.Subscription
 import rx.observables.JavaFxObservable
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.action
+import tornadofx.addClass
+import tornadofx.alert
+import tornadofx.borderpane
+import tornadofx.box
+import tornadofx.center
+import tornadofx.error
+import tornadofx.hbox
+import tornadofx.hgrow
+import tornadofx.information
+import tornadofx.label
+import tornadofx.left
+import tornadofx.px
+import tornadofx.right
+import tornadofx.stackpane
+import tornadofx.style
+import tornadofx.top
+import tornadofx.vbox
+import tornadofx.vgrow
 import javax.inject.Inject
 
 class MainWidget : Fragment(), MainContract.View {
@@ -78,6 +133,7 @@ class MainWidget : Fragment(), MainContract.View {
     @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
     @Inject lateinit var configSetSettings: ConfigSetSettings
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
+    @Inject lateinit var dialogs: Dialogs
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -460,18 +516,12 @@ class MainWidget : Fragment(), MainContract.View {
                 eventBus.post(EventMainOpenLogDetails())
             }
             LogEditType.DELETE -> {
-                warning(
-                        header = "Warning",
-                        content = "This will delete worklog. Are you sure you want to proceed?",
-                        buttons = *arrayOf(ButtonType.NO, ButtonType.YES),
-                        actionFn = { buttonType ->
-                            when (buttonType) {
-                                ButtonType.YES -> activeDisplayRepository.delete(event.logs.first())
-                                else -> logger.info("Delete dialog dismissed")
-                            }
-                        }
+                dialogs.showDialogConfirm(
+                    uiComponent = this,
+                            header = "Warning",
+                            content = "This will delete worklog. Are you sure you want to proceed?",
+                    onConfirm = { activeDisplayRepository.delete(event.logs.first()) }
                 )
-
             }
             LogEditType.CLONE -> {
                 val logToClone = event.logs.first()
@@ -597,5 +647,4 @@ class MainWidget : Fragment(), MainContract.View {
     companion object {
         private val logger = LoggerFactory.getLogger(MainWidget::class.java)!!
     }
-
 }

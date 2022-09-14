@@ -67,6 +67,9 @@ import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.dialogs.Dialogs
+import lt.markmerkk.widgets.dialogs.DialogsExternal
+import lt.markmerkk.widgets.dialogs.DialogsInternal
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
@@ -479,4 +482,13 @@ class AppModule(
         return WorklogExporter(gson, fileInteractor, timeProvider)
     }
 
+    @Provides
+    @Singleton
+    fun provideDialogs(
+        resultDispatcher: ResultDispatcher,
+        strings: Strings,
+    ): Dialogs {
+        // return DialogsExternal(resultDispatcher, strings)
+        return DialogsInternal(resultDispatcher, strings)
+    }
 }
