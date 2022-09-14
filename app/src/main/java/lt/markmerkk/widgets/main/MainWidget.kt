@@ -67,7 +67,6 @@ import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxDrawer
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
-import lt.markmerkk.ui_2.views.ticket_split.TicketSplitWidget
 import lt.markmerkk.utils.ConfigSetSettings
 import lt.markmerkk.utils.JiraLinkGenerator
 import lt.markmerkk.utils.Ticker
@@ -97,7 +96,6 @@ import tornadofx.center
 import tornadofx.error
 import tornadofx.hbox
 import tornadofx.hgrow
-import tornadofx.information
 import tornadofx.label
 import tornadofx.left
 import tornadofx.px
@@ -516,8 +514,8 @@ class MainWidget : Fragment(), MainContract.View {
             LogEditType.DELETE -> {
                 dialogs.showDialogConfirm(
                     uiComponent = this,
-                            header = "Warning",
-                            content = "This will delete worklog. Are you sure you want to proceed?",
+                    header = strings.getString("dialog_confirm_header"),
+                    content = strings.getString("dialog_confirm_content_delete_worklog"),
                     onConfirm = { activeDisplayRepository.delete(event.logs.first()) }
                 )
             }

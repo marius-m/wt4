@@ -23,8 +23,8 @@ class DialogsExternal(
         resultDispatcher.publish(
             DialogConfirmWidget.RESULT_DISPATCH_KEY_BUNDLE,
             DialogConfirmWidget.DialogBundle(
-                header = strings.getString("dialog_confirm_header"),
-                content = strings.getString("dialog_confirm_content_delete_worklog"),
+                header = header,
+                content = content,
                 onConfirm = onConfirm,
             )
         )
