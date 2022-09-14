@@ -31,9 +31,7 @@ import tornadofx.borderpane
 import tornadofx.bottom
 import tornadofx.center
 import tornadofx.combobox
-import tornadofx.error
 import tornadofx.hbox
-import tornadofx.information
 import tornadofx.label
 import tornadofx.listview
 import tornadofx.top
