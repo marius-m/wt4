@@ -567,13 +567,15 @@ class MainWidget : Fragment(), MainContract.View {
     //endregion
 
     fun showError(message: String) {
-        error(
-                header = "Error",
-                content = message
+        dialogs.showDialogInfo(
+            uiComponent = this,
+            header = strings.getString("dialog_info_header_error"),
+            content = message,
         )
     }
 
     fun showErrorAuth() {
+        // todo: mv to custom dialog
         val buttonOpenSettings = ButtonType("Open 'Account settings'")
         alert(
                 header = "Error",

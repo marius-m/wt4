@@ -21,12 +21,25 @@ class DialogsInternal(
         resultDispatcher.publish(
             DialogConfirmWidget.RESULT_DISPATCH_KEY_BUNDLE,
             DialogConfirmWidget.DialogBundle(
-                header = strings.getString("dialog_confirm_header"),
-                content = strings.getString("dialog_confirm_content_delete_worklog"),
+                header = header,
+                content = content,
                 onConfirm = onConfirm,
             )
         )
         uiComponent.openInternalWindow<DialogConfirmWidget>(
+            escapeClosesWindow = true,
+        )
+    }
+
+    override fun showDialogInfo(uiComponent: UIComponent, header: String, content: String) {
+        resultDispatcher.publish(
+            DialogInfoWidget.RESULT_DISPATCH_KEY_BUNDLE,
+            DialogInfoWidget.DialogBundle(
+                header = header,
+                content = content,
+            )
+        )
+        uiComponent.openInternalWindow<DialogInfoWidget>(
             escapeClosesWindow = true,
         )
     }

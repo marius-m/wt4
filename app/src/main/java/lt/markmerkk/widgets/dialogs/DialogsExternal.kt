@@ -36,6 +36,22 @@ class DialogsExternal(
         )
     }
 
+    override fun showDialogInfo(uiComponent: UIComponent, header: String, content: String) {
+        resultDispatcher.publish(
+            DialogInfoWidget.RESULT_DISPATCH_KEY_BUNDLE,
+            DialogInfoWidget.DialogBundle(
+                header = header,
+                content = content,
+            )
+        )
+        uiComponent.find<DialogInfoWidget>().openWindow(
+            stageStyle = StageStyle.DECORATED,
+            modality = Modality.APPLICATION_MODAL,
+            block = false,
+            resizable = true
+        )
+    }
+
     override fun showDialogSplitTicket(uiComponent: UIComponent, worklog: Log) {
         resultDispatcher.publish(
             TicketSplitWidget.RESULT_DISPATCH_KEY_ENTITY,

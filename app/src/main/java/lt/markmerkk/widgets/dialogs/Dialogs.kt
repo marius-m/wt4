@@ -11,6 +11,12 @@ interface Dialogs {
         onConfirm: () -> Unit,
     )
 
+    fun showDialogInfo(
+        uiComponent: UIComponent,
+        header: String,
+        content: String,
+    )
+
     fun showDialogSplitTicket(
         uiComponent: UIComponent,
         worklog: Log,

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
 
-class DialogConfirmWidget : Fragment() {
+class DialogInfoWidget : Fragment() {
 
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var strings: Strings
@@ -34,13 +34,7 @@ class DialogConfirmWidget : Fragment() {
         .consume(RESULT_DISPATCH_KEY_BUNDLE, DialogBundle::class.java) ?: DialogBundle.asEmpty()
 
     override val root: Parent = borderpane {
-        val actionConfirm = {
-            dialogBundle.onConfirm.invoke()
-            close()
-        }
         shortcut(KeyCombination.valueOf("Esc")) { close() }
-        shortcut(KeyCombination.valueOf("Meta+Enter"), actionConfirm)
-        shortcut(KeyCombination.valueOf("Ctrl+Enter"), actionConfirm)
         addClass(Styles.dialogAlertContainer)
         top {
             hbox(spacing = 4, alignment = Pos.CENTER_LEFT) {
@@ -50,10 +44,10 @@ class DialogConfirmWidget : Fragment() {
                     maxWidth = Double.MAX_VALUE
                 }
                 val imageAlert = graphics.from(
-                    glyph = Glyph.WARNING,
+                    glyph = Glyph.HELP,
                     color = Color.BLACK,
                     width = 18.0,
-                    height = 16.0,
+                    height = 18.0,
                 )
                 add(imageAlert)
                 HBox.setHgrow(imageAlert, Priority.NEVER)
@@ -70,13 +64,7 @@ class DialogConfirmWidget : Fragment() {
         bottom {
             hbox(alignment = Pos.CENTER_RIGHT, spacing = 4) {
                 addClass(Styles.dialogContainerActionsButtons)
-                jfxButton(strings.getString("generic_dialog_yes").uppercase()) {
-                    setOnAction {
-                        dialogBundle.onConfirm.invoke()
-                        close()
-                    }
-                }
-                jfxButton(strings.getString("generic_dialog_no").uppercase()) {
+                jfxButton(strings.getString("generic_dialog_ok").uppercase()) {
                     setOnAction {
                         close()
                     }
@@ -98,14 +86,12 @@ class DialogConfirmWidget : Fragment() {
     class DialogBundle(
         val header: String,
         val content: String,
-        val onConfirm: () -> Unit,
     ) {
         companion object {
             fun asEmpty(): DialogBundle {
                 return DialogBundle(
                     header = "",
                     content = "",
-                    onConfirm = {},
                 )
             }
         }
@@ -113,6 +99,6 @@ class DialogConfirmWidget : Fragment() {
 
     companion object {
         private val l = LoggerFactory.getLogger(Tags.INTERNAL)!!
-        const val RESULT_DISPATCH_KEY_BUNDLE = "Kb3t*Xy49M1iWS&d"
+        const val RESULT_DISPATCH_KEY_BUNDLE = "sYahBHGlh8oyusN28IXP"
     }
 }
