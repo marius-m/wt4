@@ -12,6 +12,7 @@ import javafx.stage.StageStyle
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Main
 import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.Strings
 import lt.markmerkk.Styles
 import lt.markmerkk.WorklogStorage
 import lt.markmerkk.export.ExportContract
@@ -20,6 +21,7 @@ import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.export.entities.ExportWorklogViewModel
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
+import lt.markmerkk.widgets.dialogs.Dialogs
 import org.slf4j.LoggerFactory
 import tornadofx.Fragment
 import tornadofx.action
@@ -45,6 +47,8 @@ class ExportWidget : Fragment(), ExportContract.View {
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var worklogExporter: WorklogExporter
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
+    @Inject lateinit var dialogs: Dialogs
+    @Inject lateinit var strings: Strings
 
     init {
         Main.component().inject(this)
@@ -157,16 +161,18 @@ class ExportWidget : Fragment(), ExportContract.View {
     }
 
     override fun showExportSuccess() {
-        information(
-                header = "Success",
-                content = "Worklogs exported!"
+        dialogs.showDialogInfo(
+            uiComponent = this,
+            header = strings.getString("generic_dialog_header_success"),
+            content = "Worklogs exported!",
         )
     }
 
     override fun showExportFailure() {
-        error(
-                header = "Error",
-                content = "Error saving worklogs"
+        dialogs.showDialogInfo(
+            uiComponent = this,
+            header = strings.getString("generic_dialog_header_error"),
+            content = "Error saving worklogs",
         )
     }
 

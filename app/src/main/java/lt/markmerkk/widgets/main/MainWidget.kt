@@ -73,6 +73,7 @@ import lt.markmerkk.versioner.VersionProvider
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.dialogs.Dialogs
+import lt.markmerkk.widgets.dialogs.DialogsExternal
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
@@ -126,6 +127,7 @@ class MainWidget : Fragment(), MainContract.View {
     @Inject lateinit var configSetSettings: ConfigSetSettings
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
     @Inject lateinit var dialogs: Dialogs
+    @Inject lateinit var dialogsExternal: DialogsExternal
 
     lateinit var jfxButtonDisplayView: JFXButton
     lateinit var jfxButtonSettings: JFXButton
@@ -530,7 +532,7 @@ class MainWidget : Fragment(), MainContract.View {
                 activeDisplayRepository.insertOrUpdate(newLog)
             }
             LogEditType.SPLIT -> {
-                dialogs.showDialogSplitTicket(
+                dialogsExternal.showDialogSplitTicket(
                     uiComponent = this,
                     worklog = event.logs.first(),
                 )

@@ -484,11 +484,28 @@ class AppModule(
 
     @Provides
     @Singleton
-    fun provideDialogs(
+    fun provideDialogsExternal(
         resultDispatcher: ResultDispatcher,
         strings: Strings,
-    ): Dialogs {
-        // return DialogsExternal(resultDispatcher, strings)
+    ): DialogsExternal {
+        return DialogsExternal(resultDispatcher, strings)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDialogsInternal(
+        resultDispatcher: ResultDispatcher,
+        strings: Strings,
+    ): DialogsInternal {
         return DialogsInternal(resultDispatcher, strings)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDialogs(
+        dialogsExternal: DialogsExternal,
+        dialogsInternal: DialogsInternal,
+    ): Dialogs {
+        return dialogsInternal
     }
 }
