@@ -35,6 +35,7 @@ class Styles: Stylesheet() {
         val textMini by cssclass()
 
         val dialogAlertContainer by cssclass()
+        val dialogAlertContainerBig by cssclass()
         val dialogAlertContentContainer by cssclass()
         val dialogAlertTextH1 by cssclass()
         val dialogAlertTextRegular by cssclass()
@@ -196,6 +197,18 @@ class Styles: Stylesheet() {
             prefWidth = 320.px
             minHeight = 160.px
             prefHeight = 160.px
+            padding = box(
+                top = 10.px,
+                left = 20.px,
+                right = 20.px,
+                bottom = 10.px
+            )
+        }
+        dialogAlertContainerBig {
+            minWidth = 420.px
+            prefWidth = 420.px
+            minHeight = 280.px
+            prefHeight = 280.px
             padding = box(
                 top = 10.px,
                 left = 20.px,

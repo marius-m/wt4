@@ -18,6 +18,7 @@ import lt.markmerkk.widgets.main.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.dialogs.DialogConfirmWidget
+import lt.markmerkk.widgets.dialogs.DialogCustomActionWidget
 import lt.markmerkk.widgets.dialogs.DialogInfoWidget
 import lt.markmerkk.widgets.timepicker.TimePickerWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
@@ -72,4 +73,5 @@ interface AppComponent {
     fun inject(timeSelectWidget: TimePickerWidget)
     fun inject(dialogConfirmWidget: DialogConfirmWidget)
     fun inject(dialogInfoWidget: DialogInfoWidget)
+    fun inject(dialogCustomActionWidget: DialogCustomActionWidget)
 }

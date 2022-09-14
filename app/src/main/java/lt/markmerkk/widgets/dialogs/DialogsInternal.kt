@@ -44,6 +44,27 @@ class DialogsInternal(
         )
     }
 
+    override fun showDialogCustomAction(
+        uiComponent: UIComponent,
+        header: String,
+        content: String,
+        actionTitle: String,
+        onAction: () -> Unit
+    ) {
+        resultDispatcher.publish(
+            DialogCustomActionWidget.RESULT_DISPATCH_KEY_BUNDLE,
+            DialogCustomActionWidget.DialogBundle(
+                header = header,
+                content = content,
+                actionTitle = actionTitle,
+                onAction = onAction,
+            )
+        )
+        uiComponent.openInternalWindow<DialogCustomActionWidget>(
+            escapeClosesWindow = true,
+        )
+    }
+
     override fun showDialogSplitTicket(
         uiComponent: UIComponent,
         worklog: Log,

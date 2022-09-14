@@ -32,7 +32,7 @@ class DialogsExternal(
             stageStyle = StageStyle.DECORATED,
             modality = Modality.APPLICATION_MODAL,
             block = false,
-            resizable = true
+            resizable = true,
         )
     }
 
@@ -48,7 +48,31 @@ class DialogsExternal(
             stageStyle = StageStyle.DECORATED,
             modality = Modality.APPLICATION_MODAL,
             block = false,
-            resizable = true
+            resizable = true,
+        )
+    }
+
+    override fun showDialogCustomAction(
+        uiComponent: UIComponent,
+        header: String,
+        content: String,
+        actionTitle: String,
+        onAction: () -> Unit
+    ) {
+        resultDispatcher.publish(
+            DialogCustomActionWidget.RESULT_DISPATCH_KEY_BUNDLE,
+            DialogCustomActionWidget.DialogBundle(
+                header = header,
+                content = content,
+                actionTitle = actionTitle,
+                onAction = onAction,
+            )
+        )
+        uiComponent.find<DialogCustomActionWidget>().openWindow(
+            stageStyle = StageStyle.DECORATED,
+            modality = Modality.APPLICATION_MODAL,
+            block = false,
+            resizable = true,
         )
     }
 

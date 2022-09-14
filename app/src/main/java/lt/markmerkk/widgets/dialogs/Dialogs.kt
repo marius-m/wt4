@@ -17,6 +17,14 @@ interface Dialogs {
         content: String,
     )
 
+    fun showDialogCustomAction(
+        uiComponent: UIComponent,
+        header: String,
+        content: String,
+        actionTitle: String,
+        onAction: () -> Unit,
+    )
+
     fun showDialogSplitTicket(
         uiComponent: UIComponent,
         worklog: Log,

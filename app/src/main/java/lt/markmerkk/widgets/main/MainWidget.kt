@@ -10,8 +10,6 @@ import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.Alert
-import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCombination
@@ -89,11 +87,9 @@ import rx.observables.JavaFxObservable
 import tornadofx.Fragment
 import tornadofx.action
 import tornadofx.addClass
-import tornadofx.alert
 import tornadofx.borderpane
 import tornadofx.box
 import tornadofx.center
-import tornadofx.error
 import tornadofx.hbox
 import tornadofx.hgrow
 import tornadofx.label
@@ -575,33 +571,32 @@ class MainWidget : Fragment(), MainContract.View {
     }
 
     fun showErrorAuth() {
-        // todo: mv to custom dialog
-        val buttonOpenSettings = ButtonType("Open 'Account settings'")
-        alert(
-                header = "Error",
-                content = "Cannot connect to '${jiraClientProvider.hostname()}' with user '${jiraClientProvider.username()}'.\n" +
-                        "Please check connection in 'Account settings'.\n" +
-                        "Make sure you're able to connect by pressing 'TEST CONNECTION' to fix this issue",
-                type = Alert.AlertType.ERROR,
-                title = "Error",
-                buttons = *arrayOf(buttonOpenSettings),
-                actionFn = {
-                    if (BuildConfig.oauth) {
-                        find<AccountSettingsOauthWidget>().openModal(
-                                stageStyle = StageStyle.DECORATED,
-                                modality = Modality.APPLICATION_MODAL,
-                                block = false,
-                                resizable = true
-                        )
-                    } else {
-                        find<AccountSettingsWidget>().openModal(
-                                stageStyle = StageStyle.DECORATED,
-                                modality = Modality.APPLICATION_MODAL,
-                                block = false,
-                                resizable = true
-                        )
-                    }
-                }
+        val actionOpenSettings: () -> Unit = {
+            if (BuildConfig.oauth) {
+                find<AccountSettingsOauthWidget>().openModal(
+                    stageStyle = StageStyle.DECORATED,
+                    modality = Modality.APPLICATION_MODAL,
+                    block = false,
+                    resizable = true
+                )
+            } else {
+                find<AccountSettingsWidget>().openModal(
+                    stageStyle = StageStyle.DECORATED,
+                    modality = Modality.APPLICATION_MODAL,
+                    block = false,
+                    resizable = true
+                )
+            }
+        }
+        dialogs.showDialogCustomAction(
+            uiComponent = this,
+            header = strings.getString("dialog_error_auth_header_title"),
+            content = strings.getString("dialog_error_auth_content").format(
+                jiraClientProvider.hostname(),
+                jiraClientProvider.username(),
+            ),
+            actionTitle = strings.getString("dialog_error_auth_action_title"),
+            onAction = actionOpenSettings,
         )
     }
 
