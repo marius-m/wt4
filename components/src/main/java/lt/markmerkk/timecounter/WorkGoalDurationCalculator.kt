@@ -13,7 +13,7 @@ class WorkGoalDurationCalculator(
     private val hourGlass: HourGlass,
     private val activeDisplayRepository: ActiveDisplayRepository,
 ) {
-    fun durationTotal(
+    fun durationWorked(
         displayDateStart: LocalDate,
         displayDateEnd: LocalDate,
     ): Duration {

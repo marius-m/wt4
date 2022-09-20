@@ -6,6 +6,8 @@ import lt.markmerkk.Main
 import lt.markmerkk.dagger.modules.AppModule
 import lt.markmerkk.dagger.modules.NetworkModule
 import lt.markmerkk.dagger.modules.SyncModule
+import lt.markmerkk.timecounter.WorkGoalForecaster
+import lt.markmerkk.timecounter.WorkGoalReporter
 import lt.markmerkk.ui_2.views.calendar_edit.QuickEditContainerWidget
 import lt.markmerkk.ui_2.views.date.QuickDateChangeWidget
 import lt.markmerkk.ui_2.views.progress.ProgressWidget
@@ -16,6 +18,7 @@ import lt.markmerkk.widgets.app_settings.ProfileWidget
 import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.main.MainWidget
 import lt.markmerkk.widgets.calendar.CalendarWidget
+import lt.markmerkk.widgets.calendar.WorkForecastWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.dialogs.DialogConfirmWidget
 import lt.markmerkk.widgets.dialogs.DialogCustomActionWidget
@@ -74,4 +77,5 @@ interface AppComponent {
     fun inject(dialogConfirmWidget: DialogConfirmWidget)
     fun inject(dialogInfoWidget: DialogInfoWidget)
     fun inject(dialogCustomActionWidget: DialogCustomActionWidget)
+    fun inject(workForecastWidget: WorkForecastWidget)
 }

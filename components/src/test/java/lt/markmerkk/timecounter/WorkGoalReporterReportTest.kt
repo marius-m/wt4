@@ -33,7 +33,7 @@ class WorkGoalReporterReportTest {
             .plus(Duration.standardMinutes(31))
 
         // Act
-        val result = workGoalReporter.reportLoggedTotal(durationLogged)
+        val result = workGoalReporter.reportLogged(durationLogged)
 
         // Assert
         Assertions.assertThat(result).isEqualTo("Total: 2h 31m")

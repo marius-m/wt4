@@ -10,7 +10,7 @@ class WorkGoalReporter(
     private val stringRes: StringRes,
 ) {
 
-    fun reportLoggedTotal(durationLogged: Duration): String {
+    fun reportLogged(durationLogged: Duration): String {
         return "%s: %s".format(
             stringRes.resTotal(),
             LogFormatters.humanReadableDurationShort(durationLogged),
