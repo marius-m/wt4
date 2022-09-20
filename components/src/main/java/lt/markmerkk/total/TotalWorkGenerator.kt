@@ -51,7 +51,7 @@ class TotalWorkGenerator(
     fun reportTotal(
             total: Duration,
             displayDateStart: LocalDate,
-            displayDateEnd: LocalDate
+            displayDateEnd: LocalDate,
     ): String {
         val intStart = displayDateStart.toDateTimeAtStartOfDay()
         val intEnd = displayDateEnd.toDateTimeAtStartOfDay()
