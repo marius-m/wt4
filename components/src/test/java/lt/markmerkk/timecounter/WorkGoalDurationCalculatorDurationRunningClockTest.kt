@@ -1,5 +1,6 @@
 package lt.markmerkk.timecounter
 
+import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.MocksComponents
 import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.utils.hourglass.HourGlass
@@ -13,6 +14,7 @@ import org.mockito.MockitoAnnotations
 class WorkGoalDurationCalculatorDurationRunningClockTest {
 
     @Mock lateinit var hourGlass: HourGlass
+    @Mock lateinit var activeDisplayRepository: ActiveDisplayRepository
 
     private lateinit var workGoalDurationCalculator: WorkGoalDurationCalculator
 
@@ -23,6 +25,7 @@ class WorkGoalDurationCalculatorDurationRunningClockTest {
         MockitoAnnotations.initMocks(this)
         workGoalDurationCalculator = WorkGoalDurationCalculator(
             hourGlass = hourGlass,
+            activeDisplayRepository = activeDisplayRepository,
         )
     }
 

@@ -11,6 +11,8 @@ class WorkGoalReporterStringRes(
 
     override fun resDayGoal(): String = strings.getString("workgoal_reporter_day_goal")
 
+    override fun resWeekGoal(): String = strings.getString("workgoal_reporter_week_goal")
+
     override fun resLeft(): String = strings.getString("workgoal_reporter_left")
 
     override fun resShouldComplete(): String = strings.getString("workgoal_reporter_should_complete")

@@ -6,6 +6,7 @@ class WorkGoalReporterStringResTest: WorkGoalReporter.StringRes {
     override fun resTotal(): String = "Total"
     override fun resPace(): String = "Pace"
     override fun resDayGoal(): String = "Day goal"
+    override fun resWeekGoal(): String = "Week goal"
     override fun resLeft(): String = "left"
     override fun resShouldComplete(): String = "Should complete"
     override fun resDaySchedule(): String = "Day schedule"

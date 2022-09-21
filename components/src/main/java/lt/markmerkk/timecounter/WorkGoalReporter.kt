@@ -54,6 +54,29 @@ class WorkGoalReporter(
             )
     }
 
+    fun reportPaceWeek(
+        now: DateTime,
+        durationWorked: Duration,
+    ): String {
+        val durationGoal = workGoalForecaster.forecastWeekDurationShouldWorkedForTargetTime(
+            targetDate = now.toLocalDate(),
+            targetTime = now.toLocalTime(),
+        )
+        val compareDurationWorkedToGoal = durationWorked.compareTo(durationGoal)
+        val reportPace: String = if (compareDurationWorkedToGoal == 1 || compareDurationWorkedToGoal == 0) {
+            val resultDuration = durationWorked.minus(durationGoal)
+            "+%s".format(LogFormatters.humanReadableDurationShort(resultDuration))
+        } else {
+            val resultDuration = durationGoal.minus(durationWorked)
+            "-%s".format(LogFormatters.humanReadableDurationShort(resultDuration))
+        }
+        return "%s: %s"
+            .format(
+                stringRes.resPace(),
+                reportPace,
+            )
+    }
+
     fun reportDayShouldComplete(
         now: DateTime,
         durationWorked: Duration,
@@ -76,6 +99,18 @@ class WorkGoalReporter(
             stringRes.resDayGoal(),
             workGoalForecaster.dayGoal(now).toStringShort(),
             workGoalForecaster.dayGoalLeft(now, durationWorked).toStringShort(),
+            stringRes.resLeft(),
+        )
+    }
+
+    fun reportWeekGoalDuration(
+        now: DateTime,
+        durationWorked: Duration,
+    ): String {
+        return "%s: %s (%s %s)".format(
+            stringRes.resWeekGoal(),
+            workGoalForecaster.weekGoal().toStringShort(),
+            workGoalForecaster.weekGoalLeft(durationWorked).toStringShort(),
             stringRes.resLeft(),
         )
     }
@@ -113,6 +148,7 @@ class WorkGoalReporter(
         fun resTotal(): String
         fun resPace(): String
         fun resDayGoal(): String
+        fun resWeekGoal(): String
         fun resLeft(): String
         fun resShouldComplete(): String
         fun resDaySchedule(): String

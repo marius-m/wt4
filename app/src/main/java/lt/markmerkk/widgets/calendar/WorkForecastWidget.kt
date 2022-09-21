@@ -4,6 +4,7 @@ import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.DisplayTypeLength
 import lt.markmerkk.Main
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.WorklogStorage
@@ -83,19 +84,34 @@ class WorkForecastWidget: Fragment() {
                 durationOngoing = durationRunningClock,
             )
         }
-        return StringBuilder()
-            .append(reportTotal)
-            .append("\n")
-            .append(wgReporter.reportPaceDay(now = now, durationWorked = durationWorked))
-            .append("\n")
-            .append(wgReporter.reportDayShouldComplete(now = now, durationWorked = durationWorked))
-            .append("\n")
-            .append(wgReporter.reportDayGoalDuration(now = now, durationWorked = durationWorked))
-            .append("\n")
-            .append(wgReporter.reportDaySchedule(now = now))
-            .append("\n")
-            .append(wgReporter.reportWeekShouldComplete(now = now, durationWorked = durationWorked))
-            .toString()
+        return when (activeDisplayRepository.displayType) {
+            DisplayTypeLength.DAY -> {
+                StringBuilder()
+                    .append(reportTotal)
+                    .append("\n")
+                    .append("\n")
+                    .append(wgReporter.reportPaceDay(now = now, durationWorked = durationWorked))
+                    .append("\n")
+                    .append(wgReporter.reportDayShouldComplete(now = now, durationWorked = durationWorked))
+                    .append("\n")
+                    .append(wgReporter.reportDayGoalDuration(now = now, durationWorked = durationWorked))
+                    .append("\n")
+                    .append(wgReporter.reportDaySchedule(now = now))
+                    .toString()
+            }
+            DisplayTypeLength.WEEK -> {
+                StringBuilder()
+                    .append(reportTotal)
+                    .append("\n")
+                    .append("\n")
+                    .append(wgReporter.reportWeekShouldComplete(now = now, durationWorked = durationWorked))
+                    .append("\n")
+                    .append(wgReporter.reportPaceWeek(now = now, durationWorked = durationWorked))
+                    .append("\n")
+                    .append(wgReporter.reportWeekGoalDuration(now = now, durationWorked = durationWorked))
+                    .toString()
+            }
+        }
     }
 
     companion object {

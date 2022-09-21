@@ -54,67 +54,6 @@ class WorkGoalReporterReportTest {
     }
 
     @Test
-    fun pacePositive() {
-        // Assemble
-        val nowDate = now.plusDays(4).toLocalDate() // mon
-        val nowTime = LocalTime.MIDNIGHT
-            .plusHours(11)
-            .plusMinutes(30)
-        val targetNow = nowDate.toDateTime(nowTime)
-        val durationWorked = Duration.standardHours(3)
-            .plus(Duration.standardMinutes(45))
-
-        // Act
-        val result = workGoalReporter.reportPaceDay(
-            now = targetNow,
-            durationWorked = durationWorked,
-        )
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo("Pace: +15m")
-    }
-
-    @Test
-    fun paceEquals() {
-        // Assemble
-        val nowDate = now.plusDays(4).toLocalDate() // mon
-        val nowTime = LocalTime.MIDNIGHT
-            .plusHours(11)
-        val targetNow = nowDate.toDateTime(nowTime)
-        val durationWorked = Duration.standardHours(3)
-
-        // Act
-        val result = workGoalReporter.reportPaceDay(
-            now = targetNow,
-            durationWorked = durationWorked,
-        )
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo("Pace: +0m")
-    }
-
-    @Test
-    fun paceNegative() {
-        // Assemble
-        val nowDate = now.plusDays(4).toLocalDate() // mon
-        val nowTime = LocalTime.MIDNIGHT
-            .plusHours(15)
-            .plusMinutes(35)
-        val targetNow = nowDate.toDateTime(nowTime)
-        val durationWorked = Duration.standardHours(3)
-            .plus(Duration.standardMinutes(45))
-
-        // Act
-        val result = workGoalReporter.reportPaceDay(
-            now = targetNow,
-            durationWorked = durationWorked,
-        )
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo("Pace: -2h 50m")
-    }
-
-    @Test
     fun shouldCompleteDay_noBreak() {
         // Assemble
         val nowDate = now.plusDays(4).toLocalDate() // mon
