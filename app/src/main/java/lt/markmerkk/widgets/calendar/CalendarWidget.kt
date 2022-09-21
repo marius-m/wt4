@@ -17,33 +17,65 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContextMenu
-import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.util.Callback
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Const
+import lt.markmerkk.DisplayTypeLength
+import lt.markmerkk.GAStatics
+import lt.markmerkk.Glyph
+import lt.markmerkk.Graphics
+import lt.markmerkk.Main
+import lt.markmerkk.SchedulerProvider
+import lt.markmerkk.Strings
+import lt.markmerkk.Tags
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.WTEventBus
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.Log.Companion.clone
 import lt.markmerkk.entities.Log.Companion.cloneAsNewLocal
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.events.*
+import lt.markmerkk.events.EventActiveDisplayDataChange
+import lt.markmerkk.events.EventClockChange
+import lt.markmerkk.events.EventEditLog
+import lt.markmerkk.events.EventEditMode
+import lt.markmerkk.events.EventFocusChange
+import lt.markmerkk.events.EventLogSelection
+import lt.markmerkk.events.EventTickTock
 import lt.markmerkk.total.TotalGenStringRes
 import lt.markmerkk.total.TotalWorkGenerator
+import lt.markmerkk.ui_2.EmptyWidget
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
 import lt.markmerkk.utils.CalendarFxLogLoader
 import lt.markmerkk.utils.CalendarMenuItemProvider
+import lt.markmerkk.utils.Logs.withLogInstance
 import lt.markmerkk.utils.hourglass.HourGlass
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.widgets.MainContainerNavigator
 import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.action
+import tornadofx.borderpane
+import tornadofx.box
+import tornadofx.center
+import tornadofx.hbox
+import tornadofx.hide
+import tornadofx.label
+import tornadofx.pt
+import tornadofx.px
+import tornadofx.show
+import tornadofx.stackpane
+import tornadofx.style
+import tornadofx.vbox
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -68,7 +100,8 @@ class CalendarWidget: Fragment() {
     private lateinit var viewDragIndicator: VBox
     private lateinit var viewZoomIndicator: VBox
     private lateinit var viewZoomSlider: JFXSlider
-    private lateinit var viewInfoLabel: Label
+    // private lateinit var viewInfoLabel: Label
+    private lateinit var viewWorkForecastWidget: WorkForecastWidget
 
     private lateinit var logLoader: CalendarFxLogLoader
 
@@ -125,21 +158,27 @@ class CalendarWidget: Fragment() {
         viewContainer = borderpane {
             center { }
         }
-        viewInfoLabel = label {
-            addClass(Styles.emojiText)
-            addClass(Styles.labelMini)
-            style {
-                backgroundColor.add(Color(1.0, 1.0, 1.0, 0.8))
-                backgroundRadius.add(box(6.pt))
-                backgroundInsets.add(box(2.px))
-                fontSize = 12.0.px
-                padding = box(
-                        vertical = 4.px,
-                        horizontal = 8.px
-                )
-            }
-            StackPane.setAlignment(this, Pos.BOTTOM_LEFT)
-            isMouseTransparent = true
+        // label {
+        //     // addClass(Styles.emojiText)
+        //     // addClass(Styles.labelMini)
+        //     style {
+        //         backgroundColor.add(Color(1.0, 1.0, 1.0, 0.8))
+        //         backgroundRadius.add(box(6.pt))
+        //         backgroundInsets.add(box(2.px))
+        //         fontSize = 12.0.px
+        //         padding = box(
+        //                 vertical = 4.px,
+        //                 horizontal = 8.px
+        //         )
+        //     }
+        //     StackPane.setAlignment(this, Pos.BOTTOM_LEFT)
+        //     isMouseTransparent = true
+        // }
+        add(WorkForecastWidget::class) {
+            this@CalendarWidget.viewWorkForecastWidget = this
+            this.root.isMouseTransparent = true
+            logger.debug("init(instance: {})".withLogInstance(this), this.root)
+            StackPane.setAlignment(this.root, Pos.BOTTOM_LEFT)
         }
         viewDragIndicator = vbox(alignment = Pos.BOTTOM_CENTER) {
             isMouseTransparent = true
@@ -246,11 +285,11 @@ class CalendarWidget: Fragment() {
         viewCalendar.selections.addListener(jfxCalSelectionListener)
         mainContainerNavigator.onAttach()
         eventBus.register(this)
-        viewInfoLabel.text = totalWorkGenerator
-                .reportTotalWithWorkdayEnd(
-                    activeDisplayRepository.displayDateRange.start,
-                    activeDisplayRepository.displayDateRange.endAsNextDay
-                )
+        // viewInfoLabel.text = totalWorkGenerator
+        //         .reportTotalWithWorkdayEnd(
+        //             activeDisplayRepository.displayDateRange.start,
+        //             activeDisplayRepository.displayDateRange.endAsNextDay
+        //         )
     }
 
     override fun onUndock() {
@@ -265,22 +304,24 @@ class CalendarWidget: Fragment() {
 
     @Subscribe
     fun eventClockChange(event: EventClockChange) {
-        viewInfoLabel.text = totalWorkGenerator
-                .reportTotalWithWorkdayEnd(
-                    activeDisplayRepository.displayDateRange.start,
-                    activeDisplayRepository.displayDateRange.endAsNextDay
-                )
+        // viewInfoLabel.text = totalWorkGenerator
+        //         .reportTotalWithWorkdayEnd(
+        //             activeDisplayRepository.displayDateRange.start,
+        //             activeDisplayRepository.displayDateRange.endAsNextDay
+        //         )
+        viewWorkForecastWidget.recalculateDuration()
     }
 
     @Subscribe
     fun eventTickTock(event: EventTickTock) {
         viewCalendar.today = LocalDate.now()
         viewCalendar.time = LocalTime.now()
-        viewInfoLabel.text = totalWorkGenerator
-                .reportTotalWithWorkdayEnd(
-                    activeDisplayRepository.displayDateRange.start,
-                    activeDisplayRepository.displayDateRange.endAsNextDay
-                )
+        // viewInfoLabel.text = totalWorkGenerator
+        //         .reportTotalWithWorkdayEnd(
+        //             activeDisplayRepository.displayDateRange.start,
+        //             activeDisplayRepository.displayDateRange.endAsNextDay
+        //         )
+        viewWorkForecastWidget.recalculateDuration()
     }
 
     @Subscribe
@@ -298,11 +339,12 @@ class CalendarWidget: Fragment() {
         if (event.isInFocus) {
             viewCalendar.today = LocalDate.now()
             viewCalendar.time = LocalTime.now()
-            viewInfoLabel.text = totalWorkGenerator
-                    .reportTotalWithWorkdayEnd(
-                        activeDisplayRepository.displayDateRange.start,
-                        activeDisplayRepository.displayDateRange.endAsNextDay
-                    )
+            // viewInfoLabel.text = totalWorkGenerator
+            //         .reportTotalWithWorkdayEnd(
+            //             activeDisplayRepository.displayDateRange.start,
+            //             activeDisplayRepository.displayDateRange.endAsNextDay
+            //         )
+            viewWorkForecastWidget.recalculateDuration()
         }
     }
 
@@ -311,11 +353,12 @@ class CalendarWidget: Fragment() {
         logLoader.load(event.data)
         viewCalendar.today = LocalDate.now()
         viewCalendar.time = LocalTime.now()
-        viewInfoLabel.text = totalWorkGenerator
-            .reportTotalWithWorkdayEnd(
-                activeDisplayRepository.displayDateRange.start,
-                activeDisplayRepository.displayDateRange.endAsNextDay
-            )
+        // viewInfoLabel.text = totalWorkGenerator
+        //     .reportTotalWithWorkdayEnd(
+        //         activeDisplayRepository.displayDateRange.start,
+        //         activeDisplayRepository.displayDateRange.endAsNextDay
+        //     )
+        viewWorkForecastWidget.recalculateDuration()
         eventBus.post(EventLogSelection(Const.NO_ID))
     }
 
