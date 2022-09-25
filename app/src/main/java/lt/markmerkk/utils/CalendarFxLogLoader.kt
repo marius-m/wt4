@@ -4,7 +4,6 @@ import com.calendarfx.model.Entry
 import com.calendarfx.model.Interval
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.Log
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.entities.SyncStatus
 import rx.Observable
 import rx.Scheduler

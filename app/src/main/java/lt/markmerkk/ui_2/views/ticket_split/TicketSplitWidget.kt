@@ -9,7 +9,7 @@ import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
-import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
@@ -80,19 +80,17 @@ class TicketSplitWidget : Fragment(), TicketSplitContract.View {
     )
 
     override val root: Parent = stackpane {
-        setOnKeyPressed { keyEvent ->
-            when {
-                (keyEvent.code == KeyCode.ENTER && keyEvent.isMetaDown)
-                        || (keyEvent.code == KeyCode.ENTER && keyEvent.isControlDown) -> {
-                    presenter.split(
-                            ticketName = viewTextTicketCode.text,
-                            originalComment = viewTextCommentOriginal.text,
-                            newComment = viewTextCommentNew.text
-                    )
-                    close()
-                }
-            }
+        val actionSplit = {
+            presenter.split(
+                ticketName = viewTextTicketCode.text,
+                originalComment = viewTextCommentOriginal.text,
+                newComment = viewTextCommentNew.text
+            )
+            close()
         }
+        shortcut(KeyCombination.valueOf("Esc")) { close() }
+        shortcut(KeyCombination.valueOf("Meta+Enter"), actionSplit)
+        shortcut(KeyCombination.valueOf("Ctrl+Enter"), actionSplit)
         borderpane {
             addClass(Styles.dialogContainer)
             top {

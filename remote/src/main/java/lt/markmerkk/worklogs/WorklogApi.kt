@@ -39,7 +39,7 @@ class WorklogApi(
         val endAsDateTime = end.toDateTimeAtStartOfDay(timeProvider.dateTimeZone)
         return Completable.fromAction { logger.info("--- START: Fetching logs ($start / $end)... ---") }
                 .andThen(
-                        jiraWorklogInteractor.searchWorlogs(
+                        jiraWorklogInteractor.searchWorklogs(
                                 fetchTime = fetchTime,
                                 jql = jql,
                                 startDate = start,

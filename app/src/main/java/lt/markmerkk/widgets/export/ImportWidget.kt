@@ -14,6 +14,7 @@ import lt.markmerkk.export.ImportPresenter
 import lt.markmerkk.export.WorklogExporter
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.export.entities.ExportWorklogViewModel
+import lt.markmerkk.widgets.dialogs.Dialogs
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
@@ -25,6 +26,8 @@ class ImportWidget : Fragment(), ImportContract.View {
     @Inject lateinit var timeProvider: TimeProvider
     @Inject lateinit var worklogStorage: WorklogStorage
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
+    @Inject lateinit var dialogs: Dialogs
+    @Inject lateinit var strings: Strings
 
     init {
         Main.component().inject(this)
@@ -126,9 +129,10 @@ class ImportWidget : Fragment(), ImportContract.View {
     }
 
     override fun showImportSuccess() {
-        information(
-                header = "Success",
-                content = "Worklogs imported!"
+        dialogs.showDialogInfo(
+            uiComponent = this,
+            header = strings.getString("generic_dialog_header_success"),
+            content = "Worklogs imported!",
         )
         close()
     }

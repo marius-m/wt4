@@ -22,6 +22,7 @@ import lt.markmerkk.HostServicesInteractorImpl
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.ActiveDisplayRepositoryDefault
+import lt.markmerkk.LogFormatterStringRes
 import lt.markmerkk.MigrationsRunner
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.SchedulerProvider
@@ -49,8 +50,13 @@ import lt.markmerkk.migrations.Migration8To9
 import lt.markmerkk.migrations.Migration9To10
 import lt.markmerkk.mvp.HostServicesInteractor
 import lt.markmerkk.repositories.CreditsRepository
+import lt.markmerkk.repositories.ExternalResRepository
 import lt.markmerkk.tickets.JiraTicketSearch
 import lt.markmerkk.tickets.TicketApi
+import lt.markmerkk.timecounter.WorkGoalDurationCalculator
+import lt.markmerkk.timecounter.WorkGoalForecaster
+import lt.markmerkk.timecounter.WorkGoalReporter
+import lt.markmerkk.timecounter.WorkGoalReporterStringRes
 import lt.markmerkk.ui_2.StageProperties
 import lt.markmerkk.utils.AccountAvailablility
 import lt.markmerkk.utils.AdvHashSettings
@@ -62,11 +68,18 @@ import lt.markmerkk.utils.JiraLinkGeneratorOAuth
 import lt.markmerkk.utils.Ticker
 import lt.markmerkk.utils.UserSettingsImpl
 import lt.markmerkk.utils.hourglass.HourGlass
+import lt.markmerkk.utils.hourglass.HourGlassImpl
 import lt.markmerkk.utils.tracker.GATracker
 import lt.markmerkk.utils.tracker.ITracker
 import lt.markmerkk.utils.tracker.NullTracker
 import lt.markmerkk.validators.LogChangeValidator
 import lt.markmerkk.versioner.VersionProvider
+import lt.markmerkk.widgets.dialogs.Dialogs
+import lt.markmerkk.widgets.dialogs.DialogsExternal
+import lt.markmerkk.widgets.dialogs.DialogsInternal
+import lt.markmerkk.widgets.help.HelpResourceLoader
+import lt.markmerkk.widgets.help.HelpWidgetFactory
+import lt.markmerkk.widgets.help.ImgResourceLoader
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
@@ -343,13 +356,19 @@ class AppModule(
             timeProvider: TimeProvider,
             eventBus: WTEventBus
     ): HourGlass {
-        return HourGlass(eventBus, timeProvider)
+        return HourGlassImpl(eventBus, timeProvider)
     }
 
     @Provides
     @Singleton
     fun provideStrings(): Strings {
         return StringsImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogFormatterStringRes(strings: Strings): LogFormatterStringRes {
+        return LogFormatterStringRes(strings)
     }
 
     @Provides
@@ -477,6 +496,93 @@ class AppModule(
             timeProvider: TimeProvider
     ): WorklogExporter {
         return WorklogExporter(gson, fileInteractor, timeProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDialogsExternal(
+        resultDispatcher: ResultDispatcher,
+        strings: Strings,
+    ): DialogsExternal {
+        return DialogsExternal(resultDispatcher, strings)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDialogsInternal(
+        resultDispatcher: ResultDispatcher,
+        strings: Strings,
+    ): DialogsInternal {
+        return DialogsInternal(resultDispatcher, strings)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDialogs(
+        dialogsExternal: DialogsExternal,
+        dialogsInternal: DialogsInternal,
+    ): Dialogs {
+        return dialogsInternal
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkGoalReporter(
+        strings: Strings,
+    ): WorkGoalReporter {
+        return WorkGoalReporter(
+            workGoalForecaster = WorkGoalForecaster(),
+            stringRes = WorkGoalReporterStringRes(strings = strings),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkGoalDurationCalculator(
+        hourGlass: HourGlass,
+        activeDisplayRepository: ActiveDisplayRepository,
+    ): WorkGoalDurationCalculator {
+        return WorkGoalDurationCalculator(
+            hourGlass = hourGlass,
+            activeDisplayRepository = activeDisplayRepository,
+        )
+    }
+    @Provides
+    @Singleton
+    fun provideExternalResRepository(): ExternalResRepository {
+        return ExternalResRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideImgResLoader(
+        externalResRepository: ExternalResRepository
+    ): ImgResourceLoader {
+        return ImgResourceLoader(
+            externalResRepository = externalResRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideHelpResLoader(
+        externalResRepository: ExternalResRepository
+    ): HelpResourceLoader {
+        return HelpResourceLoader(
+            externalResRepository = externalResRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideHelpWidgetFactory(
+        imgResLoader: ImgResourceLoader,
+        helpResourceLoader: HelpResourceLoader,
+    ): HelpWidgetFactory {
+        return HelpWidgetFactory(
+            imgResLoader = imgResLoader,
+            helpResLoader = helpResourceLoader,
+        )
     }
 
 }

@@ -20,7 +20,6 @@ import lt.markmerkk.interactors.AuthServiceImpl
 import lt.markmerkk.ui_2.views.*
 import tornadofx.*
 import java.io.File
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class AccountSettingsWidget : Fragment() {

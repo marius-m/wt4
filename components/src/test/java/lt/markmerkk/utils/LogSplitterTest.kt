@@ -1,21 +1,23 @@
 package lt.markmerkk.utils
 
 import lt.markmerkk.TimeMachine
+import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.entities.TimeGap
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class LogSplitterTest {
 
+    private val timeProvider = TimeProviderTest()
     private val logSplit = LogSplitter
 
     @Test
     fun half() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -27,22 +29,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(30)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(30)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
@@ -52,10 +54,10 @@ class LogSplitterTest {
     @Test
     fun percent30() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -67,22 +69,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(18)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(18)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
@@ -92,10 +94,10 @@ class LogSplitterTest {
     @Test
     fun percent2() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -107,22 +109,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(1)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(1)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
@@ -132,10 +134,10 @@ class LogSplitterTest {
     @Test
     fun percent99() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -147,22 +149,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(59)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(59)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
@@ -172,10 +174,10 @@ class LogSplitterTest {
     @Test // Impossible
     fun percentZero() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -187,22 +189,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
@@ -212,10 +214,10 @@ class LogSplitterTest {
     @Test // Impossible
     fun percentNegative() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -227,22 +229,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
@@ -252,10 +254,10 @@ class LogSplitterTest {
     @Test // Impossible
     fun over99() {
         // Assemble
-        val start = TimeMachine.now()
+        val start = timeProvider.now()
                 .withHourOfDay(10)
                 .withMinuteOfHour(0)
-        val end = TimeMachine.now()
+        val end = timeProvider.now()
                 .withHourOfDay(11)
                 .withMinuteOfHour(0)
 
@@ -267,22 +269,22 @@ class LogSplitterTest {
 
         // Assert
         assertThat(resultSplit.first.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(10)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.first.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.second.start).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )
         assertThat(resultSplit.second.end).isEqualTo(
-                TimeMachine.now()
+                timeProvider.now()
                         .withHourOfDay(11)
                         .withMinuteOfHour(0)
         )

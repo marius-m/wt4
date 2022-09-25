@@ -20,7 +20,7 @@ class HourGlassChangeStart2Test {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        hourGlass = HourGlass(eventBus, timeProvider)
+        hourGlass = HourGlassImpl(eventBus, timeProvider)
     }
 
     @Test

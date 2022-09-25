@@ -6,13 +6,11 @@ import javafx.scene.control.MenuItem
 import javafx.scene.paint.Color
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
-import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Strings
 import lt.markmerkk.Tags
 import lt.markmerkk.WTEventBus
 import lt.markmerkk.WorklogStorage
 import lt.markmerkk.entities.LogEditType
-import lt.markmerkk.entities.SimpleLog
 import lt.markmerkk.events.EventEditLog
 import org.slf4j.LoggerFactory
 

@@ -3,7 +3,6 @@ package lt.markmerkk
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * @author mariusmerkevicius

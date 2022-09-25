@@ -37,4 +37,6 @@ interface ActiveDisplayRepository {
 
     fun totalAsDuration(): Duration
 
+    fun durationForTargetDate(target: LocalDate): Duration
+
 }

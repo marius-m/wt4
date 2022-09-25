@@ -124,9 +124,36 @@ object LogFormatters {
     ): LocalTime {
         return try {
             formatTime.parseLocalTime(timeAsString)
-        } catch (e: IllegalArgumentException) {
+         } catch (e: IllegalArgumentException) {
             l.warn("Error parsing time as string from ${timeAsString}", e)
             LocalTime.MIDNIGHT
         }
     }
+
+    /**
+     * Formats time
+     * If not the same day, will include date
+     * If next day, it will say tomorrow
+     */
+    fun formatTime(
+        stringRes: StringRes,
+        dtCurrent: DateTime,
+        dtTarget: DateTime,
+    ): String {
+        return when {
+            dtCurrent.toLocalDate().isEqual(dtTarget.toLocalDate()) -> formatTime.print(dtTarget)
+            dtCurrent.plusDays(1).toLocalDate().isEqual(dtTarget.toLocalDate()) -> {
+                "${stringRes.resTomorrow()} ${formatTime.print(dtTarget)}"
+            }
+            else -> longFormatDateTime.print(dtTarget)
+        }
+    }
+
+    interface StringRes {
+        fun resTomorrow(): String
+    }
+}
+
+fun Duration.toStringShort(): String {
+    return LogFormatters.humanReadableDurationShort(this)
 }

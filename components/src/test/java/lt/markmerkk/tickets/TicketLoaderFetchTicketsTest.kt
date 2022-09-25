@@ -14,11 +14,14 @@ import java.lang.RuntimeException
 class TicketLoaderFetchTicketsTest {
 
     @Mock lateinit var listener: TicketLoader.Listener
-    @Mock lateinit var timeProvider: TimeProvider
+    @Mock lateinit var timeProviderMock: TimeProvider
     @Mock lateinit var ticketStorage: TicketStorage
     @Mock lateinit var ticketApi: TicketApi
     @Mock lateinit var userSettings: UserSettings
     lateinit var loader: TicketLoader
+
+    private val timeProvider = TimeProviderTest()
+    private val now = timeProvider.now()
 
     @Before
     fun setUp() {
@@ -27,13 +30,13 @@ class TicketLoaderFetchTicketsTest {
                 listener,
                 ticketStorage,
                 ticketApi,
-                timeProvider,
+                timeProviderMock,
                 userSettings,
                 Schedulers.immediate(),
                 Schedulers.immediate()
         )
-        doReturn(TimeMachine.now().plusHours(1)).whenever(timeProvider).now()
-        doReturn(TimeMachine.now().millis).whenever(userSettings).lastUpdate
+        doReturn(now.plusHours(1)).whenever(timeProviderMock).now()
+        doReturn(now.millis).whenever(userSettings).lastUpdate
     }
 
     @Test
@@ -47,7 +50,7 @@ class TicketLoaderFetchTicketsTest {
         loader.fetchTickets()
 
         // Assert
-        verify(userSettings).ticketLastUpdate = TimeMachine.now().plusHours(1).millis
+        verify(userSettings).ticketLastUpdate = now.plusHours(1).millis
         verify(ticketApi).searchRemoteTicketsAndCache(any())
         verify(ticketStorage).loadFilteredTickets(any())
         verify(listener).onFoundTickets(any(), any(), any())
@@ -59,7 +62,7 @@ class TicketLoaderFetchTicketsTest {
         val newTickets = listOf(Mocks.createTicket())
         doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
         doReturn(Single.just(newTickets)).whenever(ticketStorage).loadFilteredTickets(userSettings)
-        doReturn(TimeMachine.now()).whenever(timeProvider).now()
+        doReturn(now).whenever(timeProviderMock).now()
 
         // Act
         loader.fetchTickets()
@@ -77,7 +80,7 @@ class TicketLoaderFetchTicketsTest {
         val newTickets = listOf(Mocks.createTicket())
         doReturn(Single.just(newTickets)).whenever(ticketApi).searchRemoteTicketsAndCache(any())
         doReturn(Single.just(newTickets)).whenever(ticketStorage).loadFilteredTickets(any())
-        doReturn(TimeMachine.now()).whenever(timeProvider).now()
+        doReturn(now).whenever(timeProviderMock).now()
 
         // Act
         loader.fetchTickets(forceRefresh = true)
