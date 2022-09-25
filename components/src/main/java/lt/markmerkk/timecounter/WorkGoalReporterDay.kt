@@ -23,8 +23,12 @@ class WorkGoalReporterDay(
         return reporter.reportPaceDay(now, displayDateRange, durationWorked)
     }
 
-    override fun reportShouldComplete(now: DateTime, durationWorked: Duration): String {
-        return reporter.reportDayShouldComplete(now, durationWorked)
+    override fun reportShouldComplete(
+        now: DateTime,
+        displayDateRange: DateRange,
+        durationWorked: Duration
+    ): String {
+        return reporter.reportDayShouldComplete(now, displayDateRange, durationWorked)
     }
 
     override fun reportGoal(dtTarget: DateTime, durationWorked: Duration): String {
@@ -53,6 +57,7 @@ class WorkGoalReporterDay(
             )
         }
         val reportPace = reportPace(now, displayDateRange, durationWorked)
+        val reportShouldComplete = reportShouldComplete(now, displayDateRange, durationWorked)
         val reportGoal = reportGoal(
             displayDateRange.selectDate.toDateTimeAtStartOfDay(),
             durationWorked,
@@ -63,6 +68,7 @@ class WorkGoalReporterDay(
         val reports = listOf(
             "${reportTotal}\n",
             reportPace,
+            reportShouldComplete,
             reportGoal,
             reportSchedule,
         )

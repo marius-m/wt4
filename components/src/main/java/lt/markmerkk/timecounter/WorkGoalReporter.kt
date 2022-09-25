@@ -92,15 +92,24 @@ class WorkGoalReporter(
 
     fun reportDayShouldComplete(
         now: DateTime,
+        displayDateRange: DateRange,
         durationWorked: Duration,
     ): String {
+        if (!displayDateRange.contains(now.toLocalDate())) {
+            return ""
+        }
         val dtShouldFinish = workGoalForecaster.forecastShouldFinishDay(
             dtCurrent = now,
             durationWorked = durationWorked,
         )
+        val reportCompleteTime = if (dtShouldFinish.isEqual(now)) {
+            stringRes.resComplete()
+        } else {
+            LogFormatters.formatTime(stringRes = stringRes, dtCurrent = now, dtTarget = dtShouldFinish)
+        }
         return "%s: %s".format(
-            stringRes.resShouldComplete(),
-            LogFormatters.formatTime(dtCurrent = now, dtTarget = dtShouldFinish),
+            stringRes.resShouldCompleteDay(),
+            reportCompleteTime,
         )
     }
 
@@ -143,6 +152,7 @@ class WorkGoalReporter(
 
     fun reportWeekShouldComplete(
         now: DateTime,
+        displayDateRange: DateRange,
         durationWorked: Duration,
     ): String {
         val dtShouldFinish = workGoalForecaster.forecastShouldFinishWeek(
@@ -151,13 +161,13 @@ class WorkGoalReporter(
         )
         return "%s: %s".format(
             stringRes.resShouldComplete(),
-            LogFormatters.formatTime(dtCurrent = now, dtTarget = dtShouldFinish),
+            LogFormatters.formatTime(stringRes = stringRes, dtCurrent = now, dtTarget = dtShouldFinish),
         )
     }
 
     // TODO: Work day details for current day
 
-    interface StringRes {
+    interface StringRes : LogFormatters.StringRes {
         fun resTotal(): String
         fun resPace(): String
         fun resPaceDay(): String
@@ -166,8 +176,11 @@ class WorkGoalReporter(
         fun resWeekGoal(): String
         fun resLeft(): String
         fun resShouldComplete(): String
+        fun resShouldCompleteDay(): String
+        fun resShouldCompleteWeek(): String
         fun resDaySchedule(): String
         fun resBreak(): String
+        fun resComplete(): String
     }
 
     interface ReporterDecorator {
@@ -183,6 +196,7 @@ class WorkGoalReporter(
         ): String
         fun reportShouldComplete(
             now: DateTime,
+            displayDateRange: DateRange,
             durationWorked: Duration,
         ): String
         fun reportGoal(

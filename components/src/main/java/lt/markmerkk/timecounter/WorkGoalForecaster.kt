@@ -71,6 +71,7 @@ class WorkGoalForecaster(
 
     /**
      * Returns how much time is left to work to finish the day
+     * When there is no more work left, work left == [dtCurrent]
      * @param dtCurrent current date time
      * @param durationWorked duration how much time has been logged
      */

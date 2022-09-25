@@ -23,8 +23,12 @@ class WorkGoalReporterWeek(
         return reporter.reportPaceWeek(now, displayDateRange, durationWorked)
     }
 
-    override fun reportShouldComplete(now: DateTime, durationWorked: Duration): String {
-        return reporter.reportWeekShouldComplete(now, durationWorked)
+    override fun reportShouldComplete(
+        now: DateTime,
+        displayDateRange: DateRange,
+        durationWorked: Duration,
+    ): String {
+        return reporter.reportWeekShouldComplete(now, displayDateRange, durationWorked)
     }
 
     override fun reportGoal(dtTarget: DateTime, durationWorked: Duration): String {

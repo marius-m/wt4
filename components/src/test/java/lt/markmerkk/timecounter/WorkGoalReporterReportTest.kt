@@ -2,6 +2,7 @@ package lt.markmerkk.timecounter
 
 import lt.markmerkk.TimeProviderTest
 import lt.markmerkk.WorkGoalReporterStringResTest
+import lt.markmerkk.entities.DateRange
 import org.assertj.core.api.Assertions
 import org.joda.time.Duration
 import org.joda.time.LocalTime
@@ -51,45 +52,6 @@ class WorkGoalReporterReportTest {
 
         // Assert
         Assertions.assertThat(result).isEqualTo("Total: 2h 31m + 20m = 2h 51m")
-    }
-
-    @Test
-    fun shouldCompleteDay_noBreak() {
-        // Assemble
-        val nowDate = now.plusDays(4).toLocalDate() // mon
-        val nowTime = LocalTime.MIDNIGHT
-            .plusHours(11)
-            .plusMinutes(30)
-        val targetNow = nowDate.toDateTime(nowTime)
-        val durationWorked = Duration.standardHours(3)
-
-        // Act
-        val result = workGoalReporter.reportDayShouldComplete(
-            now = targetNow,
-            durationWorked = durationWorked,
-        )
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo("Should complete: 16:30")
-    }
-
-    @Test
-    fun shouldCompleteDay_hasBreak() {
-        // Assemble
-        val nowDate = now.plusDays(4).toLocalDate() // mon
-        val nowTime = LocalTime.MIDNIGHT
-            .plusHours(14)
-        val targetNow = nowDate.toDateTime(nowTime)
-        val durationWorked = Duration.standardHours(5)
-
-        // Act
-        val result = workGoalReporter.reportDayShouldComplete(
-            now = targetNow,
-            durationWorked = durationWorked,
-        )
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo("Should complete: 17:00")
     }
 
     @Test
@@ -151,6 +113,7 @@ class WorkGoalReporterReportTest {
     fun shouldCompleteWeek_weekStart() {
         // Assemble
         val nowDate = now.plusDays(4).toLocalDate() // mon
+        val displayDateRange = DateRange.forActiveWeek(nowDate)
         val nowTime = LocalTime.MIDNIGHT
             .plusHours(15)
         val targetNow = nowDate.toDateTime(nowTime)
@@ -159,6 +122,7 @@ class WorkGoalReporterReportTest {
         // Act
         val result = workGoalReporter.reportWeekShouldComplete(
             now = targetNow,
+            displayDateRange = displayDateRange,
             durationWorked = durationWorked,
         )
 
@@ -170,6 +134,7 @@ class WorkGoalReporterReportTest {
     fun shouldCompleteWeek_endOfWeek() {
         // Assemble
         val nowDate = now.plusDays(8).toLocalDate() // fri
+        val displayDateRange = DateRange.forActiveWeek(nowDate)
         val nowTime = LocalTime.MIDNIGHT
             .plusHours(17)
         val targetNow = nowDate.toDateTime(nowTime)
@@ -178,6 +143,7 @@ class WorkGoalReporterReportTest {
         // Act
         val result = workGoalReporter.reportWeekShouldComplete(
             now = targetNow,
+            displayDateRange = displayDateRange,
             durationWorked = durationWorked,
         )
 
@@ -189,6 +155,7 @@ class WorkGoalReporterReportTest {
     fun shouldCompleteWeek_endOfWeek_lotsOfTimeMissing() {
         // Assemble
         val nowDate = now.plusDays(8).toLocalDate() // fri
+        val displayDateRange = DateRange.forActiveWeek(nowDate)
         val nowTime = LocalTime.MIDNIGHT
             .plusHours(17)
         val targetNow = nowDate.toDateTime(nowTime)
@@ -197,6 +164,7 @@ class WorkGoalReporterReportTest {
         // Act
         val result = workGoalReporter.reportWeekShouldComplete(
             now = targetNow,
+            displayDateRange = displayDateRange,
             durationWorked = durationWorked,
         )
 

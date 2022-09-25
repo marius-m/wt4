@@ -49,7 +49,6 @@ import lt.markmerkk.events.EventLogSelection
 import lt.markmerkk.events.EventTickTock
 import lt.markmerkk.total.TotalGenStringRes
 import lt.markmerkk.total.TotalWorkGenerator
-import lt.markmerkk.ui_2.EmptyWidget
 import lt.markmerkk.ui_2.views.ContextMenuEditLog
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSlider
