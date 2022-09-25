@@ -41,7 +41,7 @@ class WorkGoalForecasterShouldFinishWeekTest {
     }
 
     @Test
-    fun tue_workEnd() {
+    fun tue_workFinished() {
         // Assemble
         val localNow = now.plusDays(5) // tue
             .withTime(
@@ -69,7 +69,7 @@ class WorkGoalForecasterShouldFinishWeekTest {
     }
 
     @Test
-    fun tue_workedAsNeeded_stillWorkLeft() {
+    fun tue_workedAsNeeded() {
         // Assemble
         val localNow = now.plusDays(5) // tue
             .withTime(
@@ -97,7 +97,7 @@ class WorkGoalForecasterShouldFinishWeekTest {
     }
 
     @Test
-    fun tue_workedABitLess_stillWorkLeft() {
+    fun tue_workedABitLess() {
         // Assemble
         val localNow = now.plusDays(5) // tue
             .withTime(
@@ -125,7 +125,7 @@ class WorkGoalForecasterShouldFinishWeekTest {
     }
 
     @Test
-    fun tue_workedWayMore_stillWorkLeft() {
+    fun tue_workedWayMore() {
         // Assemble
         val localNow = now.plusDays(5) // tue
             .withTime(
@@ -153,121 +153,7 @@ class WorkGoalForecasterShouldFinishWeekTest {
     }
 
     @Test
-    fun mon_workedLess_workLeft_hasBreak() {
-        // Assemble
-        val localNow = now.plusDays(4) // mon
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(15)
-                    .plusMinutes(0)
-            )
-        val durationWorked = Duration.standardHours(5)
-            .plus(Duration.standardMinutes(15))
-
-        // Act
-        val result = workGoalForecaster
-            .forecastShouldFinishWeek(
-                dtCurrent = localNow,
-                durationWorked = durationWorked,
-            )
-
-        // Assert
-        val expectDtFinish = now.plusDays(4)
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(17)
-                    .plusMinutes(45)
-            )
-        Assertions.assertThat(result).isEqualTo(expectDtFinish)
-    }
-
-    @Test
-    fun mon_workedMore_workLeft_hasBreak() {
-        // Assemble
-        val localNow = now.plusDays(4) // mon
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(15)
-                    .plusMinutes(0)
-            )
-        val durationWorked = Duration.standardHours(7)
-            .plus(Duration.standardMinutes(15))
-
-        // Act
-        val result = workGoalForecaster
-            .forecastShouldFinishWeek(
-                dtCurrent = localNow,
-                durationWorked = durationWorked,
-            )
-
-        // Assert
-        val expectDtFinish = now.plusDays(4)
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(15)
-                    .plusMinutes(45)
-            )
-        Assertions.assertThat(result).isEqualTo(expectDtFinish)
-    }
-
-    @Test
-    fun mon_workedAsNeeded_hasBreak_workFinished() {
-        // Assemble
-        val localNow = now.plusDays(4) // mon
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(17)
-                    .plusMinutes(0)
-            )
-        val durationWorked = Duration.standardHours(8)
-
-        // Act
-        val result = workGoalForecaster
-            .forecastShouldFinishWeek(
-                dtCurrent = localNow,
-                durationWorked = durationWorked,
-            )
-
-        // Assert
-        val expectDtFinish = now.plusDays(4)
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(17)
-                    .plusMinutes(0)
-            )
-        Assertions.assertThat(result).isEqualTo(expectDtFinish)
-    }
-
-    @Test
-    fun mon_workedAsNeeded_workFinished_diffCurrentTime() {
-        // Assemble
-        val localNow = now.plusDays(4) // mon
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(18)
-                    .plusMinutes(0)
-            )
-        val durationWorked = Duration.standardHours(8)
-
-        // Act
-        val result = workGoalForecaster
-            .forecastShouldFinishWeek(
-                dtCurrent = localNow,
-                durationWorked = durationWorked,
-            )
-
-        // Assert
-        val expectDtFinish = now.plusDays(4)
-            .withTime(
-                LocalTime.MIDNIGHT
-                    .plusHours(18)
-                    .plusMinutes(0)
-            )
-        Assertions.assertThat(result).isEqualTo(expectDtFinish)
-    }
-
-    @Test
-    fun mon_workedAsNeeded_workLeft_noBreak() {
+    fun mon_workedAsNeeded_noBreak() {
         // Assemble
         val localNow = now.plusDays(4) // mon
             .withTime(
@@ -295,7 +181,7 @@ class WorkGoalForecasterShouldFinishWeekTest {
     }
 
     @Test
-    fun mon_workedAsNeeded_workLeft_middleOfBreak() {
+    fun mon_workedAsNeeded_middleOfBreak() {
         // Assemble
         val localNow = now.plusDays(4) // mon
             .withTime(

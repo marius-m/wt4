@@ -97,28 +97,30 @@ class WorkGoalForecaster(
         } else {
             dtWorkLeftFromStart
         }
-        l.debug(
-            "forecastShouldFinishDay(" +
-                "dtCurrent: {}," +
-                " durationWorkedOffset: {}," +
-                " durationBreak: {}," +
-                " durationTotalWorkFromStart: {}," +
-                " dtWorkLeftFromStart: {}," +
-                " dtShouldFinish: {}," +
-                ")",
-            dtCurrent,
-            durationWorkedOffset.toStringShort(),
-            durationBreak.toStringShort(),
-            durationTotalWorkFromStart.toStringShort(),
-            dtWorkLeftFromStart,
-            dtShouldFinish,
-        )
+        // l.debug(
+        //     "forecastShouldFinishDay(" +
+        //         "dtCurrent: {}," +
+        //         " durationWorkedOffset: {}," +
+        //         " durationBreak: {}," +
+        //         " durationTotalWorkFromStart: {}," +
+        //         " dtWorkLeftFromStart: {}," +
+        //         " dtShouldFinish: {}," +
+        //         ")",
+        //     dtCurrent,
+        //     durationWorkedOffset.toStringShort(),
+        //     durationBreak.toStringShort(),
+        //     durationTotalWorkFromStart.toStringShort(),
+        //     dtWorkLeftFromStart,
+        //     dtShouldFinish,
+        // )
         return dtShouldFinish
     }
 
     /**
      * Returns how much time is left to work to finish the week
+     * If work is finished, will return dt == [dtCurrent]
      */
+    @Deprecated("Incorrectly working function")
     fun forecastShouldFinishWeek(
         dtCurrent: DateTime,
         durationWorked: Duration,
@@ -144,24 +146,24 @@ class WorkGoalForecaster(
         } else {
             dtWorkLeftFromStart
         }
-        l.debug(
-            "forecastShouldFinishDay(" +
-                "dtCurrent: {}," +
-                " durationTotalWork: {}," +
-                " durationWorkedOffset: {}," +
-                " durationBreak: {}," +
-                " durationTotalWorkFromStart: {}," +
-                " dtWorkLeftFromStart: {}," +
-                " dtShouldFinish: {}," +
-                ")",
-            dtCurrent,
-            durationWeekTotalWork.toStringShort(),
-            durationWorkedOffset.toStringShort(),
-            durationDayBreak.toStringShort(),
-            durationTotalWorkFromStart.toStringShort(),
-            dtWorkLeftFromStart,
-            dtShouldFinish,
-        )
+        // l.debug(
+        //     "forecastShouldFinishDay(" +
+        //         "dtCurrent: {}," +
+        //         " durationTotalWork: {}," +
+        //         " durationWorkedOffset: {}," +
+        //         " durationBreak: {}," +
+        //         " durationTotalWorkFromStart: {}," +
+        //         " dtWorkLeftFromStart: {}," +
+        //         " dtShouldFinish: {}," +
+        //         ")",
+        //     dtCurrent,
+        //     durationWeekTotalWork.toStringShort(),
+        //     durationWorkedOffset.toStringShort(),
+        //     durationDayBreak.toStringShort(),
+        //     durationTotalWorkFromStart.toStringShort(),
+        //     dtWorkLeftFromStart,
+        //     dtShouldFinish,
+        // )
         return dtShouldFinish
     }
 

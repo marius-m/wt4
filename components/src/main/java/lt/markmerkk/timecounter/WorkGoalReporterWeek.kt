@@ -62,26 +62,33 @@ class WorkGoalReporterWeek(
                     now = now,
                     displayDateRange,
                     durationWorkedDay,
-                ),
-                "\n",
+                ).appendBreakOnNotEmpty(),
+                reporter.reportDayShouldComplete(
+                    now = now,
+                    displayDateRange = displayDateRange,
+                    durationWorked = durationWorkedDay,
+                ).appendBreakOnNotEmpty(),
                 reporter.reportDayGoalDuration(
                     dtTarget = now,
                     durationWorkedDay,
-                ),
-                "\n",
+                ).appendBreakOnNotEmpty(),
                 "\n",
             )
         } else {
             emptyList()
         }
         val reportsWeek = listOf(
-            reportPace(now, displayDateRange, durationWorked),
-            "\n",
+            reportPace(now, displayDateRange, durationWorked)
+                .appendBreakOnNotEmpty(),
+            // reportShouldComplete(
+            //     now = now,
+            //     displayDateRange = displayDateRange,
+            //     durationWorked = durationWorked,
+            // ).appendBreakOnNotEmpty(),
             reportGoal(
                 displayDateRange.selectDate.toDateTimeAtStartOfDay(),
                 durationWorked,
-            ),
-            "\n",
+            ).appendBreakOnNotEmpty(),
         )
         val reports = listOf(
             "${reportTotal}\n",
@@ -92,5 +99,14 @@ class WorkGoalReporterWeek(
             .filter { it.isNotEmpty() }
             .joinToString(separator = "")
         return reportsAsString
+    }
+
+    companion object {
+        fun String.appendBreakOnNotEmpty(): String {
+            return when {
+                this.isEmpty() -> ""
+                else -> "${this}\n"
+            }
+        }
     }
 }

@@ -150,18 +150,29 @@ class WorkGoalReporter(
         )
     }
 
+    // todo incorrectly formed
+    // It should provide whenever the week will be finished, not being on "track". For ex. On friday at 17:00 (being on tack)
+    @Deprecated("Incorrectly working function")
     fun reportWeekShouldComplete(
         now: DateTime,
         displayDateRange: DateRange,
         durationWorked: Duration,
     ): String {
+        if (!displayDateRange.contains(now.toLocalDate())) {
+            return ""
+        }
         val dtShouldFinish = workGoalForecaster.forecastShouldFinishWeek(
             dtCurrent = now,
             durationWorked = durationWorked,
         )
+        val reportCompleteTime = if (dtShouldFinish.isEqual(now)) {
+            stringRes.resComplete()
+        } else {
+            LogFormatters.formatTime(stringRes = stringRes, dtCurrent = now, dtTarget = dtShouldFinish)
+        }
         return "%s: %s".format(
-            stringRes.resShouldComplete(),
-            LogFormatters.formatTime(stringRes = stringRes, dtCurrent = now, dtTarget = dtShouldFinish),
+            stringRes.resShouldCompleteWeek(),
+            reportCompleteTime,
         )
     }
 
