@@ -26,7 +26,7 @@ class WorkGoalForecasterDayGoalLeftTest {
         // Act
         val result = workGoalForecaster
             .dayGoalLeft(
-                dtCurrent = localNow,
+                dtTarget = localNow,
                 durationWorked = durationWorked,
             )
 
@@ -49,7 +49,7 @@ class WorkGoalForecasterDayGoalLeftTest {
         // Act
         val result = workGoalForecaster
             .dayGoalLeft(
-                dtCurrent = localNow,
+                dtTarget = localNow,
                 durationWorked = durationWorked,
             )
 
@@ -72,7 +72,7 @@ class WorkGoalForecasterDayGoalLeftTest {
         // Act
         val result = workGoalForecaster
             .dayGoalLeft(
-                dtCurrent = localNow,
+                dtTarget = localNow,
                 durationWorked = durationWorked,
             )
 

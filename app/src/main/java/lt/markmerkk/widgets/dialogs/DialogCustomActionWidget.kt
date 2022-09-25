@@ -7,8 +7,6 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
-import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Main
 import lt.markmerkk.ResultDispatcher

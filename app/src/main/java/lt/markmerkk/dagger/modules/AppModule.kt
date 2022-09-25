@@ -22,6 +22,7 @@ import lt.markmerkk.HostServicesInteractorImpl
 import lt.markmerkk.JiraClientProvider
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.ActiveDisplayRepositoryDefault
+import lt.markmerkk.LogFormatterStringRes
 import lt.markmerkk.MigrationsRunner
 import lt.markmerkk.ResultDispatcher
 import lt.markmerkk.SchedulerProvider
@@ -362,6 +363,12 @@ class AppModule(
     @Singleton
     fun provideStrings(): Strings {
         return StringsImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogFormatterStringRes(strings: Strings): LogFormatterStringRes {
+        return LogFormatterStringRes(strings)
     }
 
     @Provides

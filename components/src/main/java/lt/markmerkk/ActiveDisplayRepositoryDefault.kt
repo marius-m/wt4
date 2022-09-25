@@ -3,6 +3,7 @@ package lt.markmerkk
 import lt.markmerkk.entities.DateRange
 import lt.markmerkk.entities.Log
 import lt.markmerkk.events.EventActiveDisplayDataChange
+import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
@@ -94,6 +95,12 @@ class ActiveDisplayRepositoryDefault(
 
     override fun totalAsDuration(): Duration {
         return Duration(totalInMillis())
+    }
+
+    override fun durationForTargetDate(target: LocalDate): Duration {
+        val dateRangeTarget = DateRange.forActiveDay(target)
+        return displayLogs.filter { log -> dateRangeTarget.contains(log.time.start.toLocalDate()) }
+            .fold(Duration.ZERO) { duration, log -> duration.plus(log.time.duration) }
     }
 
     companion object {

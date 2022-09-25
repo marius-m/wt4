@@ -71,6 +71,7 @@ class WorkGoalForecaster(
 
     /**
      * Returns how much time is left to work to finish the day
+     * When there is no more work left, work left == [dtCurrent]
      * @param dtCurrent current date time
      * @param durationWorked duration how much time has been logged
      */
@@ -96,28 +97,30 @@ class WorkGoalForecaster(
         } else {
             dtWorkLeftFromStart
         }
-        l.debug(
-            "forecastShouldFinishDay(" +
-                "dtCurrent: {}," +
-                " durationWorkedOffset: {}," +
-                " durationBreak: {}," +
-                " durationTotalWorkFromStart: {}," +
-                " dtWorkLeftFromStart: {}," +
-                " dtShouldFinish: {}," +
-                ")",
-            dtCurrent,
-            durationWorkedOffset.toStringShort(),
-            durationBreak.toStringShort(),
-            durationTotalWorkFromStart.toStringShort(),
-            dtWorkLeftFromStart,
-            dtShouldFinish,
-        )
+        // l.debug(
+        //     "forecastShouldFinishDay(" +
+        //         "dtCurrent: {}," +
+        //         " durationWorkedOffset: {}," +
+        //         " durationBreak: {}," +
+        //         " durationTotalWorkFromStart: {}," +
+        //         " dtWorkLeftFromStart: {}," +
+        //         " dtShouldFinish: {}," +
+        //         ")",
+        //     dtCurrent,
+        //     durationWorkedOffset.toStringShort(),
+        //     durationBreak.toStringShort(),
+        //     durationTotalWorkFromStart.toStringShort(),
+        //     dtWorkLeftFromStart,
+        //     dtShouldFinish,
+        // )
         return dtShouldFinish
     }
 
     /**
      * Returns how much time is left to work to finish the week
+     * If work is finished, will return dt == [dtCurrent]
      */
+    @Deprecated("Incorrectly working function")
     fun forecastShouldFinishWeek(
         dtCurrent: DateTime,
         durationWorked: Duration,
@@ -143,37 +146,37 @@ class WorkGoalForecaster(
         } else {
             dtWorkLeftFromStart
         }
-        l.debug(
-            "forecastShouldFinishDay(" +
-                "dtCurrent: {}," +
-                " durationTotalWork: {}," +
-                " durationWorkedOffset: {}," +
-                " durationBreak: {}," +
-                " durationTotalWorkFromStart: {}," +
-                " dtWorkLeftFromStart: {}," +
-                " dtShouldFinish: {}," +
-                ")",
-            dtCurrent,
-            durationWeekTotalWork.toStringShort(),
-            durationWorkedOffset.toStringShort(),
-            durationDayBreak.toStringShort(),
-            durationTotalWorkFromStart.toStringShort(),
-            dtWorkLeftFromStart,
-            dtShouldFinish,
-        )
+        // l.debug(
+        //     "forecastShouldFinishDay(" +
+        //         "dtCurrent: {}," +
+        //         " durationTotalWork: {}," +
+        //         " durationWorkedOffset: {}," +
+        //         " durationBreak: {}," +
+        //         " durationTotalWorkFromStart: {}," +
+        //         " dtWorkLeftFromStart: {}," +
+        //         " dtShouldFinish: {}," +
+        //         ")",
+        //     dtCurrent,
+        //     durationWeekTotalWork.toStringShort(),
+        //     durationWorkedOffset.toStringShort(),
+        //     durationDayBreak.toStringShort(),
+        //     durationTotalWorkFromStart.toStringShort(),
+        //     dtWorkLeftFromStart,
+        //     dtShouldFinish,
+        // )
         return dtShouldFinish
     }
 
-    fun dayGoal(dtCurrent: DateTime): Duration {
-        val workDayRuleByDate = workDays.workDayRulesByDate(dtCurrent.toLocalDate())
+    fun dayGoal(dtTarget: DateTime): Duration {
+        val workDayRuleByDate = workDays.workDayRulesByDate(dtTarget.toLocalDate())
         return workDayRuleByDate.workDuration
     }
 
     fun dayGoalLeft(
-        dtCurrent: DateTime,
+        dtTarget: DateTime,
         durationWorked: Duration,
     ): Duration {
-        val durationDayGoal = dayGoal(dtCurrent)
+        val durationDayGoal = dayGoal(dtTarget)
         val durationWorkLeft = durationDayGoal.minus(durationWorked)
         if (durationWorkLeft.isShorterThan(Duration.ZERO)) {
             return Duration.ZERO

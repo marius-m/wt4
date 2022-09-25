@@ -11,7 +11,6 @@ import lt.markmerkk.WorklogStorage
 import lt.markmerkk.timecounter.WorkGoalDurationCalculator
 import lt.markmerkk.timecounter.WorkGoalReporter
 import lt.markmerkk.utils.Logs.withLogInstance
-import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 import tornadofx.Fragment
 import tornadofx.box
@@ -34,6 +33,11 @@ class WorkForecastWidget: Fragment() {
     init {
         Main.component().inject(this)
     }
+
+    private val wgReporterDay: WorkGoalReporter.ReporterDecorator = WorkGoalReporter
+        .createReporterDay(wgReporter)
+    private val wgReporterWeek: WorkGoalReporter.ReporterDecorator = WorkGoalReporter
+        .createReporterWeek(wgReporter)
 
     override val root: Parent = label {
             style {
@@ -67,50 +71,30 @@ class WorkForecastWidget: Fragment() {
 
     private fun generateReport(): String {
         val now = timeProvider.now()
+        val durationWorkedDay = wgDurationCalculator.durationWorked(
+            displayDateStart = activeDisplayRepository.displayDateRange.selectDate,
+            displayDateEnd = activeDisplayRepository.displayDateRange.selectDate,
+        )
         val durationLogged = wgDurationCalculator.durationLogged()
-        val durationRunningClock = wgDurationCalculator.durationRunningClock(
+        val durationOnbgoing = wgDurationCalculator.durationRunningClock(
             displayDateStart = activeDisplayRepository.displayDateRange.start,
             displayDateEnd = activeDisplayRepository.displayDateRange.endAsNextDay,
         )
-        val durationWorked = wgDurationCalculator.durationWorked(
-            displayDateStart = activeDisplayRepository.displayDateRange.start,
-            displayDateEnd = activeDisplayRepository.displayDateRange.endAsNextDay,
-        )
-        val reportTotal = if (durationRunningClock == Duration.ZERO) {
-            wgReporter.reportLogged(durationLogged)
-        } else {
-            wgReporter.reportLoggedWithOngoing(
-                durationLogged = durationLogged,
-                durationOngoing = durationRunningClock,
-            )
-        }
         return when (activeDisplayRepository.displayType) {
-            DisplayTypeLength.DAY -> {
-                StringBuilder()
-                    .append(reportTotal)
-                    .append("\n")
-                    .append("\n")
-                    .append(wgReporter.reportPaceDay(now = now, durationWorked = durationWorked))
-                    .append("\n")
-                    .append(wgReporter.reportDayShouldComplete(now = now, durationWorked = durationWorked))
-                    .append("\n")
-                    .append(wgReporter.reportDayGoalDuration(now = now, durationWorked = durationWorked))
-                    .append("\n")
-                    .append(wgReporter.reportDaySchedule(now = now))
-                    .toString()
-            }
-            DisplayTypeLength.WEEK -> {
-                StringBuilder()
-                    .append(reportTotal)
-                    .append("\n")
-                    .append("\n")
-                    .append(wgReporter.reportWeekShouldComplete(now = now, durationWorked = durationWorked))
-                    .append("\n")
-                    .append(wgReporter.reportPaceWeek(now = now, durationWorked = durationWorked))
-                    .append("\n")
-                    .append(wgReporter.reportWeekGoalDuration(now = now, durationWorked = durationWorked))
-                    .toString()
-            }
+            DisplayTypeLength.DAY -> wgReporterDay.reportSummary(
+                now = now,
+                displayDateRange = activeDisplayRepository.displayDateRange,
+                durationWorkedDay = durationWorkedDay,
+                durationLogged = durationLogged,
+                durationOngoing = durationOnbgoing,
+            )
+            DisplayTypeLength.WEEK -> wgReporterWeek.reportSummary(
+                now = now,
+                displayDateRange = activeDisplayRepository.displayDateRange,
+                durationWorkedDay = durationWorkedDay,
+                durationLogged = durationLogged,
+                durationOngoing = durationOnbgoing,
+            )
         }
     }
 
