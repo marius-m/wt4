@@ -49,7 +49,7 @@ class WorkGoalReporterDayPaceTest {
         )
 
         // Assert
-        Assertions.assertThat(result).isEqualTo("Pace: +15m")
+        Assertions.assertThat(result).isEqualTo("Day pace: +15m")
     }
 
     @Test
@@ -70,7 +70,7 @@ class WorkGoalReporterDayPaceTest {
         )
 
         // Assert
-        Assertions.assertThat(result).isEqualTo("Pace: +0m")
+        Assertions.assertThat(result).isEqualTo("Day pace: +0m")
     }
 
     @Test
@@ -93,7 +93,7 @@ class WorkGoalReporterDayPaceTest {
         )
 
         // Assert
-        Assertions.assertThat(result).isEqualTo("Pace: -2h 50m")
+        Assertions.assertThat(result).isEqualTo("Day pace: -2h 50m")
     }
 
     @Test
