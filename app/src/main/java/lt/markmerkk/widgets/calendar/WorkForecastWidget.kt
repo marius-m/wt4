@@ -71,6 +71,10 @@ class WorkForecastWidget: Fragment() {
 
     private fun generateReport(): String {
         val now = timeProvider.now()
+        val durationWorkedDay = wgDurationCalculator.durationWorked(
+            displayDateStart = activeDisplayRepository.displayDateRange.selectDate,
+            displayDateEnd = activeDisplayRepository.displayDateRange.selectDate,
+        )
         val durationLogged = wgDurationCalculator.durationLogged()
         val durationOnbgoing = wgDurationCalculator.durationRunningClock(
             displayDateStart = activeDisplayRepository.displayDateRange.start,
@@ -80,12 +84,14 @@ class WorkForecastWidget: Fragment() {
             DisplayTypeLength.DAY -> wgReporterDay.reportSummary(
                 now = now,
                 displayDateRange = activeDisplayRepository.displayDateRange,
+                durationWorkedDay = durationWorkedDay,
                 durationLogged = durationLogged,
                 durationOngoing = durationOnbgoing,
             )
             DisplayTypeLength.WEEK -> wgReporterWeek.reportSummary(
                 now = now,
                 displayDateRange = activeDisplayRepository.displayDateRange,
+                durationWorkedDay = durationWorkedDay,
                 durationLogged = durationLogged,
                 durationOngoing = durationOnbgoing,
             )

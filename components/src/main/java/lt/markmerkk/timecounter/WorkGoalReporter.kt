@@ -58,7 +58,7 @@ class WorkGoalReporter(
         }
         return "%s: %s"
             .format(
-                stringRes.resPace(),
+                stringRes.resPaceDay(),
                 reportPace,
             )
     }
@@ -85,7 +85,7 @@ class WorkGoalReporter(
         }
         return "%s: %s"
             .format(
-                stringRes.resPace(),
+                stringRes.resPaceWeek(),
                 reportPace,
             )
     }
@@ -160,6 +160,8 @@ class WorkGoalReporter(
     interface StringRes {
         fun resTotal(): String
         fun resPace(): String
+        fun resPaceDay(): String
+        fun resPaceWeek(): String
         fun resDayGoal(): String
         fun resWeekGoal(): String
         fun resLeft(): String
@@ -194,6 +196,7 @@ class WorkGoalReporter(
         fun reportSummary(
             now: DateTime,
             displayDateRange: DateRange,
+            durationWorkedDay: Duration,
             durationLogged: Duration,
             durationOngoing: Duration,
         ): String

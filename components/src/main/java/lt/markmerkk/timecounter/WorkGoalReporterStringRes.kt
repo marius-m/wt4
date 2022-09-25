@@ -9,6 +9,10 @@ class WorkGoalReporterStringRes(
 
     override fun resPace(): String = strings.getString("workgoal_reporter_pace")
 
+    override fun resPaceDay(): String = strings.getString("workgoal_reporter_pace_day")
+
+    override fun resPaceWeek(): String = strings.getString("workgoal_reporter_pace_week")
+
     override fun resDayGoal(): String = strings.getString("workgoal_reporter_day_goal")
 
     override fun resWeekGoal(): String = strings.getString("workgoal_reporter_week_goal")

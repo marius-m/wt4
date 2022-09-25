@@ -38,6 +38,7 @@ class WorkGoalReporterWeek(
     override fun reportSummary(
         now: DateTime,
         displayDateRange: DateRange,
+        durationWorkedDay: Duration,
         durationLogged: Duration,
         durationOngoing: Duration,
     ): String {
@@ -51,19 +52,41 @@ class WorkGoalReporterWeek(
                 durationOngoing = durationOngoing,
             )
         }
-        val reportPace = reportPace(now, displayDateRange, durationWorked)
-        val reportGoal = reportGoal(
-            displayDateRange.selectDate.toDateTimeAtStartOfDay(),
-            durationWorked,
+        val reportsDay = if (displayDateRange.contains(now.toLocalDate())) {
+            listOf(
+                reporter.reportPaceDay(
+                    now = now,
+                    displayDateRange,
+                    durationWorkedDay,
+                ),
+                "\n",
+                reporter.reportDayGoalDuration(
+                    dtTarget = now,
+                    durationWorkedDay,
+                ),
+                "\n",
+                "\n",
+            )
+        } else {
+            emptyList()
+        }
+        val reportsWeek = listOf(
+            reportPace(now, displayDateRange, durationWorked),
+            "\n",
+            reportGoal(
+                displayDateRange.selectDate.toDateTimeAtStartOfDay(),
+                durationWorked,
+            ),
+            "\n",
         )
         val reports = listOf(
             "${reportTotal}\n",
-            reportPace,
-            reportGoal,
-        )
+            "\n",
+        ).plus(reportsDay)
+            .plus(reportsWeek)
         val reportsAsString = reports
             .filter { it.isNotEmpty() }
-            .joinToString(separator = "\n")
+            .joinToString(separator = "")
         return reportsAsString
     }
 }

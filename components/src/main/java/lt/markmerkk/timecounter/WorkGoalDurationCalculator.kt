@@ -2,6 +2,7 @@ package lt.markmerkk.timecounter
 
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.utils.hourglass.HourGlass
+import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.Interval
 import org.joda.time.LocalDate
@@ -20,7 +21,7 @@ class WorkGoalDurationCalculator(
         return durationRunningClock(
             displayDateStart = displayDateStart,
             displayDateEnd = displayDateEnd,
-        ).plus(durationLogged())
+        ).plus(durationLoggedForTarget(displayDateStart))
     }
 
     fun durationRunningClock(
@@ -43,5 +44,10 @@ class WorkGoalDurationCalculator(
 
     fun durationLogged(): Duration {
         return activeDisplayRepository.totalAsDuration()
+    }
+
+    fun durationLoggedForTarget(target: LocalDate): Duration {
+        return activeDisplayRepository
+            .durationForTargetDate(target)
     }
 }

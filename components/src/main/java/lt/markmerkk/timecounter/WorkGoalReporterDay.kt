@@ -38,6 +38,7 @@ class WorkGoalReporterDay(
     override fun reportSummary(
         now: DateTime,
         displayDateRange: DateRange,
+        durationWorkedDay: Duration,
         durationLogged: Duration,
         durationOngoing: Duration,
     ): String {

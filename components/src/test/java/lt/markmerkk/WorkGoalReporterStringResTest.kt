@@ -5,6 +5,8 @@ import lt.markmerkk.timecounter.WorkGoalReporter
 class WorkGoalReporterStringResTest: WorkGoalReporter.StringRes {
     override fun resTotal(): String = "Total"
     override fun resPace(): String = "Pace"
+    override fun resPaceDay(): String = "Day pace"
+    override fun resPaceWeek(): String = "Week pace"
     override fun resDayGoal(): String = "Day goal"
     override fun resWeekGoal(): String = "Week goal"
     override fun resLeft(): String = "left"
