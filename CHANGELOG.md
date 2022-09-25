@@ -3,14 +3,24 @@
 Current: 1.9.4
 
 
+## 1.9.6
+
+-   Still same problem remains for code sign on *MacOS*, so you&rsquo;ll have to run `sudo xattr -rd com.apple.quarantine /Applications/WT4-basic.app` for the app to launch.
+
+-   **Fixes**
+    -   Fixing / improving report mechanism for day / week reports
+
+
 ## 1.9.5
 
 -   Still same problem remains for code sign on *MacOS*, so you&rsquo;ll have to run `sudo xattr -rd com.apple.quarantine /Applications/WT4-basic.app` for the app to launch.
+
 -   **Experimental release** with some experimental features
 
 -   **Fixes**
     -   Fixed worklog sync where comments would not provide a value from JIRA (this is controllable variable from JIRA itself)
     -   Change some of confirmation / info dialogs to internal ones. This **fixes a problem with a MacOS full screen feature**, what it would not show dialogs or just plainly break down the app by freezing it.
+
 -   **Features**
     -   Integrate ability to provide help sections to features in screen (aka helpful tips). Now some of more hidden features would be more visible. Still need to add more help sections for this to be more helpful
     -   (Experimental) More info on your current day and its pace (How much time is left to complete the day)
@@ -89,7 +99,7 @@ Current: 1.9.4
 -   Add worklog export to file (feature to support multiple JIRAs)
 -   Add worklog import from file (feature to support multiple JIRAs)
 -   Add delete worklog confirmation (less likely to delete worklog accidentally)
--   Cancel button in “Un-synced worklogs” screen
+-   Cancel button in &ldquo;Un-synced worklogs&rdquo; screen
 
 
 ## 1.7.3
