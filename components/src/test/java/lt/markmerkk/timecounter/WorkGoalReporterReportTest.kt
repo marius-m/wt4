@@ -103,7 +103,7 @@ class WorkGoalReporterReportTest {
 
         // Act
         val result = workGoalReporter.reportDayGoalDuration(
-            now = targetNow,
+            dtTarget = targetNow,
             durationWorked = durationWorked,
         )
 
@@ -122,7 +122,7 @@ class WorkGoalReporterReportTest {
 
         // Act
         val result = workGoalReporter.reportDayGoalDuration(
-            now = targetNow,
+            dtTarget = targetNow,
             durationWorked = durationWorked,
         )
 
@@ -140,7 +140,7 @@ class WorkGoalReporterReportTest {
 
         // Act
         val result = workGoalReporter.reportDaySchedule(
-            now = targetNow,
+            dtTarget = targetNow,
         )
 
         // Assert

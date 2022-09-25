@@ -5,7 +5,6 @@ import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.toStringShort
 import org.joda.time.DateTime
 import org.joda.time.Duration
-import org.joda.time.Interval
 
 class WorkGoalReporter(
     private val workGoalForecaster: WorkGoalForecaster,
@@ -106,19 +105,19 @@ class WorkGoalReporter(
     }
 
     fun reportDayGoalDuration(
-        now: DateTime,
+        dtTarget: DateTime,
         durationWorked: Duration,
     ): String {
         return "%s: %s (%s %s)".format(
             stringRes.resDayGoal(),
-            workGoalForecaster.dayGoal(now).toStringShort(),
-            workGoalForecaster.dayGoalLeft(now, durationWorked).toStringShort(),
+            workGoalForecaster.dayGoal(dtTarget).toStringShort(),
+            workGoalForecaster.dayGoalLeft(dtTarget, durationWorked).toStringShort(),
             stringRes.resLeft(),
         )
     }
 
     fun reportWeekGoalDuration(
-        now: DateTime,
+        dtTarget: DateTime,
         durationWorked: Duration,
     ): String {
         return "%s: %s (%s %s)".format(
@@ -130,9 +129,9 @@ class WorkGoalReporter(
     }
 
     fun reportDaySchedule(
-        now: DateTime,
+        dtTarget: DateTime,
     ): String {
-        val workDayRule = workGoalForecaster.daySchedule(dtCurrent = now)
+        val workDayRule = workGoalForecaster.daySchedule(dtCurrent = dtTarget)
         return "%s: %s %s (%s: %s)".format(
             stringRes.resDaySchedule(),
             workDayRule.weekDay,
@@ -185,11 +184,11 @@ class WorkGoalReporter(
             durationWorked: Duration,
         ): String
         fun reportGoal(
-            now: DateTime,
+            dtTarget: DateTime,
             durationWorked: Duration,
         ): String
         fun reportSchedule(
-            now: DateTime,
+            dtTarget: DateTime,
         ): String
 
         fun reportSummary(

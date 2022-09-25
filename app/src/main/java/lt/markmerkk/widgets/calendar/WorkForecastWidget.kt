@@ -34,8 +34,10 @@ class WorkForecastWidget: Fragment() {
         Main.component().inject(this)
     }
 
-    private val wgReporterDay: WorkGoalReporter.ReporterDecorator = WorkGoalReporter.createReporterDay(wgReporter)
-    private val wgReporterWeek: WorkGoalReporter.ReporterDecorator = WorkGoalReporter.createReporterDay(wgReporter)
+    private val wgReporterDay: WorkGoalReporter.ReporterDecorator = WorkGoalReporter
+        .createReporterDay(wgReporter)
+    private val wgReporterWeek: WorkGoalReporter.ReporterDecorator = WorkGoalReporter
+        .createReporterWeek(wgReporter)
 
     override val root: Parent = label {
             style {

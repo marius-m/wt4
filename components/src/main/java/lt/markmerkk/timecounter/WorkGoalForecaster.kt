@@ -164,16 +164,16 @@ class WorkGoalForecaster(
         return dtShouldFinish
     }
 
-    fun dayGoal(dtCurrent: DateTime): Duration {
-        val workDayRuleByDate = workDays.workDayRulesByDate(dtCurrent.toLocalDate())
+    fun dayGoal(dtTarget: DateTime): Duration {
+        val workDayRuleByDate = workDays.workDayRulesByDate(dtTarget.toLocalDate())
         return workDayRuleByDate.workDuration
     }
 
     fun dayGoalLeft(
-        dtCurrent: DateTime,
+        dtTarget: DateTime,
         durationWorked: Duration,
     ): Duration {
-        val durationDayGoal = dayGoal(dtCurrent)
+        val durationDayGoal = dayGoal(dtTarget)
         val durationWorkLeft = durationDayGoal.minus(durationWorked)
         if (durationWorkLeft.isShorterThan(Duration.ZERO)) {
             return Duration.ZERO

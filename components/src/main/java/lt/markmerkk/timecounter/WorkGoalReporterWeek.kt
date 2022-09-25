@@ -3,8 +3,6 @@ package lt.markmerkk.timecounter
 import lt.markmerkk.entities.DateRange
 import org.joda.time.DateTime
 import org.joda.time.Duration
-import org.joda.time.Interval
-import org.joda.time.LocalDate
 
 class WorkGoalReporterWeek(
     private val reporter: WorkGoalReporter,
@@ -29,11 +27,11 @@ class WorkGoalReporterWeek(
         return reporter.reportWeekShouldComplete(now, durationWorked)
     }
 
-    override fun reportGoal(now: DateTime, durationWorked: Duration): String {
-        return reporter.reportWeekGoalDuration(now, durationWorked)
+    override fun reportGoal(dtTarget: DateTime, durationWorked: Duration): String {
+        return reporter.reportWeekGoalDuration(dtTarget, durationWorked)
     }
 
-    override fun reportSchedule(now: DateTime): String {
+    override fun reportSchedule(dtTarget: DateTime): String {
         return ""
     }
 
@@ -54,9 +52,14 @@ class WorkGoalReporterWeek(
             )
         }
         val reportPace = reportPace(now, displayDateRange, durationWorked)
+        val reportGoal = reportGoal(
+            displayDateRange.selectDate.toDateTimeAtStartOfDay(),
+            durationWorked,
+        )
         val reports = listOf(
             "${reportTotal}\n",
             reportPace,
+            reportGoal,
         )
         val reportsAsString = reports
             .filter { it.isNotEmpty() }
