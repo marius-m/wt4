@@ -1,9 +1,11 @@
 package lt.markmerkk.timecounter
 
+import lt.markmerkk.entities.DateRange
 import lt.markmerkk.utils.LogFormatters
 import lt.markmerkk.utils.toStringShort
 import org.joda.time.DateTime
 import org.joda.time.Duration
+import org.joda.time.Interval
 
 class WorkGoalReporter(
     private val workGoalForecaster: WorkGoalForecaster,
@@ -31,10 +33,18 @@ class WorkGoalReporter(
             )
     }
 
+    /**
+     * Reports pace for the day
+     * Will only return pace of looking at current day
+     */
     fun reportPaceDay(
         now: DateTime,
+        displayDateRange: DateRange,
         durationWorked: Duration,
     ): String {
+        if (!displayDateRange.contains(now.toLocalDate())) {
+            return ""
+        }
         val durationGoal = workGoalForecaster.forecastDayDurationShouldWorkedForTargetTime(
             targetDate = now.toLocalDate(),
             targetTime = now.toLocalTime(),
@@ -56,8 +66,12 @@ class WorkGoalReporter(
 
     fun reportPaceWeek(
         now: DateTime,
+        displayDateRange: DateRange,
         durationWorked: Duration,
     ): String {
+        if (!displayDateRange.contains(now.toLocalDate())) {
+            return ""
+        }
         val durationGoal = workGoalForecaster.forecastWeekDurationShouldWorkedForTargetTime(
             targetDate = now.toLocalDate(),
             targetTime = now.toLocalTime(),
@@ -153,5 +167,50 @@ class WorkGoalReporter(
         fun resShouldComplete(): String
         fun resDaySchedule(): String
         fun resBreak(): String
+    }
+
+    interface ReporterDecorator {
+        fun reportLogged(durationLogged: Duration): String
+        fun reportLoggedOngoing(
+            durationLogged: Duration,
+            durationOngoing: Duration,
+        ): String
+        fun reportPace(
+            now: DateTime,
+            displayDateRange: DateRange,
+            durationWorked: Duration,
+        ): String
+        fun reportShouldComplete(
+            now: DateTime,
+            durationWorked: Duration,
+        ): String
+        fun reportGoal(
+            now: DateTime,
+            durationWorked: Duration,
+        ): String
+        fun reportSchedule(
+            now: DateTime,
+        ): String
+
+        fun reportSummary(
+            now: DateTime,
+            displayDateRange: DateRange,
+            durationLogged: Duration,
+            durationOngoing: Duration,
+        ): String
+    }
+
+    companion object {
+        fun createReporterDay(
+            wgReporter: WorkGoalReporter,
+        ): ReporterDecorator {
+            return WorkGoalReporterDay(reporter = wgReporter)
+        }
+
+        fun createReporterWeek(
+            wgReporter: WorkGoalReporter,
+        ): ReporterDecorator {
+            return WorkGoalReporterWeek(reporter = wgReporter)
+        }
     }
 }

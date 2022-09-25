@@ -2,6 +2,7 @@ package lt.markmerkk.entities
 
 import lt.markmerkk.DisplayTypeLength
 import org.joda.time.DateTimeConstants
+import org.joda.time.Interval
 import org.joda.time.LocalDate
 
 data class DateRange(
@@ -15,11 +16,14 @@ data class DateRange(
      */
     val endAsNextDay: LocalDate = end.plusDays(1)
 
-    val startAsMillis = start.toDateTimeAtStartOfDay().millis
+    val interval: Interval = Interval(
+        start.toDateTimeAtStartOfDay(),
+        endAsNextDay.toDateTimeAtStartOfDay(),
+    )
 
-    val endAsMillis: Long = end.toDateTimeAtStartOfDay().millis
-
-    val endNextDayAsMillis: Long = endAsNextDay.toDateTimeAtStartOfDay().millis
+    fun contains(targetDate: LocalDate): Boolean {
+        return interval.contains(targetDate.toDateTimeAtStartOfDay())
+    }
 
     companion object {
         fun byDisplayType(
