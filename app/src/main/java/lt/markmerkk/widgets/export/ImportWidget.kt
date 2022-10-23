@@ -37,6 +37,7 @@ class ImportWidget : Fragment(), ImportContract.View {
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
     private lateinit var viewSkipTicketCode: CheckBox
+    private lateinit var viewIncludeTicketCodeFromComment: CheckBox
     private lateinit var viewProjectFilters: ComboBox<String>
     private lateinit var viewTotal: Label
 
@@ -59,12 +60,13 @@ class ImportWidget : Fragment(), ImportContract.View {
                     isWrapText = true
                 }
                 viewSkipTicketCode = checkbox("Skip ticket code when importing") { }
+                viewIncludeTicketCodeFromComment = checkbox("Extract and include ticket code from comment") { }
                 viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
                     setOnAction {
                         val selectItem = (it.source as ComboBox<String>)
                                 .selectionModel
                                 .selectedItem ?: ""
-                        presenter.filterWorklogs(projectFilter = selectItem)
+                        presenter.filterWorklogsByProject(projectFilter = selectItem)
                     }
                 }
                 viewLogs = listview(worklogViewModels) {
@@ -87,7 +89,6 @@ class ImportWidget : Fragment(), ImportContract.View {
                                 importWorklogs = importWorklogs,
                                 projectFilter = presenter.defaultProjectFilter
                         )
-                        presenter.loadProjectFilters(importWorklogs)
                     }
                 }
                 jfxButton("Import".toUpperCase()) {
@@ -105,11 +106,14 @@ class ImportWidget : Fragment(), ImportContract.View {
     override fun onDock() {
         super.onDock()
         presenter = ImportPresenter(
-            activeDisplayRepository = activeDisplayRepository
+            activeDisplayRepository = activeDisplayRepository,
+            timeProvider = timeProvider,
         )
         presenter.onAttach(this)
-        presenter.filterWorklogs(projectFilter = presenter.defaultProjectFilter)
-        presenter.loadProjectFilters(worklogs = emptyList())
+        presenter.loadWorklogs(
+            importWorklogs = emptyList(),
+            projectFilter = "",
+        )
     }
 
     override fun onUndock() {
