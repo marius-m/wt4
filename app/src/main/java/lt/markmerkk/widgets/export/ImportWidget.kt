@@ -8,15 +8,35 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.layout.Priority
-import lt.markmerkk.*
+import lt.markmerkk.ActiveDisplayRepository
+import lt.markmerkk.Main
+import lt.markmerkk.ResultDispatcher
+import lt.markmerkk.Strings
+import lt.markmerkk.Styles
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.WorklogStorage
 import lt.markmerkk.export.ImportContract
 import lt.markmerkk.export.ImportPresenter
 import lt.markmerkk.export.WorklogExporter
-import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.export.entities.ExportWorklogViewModel
+import lt.markmerkk.ui_2.views.jfxButton
+import lt.markmerkk.utils.Logs.withLogInstance
 import lt.markmerkk.widgets.dialogs.Dialogs
 import org.slf4j.LoggerFactory
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.addClass
+import tornadofx.asObservable
+import tornadofx.borderpane
+import tornadofx.bottom
+import tornadofx.center
+import tornadofx.checkbox
+import tornadofx.combobox
+import tornadofx.hbox
+import tornadofx.label
+import tornadofx.listview
+import tornadofx.top
+import tornadofx.vbox
+import tornadofx.vgrow
 import javax.inject.Inject
 
 class ImportWidget : Fragment(), ImportContract.View {
@@ -36,13 +56,17 @@ class ImportWidget : Fragment(), ImportContract.View {
     private lateinit var presenter: ImportContract.Presenter
 
     private lateinit var viewLogs: ListView<ExportWorklogViewModel>
-    private lateinit var viewSkipTicketCode: CheckBox
-    private lateinit var viewIncludeTicketCodeFromComment: CheckBox
+    private lateinit var viewCheckNoTicketCode: CheckBox
+    private lateinit var viewCheckTicketCodeFromComment: CheckBox
+    private lateinit var viewCheckProjectFilters: CheckBox
     private lateinit var viewProjectFilters: ComboBox<String>
     private lateinit var viewTotal: Label
 
     private val worklogViewModels = mutableListOf<ExportWorklogViewModel>().asObservable()
     private val projectFilters = mutableListOf<String>().asObservable()
+    private val importFilters = ImportFilters(
+        defaultProjectFilter = ImportPresenter.PROJECT_FILTER_ALL,
+    )
 
     override val root: Parent = borderpane {
         addClass(Styles.dialogContainer)
@@ -59,14 +83,41 @@ class ImportWidget : Fragment(), ImportContract.View {
                     text = "Import worklogs from file"
                     isWrapText = true
                 }
-                viewSkipTicketCode = checkbox("Skip ticket code when importing") { }
-                viewIncludeTicketCodeFromComment = checkbox("Extract and include ticket code from comment") { }
-                viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
+                viewCheckNoTicketCode = checkbox("No ticket code") {
                     setOnAction {
-                        val selectItem = (it.source as ComboBox<String>)
+                        renderByImportFilterResult(
+                            filterResult = importFilters
+                                .filter(action = IFActionNoTicketCode)
+                        )
+                    }
+                }
+                viewCheckTicketCodeFromComment = checkbox("Ticket code from comment") {
+                    setOnAction {
+                        renderByImportFilterResult(
+                            filterResult = importFilters
+                                .filter(action = IFActionTicketFromComments)
+                        )
+                    }
+                }
+                hbox(spacing = 4) {
+                    viewCheckProjectFilters = checkbox("") {
+                        setOnAction {
+                            renderByImportFilterResult(
+                                filterResult = importFilters
+                                    .filter(action = IFActionTicketProjectFilterDefault)
+                            )
+                        }
+                    }
+                    viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
+                        setOnAction {
+                            val selectItem = (it.source as ComboBox<String>)
                                 .selectionModel
                                 .selectedItem ?: ""
-                        presenter.filterWorklogsByProject(projectFilter = selectItem)
+                            renderByImportFilterResult(
+                                filterResult = importFilters
+                                    .filter(action = IFActionTicketProjectFilter(filter = selectItem))
+                            )
+                        }
                     }
                 }
                 viewLogs = listview(worklogViewModels) {
@@ -89,11 +140,15 @@ class ImportWidget : Fragment(), ImportContract.View {
                                 importWorklogs = importWorklogs,
                                 projectFilter = presenter.defaultProjectFilter
                         )
+                        renderByImportFilterResult(
+                            filterResult = importFilters
+                                .filter(action = IFActionNoAction)
+                        )
                     }
                 }
                 jfxButton("Import".toUpperCase()) {
                     setOnAction {
-                        presenter.import(worklogViewModels, viewSkipTicketCode.isSelected)
+                        presenter.import(worklogViewModels, viewCheckNoTicketCode.isSelected)
                     }
                 }
                 jfxButton("Close".toUpperCase()) {
@@ -114,6 +169,10 @@ class ImportWidget : Fragment(), ImportContract.View {
             importWorklogs = emptyList(),
             projectFilter = "",
         )
+        renderByImportFilterResult(
+            filterResult = importFilters
+                .filter(action = IFActionNoAction)
+        )
     }
 
     override fun onUndock() {
@@ -129,7 +188,6 @@ class ImportWidget : Fragment(), ImportContract.View {
     override fun showProjectFilters(projectFilters: List<String>, filterSelection: String) {
         this.projectFilters.clear()
         this.projectFilters.addAll(projectFilters)
-        this.viewProjectFilters.selectionModel.select(filterSelection)
     }
 
     override fun showImportSuccess() {
@@ -145,8 +203,32 @@ class ImportWidget : Fragment(), ImportContract.View {
         viewTotal.text = "Total: $totalAsString"
     }
 
+    private fun renderByImportFilterResult(
+        filterResult: ImportFilterResultState,
+    ) {
+        l.debug(
+            "renderByImportFilterResult(filterResult: {})".withLogInstance(this),
+            filterResult,
+        )
+        viewCheckNoTicketCode.isSelected = filterResult.isSelectNoTickets
+        viewCheckTicketCodeFromComment.isSelected = filterResult.isSelectTicketFromComments
+        viewCheckProjectFilters.isSelected = filterResult.isSelectTicketFilter
+        viewProjectFilters.isDisable = !filterResult.isEnabledTicketFilter
+        when (filterResult.action) {
+            IFActionNoAction,
+            IFActionTicketProjectFilterDefault -> {
+                val selectIndex = projectFilters.indexOf(filterResult.ticketFilter)
+                viewProjectFilters.selectionModel.clearAndSelect(selectIndex)
+            }
+            else -> {
+                // No action on viewProjectFilter selection, as it would trigger filter change again
+            }
+        }
+        presenter.filterWorklogsByProject(filterResult.ticketFilter)
+    }
+
     companion object {
-        private val logger = LoggerFactory.getLogger(ImportWidget::class.java)!!
+        private val l = LoggerFactory.getLogger(ImportWidget::class.java)!!
     }
 
 }
