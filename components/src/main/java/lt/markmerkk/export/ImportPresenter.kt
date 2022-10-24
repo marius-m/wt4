@@ -38,8 +38,17 @@ class ImportPresenter(
         view?.showTotal(calcTotal(worklogsModified))
     }
 
+    override fun filterClear() {
+        this.worklogsModified = worklogsImported
+        val viewModels = worklogsModified
+            .map { ExportWorklogViewModel(it, includeDate = true) }
+        view?.showWorklogs(viewModels)
+        view?.showTotal(calcTotal(worklogsModified))
+    }
+
     override fun filterWorklogsByProject(projectFilter: String) {
-        this.worklogsModified = worklogsImported.applyProjectFilter(projectFilter)
+        this.worklogsModified = worklogsImported
+            .applyProjectFilter(projectFilter)
         val viewModels = worklogsModified
                 .map { ExportWorklogViewModel(it, includeDate = true) }
         view?.showWorklogs(viewModels)

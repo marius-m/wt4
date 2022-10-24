@@ -210,10 +210,13 @@ class ImportWidget : Fragment(), ImportContract.View {
             "renderByImportFilterResult(filterResult: {})".withLogInstance(this),
             filterResult,
         )
+        // Render checkboxes
         viewCheckNoTicketCode.isSelected = filterResult.isSelectNoTickets
         viewCheckTicketCodeFromComment.isSelected = filterResult.isSelectTicketFromComments
         viewCheckProjectFilters.isSelected = filterResult.isSelectTicketFilter
         viewProjectFilters.isDisable = !filterResult.isEnabledTicketFilter
+
+        // Render combobox selection
         when (filterResult.action) {
             IFActionNoAction,
             IFActionTicketProjectFilterDefault -> {
@@ -224,7 +227,15 @@ class ImportWidget : Fragment(), ImportContract.View {
                 // No action on viewProjectFilter selection, as it would trigger filter change again
             }
         }
-        presenter.filterWorklogsByProject(filterResult.ticketFilter)
+
+        // Render imported worklogs
+        when (filterResult.action) {
+            IFActionNoAction,
+            IFActionNoTicketCode,
+            is IFActionTicketProjectFilter,
+            IFActionTicketProjectFilterDefault -> presenter.filterWorklogsByProject(filterResult.ticketFilter)
+            IFActionTicketFromComments -> presenter.filterWorklogsWithCodeFromComment()
+        }
     }
 
     companion object {
