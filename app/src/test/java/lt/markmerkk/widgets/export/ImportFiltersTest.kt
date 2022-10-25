@@ -71,7 +71,7 @@ class ImportFiltersTest {
     @Test
     fun ticketAndRemoveFromComment() {
         // Assemble
-        val action = IFActionTicketCodeFromComments
+        val action = IFActionTicketCodeAndRemoveFromComment
 
         // Act
         val result = importFilters.filter(action = action)
