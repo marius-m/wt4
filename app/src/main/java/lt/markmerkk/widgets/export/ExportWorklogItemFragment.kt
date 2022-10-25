@@ -8,8 +8,5 @@ class ExportWorklogItemFragment : ListCellFragment<ExportWorklogViewModel>() {
 
     override val root = hbox(spacing = 4.0) {
         checkbox(property = itemModel.selected)
-        label {
-            textProperty().bind(itemModel.logAsString)
-        }
     }
 }
