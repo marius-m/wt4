@@ -3,6 +3,14 @@
 Current: 1.9.4
 
 
+## 1.9.7
+
+-   Still same problem remains for code sign on *MacOS*, so you&rsquo;ll have to run `sudo xattr -rd com.apple.quarantine /Applications/WT4-basic.app` for the app to launch.
+
+-   **Features**
+    -   When importing logs lets you to find ticket code from comment and bind it to the ticket. Very useful when trying to use multiple JIRA&rsquo;s
+
+
 ## 1.9.6
 
 -   Still same problem remains for code sign on *MacOS*, so you&rsquo;ll have to run `sudo xattr -rd com.apple.quarantine /Applications/WT4-basic.app` for the app to launch.
