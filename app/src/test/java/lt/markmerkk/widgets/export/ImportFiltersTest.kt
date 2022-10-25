@@ -6,14 +6,12 @@ import org.junit.Test
 class ImportFiltersTest {
 
     private val defaultProjectFilter: String = "default_filter"
-    private val importFilters = ImportFilters(
-        defaultProjectFilter = defaultProjectFilter,
-    )
+    private val importFilters = ImportFilters()
 
     @Test
-    fun noAction() {
+    fun clear() {
         // Assemble
-        val action = IFActionNoAction
+        val action = IFActionClear
 
         // Act
         val result = importFilters.filter(action = action)
@@ -22,11 +20,9 @@ class ImportFiltersTest {
         Assertions.assertThat(result).isEqualTo(
             ImportFilterResultState(
                 action = action,
+                isSelectNoChanges = true,
                 isSelectNoTickets = false,
                 isSelectTicketFromComments = false,
-                isSelectTicketFilter = true,
-                isEnabledTicketFilter = true,
-                ticketFilter = defaultProjectFilter,
             )
         )
     }
@@ -43,11 +39,9 @@ class ImportFiltersTest {
         Assertions.assertThat(result).isEqualTo(
             ImportFilterResultState(
                 action = action,
+                isSelectNoChanges = false,
                 isSelectNoTickets = true,
                 isSelectTicketFromComments = false,
-                isSelectTicketFilter = false,
-                isEnabledTicketFilter = false,
-                ticketFilter = defaultProjectFilter,
             )
         )
     }
@@ -64,55 +58,9 @@ class ImportFiltersTest {
         Assertions.assertThat(result).isEqualTo(
             ImportFilterResultState(
                 action = action,
+                isSelectNoChanges = false,
                 isSelectNoTickets = false,
                 isSelectTicketFromComments = true,
-                isSelectTicketFilter = false,
-                isEnabledTicketFilter = false,
-                ticketFilter = defaultProjectFilter,
-            )
-        )
-    }
-
-    @Test
-    fun projectFilterDefault() {
-        // Assemble
-        val action = IFActionTicketProjectFilterDefault
-
-        // Act
-        val result = importFilters.filter(action = action)
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo(
-            ImportFilterResultState(
-                action = action,
-                isSelectNoTickets = false,
-                isSelectTicketFromComments = false,
-                isSelectTicketFilter = true,
-                isEnabledTicketFilter = true,
-                ticketFilter = defaultProjectFilter,
-            )
-        )
-    }
-
-    @Test
-    fun projectFilter() {
-        // Assemble
-        val action = IFActionTicketProjectFilter(
-            filter = "filter1"
-        )
-
-        // Act
-        val result = importFilters.filter(action = action)
-
-        // Assert
-        Assertions.assertThat(result).isEqualTo(
-            ImportFilterResultState(
-                action = action,
-                isSelectNoTickets = false,
-                isSelectTicketFromComments = false,
-                isSelectTicketFilter = true,
-                isEnabledTicketFilter = true,
-                ticketFilter = "filter1",
             )
         )
     }

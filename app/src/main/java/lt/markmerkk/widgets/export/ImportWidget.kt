@@ -29,13 +29,16 @@ import tornadofx.addClass
 import tornadofx.asObservable
 import tornadofx.borderpane
 import tornadofx.bottom
+import tornadofx.box
 import tornadofx.center
 import tornadofx.checkbox
 import tornadofx.column
 import tornadofx.combobox
 import tornadofx.hbox
 import tornadofx.label
+import tornadofx.px
 import tornadofx.readonlyColumn
+import tornadofx.style
 import tornadofx.tableview
 import tornadofx.top
 import tornadofx.vbox
@@ -59,17 +62,15 @@ class ImportWidget : Fragment(), ImportContract.View {
     private lateinit var presenter: ImportContract.Presenter
 
     private lateinit var viewLogs: TableView<ExportWorklogViewModel>
+    private lateinit var viewCheckNoChanges: CheckBox
     private lateinit var viewCheckNoTicketCode: CheckBox
     private lateinit var viewCheckTicketCodeFromComment: CheckBox
-    private lateinit var viewCheckProjectFilters: CheckBox
     private lateinit var viewProjectFilters: ComboBox<String>
     private lateinit var viewTotal: Label
 
     private val worklogViewModels = mutableListOf<ExportWorklogViewModel>().asObservable()
     private val projectFilters = mutableListOf<String>().asObservable()
-    private val importFilters = ImportFilters(
-        defaultProjectFilter = ImportPresenter.PROJECT_FILTER_ALL,
-    )
+    private val importFilters = ImportFilters()
 
     override val root: Parent = borderpane {
         addClass(Styles.dialogContainer)
@@ -82,11 +83,25 @@ class ImportWidget : Fragment(), ImportContract.View {
         }
         center {
             vbox(spacing = 4.0) {
-                label {
-                    text = "Import worklogs from file"
-                    isWrapText = true
+                label("Changes to worklog") {
+                    style {
+                        padding = box(
+                            top = 10.px,
+                            left = 0.px,
+                            right = 0.px,
+                            bottom = 0.px
+                        )
+                    }
                 }
-                viewCheckNoTicketCode = checkbox("No ticket code") {
+                viewCheckNoChanges = checkbox("No changes to ticket code") {
+                    setOnAction {
+                        renderByImportFilterResult(
+                            filterResult = importFilters
+                                .filter(action = IFActionClear)
+                        )
+                    }
+                }
+                viewCheckNoTicketCode = checkbox("Clear ticket code") {
                     setOnAction {
                         renderByImportFilterResult(
                             filterResult = importFilters
@@ -102,25 +117,36 @@ class ImportWidget : Fragment(), ImportContract.View {
                         )
                     }
                 }
+                label("Worklog filter") {
+                    style {
+                        padding = box(
+                            top = 10.px,
+                            left = 0.px,
+                            right = 0.px,
+                            bottom = 0.px
+                        )
+                    }
+                }
                 hbox(spacing = 4) {
-                    viewCheckProjectFilters = checkbox("") {
+                    viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
                         setOnAction {
+                            // val selectItem = (it.source as ComboBox<String>)
+                            //     .selectionModel
+                            //     .selectedItem ?: ""
                             renderByImportFilterResult(
-                                filterResult = importFilters
-                                    .filter(action = IFActionTicketProjectFilterDefault)
+                                filterResult = importFilters.filter(importFilters.lastAction)
                             )
                         }
                     }
-                    viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
-                        setOnAction {
-                            val selectItem = (it.source as ComboBox<String>)
-                                .selectionModel
-                                .selectedItem ?: ""
-                            renderByImportFilterResult(
-                                filterResult = importFilters
-                                    .filter(action = IFActionTicketProjectFilter(filter = selectItem))
-                            )
-                        }
+                }
+                label("Tickets") {
+                    style {
+                        padding = box(
+                            top = 10.px,
+                            left = 0.px,
+                            right = 0.px,
+                            bottom = 0.px
+                        )
                     }
                 }
                 viewLogs = tableview(worklogViewModels) {
@@ -159,7 +185,7 @@ class ImportWidget : Fragment(), ImportContract.View {
                         )
                         renderByImportFilterResult(
                             filterResult = importFilters
-                                .filter(action = IFActionNoAction)
+                                .filter(action = IFActionClear)
                         )
                     }
                 }
@@ -188,7 +214,7 @@ class ImportWidget : Fragment(), ImportContract.View {
         )
         renderByImportFilterResult(
             filterResult = importFilters
-                .filter(action = IFActionNoAction)
+                .filter(action = IFActionClear)
         )
     }
 
@@ -228,30 +254,16 @@ class ImportWidget : Fragment(), ImportContract.View {
             filterResult,
         )
         // Render checkboxes
+        viewCheckNoChanges.isSelected = filterResult.isSelectNoChanges
         viewCheckNoTicketCode.isSelected = filterResult.isSelectNoTickets
         viewCheckTicketCodeFromComment.isSelected = filterResult.isSelectTicketFromComments
-        viewCheckProjectFilters.isSelected = filterResult.isSelectTicketFilter
-        viewProjectFilters.isDisable = !filterResult.isEnabledTicketFilter
-
-        // Render combobox selection
-        when (filterResult.action) {
-            IFActionNoAction,
-            IFActionTicketProjectFilterDefault -> {
-                val selectIndex = projectFilters.indexOf(filterResult.ticketFilter)
-                viewProjectFilters.selectionModel.clearAndSelect(selectIndex)
-            }
-            else -> {
-                // No action on viewProjectFilter selection, as it would trigger filter change again
-            }
-        }
 
         // Render imported worklogs
+        val projectFilter = viewProjectFilters.selectionModel.selectedItem
         when (filterResult.action) {
-            IFActionNoAction,
-            IFActionNoTicketCode,
-            is IFActionTicketProjectFilter,
-            IFActionTicketProjectFilterDefault -> presenter.filterWorklogsByProject(filterResult.ticketFilter)
-            IFActionTicketFromComments -> presenter.filterWorklogsWithCodeFromComment()
+            IFActionClear -> presenter.filterClear(projectFilter)
+            IFActionNoTicketCode -> presenter.filterWorklogsNoCode(projectFilter)
+            IFActionTicketFromComments -> presenter.filterWorklogsWithCodeFromComment(projectFilter)
         }
     }
 

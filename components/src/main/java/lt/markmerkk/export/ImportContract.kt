@@ -17,9 +17,9 @@ interface ImportContract {
         fun onDetach()
         fun loadWorklogs(importWorklogs: List<Log>, projectFilter: String)
 
-        fun filterClear()
-        fun filterWorklogsByProject(projectFilter: String)
-        fun filterWorklogsWithCodeFromComment()
+        fun filterClear(projectFilter: String)
+        fun filterWorklogsWithCodeFromComment(projectFilter: String)
+        fun filterWorklogsNoCode(projectFilter: String)
 
         fun import(
                 worklogViewModels: List<ExportWorklogViewModel>,
