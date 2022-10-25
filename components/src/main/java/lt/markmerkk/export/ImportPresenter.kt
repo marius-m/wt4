@@ -3,6 +3,7 @@ package lt.markmerkk.export
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.TimeProvider
 import lt.markmerkk.entities.Log
+import lt.markmerkk.entities.Log.Companion.clone
 import lt.markmerkk.entities.Log.Companion.cloneAsNewLocal
 import lt.markmerkk.entities.TicketCode
 import lt.markmerkk.export.entities.ExportWorklogViewModel
@@ -42,30 +43,28 @@ class ImportPresenter(
     override fun filterClear(projectFilter: String) {
         this.worklogsModified = worklogsImported
             .applyProjectFilter(projectFilter)
-        val viewModels = worklogsModified
-            .map { ExportWorklogViewModel(it, includeDate = true) }
-        view?.showWorklogs(viewModels)
-        view?.showTotal(calcTotal(worklogsModified))
+        renderWorklogs(worklogsModified)
     }
 
     override fun filterWorklogsWithCodeFromComment(projectFilter: String) {
         this.worklogsModified = worklogsImported
             .applyProjectFilter(projectFilter)
-            .applyTicketCodeFromComment(timeProvider)
-        val viewModels = worklogsModified
-            .map { ExportWorklogViewModel(it, includeDate = true) }
-        view?.showWorklogs(viewModels)
-        view?.showTotal(calcTotal(worklogsModified))
+            .applyTicketCodeFromComment()
+        renderWorklogs(worklogsModified)
     }
 
     override fun filterWorklogsNoCode(projectFilter: String) {
         this.worklogsModified = worklogsImported
             .applyProjectFilter(projectFilter)
-            .applyNoTicketCode(timeProvider)
-        val viewModels = worklogsModified
-            .map { ExportWorklogViewModel(it, includeDate = true) }
-        view?.showWorklogs(viewModels)
-        view?.showTotal(calcTotal(worklogsModified))
+            .applyNoTicketCode()
+        renderWorklogs(worklogsModified)
+    }
+
+    override fun filterWorklogsWithCodeAndRemoveFromComment(projectFilter: String) {
+        this.worklogsModified = worklogsImported
+            .applyProjectFilter(projectFilter)
+            .applyTicketCodeAndRemoveFromComment()
+        renderWorklogs(worklogsModified)
     }
 
     override fun import(
@@ -84,6 +83,13 @@ class ImportPresenter(
         importWorklogs
                 .forEach { activeDisplayRepository.insertOrUpdate(it) }
         view?.showImportSuccess()
+    }
+
+    private fun renderWorklogs(worklogsModified: List<Log>) {
+        val viewModels = worklogsModified
+            .map { ExportWorklogViewModel(it, includeDate = true) }
+        view?.showWorklogs(viewModels)
+        view?.showTotal(calcTotal(worklogsModified))
     }
 
     /**
@@ -132,30 +138,51 @@ class ImportPresenter(
             }
         }
 
-        internal fun Log.extractTicketCodeFromComment(): TicketCode {
-            return TicketCode.new(this.comment)
+        internal fun Log.extractTicketCodeFromComment(): Log {
+            val ticketCode = TicketCode.new(this.comment)
+            return this.copy(
+                code = ticketCode,
+            )
         }
 
-        internal fun List<Log>.applyTicketCodeFromComment(
-            timeProvider: TimeProvider,
-        ): List<Log> {
-            return this.map { originalLog ->
-                originalLog.cloneAsNewLocal(
-                    timeProvider = timeProvider,
-                    code = originalLog.extractTicketCodeFromComment()
-                )
+        internal fun Log.extractTicketCodeAndRemoveFromComment(): Log {
+            val commentSplit: List<String> = comment.split(" ")
+            var commentCodeIndex = -1
+            var commentTicketCode = TicketCode.asEmpty()
+            for (commentIndex in commentSplit.indices) {
+                val commentPart = commentSplit[commentIndex]
+                val commentPartTicketCode = TicketCode.new(commentPart)
+                if (!commentPartTicketCode.isEmpty()) {
+                    commentCodeIndex = commentIndex
+                    commentTicketCode = commentPartTicketCode
+                    break
+                }
             }
+            val newComment = if (!commentTicketCode.isEmpty()) {
+                commentSplit.toMutableList()
+                    .apply { this.removeAt(commentCodeIndex) }
+                    .toList()
+                    .joinToString(separator = " ")
+                    .trim()
+            } else {
+                this.comment
+            }
+            return this.copy(
+                code = commentTicketCode,
+                comment = newComment,
+            )
         }
 
-        internal fun List<Log>.applyNoTicketCode(
-            timeProvider: TimeProvider,
-        ): List<Log> {
-            return this.map { originalLog ->
-                originalLog.cloneAsNewLocal(
-                    timeProvider = timeProvider,
-                    code = TicketCode.asEmpty(),
-                )
-            }
+        internal fun List<Log>.applyTicketCodeFromComment(): List<Log> {
+            return this.map { it.extractTicketCodeFromComment() }
+        }
+
+        internal fun List<Log>.applyTicketCodeAndRemoveFromComment(): List<Log> {
+            return this.map { it.extractTicketCodeAndRemoveFromComment() }
+        }
+
+        internal fun List<Log>.applyNoTicketCode(): List<Log> {
+            return this.map { it.copy(code = TicketCode.asEmpty()) }
         }
     }
 

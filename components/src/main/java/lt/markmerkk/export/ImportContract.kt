@@ -19,6 +19,7 @@ interface ImportContract {
 
         fun filterClear(projectFilter: String)
         fun filterWorklogsWithCodeFromComment(projectFilter: String)
+        fun filterWorklogsWithCodeAndRemoveFromComment(projectFilter: String)
         fun filterWorklogsNoCode(projectFilter: String)
 
         fun import(

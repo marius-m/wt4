@@ -20,7 +20,8 @@ class ImportFilters {
                     action = action,
                     isSelectNoChanges = true,
                     isSelectNoTickets = false,
-                    isSelectTicketFromComments = false,
+                    isSelectTicketCodeFromComments = false,
+                    isSelectTicketCodeAndRemoveFromComments = false,
                 )
             }
             IFActionNoTicketCode -> {
@@ -28,15 +29,26 @@ class ImportFilters {
                     action = action,
                     isSelectNoChanges = false,
                     isSelectNoTickets = true,
-                    isSelectTicketFromComments = false,
+                    isSelectTicketCodeFromComments = false,
+                    isSelectTicketCodeAndRemoveFromComments = false,
                 )
             }
-            IFActionTicketFromComments -> {
+            IFActionTicketCodeFromComments -> {
                 ImportFilterResultState(
                     action = action,
                     isSelectNoChanges = false,
                     isSelectNoTickets = false,
-                    isSelectTicketFromComments = true,
+                    isSelectTicketCodeFromComments = true,
+                    isSelectTicketCodeAndRemoveFromComments = false,
+                )
+            }
+            IFActionTicketCodeAndRemoveFromComment -> {
+                ImportFilterResultState(
+                    action = action,
+                    isSelectNoChanges = false,
+                    isSelectNoTickets = false,
+                    isSelectTicketCodeFromComments = false,
+                    isSelectTicketCodeAndRemoveFromComments = true,
                 )
             }
         }
@@ -50,11 +62,13 @@ class ImportFilters {
 sealed class ImportFilterAction
 object IFActionClear: ImportFilterAction()
 object IFActionNoTicketCode: ImportFilterAction()
-object IFActionTicketFromComments: ImportFilterAction()
+object IFActionTicketCodeFromComments: ImportFilterAction()
+object IFActionTicketCodeAndRemoveFromComment: ImportFilterAction()
 
 data class ImportFilterResultState(
     val action: ImportFilterAction,
     val isSelectNoChanges: Boolean,
     val isSelectNoTickets: Boolean,
-    val isSelectTicketFromComments: Boolean,
+    val isSelectTicketCodeFromComments: Boolean,
+    val isSelectTicketCodeAndRemoveFromComments: Boolean,
 )

@@ -65,6 +65,7 @@ class ImportWidget : Fragment(), ImportContract.View {
     private lateinit var viewCheckNoChanges: CheckBox
     private lateinit var viewCheckNoTicketCode: CheckBox
     private lateinit var viewCheckTicketCodeFromComment: CheckBox
+    private lateinit var viewCheckTicketCodeAndRemoveFromComment: CheckBox
     private lateinit var viewProjectFilters: ComboBox<String>
     private lateinit var viewTotal: Label
 
@@ -113,7 +114,15 @@ class ImportWidget : Fragment(), ImportContract.View {
                     setOnAction {
                         renderByImportFilterResult(
                             filterResult = importFilters
-                                .filter(action = IFActionTicketFromComments)
+                                .filter(action = IFActionTicketCodeFromComments)
+                        )
+                    }
+                }
+                viewCheckTicketCodeAndRemoveFromComment = checkbox("Ticket code from comment (And remove)") {
+                    setOnAction {
+                        renderByImportFilterResult(
+                            filterResult = importFilters
+                                .filter(action = IFActionTicketCodeAndRemoveFromComment)
                         )
                     }
                 }
@@ -130,9 +139,6 @@ class ImportWidget : Fragment(), ImportContract.View {
                 hbox(spacing = 4) {
                     viewProjectFilters = combobox(SimpleStringProperty(""), projectFilters) {
                         setOnAction {
-                            // val selectItem = (it.source as ComboBox<String>)
-                            //     .selectionModel
-                            //     .selectedItem ?: ""
                             renderByImportFilterResult(
                                 filterResult = importFilters.filter(importFilters.lastAction)
                             )
@@ -256,15 +262,17 @@ class ImportWidget : Fragment(), ImportContract.View {
         // Render checkboxes
         viewCheckNoChanges.isSelected = filterResult.isSelectNoChanges
         viewCheckNoTicketCode.isSelected = filterResult.isSelectNoTickets
-        viewCheckTicketCodeFromComment.isSelected = filterResult.isSelectTicketFromComments
+        viewCheckTicketCodeFromComment.isSelected = filterResult.isSelectTicketCodeFromComments
+        viewCheckTicketCodeAndRemoveFromComment.isSelected = filterResult.isSelectTicketCodeAndRemoveFromComments
 
         // Render imported worklogs
         val projectFilter = viewProjectFilters.selectionModel.selectedItem
         when (filterResult.action) {
             IFActionClear -> presenter.filterClear(projectFilter)
             IFActionNoTicketCode -> presenter.filterWorklogsNoCode(projectFilter)
-            IFActionTicketFromComments -> presenter.filterWorklogsWithCodeFromComment(projectFilter)
-        }
+            IFActionTicketCodeFromComments -> presenter.filterWorklogsWithCodeFromComment(projectFilter)
+            IFActionTicketCodeAndRemoveFromComment -> presenter.filterWorklogsWithCodeAndRemoveFromComment(projectFilter)
+        }.javaClass
     }
 
     companion object {

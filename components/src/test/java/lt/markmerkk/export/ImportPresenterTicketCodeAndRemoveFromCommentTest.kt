@@ -2,11 +2,11 @@ package lt.markmerkk.export
 
 import lt.markmerkk.Mocks
 import lt.markmerkk.TimeProviderTest
-import lt.markmerkk.export.ImportPresenter.Companion.extractTicketCodeFromComment
+import lt.markmerkk.export.ImportPresenter.Companion.extractTicketCodeAndRemoveFromComment
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-class ImportPresenterTicketCodeFromCommentTest {
+class ImportPresenterTicketCodeAndRemoveFromCommentTest {
 
     private val timeProvider = TimeProviderTest()
 
@@ -19,14 +19,14 @@ class ImportPresenterTicketCodeFromCommentTest {
         )
 
         // Act
-        val result = log.extractTicketCodeFromComment()
+        val result = log.extractTicketCodeAndRemoveFromComment()
 
         // Assert
         Assertions.assertThat(result).isEqualTo(
             Mocks.createLog(
                 timeProvider,
                 code = "DEV-123",
-                comment = "DEV-123 Some other random comment"
+                comment = "Some other random comment"
             )
         )
     }
@@ -40,7 +40,7 @@ class ImportPresenterTicketCodeFromCommentTest {
         )
 
         // Act
-        val result = log.extractTicketCodeFromComment()
+        val result = log.extractTicketCodeAndRemoveFromComment()
 
         // Assert
         Assertions.assertThat(result).isEqualTo(
@@ -61,14 +61,14 @@ class ImportPresenterTicketCodeFromCommentTest {
         )
 
         // Act
-        val result = log.extractTicketCodeFromComment()
+        val result = log.extractTicketCodeAndRemoveFromComment()
 
         // Assert
         Assertions.assertThat(result).isEqualTo(
             Mocks.createLog(
                 timeProvider,
                 code = "DEV-123",
-                comment = "https://somejira.jira.com/ticket/DEV-123 Some other random comment"
+                comment = "Some other random comment"
             )
         )
     }
@@ -82,14 +82,14 @@ class ImportPresenterTicketCodeFromCommentTest {
         )
 
         // Act
-        val result = log.extractTicketCodeFromComment()
+        val result = log.extractTicketCodeAndRemoveFromComment()
 
         // Assert
         Assertions.assertThat(result).isEqualTo(
             Mocks.createLog(
                 timeProvider,
                 code = "DEV-123",
-                comment = "(https://somejira.jira.com/ticket/DEV-123) Some other random comment"
+                comment = "Some other random comment"
             )
         )
     }

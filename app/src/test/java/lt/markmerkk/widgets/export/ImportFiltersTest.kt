@@ -22,7 +22,8 @@ class ImportFiltersTest {
                 action = action,
                 isSelectNoChanges = true,
                 isSelectNoTickets = false,
-                isSelectTicketFromComments = false,
+                isSelectTicketCodeFromComments = false,
+                isSelectTicketCodeAndRemoveFromComments = false,
             )
         )
     }
@@ -41,7 +42,8 @@ class ImportFiltersTest {
                 action = action,
                 isSelectNoChanges = false,
                 isSelectNoTickets = true,
-                isSelectTicketFromComments = false,
+                isSelectTicketCodeFromComments = false,
+                isSelectTicketCodeAndRemoveFromComments = false,
             )
         )
     }
@@ -49,7 +51,7 @@ class ImportFiltersTest {
     @Test
     fun ticketFromComment() {
         // Assemble
-        val action = IFActionTicketFromComments
+        val action = IFActionTicketCodeFromComments
 
         // Act
         val result = importFilters.filter(action = action)
@@ -60,7 +62,28 @@ class ImportFiltersTest {
                 action = action,
                 isSelectNoChanges = false,
                 isSelectNoTickets = false,
-                isSelectTicketFromComments = true,
+                isSelectTicketCodeFromComments = true,
+                isSelectTicketCodeAndRemoveFromComments = false,
+            )
+        )
+    }
+
+    @Test
+    fun ticketAndRemoveFromComment() {
+        // Assemble
+        val action = IFActionTicketCodeFromComments
+
+        // Act
+        val result = importFilters.filter(action = action)
+
+        // Assert
+        Assertions.assertThat(result).isEqualTo(
+            ImportFilterResultState(
+                action = action,
+                isSelectNoChanges = false,
+                isSelectNoTickets = false,
+                isSelectTicketCodeFromComments = false,
+                isSelectTicketCodeAndRemoveFromComments = true,
             )
         )
     }
