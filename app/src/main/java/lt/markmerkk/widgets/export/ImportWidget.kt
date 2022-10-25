@@ -6,7 +6,7 @@ import javafx.scene.Parent
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Label
-import javafx.scene.control.ListView
+import javafx.scene.control.TableView
 import javafx.scene.layout.Priority
 import lt.markmerkk.ActiveDisplayRepository
 import lt.markmerkk.Main
@@ -22,6 +22,7 @@ import lt.markmerkk.export.entities.ExportWorklogViewModel
 import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.Logs.withLogInstance
 import lt.markmerkk.widgets.dialogs.Dialogs
+import lt.markmerkk.widgets.export.tableview.ImportTableCell
 import org.slf4j.LoggerFactory
 import tornadofx.Fragment
 import tornadofx.addClass
@@ -30,10 +31,12 @@ import tornadofx.borderpane
 import tornadofx.bottom
 import tornadofx.center
 import tornadofx.checkbox
+import tornadofx.column
 import tornadofx.combobox
 import tornadofx.hbox
 import tornadofx.label
-import tornadofx.listview
+import tornadofx.readonlyColumn
+import tornadofx.tableview
 import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
@@ -55,7 +58,7 @@ class ImportWidget : Fragment(), ImportContract.View {
 
     private lateinit var presenter: ImportContract.Presenter
 
-    private lateinit var viewLogs: ListView<ExportWorklogViewModel>
+    private lateinit var viewLogs: TableView<ExportWorklogViewModel>
     private lateinit var viewCheckNoTicketCode: CheckBox
     private lateinit var viewCheckTicketCodeFromComment: CheckBox
     private lateinit var viewCheckProjectFilters: CheckBox
@@ -120,10 +123,24 @@ class ImportWidget : Fragment(), ImportContract.View {
                         }
                     }
                 }
-                viewLogs = listview(worklogViewModels) {
+                viewLogs = tableview(worklogViewModels) {
                     prefHeight = 200.0
                     vgrow = Priority.ALWAYS
-                    cellFragment(ExportWorklogItemFragment::class)
+                    columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+                    column("x", ExportWorklogViewModel::selectedProperty) {
+                        minWidth = 32.0
+                        maxWidth = 32.0
+                        cellFragment(ImportTableCell::class)
+                    }
+                    readonlyColumn("Date", ExportWorklogViewModel::date) {
+                        minWidth = 80.0
+                        maxWidth = 80.0
+                    }
+                    readonlyColumn("Ticket", ExportWorklogViewModel::ticket) {
+                        minWidth = 100.0
+                        maxWidth = 100.0
+                    }
+                    readonlyColumn("Comment", ExportWorklogViewModel::comment)
                 }
                 viewTotal = label {
                     addClass(Styles.labelMini)

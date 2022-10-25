@@ -15,12 +15,17 @@ class ExportWorklogViewModel(
     val comment: String = log.comment
     val duration: String = LogFormatters.humanReadableDurationShort(log.time.duration)
     val date: String = log.time.start.toLocalDate().toString(LogFormatters.DATE_SHORT_FORMAT)
+    val time: String = "%s-%s".format(
+        log.time.start.toString(LogFormatters.formatTime),
+        log.time.end.toString(LogFormatters.formatTime),
+    )
     val selected: Boolean = true
 
     val logAsStringProperty = SimpleStringProperty(this, "logAsString", LogFormatters.formatLogBasic(log, includeDate))
-    val selectedProperty = SimpleBooleanProperty(this, "selected", selected)
     val ticketProperty = SimpleStringProperty(this, "name", ticket)
     val commentProperty = SimpleStringProperty(this, "comment", comment)
-    val durationProperty = SimpleStringProperty(this, "duration", duration)
     val dateProperty = SimpleStringProperty(this, "date", date)
+    val timeProperty = SimpleStringProperty(this, "time", time)
+    val durationProperty = SimpleStringProperty(this, "duration", duration)
+    val selectedProperty = SimpleBooleanProperty(this, "selected", selected)
 }
