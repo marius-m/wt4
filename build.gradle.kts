@@ -13,6 +13,7 @@ buildscript {
         classpath("com.github.jengelman.gradle.plugins:shadow:4.0.2")
         classpath("de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2")
         classpath("gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.8")
+        classpath("org.openjfx:javafx-plugin:0.1.0")
     }
 }
 

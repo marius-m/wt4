@@ -1,11 +1,11 @@
 package lt.markmerkk.tickets
 
+import lt.markmerkk.clientextension.JiraClientExt
 import lt.markmerkk.JiraUser
 import lt.markmerkk.Tags
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
-import lt.markmerkk.toJiraUser
-import net.rcarz.jiraclient.JiraClient
+import lt.markmerkk.clientextension.toJiraUser
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import rx.Emitter
@@ -16,7 +16,7 @@ class JiraTicketSearch {
 
     fun projectStatuses(
             now: DateTime,
-            jiraClient: JiraClient
+            jiraClient: JiraClientExt
     ): Single<List<String>> {
         return Observable
                 .create(JiraProjectStatusesEmitter(jiraClient), Emitter.BackpressureMode.BUFFER)
@@ -27,9 +27,9 @@ class JiraTicketSearch {
     }
 
     fun searchIssues(
-            now: DateTime,
-            jiraClient: JiraClient,
-            jql: String
+        now: DateTime,
+        jiraClient: JiraClientExt,
+        jql: String
     ): Observable<Ticket> {
         return Observable.create(
                 JiraTicketEmitter(

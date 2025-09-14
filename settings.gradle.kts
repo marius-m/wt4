@@ -13,6 +13,7 @@ rootProject.name = "wt4"
 include(
         ":app",
         ":jira-client",
+        ":jira-client2",
         ":remote",
         ":models",
         ":components",

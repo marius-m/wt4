@@ -19,7 +19,6 @@ object Mocks {
                 name = name,
                 displayName = displayName,
                 email = email,
-                accountId = accountId
         )
     }
 
@@ -178,7 +177,6 @@ object Mocks {
                 name = name,
                 displayName = displayName,
                 email = email,
-                accountId = accountId
         )
     }
 

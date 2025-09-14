@@ -1,18 +1,17 @@
 package lt.markmerkk
 
+import lt.markmerkk.clientextension.JiraClientExt
 import lt.markmerkk.exceptions.AuthException
-import net.rcarz.jiraclient.JiraClient
-import net.rcarz.jiraclient.RestClient
 
 interface JiraClientProvider {
 
     fun markAsError()
 
     @Throws(AuthException::class)
-    fun newClient(): JiraClient
+    fun newClient(): JiraClientExt
 
     @Throws(AuthException::class)
-    fun client(): JiraClient
+    fun client(): JiraClientExt
 
     fun hasError(): Boolean
 

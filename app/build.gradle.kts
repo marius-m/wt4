@@ -11,6 +11,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
     id("de.fuerstenau.buildconfig")
     id("lt.markmerkk.jbundle")
+    id("org.openjfx.javafxplugin")
 }
 
 val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(AppType.DEBUG, project)
@@ -43,7 +44,7 @@ dependencies {
     implementation(project(":components"))
     implementation(project(":database2"))
     implementation(project(":remote"))
-    implementation(project(":jira-client"))
+    implementation(project(":jira-client2"))
     implementation(project(":models"))
     implementation(project(":mock-factory"))
     implementation(project(":credits"))
@@ -94,9 +95,10 @@ project.extensions.getByType(JavaApplication::class.java).apply {
     applicationDefaultJvmArgs = listOf(
             "-Xms128M",
             "-Xmx300M",
-            "-XX:+UseG1GC"
+            "-XX:+UseG1GC",
            // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
            // "-DWT_APP_PATH=${jBundleProps.app}"
+            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED"
     ).plus(jBundleProps.jvmProps)
 }
 
@@ -144,4 +146,17 @@ idea {
         sourceDirs = sourceDirs
                 .plus(file("generated/"))
     }
+}
+
+javafx {
+//    version = "17.0.11" // Use latest LTS version (or newer, e.g. 23 if you want bleeding-edge)
+    modules(
+        "javafx.base",
+        "javafx.controls",
+        "javafx.fxml",
+        "javafx.graphics",
+        "javafx.media",
+        "javafx.swing",
+        "javafx.web"
+    )
 }

@@ -11,12 +11,11 @@ class JiraBasicApi(
     fun jiraUser(): Single<JiraUser> {
         return Single.defer {
             val clientUser = jiraClientProvider.client()
-                    .currentUser2()
+                    .currentUser()
             val jiraUser = JiraUser(
                     name = clientUser.name ?: "",
                     displayName = clientUser.displayName ?: "",
                     email = clientUser.email ?: "",
-                    accountId = clientUser.accountId ?: ""
             )
             Single.just(jiraUser)
         }

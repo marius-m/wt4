@@ -30,6 +30,7 @@ import tornadofx.readonlyColumn
 import tornadofx.setValue
 import tornadofx.tableview
 import javax.inject.Inject
+import lt.markmerkk.toColor
 
 class ListLogWidget: Fragment() {
 

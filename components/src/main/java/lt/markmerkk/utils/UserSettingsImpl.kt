@@ -34,7 +34,6 @@ class UserSettingsImpl(
     private var jiraUserName: String = ""
     private var jiraUserEmail: String = ""
     private var jiraUserDisplayName: String = ""
-    private var jiraUserAccountId: String = ""
 
     override fun onAttach() {
         settings.load()
@@ -58,7 +57,6 @@ class UserSettingsImpl(
         jiraUserName = settings.get(JIRA_USER_NAME, "")
         jiraUserEmail = settings.get(JIRA_USER_EMAIL, "")
         jiraUserDisplayName = settings.get(JIRA_USER_DISPLAY_NAME, "")
-        jiraUserAccountId = settings.get(JIRA_USER_ACCOUNT_ID, "")
         onlyCurrentUserIssues = settings.getBoolean(ISSUE_ONLY_CURRENT_USER_ISSUES, true)
         settingsAutoStartClock = settings.getBoolean(SETTINGS_AUTO_START_CLOCK, true)
         settingsAutoSync = settings.getBoolean(SETTINGS_AUTO_SYNC, true)
@@ -85,7 +83,7 @@ class UserSettingsImpl(
         settings.set(JIRA_USER_NAME, jiraUserName)
         settings.set(JIRA_USER_EMAIL, jiraUserEmail)
         settings.set(JIRA_USER_DISPLAY_NAME, jiraUserDisplayName)
-        settings.set(JIRA_USER_ACCOUNT_ID, jiraUserAccountId)
+        settings.set(JIRA_USER_ACCOUNT_ID, "")
         settings.set(ISSUE_ONLY_CURRENT_USER_ISSUES, onlyCurrentUserIssues.toString())
         settings.set(SETTINGS_AUTO_START_CLOCK, settingsAutoStartClock.toString())
         settings.set(SETTINGS_AUTO_SYNC, settingsAutoSync.toString())
@@ -94,7 +92,7 @@ class UserSettingsImpl(
 
     override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
     override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
-    override fun jiraUser(): JiraUser  = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail, jiraUserAccountId)
+    override fun jiraUser(): JiraUser  = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail)
     override fun jiraBasicCreds(): JiraBasicCreds = JiraBasicCreds(host, username, password)
 
     override fun changeOAuthPreset(
@@ -116,12 +114,10 @@ class UserSettingsImpl(
             name: String,
             email: String,
             displayName: String,
-            accountId: String
     ) {
         this.jiraUserName = name
         this.jiraUserEmail = email
         this.jiraUserDisplayName = displayName
-        this.jiraUserAccountId = accountId
     }
 
     override fun changeBasicCreds(hostname: String, username: String, password: String) {
@@ -160,6 +156,8 @@ class UserSettingsImpl(
         const val JIRA_USER_NAME = "JIRA_USER_NAME"
         const val JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
         const val JIRA_USER_DISPLAY_NAME = "JIRA_USER_DISPLAY_NAME"
+
+        @Deprecated("Deprecated key, should not be used")
         const val JIRA_USER_ACCOUNT_ID = "JIRA_USER_ACCOUNT_ID"
         const val SETTINGS_AUTO_START_CLOCK = "SETTINGS_AUTO_START_CLOCK"
         const val SETTINGS_AUTO_SYNC = "SETTINGS_AUTO_SYNC"

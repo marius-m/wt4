@@ -1,18 +1,17 @@
 package lt.markmerkk.tickets
 
+import lt.markmerkk.clientextension.JiraClientExt
 import lt.markmerkk.Tags
 import net.rcarz.jiraclient.Issue
-import net.rcarz.jiraclient.JiraClient
 import net.rcarz.jiraclient.JiraException
 import org.slf4j.LoggerFactory
 import rx.Emitter
-import rx.Observable
 import rx.functions.Action1
 
 class JiraTicketEmitter(
-        private val jiraClient: JiraClient,
-        private val searchFields: String = "*all",
-        private val jql: String = ""
+    private val jiraClient: JiraClientExt,
+    private val searchFields: String = "*all",
+    private val jql: String = ""
 ) : Action1<Emitter<List<Issue>>> {
 
     override fun call(emitter: Emitter<List<Issue>>) {

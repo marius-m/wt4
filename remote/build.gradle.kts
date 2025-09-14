@@ -5,11 +5,12 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":jira-client"))
+    implementation(project(":jira-client2"))
     implementation(project(":database2"))
     implementation(project(":models"))
 
     implementation("joda-time:joda-time:${Versions.jodaTime}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
     implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")

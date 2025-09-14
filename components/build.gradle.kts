@@ -2,6 +2,7 @@ import lt.markmerkk.Versions
 
 plugins {
     id("kotlin")
+    id("org.openjfx.javafxplugin")
 }
 
 dependencies {
@@ -29,4 +30,17 @@ dependencies {
     testImplementation("org.mockito:mockito-core:${Versions.mockito}")
     testImplementation("org.assertj:assertj-core:${Versions.assertj}")
     testImplementation(project(":mock-factory"))
+}
+
+javafx {
+//    version = "17.0.11" // Use latest LTS version (or newer, e.g. 23 if you want bleeding-edge)
+    modules(
+        "javafx.base",
+        "javafx.controls",
+        "javafx.fxml",
+        "javafx.graphics",
+        "javafx.media",
+        "javafx.swing",
+        "javafx.web"
+    )
 }

@@ -16,7 +16,6 @@ import lt.markmerkk.widgets.app_settings.ProfileWidget
 import lt.markmerkk.widgets.credits.CreditsWidget
 import lt.markmerkk.widgets.export.ExportWidget
 import lt.markmerkk.widgets.export.ImportWidget
-import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
 import tornadofx.*
@@ -121,89 +120,8 @@ class PopUpSettings(
                         }
                 )
         )
-        val settingsOauth = listOf(
-                PopUpAction(
-                        title = "Account settings",
-                        graphic = graphics.from(Glyph.ACCOUNT, Color.BLACK, 12.0),
-                        action = {
-                            find<AccountSettingsOauthWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = true
-                            )
-                        }
-                ),
-                PopUpAction(
-                        title = "App settings",
-                        graphic = graphics.from(Glyph.SETTINGS2, Color.BLACK, 12.0),
-                        action = {
-                            find<AppSettingsWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = true
-                            )
-                        }
-                ),
-                PopUpAction(
-                        title = "Statistics",
-                        graphic = graphics.from(Glyph.STATISTICS, Color.BLACK, 12.0),
-                        action = {
-                            find<StatisticsWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = true
-                            )
-                        }
-                ),
-                PopUpAction(
-                        title = "Export worklogs",
-                        graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0, 14.0),
-                        action = {
-                            find<ExportWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = true
-                            )
-                        }
-                ),
-                PopUpAction(
-                        title = "Import worklogs",
-                        graphic = graphics.from(Glyph.IMPORT_EXPORT, Color.BLACK, 12.0, 14.0),
-                        action = {
-                            find<ImportWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = true
-                            )
-                        }
-                ),
-                PopUpAction(
-                        title = "Credits",
-                        graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
-                        action = {
-                            find<CreditsWidget>().openModal(
-                                    stageStyle = StageStyle.DECORATED,
-                                    modality = Modality.APPLICATION_MODAL,
-                                    block = false,
-                                    resizable = true
-                            )
-                        }
-                ),
-                PopUpAction(
-                        title = "Help",
-                        graphic = graphics.from(Glyph.HELP, Color.BLACK, 12.0, 12.0),
-                        action = {
-                            hostServicesInteractor.openLink("https://github.com/marius-m/wt4/wiki")
-                        }
-                )
-        )
         createPopUpDisplay(
-                actions = if (BuildConfig.oauth) settingsOauth else settingsBasic,
+                actions = settingsBasic,
                 attachTo = attachTo
         )
     }

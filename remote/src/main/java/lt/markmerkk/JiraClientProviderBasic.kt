@@ -1,10 +1,9 @@
 package lt.markmerkk
 
+import lt.markmerkk.clientextension.JiraClientExt
 import lt.markmerkk.exceptions.AuthException
 import net.rcarz.jiraclient.BasicCredentials
-import net.rcarz.jiraclient.JiraClient
-import net.rcarz.jiraclient.RestClient
-import net.rcarz.jiraclient.RestClientDefault
+import net.rcarz.jiraclient.BearerTokenCredentials
 import org.slf4j.LoggerFactory
 
 class JiraClientProviderBasic(
@@ -14,7 +13,7 @@ class JiraClientProviderBasic(
     private var client: Client = Client.asEmpty()
 
     @Throws(AuthException::class)
-    override fun newClient(): JiraClient {
+    override fun newClient(): JiraClientExt {
         client = Client.asEmpty()
         return client()
     }
@@ -24,7 +23,7 @@ class JiraClientProviderBasic(
     }
 
     @Throws(AuthException::class)
-    override fun client(): JiraClient {
+    override fun client(): JiraClientExt {
         if (client.hasError()) {
             throw AuthException(
                     IllegalArgumentException(
@@ -72,7 +71,7 @@ class JiraClientProviderBasic(
             val pass: String
     ) {
 
-        @Transient private var jiraClient: JiraClient? = null
+        @Transient private var jiraClient: JiraClientExt? = null
         @Transient private var isError: Boolean = false
 
         fun markHasError() {
@@ -81,14 +80,14 @@ class JiraClientProviderBasic(
 
         fun hasError() = isError
 
-        fun jiraClient(): JiraClient {
+        fun jiraClient(): JiraClientExt {
             if (jiraClient == null) {
-                jiraClient = JiraClient.createBasicClient(
-                        host,
-                        BasicCredentials(
-                                user,
-                                pass
-                        )
+                jiraClient = JiraClientExt(
+                    host,
+                    BasicCredentials(
+                        user,
+                        pass,
+                    )
                 )
             }
             return jiraClient!!
