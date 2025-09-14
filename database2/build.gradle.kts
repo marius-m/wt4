@@ -23,6 +23,7 @@ dependencies {
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
     implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
+    implementation("org.xerial:sqlite-jdbc:3.50.3.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.kotlinTest}")
