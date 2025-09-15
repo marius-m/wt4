@@ -17,8 +17,9 @@ import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class ClockWidget : Fragment(), ClockContract.View {
+class ClockWidget : BaseFragment(), ClockContract.View {
 
     @Inject lateinit var hourGlass: HourGlass
     @Inject lateinit var graphics: Graphics<SVGGlyph>

@@ -29,8 +29,9 @@ import org.slf4j.LoggerFactory
 import rx.observables.JavaFxObservable
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class TicketSideDrawerWidget: Fragment(), TicketContract.View {
+class TicketSideDrawerWidget: BaseFragment(), TicketContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var ticketApi: TicketApi

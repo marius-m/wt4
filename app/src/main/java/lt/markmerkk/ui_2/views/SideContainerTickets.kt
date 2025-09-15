@@ -1,13 +1,14 @@
 package lt.markmerkk.ui_2.views
 
 import javafx.scene.Parent
+import lt.markmerkk.AttachableWidget
 import lt.markmerkk.ui_2.EmptyWidget
 import lt.markmerkk.widgets.tickets.TicketBasicSearchWidget
 import lt.markmerkk.widgets.tickets.TicketSideDrawerWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 
-class SideContainerTickets: View() {
+class SideContainerTickets: View(), AttachableWidget {
 
     private lateinit var widgetActive: Fragment
 

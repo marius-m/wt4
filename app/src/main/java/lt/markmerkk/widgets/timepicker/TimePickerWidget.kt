@@ -45,8 +45,9 @@ import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class TimePickerWidget : Fragment(), TimePickerContract.View {
+class TimePickerWidget : BaseFragment(), TimePickerContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus

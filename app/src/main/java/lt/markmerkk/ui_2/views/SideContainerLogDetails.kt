@@ -1,12 +1,13 @@
 package lt.markmerkk.ui_2.views
 
 import javafx.scene.Parent
+import lt.markmerkk.ui_2.BaseView
 import lt.markmerkk.ui_2.EmptyWidget
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 
-class SideContainerLogDetails: View() {
+class SideContainerLogDetails: BaseView() {
 
     private lateinit var widgetActive: Fragment
 

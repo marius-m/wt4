@@ -21,8 +21,9 @@ import lt.markmerkk.ui_2.views.*
 import tornadofx.*
 import java.io.File
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class AccountSettingsWidget : Fragment() {
+class AccountSettingsWidget : BaseFragment() {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var schedulerProvider: SchedulerProvider

@@ -19,8 +19,9 @@ import lt.markmerkk.ui_2.views.jfxSpinner
 import lt.markmerkk.utils.AccountAvailablility
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class TicketFilterSettingsWidget: Fragment(), TicketFilterSettingsContract.View {
+class TicketFilterSettingsWidget: BaseFragment(), TicketFilterSettingsContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var ticketApi: TicketApi

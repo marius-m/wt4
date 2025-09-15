@@ -18,8 +18,9 @@ import lt.markmerkk.utils.Logs.withLogInstance
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class DialogCustomActionWidget : Fragment() {
+class DialogCustomActionWidget : BaseFragment() {
 
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var strings: Strings

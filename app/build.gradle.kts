@@ -27,7 +27,7 @@ val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(AppType.DEBUG, project
 sourceSets {
     main {
         java {
-            srcDirs("build/generated/source/kapt/main")
+            srcDirs("build/generated/source/kapt/main", "build/gen/buildconfig/src/main")
         }
     }
     test {

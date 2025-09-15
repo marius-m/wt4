@@ -10,8 +10,9 @@ import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.ConfigSetSettings
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class AppSettingsWidget : Fragment() {
+class AppSettingsWidget : BaseFragment() {
 
     @Inject lateinit var userSettings: UserSettings
     @Inject lateinit var configSetSettings: ConfigSetSettings

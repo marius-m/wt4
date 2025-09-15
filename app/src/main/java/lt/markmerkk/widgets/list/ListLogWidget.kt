@@ -31,8 +31,9 @@ import tornadofx.setValue
 import tornadofx.tableview
 import javax.inject.Inject
 import lt.markmerkk.toColor
+import lt.markmerkk.ui_2.BaseFragment
 
-class ListLogWidget: Fragment() {
+class ListLogWidget: BaseFragment() {
 
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>

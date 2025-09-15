@@ -17,8 +17,9 @@ import org.joda.time.LocalDate
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class DatePickerWidget: Fragment() {
+class DatePickerWidget: BaseFragment() {
 
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var eventBus: WTEventBus

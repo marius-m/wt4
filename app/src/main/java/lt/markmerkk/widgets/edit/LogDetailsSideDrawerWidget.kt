@@ -114,8 +114,9 @@ import tornadofx.tableview
 import tornadofx.top
 import tornadofx.vbox
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class LogDetailsSideDrawerWidget : Fragment(),
+class LogDetailsSideDrawerWidget : BaseFragment(),
     LogDetailsContract.View,
     JiraLinkGenerator.View,
     RecentTicketLoader.Listener {

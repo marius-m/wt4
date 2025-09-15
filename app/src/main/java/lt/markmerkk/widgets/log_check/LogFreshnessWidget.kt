@@ -11,8 +11,9 @@ import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.utils.LogFormatters
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class LogFreshnessWidget: Fragment() {
+class LogFreshnessWidget: BaseFragment() {
 
     @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
     @Inject lateinit var syncInteractor: SyncInteractor

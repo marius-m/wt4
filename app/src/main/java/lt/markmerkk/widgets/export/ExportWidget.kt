@@ -43,8 +43,9 @@ import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class ExportWidget : Fragment(), ExportContract.View {
+class ExportWidget : BaseFragment(), ExportContract.View {
 
     @Inject lateinit var worklogStorage: WorklogStorage
     @Inject lateinit var resultDispatcher: ResultDispatcher

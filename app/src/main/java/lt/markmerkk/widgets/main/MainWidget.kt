@@ -102,8 +102,9 @@ import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class MainWidget : Fragment(), MainContract.View {
+class MainWidget : BaseFragment(), MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings

@@ -16,8 +16,9 @@ import lt.markmerkk.widgets.datepicker.DatePickerWidget
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class QuickDateChangeWidget: Fragment(), DateChangeContract.View {
+class QuickDateChangeWidget: BaseFragment(), DateChangeContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var eventBus: WTEventBus

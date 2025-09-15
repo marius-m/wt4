@@ -6,6 +6,7 @@ import javafx.scene.Parent
 import javafx.scene.web.WebView
 import lt.markmerkk.Styles
 import lt.markmerkk.showIf
+import lt.markmerkk.ui_2.BaseFragment
 import lt.markmerkk.ui_2.views.jfxSpinner
 import org.slf4j.LoggerFactory
 import rx.Subscription
@@ -13,7 +14,7 @@ import rx.observables.JavaFxObservable
 import tornadofx.*
 
 @Deprecated("Webview is very costly, don't use it")
-class HelpWidget: Fragment() {
+class HelpWidget: BaseFragment() {
 
     private lateinit var viewWebview: WebView
     private lateinit var viewProgress: JFXSpinner

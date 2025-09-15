@@ -6,6 +6,7 @@ import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.layout.VBox
 import lt.markmerkk.Styles
+import lt.markmerkk.ui_2.BaseView
 import lt.markmerkk.ui_2.views.jfxButton
 import tornadofx.*
 
@@ -21,7 +22,7 @@ interface PopUpDisplay {
             attachTo: Node
     ) {
         val viewPopUp = JFXPopup()
-        val viewContainer = object : View() {
+        val viewContainer = object : BaseView() {
             override val root: Parent = vbox(spacing = 4) {
                 style {
                     padding = box(4.px)
