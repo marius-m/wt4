@@ -93,13 +93,14 @@ project.extensions.getByType(JavaApplication::class.java).apply {
     group = "lt.markmerkk"
     setVersion(jBundleProps.versionName)
     applicationDefaultJvmArgs = listOf(
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC",
-           // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
-           // "-DWT_APP_PATH=${jBundleProps.app}"
             "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
             "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED"
+           // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+           // "-DWT_APP_PATH=${jBundleProps.app}"
     ).plus(jBundleProps.jvmProps)
 }
 
