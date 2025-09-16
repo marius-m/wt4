@@ -98,7 +98,8 @@ project.extensions.getByType(JavaApplication::class.java).apply {
             "-XX:+UseG1GC",
            // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
            // "-DWT_APP_PATH=${jBundleProps.app}"
-            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED"
+            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED"
     ).plus(jBundleProps.jvmProps)
 }
 
