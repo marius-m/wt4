@@ -11,7 +11,7 @@ class JiraBasicApi(
     fun jiraUser(): Single<JiraUser> {
         return Single.defer {
             val clientUser = jiraClientProvider.client()
-                    .currentUser()
+                    .fetchCurrentUser()
             val jiraUser = JiraUser(
                     name = clientUser.name ?: "",
                     displayName = clientUser.displayName ?: "",

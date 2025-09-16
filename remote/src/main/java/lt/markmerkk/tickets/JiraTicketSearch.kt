@@ -17,13 +17,10 @@ class JiraTicketSearch {
     fun projectStatuses(
             now: DateTime,
             jiraClient: JiraClientExt
-    ): Single<List<String>> {
+    ): Single<Set<String>> {
         return Observable
                 .create(JiraProjectStatusesEmitter(jiraClient), Emitter.BackpressureMode.BUFFER)
                 .toSingle()
-                .map { statuses ->
-                    statuses.map { it.name }
-                }
     }
 
     fun searchIssues(
