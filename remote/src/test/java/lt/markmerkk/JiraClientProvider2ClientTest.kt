@@ -1,6 +1,8 @@
 package lt.markmerkk
 
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.whenever
 import lt.markmerkk.exceptions.AuthException
 import org.assertj.core.api.Assertions.assertThat

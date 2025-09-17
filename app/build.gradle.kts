@@ -15,14 +15,9 @@ plugins {
 }
 
 val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(AppType.DEBUG, project)
-// val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(AppType.DEBUG, project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(AppType.BASIC, project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(AppType.BASIC, project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicLinux(AppType.BASIC, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(AppType.ITO, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(AppType.ITO, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOLinux(AppType.ITO, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(AppType.SW, project)
 
 sourceSets {
     main {
@@ -38,13 +33,14 @@ sourceSets {
 }
 
 dependencies {
-//    implementation(fileTree("libs", include: ["*.jar"]))
+    // implementation(fileTree("libs", include: ["*.jar"]))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
 
     implementation(project(":components"))
     implementation(project(":database2"))
     implementation(project(":remote"))
-    implementation(project(":jira-client2"))
+    // api(project(":jira-client2"))
+    api(files("${rootDir.absolutePath}/libs/${Versions.localJiraClient}"))
     implementation(project(":models"))
     implementation(project(":mock-factory"))
     implementation(project(":credits"))

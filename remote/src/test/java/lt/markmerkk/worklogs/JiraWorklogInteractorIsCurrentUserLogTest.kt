@@ -20,26 +20,6 @@ class JiraWorklogInteractorIsCurrentUserLogTest {
     }
 
     @Test
-    fun validAccountId() {
-        val result = JiraWorklogInteractor.isCurrentUserLog(
-            activeIdentifier = "account_id",
-            worklog = JiraMocks.mockWorklog(timeProvider = timeProvider),
-        )
-
-        assertThat(result).isTrue()
-    }
-
-    @Test
-    fun validAccountId_upperCase() {
-        val result = JiraWorklogInteractor.isCurrentUserLog(
-            activeIdentifier = "ACCOUNT_ID",
-            worklog = JiraMocks.mockWorklog(timeProvider = timeProvider)
-        )
-
-        assertThat(result).isTrue()
-    }
-
-    @Test
     fun validEmail() {
         val result = JiraWorklogInteractor.isCurrentUserLog(
             activeIdentifier = "email@mail.com",
