@@ -12,7 +12,6 @@ class JiraUserIsEmptyTest {
                 name = "valid_name",
                 displayName = "display_name",
                 email = "user@mail.com",
-                accountId = "account_id"
         )
 
         // Act
@@ -29,7 +28,6 @@ class JiraUserIsEmptyTest {
                 name = "",
                 displayName = "",
                 email = "",
-                accountId = ""
         )
 
         // Act
@@ -46,7 +44,6 @@ class JiraUserIsEmptyTest {
                 name = "",
                 displayName = "display_name",
                 email = "user@mail.com",
-                accountId = "account_id"
         )
 
         // Act
@@ -63,7 +60,6 @@ class JiraUserIsEmptyTest {
                 name = "valid_name",
                 displayName = "",
                 email = "user@mail.com",
-                accountId = "account_id"
         )
 
         // Act
@@ -80,7 +76,6 @@ class JiraUserIsEmptyTest {
                 name = "valid_name",
                 displayName = "display_name",
                 email = "",
-                accountId = "account_id"
         )
 
         // Act
@@ -97,7 +92,6 @@ class JiraUserIsEmptyTest {
                 name = "valid_name",
                 displayName = "display_name",
                 email = "user@mail.com",
-                accountId = ""
         )
 
         // Act

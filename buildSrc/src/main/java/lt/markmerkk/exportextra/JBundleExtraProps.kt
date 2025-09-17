@@ -25,8 +25,6 @@ class JBundleExtraProps(
 enum class AppType(val rawType: String) {
     DEBUG("debug"),
     BASIC("basic"),
-    ITO("iTo"),
-    ITO_SW("iToSW"),
 }
 
 data class VersionProps(

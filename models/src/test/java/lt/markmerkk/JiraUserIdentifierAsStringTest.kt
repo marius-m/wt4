@@ -12,7 +12,6 @@ class JiraUserIdentifierAsStringTest {
                 name = "valid_name",
                 displayName = "display_name",
                 email = "user@mail.com",
-                accountId = "account_id"
         )
 
         // Act
@@ -23,30 +22,12 @@ class JiraUserIdentifierAsStringTest {
     }
 
     @Test
-    fun noName() {
-        // Assemble
-        val user = Mocks.createJiraUser(
-                name = "",
-                displayName = "display_name",
-                email = "user@mail.com",
-                accountId = "account_id"
-        )
-
-        // Act
-        val result = user.identifierAsString()
-
-        // Assert
-        assertThat(result).isEqualTo("account_id")
-    }
-
-    @Test
     fun noNameNoAccountId() {
         // Assemble
         val user = Mocks.createJiraUser(
                 name = "",
                 displayName = "display_name",
                 email = "user@mail.com",
-                accountId = ""
         )
 
         // Act
@@ -63,7 +44,6 @@ class JiraUserIdentifierAsStringTest {
                 name = "",
                 displayName = "display_name",
                 email = "",
-                accountId = ""
         )
 
         // Act
@@ -80,7 +60,6 @@ class JiraUserIdentifierAsStringTest {
                 name = "",
                 displayName = "",
                 email = "",
-                accountId = ""
         )
 
         // Act

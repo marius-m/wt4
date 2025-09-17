@@ -164,14 +164,13 @@ object Mocks {
     }
 
     fun createJiraUserEmpty(): JiraUser {
-        return createJiraUser(name = "", displayName = "", email = "", accountId = "")
+        return createJiraUser(name = "", displayName = "", email = "")
     }
 
     fun createJiraUser(
             name: String = "name",
             displayName: String = "display_name",
             email: String = "email",
-            accountId: String = "account_id"
     ): JiraUser {
         return JiraUser(
                 name = name,
