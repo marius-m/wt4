@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.*
 import lt.markmerkk.*
 import lt.markmerkk.exceptions.AuthException
 import lt.markmerkk.schema1.tables.Ticket
-import net.rcarz.jiraclient.JiraClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -13,13 +12,14 @@ import org.mockito.MockitoAnnotations
 import rx.Observable
 import rx.Single
 import java.lang.RuntimeException
+import lt.markmerkk.clientextension.JiraClientExt
 
 class TicketsNetworkRepoSearchRemoteTicketsTest {
 
     @Mock lateinit var jiraClientProvider: JiraClientProvider
     @Mock lateinit var jiraTicketSearch: JiraTicketSearch
     @Mock lateinit var ticketsDatabaseRepo: TicketStorage
-    @Mock lateinit var jiraClient: JiraClient
+    @Mock lateinit var jiraClient: JiraClientExt
     @Mock lateinit var userSettings: UserSettings
     lateinit var ticketApi: TicketApi
 

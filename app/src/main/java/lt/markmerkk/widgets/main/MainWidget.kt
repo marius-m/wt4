@@ -77,7 +77,6 @@ import lt.markmerkk.widgets.dialogs.DialogsExternal
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
-import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
@@ -103,8 +102,9 @@ import tornadofx.top
 import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class MainWidget : Fragment(), MainContract.View {
+class MainWidget : BaseFragment(), MainContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var strings: Strings
@@ -574,21 +574,12 @@ class MainWidget : Fragment(), MainContract.View {
 
     fun showErrorAuth() {
         val actionOpenSettings: () -> Unit = {
-            if (BuildConfig.oauth) {
-                find<AccountSettingsOauthWidget>().openModal(
-                    stageStyle = StageStyle.DECORATED,
-                    modality = Modality.APPLICATION_MODAL,
-                    block = false,
-                    resizable = true
-                )
-            } else {
-                find<AccountSettingsWidget>().openModal(
-                    stageStyle = StageStyle.DECORATED,
-                    modality = Modality.APPLICATION_MODAL,
-                    block = false,
-                    resizable = true
-                )
-            }
+            find<AccountSettingsWidget>().openModal(
+                stageStyle = StageStyle.DECORATED,
+                modality = Modality.APPLICATION_MODAL,
+                block = false,
+                resizable = true
+            )
         }
         dialogs.showDialogCustomAction(
             uiComponent = this,

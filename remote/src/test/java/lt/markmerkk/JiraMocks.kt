@@ -16,20 +16,18 @@ import java.lang.RuntimeException
 object JiraMocks {
 
     fun createJiraUserEmpty(): JiraUser {
-        return createJiraUser(name = "", displayName = "", email = "", accountId = "")
+        return createJiraUser(name = "", displayName = "", email = "")
     }
 
     fun createJiraUser(
             name: String = "name",
             displayName: String = "display_name",
             email: String = "email",
-            accountId: String = "account_id"
     ): JiraUser {
         return JiraUser(
                 name = name,
                 displayName = displayName,
                 email = email,
-                accountId = accountId
         )
     }
 
@@ -110,7 +108,6 @@ object JiraMocks {
         doReturn(email).whenever(author).email
         doReturn(displayName).whenever(author).displayName
         doReturn(name).whenever(author).name
-        doReturn(accountId).whenever(author).accountId
         return author
     }
 }

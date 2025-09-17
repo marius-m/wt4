@@ -1,0 +1,61 @@
+diff --git a/build.gradle b/build.gradle
+index 0170359..5a0512c 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -6,7 +6,7 @@ plugins {
+     id 'java'
+     id 'maven-publish'
+     id("org.sonarqube") version "4.0.0.2929"
+-    id 'auth-gradle-plugin' version '1.1.4'
++//    id 'auth-gradle-plugin' version '1.1.4'
+ }
+ 
+ ext {
+@@ -47,14 +47,14 @@ publishing {
+     }
+ }
+ 
+-aws {
+-    active = true // 'false' by default.
+-    codeartifact {
+-        domain = 'iriusrisk' // AWS maven domain.
+-        repoName = 'maven' // AWS maven repository name, multiple repositories may belong to the same domain.
+-        publish = true // Optional, to publish the artifact to the remote repository, 'false' by default.
+-    }
+-}
++//aws {
++//    active = true // 'false' by default.
++//    codeartifact {
++//        domain = 'iriusrisk' // AWS maven domain.
++//        repoName = 'maven' // AWS maven repository name, multiple repositories may belong to the same domain.
++//        publish = true // Optional, to publish the artifact to the remote repository, 'false' by default.
++//    }
++//}
+ 
+ publish {
+     group 'iriusrisk'
+diff --git a/settings.gradle b/settings.gradle
+index 67f962b..06d492a 100644
+--- a/settings.gradle
++++ b/settings.gradle
+@@ -2,13 +2,13 @@ pluginManagement {
+     repositories {
+         mavenLocal()
+         mavenCentral()
+-        maven {
+-            url = uri('https://maven.pkg.github.com/iriusrisk/repositories')
+-            credentials {
+-                username = System.getenv('GITHUB_USERNAME') ?: getProperty('github.username')
+-                password = System.getenv('GITHUB_PASSWORD') ?: getProperty('github.password')
+-            }
+-        }
++//        maven {
++//            url = uri('https://maven.pkg.github.com/iriusrisk/repositories')
++//            credentials {
++//                username = System.getenv('GITHUB_USERNAME') ?: getProperty('github.username')
++//                password = System.getenv('GITHUB_PASSWORD') ?: getProperty('github.password')
++//            }
++//        }
+         maven {
+             url "https://plugins.gradle.org/m2/"
+         }

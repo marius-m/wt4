@@ -1,3 +1,6 @@
 [submodule "jira-client"]
 	path = jira-client
 	url = git@github.com:marius-m/jira-client.git
+[submodule "jira-client2"]
+	path = jira-client2
+	url = git@github.com:iriusrisk/jira-client.git

@@ -15,8 +15,9 @@ import tornadofx.Fragment
 import tornadofx.View
 import tornadofx.stackpane
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseView
 
-class CoreWidget : View() {
+class CoreWidget : BaseView() {
 
     @Inject lateinit var syncInteractor: SyncInteractor
     @Inject lateinit var appConfig: Config

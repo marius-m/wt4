@@ -26,8 +26,9 @@ import org.joda.time.Duration
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class TicketSplitWidget : Fragment(), TicketSplitContract.View {
+class TicketSplitWidget : BaseFragment(), TicketSplitContract.View {
 
     @Inject lateinit var strings: Strings
     @Inject lateinit var graphics: Graphics<SVGGlyph>

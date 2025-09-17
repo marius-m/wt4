@@ -11,22 +11,18 @@ plugins {
     id("com.github.johnrengelman.shadow")
     id("de.fuerstenau.buildconfig")
     id("lt.markmerkk.jbundle")
+    id("org.openjfx.javafxplugin")
 }
 
 val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(AppType.DEBUG, project)
-// val jBundleProps = JBundleExtraPropsFactory.Debug.asOauthITO(AppType.DEBUG, project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(AppType.BASIC, project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(AppType.BASIC, project)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicLinux(AppType.BASIC, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOWin(AppType.ITO, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOMac(AppType.ITO, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOLinux(AppType.ITO, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asOauthITOCustomSystemWideWindows(AppType.SW, project)
 
 sourceSets {
     main {
         java {
-            srcDirs("build/generated/source/kapt/main")
+            srcDirs("build/generated/source/kapt/main", "build/gen/buildconfig/src/main")
         }
     }
     test {
@@ -37,13 +33,14 @@ sourceSets {
 }
 
 dependencies {
-//    implementation(fileTree("libs", include: ["*.jar"]))
+    // implementation(fileTree("libs", include: ["*.jar"]))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
 
     implementation(project(":components"))
     implementation(project(":database2"))
     implementation(project(":remote"))
-    implementation(project(":jira-client"))
+    // api(project(":jira-client2"))
+    api(files("${rootDir.absolutePath}/libs/${Versions.localJiraClient}"))
     implementation(project(":models"))
     implementation(project(":mock-factory"))
     implementation(project(":credits"))
@@ -92,9 +89,12 @@ project.extensions.getByType(JavaApplication::class.java).apply {
     group = "lt.markmerkk"
     setVersion(jBundleProps.versionName)
     applicationDefaultJvmArgs = listOf(
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
             "-Xms128M",
             "-Xmx300M",
-            "-XX:+UseG1GC"
+            "-XX:+UseG1GC",
+            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED"
            // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
            // "-DWT_APP_PATH=${jBundleProps.app}"
     ).plus(jBundleProps.jvmProps)
@@ -144,4 +144,17 @@ idea {
         sourceDirs = sourceDirs
                 .plus(file("generated/"))
     }
+}
+
+javafx {
+//    version = "17.0.11" // Use latest LTS version (or newer, e.g. 23 if you want bleeding-edge)
+    modules(
+        "javafx.base",
+        "javafx.controls",
+        "javafx.fxml",
+        "javafx.graphics",
+        "javafx.media",
+        "javafx.swing",
+        "javafx.web"
+    )
 }

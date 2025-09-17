@@ -80,8 +80,9 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.WeekFields
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class CalendarWidget: Fragment() {
+class CalendarWidget: BaseFragment() {
 
     @Inject lateinit var tracker: ITracker
     @Inject lateinit var strings: Strings

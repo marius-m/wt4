@@ -13,8 +13,9 @@ import lt.markmerkk.versioner.Changelog
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class ChangelogWidget : Fragment() {
+class ChangelogWidget : BaseFragment() {
 
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
 

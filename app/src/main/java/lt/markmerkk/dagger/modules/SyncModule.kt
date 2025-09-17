@@ -15,11 +15,7 @@ class SyncModule {
     fun providesClientProvider(
             userSettings: UserSettings
     ): JiraClientProvider {
-        return if (BuildConfig.oauth) {
-            JiraClientProviderOauth(userSettings)
-        } else {
-            JiraClientProviderBasic(userSettings)
-        }
+        return JiraClientProviderBasic(userSettings)
     }
 
     @Provides

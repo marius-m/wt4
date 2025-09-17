@@ -19,8 +19,9 @@ import tornadofx.pt
 import tornadofx.px
 import tornadofx.style
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class WorkForecastWidget: Fragment() {
+class WorkForecastWidget: BaseFragment() {
 
     @Inject lateinit var worklogStorage: WorklogStorage
     @Inject lateinit var wgReporter: WorkGoalReporter

@@ -23,8 +23,9 @@ import tornadofx.style
 import tornadofx.vbox
 import tornadofx.vgrow
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class QuickEditContainerWidget : Fragment(),
+class QuickEditContainerWidget : BaseFragment(),
     QuickEditContract.ContainerView,
     QuickEditActionChangeListener,
     VisibilityChangeableView {

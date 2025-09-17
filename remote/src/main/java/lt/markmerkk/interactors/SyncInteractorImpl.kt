@@ -72,7 +72,6 @@ class SyncInteractorImpl(
                             name = it.name,
                             email = it.email,
                             displayName = it.displayName,
-                            accountId = it.accountId
                     )
                 }
                 .flatMapCompletable { worklogApi.deleteMarkedLogs(startDate, endDate) }

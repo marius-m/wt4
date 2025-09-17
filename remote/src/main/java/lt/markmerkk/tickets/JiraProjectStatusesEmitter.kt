@@ -1,29 +1,29 @@
 package lt.markmerkk.tickets
 
 import lt.markmerkk.Tags
-import lt.markmerkk.entities.TicketStatus
-import net.rcarz.jiraclient.JiraClient
+import lt.markmerkk.clientextension.JiraClientExt
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.Project
-import net.rcarz.jiraclient.Status
 import org.slf4j.LoggerFactory
 import rx.Emitter
 import rx.functions.Action1
 
 class JiraProjectStatusesEmitter(
-        private val jiraClient: JiraClient
-) : Action1<Emitter<List<Status>>> {
+        private val jiraClient: JiraClientExt,
+) : Action1<Emitter<Set<String>>> {
 
-    override fun call(emitter: Emitter<List<Status>>) {
+    override fun call(emitter: Emitter<Set<String>>) {
         try {
-            val projects = jiraClient.projects
+            val projects: List<Project> = jiraClient.projects
             logger.info("Found ${projects.size} projects.")
-            val projectStatuses = projects
-                    .flatMap { jiraClient.getProjectStatuses(it.key) }
-                    .map { it.name to it } // status cannot be compared, so using map to filter
-                    .toMap()
-            logger.info("Found ${projectStatuses.size} project statuses.")
-            emitter.onNext(projectStatuses.values.toList())
+            val projectStatuses: Set<String> = projects
+                .fold(mutableSetOf()) { acc, project ->
+                    val statusesPerProject: Set<String> = jiraClient.fetchProjectStatuses(project.key)
+                    acc.addAll(statusesPerProject)
+                    acc
+                }
+            logger.info("Found ${projectStatuses.size} statuses per ${projects.size} projects.")
+            emitter.onNext(projectStatuses.toSet())
             emitter.onCompleted()
         } catch (e: IllegalStateException) {
             logger.info("Jira project statuses ${e.message}")

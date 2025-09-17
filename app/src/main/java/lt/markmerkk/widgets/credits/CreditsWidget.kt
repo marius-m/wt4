@@ -16,9 +16,10 @@ import lt.markmerkk.entities.Credit
 import lt.markmerkk.repositories.CreditsRepository
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 import tornadofx.*
 
-class CreditsWidget(): Fragment(), CreditsContract.View {
+class CreditsWidget(): BaseFragment(), CreditsContract.View {
 
     @Inject lateinit var creditsRepository: CreditsRepository
     @Inject lateinit var schedulerProvider: SchedulerProvider

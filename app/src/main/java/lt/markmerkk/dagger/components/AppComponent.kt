@@ -30,7 +30,6 @@ import lt.markmerkk.widgets.export.ExportWidget
 import lt.markmerkk.widgets.export.ImportWidget
 import lt.markmerkk.widgets.list.ListLogWidget
 import lt.markmerkk.widgets.log_check.LogFreshnessWidget
-import lt.markmerkk.widgets.settings.AccountSettingsOauthWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
 import lt.markmerkk.widgets.tickets.*
@@ -59,7 +58,6 @@ interface AppComponent {
     fun inject(listLogWidget: ListLogWidget)
     fun inject(ticketSplitWidget: TicketSplitWidget)
     fun inject(statisticsWidget: StatisticsWidget)
-    fun inject(accountSettingsOauthWidget: AccountSettingsOauthWidget)
     fun inject(creditsWidget: CreditsWidget)
     fun inject(quickDateChangeWidget: QuickDateChangeWidget)
     fun inject(quickEditContainerWidget: QuickEditContainerWidget)

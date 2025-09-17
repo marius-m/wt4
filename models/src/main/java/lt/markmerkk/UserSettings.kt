@@ -26,7 +26,7 @@ interface UserSettings {
 
     fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
     fun changeOAuthCreds(tokenSecret: String, accessKey: String)
-    fun changeJiraUser(name: String, email: String, displayName: String, accountId: String)
+    fun changeJiraUser(name: String, email: String, displayName: String)
     fun changeBasicCreds(hostname: String, username: String, password: String)
     fun resetUserData()
 }
@@ -48,19 +48,16 @@ data class JiraUser(
         val name: String, // may be empty due to new JIRA API changes
         val displayName: String,
         val email: String,
-        val accountId: String // may be empty
 ) {
     fun isEmpty(): Boolean = name.isEmpty()
             && displayName.isEmpty()
             && email.isEmpty()
-            && accountId.isEmpty()
 
     /**
      * Provides user identifier based on available value
      */
     fun identifierAsString(): String {
         if (name.isNotEmpty()) return name
-        if (accountId.isNotEmpty()) return accountId
         if (email.isNotEmpty()) return email
         return displayName
     }
@@ -70,7 +67,6 @@ data class JiraUser(
                 name = "",
                 displayName = "",
                 email = "",
-                accountId = ""
         )
     }
 

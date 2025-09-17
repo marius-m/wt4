@@ -14,8 +14,9 @@ import lt.markmerkk.ui_2.views.jfxButton
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class ExportSampleWidget: Fragment() {
+class ExportSampleWidget: BaseFragment() {
 
     @Inject lateinit var resultDispatcher: ResultDispatcher
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor

@@ -102,7 +102,7 @@ class TicketStorage(
         }
     }
 
-    fun refreshTicketStatuses(ticketStatusesNames: List<String>): Single<Int> {
+    fun refreshTicketStatuses(ticketStatusesNames: Set<String>): Single<Int> {
         return Single.defer {
             val newStatusNamesWithValues = ticketStatusesNames
                     .map { TicketStatus(it, isTicketStatusEnabled(it)) }
@@ -159,7 +159,7 @@ class TicketStorage(
                 .firstOrNull { it.name == ticketStatus }?.enabled ?: true
     }
 
-    fun refreshTicketStatusesSync(ticketStatuses: List<String>): Int {
+    fun refreshTicketStatusesSync(ticketStatuses: Set<String>): Int {
         return refreshTicketStatuses(ticketStatuses).toBlocking().value()
     }
 

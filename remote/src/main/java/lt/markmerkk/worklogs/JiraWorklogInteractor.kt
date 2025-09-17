@@ -1,6 +1,13 @@
 package lt.markmerkk.worklogs
 
-import lt.markmerkk.*
+import lt.markmerkk.JiraClientProvider
+import lt.markmerkk.JiraUser
+import lt.markmerkk.Tags
+import lt.markmerkk.TimeProvider
+import lt.markmerkk.UserSettings
+import lt.markmerkk.clientextension.addWorklog
+import lt.markmerkk.clientextension.removeWorklog
+import lt.markmerkk.clientextension.toJiraUser
 import lt.markmerkk.entities.Log
 import lt.markmerkk.entities.RemoteData
 import lt.markmerkk.entities.Ticket
@@ -16,9 +23,9 @@ import rx.Observable
 import rx.Single
 
 class JiraWorklogInteractor(
-        private val jiraClientProvider: JiraClientProvider,
-        private val timeProvider: TimeProvider,
-        private val userSettings: UserSettings
+    private val jiraClientProvider: JiraClientProvider,
+    private val timeProvider: TimeProvider,
+    private val userSettings: UserSettings
 ) {
 
     /**
@@ -95,10 +102,11 @@ class JiraWorklogInteractor(
             val issue = jiraClient.getIssue(log.code.code)
             val commentWithTimeStamp = TimedCommentStamper
                     .addStamp(log.time.start, log.time.end, log.comment)
-            val remoteWorklog = issue.addWorkLog(
-                    commentWithTimeStamp,
-                    log.time.start,
-                    log.time.duration.standardSeconds
+            val remoteWorklog = issue.addWorklog(
+                jiraClient.restClient,
+                commentWithTimeStamp,
+                log.time.start,
+                log.time.duration.standardSeconds
             )
             val noStampRemoteComment = TimedCommentStamper
                     .removeStamp(remoteWorklog.comment)
@@ -128,7 +136,7 @@ class JiraWorklogInteractor(
             val remoteId = log.remoteData?.remoteId ?: throw IllegalArgumentException("Cannot find worklog id")
             val jiraClient = jiraClientProvider.client()
             val issue = jiraClient.getIssue(log.code.code)
-            issue.removeWorklog(remoteId.toString())
+            issue.removeWorklog(jiraClient.restClient, remoteId.toString())
             Single.just(remoteId)
         }
     }
@@ -147,7 +155,6 @@ class JiraWorklogInteractor(
             return activeIdentifier.equals(jiraUser.name, ignoreCase = true)
                     || activeIdentifier.equals(jiraUser.displayName, ignoreCase = true)
                     || activeIdentifier.equals(jiraUser.email, ignoreCase = true)
-                    || activeIdentifier.equals(jiraUser.accountId, ignoreCase = true)
         }
 
         @TestOnly

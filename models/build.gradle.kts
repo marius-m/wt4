@@ -4,8 +4,14 @@ plugins {
     id("kotlin")
 }
 
+println("Remote library dir: \"${rootDir.absolutePath}/libs/${Versions.localJiraClient}\"")
+
 dependencies {
-    implementation(project(":jira-client"))
+    // implementation(project(":jira-client"))
+    api("com.fasterxml.jackson.core:jackson-databind:2.19.1")
+    api("org.apache.httpcomponents:httpclient:4.5.14")
+    api("org.apache.httpcomponents:httpmime:4.2.5")
+    implementation(files("${rootDir.absolutePath}/libs/${Versions.localJiraClient}"))
 
     implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")

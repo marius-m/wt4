@@ -16,8 +16,9 @@ import lt.markmerkk.ui_2.views.jfxButton
 import lt.markmerkk.ui_2.views.jfxSpinner
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class ProgressWidget: Fragment(), ProgressContract.View {
+class ProgressWidget: BaseFragment(), ProgressContract.View {
 
     @Inject lateinit var graphics: Graphics<SVGGlyph>
     @Inject lateinit var syncInteractor: SyncInteractor

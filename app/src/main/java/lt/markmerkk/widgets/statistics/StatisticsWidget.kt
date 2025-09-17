@@ -15,8 +15,9 @@ import lt.markmerkk.utils.hourglass.HourGlass
 import org.slf4j.LoggerFactory
 import tornadofx.*
 import javax.inject.Inject
+import lt.markmerkk.ui_2.BaseFragment
 
-class StatisticsWidget: Fragment(), StatisticsContract.View {
+class StatisticsWidget: BaseFragment(), StatisticsContract.View {
 
     @Inject lateinit var ticketStorage: TicketStorage
     @Inject lateinit var schedulerProvider: SchedulerProvider

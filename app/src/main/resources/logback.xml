@@ -37,5 +37,5 @@
     <logger name="lt.markmerkk" level="DEBUG" />
     <logger name="org.jooq" level="INFO" />
     <logger name="org.apache.http" level="INFO" />
-    <logger name="org.apache.http.wire" level="DEBUG" />
+    <logger name="org.apache.http.wire" level="INFO" />
 </configuration>

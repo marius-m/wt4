@@ -11,6 +11,7 @@ import javafx.scene.paint.Paint
 import lt.markmerkk.Glyph
 import lt.markmerkk.Graphics
 import lt.markmerkk.Tags
+import lt.markmerkk.ui_2.BaseFragment
 import lt.markmerkk.ui_2.views.*
 import org.slf4j.LoggerFactory
 import tornadofx.*
@@ -22,7 +23,7 @@ class QuickEditWidgetScale(
         private val graphics: Graphics<SVGGlyph>,
         private val scaleStepMinutes: Int,
         private val quickEditActionChangeListener: QuickEditActionChangeListener
-): Fragment(),
+): BaseFragment(),
         QuickEditChangableAction,
         QuickEditContract.ScaleView,
         VisibilityChangeableView
