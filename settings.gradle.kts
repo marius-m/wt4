@@ -12,6 +12,8 @@
 rootProject.name = "wt4"
 include(
         ":app",
+        ":jira-client2",
+        ":JFoenix",
         ":remote",
         ":models",
         ":components",
@@ -19,3 +21,4 @@ include(
         ":mock-factory",
         ":credits"
 )
+project(":JFoenix").projectDir = file("JFoenix/jfoenix")

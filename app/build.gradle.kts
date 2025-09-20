@@ -48,7 +48,8 @@ dependencies {
     implementation("com.googlecode.blaisemath.tornado:tornadofx-fx18k16:2.0.1")
     implementation("com.brsanthu:google-analytics-java:1.1.2")
     implementation("com.google.guava:guava:21.0")
-    implementation("com.jfoenix:jfoenix:9.0.9")
+//    implementation("com.jfoenix:jfoenix:9.0.10")
+    implementation(files("${rootDir.absolutePath}/libs/${Versions.localJFoenix21}"))
     implementation("io.reactivex:rxjavafx:1.1.0")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
     implementation("org.bouncycastle:bcprov-jdk15on:1.51")
@@ -89,13 +90,14 @@ project.extensions.getByType(JavaApplication::class.java).apply {
     group = "lt.markmerkk"
     setVersion(jBundleProps.versionName)
     applicationDefaultJvmArgs = listOf(
-            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+//            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC",
             "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
-            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED"
-           // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+            // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
            // "-DWT_APP_PATH=${jBundleProps.app}"
     ).plus(jBundleProps.jvmProps)
 }
@@ -155,7 +157,7 @@ idea {
 }
 
 javafx {
-//    version = "17.0.11" // Use latest LTS version (or newer, e.g. 23 if you want bleeding-edge)
+    version = "21.0.2"
     modules(
         "javafx.base",
         "javafx.controls",
