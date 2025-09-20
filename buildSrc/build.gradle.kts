@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     `kotlin-dsl`
     `maven-publish`
@@ -16,7 +14,6 @@ object PluginVersions {
 repositories {
     mavenCentral()
     google()
-    jcenter()
 }
 
 dependencies {
@@ -39,12 +36,4 @@ gradlePlugin {
             implementationClass = "lt.markmerkk.export.JBundlePlugin"
         }
     }
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "11"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "11"
 }
