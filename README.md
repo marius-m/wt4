@@ -1,13 +1,3 @@
-- [WT4](#wt4)
-  - [Downloads](#downloads)
-  - [Issues](#issues)
-  - [Attributions](#attributions)
-  - [Changelog](#changelog)
-
-
-
-<a id="wt4"></a>
-
 # WT4
 
 Dedicated worklog management for JIRA
