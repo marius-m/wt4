@@ -12,7 +12,7 @@ object Versions {
     val rxJava = "1.3.6"
     val rxJavaAsync = "0.21.0" // should deprecate this
     val javaAnnotate = "1.3.1"
-    val mockito = "2.8.9"
+    val mockito = "5.20.0"
     val assertj = "2.2.0"
 
     val localJiraClient = "jira-client2-2.1.0-SNAPSHOT.jar"

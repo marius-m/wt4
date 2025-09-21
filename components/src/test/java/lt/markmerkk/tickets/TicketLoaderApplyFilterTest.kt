@@ -11,6 +11,7 @@ import rx.Single
 import rx.schedulers.TestScheduler
 import rx.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
+import org.mockito.Mockito
 
 class TicketLoaderApplyFilterTest {
 
@@ -69,7 +70,7 @@ class TicketLoaderApplyFilterTest {
         testScheduler.triggerActions()
         publishSubject.onNext("TTS-005")
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS - 200, TimeUnit.MILLISECONDS)
-        verifyZeroInteractions(listener)
+        Mockito.verifyNoInteractions(listener)
 
         // Act
         testScheduler.advanceTimeBy(TicketLoader.FILTER_INPUT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)

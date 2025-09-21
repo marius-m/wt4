@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations
 import rx.Single
 import rx.schedulers.Schedulers
 import java.lang.RuntimeException
+import org.mockito.Mockito
 
 class ChangelogLoaderCheckTest {
 
@@ -81,6 +82,6 @@ class ChangelogLoaderCheckTest {
         changelogLoader.check()
 
         // Assert
-        verifyZeroInteractions(listener)
+        Mockito.verifyNoInteractions(listener)
     }
 }
