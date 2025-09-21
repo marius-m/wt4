@@ -124,10 +124,6 @@ buildConfig {
     buildConfigField("boolean", "debug", jBundleProps.debug.toString())
     buildConfigField("String", "sentryDsn", jBundleProps.sentryDsn)
     buildConfigField("String", "gaKey", jBundleProps.gaKey)
-    buildConfigField("boolean", "oauth", jBundleProps.oauth.toString())
-    buildConfigField("String", "oauthKeyConsumer", jBundleProps.oauthKeyConsumer)
-    buildConfigField("String", "oauthKeyPrivate", jBundleProps.oauthKeyPrivate)
-    buildConfigField("String", "oauthHost", jBundleProps.oauthHost)
 
     charset = Charsets.UTF_8.toString()
 }

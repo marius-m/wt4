@@ -26,11 +26,7 @@ class ContextMenuTicketSelect(
         private val accountAvailablility: AccountAvailablility
 ) {
 
-    private val jiraLinkGenerator = if (BuildConfig.oauth) {
-        JiraLinkGeneratorOAuth(view = null, accountAvailability = accountAvailablility)
-    } else {
-        JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
-    }
+    private val jiraLinkGenerator = JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
 
     private var subsTicketSelect: Subscription? = null
 

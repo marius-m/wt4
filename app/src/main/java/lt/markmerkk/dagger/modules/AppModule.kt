@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import javafx.application.Application
 import lt.markmerkk.AccountAvailabilityBasic
-import lt.markmerkk.AccountAvailabilityOAuth
 import lt.markmerkk.AutoSyncWatcher2
 import lt.markmerkk.BuildConfig
 import lt.markmerkk.Config
@@ -189,8 +188,7 @@ class AppModule(
             config: Config
     ): UserSettings {
         return UserSettingsImpl(
-                isOauth = BuildConfig.oauth,
-                settings = AdvHashSettings(config)
+            settings = AdvHashSettings(config)
         )
     }
 
@@ -401,26 +399,18 @@ class AppModule(
     @Provides
     @Singleton
     fun provideAccountAvailability(
-            userSettings: UserSettings,
-            jiraClientProvider: JiraClientProvider
+        userSettings: UserSettings,
+        jiraClientProvider: JiraClientProvider
     ): AccountAvailablility {
-        if (BuildConfig.oauth) {
-            return AccountAvailabilityOAuth(userSettings, jiraClientProvider)
-        } else {
-            return AccountAvailabilityBasic(userSettings, jiraClientProvider)
-        }
+        return AccountAvailabilityBasic(userSettings, jiraClientProvider)
     }
 
     @Provides
     @Singleton
     fun provideJiraLinkGenerator(
-            accountAvailablility: AccountAvailablility
+        accountAvailablility: AccountAvailablility
     ): JiraLinkGenerator {
-        if (BuildConfig.oauth) {
-            return JiraLinkGeneratorOAuth(view = null, accountAvailability = accountAvailablility)
-        } else {
-            return JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
-        }
+        return JiraLinkGeneratorBasic(view = null, accountAvailablility = accountAvailablility)
     }
 
     @Provides

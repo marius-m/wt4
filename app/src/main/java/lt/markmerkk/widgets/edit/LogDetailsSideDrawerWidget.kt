@@ -568,17 +568,11 @@ class LogDetailsSideDrawerWidget : BaseFragment(),
                 ioScheduler = schedulerProvider.io(),
                 uiScheduler = schedulerProvider.ui()
         )
-        jiraLinkGenerator = if (BuildConfig.oauth) {
-            JiraLinkGeneratorOAuth(
-                    view = this,
-                    accountAvailability = accountAvailablility
-            )
-        } else {
-            JiraLinkGeneratorBasic(
-                    view = this,
-                    accountAvailablility = accountAvailablility
-            )
-        }
+        jiraLinkGenerator = JiraLinkGeneratorBasic(
+            view = this,
+            accountAvailablility = accountAvailablility
+        )
+
         timeGapGenerator = TimeGapGenerator(
             startDateSource = viewDatePickerFrom.wrapAsSource(),
             startTimeSource = viewTimePickerFrom.wrapAsSource(),

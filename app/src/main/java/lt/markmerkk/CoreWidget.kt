@@ -63,11 +63,6 @@ class CoreWidget : BaseView() {
         stageProperties.onAttach()
         autoSyncWatcher.onAttach()
         autoSyncWatcher.subscribeWatch()
-        userSettings.changeOAuthPreset(
-                host = BuildConfig.oauthHost,
-                privateKey = BuildConfig.oauthKeyPrivate,
-                consumerKey = BuildConfig.oauthKeyConsumer
-        )
         ticker.onAttach()
 
         // Attaching view

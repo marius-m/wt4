@@ -6,7 +6,6 @@ import lt.markmerkk.*
  * Controller for holding persistent data
  */
 class UserSettingsImpl(
-        private val isOauth: Boolean,
         private val settings: HashSettings
 ) : UserSettings {
 
@@ -26,11 +25,6 @@ class UserSettingsImpl(
     override var settingsAutoStartClock: Boolean = true
     override var settingsAutoSync: Boolean = true
 
-    private var oauthHost: String = ""
-    private var oauthPrivateKey: String = ""
-    private var oauthConsumerKey: String = ""
-    private var oauthTokenSecret: String = ""
-    private var oauthAccessKey: String = ""
     private var jiraUserName: String = ""
     private var jiraUserEmail: String = ""
     private var jiraUserDisplayName: String = ""
@@ -49,11 +43,6 @@ class UserSettingsImpl(
         ticketFilterIncludeAssignee = settings.getBoolean(TICKET_FILTER_INCLUDE_ASSIGNEE, true)
         ticketFilterIncludeReporter = settings.getBoolean(TICKET_FILTER_INCLUDE_REPORTER, true)
         ticketFilterIncludeIsWatching = settings.getBoolean(TICKET_FILTER_INCLUDE_IS_WATCHING, true)
-        oauthHost = settings.get(OAUTH_HOST, "")
-        oauthPrivateKey = settings.get(OAUTH_PRIVATE_KEY, "")
-        oauthConsumerKey = settings.get(OAUTH_CONSUMER_KEY, "")
-        oauthTokenSecret = settings.get(OAUTH_TOKEN_SECRET, "")
-        oauthAccessKey = settings.get(OAUTH_ACCESS_KEY, "")
         jiraUserName = settings.get(JIRA_USER_NAME, "")
         jiraUserEmail = settings.get(JIRA_USER_EMAIL, "")
         jiraUserDisplayName = settings.get(JIRA_USER_DISPLAY_NAME, "")
@@ -75,11 +64,11 @@ class UserSettingsImpl(
         settings.set(TICKET_FILTER_INCLUDE_ASSIGNEE, ticketFilterIncludeAssignee.toString())
         settings.set(TICKET_FILTER_INCLUDE_REPORTER, ticketFilterIncludeReporter.toString())
         settings.set(TICKET_FILTER_INCLUDE_IS_WATCHING, ticketFilterIncludeIsWatching.toString())
-        settings.set(OAUTH_HOST, oauthHost)
-        settings.set(OAUTH_PRIVATE_KEY, oauthPrivateKey)
-        settings.set(OAUTH_CONSUMER_KEY, oauthConsumerKey)
-        settings.set(OAUTH_TOKEN_SECRET, oauthTokenSecret)
-        settings.set(OAUTH_ACCESS_KEY, oauthAccessKey)
+        settings.set(OAUTH_HOST, "")
+        settings.set(OAUTH_PRIVATE_KEY, "")
+        settings.set(OAUTH_CONSUMER_KEY, "")
+        settings.set(OAUTH_TOKEN_SECRET, "")
+        settings.set(OAUTH_ACCESS_KEY, "")
         settings.set(JIRA_USER_NAME, jiraUserName)
         settings.set(JIRA_USER_EMAIL, jiraUserEmail)
         settings.set(JIRA_USER_DISPLAY_NAME, jiraUserDisplayName)
@@ -90,25 +79,8 @@ class UserSettingsImpl(
         settings.save()
     }
 
-    override fun jiraOAuthPreset(): JiraOAuthPreset = JiraOAuthPreset(oauthHost, oauthPrivateKey, oauthConsumerKey)
-    override fun jiraOAuthCreds(): JiraOAuthCreds = JiraOAuthCreds(oauthTokenSecret, oauthAccessKey)
     override fun jiraUser(): JiraUser  = JiraUser(jiraUserName, jiraUserDisplayName, jiraUserEmail)
     override fun jiraBasicCreds(): JiraBasicCreds = JiraBasicCreds(host, username, password)
-
-    override fun changeOAuthPreset(
-            host: String,
-            privateKey: String,
-            consumerKey: String
-    ) {
-        this.oauthHost = host
-        this.oauthPrivateKey = privateKey
-        this.oauthConsumerKey = consumerKey
-    }
-
-    override fun changeOAuthCreds(tokenSecret: String, accessKey: String) {
-        this.oauthTokenSecret = tokenSecret
-        this.oauthAccessKey = accessKey
-    }
 
     override fun changeJiraUser(
             name: String,
@@ -127,8 +99,6 @@ class UserSettingsImpl(
     }
 
     override fun resetUserData() {
-        this.oauthTokenSecret = ""
-        this.oauthAccessKey = ""
         this.jiraUserName = ""
         this.jiraUserDisplayName = ""
         this.jiraUserEmail = ""
@@ -148,11 +118,12 @@ class UserSettingsImpl(
         const val TICKET_FILTER_INCLUDE_ASSIGNEE = "TICKET_FILTER_INCLUDE_ASSIGNEE"
         const val TICKET_FILTER_INCLUDE_REPORTER = "TICKET_FILTER_INCLUDE_REPORTER"
         const val TICKET_FILTER_INCLUDE_IS_WATCHING = "TICKET_FILTER_INCLUDE_IS_WATCHING"
-        const val OAUTH_HOST = "OAUTH_HOST"
-        const val OAUTH_PRIVATE_KEY = "OAUTH_PRIVATE_KEY"
-        const val OAUTH_CONSUMER_KEY = "OAUTH_CONSUMER_KEY"
-        const val OAUTH_TOKEN_SECRET = "OAUTH_TOKEN_SECRET"
-        const val OAUTH_ACCESS_KEY = "OAUTH_ACCESS_KEY"
+
+        @Deprecated("Not supported anymore") const val OAUTH_HOST = "OAUTH_HOST"
+        @Deprecated("Not supported anymore") const val OAUTH_PRIVATE_KEY = "OAUTH_PRIVATE_KEY"
+        @Deprecated("Not supported anymore") const val OAUTH_CONSUMER_KEY = "OAUTH_CONSUMER_KEY"
+        @Deprecated("Not supported anymore") const val OAUTH_TOKEN_SECRET = "OAUTH_TOKEN_SECRET"
+        @Deprecated("Not supported anymore") const val OAUTH_ACCESS_KEY = "OAUTH_ACCESS_KEY"
         const val JIRA_USER_NAME = "JIRA_USER_NAME"
         const val JIRA_USER_EMAIL = "JIRA_USER_EMAIL"
         const val JIRA_USER_DISPLAY_NAME = "JIRA_USER_DISPLAY_NAME"

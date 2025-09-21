@@ -19,13 +19,9 @@ interface UserSettings {
     var settingsAutoStartClock: Boolean
     var settingsAutoSync: Boolean
 
-    fun jiraOAuthPreset(): JiraOAuthPreset
-    fun jiraOAuthCreds(): JiraOAuthCreds
     fun jiraUser(): JiraUser
     fun jiraBasicCreds(): JiraBasicCreds
 
-    fun changeOAuthPreset(host: String, privateKey: String, consumerKey: String)
-    fun changeOAuthCreds(tokenSecret: String, accessKey: String)
     fun changeJiraUser(name: String, email: String, displayName: String)
     fun changeBasicCreds(hostname: String, username: String, password: String)
     fun resetUserData()
