@@ -16,8 +16,6 @@ data class JBundleResource(
         val mainIconFilePath: String,
         val systemWide: Boolean,
         private val inputPath: String,
-        private val jdk8HomePath: String,
-        private val jre8HomePath: String,
         private val jdk17HomePath: String,
         private val jmodsHomePath: String,
         private val scriptsPath: String,
@@ -52,12 +50,6 @@ data class JBundleResource(
 
     val buildDir = project.buildDir
     val bundlePath = File("${buildDir}/bundle")
-    val jdk8HomeDir: File = File(jdk8HomePath)
-    val jre8HomeDir: File = if (jre8HomePath.isNotEmpty()) {
-        File(jre8HomePath)
-    } else {
-        File(jdk8HomeDir, "/jre")
-    }
     val jdk17HomeDir: File = File(jdk17HomePath)
     val jmodsHomeDir: File = File(jmodsHomePath)
     val scriptsDir: File = File(scriptsPath)
@@ -67,6 +59,7 @@ data class JBundleResource(
     val packageType: String = when (OsType.get()) {
         OsType.UNKNOWN -> ""
         OsType.MAC -> "dmg"
+//        OsType.MAC -> "app-image"
         OsType.LINUX -> "deb"
         OsType.WINDOWS -> "exe"
     }

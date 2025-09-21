@@ -7,15 +7,20 @@ plugins {
     id("kotlin")
     id("kotlin-kapt")
     id("idea")
-    id("com.gradleup.shadow")
     id("de.fuerstenau.buildconfig")
     id("lt.markmerkk.jbundle")
     id("org.openjfx.javafxplugin")
 }
 
 val jBundleProps = JBundleExtraPropsFactory.Debug.asBasic(AppType.DEBUG, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(AppType.BASIC, project)
-// val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(AppType.BASIC, project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicWin(AppType.BASIC, project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMac(AppType.BASIC, project)
+//val jBundleProps = JBundleExtraPropsFactory.Release.asBasicMacX64(
+//    AppType.BASIC,
+//    project,
+//    j17HomeOverride = System.getenv("J17_HOME_X64"),
+//    jmodsHomeOverride = System.getenv("JMODS_HOME_X64"),
+//)
 // val jBundleProps = JBundleExtraPropsFactory.Release.asBasicLinux(AppType.BASIC, project)
 
 sourceSets {
@@ -139,6 +144,8 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
 
     mainIconFilePath = File(projectDir, "package${File.separator}icons${File.separator}App1024.png").absolutePath
     scriptsDirPath = File(projectDir, "package${File.separator}scripts").absolutePath
+    j17HomeOverride = jBundleProps.j17HomeOverride
+    jmodsHomeOverride = jBundleProps.jmodsHomeOverride
 }
 
 kapt {

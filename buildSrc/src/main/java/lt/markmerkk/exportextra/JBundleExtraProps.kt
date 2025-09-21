@@ -16,10 +16,8 @@ class JBundleExtraProps(
     val jvmProps: List<String>,
     val sentryDsn: String,
     val gaKey: String,
-    val oauth: Boolean,
-    val oauthKeyConsumer: String,
-    val oauthKeyPrivate: String,
-    val oauthHost: String
+    val j17HomeOverride: String? = null,
+    val jmodsHomeOverride: String? = null,
 )
 
 enum class AppType(val rawType: String) {

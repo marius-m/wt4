@@ -35,13 +35,13 @@ echo "Running dynamic jdeps"
 #    target/classes/com/dlsc/jpackagefx/App.class`
 #echo "detected modules: ${detected_modules}"
 
-$J17_HOME/bin/jdeps \
-  --multi-release ${JAVA_VERSION} \
-  --print-module-deps \
-  --ignore-missing-deps \
-  --class-path "${INPUT_LIBS_DIR}/*"
+## Still does not work properly to list out modules
+#$J17_HOME/bin/jdeps \
+#  --multi-release ${JAVA_VERSION} \
+#  --print-module-deps \
+#  --ignore-missing-deps \
+#  --class-path "${INPUT_LIBS_DIR}/*"
 
-## java.base,java.desktop,java.logging,java.naming
 MODULES_BASE=java.base,java.desktop,java.instrument,java.management,java.naming,java.net.http,java.prefs,java.scripting,java.security.jgss,java.sql,jdk.compiler,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
 MODULES_MANUAL=jdk.crypto.ec,jdk.localedata
 MODULES_JFX=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web

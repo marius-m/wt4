@@ -41,10 +41,6 @@ object JBundleExtraPropsFactory {
                 ),
                 sentryDsn = sentryProps.dsn,
                 gaKey = "test",
-                oauth = false,
-                oauthKeyConsumer = "",
-                oauthKeyPrivate = "",
-                oauthHost = ""
             )
         }
 
@@ -54,7 +50,9 @@ object JBundleExtraPropsFactory {
         private fun asBasic(
             appType: AppType,
             project: Project,
-            systemWide: Boolean
+            systemWide: Boolean,
+            j17HomeOverride: String? = null,
+            jmodsHomeOverride: String? = null,
         ): JBundleExtraProps {
             val versionProps = VersionProps.fromProps(project, flavor = APP_FLAVOR_BASIC)
             val sentryProps = SentryProps.fromProps(project)
@@ -81,10 +79,8 @@ object JBundleExtraPropsFactory {
                 ),
                 sentryDsn = sentryProps.dsn,
                 gaKey = deployProps.getProperty("ga"),
-                oauth = false,
-                oauthKeyConsumer = "",
-                oauthKeyPrivate = "",
-                oauthHost = ""
+                j17HomeOverride = j17HomeOverride,
+                jmodsHomeOverride = jmodsHomeOverride,
             )
         }
 
@@ -96,6 +92,30 @@ object JBundleExtraPropsFactory {
                 throw IllegalArgumentException("Bundle designed for MACOSX *ONLY*")
             }
             return asBasic(appType, project, systemWide = true)
+        }
+
+        /**
+         * Legacy architecture support
+         */
+        fun asBasicMacX64(
+            appType: AppType,
+            project: Project,
+            j17HomeOverride: String?,
+            jmodsHomeOverride: String?,
+        ): JBundleExtraProps {
+            if (OsType.get() != OsType.MAC) {
+                throw IllegalArgumentException("Bundle designed for MACOSX *ONLY*")
+            }
+            if (j17HomeOverride == null || jmodsHomeOverride == null) {
+                throw IllegalArgumentException("Cannot create legacy bundle with unprovided special j17 build")
+            }
+            return asBasic(
+                appType,
+                project,
+                systemWide = true,
+                j17HomeOverride = j17HomeOverride,
+                jmodsHomeOverride = jmodsHomeOverride,
+            )
         }
 
         fun asBasicLinux(

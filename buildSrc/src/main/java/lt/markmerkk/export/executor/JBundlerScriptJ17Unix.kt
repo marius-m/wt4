@@ -15,7 +15,7 @@ class JBundlerScriptJ17Unix(
 
     private val jPackage = File(bundleResource.jdk17HomeDir, "/bin/jpackage")
     private val rootDir = project.rootDir
-    private val scriptDir = File(bundleResource.scriptsDir, "/build-package-j17.sh")
+    private val scriptFile = File(bundleResource.scriptsDir, "/build-package-j17.sh")
 
     init {
         assert(jPackage.exists()) {
@@ -45,7 +45,7 @@ class JBundlerScriptJ17Unix(
         )
         return listOf(
                 "sh",
-                scriptDir.absolutePath
+                scriptFile.absolutePath
         ).plus(scriptArgs.components)
     }
 

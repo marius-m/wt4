@@ -4,8 +4,6 @@ import lt.markmerkk.export.executor.JBundlerScriptProvider
 import org.gradle.api.tasks.Exec
 import java.io.File
 import java.lang.IllegalStateException
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import lt.markmerkk.export.executor.JBundlerScriptJ17Unix
 import lt.markmerkk.export.executor.JBundlerScriptJ17Win
 import org.gradle.kotlin.dsl.support.unzipTo
@@ -24,7 +22,9 @@ open class BundleTask: Exec() {
             mainIconFilePath: String,
             systemWide: Boolean,
             jvmProps: List<String>,
-            scriptsDirPath: String
+            scriptsDirPath: String,
+            j17HomeOverride: String?,
+            jmodsHomeOverride: String?,
     ) {
         val iconFile = File(mainIconFilePath)
         assert(iconFile.exists() && iconFile.isFile) {
@@ -36,11 +36,8 @@ open class BundleTask: Exec() {
         val inputDir = File(project.buildDir, "/input").apply { mkdirs() }
         val resourceDir = File(project.projectDir, "/package/resources")
         val inputLibsDir = File(inputDir, "/libs/")
-        val jdk8HomePath: String = System.getenv("JAVA_HOME") ?: ""
-        val jre8HomePath: String = System.getenv("JRE_HOME") ?: ""
-        val j17HomePath: String = System.getenv("J17_HOME") ?: ""
-        // TODO support diff architectures for macos
-        val jmodsHomePath: String = System.getenv("JMODS_HOME") ?: ""
+        val j17HomePath: String = j17HomeOverride ?: System.getenv("J17_HOME") ?: ""
+        val jmodsHomePath: String = jmodsHomeOverride ?: System.getenv("JMODS_HOME") ?: ""
         bundleResource = JBundleResource(
             project = project,
             appName = appName,
@@ -51,8 +48,6 @@ open class BundleTask: Exec() {
             mainIconFilePath = mainIconFilePath,
             systemWide = systemWide,
             inputPath = inputDir.absolutePath,
-            jdk8HomePath = jdk8HomePath,
-            jre8HomePath = jre8HomePath,
             jdk17HomePath = j17HomePath,
             jmodsHomePath = jmodsHomePath,
             scriptsPath = scriptsDirPath,

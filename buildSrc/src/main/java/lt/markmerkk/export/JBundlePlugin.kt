@@ -30,7 +30,9 @@ class JBundlePlugin: Plugin<Project> {
                 mainClassName = extension.mainClassName,
                 mainIconFilePath = extension.mainIconFilePath,
                 jvmProps = extension.jvmProps,
-                scriptsDirPath = extension.scriptsDirPath
+                scriptsDirPath = extension.scriptsDirPath,
+                j17HomeOverride = extension.j17HomeOverride,
+                jmodsHomeOverride = extension.jmodsHomeOverride,
             )
             setDependsOn(listOf(":${project.name}:build"))
         }

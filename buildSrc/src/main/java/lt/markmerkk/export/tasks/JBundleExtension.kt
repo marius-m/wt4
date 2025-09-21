@@ -11,6 +11,10 @@ open class JBundleExtension(private val project : Project) {
     var systemWide: Boolean = false
     var jvmProps: List<String> = emptyList()
 
+    // Necessary for different architecture builds
+    var j17HomeOverride: String? = null
+    var jmodsHomeOverride: String? = null
+
     var mainIconFilePath: String = ""
     var scriptsDirPath: String = ""
 }
