@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-    // implementation(project(":jira-client2"))
+//    implementation(project(":jira-client2"))
+
     // Using local file instead of a library, as the gradle config would require changes to use it as a code
     // Leaving it as intact as possible
     // To build the library locally you'll need to apply a patch that would disable some parts of the gradle config

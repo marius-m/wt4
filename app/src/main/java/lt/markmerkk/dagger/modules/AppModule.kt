@@ -80,7 +80,6 @@ import lt.markmerkk.widgets.dialogs.DialogsInternal
 import lt.markmerkk.widgets.help.HelpResourceLoader
 import lt.markmerkk.widgets.help.HelpWidgetFactory
 import lt.markmerkk.widgets.help.ImgResourceLoader
-import lt.markmerkk.widgets.log_check.LogFreshnessChecker
 import lt.markmerkk.widgets.network.Api
 import lt.markmerkk.widgets.versioner.VersionProviderImpl
 import lt.markmerkk.worklogs.JiraWorklogInteractor
@@ -467,18 +466,6 @@ class AppModule(
                 eventBus,
                 schedulerProvider.waitScheduler(),
                 schedulerProvider.ui()
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideLogFreshnessChecker(
-            worklogStorage: WorklogStorage,
-            timeProvider: TimeProvider
-    ): LogFreshnessChecker {
-        return LogFreshnessChecker(
-                worklogStorage,
-                timeProvider
         )
     }
 

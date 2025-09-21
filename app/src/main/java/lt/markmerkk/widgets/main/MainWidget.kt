@@ -75,8 +75,6 @@ import lt.markmerkk.widgets.clock.ClockWidget
 import lt.markmerkk.widgets.dialogs.Dialogs
 import lt.markmerkk.widgets.dialogs.DialogsExternal
 import lt.markmerkk.widgets.edit.LogDetailsSideDrawerWidget
-import lt.markmerkk.widgets.log_check.LogFreshnessChecker
-import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.tickets.PopUpChangeMainContent
 import lt.markmerkk.widgets.tickets.PopUpSettings
@@ -123,7 +121,6 @@ class MainWidget : BaseFragment(), MainContract.View {
     @Inject lateinit var jiraLinkGenerator: JiraLinkGenerator
     @Inject lateinit var hostServicesInteractor: HostServicesInteractor
     @Inject lateinit var ticker: Ticker
-    @Inject lateinit var logFreshnessChecker: LogFreshnessChecker
     @Inject lateinit var configSetSettings: ConfigSetSettings
     @Inject lateinit var activeDisplayRepository: ActiveDisplayRepository
     @Inject lateinit var dialogs: Dialogs
@@ -333,20 +330,6 @@ class MainWidget : BaseFragment(), MainContract.View {
                 paneLogs = SidePaneStateProviderDrawer(viewSideDrawerLogDetails),
                 paneTickets = SidePaneStateProviderDrawer(viewSideDrawerTickets)
         )
-        primaryStage.setOnCloseRequest {
-            if (logFreshnessChecker.isUpToDate()) {
-                Platform.exit()
-            } else {
-                it.consume()
-                find<LogFreshnessWidget>()
-                        .openModal(
-                                stageStyle = StageStyle.DECORATED,
-                                modality = Modality.APPLICATION_MODAL,
-                                block = false,
-                                resizable = true
-                        )
-            }
-        }
 
         // Init interactors
         syncInteractor.addLoadingListener(syncInteractorListener)

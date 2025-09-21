@@ -53,6 +53,7 @@ jdeploy-bundle/
 # Other
 out4/
 build/
+buildSrc/out/
 usr.properties
 deploy_pass.properties
 tools/remote.txt

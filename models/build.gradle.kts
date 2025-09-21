@@ -4,10 +4,8 @@ plugins {
     id("kotlin")
 }
 
-println("Remote library dir: \"${rootDir.absolutePath}/libs/${Versions.localJiraClient}\"")
-
 dependencies {
-    // implementation(project(":jira-client"))
+    // implementation(project(":jira-client2"))
     api("com.fasterxml.jackson.core:jackson-databind:2.19.1")
     api("org.apache.httpcomponents:httpclient:4.5.14")
     api("org.apache.httpcomponents:httpmime:4.2.5")

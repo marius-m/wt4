@@ -1,6 +1,5 @@
 import lt.markmerkk.Versions
 import lt.markmerkk.exportextra.AppType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import lt.markmerkk.exportextra.JBundleExtraPropsFactory
 
 plugins {
@@ -8,7 +7,7 @@ plugins {
     id("kotlin")
     id("kotlin-kapt")
     id("idea")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
     id("de.fuerstenau.buildconfig")
     id("lt.markmerkk.jbundle")
     id("org.openjfx.javafxplugin")
@@ -39,16 +38,17 @@ dependencies {
     implementation(project(":components"))
     implementation(project(":database2"))
     implementation(project(":remote"))
-    // api(project(":jira-client2"))
+
+//    api(project(":jira-client2"))
     api(files("${rootDir.absolutePath}/libs/${Versions.localJiraClient}"))
     implementation(project(":models"))
     implementation(project(":mock-factory"))
     implementation(project(":credits"))
 
-    implementation("no.tornado:tornadofx:2.0.0-SNAPSHOT")
+    implementation("com.googlecode.blaisemath.tornado:tornadofx-fx18k16:2.0.1")
     implementation("com.brsanthu:google-analytics-java:1.1.2")
     implementation("com.google.guava:guava:21.0")
-    implementation("com.jfoenix:jfoenix:9.0.9")
+    implementation(files("${rootDir.absolutePath}/libs/${Versions.localJFoenix21}"))
     implementation("io.reactivex:rxjavafx:1.1.0")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
     implementation("org.bouncycastle:bcprov-jdk15on:1.51")
@@ -62,14 +62,14 @@ dependencies {
     implementation("com.vdurmont:emoji-java:5.1.1")
     implementation("org.controlsfx:controlsfx:11.0.2")
     implementation("javax.annotation:javax.annotation-api:${Versions.javaAnnotate}")
-    implementation("org.fxmisc.richtext:richtextfx:1.0.0-SNAPSHOT")
+    implementation("org.fxmisc.richtext:richtextfx:0.11.6")
     implementation("org.jsoup:jsoup:1.15.2")
 
     implementation("com.google.dagger:dagger:${Versions.dagger}")
     kapt("com.google.dagger:dagger-compiler:${Versions.dagger}")
 
     implementation("joda-time:joda-time:${Versions.jodaTime}")
-    implementation("com.calendarfx:view:8.5.0")
+    implementation("com.calendarfx:view:10.5.0")
 
     implementation("io.sentry:sentry:${Versions.sentry}")
     implementation("io.sentry:sentry-logback:${Versions.sentry}")
@@ -85,19 +85,32 @@ dependencies {
 }
 
 project.extensions.getByType(JavaApplication::class.java).apply {
-    mainClassName = "lt.markmerkk.MainAsJava"
+    mainClass = "lt.markmerkk.MainAsJava"
     group = "lt.markmerkk"
     setVersion(jBundleProps.versionName)
     applicationDefaultJvmArgs = listOf(
-            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+//            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
             "-Xms128M",
             "-Xmx300M",
             "-XX:+UseG1GC",
             "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
-            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED"
-           // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
+            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+            // "-DWT_ROOT=/Users/mariusmerkevicius/tmp-wt4",
            // "-DWT_APP_PATH=${jBundleProps.app}"
     ).plus(jBundleProps.jvmProps)
+}
+
+// Required for BuildConfig plugin to workaround the not up to date plugin issue with newer gradle
+// https://github.com/mfuerstenau/gradle-buildconfig-plugin/issues/30
+configurations {
+    create("compile")
+}
+
+tasks {
+    withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }
 
 buildConfig {
@@ -131,10 +144,6 @@ extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).app
     scriptsDirPath = File(projectDir, "package${File.separator}scripts").absolutePath
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-}
-
 kapt {
     generateStubs = true
 }
@@ -147,7 +156,7 @@ idea {
 }
 
 javafx {
-//    version = "17.0.11" // Use latest LTS version (or newer, e.g. 23 if you want bleeding-edge)
+    version = "21.0.2"
     modules(
         "javafx.base",
         "javafx.controls",

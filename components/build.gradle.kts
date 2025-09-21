@@ -33,7 +33,7 @@ dependencies {
 }
 
 javafx {
-//    version = "17.0.11" // Use latest LTS version (or newer, e.g. 23 if you want bleeding-edge)
+    version = "21.0.2"
     modules(
         "javafx.base",
         "javafx.controls",

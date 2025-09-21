@@ -29,7 +29,6 @@ import lt.markmerkk.widgets.export.ExportSampleWidget
 import lt.markmerkk.widgets.export.ExportWidget
 import lt.markmerkk.widgets.export.ImportWidget
 import lt.markmerkk.widgets.list.ListLogWidget
-import lt.markmerkk.widgets.log_check.LogFreshnessWidget
 import lt.markmerkk.widgets.settings.AccountSettingsWidget
 import lt.markmerkk.widgets.statistics.StatisticsWidget
 import lt.markmerkk.widgets.tickets.*
@@ -65,7 +64,6 @@ interface AppComponent {
     fun inject(ticketFilterWidget: TicketFilterSettingsWidget)
     fun inject(ticketBasicSearchWidget: TicketBasicSearchWidget)
     fun inject(appSettingsWidget: AppSettingsWidget)
-    fun inject(logFreshnessWidget: LogFreshnessWidget)
     fun inject(exportWidget: ExportWidget)
     fun inject(exportSampleWidget: ExportSampleWidget)
     fun inject(profileWidget: ProfileWidget)

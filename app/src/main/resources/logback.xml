@@ -22,7 +22,7 @@
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            <pattern>%d %p %c{1} [%t] %m%n</pattern>
         </encoder>
     </appender>
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
@@ -35,6 +35,7 @@
         <appender-ref ref="Sentry"/>
     </root>
     <logger name="lt.markmerkk" level="DEBUG" />
+    <logger name="com.calendarfx" level="debug" />
     <logger name="org.jooq" level="INFO" />
     <logger name="org.apache.http" level="INFO" />
     <logger name="org.apache.http.wire" level="INFO" />

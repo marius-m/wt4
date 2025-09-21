@@ -26,11 +26,11 @@ data class WorkDayRule(
         val durationStartEnd = targetGap.period.toStandardDuration()
         val breakDurationFromTimeGap = timeBreak.breakDurationFromTimeGap(timeWork = targetGap)
         val totalDuration = durationStartEnd.minus(breakDurationFromTimeGap)
-        l.debug(
-            "durationWithTargetEnd(durationStartEnd: {}, breakDuration: {})",
-            durationStartEnd.toStandardMinutes(),
-            breakDurationFromTimeGap.toStandardMinutes(),
-        )
+//        l.debug(
+//            "durationWithTargetEnd(durationStartEnd: {}, breakDuration: {})",
+//            durationStartEnd.toStandardMinutes(),
+//            breakDurationFromTimeGap.toStandardMinutes(),
+//        )
         return totalDuration
     }
 
