@@ -45,11 +45,9 @@ dependencies {
     implementation(project(":mock-factory"))
     implementation(project(":credits"))
 
-    // implementation("no.tornado:tornadofx:2.0.0-SNAPSHOT")
     implementation("com.googlecode.blaisemath.tornado:tornadofx-fx18k16:2.0.1")
     implementation("com.brsanthu:google-analytics-java:1.1.2")
     implementation("com.google.guava:guava:21.0")
-//    implementation("com.jfoenix:jfoenix:9.0.10")
     implementation(files("${rootDir.absolutePath}/libs/${Versions.localJFoenix21}"))
     implementation("io.reactivex:rxjavafx:1.1.0")
     implementation("io.reactivex:rxjava:${Versions.rxJava}")
