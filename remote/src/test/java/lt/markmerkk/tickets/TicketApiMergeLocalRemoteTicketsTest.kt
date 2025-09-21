@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.verification.VerificationMode
 
@@ -40,7 +41,7 @@ class TicketApiMergeLocalRemoteTicketsTest {
         )
 
         // Assert
-        verifyZeroInteractions(ticketsDatabaseRepo)
+        Mockito.verifyNoInteractions(ticketsDatabaseRepo)
     }
 
     @Test

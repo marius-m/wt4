@@ -13,6 +13,7 @@ import rx.Observable
 import rx.Single
 import java.lang.RuntimeException
 import lt.markmerkk.clientextension.JiraClientExt
+import org.mockito.Mockito
 
 class TicketsNetworkRepoSearchRemoteTicketsTest {
 
@@ -78,7 +79,7 @@ class TicketsNetworkRepoSearchRemoteTicketsTest {
 
         // Assert
         result.assertError(AuthException::class.java)
-        verifyZeroInteractions(ticketsDatabaseRepo)
+        Mockito.verifyNoInteractions(ticketsDatabaseRepo)
     }
 
     @Test
