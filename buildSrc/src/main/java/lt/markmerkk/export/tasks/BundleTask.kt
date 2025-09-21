@@ -1,11 +1,14 @@
 package lt.markmerkk.export.tasks
 
-import lt.markmerkk.export.executor.JBundlerScriptJ11Unix
-import lt.markmerkk.export.executor.JBundlerScriptJ11Win
 import lt.markmerkk.export.executor.JBundlerScriptProvider
 import org.gradle.api.tasks.Exec
 import java.io.File
 import java.lang.IllegalStateException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import lt.markmerkk.export.executor.JBundlerScriptJ17Unix
+import lt.markmerkk.export.executor.JBundlerScriptJ17Win
+import org.gradle.kotlin.dsl.support.unzipTo
 
 open class BundleTask: Exec() {
 
@@ -15,6 +18,7 @@ open class BundleTask: Exec() {
     fun init(
             appName: String,
             versionName: String,
+            mainJarName: String,
             mainJarFilePath: String,
             mainClassName: String,
             mainIconFilePath: String,
@@ -26,48 +30,86 @@ open class BundleTask: Exec() {
         assert(iconFile.exists() && iconFile.isFile) {
             throw IllegalArgumentException("Cannot find app icon at $iconFile")
         }
-        val inputDir = File(project.buildDir, "/input")
+        val tmpDistributions = File(project.buildDir, "/distributions/")
+        val tmpDistributionsArchive = File(tmpDistributions, "${mainJarName}.zip")
+        val tmpDir = File(project.buildDir, "/tmp2").apply { mkdirs() }
+        val inputDir = File(project.buildDir, "/input").apply { mkdirs() }
         val resourceDir = File(project.projectDir, "/package/resources")
+        val inputLibsDir = File(inputDir, "/libs/")
         val jdk8HomePath: String = System.getenv("JAVA_HOME") ?: ""
         val jre8HomePath: String = System.getenv("JRE_HOME") ?: ""
-        val j11HomePath: String = System.getenv("J11_HOME") ?: ""
-        val j14HomePath: String = System.getenv("J14_HOME") ?: ""
+        val j17HomePath: String = System.getenv("J17_HOME") ?: ""
+        // TODO support diff architectures for macos
+        val jmodsHomePath: String = System.getenv("JMODS_HOME") ?: ""
         bundleResource = JBundleResource(
-                project = project,
-                appName = appName,
-                versionName = versionName,
-                mainJarFilePath = mainJarFilePath,
-                mainClassName = mainClassName,
-                mainIconFilePath = mainIconFilePath,
-                systemWide = systemWide,
-                inputPath = inputDir.absolutePath,
-                jdk8HomePath = jdk8HomePath,
-                jre8HomePath = jre8HomePath,
-                jdk11HomePath = j11HomePath,
-                jdk14HomePath = j14HomePath,
-                scriptsPath = scriptsDirPath,
-                jvmOptions = jvmProps
+            project = project,
+            appName = appName,
+            versionName = versionName,
+            mainJarName = mainJarName,
+            mainJarFilePath = mainJarFilePath,
+            mainClassName = mainClassName,
+            mainIconFilePath = mainIconFilePath,
+            systemWide = systemWide,
+            inputPath = inputDir.absolutePath,
+            jdk8HomePath = jdk8HomePath,
+            jre8HomePath = jre8HomePath,
+            jdk17HomePath = j17HomePath,
+            jmodsHomePath = jmodsHomePath,
+            scriptsPath = scriptsDirPath,
+            jvmOptions = jvmProps
         )
         scriptProvider = when (OsType.get()) {
             OsType.UNKNOWN -> throw IllegalStateException("Unsupported OS type")
             OsType.LINUX, OsType.MAC -> {
-                JBundlerScriptJ11Unix(project, bundleResource)
+                JBundlerScriptJ17Unix(project, bundleResource)
             }
             OsType.WINDOWS -> {
-                JBundlerScriptJ11Win(project, bundleResource)
+                JBundlerScriptJ17Win(project, bundleResource)
             }
         }
         doFirst {
             debugPrint()
+            println("Prepping environment")
+            // Clean / creat input dir
             if (inputDir.exists()) {
                 inputDir.deleteRecursively()
             }
             inputDir.mkdirs()
+
+            // Clean / creat tmp dir
+            if (tmpDir.exists()) {
+                tmpDir.deleteRecursively()
+            }
+            tmpDir.mkdirs()
+
+            // Clean / creat input/libs dir
+            if (inputLibsDir.exists()) {
+                inputLibsDir.deleteRecursively()
+            }
+            inputLibsDir.mkdirs()
+
             val inputResDir = File(inputDir, "/resources").apply { mkdirs() }
+            println("Copying main jar: ${bundleResource.mainJar.name}")
             val inputMainJar = File(inputDir, "/${bundleResource.mainJar.name}")
                     .apply { createNewFile() }
             bundleResource.mainJar.copyTo(inputMainJar, overwrite = true)
+            println("Copying resources")
             resourceDir.copyRecursively(inputResDir, overwrite = true)
+            println("debugZip(archiveExist: ${tmpDistributionsArchive.exists()}, isFile: ${tmpDistributionsArchive.isFile})")
+            println("Copying distributions: ${tmpDistributionsArchive.absolutePath}")
+            unzipTo(tmpDir, tmpDistributionsArchive)
+            val extractedLibDir = File(tmpDir, "/${bundleResource.mainJarName}/lib")
+            println("Copying input libs (libsPath: ${extractedLibDir.absolutePath}, exists: ${extractedLibDir.exists()}, isDir: ${extractedLibDir.isDirectory})")
+            val extractedLibFiles = extractedLibDir.listFiles()?.toList() ?: emptyList<File>()
+            extractedLibFiles
+                .filter { it.exists() }
+            extractedLibFiles.forEach { sourceLibFile ->
+                assert(inputLibsDir.isDirectory, { "inputLibsDirectory should be a directory" })
+                // println(".copyLib(lib: ${sourceLibFile.absolutePath}, to: ${inputLibsDir.absolutePath})")
+                val targetLibFile = File(inputLibsDir, "/${sourceLibFile.name}")
+                    .apply { createNewFile() }
+                sourceLibFile.copyTo(targetLibFile, overwrite = true)
+            }
         }
         val scriptArgs = scriptProvider.scriptCommand()
         workingDir = project.projectDir

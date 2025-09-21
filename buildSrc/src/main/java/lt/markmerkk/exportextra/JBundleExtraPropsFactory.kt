@@ -10,7 +10,6 @@ object JBundleExtraPropsFactory {
 
     const val APP_NAME = "WT4"
     const val APP_FLAVOR_BASIC = "basic"
-    const val APP_FLAVOR_ITO = "ito"
 
     private val defaultJvmProps = listOf(
         "-Xms128m",
@@ -74,7 +73,10 @@ object JBundleExtraPropsFactory {
                 jvmProps = defaultJvmProps.plus(
                     listOf(
                         "-DWT_APP_PATH=wt4",
-                        "-DWT_APP_FLAVOR=${versionProps.flavor}"
+                        "-DWT_APP_FLAVOR=${versionProps.flavor}",
+                        "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+                        "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED",
+                        "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
                     )
                 ),
                 sentryDsn = sentryProps.dsn,

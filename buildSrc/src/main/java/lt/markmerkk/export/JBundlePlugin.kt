@@ -22,14 +22,15 @@ class JBundlePlugin: Plugin<Project> {
             group = NAME_PLUGIN
             description = "Creates and exports bundle"
             init(
-                    appName = extension.appName,
-                    versionName = extension.version,
-                    systemWide = extension.systemWide,
-                    mainJarFilePath = extension.mainJarFilePath,
-                    mainClassName = extension.mainClassName,
-                    mainIconFilePath = extension.mainIconFilePath,
-                    jvmProps = extension.jvmProps,
-                    scriptsDirPath = extension.scriptsDirPath
+                appName = extension.appName,
+                versionName = extension.version,
+                systemWide = extension.systemWide,
+                mainJarName = extension.mainJarName,
+                mainJarFilePath = extension.mainJarFilePath,
+                mainClassName = extension.mainClassName,
+                mainIconFilePath = extension.mainIconFilePath,
+                jvmProps = extension.jvmProps,
+                scriptsDirPath = extension.scriptsDirPath
             )
             setDependsOn(listOf(":${project.name}:build"))
         }

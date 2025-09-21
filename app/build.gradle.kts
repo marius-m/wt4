@@ -135,8 +135,9 @@ buildConfig {
 extensions.getByType(lt.markmerkk.export.tasks.JBundleExtension::class.java).apply {
     appName = jBundleProps.appName
     version = jBundleProps.versionName
+    mainJarName = "app-${jBundleProps.versionName}"
     mainClassName = "lt.markmerkk.MainAsJava"
-    mainJarFilePath = File(buildDir, "${File.separator}libs${File.separator}app-${jBundleProps.versionName}.jar").absolutePath
+    mainJarFilePath = File(buildDir, "${File.separator}libs${File.separator}${mainJarName}.jar").absolutePath
     systemWide = jBundleProps.systemWide
     jvmProps = jBundleProps.jvmProps
 

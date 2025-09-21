@@ -5,6 +5,7 @@ import org.gradle.api.Project
 open class JBundleExtension(private val project : Project) {
     var appName: String = ""
     var version: String = ""
+    var mainJarName: String = ""
     var mainClassName: String = ""
     var mainJarFilePath: String = ""
     var systemWide: Boolean = false

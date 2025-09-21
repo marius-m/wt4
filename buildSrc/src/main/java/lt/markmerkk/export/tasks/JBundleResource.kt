@@ -10,6 +10,7 @@ data class JBundleResource(
         val project: Project,
         val appName: String,
         val versionName: String,
+        val mainJarName: String,
         val mainJarFilePath: String,
         val mainClassName: String,
         val mainIconFilePath: String,
@@ -17,8 +18,8 @@ data class JBundleResource(
         private val inputPath: String,
         private val jdk8HomePath: String,
         private val jre8HomePath: String,
-        private val jdk11HomePath: String,
-        private val jdk14HomePath: String,
+        private val jdk17HomePath: String,
+        private val jmodsHomePath: String,
         private val scriptsPath: String,
         val jvmOptions: List<String>
 ) {
@@ -57,10 +58,11 @@ data class JBundleResource(
     } else {
         File(jdk8HomeDir, "/jre")
     }
-    val jdk11HomeDir: File = File(jdk11HomePath)
-    val jdk14HomeDir: File = File(jdk14HomePath)
+    val jdk17HomeDir: File = File(jdk17HomePath)
+    val jmodsHomeDir: File = File(jmodsHomePath)
     val scriptsDir: File = File(scriptsPath)
     val inputDir = File(inputPath)
+    val inputLibsDir = File(inputPath, "/libs/")
 
     val packageType: String = when (OsType.get()) {
         OsType.UNKNOWN -> ""
