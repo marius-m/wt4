@@ -38,7 +38,8 @@ dependencies {
     implementation(project(":components"))
     implementation(project(":database2"))
     implementation(project(":remote"))
-    // api(project(":jira-client2"))
+
+//    api(project(":jira-client2"))
     api(files("${rootDir.absolutePath}/libs/${Versions.localJiraClient}"))
     implementation(project(":models"))
     implementation(project(":mock-factory"))
