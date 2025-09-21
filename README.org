@@ -1,0 +1,53 @@
+* WT4
+:PROPERTIES:
+:CUSTOM_ID: wt4
+:END:
+Dedicated worklog management for JIRA
+
+- Works offline
+- Synchronization with JIRA
+- Dynamic log editing
+- Works on Windows, Linux and Mac
+
+#+caption: Main view screenshot
+[[file:imgs/main.png]]
+
+- Wiki how to use the tool - https://github.com/marius-m/wt4/wiki
+
+** Downloads
+:PROPERTIES:
+:CUSTOM_ID: downloads
+:END:
+Builds for =WT4-basic-1.9.9=
+
+- Release Release builds/marius-m/wt4/releases
+- Tips how to [[https://github.com/marius-m/wt4/wiki/Set-up-Basic][set-up to JIRA]]
+- Having trouble installing ? Tips on how to install on [[https://github.com/marius-m/wt4/wiki/Install-Mac][MacOS]] or [[https://github.com/marius-m/wt4/wiki/Install-Win][Windows]]
+
+** Issues
+:PROPERTIES:
+:CUSTOM_ID: issues
+:END:
+Track issues / feature requests - https://github.com/marius-m/wt4/issues
+
+** Attributions
+:PROPERTIES:
+:CUSTOM_ID: attributions
+:END:
+This app serves me as a sandbox for trying out various java stuff that I find interesting. As a side effect app was born that is being used for easier time tracking. Feel free copying / contributing / using code for your own pleasure.
+
+- [[https://github.com/dlemmermann/CalendarFX][CalendarFX]] - Most amazing calendar that lets display logs and modify them. Very very cool.
+- [[http://www.jfoenix.com/][JFoenix]] - Material designs for JavaFX! Amazing!
+- [[https://kotlinlang.org/][Kotlin]] - Most of the app is converted to kotlin, once got used to it, never want to look back.
+- [[https://github.com/ReactiveX/RxJava][RXJava]] Very cool programming [[http://reactivex.io/][paradigm]]
+- [[https://github.com/google/dagger][Dagger2]] - Essential for making object graph. Loved it every bit.
+- [[http://docs.oracle.com/javase/8/javase-clienttechnologies.htm][JavaFX]] - Great components and quite easy to assemble with after burner.
+- [[https://design.google.com/icons/][Google material design]] - Icons for easier use and clear purpose!
+- [[https://www.jooq.org/][jOOQ]]
+- [[][TornadoFX]] - Lightweight UI framework for JavaFX
+
+** Changelog
+:PROPERTIES:
+:CUSTOM_ID: changelog
+:END:
+Version changelog can be found here - https://github.com/marius-m/wt4/blob/master/CHANGELOG.md
