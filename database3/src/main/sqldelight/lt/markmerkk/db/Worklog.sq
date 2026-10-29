@@ -1,0 +1,17 @@
+CREATE TABLE `worklog` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `start` INTEGER NOT NULL DEFAULT 0,
+  `end` INTEGER NOT NULL DEFAULT 0,
+  `duration` INTEGER NOT NULL DEFAULT 0,
+  `code` TEXT DEFAULT '' NOT NULL,
+  `comment` TEXT DEFAULT '' NOT NULL,
+  `system_note` TEXT DEFAULT '' NOT NULL,
+  `author` TEXT DEFAULT '' NOT NULL,
+  `remote_id` INTEGER NOT NULL DEFAULT -1,
+  `is_deleted` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+  `is_dirty` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+  `is_error` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+  `error_message` TEXT NOT NULL DEFAULT '',
+  `fetchTime` INTEGER NOT NULL DEFAULT 0,
+  `URL` TEXT NOT NULL DEFAULT ''
+);

@@ -18,6 +18,7 @@ include(
         ":models",
         ":components",
         ":database2",
+        ":database3",
         ":mock-factory",
         ":credits"
 )

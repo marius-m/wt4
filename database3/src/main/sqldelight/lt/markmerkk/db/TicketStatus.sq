@@ -1,0 +1,5 @@
+CREATE TABLE `ticket_status` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `name` TEXT DEFAULT '' NOT NULL,
+  `enabled` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 1
+);

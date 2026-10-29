@@ -12,6 +12,7 @@ buildscript {
         classpath("de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2")
         classpath("gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.8")
         classpath("org.openjfx:javafx-plugin:0.1.0")
+        classpath("app.cash.sqldelight:gradle-plugin:${lt.markmerkk.Versions.sqldelight}")
     }
 }
 

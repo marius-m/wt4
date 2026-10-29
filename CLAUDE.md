@@ -8,7 +8,7 @@ WT4 is a JavaFX desktop app for tracking time as JIRA worklogs. It works offline
 
 ## Build / run / test
 
-The JDK is pinned in `.sdkmanrc` (`java=11.0.31.fx-zulu`, a JDK that bundles JavaFX). Run `sdk env` to switch to it. Gradle uses the Kotlin DSL, and shared dependency versions live in `buildSrc/src/main/java/lt/markmerkk/Versions.kt`.
+The JDK is pinned in `.sdkmanrc` (`java=17.0.20.0-fx-zulu`, a JDK that bundles JavaFX; 17+ is required by the SQLDelight Gradle plugin). Run `sdk env install` to switch to it. Gradle uses the Kotlin DSL, and shared dependency versions live in `buildSrc/src/main/java/lt/markmerkk/Versions.kt`.
 
 ```sh
 ./gradlew build                      # build all modules + run tests

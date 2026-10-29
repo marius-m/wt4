@@ -14,6 +14,7 @@ object Versions {
     val javaAnnotate = "1.3.1"
     val mockito = "5.20.0"
     val assertj = "2.2.0"
+    val sqldelight = "2.0.2"
 
     val localJiraClient = "jira-client2-2.1.0-SNAPSHOT.jar"
     val localJFoenix17 = "JFoenix-17.0.5.jar"

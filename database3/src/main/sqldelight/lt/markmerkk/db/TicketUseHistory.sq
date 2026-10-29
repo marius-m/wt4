@@ -1,0 +1,7 @@
+CREATE TABLE `ticket_use_history` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `code_project` TEXT DEFAULT '' NOT NULL,
+  `code_number` TEXT DEFAULT '' NOT NULL,
+  `code` TEXT DEFAULT '' NOT NULL,
+  `lastUsed` INTEGER NOT NULL DEFAULT 0
+);

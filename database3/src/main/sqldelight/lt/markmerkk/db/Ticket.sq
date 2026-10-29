@@ -1,0 +1,20 @@
+CREATE TABLE `ticket` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `code_project` TEXT DEFAULT '' NOT NULL,
+  `code_number` TEXT DEFAULT '' NOT NULL,
+  `code` TEXT DEFAULT '' NOT NULL,
+  `description` TEXT DEFAULT '' NOT NULL,
+  `parent_id` INTEGER NOT NULL DEFAULT -1,
+  `remote_id` INTEGER NOT NULL DEFAULT -1,
+  `is_deleted` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+  `is_dirty` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+  `is_error` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+  `error_message` TEXT NOT NULL DEFAULT '',
+  `fetchTime` INTEGER NOT NULL DEFAULT 0,
+  `URL` TEXT NOT NULL DEFAULT '',
+  `parent_code` TEXT DEFAULT '' NOT NULL,
+  `status` TEXT DEFAULT '' NOT NULL,
+  `assignee` TEXT DEFAULT '' NOT NULL,
+  `reporter` TEXT DEFAULT '' NOT NULL,
+  `is_watching` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0
+);
