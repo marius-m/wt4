@@ -15,3 +15,75 @@ CREATE TABLE `worklog` (
   `fetchTime` INTEGER NOT NULL DEFAULT 0,
   `URL` TEXT NOT NULL DEFAULT ''
 );
+
+selectByStartRange:
+SELECT *
+FROM worklog
+WHERE `start` >= :fromMillis AND `start` <= :toMillis;
+
+selectById:
+SELECT *
+FROM worklog
+WHERE id = ?;
+
+selectByRemoteId:
+SELECT *
+FROM worklog
+WHERE remote_id = ?;
+
+countById:
+SELECT COUNT(*)
+FROM worklog
+WHERE id = ?;
+
+countByRemoteId:
+SELECT COUNT(*)
+FROM worklog
+WHERE remote_id = ?;
+
+insert:
+INSERT INTO worklog(
+  `start`,
+  `end`,
+  `duration`,
+  `code`,
+  `comment`,
+  `system_note`,
+  `author`,
+  `remote_id`,
+  `is_deleted`,
+  `is_dirty`,
+  `is_error`,
+  `error_message`,
+  `fetchTime`,
+  `URL`
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE worklog
+SET `start` = :start,
+  `end` = :end,
+  `duration` = :duration,
+  `code` = :code,
+  `comment` = :comment,
+  `system_note` = :system_note,
+  `author` = :author,
+  `remote_id` = :remote_id,
+  `is_deleted` = :is_deleted,
+  `is_dirty` = :is_dirty,
+  `is_error` = :is_error,
+  `error_message` = :error_message,
+  `fetchTime` = :fetchTime,
+  `URL` = :URL
+WHERE id = :id;
+
+deleteById:
+DELETE FROM worklog
+WHERE id = ?;
+
+deleteByRemoteId:
+DELETE FROM worklog
+WHERE remote_id = ?;
