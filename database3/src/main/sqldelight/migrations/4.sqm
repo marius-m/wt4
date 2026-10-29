@@ -1,0 +1,4 @@
+CREATE TABLE `ticket_status` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `name` TEXT DEFAULT '' NOT NULL
+);

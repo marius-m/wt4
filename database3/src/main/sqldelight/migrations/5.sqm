@@ -1,0 +1,2 @@
+ALTER TABLE `ticket` ADD COLUMN `parent_code` TEXT DEFAULT '' NOT NULL;
+ALTER TABLE `ticket` ADD COLUMN `status` TEXT DEFAULT '' NOT NULL;

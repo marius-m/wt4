@@ -1,0 +1,1 @@
+ALTER TABLE `worklog` ADD COLUMN `system_note` TEXT NOT NULL DEFAULT '';
