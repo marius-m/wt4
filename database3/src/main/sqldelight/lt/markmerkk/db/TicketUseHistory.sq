@@ -5,3 +5,17 @@ CREATE TABLE `ticket_use_history` (
   `code` TEXT DEFAULT '' NOT NULL,
   `lastUsed` INTEGER NOT NULL DEFAULT 0
 );
+
+selectRecent:
+SELECT *
+FROM ticket_use_history
+ORDER BY `lastUsed` DESC
+LIMIT :limit;
+
+insert:
+INSERT INTO ticket_use_history(`code`, `code_project`, `code_number`, `lastUsed`)
+VALUES (?, ?, ?, ?);
+
+deleteByCode:
+DELETE FROM ticket_use_history
+WHERE code = ?;

@@ -18,3 +18,61 @@ CREATE TABLE `ticket` (
   `reporter` TEXT DEFAULT '' NOT NULL,
   `is_watching` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0
 );
+
+selectAll:
+SELECT *
+FROM ticket;
+
+selectByCode:
+SELECT *
+FROM ticket
+WHERE code = ?;
+
+countByRemoteId:
+SELECT COUNT(*)
+FROM ticket
+WHERE remote_id = ?;
+
+insert:
+INSERT INTO ticket(
+  `code`,
+  `code_project`,
+  `code_number`,
+  `description`,
+  `parent_id`,
+  `remote_id`,
+  `is_deleted`,
+  `is_dirty`,
+  `is_error`,
+  `error_message`,
+  `fetchTime`,
+  `URL`,
+  `status`,
+  `assignee`,
+  `reporter`,
+  `is_watching`,
+  `parent_code`
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateByRemoteId:
+UPDATE ticket
+SET `code` = :code,
+  `code_project` = :code_project,
+  `code_number` = :code_number,
+  `description` = :description,
+  `parent_id` = :parent_id,
+  `is_deleted` = :is_deleted,
+  `is_dirty` = :is_dirty,
+  `is_error` = :is_error,
+  `error_message` = :error_message,
+  `fetchTime` = :fetchTime,
+  `URL` = :URL,
+  `status` = :status,
+  `assignee` = :assignee,
+  `reporter` = :reporter,
+  `is_watching` = :is_watching,
+  `parent_code` = :parent_code
+WHERE remote_id = :remote_id;
+
+rowsChanged:
+SELECT changes();

@@ -3,3 +3,29 @@ CREATE TABLE `ticket_status` (
   `name` TEXT DEFAULT '' NOT NULL,
   `enabled` INTEGER AS kotlin.Boolean NOT NULL DEFAULT 1
 );
+
+selectAll:
+SELECT *
+FROM ticket_status;
+
+selectByName:
+SELECT *
+FROM ticket_status
+WHERE name = ?;
+
+countByName:
+SELECT COUNT(*)
+FROM ticket_status
+WHERE name = ?;
+
+insert:
+INSERT INTO ticket_status(`name`, `enabled`)
+VALUES (?, ?);
+
+updateEnabled:
+UPDATE ticket_status
+SET `enabled` = :enabled
+WHERE name = :name;
+
+deleteAll:
+DELETE FROM ticket_status;
